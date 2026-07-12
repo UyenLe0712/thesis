@@ -1,0 +1,73 @@
+{
+  "screen": "app1_s91",
+  "model": "gpt-4o-mini",
+  "question": "How do I change the time to 8:30 PM?",
+  "elem_labels": [
+    "9",
+    ":",
+    "15",
+    "AM",
+    "PM",
+    "0",
+    "5",
+    "10",
+    "15",
+    "20",
+    "25",
+    "30",
+    "35",
+    "40",
+    "45",
+    "50",
+    "55",
+    "Switch to text input mode for the time input.",
+    "Cancel",
+    "OK"
+  ],
+  "actionable_labels": [
+    "9",
+    "15",
+    "AM",
+    "PM",
+    "Switch to text input mode for the time input.",
+    "Cancel",
+    "OK"
+  ],
+  "base": [
+    {
+      "verb": "Select",
+      "element": "15",
+      "note": "Set the minutes to 30"
+    },
+    {
+      "verb": "Select",
+      "element": "PM",
+      "note": "Change to PM if not already selected"
+    },
+    {
+      "verb": "Select",
+      "element": "OK",
+      "note": "Confirm the time change to 8:30 PM"
+    }
+  ],
+  "sysE": [
+    {
+      "verb": "Select",
+      "element": "15",
+      "note": "Set the minutes to 30",
+      "status": "matched"
+    },
+    {
+      "verb": "Select",
+      "element": "PM",
+      "note": "Change to PM if not already selected",
+      "status": "matched"
+    },
+    {
+      "verb": "Select",
+      "element": "OK",
+      "note": "Confirm the time change to 8:30 PM",
+      "status": "matched"
+    }
+  ]
+}

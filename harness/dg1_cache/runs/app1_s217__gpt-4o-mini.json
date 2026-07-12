@@ -1,0 +1,49 @@
+{
+  "screen": "app1_s217",
+  "model": "gpt-4o-mini",
+  "question": "How do I enable tracking within a 100m radius?",
+  "elem_labels": [
+    "Navigate up",
+    "New Zealand Maritime Museum",
+    "More options",
+    "1HW",
+    "153 Hunters Way",
+    "153 Hunters Way",
+    "161-173 Quay Street, Auckland, Auckland Central 1010, New Zealand",
+    "Track within 100m radius",
+    "Projects won't run without Google Play services, which are not supported by your device.",
+    "Map center pin",
+    "Use this location for suggested time entries ON"
+  ],
+  "actionable_labels": [
+    "Navigate up",
+    "More options",
+    "Use this location for suggested time entries ON"
+  ],
+  "base": [
+    {
+      "verb": "Select",
+      "element": "Track within 100m radius",
+      "note": "Enable tracking within the specified radius."
+    },
+    {
+      "verb": "Adjust",
+      "element": "slider",
+      "note": "Move the slider to enable tracking."
+    }
+  ],
+  "sysE": [
+    {
+      "verb": "Select",
+      "element": "Track within 100m radius",
+      "note": "Enable tracking within the specified radius.",
+      "status": "matched"
+    },
+    {
+      "verb": "Adjust",
+      "element": "(describe) slider",
+      "note": "Move the slider to enable tracking.",
+      "status": "fallback"
+    }
+  ]
+}

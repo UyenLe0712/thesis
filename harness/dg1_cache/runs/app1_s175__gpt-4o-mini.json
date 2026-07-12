@@ -1,0 +1,47 @@
+{
+  "screen": "app1_s175",
+  "model": "gpt-4o-mini",
+  "question": "How do I update the expenses for Zobron Ltd?",
+  "elem_labels": [
+    "ZL",
+    "Zobron Ltd"
+  ],
+  "actionable_labels": [],
+  "base": [
+    {
+      "verb": "Select",
+      "element": "EXPENSES",
+      "note": "Navigate to the expenses section."
+    },
+    {
+      "verb": "Tap",
+      "element": "Zobron Ltd",
+      "note": "Select the company to update expenses."
+    },
+    {
+      "verb": "Tap",
+      "element": "<icon with circular arrow>",
+      "note": "Refresh or update the expenses."
+    }
+  ],
+  "sysE": [
+    {
+      "verb": "Select",
+      "element": "ZL",
+      "note": "Navigate to the expenses section.",
+      "status": "corrected"
+    },
+    {
+      "verb": "Tap",
+      "element": "Zobron Ltd",
+      "note": "Select the company to update expenses.",
+      "status": "matched"
+    },
+    {
+      "verb": "Tap",
+      "element": "(describe) <icon with circular arrow>",
+      "note": "Refresh or update the expenses.",
+      "status": "fallback"
+    }
+  ]
+}

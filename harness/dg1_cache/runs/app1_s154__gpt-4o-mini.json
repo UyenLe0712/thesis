@@ -1,0 +1,73 @@
+{
+  "screen": "app1_s154",
+  "model": "gpt-4o-mini",
+  "question": "How do I change the minutes to 45?",
+  "elem_labels": [
+    "8",
+    ":",
+    "35",
+    "AM",
+    "PM",
+    "0",
+    "5",
+    "10",
+    "15",
+    "20",
+    "25",
+    "30",
+    "35",
+    "40",
+    "45",
+    "50",
+    "55",
+    "Switch to text input mode for the time input.",
+    "Cancel",
+    "OK"
+  ],
+  "actionable_labels": [
+    "8",
+    "35",
+    "AM",
+    "PM",
+    "Switch to text input mode for the time input.",
+    "Cancel",
+    "OK"
+  ],
+  "base": [
+    {
+      "verb": "<Tap>",
+      "element": "35",
+      "note": "Select the current minute value."
+    },
+    {
+      "verb": "<Drag>",
+      "element": "45",
+      "note": "Adjust the minute value to 45."
+    },
+    {
+      "verb": "<Tap>",
+      "element": "OK",
+      "note": "Confirm the change."
+    }
+  ],
+  "sysE": [
+    {
+      "verb": "<Tap>",
+      "element": "35",
+      "note": "Select the current minute value.",
+      "status": "matched"
+    },
+    {
+      "verb": "<Drag>",
+      "element": "45",
+      "note": "Adjust the minute value to 45.",
+      "status": "matched"
+    },
+    {
+      "verb": "<Tap>",
+      "element": "OK",
+      "note": "Confirm the change.",
+      "status": "matched"
+    }
+  ]
+}

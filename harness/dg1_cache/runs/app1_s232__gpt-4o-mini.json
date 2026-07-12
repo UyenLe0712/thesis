@@ -1,0 +1,61 @@
+{
+  "screen": "app1_s232",
+  "model": "gpt-4o-mini",
+  "question": "How do I add a description to my task?",
+  "elem_labels": [
+    "Navigate up",
+    "Submit",
+    "Copy time",
+    "New Patio",
+    "dummy_user_input",
+    "dummy_user_input",
+    "Select time entry method:",
+    "Duration",
+    "Start & end",
+    "Start Time: 8:06pm",
+    "End Time: 8:06pm",
+    "Total Time",
+    "0:00",
+    "Sat, 1 Jun 2024",
+    "Jo Champion (you)"
+  ],
+  "actionable_labels": [
+    "Navigate up",
+    "Submit",
+    "New Patio",
+    "dummy_user_input",
+    "dummy_user_input",
+    "Duration",
+    "Start & end",
+    "Start Time: 8:06pm",
+    "End Time: 8:06pm",
+    "Sat, 1 Jun 2024",
+    "Jo Champion (you)"
+  ],
+  "base": [
+    {
+      "verb": "Select",
+      "element": "Add a description (optional)",
+      "note": "Tap the field to enter a description."
+    },
+    {
+      "verb": "Type",
+      "element": "dummy_user_input",
+      "note": "Enter your description."
+    }
+  ],
+  "sysE": [
+    {
+      "verb": "Select",
+      "element": "Navigate up",
+      "note": "Tap the field to enter a description.",
+      "status": "corrected"
+    },
+    {
+      "verb": "Type",
+      "element": "dummy_user_input",
+      "note": "Enter your description.",
+      "status": "matched"
+    }
+  ]
+}

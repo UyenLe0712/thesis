@@ -1,0 +1,40 @@
+{
+  "episode_id": 7057,
+  "goal": "I forgot that I already have a note named Grocery in the Keep Notes app, so I want to edit the title of this note from Grocery to Grocery Store Lidl.",
+  "num_steps": 3,
+  "steps": [
+    {
+      "step_id": 0,
+      "np": 0,
+      "active_application": "Keep Notes",
+      "previous_actions": "",
+      "gold_action": "!FUNCTIONCALL{\"name\": \"click\", \"parameters\": {\"x\": 275, \"y\": 401}}",
+      "screen_w": 1080,
+      "screen_h": 2400,
+      "uid": "427fd821-73a1-4727-9417-611ac26cd91c",
+      "screenshot_file": "ep1_7057_step1.png"
+    },
+    {
+      "step_id": 1,
+      "np": 1,
+      "active_application": "Popup Window",
+      "previous_actions": "{\"name\": \"click\", \"parameters\": {\"x\": 275, \"y\": 401}}",
+      "gold_action": "!FUNCTIONCALL{\"name\": \"input_text\", \"parameters\": {\"text\": \"Grocery Store Lidl\"}}",
+      "screen_w": 1080,
+      "screen_h": 2400,
+      "uid": "0001df0d-c9ad-4c32-b0d6-80756ab4ccf9",
+      "screenshot_file": "ep1_7057_step2.png"
+    },
+    {
+      "step_id": 2,
+      "np": 2,
+      "active_application": "Keep Notes",
+      "previous_actions": "{\"name\": \"click\", \"parameters\": {\"x\": 275, \"y\": 401}}\n{\"name\": \"input_text\", \"parameters\": {\"text\": \"Grocery Store Lidl\"}}",
+      "gold_action": "!FUNCTIONCALL{\"name\": \"status\", \"parameters\": {\"goal_status\": \"successful\"}}",
+      "screen_w": 1080,
+      "screen_h": 2400,
+      "uid": "79b18a19-70ad-4743-b582-705efdb4fcad",
+      "screenshot_file": "ep1_7057_step3.png"
+    }
+  ]
+}

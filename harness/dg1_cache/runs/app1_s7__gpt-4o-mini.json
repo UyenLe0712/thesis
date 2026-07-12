@@ -1,0 +1,51 @@
+{
+  "screen": "app1_s7",
+  "model": "gpt-4o-mini",
+  "question": "How do I turn on notifications for the New Zealand Maritime Museum?",
+  "elem_labels": [
+    "Navigate up",
+    "Locations",
+    "New Zealand Maritime Museum",
+    "161-173 Quay Street",
+    "ON",
+    "Xero",
+    "96 Saint Georges Bay Road",
+    "ON",
+    "Bunnings Warehouse",
+    "459 Ellerslie Panmure Highway",
+    "ON",
+    "97 of 100 locations available"
+  ],
+  "actionable_labels": [
+    "Navigate up",
+    "ON",
+    "ON",
+    "ON"
+  ],
+  "base": [
+    {
+      "verb": "<Tap>",
+      "element": "New Zealand Maritime Museum",
+      "note": "Select the museum to access its settings."
+    },
+    {
+      "verb": "<Tap>",
+      "element": "toggle",
+      "note": "Enable notifications by toggling the switch."
+    }
+  ],
+  "sysE": [
+    {
+      "verb": "<Tap>",
+      "element": "New Zealand Maritime Museum",
+      "note": "Select the museum to access its settings.",
+      "status": "matched"
+    },
+    {
+      "verb": "<Tap>",
+      "element": "ON",
+      "note": "Enable notifications by toggling the switch.",
+      "status": "corrected"
+    }
+  ]
+}

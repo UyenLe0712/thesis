@@ -1,0 +1,70 @@
+{
+  "screen": "app1_s22",
+  "model": "gpt-4o-mini",
+  "question": "How do I change the project name?",
+  "elem_labels": [
+    "Navigate up",
+    "Submit",
+    "Edit project",
+    "dummy_user_input",
+    "Shoe Cleaning",
+    "Deadline: 12 Jun, 2024",
+    "Clear",
+    "Estimate",
+    "Calculate from tasks & estimated expenses OFF",
+    "2,000.00",
+    "excl. tax",
+    "Who can view this project?",
+    "Private",
+    "Only admin, standard or assigned users",
+    "OFF"
+  ],
+  "actionable_labels": [
+    "Navigate up",
+    "Submit",
+    "dummy_user_input",
+    "Shoe Cleaning",
+    "Deadline: 12 Jun, 2024",
+    "Clear",
+    "Calculate from tasks & estimated expenses OFF",
+    "2,000.00",
+    "OFF"
+  ],
+  "base": [
+    {
+      "verb": "Tap",
+      "element": "Project name",
+      "note": "Select the project name field to edit it."
+    },
+    {
+      "verb": "Type",
+      "element": "",
+      "note": "Enter the new project name."
+    },
+    {
+      "verb": "Tap",
+      "element": "✓",
+      "note": "Save the changes."
+    }
+  ],
+  "sysE": [
+    {
+      "verb": "Tap",
+      "element": "Project name",
+      "note": "Select the project name field to edit it.",
+      "status": "matched"
+    },
+    {
+      "verb": "Type",
+      "element": "",
+      "note": "Enter the new project name.",
+      "status": "matched"
+    },
+    {
+      "verb": "Tap",
+      "element": "Navigate up",
+      "note": "Save the changes.",
+      "status": "corrected"
+    }
+  ]
+}

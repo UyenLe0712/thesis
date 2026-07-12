@@ -1,0 +1,62 @@
+{
+  "episode_id": 14851,
+  "goal": "Create a shortcut for me of The Queen's Gambit pdf file to the home screen on the Drive app.",
+  "num_steps": 5,
+  "steps": [
+    {
+      "step_id": 0,
+      "np": 0,
+      "active_application": "Drive",
+      "previous_actions": "",
+      "gold_action": "!FUNCTIONCALL{\"name\": \"click\", \"parameters\": {\"x\": 1016, \"y\": 866}}",
+      "screen_w": 1080,
+      "screen_h": 2400,
+      "uid": "7e67dafe-16bb-4846-a2ef-2a038243cfb6",
+      "screenshot_file": "ep2_14851_step1.png"
+    },
+    {
+      "step_id": 1,
+      "np": 1,
+      "active_application": "",
+      "previous_actions": "{\"name\": \"click\", \"parameters\": {\"x\": 1016, \"y\": 866}}",
+      "gold_action": "!FUNCTIONCALL{\"name\": \"scroll\", \"parameters\": {\"direction\": \"down\"}}",
+      "screen_w": 1080,
+      "screen_h": 2400,
+      "uid": "f535fbe6-e852-4fcb-94e9-3fd7103747f0",
+      "screenshot_file": "ep2_14851_step2.png"
+    },
+    {
+      "step_id": 2,
+      "np": 2,
+      "active_application": "",
+      "previous_actions": "{\"name\": \"click\", \"parameters\": {\"x\": 1016, \"y\": 866}}\n{\"name\": \"scroll\", \"parameters\": {\"direction\": \"down\"}}",
+      "gold_action": "!FUNCTIONCALL{\"name\": \"click\", \"parameters\": {\"x\": 602, \"y\": 2105}}",
+      "screen_w": 1080,
+      "screen_h": 2400,
+      "uid": "9c2bcc4c-348e-479f-aee6-452ddbe213ce",
+      "screenshot_file": "ep2_14851_step3.png"
+    },
+    {
+      "step_id": 3,
+      "np": 3,
+      "active_application": "Pixel Launcher",
+      "previous_actions": "{\"name\": \"click\", \"parameters\": {\"x\": 1016, \"y\": 866}}\n{\"name\": \"scroll\", \"parameters\": {\"direction\": \"down\"}}\n{\"name\": \"click\", \"parameters\": {\"x\": 602, \"y\": 2105}}",
+      "gold_action": "!FUNCTIONCALL{\"name\": \"click\", \"parameters\": {\"x\": 821, \"y\": 2252}}",
+      "screen_w": 1080,
+      "screen_h": 2400,
+      "uid": "a1e0d1c3-7c2f-4881-846b-c3e49e3db034",
+      "screenshot_file": "ep2_14851_step4.png"
+    },
+    {
+      "step_id": 4,
+      "np": 4,
+      "active_application": "Drive",
+      "previous_actions": "{\"name\": \"click\", \"parameters\": {\"x\": 1016, \"y\": 866}}\n{\"name\": \"scroll\", \"parameters\": {\"direction\": \"down\"}}\n{\"name\": \"click\", \"parameters\": {\"x\": 602, \"y\": 2105}}\n{\"name\": \"click\", \"parameters\": {\"x\": 821, \"y\": 2252}}",
+      "gold_action": "!FUNCTIONCALL{\"name\": \"status\", \"parameters\": {\"goal_status\": \"successful\"}}",
+      "screen_w": 1080,
+      "screen_h": 2400,
+      "uid": "f7102088-4943-46dd-9cdb-75e449f7b638",
+      "screenshot_file": "ep2_14851_step5.png"
+    }
+  ]
+}
