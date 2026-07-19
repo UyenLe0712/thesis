@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 import time
 from _apikey import get_key
 from _http import chat
-FOLDER = os.path.join(os.path.dirname(__file__), "..", "dataset_samples", "mv_dg1")
+FOLDER = os.path.join(os.path.dirname(__file__), "..", "dataset_samples", "mv_multiapp")
 OUT = os.path.join(os.path.dirname(__file__), "dg1_cache"); os.makedirs(OUT, exist_ok=True)
 QFILE = os.path.join(OUT, "questions.json")
 

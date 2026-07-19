@@ -1,0 +1,25 @@
+# Node deps (tái tạo bằng npm install)
+node_modules/
+ppt_build/node_modules/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# File sinh ra (tái tạo từ nguồn .md / build.js)
+*.pdf
+ppt_build/_preview*/
+
+# Dữ liệu tải về — KHÔNG commit (git giữ blob vĩnh viễn)
+# Pool train mở rộng: 498 màn/220 app, ~254MB — tái tạo bằng harness/fetch_mv_expand_train.py
+dataset_samples/mv_train_pool/
+
+# Khoá API — KHÔNG commit
+harness/.openai_key
+harness/*.key
+
+# Rác hệ điều hành
+.DS_Store
+Thumbs.db
+# File khoá tạm của Office (sinh ra khi đang mở pptx/docx)
+~$*

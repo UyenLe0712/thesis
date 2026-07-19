@@ -62,3 +62,56 @@ Không bị scoop · verify bằng **inventory-cấu-trúc audit-được** (khe
 ### 🎯 ĐÒN 2026 NGUY HIỂM NHẤT + THỦ SẴN
 > **Đòn:** *"Anh đo bịa ¼ trên gpt-4o-mini đời 2024 — frontier 2025-26 đọc ảnh chuẩn hơn, bịa tụt gần 0, vậy lớp trung-thực-hoá đang chữa bệnh sắp tự khỏi."*
 > **Thủ:** *"Chúng tôi báo bịa như ĐƯỜNG-CONG theo bậc-model gồm 1 frontier 2025-26 — bịa VẪN >0 ở model mạnh nhất (khớp FaithScore/POPE: hallucination-tham-chiếu chưa hết ở VLM frontier); và on-device có a11y-tree-live nhưng chạy model-nhỏ-không-gọi-được-frontier → lớp kiểm-tra-độc-lập là nhu-cầu-triển-khai BẤT BIẾN; trọng-lượng đóng góp neo vào DG2/Step-SR, không vào độ-lớn con số bịa."*
+
+---
+
+## 7. ✅ DEEP-RESEARCH CHỐT LẦN CUỐI 2026 (`wf_9c395ab3-f59`, 5 góc quét web 2024-2026 + 1 tổng hợp)
+
+### PHÁN QUYẾT MỘT DÒNG: **ĐỦ VỮNG ĐỂ NỘP 2026 — KHÔNG có lỗi thiết kế.**
+Rủi ro reject cao nhất KHÔNG ở pipeline/metric sai, mà ở (a) **novelty bị AskEase CHI2026 áp sát trục sinh-hướng-dẫn-cho-người**, (b) **cách đóng khung validation**. Cả hai thủ được bằng cách VIẾT, không phải làm lại thiết kế. Điều kiện đậu: (a) tự đo đường-cong tỉ-lệ-bịa per-model trên ≥1 frontier rẻ (không mượn số ngoài); (b) thêm 3 citation peer-reviewed + phân định AskEase & FaithScore; (c) đóng khung construct-validity + bổ sung 2 test perturbation (benign-robustness + error-type-discrimination).
+
+### 7 LÝ-DO-CÓ-THỂ-REJECT (cao→thấp) + phản-thủ — ĐÃ ÁP VÀO `report/43`
+- **R1 (CAO) AskEase CHI2026** cũng sinh hướng dẫn từng bước cho người (screen-reader) → phân định 3 điểm: ảnh-tĩnh+câu-hỏi vs live · no-gold neo VH vs user-study task-success · CÓ lớp trung-thực-hoá + sắp-màn vs KHÔNG. Dùng AskEase hậu thuẫn niche on-device. *(→ file 43 §9)*
+- **R2 (CAO) FaithScore** (reference-free, cùng miền) VẪN báo human-correlation → viết đoạn phân định TRƯỚC khi giám khảo nêu: ta verify VH cấu trúc + matcher tất định (≠ self-check VLM); hạ human-correlation xuống future-work có chủ đích dưới khung measurement-theory. *(→ file 43 §7.2 + §9)*
+- **R3 (TB-cao) "frontier hết bịa → lớp trung-thực-hoá thừa"** → bằng chứng preprint: ScreenSpot-Pro mọi model <90% (GPT-4o 0.8%, Qwen2.5-VL-72B 43.6%), Ferret-UI Lite 3B ~53%, object-hallucination truyền chéo 66.5%. BẮT BUỘC tự đo đường-cong-bịa; tách trục grounding-coords khỏi faithfulness-văn-bản. *(→ file 43 §9 + §5.3 + §10.3)*
+- **R4 (TB) "chỉ áp method có sẵn"** cho pairwise→Copeland→min-FAS → có bài 2025-26 cùng lõi (2412.16181 preprint, EZ-Sort CIKM25, Dodgersort PAKDD26) → PHẢI cite; độ mới = 5 điểm ghép (miền GUI + điều-kiện-mục-tiêu + gắn-sinh-hướng-dẫn + partial-order-from-gold + 5-cue). *(→ file 43 §4.4)*
+- **R5 (TB) tolerance 14% lỗi thời** → chuẩn 2025 = point-in-GT-bbox bbox-native (ScreenSpot-Pro/UI-TARS); hạ 14% xuống biến-thể-đối-chứng. M1 (rút khỏi headline) đúng hướng. *(→ file 43 §5.3)*
+- **R6 (TB) perturbation-only chưa đủ bar 2025** → cần 4 tiêu chí (nhạy + đơn-điệu + benign-robustness + error-type-discrimination); đang có 3/4 → bổ sung 2 test. Trụ: BUMP ACL2023 + Sai EMNLP2021. *(→ file 43 §7.2)*
+- **R7 (thấp) thống kê G≈17** → không có phương án sạch; nâng trụ Cameron-2008 → MacKinnon-Nielsen-Webb (J.Econometrics 2023) + jackknife CV3; khai caveat under-coverage; số = exploratory. *(→ file 43 §7.4)*
+
+### CITATION PEER-REVIEWED MỚI (đã thêm vào file 43 Phụ lục C)
+AskEase (CHI 2026) · BUMP (ACL 2023) · EZ-Sort (CIKM 2025) · Dodgersort (PAKDD 2026) · "Neither Valid nor Reliable?" + "Construct Validity in LLM Benchmarks" (NeurIPS 2025) · MacKinnon-Nielsen-Webb (J.Econometrics 2023).
+⚠ Đối chiếu PDF/venue TRƯỚC KHI IN: DOI AskEase 10.1145/3772318.3790661; venue EZ-Sort/Dodgersort/2 bài NeurIPS2025 trên OpenReview.
+Preprint (HalluClear, Ferret-UI Lite, ScreenSpot-Pro, UI-TARS, 2412.16181, LLM-as-Meta-Judge) = CHỈ định-vị-landscape, KHÔNG làm trụ đậu/rớt.
+
+### SO VỚI §6 (report/42 cũ): KHÔNG mâu thuẫn — chỉ SIẾT CHẶT.
+Xác nhận mạnh M1/M2/M3. Bổ sung mới: chuẩn grounding bbox-native (R5), khung construct-validity + 2 test perturbation (R6), scoop-thành-phần khối sắp-màn (R4), trụ thống kê MNW2023 (R7), 2 citation then-chốt AskEase+BUMP.
+
+---
+
+## 8. ✅ RESEARCH RIÊNG KIẾN TRÚC PIPELINE (`wf_1306a703-213`, 5 góc web + 1 tổng hợp) — 2026-07-05
+
+### PHÁN QUYẾT: **Pipeline ĐÚNG nhu cầu 2026 — KHÔNG cần đổi kiến trúc, chỉ đóng-khung + 2 nhánh so-sánh.**
+Cả hai khối ("sinh mù → hậu-kiểm đối chiếu VH → fallback mô-tả" và "pairwise→Copeland→min-FAS") nằm ĐÚNG dòng chính danh 2024–2026 (post-hoc verification đối-chiếu-nguồn-ngoài + ordering-tường-minh). Rủi ro còn lại = THUẦN FRAMING.
+
+### ĐÒN NGUY HIỂM NHẤT (kiến trúc): "Sao không grounded-gen như AskEase CHI2026?"
+Thuốc-giải 4 lớp (đã ÁP vào `report/43` §4.5):
+1. Sinh mù = thiết bị ĐO, không phải kiến-trúc-deploy; deploy có thể grounded.
+2. Grounded-gen làm HỎNG phép đo: thêm ngữ cảnh → ảo giác còn ~2% (Frontiers in AI 2025, PR) → model chép, hết đo được.
+3. Grounded-gen không sạch: cây a11y thiếu nhãn (>77%, Chen ICSE20) → vẫn bịa.
+4. Post-hoc verify chính danh: FaithScore EMNLP24, CoVe ACL24, RARR ACL23; tín hiệu NGOÀI phi-LLM tất định → KHÁC self-check nội tại bị Huang ICLR24 bác.
+
+### 7 RỦI-RO-PIPELINE (đa số CHỈ đóng-khung, đã áp vào file 43):
+- R1 grounded-gen (AskEase CHI26, PR) → §4.5 measurement-vs-deploy.
+- R2 field rời a11y sang visual-grounding (ShowUI CVPR25) → phân định: trục agent-bấm-toạ-độ khác; VH chỉ dùng lúc chấm.
+- R3 pairwise "bag-of-frames" acc~0.5 (TOMATO ICLR25) → **PHẢI-LÀM cổng K-pair** (rủi ro thực-nghiệm thật duy nhất).
+- R4 pairwise O(N²) (Qin PRP NAACL24) → **PHẢI-THÊM baseline listwise + cột chi phí** (M2).
+- R5 fallback mô-tả "vô dụng" → ranh giới agent-vs-người + đo chất lượng fallback = appropriate abstention.
+- R6 khối không mới → độ mới ở TỔ-HỢP (§4.4).
+- R7 gộp vào self-correct-bị-bác (Huang ICLR24) → tín hiệu NGOÀI phi-LLM.
+
+### TRỤ PEER-REVIEWED bênh pipeline: FaithScore (EMNLP24) · CoVe (ACL24) · RARR (ACL23) · Huang (ICLR24) · TACL survey (2024) · Frontiers-AI (2025) · TOMATO (ICLR25) · Qin-PRP (NAACL24) · ShowUI (CVPR25) · AskEase (CHI26) · "Do GUI Grounders…" (EACL26).
+
+### 3 VIỆC PHẢI LÀM (không đụng kiến trúc): (1) framing §4.5; (2) cổng K-pair; (3) baseline listwise. KHÔNG cần: đổi kiến trúc / grounded-gen vào lõi / self-refine / bỏ a11y-tree.
+
+### ĐÃ GOM TẤT CẢ VÀO `report/43` — file 43 giờ TỰ-ĐỦ (thêm §4.5, Chương 11 lộ trình/môi trường/trạng thái, Chương 12 tổng hợp phòng thủ 3 vòng research, Q&A + citation mở rộng). User chỉ đọc file 43.

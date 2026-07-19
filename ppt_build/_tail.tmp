@@ -1,0 +1,12 @@
+// ---- write outputs ----
+fs.mkdirSync("_preview_pipeline", { recursive: true });
+const page = `<!doctype html><meta charset="utf-8"><style>
+@page{size:${W}in ${H}in;margin:0}
+*{margin:0;box-sizing:border-box}
+.slide{position:relative;width:${W}in;height:${H}in;overflow:hidden;page-break-after:always}
+</style>` + htmlSlides.join("\n");
+fs.writeFileSync("_preview_pipeline/preview.html", page);
+
+pres.writeFile({ fileName: "../LUAN_VAN_PIPELINE.pptx" })
+  .then(f => console.log("PPTX ->", f, "| slides:", htmlSlides.length))
+  .catch(e => console.error("ERR", e));

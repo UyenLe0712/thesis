@@ -166,7 +166,7 @@
 
 **4 quy tắc (mỗi cái gắn nguồn TRỤ peer-reviewed):**
 1. **Matcher validate vs người** trên 80–120 cặp gán-tay: báo **P/R + Cohen's κ** (không chỉ %); chọn τ theo precision≥0.95, **FREEZE trước khi chạy**. [Trụ: **ALOHa, NAACL 2024**]
-2. **Gán-tay tối thiểu = few-pairwise/HITLC** (pre-label + người chỉ duyệt vùng-bất-đồng → giảm **tới ~80%** số nhãn; số peer-reviewed CHẮC = 80%, "89%" chỉ dùng thận trọng — xem §7.3). [Trụ: **Active Evaluation, ACL 2022, Best Paper**]
+2. **Gán-tay tối thiểu = few-pairwise/HITLC** (pre-label + người chỉ duyệt vùng-bất-đồng → giảm **tới ~80%** số nhãn; số peer-reviewed CHẮC = 80%, "89%" chỉ dùng thận trọng — xem §7.3). [Trụ: **Active Evaluation, ACL 2022, Outstanding Paper**]
 3. **LLM-judge KHÁC HỌ generator + vẫn NEO người** (né self/family-bias). [Trụ: **Panickssery, NeurIPS 2024** (self-preference) — NÊN THÊM; bổ trợ: U3/U4/U6 preprint]
 4. **KHÔNG validate judge bằng nhãn LLM.** Nếu chạy 2-bước Han et al. thì **baseline κ người-người phải TỰ ĐO lại** trên tập tutorial UI (KHÔNG mượn 0.801). [Bổ trợ: U1/U2 preprint]
 
@@ -189,7 +189,7 @@
 |---|---|---|---|---|
 | **P1** | **LLM-judge PHẢI khác HỌ generator** (né self/family-bias) — §6.3 QT3, `22` §7 | **Panickssery, Bowman & Feng — NeurIPS 2024** (Main, Oral) + bổ trợ **Zheng et al. — NeurIPS 2023** (thuật ngữ "self-enhancement bias") | ✅ PEER-REVIEWED | Panickssery, Bowman & Feng (2024), "LLM Evaluators Recognize and Favor Their Own Generations," NeurIPS 2024. |
 | **P2** | **Matcher đo theo NGỮ NGHĨA (không so chuỗi thô) + validate vs nhãn người** — §6.3 QT1, metric Bịa/Faithfulness | **Petryk et al. (ALOHa) — NAACL 2024** (Short) + bổ trợ **Rohrbach et al. (CHAIR) — EMNLP 2018** | ✅ PEER-REVIEWED | Petryk et al. (2024), "ALOHa: A New Measure for Hallucination in Captioning Models," NAACL-HLT 2024 (Short), pp. 342–357. |
-| **P3** | **Giảm khối lượng gán-tay bằng few pairwise / chọn cặp thông minh (HITLC)** — §6.3 QT2, `22` §7 | **Mohankumar & Khapra (Active Evaluation) — ACL 2022** (Long, **Best Paper**) | ✅ PEER-REVIEWED | Mohankumar & Khapra (2022), "Active Evaluation: Efficient NLG Evaluation with Few Pairwise Comparisons," ACL 2022 (Long), pp. 8761–8781. |
+| **P3** | **Giảm khối lượng gán-tay bằng few pairwise / chọn cặp thông minh (HITLC)** — §6.3 QT2, `22` §7 | **Mohankumar & Khapra (Active Evaluation) — ACL 2022** (Long, **Outstanding Paper**) | ✅ PEER-REVIEWED | Mohankumar & Khapra (2022), "Active Evaluation: Efficient NLG Evaluation with Few Pairwise Comparisons," ACL 2022 (Long), pp. 8761–8781. |
 | **P4** | **Validate metric bằng PERTURBATION (bơm lỗi đã-biết → đo độ nhạy)** — H3 `22`, trục validate chính | **Sai et al. — EMNLP 2021** (Main) + bổ trợ **Ribeiro et al. (CheckList) — ACL 2020** (Best Paper) | ✅ PEER-REVIEWED | Sai et al. (2021), "Perturbation CheckLists for Evaluating NLG Evaluation Metrics," EMNLP 2021, pp. 7219–7234. |
 | **P5** | **View Hierarchy / a11y tree KHÔNG phải ground truth hoàn hảo** (thiếu/nhiễu nhãn) → cần lớp hậu kiểm + fallback | **Chen et al. — ICSE 2020** (ACM/IEEE, Distinguished Paper) + bổ trợ **Ross et al. — TACCESS 2020** (tạp chí) | ✅ PEER-REVIEWED | Chen et al. (2020), "Unblind Your Apps: Predicting Natural-Language Labels for Mobile GUI Components by Deep Learning," ICSE 2020, pp. 322–334. |
 | **P6** | **Human-eval KHÔNG phải chuẩn vàng tuyệt đối** → biện hộ BỎ human-correlation làm cổng đậu/rớt, dùng perturbation | **Clark et al. — ACL-IJCNLP 2021** (Long) + bổ trợ **Karpinska et al. — EMNLP 2021** | ✅ PEER-REVIEWED | Clark et al. (2021), "All That's 'Human' Is Not Gold: Evaluating Human Evaluation of Generated Text," ACL-IJCNLP 2021, pp. 7282–7296. |
@@ -205,7 +205,7 @@ Preprint KHÔNG bị vứt — hạ xuống đúng vai **bổ trợ/động cơ*
 - **P2 — Petryk et al. (ALOHa), NAACL 2024 Short**, pp. 342–357 (`aclanthology.org/2024.naacl-short.30/`).
   *Đủ làm trụ vì:* chính là tiền lệ matcher mà DG1 kế thừa — "semantic similarity + Hungarian matching" (không so chuỗi thô), và được đo độ chính xác trên **HAT — gold-standard subset annotated for hallucinations** (tập nhãn NGƯỜI) → hậu thuẫn cả "đo theo ngữ nghĩa" lẫn "matcher bám phán đoán người".
   *Caveat:* ALOHa báo "13.6% more hallucinated objects" (so độ chính xác trên gold), KHÔNG báo hệ số tương quan matcher↔người → nếu muốn claim "validated vs human bằng tương quan định lượng" thì dựa Sai et al. (P4), đừng dồn hết vào ALOHa. CHAIR (EMNLP 2018) bổ trợ cho ý "đối chiếu tập-đối-tượng-thật thay vì so chuỗi".
-- **P3 — Mohankumar & Khapra (Active Evaluation), ACL 2022 Long, Best Paper**, pp. 8761–8781 (`aclanthology.org/2022.acl-long.600/`).
+- **P3 — Mohankumar & Khapra (Active Evaluation), ACL 2022 Long, Outstanding Paper**, pp. 8761–8781 (`aclanthology.org/2022.acl-long.600/`).
   *Đủ làm trụ vì:* là bài giải thưởng, chứng minh "the number of human annotations can be reduced by 80%" bằng dueling-bandits/few-pairwise → trụ vững cho luận điểm "giảm mạnh gán-tay có cơ sở học thuật".
   *Caveat QUAN TRỌNG:* con số CHÍNH THỐNG là **80%** (tìm hệ-xếp-hạng-đầu bằng ít so-cặp), KHÔNG phải "89%" như report/27 §5/§6.3 và report/22 đang ghi. "89%" và ý "chỉ chấm vùng-bất-định model pre-label" là active-learning/uncertainty-sampling KHÁC, hiện CHƯA có trụ peer-reviewed → xem §7.3.
 - **P4 — Sai et al., EMNLP 2021 Main**, pp. 7219–7234 (`aclanthology.org/2021.emnlp-main.575/`).
@@ -238,3 +238,35 @@ Preprint KHÔNG bị vứt — hạ xuống đúng vai **bổ trợ/động cơ*
 - §6.3 dòng "Trục validate CHÍNH = perturbation": trụ **Sai et al. EMNLP 2021** (đã có) + thêm Ribeiro ACL 2020 bổ trợ.
 
 **Trong `report/22` §7:** (đã cập nhật — xem file) đổi "~89%"→"~80% (ACL 2022)"; chốt Panickssery NeurIPS 2024 làm trụ P1 (bỏ chữ "cần thêm"); thêm trụ P5 (Chen ICSE 2020) và P6 (Clark ACL 2021) vào phần biện hộ VH-không-hoàn-hảo + bỏ-human-correlation.
+
+---
+
+## §8. ✅ METRIC-VERIFY ĐỐI KHÁNG "ĐỦ ĐÓNG GÓP THẠC SĨ?" (R-08, 2026-07-05, `wf_38650b3d-e50`)
+
+> Đối xứng với R-07 (pipeline). Phản-bác 3-phiếu 8 khẳng định lõi của phương pháp đánh giá (contribution B) + kiểm venue.
+
+### PHÁN QUYẾT: B ĐỦ làm đóng góp khoa học thạc sĩ — CÓ ĐIỀU KIỆN (đối xứng A). 7/8 sống, 1 đổ (M6).
+Mọi đòn hạ được đều nhắm phần **PHÁT-BIỂU TUYỆT-ĐỐI**, không chạm thiết kế lõi → đóng góp vững-cấu-trúc nhưng đang overclaim câu chữ.
+
+### 8 khẳng định
+| ID | Nội dung | Kết quả | Chữa |
+|---|---|---|---|
+| M1 | no-gold neo cấu trúc (VH/gold) | ✅ sống (1 refute framing) | "thay được vai người-viết" → "proxy no-gold CÓ ĐIỀU KIỆN, recall-conditioned, validate per-task" (VH lossy: chỉ grounding/thứ-tự, không adequacy/clarity) |
+| M2 | perturbation = trục validate chính | ✅ sống (1 refute) | GIỮ hedge "điều kiện CẦN không đủ" (Xiao EMNLP23), KHÔNG nâng "đủ" |
+| M3 | bỏ human-correlation khỏi cổng | ✅ sống — NHƯNG đòn đáng lo nhất | phần "đẩy HẲN future-work, 0 annotate" BỊ BÁC → **BẮT BUỘC chạy ≥1 mẫu-nhỏ human-validation per-criterion NGAY** (không làm gate cứng); gọi "content+sensitivity validity (partial)", đừng claim construct-validity đầy đủ |
+| M4 | anti-circularity 3 cơ chế độc lập | ✅ sống (1 refute) | "ĐỘC LẬP"/"khác-họ là ĐỦ" → "GIẢM không LOẠI tương quan; token-overlap = trục phi-neural thực-sự-khác; báo phi/neff giữa judges". (Bước QUYẾT dùng embedding ≠ generator nên circularity generator-tự-chấm vốn không tồn tại ở bước quyết.) |
+| M5 | τ thứ-tự-bộ-phận | ✅✅ sống sạch 0/3 | attribution: thêm **Brandenburg-Gleißner-Hofmeier** cho ca cặp-tự-do (khớp hơn Fagin); khai "near-metric dùng scoring", tránh "the correct measure" |
+| M6 | Step-SR = trục "làm tới đích" | ❌ **ĐỔ 2/2** | **TỰ-BÁC bởi chính AndroidControl (Li NeurIPS24):** step-acc không dự báo human-ranking; teacher-forcing che lỗi tích lũy → KHÔNG đo "tới đích". **Reframe: Step-SR = proxy chẩn-đoán NĂNG-LỰC-TỪNG-BƯỚC (teacher-forced), KHÔNG phải thước tới-đích**; 14% = ngưỡng-mượn-AITW. Sau reframe vẫn hợp lệ. |
+| M7 | thống kê cluster ít | ✅✅ sống sạch 0/3 | headline = wild-bootstrap/CV3 (không phải pairs-bootstrap); báo kèm effective-#clusters (Carter-Schnepel-Steigerwald) |
+| M8 | B đủ tư cách đóng góp | ✅✅ sống sạch 0/3 | combo không bị scoop; NeurIPS guidelines công nhận "novel combination"; điều kiện: insight không-tầm-thường = đối-chứng-thất-bại + DG2 dương |
+
+### B KHÁC G-Eval/RAGAS ở đâu (lằn ranh khoa học): (1) neo NGUỒN CẤU TRÚC phi-model (VH/gold) thay vì LLM tự phán; (2) validate bằng perturbation độc-lập-matcher; (3) tách QUYẾT/CHẤM + judge khác-họ. → vượt "áp G-Eval vào GUI".
+
+### CITATION — sửa 1 lỗi: **Active Evaluation (Mohankumar & Khapra, ACL 2022) = OUTSTANDING Paper, KHÔNG phải "Best Paper"** (Best Paper ACL22 = Kitaev-Lu-Klein). Sửa CLAUDE.md §4 + report/27 §7 P3 + report/22. Số 80% giữ nguyên. (BUMP/Ribeiro/Fagin/Lapata/Chim đều ĐÚNG venue.)
+
+### "HAI ĐÓNG GÓP NGANG NHAU" — GIỮ ĐƯỢC (ngang nhau CÓ ĐIỀU KIỆN, đối xứng):
+- B **mạnh hơn A** ở nền peer-reviewed (M5/M7/M8 sống sạch); **ngang A** ở phụ thuộc số chưa-chạy.
+- Cả hai = "đủ-có-điều-kiện, chờ DG2 dương". Không bên nào rơi "chỉ engineering".
+- Điều kiện giữ ngang của B = 3 việc rẻ: reframe M6 · mẫu-nhỏ human-validation (M3) · dựng perturbation harness ra số.
+
+### Preprint (chỉ bổ trợ, KHÔNG trụ): refute-M4 correlated-errors (2605.29800, 2601.22548) · refute-M3 validation-gap (2601.07648) · Han 2510.09738 · Liu 2505.19176. Trụ đậu/rớt vẫn peer-reviewed (Sai, Panickssery, ALOHa, Clark, MacKinnon, AndroidControl…).

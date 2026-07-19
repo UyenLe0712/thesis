@@ -1,143 +1,153 @@
-# KẾ HOẠCH CHIA ĐỀ TÀI THÀNH 2 BÀI BÁO — VCL & FAIR (trình thầy)
+# KẾ HOẠCH CHIA ĐỀ TÀI THÀNH 2 BÀI BÁO — FAIR & VCL (trình thầy)
 
-> **Mục đích:** từ một luận văn, tách thành **2 bài báo KHÔNG TRÙNG NHAU**, mỗi bài đúng tầm hội nghị, dễ được nhận. Luận văn thạc sĩ là “cái ô” gộp cả hai.
-> **Cách tách:** dựa đúng **2 đóng góp song song đã có sẵn** trong đề tài — **DG1** (đánh giá hướng dẫn từ 1 ảnh) và **DG2** (suy luận trật tự màn từ nhiều ảnh). Hai nhánh này vốn **khác câu hỏi, khác dữ liệu, khác thước đo** → tách ra gần như không đụng nhau.
-
----
-
-## 0. Sơ đồ chia (1 hình nắm ngay)
-
-```
-                 LUẬN VĂN THẠC SĨ  (cái ô — gộp cả hai)
-                 Khung đánh giá hướng dẫn-từ-ảnh khi KHÔNG có đáp án mẫu
-                          │
-        ┌─────────────────┴──────────────────┐
-   BÀI 1 — VCL (nộp trước)            BÀI 2 — FAIR (nộp sau)
-   Tiếng VIỆT · dễ hơn                Tiếng ANH · khó/cạnh tranh hơn
-   = DG1: chấm hướng dẫn 1 ẢNH        = DG2: SUY LUẬN TRẬT TỰ MÀN
-   Dataset: MobileViews + ScreenSpot  Dataset: AndroidControl
-   Metric: grounding/bịa/rõ           Metric: Kendall τ-b (partial-order)
-   + demo tiếng Việt                  + signal-attribution + ordering-gap
-```
+> **Cập nhật 2026-07-12 (bản 3) — CHỐT NỘP CẢ HAI HỘI NGHỊ MÙA NÀY.**
+> Bản 1 (24/06): khung cũ prompting, cả 2 bài không model. Bản 2 (07-12 sáng): xoay sang model, giả định "model→VCL nộp trước". **Bản 3 (07-12, sau deep-research venue + trao đổi với user):** đổi lại theo thực tế deadline + độ-fit + mục tiêu user muốn **2 công bố để dễ tốt nghiệp**.
+> **Nguồn-sự-thật hướng model:** `report/54` · `report/53` · CLAUDE.md §0. **Nguồn venue:** deep-research `wf_ef24768f` (§0.2 dưới).
 
 ---
 
-## 1. Nguyên tắc chống “trùng” (để cả hai cùng được nhận)
+## §0. BỐI CẢNH & QUYẾT ĐỊNH (đọc trước — ghi lại toàn bộ context đã trao đổi)
 
-1. **Hai câu hỏi nghiên cứu KHÁC NHAU** — không phải một kết quả gói lại hai lần.
-2. **Không nộp cùng kết quả/thí nghiệm** cho cả hai. Mỗi bài có *headline* riêng.
-3. **VCL ra trước ⇒ FAIR phải TRÍCH DẪN VCL** (như công trình trước của chính tác giả) và nêu rõ **phần MỚI** (delta). *(Bắt buộc theo chuẩn học thuật.)*
-4. **Phần dùng chung** (pipeline sinh hướng dẫn, động cơ) → mỗi bài viết **1 đoạn ngắn + dẫn bài kia**, **viết lại câu chữ** (FAIR tiếng Anh dễ bị quét trùng).
-5. Mỗi bài **tự đứng được**: đặt vấn đề → phương pháp → thí nghiệm → kết luận riêng.
+### §0.1. Mục tiêu user (đã xác nhận)
+- **Muốn NỘP CẢ HAI hội nghị mùa này** (FAIR + VCL) vì nhiều công bố = **điểm cộng để dễ ra tốt nghiệp**.
+- Dành **10h/ngày** làm luận văn cho kịp; **không bỏ bước** (giữ nguyên freeze-split + pre-register).
+- Hôm nay **12/7/2026**.
 
----
-
-## 2. BÀI 1 — Hội nghị VCL (nộp trước · tiếng Việt · DG1)
-
-### 2.1. Tựa đề (dự kiến)
-**“Khung đánh giá KHÔNG-THAM-CHIẾU cho hướng dẫn sử dụng phần mềm sinh tự động từ một ảnh giao diện.”**
-*(Phụ đề gợi ý: “Chấm bám-đúng-màn, chống-bịa và rõ-ràng khi không có bản hướng dẫn mẫu của người.”)*
-
-### 2.2. Tóm tắt (abstract nháp — tiếng Việt)
-> Sinh tự động hướng dẫn sử dụng phần mềm từ ảnh giao diện đang khả thi nhờ mô hình thị giác–ngôn ngữ (VLM), nhưng **việc ĐÁNH GIÁ** gặp trở ngại lớn: **không có bộ hướng dẫn-chuẩn do người soạn** để so sánh. Bài báo đề xuất một **khung đánh giá không-tham-chiếu** cho hướng dẫn sinh từ **một ảnh**, neo bằng *view-hierarchy* (nhãn-bạc), gồm ba tiêu chí có nguồn đã bình duyệt: **(1) bám-đúng-màn** (point-in-bbox grounding), **(2) chống-bịa** (hallucination), **(3) rõ-ràng/đúng-định-dạng**. Khung kế thừa và điều chỉnh phương pháp Intrinsic/Extrinsic của Chim, Ive, Liakata (Computational Linguistics 2025) sang miền *ảnh→chữ*. Chúng tôi đánh giá trên **MobileViews** (kèm **ScreenSpot** làm đối chứng độ chính xác vị trí), dùng **thang bậc bật-dần cơ chế** để tách “cơ chế nào thực sự giúp”, và **đối chứng với người chấm**; đồng thời trình bày **demo định tính trên ứng dụng tiếng Việt thực tế**. Toàn bộ giả thuyết được **đăng-ký-trước** nên kết quả null vẫn có giá trị.
-
-### 2.3. Câu hỏi nghiên cứu
-**“Làm sao đánh giá ĐÁNG TIN chất lượng một bản hướng dẫn (sinh từ 1 ảnh) khi KHÔNG có đáp án mẫu của người?”**
-
-### 2.4. Đóng góp (claim chính)
-- **C1.** Một **khung đánh giá không-tham-chiếu** cho hướng dẫn-từ-ảnh, neo VH-bạc, gồm 3 tiêu chí có citation.
-- **C2.** Quy trình **chống rò-rỉ** (view-hierarchy chỉ dùng lúc CHẤM, không đưa vào lúc sinh) + **thang bậc** tách đóng góp từng cơ chế.
-- **C3.** **Đối chứng người chấm** (độ khớp máy↔người) + **demo tiếng Việt** cho thấy khung độc-lập-ngôn-ngữ.
-
-### 2.5. Dữ liệu · Phương pháp · Thí nghiệm
-- **Dữ liệu:** MobileViews (ảnh + view-hierarchy có toạ độ) · ScreenSpot (đối chứng point-in-bbox).
-- **Phương pháp:** pipeline sinh (off-the-shelf) → chấm 3 tiêu chí; *chỉ cite ID nút đã dò* để chống bịa.
-- **Thí nghiệm dự kiến:** thang bậc {C1 baseline → C3 ràng buộc → C4 kiểm-ý} trên tập dev rồi mở rộng; báo điểm grounding/hallucination/clarity kèm **“độ phủ bộ dò = X%”**; pilot người ≥60–80 mẫu. *(Số liệu cụ thể báo sau khi chạy — không nêu trước.)*
-
-### 2.6. Vì sao hợp VCL & dễ được nhận
-- **Tự-chứa, gọn, dễ minh hoạ** (1 ảnh → 3 điểm số rõ ràng).
-- **Có demo tiếng Việt** → rất hợp hội nghị trong nước.
-- Đóng góp là **phương pháp đánh giá có nền lý thuyết** (kế thừa CL 2025) → chắc chắn, ít rủi ro bị chê “mỏng”.
-
----
-
-## 3. BÀI 2 — Hội nghị FAIR (nộp sau · tiếng Anh · DG2)
-
-### 3.1. Title (draft — English)
-**“Screen-Order Inference: Evaluating Vision-Language Models’ Ability to Reconstruct Multi-Step UI Workflows from Shuffled Screenshots.”**
-
-### 3.2. Abstract (draft — English)
-> Turning UI screenshots into step-by-step software tutorials with vision-language models (VLMs) requires understanding the **order** of screens in a multi-step workflow. We introduce **Screen-Order Inference**: given **N shuffled screenshots** of one workflow plus a goal, the model must **recover the correct order** before generating instructions. We propose a rigorous, **reference-based** evaluation built on **AndroidControl** (NeurIPS 2024 Datasets & Benchmarks), whose **gold action trajectories** provide ground-truth order. Our headline metric is a **partial-order-aware Kendall τ-b** that penalises **only mandatory pairs** — derived *deterministically from the gold trajectory* rather than from the cue detector the model itself uses, thereby **avoiding circular evaluation**. We further report an **ordering gap** (oracle-order vs self-order) and perform **single-cue signal attribution** to identify which on-screen cues drive correct ordering, using symmetric **GOAL-ONLY / VISUAL-ONLY** baselines and an **empirical per-N null** distribution. All hypotheses are **pre-registered** so null results remain informative. *(Results will characterise how VLM ordering accuracy changes with N and which visual cues are decisive.)*
-
-### 3.3. Research questions
-- **RQ1.** Suy luận trật tự màn của VLM **giảm thế nào khi N tăng**?
-- **RQ2.** VLM **dựa vào tín hiệu nào trên màn** để biết thứ tự (signal attribution)?
-- **RQ3.** “Giá của việc không biết trật tự” (**ordering gap**) lớn cỡ nào?
-
-### 3.4. Contributions
-- **C1.** Đặt bài toán **Screen-Order Inference** + giao thức xáo-trộn chống rò-rỉ thứ-tự (cổng KB).
-- **C2.** **Thước đo τ-b chấm thứ-tự-bộ-phận** với nhãn cặp-bắt-buộc **suy từ gold (tất định)** → **chống vòng-lập-luận** (đóng góp phương pháp cốt lõi, neo Kendall 1938 + Lapata CL 2006).
-- **C3.** **Signal attribution một-cue** + baseline đối xứng + null-theo-N → trả lời “AI dựa vào đâu”.
-
-### 3.5. Dữ liệu · Phương pháp · Thí nghiệm
-- **Dữ liệu:** AndroidControl (episode đa bước + gold trajectory). *(Có thể bổ sung GUI-Odyssey làm robustness — future/optional.)*
-- **Phương pháp:** Stage-0 sắp-thứ-tự (hỏi-từng-cặp → tổng hợp) → so với gold; signal-attribution theo từng cue.
-- **Thí nghiệm dự kiến:** đường cong τ-b theo N (≥30 episode/mốc, N∈[3,~6], báo thêm tới ~8–10) · ordering-gap · phân tầng một-cue · GOAL-ONLY/VISUAL-ONLY/RANDOM. Pre-register + hiệu chỉnh đa-kiểm-định.
-
-### 3.6. Vì sao hợp FAIR (venue khó/cạnh tranh hơn)
-- **Mới về bài toán + phương pháp đánh giá** (chống-vòng-lập-luận, signal-attribution) → đủ “độ mới” cho venue khó.
-- **Reference-based, định lượng, tiếng Anh, dataset đã bình duyệt** (AndroidControl) → đúng khẩu vị hội nghị nghiên cứu.
-- **Thừa nhận prior-art** (Sort-Story 2016, Wu 2022, RankGPT 2023) ở trục sắp-ảnh; claim độ mới ở **miền GUI + cách đánh giá** → an toàn, chuyên nghiệp.
-
----
-
-## 4. Bảng RANH GIỚI — bằng chứng KHÔNG trùng
-
-| Trục | BÀI 1 (VCL/DG1) | BÀI 2 (FAIR/DG2) |
+### §0.2. Sự thật về 2 venue (deep-research, nguồn chính thức, confidence cao)
+| | **FAIR** | **VCL** |
 |---|---|---|
-| Câu hỏi | Chấm hướng dẫn **1 ảnh** không-tham-chiếu | **Suy luận trật tự** nhiều ảnh |
-| Đầu vào | 1 ảnh + câu hỏi | N ảnh **xáo trộn** + mục tiêu |
-| Dataset | MobileViews (+ ScreenSpot) | AndroidControl |
-| Metric headline | grounding · hallucination · clarity | **Kendall τ-b partial-order** |
-| Phân tích đặc trưng | thang bậc cơ chế C1/C3/C4 | signal-attribution + ordering-gap |
-| Ngôn ngữ | Tiếng Việt (+ demo VN) | Tiếng Anh |
-| Kết quả chính | bộ điểm chất-lượng-tutorial | đường cong τ-b theo N + cue nào trả công |
+| Tên | Hội nghị Quốc gia Nghiên cứu Cơ bản & Ứng dụng CNTT (lần 19) | Hội thảo Quốc gia Ngôn ngữ học Tính toán (HUFLIT + Hội Ngôn ngữ học VN) |
+| Deadline | **15/8/2026** (mốc đầu, hay gia hạn) | **~30/8/2026** (user nhớ — ⚠ deep-research CHƯA verify CFP VCL2026, cần kiểm trang HUFLIT) |
+| Ngôn ngữ | **CHỈ tiếng Anh** (user xác nhận) | tiếng Việt (hoặc Anh), trình bày tiếng Việt |
+| Độ khó | **khó gấp ~2** (user đánh giá), danh giá hơn | dễ hơn |
+| Phạm vi | RỘNG toàn CNTT/AI, có track VLM/CV/NLP; kỷ yếu 2025 đã in bài VLM | thuần ngôn-ngữ-học; **không có track CV/VLM** — NHƯNG user xác nhận **"miễn có chất ngôn ngữ là được"** → fit KHÔNG còn là rào cản |
+| Chưa có nguồn | tỉ lệ nhận · index Scopus/DBLP · ISBN · chính sách dual-submission | như FAIR (đừng bịa) |
 
-→ **Khác cả 7 trục.** Phần duy nhất dùng chung là **pipeline + động cơ** → xử lý theo §1 (viết ngắn, dẫn nhau).
+### §0.3. QUYẾT ĐỊNH CHỐT (trục chia mới)
+Không nộp trùng 1 bài 2 nơi → tách thành **2 bài nội-dung-khác-nhau**, mỗi bài hợp 1 venue:
+
+- **FAIR (15/8 · tiếng Anh · danh giá) = BÀI MÔ HÌNH (flagship).** Headline = Faithful Distillation: mô hình một-màn Qwen2.5-VL-3B tự-train, kết quả định lượng Tier1/Tier2 trên MobileViews (English). Hợp FAIR (có track VLM). Đây là bài KHÓ + GẤP.
+- **VCL (30/8 · tiếng Việt · dễ hơn) = BÀI SINH-HƯỚNG-DẪN-TIẾNG-VIỆT.** Headline = bắt model (train trên English) **sinh hướng dẫn BẰNG TIẾNG VIỆT** trên các màn MobileViews có sẵn + đánh giá không-đáp-án-mẫu; trọng tâm = **chất lượng tiếng Việt + độ trung thực khi chuyển-giao Anh→Việt**. Output tiếng Việt + câu hỏi ngôn-ngữ → hợp VCL. *(Fallback nếu model sinh tiếng Việt kém: lùi về bài PHƯƠNG-PHÁP-ĐÁNH-GIÁ thuần, viết tiếng Việt, thí nghiệm English — xem §3.)*
+
+**⚠ Vì sao ĐỔI khỏi ý "app tiếng Việt" (2026-07-12, sau khi quét dữ liệu):** quét 231 file VH MobileViews local → **chỉ 2 màn có chữ Việt, đều là nội dung lẻ (tên truyện/username), KHÔNG có giao diện app Việt thật**. Không có dataset GUI tiếng Việt công khai + user không tự chụp được → **góc "app tiếng Việt" bất khả thi**. Thay bằng góc "**sinh OUTPUT tiếng Việt trên màn English có sẵn**" — không cần dữ liệu Việt, vẫn giữ chất ngôn ngữ + chuyển-giao. Nút nhắc-tới vẫn so được với VH (tên nút English) nên chấm trung thực tự động vẫn chạy.
+
+**Vì sao 2 bài (không phải kiểu cũ một-màn/nhiều-màn):** nhiều-màn CHƯA kịp build mùa 2026. Chỉ model một-màn kịp → tách theo **ngôn ngữ output + trọng tâm** (FAIR: output-English + train-model · VCL: output-tiếng-Việt + chất-lượng-ngôn-ngữ/đánh-giá).
+
+### §0.4. Fallback BẮT BUỘC (đừng bỏ qua)
+**VCL = sàn CHẮC · FAIR = stretch.** Nếu FAIR 15/8 không kịp (model trễ / viết tiếng Anh quá tải) → **BỎ FAIR, GIỮ VCL**, nộp bài mô hình vào FAIR kỳ sau hoặc venue quốc tế. Luận văn vẫn có mô hình dù FAIR ra sao. **Tuyệt đối không để canh bạc FAIR làm hỏng VCL.**
+
+### §0.5. Nhiều-màn (Copeland + min-FAS) đi đâu?
+KHÔNG kịp mùa này. Để dành cho **bài tiếng Anh mở rộng sau** (FAIR'2027 / venue quốc tế), gộp với bản mở rộng của bài mô hình. Bộ sắp-thứ-tự học-được (tuỳ chọn, +~$10/+~5-6 ngày — xem §3.4) chỉ làm nếu theo hướng này về sau.
 
 ---
 
-## 5. Cách FAIR “thoát trùng” với VCL (viết cụ thể)
-- Mở đầu FAIR: *“Building on a reference-free evaluation for single-screen tutorials [cite VCL paper], this work addresses a different problem: inferring screen ORDER in multi-step workflows.”*
-- FAIR **không lặp** bảng số DG1; chỉ 1 câu nhắc + trích.
-- Pipeline: FAIR mô tả **Stage-0 sắp-thứ-tự** (phần mới của FAIR) là chính; phần sinh per-màn chỉ tóm tắt + dẫn VCL.
+## §1. Nguyên tắc chống "trùng"/salami (để CẢ HAI được nhận, không bị soi chẻ-mỏng)
+
+1. **Hai câu hỏi nghiên cứu KHÁC NHAU** + **output khác ngôn ngữ** (FAIR: model sinh tiếng Anh, câu hỏi = train được không · VCL: model sinh tiếng Việt, câu hỏi = chuyển-giao Anh→Việt được không). ⚠ Data nguồn dùng chung (MobileViews English) → overlap cao hơn, bù bằng output + câu hỏi khác.
+2. **Không nộp cùng kết quả/bảng số** cho cả hai. FAIR headline = huấn-luyện-mô-hình (Tier1/Tier2); VCL headline = chất-lượng+trung-thực khi xuất tiếng Việt (chuyển-giao).
+3. **FAIR ra trước (15/8) ⇒ VCL trích dẫn FAIR** (công trình trước của chính tác giả), nêu rõ phần mới (sinh tiếng Việt + chuyển-giao). *(Nếu FAIR chưa kịp có ID/DOI khi nộp VCL thì trích dạng "under review / manuscript".)*
+4. **Phần dùng chung** (mô hình + lớp đối chiếu VH): mỗi bài viết **1 đoạn ngắn + dẫn bài kia**, viết lại câu chữ (VCL tiếng Việt, FAIR tiếng Anh — khác ngôn ngữ nên rủi ro copy thấp).
+5. Mỗi bài **tự đứng được**. ⚠️ **Rủi ro salami có thật** (2 bài 1 luận văn nộp cách 2 tuần) — chống bằng khác-dữ-liệu + khác-câu-hỏi + trích-chéo. **Đọc CFP cả 2 venue về chính sách dual-submission/trùng lặp trước khi nộp** (deep-research chưa tra được).
 
 ---
 
-## 6. Lịch trình & quan hệ với luận văn
-1. **VCL trước** (dễ, gọn, tiếng Việt) — lấy “điểm tựa” + được xuất bản sớm.
-2. **FAIR sau** — trích VCL, tập trung 100% vào DG2 (mới hơn).
-3. **Luận văn** = gộp cả hai + chương framework chung + chương kết-luận. (2 bài báo = 2 chương đóng-góp; hoàn toàn chuẩn.)
+## §2. BÀI FAIR (nộp TRƯỚC 15/8 · tiếng Anh · flagship = MÔ HÌNH)
+
+### 2.1. Title (draft — English)
+**"Faithful Distillation: Training a Small On-Device Vision-Language Model to Generate Faithful GUI Instructions without Gold References."**
+
+### 2.2. Abstract (draft — English)
+> Large VLMs can turn UI screenshots into step-by-step software instructions but frequently **hallucinate non-existent buttons**, misleading users. We present **Faithful Distillation**: we distil from a large teacher (gpt-4o-mini) into a small on-device student (Qwen2.5-VL-3B) via SFT-LoRA, training **only on data whose fabricated button references have been filtered** by matching against the screen's **view hierarchy** and rewritten into faithful generic descriptions. Since no human-authored gold instructions exist, we validate our **reference-free faithfulness metric via automatic perturbation**. We report **two decoupled tiers**: **Tier 1** (student trained on filtered vs raw data, view hierarchy available at inference — safety net) and **Tier 2** (student vs teacher with **view hierarchy switched OFF** at inference, held-out by app — the central question of whether faithfulness *internalises* into the weights). All thresholds are **pre-registered**; null results remain informative.
+
+### 2.3. Đóng góp
+- **C1 (headline).** Mô hình nhỏ chạy-trên-máy tự-train qua **Faithful Distillation** (lọc-bịa bằng nguồn ngoài có cấu trúc rồi SFT). *(= yêu cầu train-model của thầy.)*
+- **C2.** Giao thức đánh giá no-gold + **kiểm định bằng bơm-lỗi**, chống-vòng-lặp (lọc nomic ≠ chấm bge-m3/judge/token-overlap).
+- **C3.** Thiết kế **hai-tầng đăng-ký-trước** (Tier 1 lưới an toàn · Tier 2 nội-tại-hoá khi tắt VH).
+
+### 2.4. Dữ liệu · Thí nghiệm
+- MobileViews (English, 18 train/12 test theo app) + ScreenSpot-v2 (đối chứng). Tier 1 + Tier 2 + kiểm-định-bơm-lỗi + thống kê exact sign-flip G=12. Chi tiết: `report/53` §5, `report/54` Phụ lục E.
+
+### 2.5. Vì sao hợp FAIR
+Có track VLM/CV/AI; kỷ yếu 2025 đã in bài LLM+VLM; định lượng, tiếng Anh, danh giá → đúng chỗ cho flagship model paper.
 
 ---
 
-## 7. Rủi ro & cách phòng
+## §3. BÀI VCL (nộp SAU 30/8 · tiếng Việt · dễ hơn = ỨNG DỤNG TIẾNG VIỆT)
+
+### 3.1. Tựa đề (dự kiến — tiếng Việt)
+**"Sinh hướng dẫn sử dụng phần mềm bằng tiếng Việt từ ảnh giao diện và đánh giá không cần đáp án mẫu: khảo sát khả năng chuyển-giao Anh→Việt của mô hình chưng cất trung thực."**
+
+### 3.2. Tóm tắt (nháp — tiếng Việt)
+> Sinh hướng dẫn sử dụng phần mềm từ ảnh giao diện gặp hai trở ngại: mô hình dễ **bịa tên nút**, và **không có bộ hướng dẫn mẫu** để chấm. Chúng tôi lấy một mô hình nhỏ chạy-trên-máy (chưng cất trung thực trên dữ liệu tiếng Anh — dẫn bài FAIR) và **yêu cầu nó sinh hướng dẫn BẰNG TIẾNG VIỆT** cho các màn giao diện, rồi đánh giá bằng một **quy trình không-đáp-án-mẫu**: đối chiếu tên nút được nhắc với cấu trúc màn hình (view hierarchy), chấm bằng ba cơ chế khác họ. Câu hỏi trung tâm: **thói quen trung thực học trên tiếng Anh có giữ được khi mô hình xuất tiếng Việt không, và chất lượng tiếng Việt ra sao** (chuyển-giao Anh→Việt). Toàn bộ giả thuyết được đăng-ký-trước; kết quả null vẫn có giá trị.
+
+### 3.3. Đóng góp
+- **C1 (headline).** Khảo sát **chuyển-giao ngôn ngữ Anh→Việt**: mô hình trung thực học trên tiếng Anh có sinh được hướng dẫn tiếng Việt trung thực + dùng được không (câu hỏi mới, có thể null).
+- **C2.** Quy trình **đánh giá no-gold cho văn bản hướng dẫn tiếng Việt** (đối chiếu VH + 3 cơ chế) — chất ngôn ngữ, hợp VCL.
+- **C3.** Phân tích lỗi khi xuất tiếng Việt (bịa nút / lẫn tiếng Anh / dịch sai tên nút) + khuyến nghị.
+
+### 3.4. Dữ liệu · Thí nghiệm
+- **KHÔNG cần dữ liệu tiếng Việt** (đã xác nhận: không có bộ GUI tiếng Việt nào + quét MobileViews local 231 file → chỉ 2 màn chữ Việt lẻ, không phải app Việt + user không tự chụp được): dùng **màn MobileViews English có sẵn** (CÓ VH → chấm trung thực tự động; tên nút English vẫn so được dù câu hướng dẫn là tiếng Việt).
+- **Việc mới so với FAIR:** prompt model ra **tiếng Việt** (VD 'Chạm vào "Settings"'); đo (a) độ trung thực khi xuất Việt, (b) chất lượng/độ trôi chảy tiếng Việt, (c) so với FAIR (xuất English) để lượng hoá suy giảm do chuyển ngôn ngữ.
+- **⚠ SMOKE-TEST BẮT BUỘC tuần 1:** chạy model + prompt tiếng Việt trên ~5 màn. Ra tiếng Việt dùng được → làm bài này. Ra tệ → **fallback: bài PHƯƠNG-PHÁP-ĐÁNH-GIÁ thuần** (viết tiếng Việt, headline = kiểm-định-bơm-lỗi, thí nghiệm English) — vẫn nộp VCL được, chỉ kém chất-Việt + trùng FAIR nhiều hơn (chống bằng headline khác = bơm-lỗi vs Tier1/Tier2).
+- *(Tuỳ chọn tương lai, KHÔNG cho VCL mùa này: bộ sắp-thứ-tự nhiều-màn học-được — +~$10, +~5–6 ngày, nhãn free từ gold AndroidControl; chạy cổng K-pair trước xem có đáng. Xem `report/53` §4.4.)*
+
+### 3.5. Vì sao hợp VCL
+User xác nhận VCL "**miễn có chất ngôn ngữ là được**"; bài này headline tiếng Việt + đánh giá văn bản → chất ngôn ngữ rõ, hợp track "AI & NLP" / "Ngôn ngữ học tính toán". Dễ hơn + tiếng Việt (viết nhanh) + deadline muộn → an toàn.
+
+---
+
+## §4. Bảng RANH GIỚI — bằng chứng KHÔNG trùng
+
+| Trục | BÀI FAIR (model) | BÀI VCL (tiếng Việt) |
+|---|---|---|
+| Câu hỏi | **Train** mô hình trung thực (nội-tại-hoá?) | **Chuyển-giao Anh→Việt** của mô hình + đánh giá |
+| Dữ liệu | MobileViews English | MobileViews English (dùng chung) — nhưng **OUTPUT khác ngôn ngữ** |
+| Ngôn ngữ OUTPUT model | Tiếng Anh | **Tiếng Việt** (điểm khác cốt lõi) |
+| Headline | Faithful Distillation + Tier1/Tier2 định lượng | Chất lượng + trung thực khi xuất tiếng Việt + phân tích lỗi |
+| Ngôn ngữ bài | Tiếng Anh | Tiếng Việt |
+| Venue-fit | track VLM/AI | chất ngôn ngữ (sinh+đánh giá văn bản Việt) |
+| Thời điểm | nộp trước 15/8 | nộp sau 30/8 (trích FAIR) |
+
+→ Khác **ngôn ngữ output + câu hỏi (chuyển-giao) + headline + ngôn ngữ bài**. ⚠ Data nguồn dùng chung (đều MobileViews English) → **overlap cao hơn ý "app Việt" cũ**; bù lại bằng output-tiếng-Việt + trọng-tâm-chuyển-giao khác hẳn. Mô hình dùng chung = "công cụ", xử lý theo §1. Nếu fallback về "phương pháp thuần" thì overlap cao nhất → phải tách headline mạnh (bơm-lỗi vs Tier1/Tier2) + đọc kỹ chính sách dual-submission.
+
+---
+
+## §5. Lịch trình (12/7 → 30/8, 10h/ngày)
+
+| Mốc | Việc | Ghi chú |
+|---|---|---|
+| 12/7 → ~2/8 (~3 tuần) | Build + eval mô hình một-màn | **Giữ freeze-split + pre-register TRƯỚC khi chạy** — gấp mấy cũng không bỏ |
+| Tuần 1 | **Smoke-test: model sinh tiếng Việt ~5 màn** | Quyết VCL đi hướng "sinh tiếng Việt" hay fallback "phương pháp thuần" |
+| ~2/8 → 15/8 (~13 ngày) | **Viết FAIR (tiếng Anh, model)** — ĐIỂM NGHẼN | Số liệu đã có, chủ yếu viết lại kết quả; 0 buffer |
+| ~15/8 → 30/8 (~2 tuần) | Sinh hướng dẫn tiếng Việt trên màn English + đánh giá + **viết VCL (tiếng Việt)** | Không cần thu thập data mới; thoải mái hơn |
+| Mốc quyết định 15/8 | Nếu FAIR không kịp → **bỏ FAIR, dồn VCL** (§0.4) | VCL là sàn chắc |
+
+*(Chưa gồm viết luận văn — thêm ~10–15 ngày sau; xem `report/53` §4.4.)*
+
+---
+
+## §6. Rủi ro & cách phòng
 | Rủi ro | Phòng |
 |---|---|
-| Reviewer thấy 2 bài “na ná” | Bảng §4 + FAIR trích VCL + headline khác hẳn (1-ảnh-chấm vs nhiều-ảnh-sắp-xếp) |
-| Mỗi bài bị chê thiếu nội dung | VCL: thêm pilot người + demo VN; FAIR: thêm signal-attribution + ordering-gap + null-theo-N |
-| Lệch chủ đề với CFP | **Đọc Call-for-Papers** từng hội nghị trước, chỉnh tựa/khung cho khớp |
-| Tự-đạo-văn (text) | Viết lại phần chung bằng câu chữ khác; FAIR là tiếng Anh nên không copy VCL tiếng Việt |
+| Tải nặng (build + 2 bài, 1 tiếng Anh, ~7 tuần) | 10h/ngày; FAIR là điểm nghẽn → viết ngay khi model xong; VCL là fallback nếu FAIR trượt |
+| Salami / trùng lặp (2 bài 1 luận văn) | Khác dữ liệu (EN vs VN) + khác câu hỏi + trích chéo; **đọc CFP dual-submission cả 2 venue** |
+| FAIR 15/8 quá gấp | Model phải xong ~2/8; nếu trễ → bỏ FAIR giữ VCL, model đi venue sau |
+| VCL deadline 30/8 chưa chắc | **Verify CFP VCL2026 trên trang HUFLIT** (deep-research chưa xác nhận) |
+| FAIR hay gia hạn deadline | Theo dõi fair.conf.vn sát ngày |
+| Viết tiếng Anh (FAIR) chậm | Bài model số liệu sẵn → viết mô tả kết quả; nhờ người rà tiếng Anh nếu cần |
 
 ---
 
-## 8. Đoạn NÓI VỚI THẦY (thuyết phục)
+## §7. Đoạn NÓI VỚI THẦY
 
-> “Thưa thầy, đề tài của em vốn có **hai đóng góp tách bạch**: (1) **đánh giá hướng dẫn sinh từ một ảnh** khi không có đáp án mẫu, và (2) **suy luận trật tự màn** từ nhiều ảnh. Hai phần này **khác câu hỏi, khác dữ liệu, khác thước đo**, nên em đề xuất tách thành **2 bài báo không trùng nhau**:
-> – **VCL (nộp trước, tiếng Việt)** trình phần (1) — gọn, tự-chứa, kèm **demo tiếng Việt**, dễ được nhận, giúp em có công bố đầu tiên sớm.
-> – **FAIR (nộp sau, tiếng Anh)** trình phần (2) — mới hơn về *bài toán + cách đánh giá chống-vòng-lập-luận*, hợp một venue cạnh tranh hơn. Bài FAIR sẽ **trích dẫn bài VCL** và chỉ tập trung vào phần mới, nên **không vi phạm trùng lặp**.
-> Cả hai gộp lại đúng bằng **luận văn** của em, mỗi bài là một chương đóng góp. Em xin thầy duyệt hướng tách này để bắt đầu viết VCL trước ạ.”
+> "Thưa thầy, em đã có mô hình tự huấn luyện (Faithful Distillation) như thầy yêu cầu. Em định tách thành **2 bài không trùng nhau** để có thêm công bố: **(1) FAIR (tiếng Anh, nộp 15/8)** trình mô hình + kết quả định lượng; **(2) VCL (tiếng Việt, nộp 30/8)** cho mô hình **sinh hướng dẫn bằng tiếng Việt** và khảo sát khả năng chuyển-giao Anh→Việt + cách đánh giá không cần đáp án mẫu — câu hỏi và ngôn ngữ output khác hẳn bài FAIR, và bài VCL trích dẫn bài FAIR. Nếu FAIR gấp quá không kịp, em vẫn chắc chắn có bài VCL, còn mô hình để dành nộp venue quốc tế sau ạ."
 
 ---
 
-*Lưu ý kiểm chứng: nên đọc Call-for-Papers (chủ đề, độ dài, ngôn ngữ, chính sách trùng-lặp) của **VCL** và **FAIR** trước khi chốt tựa/khung. Mọi citation trong bài lấy từ nguồn đã xác minh (AndroidControl–NeurIPS 2024; ScreenSpot–ACL 2024/ICLR 2025; Chim et al.–CL 2025; Kendall 1938; Lapata CL 2006). MobileViews là preprint → chỉ dùng làm nguồn ảnh/nhãn.*
+## §8. VIỆC CẦN VERIFY TRƯỚC KHI NỘP (deep-research chưa có nguồn — đừng bịa)
+- Deadline + CFP **VCL2026** (trang HUFLIT) — 30/8 mới là trí nhớ user.
+- Chính sách **dual-submission / trùng lặp / self-plagiarism** của cả FAIR và VCL.
+- Độ dài/template bài · index Scopus/DBLP · ISBN kỷ yếu từng venue.
+- FAIR có gia hạn 15/8 không.
+
+*Citation đã verify (dùng cho cả 2 bài): AndroidControl NeurIPS 2024 D&B · ScreenSpot-v2 OS-Atlas ICLR 2025 · Chim/Ive/Liakata CL 51(1) 2025 · ALOHa NAACL 2024 · thứ-tự-bộ-phận (C−D)/|M| = Fagin 2006 + Lapata CL 2006 (KHÔNG "Kendall τ-b") · Sai EMNLP 2021 (perturbation) · UI-R1 AAAI 2026. MobileViews = preprint → chỉ dùng làm nguồn ảnh/nhãn.*

@@ -2,6 +2,8 @@
 
 > ⚠️ **THẨM QUYỀN:** đây là **nguồn-sự-thật**. Khi mâu thuẫn với report 01–04 (mang khung cũ), **file 05 thắng**. Bản dễ hiểu toàn cảnh: `00_DOC_TU_DAU`; thiết kế chi tiết: `14`; metric rõ ràng: `18`; kết quả đã chạy: `15`.
 > **Phiên bản:** viết lại 2026-06-25 theo **design E** (thay khung cũ "ReOrder-Tutor / SoM đặt-trước / DG1-DG2 / hệ tham chiếu").
+>
+> 🔴 **BƯỚC NGOẶT 2026-07-08 — ĐÈ LÊN FILE NÀY:** thầy yêu cầu luận văn **PHẢI TRAIN MODEL thật** (khung prompting bị bác). Đang xoay sang **hướng lấy-model-làm-trung-tâm** (fine-tune VLM nhỏ + distill + lọc faithfulness; chưa chốt, deep-research dở → `report/50`). Câu *"Không fine-tune lõi"* ở TÓM TẮT dưới đây **ĐÃ ĐẢO NGƯỢC** — fine-tune giờ là trung tâm. Toàn cảnh + hệ quả: **`CLAUDE.md §0`** (thắng khi mâu thuẫn với file này về phần khung/đóng góp). Dataset/metric/citation trong file này vẫn tái dùng được.
 
 ## TÓM TẮT 30 GIÂY (đã khoá)
 1. **HAI đóng góp NGANG NHAU:** (A) **hệ sinh hướng dẫn TỐT** = "lớp trung-thực-hoá độc-lập-model"; (B) **phương pháp ĐÁNH GIÁ** đáng tin khi không có bài mẫu của người. Đóng khung để **kết quả null vẫn ĐẬU** (nếu pre-register) ở cả hai.
