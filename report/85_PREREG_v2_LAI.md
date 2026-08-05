@@ -6,6 +6,28 @@
 
 ---
 
+> # ⛔ BẢN VÁ 1 — 2026-07-19, sau phản biện đối kháng `report/90`
+>
+> **Không sửa lặng.** Bản gốc đã commit `b5a6b29` (kèm chữ `metric-gate PASSED` trong commit message — chữ đó nay SAI). Phần dưới giữ nguyên văn; bản vá này ghi rõ cái gì mất hiệu lực, vì sao, và ngày nào.
+>
+> **Trạng thái sau vá: file này CHƯA ĐỦ ĐIỀU KIỆN làm dấu-thời-gian cho việc train.** Phải sửa xong bốn mục dưới rồi commit lại (bản vá 2) trước khi chạy bất kỳ lệnh train nào.
+>
+> | # | Chỗ | Vấn đề | Trạng thái |
+> |---|---|---|---|
+> | V1 | §4 bảng cổng — 3 dòng `detection sai-target 1.000`, `FP paraphrase 0.000`, `AUC 1.000` | **Hằng đẳng thức, không phải phép đo.** Nhánh paraphrase của bộ bơm-lỗi gọi chính `target_of()` rồi dán lại nguyên văn output của nó (Jaccard=1 tất yếu); nhánh target_error bị ép giao-rỗng token (Jaccard=0 tất yếu). Đo lại bằng paraphrase THẬT: **AUC = 0.35, kết oan 10/10**. | ❌ RÚT — cổng chưa qua |
+> | V2 | §4 dòng "(cả ca khó)" | Vòng 2 **không có code, không có file kết quả**. Ba con số (0.350 / AUC 1.0 / bge cứu nhầm 5%) không tái lập được. | ❌ GỠ SỐ |
+> | V3 | §1 + §6 — `~72% ep gán được app`, `~114 app distinct`, `G ≈ 150-250`, `MDE ~9 pp` | Đếm từ **sai quần thể** (`ac_test_200ep.json` = test chung, không phải app_unseen). Trên đúng split (`ac_app_unseen_count.json`): **41% gán được, 42 app distinct/102 ep, tập trung mạnh** (Pinterest 14, Arts&Culture 8) chứ không "phần lớn singleton". → **MDE thật ≈ 12.5–14.4 pp**, không phải 8-9. Thêm: bộ gán app tách một app thành nhiều cụm (`The Washington Post` vs `Washington post`) và đẻ cụm rác (`On the Pinerest`) → **G thổi phồng, CI hẹp giả**. | ❌ TÍNH LẠI |
+> | V4 | §6 ô `[MDE trục trung thực = ___ pp]` | Để trống mà vẫn commit. Mô phỏng sign-flip đầy đủ ở G=12 với SD=0.362: lực chỉ **25% @15pp, 43% @20pp**; công thức của chính file này cho **32.2 pp** → **trục trung thực RỚT ngưỡng 15-20 gấp đôi**. Một kết quả null ở trục này sẽ không đọc được gì. | ❌ PHẢI ĐIỀN TRƯỚC KHI COMMIT LẠI |
+>
+> **Ngoài ra, hai chỗ phải thêm chứ không chỉ sửa:**
+>
+> - **Nhánh Teacher-STYLE-MATCHED (bắt buộc).** Student train trên gold AC sẽ nói đúng phương ngữ annotator; Teacher zero-shot nói khác nên bị kết oan có hệ thống. Đo được: chỉ đổi lựa chọn bề mặt của thước (gộp tap/open, containment thay Jaccard, bỏ từ chỉ vị trí) làm điểm teacher nhảy **0.286 → 0.604** mà không đổi một chữ nội dung. ⇒ Δ(Student − Teacher-BASE) hiện **không diễn giải được**. Phải tách: `Student − Teacher-STYLE` = chọn đúng nút; `Teacher-STYLE − Teacher-BASE` = khớp giọng thuần. Điều này **đảo §8 rủi ro 4** — câu "thước action∧target bớt nhạy phong cách" là SAI, token-overlap là thước nhạy phong cách nhất khi từ vựng khác nhau.
+> - **§8 rủi ro 2 phải đổi cách xử.** "Hiệu chỉnh backstop khi có output model thật" = chỉnh thước trên chính dữ liệu đánh giá sau khi đã đóng băng ngưỡng. Phải hiệu chỉnh trên **tập dev tách riêng** (app ngoài test split), khoá lại, ghi rõ dev nào / ngày nào / commit nào, rồi mới chạy test.
+>
+> **Việc trước khi commit bản vá 2:** `report/90` Giai đoạn B (dựng lại bơm-lỗi) → C (`harness/cv_study/`, construct-validity với người) → D (đếm lại G, tính lại MDE cả hai trục).
+
+---
+
 ## 0. ĐÓNG GÓP (khung hai trụ — chốt 19/7)
 
 1. **MODEL** — model đầu tiên **sinh hướng dẫn nhiều-bước CHO NGƯỜI ĐỌC** từ 1 ảnh + câu hỏi (mọi model GUI khác sinh action-cho-máy). Tính mới ở **tác vụ**, KHÔNG ở "3B on-device".
@@ -16,7 +38,7 @@ Hai trụ ngang nhau. Kết cục null ở một trục KHÔNG kéo sập trục
 ## 1. PHÂN VÙNG (đã/ sẽ khoá)
 
 - **Trục ĐÚNG (chính):** dùng **AndroidControl app-unseen split CHÍNH THỨC = 631 episode** (từ reece124/android_control; app ở test KHÔNG xuất hiện lúc train — held-out-by-app chuẩn của bộ). Đã xác nhận 631/631 ep có file tải được ở mirror wangyuanlei.
-- **Đơn vị thống kê = per-app.** Gán app mỗi ep bằng **open_app-action + trích-từ-goal** (phủ ~72% ep trên mẫu 200; phần còn lại gán tay/GCS lúc build). **AndroidControl CỰC đa dạng app — ~114 app distinct chỉ trong 200 ep, phần lớn app 1-2 ep** → **[số app test AC ≈ 150-250, phần lớn singleton — chốt chính xác lúc build]**. Hệ quả: **G LỚN** (khác hẳn MobileViews G=12) → dùng **wild-cluster bootstrap**, KHÔNG exact sign-flip (xem §6).
+- **Đơn vị thống kê = per-app.** Gán app mỗi ep bằng **open_app-action + trích-từ-goal** (~~phủ ~72% ep trên mẫu 200~~ ⛔ **V3 — trên đúng app_unseen split chỉ 41%**; phần còn lại gán tay/GCS lúc build). ~~**AndroidControl CỰC đa dạng app — ~114 app distinct chỉ trong 200 ep, phần lớn app 1-2 ep** → **[số app test AC ≈ 150-250, phần lớn singleton]**~~ ⛔ **V3 — đếm từ SAI quần thể.** Trên `ac_app_unseen_count.json`: **42 app distinct / 102 ep gán được, tập trung mạnh** (Pinterest 14, Arts&Culture 8, CNN 6). **[G thật = ___ , điền sau khi gán app cho cả 631 ep]**. Hệ quả: **G LỚN** (khác hẳn MobileViews G=12) → dùng **wild-cluster bootstrap**, KHÔNG exact sign-flip (xem §6).
 - **KHÔNG dùng "lát gần-miền" nữa** (v1/report/81 đề xuất, nay BỎ): lát gần-miền vốn là hedge chống lệch-miền của thiết kế CROSS-dataset (report/78). Thiết kế cuối là **IN-DISTRIBUTION** (train + chấm đều trên AndroidControl app-unseen) → lệch-miền không còn → dùng thẳng **toàn bộ split chính thức 631 ep**, tránh mang tiếng cherry-pick. ("AndroidControl-Low" tự thoả vì ta dùng chính low-level step_instructions làm gold.)
 - **Trục TRUNG THỰC (phụ):** MobileViews **18 train / 12 test app** (seed=20260710, `train_eval_app_split.json`, commit `3776212`) — giữ nguyên từ v1.
 - **Chống leak:** app test (cả AC lẫn MV) KHÔNG xuất hiện lúc train; VH/gold chỉ vào lúc CHẤM. Student KHÔNG thấy VH bao giờ.
@@ -44,13 +66,13 @@ Ngưỡng ĐÓNG BĂNG (Sai et al. EMNLP 2021):
 
 | Kiểm | Ngưỡng | Kết quả synthetic (report/84) |
 |---|---|---|
-| detection sai-target | ≥ 0.90 | 1.000 ✓ |
+| detection sai-target | ≥ 0.90 | ~~1.000 ✓~~ ⛔ **V1 — hằng đẳng thức, chưa đo** |
 | detection sai-action | ≥ 0.90 | (coverage tụt đúng) ✓ |
-| false-positive paraphrase | ≤ 0.10 | 0.000 ✓ |
-| **tách-phân-phối sai-target vs paraphrase (chỗ K1 chết)** | **AUC ≥ 0.80** | **1.000** (cả ca khó) ✓ |
+| false-positive paraphrase | ≤ 0.10 | ~~0.000 ✓~~ ⛔ **V1 — nhánh paraphrase tái dùng `target_of()`; đo thật = kết oan 10/10** |
+| **tách-phân-phối sai-target vs paraphrase (chỗ K1 chết)** | **AUC ≥ 0.80** | ~~**1.000** (cả ca khó) ✓~~ ⛔ **V1+V2 — trên paraphrase thật AUC = 0.35, RỚT** |
 | đảo thứ tự → order-τ tụt, coverage GIỮ | định tính | ✓ |
 
-**Cổng cứng:** rớt AUC≥0.80 trên config cuối → **DỪNG, sửa thước, KHÔNG train**. (Synthetic đã qua; chạy lại trên parser cuối + validate bộ-trích P/R trên tập gán-tay khi có output model.)
+**Cổng cứng:** rớt AUC≥0.80 trên config cuối → **DỪNG, sửa thước, KHÔNG train**. ⛔ **Cổng này chưa bao giờ kích hoạt được** (xem V1): bộ bơm-lỗi cũ không sinh nổi ca làm AUC<1. Cổng chỉ có hiệu lực sau khi dựng lại bộ sinh — `report/90` Giai đoạn B. (Synthetic đã qua; chạy lại trên parser cuối + validate bộ-trích P/R trên tập gán-tay khi có output model.)
 
 ## 5. THƯỚC TRỤC PHỤ — độ TRUNG THỰC (no-gold, MobileViews)
 
@@ -64,7 +86,7 @@ Ngưỡng ĐÓNG BĂNG (Sai et al. EMNLP 2021):
   - **Trục ĐÚNG (AndroidControl, G lớn ~150-250 app):** **wild-cluster bootstrap-t Rademacher B=9999** cluster theo app (Cameron-Gelbach-Miller REStat 2008). KHÔNG dùng exact sign-flip (2^G quá lớn, và G lớn không cần exact).
   - **Trục TRUNG THỰC (MobileViews, G=12 app):** **exact sign-flip** liệt kê 2^12=4096 tổ hợp dấu (giữ từ report/56 §4; Canay-Santos-Shaikh 2021).
 - Cả hai: CI 95% + Holm.
-- **MDE** tính trước từ đo-nền (công thức 3.077×SD-hiệu/√G). **MDE trục ĐÚNG = ~9 pp @ G=150 (bảo thủ; 8 pp @ G=200)** — đã đo pilot (report/86: teacher 30% điểm-đúng, SD-hiệu-nền=0.362, KHÔNG suy biến sàn-0). **Dưới ngưỡng 15-20 pp → đủ lực, giữ nguyên thiết kế.** **[MDE trục trung thực MobileViews = ___ pp]** ← điền khi pilot trung thực (v1 để trống).
+- **MDE** tính trước từ đo-nền (công thức 3.077×SD-hiệu/√G). ~~**MDE trục ĐÚNG = ~9 pp @ G=150**~~ ⛔ **V3 — G sai nên MDE sai. Tính lại với G≈60-90: MDE ≈ 12.5–14.4 pp** (vẫn dưới ngưỡng nhưng SÁT hơn nhiều, không còn dư địa). Phần "teacher 30%, không suy biến sàn-0" vẫn đứng. **Ngưỡng 15-20 pp vốn là cơ chế chữa cháy viết cho trục MobileViews G=12 (report/56:65) — trục ĐÚNG phải có ngưỡng riêng có căn cứ.** **[MDE trục trung thực MobileViews = ___ pp]** ⛔ **V4 — để trống mà vẫn commit.** Ước lượng bằng chính công thức file này ở G=12, SD=0.362: **32.2 pp** → RỚT ngưỡng gấp đôi. Mô phỏng sign-flip đầy đủ: lực 25% @15pp, 43% @20pp. **Phải điền và quyết (tăng app MV, hay hạ trục này xuống mức mô tả) TRƯỚC khi commit lại.**
 - **Holm** trên family ĐÓNG BĂNG: { coverage-đúng Tier-chính, faithfulness Tier 2, phép-đo-phụ }. Thêm/bớt sau khi nhìn số = vi phạm.
 
 ## 7. NGƯỠNG ĐẬU/RỚT (3 kết cục, viết TRƯỚC khi nhìn số)
@@ -81,9 +103,9 @@ Ngưỡng ĐÓNG BĂNG (Sai et al. EMNLP 2021):
 ## 8. RỦI RO KHAI TRƯỚC (đưa vào luận văn)
 
 1. Trích (action, target) từ văn tự do có thể hỏng trên guide dài → validate bộ-trích riêng.
-2. Backstop bge-m3 có thể kết-oan paraphrase đổi-từ-đồng-nghĩa → hiệu chỉnh khi có output model.
+2. Backstop bge-m3 có thể kết-oan paraphrase đổi-từ-đồng-nghĩa → ~~hiệu chỉnh khi có output model~~ ⛔ **hiệu chỉnh trên TẬP DEV TÁCH RIÊNG** (chỉnh trên dữ liệu đánh giá = phá đăng-ký-trước). Đo thật: backstop **không cứu được ca nào** — `gmail tab`↔`calendar tab` (bịa) 0.717 > `search bar`↔`magnifying glass` (thật) 0.490.
 3. ~48% target là icon/ảnh → báo tách nhóm, không gộp.
-4. Circular ngược (train trên gold, chấm so gold) → mốc Teacher-BASE + thước ưu tiên action∧target (bớt nhạy phong cách).
+4. Circular ngược (train trên gold, chấm so gold) → ~~thước action∧target bớt nhạy phong cách~~ ⛔ **CÂU NÀY SAI.** Token-overlap là thước NHẠY phong cách nhất khi từ vựng khác nhau. Đổi lựa chọn bề mặt của thước làm điểm teacher nhảy 0.286→0.604. **Bắt buộc thêm nhánh Teacher-STYLE-MATCHED** để tách khớp-giọng khỏi chọn-đúng-nút, nếu không Δ headline không diễn giải được.
 5. Tính-mới mỏng ở kiến-trúc → bán bằng tác-vụ-mới + đánh-giá, không bằng size.
 6. In-distribution vẫn có thể ra số nhạt nếu 3B sinh kém → vẫn đọc-được (có Teacher-BASE mốc).
 
@@ -94,4 +116,4 @@ Ngưỡng ĐÓNG BĂNG (Sai et al. EMNLP 2021):
 3. SAU đó mới build data / train / eval. Mọi bước ✱ tốn API/GPU: hỏi user (trừ standing approval).
 
 ---
-*Ghi chú trung thực:* con số 15.283 ep/833 app AC + 498/220 MV lấy từ ghi-chú-đã-verify dự án — verify trước khi in. Venue OS-Atlas/UGround (ICLR2025) + STaR/CapFilt/VGA — verify trước khi ghi "peer-reviewed". Metric v1 đã qua cổng synthetic (report/84); construct-validity NGƯỜI + validate bộ-trích còn chờ output model (việc 4).
+*Ghi chú trung thực:* con số 15.283 ep/833 app AC + 498/220 MV lấy từ ghi-chú-đã-verify dự án — verify trước khi in. Venue OS-Atlas/UGround (ICLR2025) + STaR/CapFilt/VGA — verify trước khi ghi "peer-reviewed". ⛔ ~~Metric v1 đã qua cổng synthetic (report/84)~~ — cổng không hợp lệ, xem bản vá 1. Construct-validity NGƯỜI **không chờ output model nữa**: bộ chấm đã dựng sẵn trên 91 cặp teacher có sẵn (`harness/cv_study/`, free) — `report/90` Giai đoạn C.

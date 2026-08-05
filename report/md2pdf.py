@@ -172,8 +172,12 @@ a { color: #14395c; text-decoration: none; }
 .frac .fnum { border-bottom: 1px solid currentColor; padding: 0 4px; }
 .frac .fden { padding: 0 4px; }
 sup, sub { font-size: 0.72em; }
+img { max-width: 100%; height: auto; display: block; margin: 0.5em auto;
+      border: 1px solid #ddd; page-break-inside: avoid; }
 """
 
 full = f"<html><head><meta charset='utf-8'><style>{CSS}</style></head><body>{html_body}</body></html>"
-HTML(string=full).write_pdf(OUT)
+# base_url = thư mục chứa file .md, để ảnh dẫn tương đối (![](_papers/x.png)) tải được
+import os
+HTML(string=full, base_url=os.path.dirname(os.path.abspath(SRC)) + os.sep).write_pdf(OUT)
 print("WROTE", OUT)

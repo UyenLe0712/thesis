@@ -1,0 +1,413 @@
+% LUẬN VĂN THẠC SĨ — slide v9, trọn flow (đề tài → dữ liệu → pipeline → đánh giá → thí nghiệm → kế hoạch)
+% Style bám file mẫu "Đại số tuyến tính — Lê Văn Luyện, chương 2" (Beamer cổ điển, serif CM, chàm đậm 322164)
+% Biên dịch: ~/bin/tectonic slides/LUAN_VAN_SLIDE_v9.tex
+\documentclass[10pt]{beamer}
+\usepackage{fontspec}
+\setmainfont{lmroman10-regular.otf}[BoldFont=lmroman10-bold.otf,ItalicFont=lmroman10-italic.otf,BoldItalicFont=lmroman10-bolditalic.otf]
+\setmonofont{lmmono10-regular.otf}[BoldFont=lmmonolt10-bold.otf]
+\usefonttheme{serif}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+
+% ---------- màu lấy trực tiếp từ PDF mẫu ----------
+\definecolor{daunavy}{HTML}{322164}   % thanh tiêu đề + hộp bìa
+\definecolor{footA}{HTML}{191132}
+\definecolor{footB}{HTML}{25194B}
+\definecolor{footC}{HTML}{4F417A}
+\definecolor{footD}{HTML}{7A7099}
+\definecolor{blockbg}{HTML}{E9E8EC}   % nền khối xám
+\definecolor{vdblue}{HTML}{1414BE}    % "Ví dụ." xanh
+\definecolor{dnteal}{HTML}{006666}    % "Định nghĩa." xanh lục đậm
+\definecolor{chapred}{HTML}{B22222}   % nhãn chương đỏ
+\definecolor{annmar}{HTML}{990000}    % chú thích nâu đỏ
+\definecolor{ink}{HTML}{1A1A1A}
+
+\setbeamercolor{normal text}{fg=ink}
+\setbeamercolor{structure}{fg=daunavy}
+\setbeamercolor{frametitle}{fg=white,bg=daunavy}
+\setbeamerfont{frametitle}{series=\bfseries,size=\large}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamercolor{block body}{bg=blockbg,fg=ink}
+\setbeamercolor{block title}{bg=blockbg,fg=daunavy}
+\setbeamercolor{titlebox}{fg=white,bg=daunavy}
+\setbeamertemplate{itemize item}{\color{daunavy}$\blacktriangleright$}
+\setbeamertemplate{itemize subitem}{\color{dnteal}--}
+
+% thanh tiêu đề chạy hết chiều ngang
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip
+  \begin{beamercolorbox}[wd=\paperwidth,ht=3.1ex,dp=1.5ex,leftskip=1.6ex]{frametitle}%
+    \usebeamerfont{frametitle}\insertframetitle
+  \end{beamercolorbox}}
+
+% footline 4 ô như mẫu
+\newcommand{\myfoot}{%
+  {\setlength{\fboxsep}{0pt}\hbox{%
+  \colorbox{footA}{\makebox[.30\paperwidth][c]{\rule[-0.85ex]{0pt}{2.5ex}\tiny\color{white}\texttt{luận văn thạc sĩ}}}%
+  \colorbox{footB}{\makebox[.37\paperwidth][c]{\rule[-0.85ex]{0pt}{2.5ex}\tiny\color{white} Sinh hướng dẫn sử dụng phần mềm}}%
+  \colorbox{footC}{\makebox[.19\paperwidth][c]{\rule[-0.85ex]{0pt}{2.5ex}\tiny\color{white} PU \copyright 2026}}%
+  \colorbox{footD}{\makebox[.14\paperwidth][c]{\rule[-0.85ex]{0pt}{2.5ex}\tiny\color{white} \insertframenumber/\inserttotalframenumber}}}}}
+\setbeamertemplate{footline}{\myfoot}
+
+% ---------- macro chữ dẫn màu (kiểu "Định nghĩa." / "Ví dụ." của mẫu) ----------
+\newcommand{\dn}[1]{{\color{dnteal}\textbf{#1}}}
+\newcommand{\vd}[1]{{\color{vdblue}\textbf{#1}}}
+\newcommand{\chred}[1]{{\color{chapred}\textbf{#1}}}
+\newcommand{\ann}[1]{{\color{annmar}\textbf{#1}}}
+\newcommand{\nv}[1]{{\color{daunavy}\textbf{#1}}}
+\newcommand{\mI}[1]{{\color{daunavy}\bfseries #1}}
+
+% mục lục kiểu mẫu: số xanh lục, chữ chàm đậm
+\newcommand{\tocline}[2]{{\large\color{dnteal}\textbf{#1}}~~{\large\color{daunavy}\textbf{#2}}\par\vspace{2.1ex}}
+
+\begin{document}
+
+% ═══════════════ 1 · BÌA (bám bố cục trang 1 của mẫu) ═══════════════
+\begin{frame}
+  \vspace*{-1.0ex}
+  \noindent\hspace*{-\dimexpr(\paperwidth-\textwidth)/2\relax}%
+  {\setlength{\fboxsep}{0pt}\colorbox{daunavy}{\makebox[\paperwidth][c]{\rule[-1.2ex]{0pt}{4.2ex}\bfseries\color{white} LUẬN VĂN THẠC SĨ -- CÔNG NGHỆ THÔNG TIN -- 2026}}}
+  \vspace{2.6ex}
+  \begin{center}
+  \begin{beamercolorbox}[wd=\textwidth,rounded=true,shadow=true,center]{titlebox}
+    \vspace{3.2ex}
+    {\bfseries\large Đề tài}\\[2.4ex]
+    {\bfseries\LARGE SINH HƯỚNG DẪN SỬ DỤNG}\\[1.2ex]
+    {\bfseries\LARGE PHẦN MỀM TỪ ẢNH MÀN HÌNH}
+    \vspace{3.2ex}
+  \end{beamercolorbox}
+
+  \vspace{3.4ex}
+  {\color{vdblue}\texttt{\bfseries hocvien@email.edu.vn}}\\[1.8ex]
+  {\textbf{Học viên}: \makebox[0.16\paperwidth]{\dotfill}\quad \textbf{GVHD}: \makebox[0.16\paperwidth]{\dotfill}}\\[2.8ex]
+  {\small Trường Đại học \makebox[0.3\paperwidth]{\dotfill}}\\[1.4ex]
+  {\small --\,--\,--\,-- Năm 2026 --\,--\,--\,--}
+  \end{center}
+\end{frame}
+
+% ═══════════════ 2 · NỘI DUNG (bám trang 2 của mẫu) ═══════════════
+\begin{frame}
+  \frametitle{Nội dung}
+  \begin{block}{}
+    \chred{Đề tài.} {\color{vdblue}\textbf{NHÌN ẢNH MÀN HÌNH, VIẾT HƯỚNG DẪN CHO NGƯỜI ĐỌC}}
+  \end{block}
+  \vspace{2.4ex}
+  {\setlength{\leftskip}{2.4em}
+    \tocline{1.}{Bài toán và đóng góp}
+    \tocline{2.}{Dữ liệu}
+    \tocline{3.}{Pipeline dựng mô hình}
+    \tocline{4.}{Cách chấm điểm}
+    \tocline{5.}{Bộ thí nghiệm}
+    \tocline{6.}{Kế hoạch và rủi ro}
+  \par}
+\end{frame}
+
+% ═══════════════ PHẦN 1 · BÀI TOÁN ═══════════════
+\begin{frame}
+  \frametitle{1.1. Bài toán}
+  \begin{block}{}
+    \dn{Bài toán.} Người dùng bí trong một ứng dụng điện thoại. Họ đưa \nv{một ảnh màn hình} và \nv{một câu hỏi}; mô hình viết ra \nv{câu hướng dẫn} cho họ làm theo.
+  \end{block}
+  \begin{block}{}
+    \vd{Ví dụ.} Hỏi: \textit{"Làm sao chia sẻ playlist này cho bạn tôi?"}\\[1.2ex]
+    Trả lời: \textit{"Chạm vào biểu tượng chia sẻ ở góc trên bên phải màn hình."}
+  \end{block}
+  \vspace{1ex}
+  \dn{Điểm khác biệt.} Các mô hình giao diện hiện nay được huấn luyện để \nv{tự bấm thay người} --- chúng sinh lệnh máy như \texttt{click(732,\,173)}. Mô hình của luận văn sinh \nv{câu chữ cho con người đọc}.
+  \vspace{1.2ex}
+
+  \ann{Chú ý.} Chạy ngay trên điện thoại, không cần mạng --- ảnh màn hình không phải gửi đi đâu.
+\end{frame}
+
+\begin{frame}
+  \frametitle{1.2. Đã có ai làm chưa?}
+  \begin{block}{}
+    \dn{Đã tra kỹ} (kiểm tận trang gốc từng bài):
+    \begin{itemize}
+      \item Mọi mô hình giao diện: chữ chỉ là bước đệm, \nv{toạ độ mới là sản phẩm} --- luận văn đảo vai;
+      \item Câu hướng dẫn trong bộ dữ liệu xưa nay là \nv{đầu vào}, luận văn dùng làm \nv{đích để sinh};
+      \item GuideMe (CHI 2026) sinh hướng dẫn cho người cao tuổi, nhưng chỉ ra lệnh GPT-5 --- \nv{không huấn luyện gì}.
+    \end{itemize}
+  \end{block}
+  \begin{block}{}
+    \vd{Vị trí của luận văn.} Mô hình mở \nv{đầu tiên được huấn luyện} cho việc sinh hướng dẫn giao diện cho người đọc.\\[0.8ex]
+    {\small (Chữ "đầu tiên" chỉ gắn đúng vào chỗ này --- các cơ chế bên trong đều có tiền lệ, sẽ khai rõ.)}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{1.3. Ba tầng đóng góp}
+  \begin{block}{}
+    \nv{1.} Một \nv{mô hình tự huấn luyện} cho tác vụ chưa ai huấn luyện (Qwen2.5-VL-3B).
+  \end{block}
+  \begin{block}{}
+    \nv{2.} Thành phần \chred{"khai báo trước, phát ngôn sau"}: buộc mô hình xác định rõ mục tiêu trước khi viết câu --- hai mức sâu, chứng minh bằng bộ đối chứng khoá trước.
+  \end{block}
+  \begin{block}{}
+    \nv{3.} \nv{Chương đo lường}: thước chấm tự dựng, tự kiểm bằng bơm lỗi, tự đo giới hạn của chính nó.
+  \end{block}
+  \vspace{1ex}
+  \ann{Ghi chú.} Luận văn được chấm trên \nv{độ chặt của phần chứng minh}, không phải độ phức tạp của can thiệp.
+\end{frame}
+
+% ═══════════════ PHẦN 2 · DỮ LIỆU ═══════════════
+\begin{frame}
+  \frametitle{2.1. Bộ dữ liệu AndroidControl}
+  \begin{block}{}
+    \dn{AndroidControl} (NeurIPS 2024): \nv{15.283 tác vụ} trên điện thoại Android do người thật thao tác. Mỗi bước có:
+    \begin{itemize}
+      \item ảnh màn hình;
+      \item \nv{toạ độ chỗ người thật chạm} (nhãn sạch, có ở 100\% bước chạm);
+      \item một câu mô tả bước đó \nv{do chính người thao tác viết}.
+    \end{itemize}
+  \end{block}
+  \begin{block}{}
+    \vd{Vấn đề của câu người viết.} Trung vị \nv{6 từ}, gần nửa dưới 5 từ:\par\smallskip
+    {\centering \textit{"Click on alerts"} \quad·\quad \textit{"Tap the app"}\par}\smallskip
+    Học bắt chước nguyên bản là học đúng giọng cụt đó.
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{2.2. Bệnh đã chẩn được bằng số}
+  \begin{block}{}
+    \dn{Đo trước khi chọn thuốc.} Khi mô hình viết hướng dẫn sai, lỗi số một \nv{không phải bịa nút không tồn tại} (chỉ 0--2\%). Lỗi số một là \chred{câu mơ hồ} --- "chạm biểu tượng tìm kiếm" trên màn có \nv{hai} biểu tượng tìm kiếm.
+  \end{block}
+  \begin{block}{}
+    \vd{Số đo} (76 câu chuẩn, chia đôi theo trung vị 8 từ):\par\smallskip
+    {\centering câu cộc lốc trỏ trúng \ann{32\%} \qquad câu tả rõ trỏ trúng \nv{69\%}\par}\smallskip
+    {\small (Đo trên câu mẫu chuẩn; câu rõ cũng dài hơn nên có nhánh đối chứng riêng cho độ dài --- mục 5.)}
+  \end{block}
+  \vspace{0.6ex}
+  Cả hai mức của đóng góp đều nhắm thẳng vào bệnh mơ hồ này.
+\end{frame}
+
+% ═══════════════ PHẦN 3 · PIPELINE ═══════════════
+\begin{frame}
+  \frametitle{3.1. Toàn cảnh pipeline}
+  \begin{center}
+  \begin{tikzpicture}[
+    box/.style={draw=none,fill=blockbg,rounded corners=2pt,minimum height=9mm,minimum width=27mm,align=center,font=\small\bfseries,text=daunavy},
+    hot/.style={box,fill=daunavy,text=white},
+    arr/.style={-{Triangle[length=2mm]},thick,color=footC}]
+    \node[box] (b1) {1. Đọc chữ\\trên ảnh};
+    \node[box,right=4mm of b1] (b2) {2. Viết lại\\câu};
+    \node[box,right=4mm of b2] (b3) {3. Dựng dòng\\khai báo};
+    \node[box,below=6mm of b3] (b4) {4. Ghép thành\\bộ dữ liệu};
+    \node[hot,left=4mm of b4] (b5) {5. Huấn luyện};
+    \node[box,left=4mm of b5,fill=blockbg,text=chapred] (b6) {6. Chạy thật};
+    \draw[arr] (b1) -- (b2);
+    \draw[arr] (b2) -- (b3);
+    \draw[arr] (b3) -- (b4);
+    \draw[arr] (b4) -- (b5);
+    \draw[arr] (b5) -- (b6);
+  \end{tikzpicture}
+  \end{center}
+  \begin{block}{}
+    \dn{Nhận xét.} Khâu 1--4 chỉ \nv{chế biến dữ liệu}, chạy một lần trên máy cá nhân, miễn phí. Mô hình chỉ xuất hiện ở khâu 5.
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{3.2. Khâu 1--2: đọc chữ, rồi viết lại câu}
+  \begin{block}{}
+    \dn{Khâu 1 --- đọc chữ (OCR).} Chạy trên CPU, ngay trên điện thoại. Trung vị 22 dòng chữ mỗi màn; 57\% bước có chữ gần nút, \ann{43\% không có} (nút hình: dấu cộng, mũi tên\ldots).
+  \end{block}
+  \begin{block}{}
+    \dn{Khâu 2 --- viết lại câu.} Mô hình lớn xem ảnh \nv{đã khoanh dấu tại chỗ người chạm}, viết lại câu cụt thành câu tự đủ:\\[1ex]
+    \textit{"Click on the search bar"}\\
+    \centerline{$\Downarrow$}
+    \textit{"Tap the `Search Publications' bar at the top"}
+  \end{block}
+  \vspace{0.4ex}
+  {\small \ann{Khai thẳng.} Khâu 2 là tiền xử lý dữ liệu, không kể vào tính mới. Có nhánh viết-lại-mù-ảnh làm đối chứng độ dài.}
+\end{frame}
+
+\begin{frame}
+  \frametitle{3.3. Khâu 3: dòng khai báo --- trọng tâm mức 1}
+  \begin{block}{}
+    \dn{Định nghĩa.} Đích huấn luyện không phải câu trần, mà là \nv{một dòng khai báo bốn ô} đứng trước câu:\\[1.2ex]
+    \centerline{\chred{[\,vai trò\ |\ tên\ |\ toạ độ\ |\ dấu hiệu phân biệt\,]}}
+  \end{block}
+  \begin{block}{}
+    \vd{Ví dụ.}\\[0.6ex]
+    {\small\texttt{<desc>ô nhập liệu | "Search Publications..." |}\\
+    \texttt{<point>500,80</point> | ô nhập liệu duy nhất trên màn</desc>}\\[0.6ex]
+    \texttt{Tap the Search Publications bar at the top}}
+  \end{block}
+  \vspace{0.6ex}
+  \dn{Then chốt.} Ô toạ độ lấy từ \nv{đúng chỗ người thật chạm} --- nhãn sạch 100\% mà cách huấn luyện thường bỏ phí. Khi chạy thật, dòng khai báo \nv{bị cắt bỏ}: nó chỉ tồn tại để ép mô hình xác định mục tiêu trước khi viết.
+\end{frame}
+
+\begin{frame}
+  \frametitle{3.4. Khâu 4: ghép thành bộ dữ liệu}
+  \begin{block}{}
+    \dn{Đề bài} (đầu vào lúc học): ảnh \nv{sạch} không khoanh dấu + mục tiêu tác vụ + danh sách chữ khâu 1 đọc được.
+  \end{block}
+  \begin{block}{}
+    \dn{Đáp án mẫu} (mô hình tập viết ra): dòng khai báo (khâu 3) + câu viết lại (khâu 2).
+  \end{block}
+  \begin{block}{}
+    \vd{Nhận xét.} Chưa mô hình nào sinh gì ở đây --- thuần tuý ghép nhãn. Toạ độ đúng \nv{chỉ dùng để dựng nhãn} rồi biến mất; dòng khai báo nằm ở \nv{đáp án} chứ không nằm ở đề bài, nên lúc chạy mô hình phải tự sinh, không được mớm.
+  \end{block}
+  \vspace{0.4ex}
+  {\small Nhãn dựng tự động; chất lượng đã đo trên 1.068 bước: 77\% có tên rõ (số làm việc 70--75\%), ô toạ độ sạch 100\%.}
+\end{frame}
+
+\begin{frame}
+  \frametitle{3.5. Mức 2: phạt thẳng khi câu viết ra mơ hồ}
+  \begin{block}{}
+    \dn{Ý tưởng.} Màn có hai kính lúp giống hệt --- một tìm danh bạ (trái), một tìm nhạc (phải). Cần bấm cái trái.\\[1.4ex]
+    \centering
+    \begin{tabular}{l c c}
+      & \nv{lúp trái} & \nv{lúp phải}\\[0.4ex]
+      \textit{"Tap the search icon"} & xuôi & \ann{cũng xuôi\ \(\Rightarrow\) phạt}\\[0.4ex]
+      \textit{"\ldots on the left, next to Contacts"} & xuôi & không xuôi\\
+    \end{tabular}
+  \end{block}
+  \begin{block}{}
+    \vd{Cách làm.} Dựng sẵn "khai báo giả" từ nút hàng xóm; lúc học, câu đích phải khớp khai báo \nv{thật} rõ hơn khai báo \nv{giả}. Khớp cả hai như nhau = câu mơ hồ = phạt.
+  \end{block}
+  {\small \ann{Khai trước.} Cơ chế phạt-mơ-hồ có tiền lệ từ 2016 (miền ảnh tự nhiên); miền giao diện chưa ai làm. Mức 2 bắt buộc chạy thử nghiệm nhỏ, mở rộng hay không quyết bằng số.}
+\end{frame}
+
+\begin{frame}
+  \frametitle{3.6. Khâu 5--6: huấn luyện, rồi chạy thật}
+  \begin{block}{}
+    \dn{Khâu 5 --- huấn luyện.} Qwen2.5-VL-3B (mở, 3 tỉ tham số) + QLoRA trên card thuê --- mỗi lượt trọn bộ dữ liệu khoảng \nv{13--16 đô}.
+  \end{block}
+  \begin{block}{}
+    \dn{Khâu 6 --- chạy thật.} Trên máy người dùng chỉ có \nv{bộ đọc chữ + mô hình}:\\[1ex]
+    \centerline{ảnh + câu hỏi \(\rightarrow\) OCR \(\rightarrow\) mô hình \(\rightarrow\) {\small[khai báo]} + câu \(\rightarrow\) \nv{cắt khai báo} \(\rightarrow\) người dùng}
+  \end{block}
+  \begin{block}{}
+    \vd{Không cần:} mạng · toạ độ đúng · cây trợ năng · mô hình lớn · bộ trỏ --- những thứ đó chỉ tồn tại lúc dựng dữ liệu và lúc chấm.
+  \end{block}
+\end{frame}
+
+% ═══════════════ PHẦN 4 · CÁCH CHẤM ═══════════════
+\begin{frame}
+  \frametitle{4.1. Cách chấm: câu có đủ rõ để lần ra đúng nút không?}
+  \begin{block}{}
+    \dn{Thước chính.} Đưa câu mô hình viết cho một \nv{bộ trỏ độc lập} đọc rồi chỉ lên ảnh. Chỗ nó chỉ đúng là nút người thật đã chạm \(\Rightarrow\) câu được tính đúng.
+  \end{block}
+  \begin{block}{}
+    \vd{Lý lẽ.} Câu hướng dẫn tốt là câu mà \nv{bên thứ ba chưa biết đáp án vẫn tìm ra đúng nút} --- cách dòng nghiên cứu mô tả vật thể đã chấm từ 2016.
+  \end{block}
+  \vspace{0.6ex}
+  \dn{Ba tinh chỉnh đã cài:} chỉ tính trúng khi nút chuẩn là nút \nv{gần nhất} với điểm trỏ · gom các cách nói cùng nghĩa (tap/click/open) · luật riêng cho công tắc bật/tắt.
+\end{frame}
+
+\begin{frame}
+  \frametitle{4.2. Thước có đáng tin không? --- tự kiểm bằng bơm lỗi}
+  \begin{block}{}
+    \dn{Cách kiểm.} Cấy lỗi biết trước vào câu, xem thước có bắt được không: đạt \nv{8/10 tiêu chí} --- và khai luôn 2 tiêu chí rớt:
+    \begin{itemize}
+      \item bộ trỏ lệch nhiều thì thước \ann{kết oan}: lệch 3\% chỉ oan 2,6\%, lệch 8\% oan tới 42\% \(\Rightarrow\) \nv{cổng tuần đầu}: bộ trỏ chuyên phải đạt sai số \(\sim\)3\%;
+      \item luật từ-ngược-nghĩa chỉ bắt được cặp có trong bảng tay.
+    \end{itemize}
+  \end{block}
+  \begin{block}{}
+    \vd{Lá chắn ba lớp} cho đòn "bộ trỏ dễ bị lừa": chấm tay 100 câu bằng hai người độc lập · cắt lớp theo độ dài câu · báo song song hai cách chấm.
+  \end{block}
+\end{frame}
+
+% ═══════════════ PHẦN 5 · THÍ NGHIỆM ═══════════════
+\begin{frame}
+  \frametitle{5.1. Bộ thí nghiệm: các phiên bản đem so}
+  \begin{block}{}
+    \dn{Nguyên tắc.} Cùng dữ liệu, cùng mô hình gốc, \nv{chỉ khác đúng chỗ can thiệp}; danh sách \nv{khoá trước khi nhìn kết quả}.\\[1.4ex]
+    \centering
+    {\small
+    \begin{tabular}{l l}
+      \nv{S1} --- bản thường & học viết thẳng ra câu (mốc so sánh)\\[0.35ex]
+      \chred{S2} --- bản khai báo & học viết khai báo trước, rồi tới câu \ann{(câu hỏi chính)}\\[0.35ex]
+      \nv{S2r} --- khai báo giả & nội dung lấy từ màn khác, ghép đúng độ dài\\[0.35ex]
+      \nv{S2-nopoint} & khai báo bỏ ô toạ độ (tách công của toạ độ)\\[0.35ex]
+      \nv{B-infer} & không huấn luyện, nhét mô tả vào đầu vào lúc chạy\\[0.35ex]
+      \nv{S3-pilot} & thử mức 2 trên lát nhỏ 1.697 bước\\
+    \end{tabular}}
+  \end{block}
+  {\small Kèm: cắt theo độ dài câu · cắt theo độ dễ nhầm của màn · chấm tay 100 câu · phép thử nhân quả rẻ trên S1 \nv{trước} khi tiêu tiền S2.}
+\end{frame}
+
+\begin{frame}
+  \frametitle{5.2. Vì sao kết quả sẽ đọc được}
+  \begin{block}{}
+    \dn{MDE} = mức chênh nhỏ nhất mà phép đo còn phân biệt được với may rủi. Tác dụng kỳ vọng 3--8 điểm \(\Rightarrow\) phải ép MDE \nv{xuống dưới mức đó} trước khi tiêu tiền: chấm đủ \(\sim\)2.000 bước chạm, MDE ước còn \nv{4--7 điểm}.
+  \end{block}
+  \begin{block}{}
+    \vd{Trình tự cứng.} Huấn luyện S1 trước \(\rightarrow\) chấm đủ \(\rightarrow\) tính MDE \nv{thật} \(\rightarrow\) khoá ngưỡng đậu rớt \(\rightarrow\) mới huấn luyện S2. Không đảo thứ tự.
+  \end{block}
+  \vspace{0.4ex}
+  \dn{Hai lớp chống nhiễu nữa:} mỗi bản huấn luyện \nv{2--3 hạt giống} (chênh giữa hai hạt giống S1 = cỡ nhiễu đo bằng số thật) · gom bước theo \nv{ứng dụng} khi tính khoảng tin cậy (bước cùng ứng dụng không độc lập).
+\end{frame}
+
+\begin{frame}
+  \frametitle{5.3. Bằng chứng từ nghiên cứu trước (đã rà tận PDF gốc)}
+  \begin{block}{}
+    \dn{Cùng kiểu can thiệp, hiệu ứng dương:}\par\smallskip
+    {\centering\footnotesize
+    \begin{tabular}{l p{0.42\textwidth} r}
+      Aguvis (ICML 2025) & bỏ tầng trung gian, \nv{trên chính AndroidControl} & \ann{tụt 11,4}\\[0.35ex]
+      GCoT (bản thảo) & \nv{huấn luyện} định-vị-trước & +4,5 / +5,8\\[0.35ex]
+      CogCoM (ICLR 2025) & chuỗi thao tác trung gian & +6,6\\
+    \end{tabular}\par}
+  \end{block}
+  \begin{block}{}
+    \vd{Và biết kiểu làm sai để né:} bước trung gian là \nv{văn nói tự do} cho kết quả \ann{âm} (Shikra: $-$7,39 vs +5,90 khi có toạ độ) \(\Rightarrow\) dòng khai báo phải \nv{có cấu trúc chặt và chứa toạ độ}.
+  \end{block}
+  {\small Mỗi số trong bảng đọc kèm điều kiện đo --- các thước khác nhau, chỉ nói lên \textit{chiều} và \textit{cỡ}.}
+\end{frame}
+
+% ═══════════════ PHẦN 6 · KẾ HOẠCH ═══════════════
+\begin{frame}
+  \frametitle{6.1. Kế hoạch và chi phí}
+  \begin{block}{}
+    \dn{Trình tự.} Đăng ký trước (commit git) \(\rightarrow\) cổng bộ trỏ \(\sim\)3\% \(\rightarrow\) S1 hai hạt giống + MDE thật + phép thử nhân quả \(\rightarrow\) khoá ngưỡng \(\rightarrow\) S2 \(\rightarrow\) đối chứng \(\rightarrow\) thử mức 2 \(\rightarrow\) chấm tay + demo tiếng Việt.
+  \end{block}
+  \begin{block}{}
+    \vd{Tiền.} Phần chắc chắn \nv{85--112 đô}; trần nếu kích hoạt hết các mục điều kiện \nv{123--162 đô} --- dưới ngân sách 200.
+  \end{block}
+  \vspace{0.4ex}
+  \dn{Ba điểm quyết định} (tiêu chí ghi sẵn): sau S1 --- còn đủ chỗ chứng minh không? · sau đối chứng --- chênh rõ mới chạy tiếp mục điều kiện · trước chương kết quả --- đóng băng mọi con số.
+\end{frame}
+
+\begin{frame}
+  \frametitle{6.2. Rủi ro chính và cách đỡ}
+  \begin{block}{}
+    \centering
+    {\small
+    \begin{tabular}{p{0.42\textwidth} p{0.46\textwidth}}
+      \nv{Rủi ro} & \nv{Cách đỡ}\\[0.5ex]
+      Bộ trỏ chuyên không đạt cổng 3\% & kế hoạch B ba bậc ghi sẵn; đo ngay tuần một\\[0.6ex]
+      Tác dụng thật nhỏ hơn mức đo được & MDE đã ép hết cỡ; kết quả trắng có đăng ký trước + phân tích sâu vẫn đọc được\\[0.6ex]
+      Nhãn khai báo nhiễu kéo S2 xuống & để trống ô tên thay vì đoán; tách phân tích theo nguồn tên\\[0.6ex]
+      Mô hình học vẹt cú pháp khai báo & chính nhánh S2r được dựng để bắt\\
+    \end{tabular}}
+  \end{block}
+  \begin{block}{}
+    \vd{Điểm tựa.} Luận văn ba tầng --- một tầng null không kéo sập cả bài; chương đo lường đứng trong thân như đóng góp có tên.
+  \end{block}
+\end{frame}
+
+% ═══════════════ TÓM TẮT ═══════════════
+\begin{frame}
+  \frametitle{Tóm tắt}
+  \begin{block}{}
+    \nv{Sản phẩm.} Mô hình 3 tỉ tham số chạy trên máy: nhìn ảnh + câu hỏi, viết hướng dẫn cho người đọc.
+  \end{block}
+  \begin{block}{}
+    \nv{Đóng góp.} Buộc mô hình \chred{xác định rõ mục tiêu trước khi phát ngôn} --- mức 1 sinh dòng khai báo trước câu; mức 2 phạt thẳng câu mơ hồ trong công thức học.
+  \end{block}
+  \begin{block}{}
+    \nv{Vì sao tin.} Nhắm trúng bệnh số một đã đo (32\% vs 69\%) · bằng chứng cùng kiểu trên chính bộ dữ liệu ($-$11,4) · bộ đối chứng khoá trước · thước tự kiểm bằng bơm lỗi.
+  \end{block}
+  \vspace{1.6ex}
+  \begin{center}
+    {\color{daunavy}\bfseries Xin cảm ơn thầy cô và hội đồng!}
+  \end{center}
+\end{frame}
+
+\end{document}

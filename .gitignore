@@ -23,3 +23,19 @@ harness/*.key
 Thumbs.db
 # File khoá tạm của Office (sinh ra khi đang mở pptx/docx)
 ~$*
+
+# dữ liệu dạy dựng tại máy (833MB, dựng lại được bằng harness/build_train_data.py)
+harness/dg1_cache/train_ac/images/
+
+# ── thêm 5/8/2026 ──
+# Cache embedding cũ (dựng lại được, 7.6MB)
+harness/_archive/emb_cache*.json
+# OCR đã chạy sẵn cho lát train (dựng lại bằng harness/prep_ocr_train.py)
+harness/dg1_cache/train_ac/ocr.jsonl
+# Bộ chấm tay: HTML nhúng ảnh base64, 10MB mỗi file — dựng lại bằng cv_build_items.py
+harness/cv_study/rate_*.html
+# Slide bản cũ đã archive (dựng lại bằng ppt_build/_archive/*.js)
+report/_archive/slides_cu/*.pptx
+_archive/slides/*.pptx
+# PDF bài báo gốc tải từ arXiv (44MB) — ảnh bảng đã cắt sẵn ở report/_papers/*.png
+report/_papers/*.pdf

@@ -2,7 +2,7 @@
 
 > **Mục đích:** viết sẵn phần Công-trình-liên-quan cho CẢ HAI bài (FAIR = model tiếng Anh · VCL = sinh-tiếng-Việt + đánh giá).
 > Soạn theo lựa chọn của user (2026-07-12): **viết chung một kho luận điểm → tách/viết-lại câu chữ cho từng bài** (chống trùng lặp).
-> **Mọi citation trong file này đã verify venue/năm** (nguồn: `report/50`, `report/51`, `report/papers/`, + web-verify 2026-07-12). Preprint được gắn nhãn rõ; **KHÔNG trích preprint như trụ bình-duyệt**.
+> **Mọi citation trong file này đã verify venue/năm** (nguồn: `report/50`, `report/_archive/51`, `report/papers/`, + web-verify 2026-07-12). Preprint được gắn nhãn rõ; **KHÔNG trích preprint như trụ bình-duyệt**.
 > Khi mâu thuẫn framing: `report/54` (pipeline) + `report/00` (trạng thái) thắng.
 >
 > **⚠️ CẬP NHẬT 2026-07-12 (sau debate `wf_e77fd58f`, 22 đòn web-verify, 0 đòn design):** đã vá trọn 4 nhóm — (1) scoop cần phân-định (DocVAL, dòng lọc-a11y-tree); (2) thiếu citation reviewer sẽ đòi (UGIF, screen-captioning-cho-người, VLM tiếng Việt, POPE/HallusionBench, eval-Việt, cross-lingual-tuning); (3) sửa citation sai (DreamStruct = synthetic-data code-gen, KHÔNG phải distillation); (4) framing/overclaim (hedge "internalized→persists", T4c reference-free, ZonUI recipe-collision, cắt đống grounding, salami FAIR2.4, self-cite ngôi-ba-ẩn-danh). Không đòn nào chạm thiết kế thí nghiệm.
