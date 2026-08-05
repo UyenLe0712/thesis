@@ -138,4 +138,65 @@ Hạt giống dùng chung cho mọi phép lấy mẫu và bootstrap: **20260805*
 
 *(Mọi thay đổi sau ngày lập đều ghi vào đây kèm ngày và lý do. Không sửa đè lên phần trên.)*
 
-- *(chưa có)*
+### 5/8/2026 — cân nhắc ĐẢO nguồn tên trong nhãn khai báo: **BÁC**. Áp cổng lọc thay thế.
+
+**Vì sao đặt vấn đề.** Phát hiện bản dump cây trợ năng không có trường `text` nào, chỉ có
+`content_description` — tức nhãn chức năng do lập trình viên viết, không phải chữ hiển thị.
+Ô "tên" vì vậy đang trộn hai quy ước: tên chức năng (từ trợ năng) và chữ trên màn (từ OCR).
+Đề xuất ban đầu là đảo thứ tự ưu tiên sang OCR trước, vì người dùng nhìn màn hình chỉ thấy
+chữ hiển thị.
+
+**Bằng chứng ban đầu, thuận chiều đảo.** Khi hai nguồn khác nhau (n=130), câu chuẩn do người
+viết dùng chữ OCR 32 lần, dùng nhãn trợ năng 10 lần — gấp 3,2 lần.
+
+**Vòng phản biện 5/8 (3 lập trường, mổ chéo, một chủ tịch tự đo lại) BÁC đề xuất**, bằng một
+lập luận mà vòng đo đầu bỏ sót:
+
+1. Bán kính thật của tranh cãi nhỏ: chỉ **72/1074 = 6,7%** nhãn đổi tên nếu đảo.
+2. Trong 72 ca đó, **32 ca là chuỗi số có sẵn trong mục tiêu** (bộ chọn ngày giờ, bàn phím
+   số: OCR đọc `10`, mục tiêu ghi "Set minutes to 10"). Ưu thế ở nhóm này đến từ đề bài,
+   không từ chất lượng đặt tên.
+3. Còn 40 ca lõi: OCR thắng 12, trợ năng thắng 3, không bên nào 25. **Nhưng 11/12 ca OCR
+   thắng là vì nhãn trợ năng RÁC** (`plp_category_button`, `viewer.button.edit`,
+   `No label specified`, `Search, Tab 2 of 3`, chuỗi có ký tự vô hình...). Đối đầu
+   sạch-với-sạch: OCR thắng 1, trợ năng thắng 3.
+
+⇒ **Ưu thế đo được của OCR là ưu thế của việc LỌC RÁC, không phải của thứ tự ưu tiên.**
+Đảo thứ tự là đổi một luật đã niêm phong để mua nhầm thứ mà một bộ lọc lấy được rẻ hơn.
+
+**Đã áp thay vào đó (phương án A′), quyết TRƯỚC khi huấn luyện dòng nào:**
+
+- **Cổng hợp lệ cho nhãn trợ năng** (`clean_a11y` trong `descriptor_label_build.py`): cắt tại
+  ký tự xuống dòng, bỏ ký tự vô hình, bỏ tiền tố `null,` và đuôi đọc-màn (`, Tab 2 of 3`,
+  `. Button`); loại hẳn nếu là định danh mã nguồn, chuỗi số dài, nhãn rỗng nghĩa, hoặc còn
+  dài quá 40 ký tự. Đo tại nút đích: **14,7% nhãn trợ năng là rác** (tự kiểm lại, phản biện
+  ước 15,0%).
+- **Cổng hình học cho OCR**: chỉ dùng chữ OCR khi hộp chiếm ≤25% màn. Hộp to hơn là khung
+  ngoài, chữ bên trong thuộc phần tử khác — đo được 25 ca như vậy, **0/25 khớp câu chuẩn**.
+- **Luật ghép OCR**: chỉ nối hai mục khi cùng dòng, tránh đẻ ra chuỗi không tồn tại trên màn
+  (`= adidas Gmail`, `Showresults`).
+- Thêm trường `a11y_raw` và giá trị `name_src = a11y_rejected` để sau này kiểm lại được.
+
+**Ảnh hưởng lên phân bố nhãn** (thay số ở mục 9, dòng "chất lượng nhãn khai báo"):
+
+| | luật cũ | sau A′ |
+|---|---|---|
+| tên rõ | 77,2% | **73,8%** |
+| chỉ ký hiệu lẻ | 2,9% | 2,8% |
+| không tên | 19,9% | **23,4%** |
+| nguồn: trợ năng / OCR | 254 / 606 | 224 / 599 |
+
+Tên ít đi 3,4 điểm, đổi lại nhãn còn lại sạch hơn — đúng nguyên tắc đã khoá ở mục 7: để trống
+còn hơn đoán bừa.
+
+**Ba giới hạn phải khai, không được lờ:**
+
+- A′ không chạm tới 25/40 ca lõi mà người viết không dùng nguồn nào (`Create new reminder.` |
+  `+` → người viết "the add icon"), cũng không chạm 23,4% bước không có tên.
+- Toàn bộ nhóm quyết định này nằm trên 6,7% dữ liệu, **dưới mọi kịch bản MDE**. Cấm dùng A′
+  để giải thích hậu kỳ nếu S2 thắng, và cấm hứa nó nâng điểm.
+- Lát cắt "theo nguồn tên" (mục 7 ý 3) bị nhiễu: nhóm nguồn-trợ-năng thiên nặng về nút icon
+  không chữ, tức là bước KHÓ hơn. Chênh lệch thấp ở nhóm đó không tách được "nhãn tệ" khỏi
+  "bước khó". Lát này là mô tả, **không phải phép kiểm** — phải ghi rõ trong thân luận văn.
+
+Nhật ký đầy đủ của vòng phản biện: `report/107_DEBATE_NGUON_TEN.md`.

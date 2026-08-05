@@ -1,5 +1,20 @@
 # CLAUDE.md — Bối cảnh luận văn (auto-load mỗi phiên)
 
+> ## 🔒 CHỐT 5/8/2026 — ĐÃ ĐĂNG KÝ TRƯỚC VÀ COMMIT, ĐỌC `report/106_DANG_KY_TRUOC.md`
+> **Thầy không gặp được → chạy luôn, không đợi chốt miệng.** Vì mất bước đó, `report/106` gánh vai trò niêm phong thiết kế: khoá 6 nhánh, thước đo, **luật đọc kết quả cho cả 4 kết cục** (dương / dương yếu / trắng / âm), 3 lát cắt, hạt giống 20260805. Đã commit `51ddb35`. Mọi thay đổi về sau **ghi vào mục sửa đổi cuối file, KHÔNG sửa đè**.
+>
+> **Đã dựng xong, chạy được ngay khi có máy:**
+> · `harness/descriptor_label_build.py` — nhãn khai báo bản thật (`<point>` toạ độ, không còn lưới 3×3). Bắt 2 lỗi: cây trợ năng lồng nhau làm "trùng tên" thổi từ 30%→6,9%, và tên class Android lọt vào nhãn.
+> · `harness/build_branch_data.py` — 4 nhánh s1/s2/s2r/s2_nopoint, định dạng sharegpt. **Khai báo giả của s2r lệch độ dài trung bình 0,5 ký tự** nên không đổ hiệu ứng cho "chuỗi dài thêm" được. 623/1697 bước không-chạm giữ đích y hệt ở mọi nhánh → phép kiểm không-gây-hại đọc được.
+> · `harness/build_test_data.py` — **tập kiểm 6.969 bước / 1.432 tác vụ / 4.465 bước chạm (64,1%)**, ghép chuẩn (khớp 37% vs đối chứng lệch 10%). ⚠️ chỉ **44,9% gán được app** → số cụm hiệu dụng do nhóm cụm-đơn chi phối, MDE thật phải tính lại từ đây.
+> · `harness/infer_branch.py` · `harness/score_run.py` (gồm **cổng A**) · `harness/run_on_rented.sh` — ba mắt xích trước đó KHÔNG tồn tại: chưa có script suy luận, `metric_exec.py` hoá ra chỉ là thư viện hàm chấm chứ không có gì gộp số.
+> · `harness/train_config.yaml` viết lại: bỏ khung Student/Student-RAW cũ, một file cho mọi nhánh chỉ đổi 3 dòng. Bắt 2 lỗi: **thiếu `seed`** (giao thức 2 hạt giống không có chỗ khai) và `val_size: held_out_by_app` là giá trị không hợp lệ.
+>
+> **⚖️ QUYẾT ĐỊNH 5/8 — nguồn tên trong nhãn: BÁC việc đảo sang OCR-trước, áp A′.** Chi tiết `report/107_DEBATE_NGUON_TEN.md`. Phát hiện: dump cây trợ năng **không có trường `text`**, chỉ `content_description` (tên chức năng). Tưởng phải đảo sang OCR vì câu chuẩn theo OCR gấp 3,2 lần — nhưng vòng phản biện bóc ra: bán kính thật chỉ **72/1074 = 6,7%**; bỏ 32 ca chuỗi-số-có-sẵn-trong-mục-tiêu còn 40 ca lõi (OCR 12 – trợ năng 3); và **11/12 ca OCR thắng là do nhãn trợ năng RÁC**. ⇒ ưu thế của OCR là ưu thế của **lọc rác**, không phải của thứ tự. Đã áp: cổng `clean_a11y` (14,7% nhãn là rác) + cổng hình học ≤25% màn (25 ca hộp to, **0/25 khớp câu chuẩn**) + luật ghép OCR cùng dòng. Nhãn: tên rõ 77,2%→**73,8%**, không tên 19,9%→**23,4%** (ít tên hơn nhưng sạch hơn). **Cấm dùng A′ giải thích hậu kỳ nếu S2 thắng** — nó nằm dưới mọi kịch bản MDE.
+>
+> **▶️ VIỆC KẾ:** (1) chạy OCR tập kiểm `prep_ocr_train.py --split test` (free, vài tiếng) → (2) thử đường ống bằng bộ trỏ rẻ ~30 bước (~$0.3) → (3) **cổng A** ($4-8, cần GPU) → (4) train s1 ×2 hạt giống → chấm đủ → **MDE thật** → khoá ngưỡng → (5) mới train s2.
+> **Slide + script trình bày:** `LUAN_VAN_SLIDE_v9.pptx` (23 slide chính + 4 slide dự phòng ẩn chứa ảnh bảng gốc) · `report/104` (script 15 phút) · `report/105` (nguồn từng con số, ảnh bảng cắt từ PDF gốc). ⚠️ **3/4 số trong bảng bằng chứng là hiệu tự trừ từ bảng của họ, không phải số in sẵn** — khai trước khi bị vặn.
+
 > ## 🧭 NGUỒN-SỰ-THẬT HIỆN TẠI (cập nhật 29/7/2026) — ĐỌC HAI FILE NÀY TRƯỚC
 > **`report/100_TONG_QUAN_PIPELINE.md`** = bản cho người CHƯA biết gì, chỉ có bài toán + pipeline + số. Không kể lịch sử. **Đây là file đưa thầy đọc trước** (thầy muốn nghe pipeline, không quan tâm đã làm gì).
 > **`report/98_BAN_TRINH_THAY_DAY_DU.md`** = hồ sơ đầy đủ, có cả phần tự kiểm và các chỗ còn hở, dùng khi thầy hỏi sâu. Slide: **`LUAN_VAN_SLIDE_v9.pptx`** (4/8 — 22 slide trọn flow theo report/103, style mẫu bài giảng Lê Văn Luyện: 4:3, chàm 322164, khối xám bo góc, Cambria; build `ppt_build/build_v9.js`, preview `ppt_build/_preview_v9/preview.html`; bìa còn ô trống học viên/GVHD/trường + chữ "PU © 2026" ở footline phải sửa). Bản PDF LaTeX cùng nội dung: `slides/LUAN_VAN_SLIDE_v9.tex` (build tectonic). v7/v8 pptx cũ → `slides/old_pptx/`.

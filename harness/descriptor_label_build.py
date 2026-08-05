@@ -79,17 +79,72 @@ def nodes_of(rel):
     return out
 
 
-def name_of(box, a11y_name, ocr_rec):
-    """Tên phần tử: cây trợ năng trước, không có thì OCR đọc chữ nằm trong hộp."""
-    if a11y_name:
-        return a11y_name, "a11y"
-    if ocr_rec:
+def clean_a11y(name):
+    """Làm sạch nhãn trợ năng, trả None nếu nhãn không dùng được làm TÊN.
+
+    Đo trên 285 nhãn tại nút đích: 14,7% là rác. Bốn kiểu hay gặp, đều không phải
+    tên mà người dùng nhìn thấy hay gọi ra được:
+      · định danh trong mã nguồn: 'plp_category_button', 'viewer.button.edit'
+      · phần đuôi do bộ đọc màn thêm vào: 'Search, Tab 2 of 3', 'Every Year. Button'
+      · nhãn rỗng nghĩa: 'No label specified', tiền tố 'null, '
+      · cả một câu thay vì một tên: 'Save as reminder and go back to home page.'
+    Cắt tại ký tự xuống dòng TRƯỚC khi xét độ dài, vì nhiều nhãn có dạng
+    'Basic\nI have a modest vocabulary...' mà dòng đầu chính là tên tử tế.
+    """
+    if not name:
+        return None
+    t = re.sub(r"[\u200b\u200c\u200d\ufeff]", "", name).strip()
+    t = t.split("\n")[0].strip()
+    t = re.sub(r"^null,\s*", "", t, flags=re.I)
+    t = re.sub(r"(,\s*Tab \d+ of \d+|[,.]\s*Button)$", "", t, flags=re.I).strip()
+    if not t or len(t) > 40:
+        return None
+    if t.lower() in ("no label specified", "null", "unlabeled"):
+        return None
+    if re.fullmatch(r"[a-z0-9]+([._][a-z0-9]+)+", t) or re.fullmatch(r"[a-z]+_[a-z0-9_]+", t):
+        return None                      # định danh mã nguồn
+    if re.fullmatch(r"\d{5,}", t):
+        return None                      # chuỗi số dài, thường là id
+    if not re.search(r"[A-Za-z0-9]", t):
+        return None
+    return t
+
+
+def name_of(box, a11y_name, ocr_rec, area_share=0.0):
+    """Tên phần tử. Thứ tự: nhãn trợ năng ĐÃ QUA CỔNG HỢP LỆ, không qua thì tới OCR.
+
+    Vòng phản biện 5/8 đã bác phương án đảo thứ tự sang OCR-trước. Lý do bằng số: trong
+    72 ca hai nguồn khác nhau, bóc 32 ca mà chuỗi OCR chỉ là con số có sẵn trong mục tiêu
+    (bộ chọn ngày giờ, bàn phím số) thì còn 40 ca lõi — OCR thắng 12, trợ năng thắng 3.
+    Nhưng 11/12 ca OCR thắng là vì nhãn trợ năng RÁC. Đối đầu sạch với sạch: 1 ca OCR
+    thắng, 3 ca trợ năng thắng. Tức ưu thế đo được của OCR là ưu thế của việc LỌC RÁC,
+    không phải của thứ tự ưu tiên. Nên lọc rác, giữ thứ tự.
+
+    Hai cổng, đều tiên nghiệm và đo được:
+      · nhãn trợ năng phải qua clean_a11y
+      · chữ OCR chỉ dùng khi hộp không quá to (>25% màn thì hộp là khung ngoài, chữ bên
+        trong là của phần tử khác: đo được 25 ca như vậy, 0/25 khớp câu chuẩn)
+    """
+    clean = clean_a11y(a11y_name)
+    if clean:
+        return clean, "a11y"
+    if ocr_rec and area_share <= 0.25:
         inside = [it for it in ocr_rec["items"]
                   if box[0] <= it["cx"] <= box[2] and box[1] <= it["cy"] <= box[3]]
         if inside:
             inside.sort(key=lambda it: (it["cy"], it["cx"]))
-            return " ".join(it["text"] for it in inside[:2]).strip(), "ocr"
-    return None, None
+            # chỉ nối hai mục khi chúng CÙNG DÒNG; khác dòng mà nối sẽ đẻ ra chuỗi không
+            # tồn tại trên màn ('= adidas Gmail', 'Showresults')
+            keep = [inside[0]]
+            if len(inside) > 1:
+                h = max(box[3] - box[1], 1)
+                if abs(inside[1]["cy"] - inside[0]["cy"]) < 0.5 * h:
+                    keep.append(inside[1])
+            t = " ".join(it["text"] for it in keep).strip()
+            if re.search(r"[A-Za-z0-9]{2,}", t):
+                return t, "ocr"
+            return t or None, ("ocr" if t else None)
+    return None, ("a11y_rejected" if a11y_name else None)
 
 
 def tier_of(name):
@@ -98,6 +153,9 @@ def tier_of(name):
     if name:
         return "ky_hieu"
     return "khong_ten"
+
+
+SCREEN_AREA = [1080 * 2400]      # đặt lại theo từng màn trong main()
 
 
 def distinguish(box, cls, name, nds, ocr_rec):
@@ -114,7 +172,8 @@ def distinguish(box, cls, name, nds, ocr_rec):
         for b, c, nm in nds:
             if b == box or overlapped(b, box):
                 continue
-            n2, _ = name_of(b, nm, ocr_rec)
+            a2 = (b[2] - b[0]) * (b[3] - b[1]) / max(SCREEN_AREA[0], 1)
+            n2, _ = name_of(b, nm, ocr_rec, a2)
             if n2 and n2.strip().lower() == low:
                 dup += 1
     if dup:
@@ -188,13 +247,16 @@ def main():
         st["vai_tro_ro"] += 1 if cls in ROLE else 0
         st["vai_tro_generic"] += 1 if cls in GENERIC else 0
 
-        name, src = name_of(box, a11y_name, ocr_rec)
+        SCREEN_AREA[0] = w * h
+        name, src = name_of(box, a11y_name, ocr_rec, area_share)
         tier = tier_of(name)
         st[tier] += 1
         if src:
             st[f"nguon_{src}"] += 1
-        if area_share > 0.5:
+        if area_share > 0.25:
             st["hop_qua_to"] += 1
+        if src == "a11y_rejected":
+            st["a11y_bi_loai"] += 1
 
         hint, dup, same_role = distinguish(box, cls, name, nds, ocr_rec)
         if dup:
@@ -209,7 +271,8 @@ def main():
         neg_desc = None
         if neg:
             nb, ncls, nnm = neg
-            nname, _ = name_of(nb, nnm, ocr_rec)
+            nshare = (nb[2] - nb[0]) * (nb[3] - nb[1]) / max(w * h, 1)
+            nname, _ = name_of(nb, nnm, ocr_rec, nshare)
             ncx = int(round((nb[0] + nb[2]) / 2))
             ncy = int(round((nb[1] + nb[3]) / 2))
             npt = (ncx, ncy) if args.abs else (int(round(ncx / max(w, 1) * 1000)),
@@ -224,6 +287,7 @@ def main():
             "desc": desc_str(role, name, pt, hint),
             "desc_neg": neg_desc,
             "role": role, "role_class": cls, "name": name, "name_src": src, "tier": tier,
+            "a11y_raw": a11y_name or None,
             "hint": hint, "dup_name": dup, "same_role": same_role,
             "point_abs": pt_abs, "point_norm": pt_norm,
             "box": [int(v) for v in box], "area_share": round(area_share, 3),
