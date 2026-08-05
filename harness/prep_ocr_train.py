@@ -6,13 +6,16 @@ Lớp 2 nối danh sách chữ nhìn thấy vào đầu vào của mô hình. Ch
 luyện thì chậm, nên đọc trước một lần rồi lưu lại. Vị trí ghi theo lưới thô 3x3 để mô tả
 gọn và không phụ thuộc kích thước màn.
 
-Chạy: ~/.venvs/thesis/bin/python harness/prep_ocr_train.py [--limit N]
+Chạy: ~/.venvs/thesis/bin/python harness/prep_ocr_train.py [--limit N] [--split test]
 """
 import os, json, argparse
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.join(HERE, "dg1_cache", "train_ac")
+# --split test  -> chạy trên tập kiểm (cùng mã, để đầu vào lúc chấm giống hệt lúc dạy)
+_SPLIT = "test" if "--split" in os.sys.argv and "test" in os.sys.argv else "train"
+ROOT = os.path.join(HERE, "dg1_cache", f"{_SPLIT}_ac")
 OUT = os.path.join(ROOT, "ocr.jsonl")
+_RECFILE = "test.jsonl" if _SPLIT == "test" else "train.jsonl"
 
 COLS = ["bên trái", "giữa", "bên phải"]
 ROWS = ["trên đỉnh", "giữa màn", "dưới đáy"]
@@ -31,7 +34,7 @@ def main(limit=None):
         with open(OUT, encoding="utf-8") as f:
             for line in f:
                 done.add(json.loads(line)["image"])
-    recs = [json.loads(l) for l in open(os.path.join(ROOT, "train.jsonl"), encoding="utf-8")]
+    recs = [json.loads(l) for l in open(os.path.join(ROOT, _RECFILE), encoding="utf-8")]
     if limit:
         recs = recs[:limit]
     todo = [r for r in recs if r["image"] not in done]
@@ -58,4 +61,5 @@ def main(limit=None):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(); ap.add_argument("--limit", type=int)
+    ap.add_argument("--split", default="train", choices=["train", "test"])
     main(ap.parse_args().limit)
