@@ -1,14 +1,32 @@
-# train_config.yaml — LLaMA-Factory, Qwen2.5-VL-3B QLoRA (report/53 §3).
-# Freeze vision (chi LoRA decoder) — hanh vi can do la "noi gi khi khong chac", khong phai "nhin thay gi".
-# Train HAI ban voi cung file nay, chi doi `dataset` + `output_dir`:
-#   - Student     : dataset=faithful_gui_train      (data DA LOC, buoc 2.6)
-#   - Student-RAW : dataset=faithful_gui_train_raw   (data BASE tho, cung train_apps)
-# Chay tren Colab (✱ GPU) — KHONG chay tren may nay (khong GPU).
+# train_config.yaml — LLaMA-Factory · Qwen2.5-VL-3B QLoRA
+# Viết lại 5/8/2026 cho thiết kế đã khoá ở report/106. Bản cũ theo khung Faithful
+# Distillation (Student / Student-RAW) đã bỏ.
+#
+# MỘT FILE DÙNG CHO MỌI NHÁNH — chỉ đổi ba dòng, không đổi gì khác. Đó là điều
+# kiện để chênh lệch điểm quy được về can thiệp:
+#     dataset      gui_s1 · gui_s2 · gui_s2r · gui_s2_nopoint
+#     seed         101 (hạt giống 1) · 202 (hạt giống 2) · 303 (chỉ khi cổng ở
+#                  report/106 mục 2 kích hoạt)
+#     output_dir   .../<nhánh>_seed<seed>
+#
+# Trình tự bắt buộc (report/106 mục 5): chạy đủ s1 hai hạt giống, chấm, đo MDE
+# thật, khoá ngưỡng — RỒI MỚI chạy s2. Không đảo.
+#
+# Máy: vast.ai A100-80GB (bf16). Nếu rơi xuống card Turing đời cũ không có bf16
+# thì đổi bf16→false, fp16→true và ghi lại vào mục sửa đổi của report/106, vì
+# đổi độ chính xác số học giữa các nhánh là làm hỏng phép so.
 
 model_name_or_path: Qwen/Qwen2.5-VL-3B-Instruct
-image_min_pixels: 200704          # 256 * 28^2
-image_max_pixels: 1003520         # 1280 * 28^2 (ha xuong 602112 = 768*28^2 neu T4 OOM)
 trust_remote_code: true
+image_min_pixels: 200704          # 256 * 28^2
+image_max_pixels: 1003520         # 1280 * 28^2 — hạ xuống 602112 nếu thiếu bộ nhớ
+
+### ── nhánh: BA DÒNG DUY NHẤT ĐƯỢC PHÉP ĐỔI ───────────────────────────────────
+dataset: gui_s1
+seed: 101
+output_dir: /workspace/ckpt/s1_seed101
+dataset_dir: /workspace/data/branches   # nơi đặt dataset_info.json + 4 tệp nhánh
+### ───────────────────────────────────────────────────────────────────────────
 
 stage: sft
 do_train: true
@@ -17,30 +35,33 @@ lora_rank: 8
 lora_alpha: 16
 lora_dropout: 0.05
 lora_target: q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
-freeze_vision_tower: true
+freeze_vision_tower: true         # hành vi cần dạy là "nói gì", không phải "nhìn thấy gì"
 freeze_multi_modal_projector: true
-quantization_bit: 4               # QLoRA 4-bit NF4 (MAC DINH, chay duoc ca T4 16GB)
+quantization_bit: 4               # QLoRA 4-bit NF4
 quantization_method: bnb
 
-dataset: faithful_gui_train       # <-- doi thanh faithful_gui_train_raw cho ban Student-RAW
-template: qwen2_vl                # dung chung Qwen2-VL va Qwen2.5-VL
-cutoff_len: 2048
-train_on_prompt: false            # chi tinh loss tren luot assistant
+template: qwen2_vl                # dùng chung Qwen2-VL và Qwen2.5-VL
+cutoff_len: 2048                  # đủ cho ảnh + mục tiêu + ~24 dòng OCR + đích
+train_on_prompt: false            # chỉ tính mất mát trên lượt trợ lý
 
-output_dir: /content/drive/MyDrive/thesis_ckpt/qwen25vl3b_faithful_lora
-save_steps: 50                    # ~10-15 phut wall-clock -> luu thuong xuyen (chong ngat phien Colab)
-save_total_limit: 3
-resume_from_checkpoint: auto
-
-per_device_train_batch_size: 1
-gradient_accumulation_steps: 16   # doi 8 neu chac chan L4/A100
+per_device_train_batch_size: 4    # A100-80GB gánh được; hạ về 1 nếu card nhỏ
+gradient_accumulation_steps: 4    # cỡ lô hiệu dụng = 16, giữ nguyên cho mọi nhánh
 learning_rate: 1.0e-4
-num_train_epochs: 3.0
+num_train_epochs: 2.0             # 2 lượt duyệt, khoá trong report/106
 lr_scheduler_type: cosine
 warmup_ratio: 0.05
-bf16: false                       # true neu GPU = L4/A100 (re nhanh tu dong dau notebook theo device_name)
-fp16: true                        # T4 (Turing) khong co bf16 tensor-core
+bf16: true
+fp16: false
 gradient_checkpointing: true
 
-val_size: held_out_by_app         # split thu cong theo APP, KHONG dung val_size random-row mac dinh
-eval_strategy: epoch
+save_steps: 200                   # máy thuê loại rẻ có thể bị ngắt giữa chừng
+save_total_limit: 2
+resume_from_checkpoint: auto
+logging_steps: 20
+report_to: none
+
+# Tập kiểm chia theo ỨNG DỤNG, không phải chia ngẫu nhiên theo dòng: màn hình cùng
+# một app na ná nhau nên chia ngẫu nhiên sẽ rò rỉ và cho điểm ảo. Việc chia làm
+# ở khâu dựng dữ liệu; ở đây tắt hẳn phần tự chia của LLaMA-Factory.
+val_size: 0.0
+do_eval: false
