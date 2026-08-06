@@ -30,6 +30,7 @@ OUT = os.path.join(ROOT, "branches")
 
 SEED = 20260805                      # khoá trong report/106 mục 10
 MAX_OCR = 24                         # số dòng chữ tối đa nhét vào đầu vào
+BASE_MODEL = "Qwen/Qwen2.5-VL-3B-Instruct"   # chỉ dùng bộ tách token, không nạp trọng số
 
 SYS = ("Bạn nhìn ảnh màn hình điện thoại và viết MỘT câu hướng dẫn ngắn bằng tiếng Anh "
        "cho người dùng, chỉ rõ cần chạm vào đâu để đi tiếp.")
@@ -96,11 +97,28 @@ def main():
     # ── kho khai báo để bốc bản GIẢ cho nhánh s2r ──────────────────────────────
     # Luật: bốc từ tác vụ KHÁC (khác episode), chọn bản có độ dài sát nhất để
     # chênh lệch độ dài chuỗi đích không thành lời giải thích thay thế.
-    pool = [(d["episode_id"], len(d["desc"]), d["desc"]) for d in desc.values()]
+    #
+    # Đo theo TOKEN chứ không theo ký tự. Mất mát tính trên token, nên "độ dài" mà
+    # nhánh đối chứng cần ghép là độ dài token. Bản trước ghép theo ký tự: trung vị
+    # lệch 0 ký tự nghe rất khít, nhưng đo lại theo token thì chỉ 54% số cặp nằm
+    # trong 2 token, biên độ tới ±17. Trung bình vẫn ~0 nên đối chứng không lệch hệ
+    # thống, song ghép theo token thì chặt hơn mà không mất gì.
+    def _tok_len_factory():
+        try:
+            from transformers import AutoTokenizer
+            tk = AutoTokenizer.from_pretrained(BASE_MODEL, trust_remote_code=True)
+            return lambda s: len(tk(s).input_ids), "token"
+        except Exception as e:
+            print(f"  (không nạp được bộ tách token: {e} — ghép độ dài theo KÝ TỰ)")
+            return len, "ký tự"
+
+    tok_len, len_unit = _tok_len_factory()
+    pool = [(d["episode_id"], tok_len(d["desc"]), d["desc"]) for d in desc.values()]
     pool.sort(key=lambda t: t[1])
+    print(f"  ghép độ dài khai báo giả theo: {len_unit}")
 
     def fake_for(d):
-        L = len(d["desc"])
+        L = tok_len(d["desc"])
         cand = [p for p in pool if p[0] != d["episode_id"]]
         if not cand:
             return None

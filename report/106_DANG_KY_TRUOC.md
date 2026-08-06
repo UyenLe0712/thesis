@@ -439,3 +439,62 @@ thành phần đóng góp ("mô tả **phân biệt** trước, phát ngôn sau"
 > **S2-nopoint** tách phần đóng góp của ô toạ độ, **S2r** tách phần đóng góp của việc chuỗi dài
 > thêm. Phần dư sau khi trừ hai thứ đó mới được bàn tới nội dung khai báo.
 > Đồng thời phải in bảng phân tầng kết quả theo ba nhóm ô trên (85,8% / 7,0% / 7,3%).
+
+---
+
+## Sửa đổi 6/8 (f) — nâng ô "dấu hiệu phân biệt", và siết ghép độ dài của nhánh đối chứng
+
+Sửa đổi này ra đời **trước khi có bất kỳ điểm số nào**, và đó là điều kiện để nó hợp lệ. Sau
+lượt huấn luyện đầu tiên thì không được đụng vào đặc tả nhãn nữa.
+
+### (f1) Ô thứ tư nay nói được cách gỡ mơ hồ
+
+Sửa đổi (e2) đo ra ô này rỗng nghĩa 92,7%. Nguyên nhân nằm ở **thứ tự ưu tiên trong luật sinh**:
+vế "đếm số phần tử cùng loại" đứng trước nên nuốt gần hết, dù nó không gỡ được gì. Đã xếp lại
+theo tiêu chí *vế nào gỡ được mơ hồ*:
+
+1. phần tử duy nhất thuộc vai trò đó — gỡ hẳn
+2. **mỏ neo chữ** — chuỗi chữ gần nhất bên cạnh, kèm hướng: *"ngay dưới chữ «Create folder»"*
+3. đếm số phần tử cùng loại — chỉ dùng khi hết đường
+
+Ca trùng tên là ca mơ hồ nặng nhất nên nay được **ghép thêm mỏ neo** thay vì chỉ nói triệu chứng.
+
+Vì sao chọn mỏ neo chữ chứ không chọn mô tả vị trí kiểu *"nửa dưới, bên phải"*: ô `<point>` đã
+ghi vị trí, và ghi chính xác hơn hẳn một cách nói ước lượng. Mô tả vị trí bằng lời **không thêm
+thông tin nào** ngoài thứ toạ độ đã có. Mỏ neo thì khác — nó là **quan hệ với xung quanh**, không
+suy ra được từ toạ độ, và đúng là thứ tách được hai nút trông y hệt nhau.
+
+Ba điều kiện lọc, đều đã kiểm bằng số trên đủ 1.074 nhãn: chuỗi phải nằm **ngoài** hộp phần tử
+(nằm trong hộp thì nó chính là nhãn của phần tử, lặp lại ô TÊN); không được trùng tên phần tử;
+phải có ít nhất hai ký tự chữ-số (không có luật này thì lọt rác OCR một ký tự kiểu `α`, `S`).
+Hướng của mỏ neo kiểm riêng: **737/737 ca đúng chiều, 0 sai**.
+
+| Nội dung ô | Bản cũ | **Bản mới** |
+|---|---|---|
+| Mỏ neo chữ | — | **686 = 63,9%** |
+| Trùng tên, có kèm mỏ neo | — | 51 = 4,7% |
+| Phần tử duy nhất trên màn | 78 = 7,3% | 78 = 7,3% |
+| Trùng tên, không mỏ neo | 75 = 7,0% | 24 = 2,2% |
+| Chỉ đếm số phần tử cùng loại | 921 = 85,8% | 235 = 21,9% |
+| **Gỡ được mơ hồ** | **7,3%** | **75,9%** |
+
+**Cách đọc kết quả vẫn giữ nguyên như (e2)** — không nới. Ô này khá hơn nhiều nhưng vẫn còn
+24,1% không gỡ được, và việc quy công cho "tính phân biệt" vẫn phải đi qua hai nhánh đối chứng
+S2-nopoint và S2r, kèm bảng phân tầng theo ba nhóm trên. Sửa nhãn không phải là bằng chứng.
+
+### (f2) Nhánh S2r nay ghép độ dài theo token
+
+Mục 2 đăng ký S2r là "độ dài **token** ghép bằng bản thật theo từng mẫu". Kiểm lại thì mã ghép
+theo **ký tự**. Trung vị lệch 0 ký tự nghe rất khít, nhưng đo theo token thì chỉ **54,0%** số cặp
+nằm trong 2 token, biên độ tới −17/+14. Trung bình vẫn ~0 nên đối chứng không lệch hệ thống, song
+mã không làm đúng thứ đã đăng ký. Đã đổi sang ghép theo token của chính `Qwen2.5-VL-3B-Instruct`:
+
+| | trước | sau |
+|---|---|---|
+| Cặp lệch ≤ 2 token | 54,0% | **99,3%** |
+| Biên độ | −17 / +14 | **−3 / +6** |
+| Tổng token đích (S2 vs S2r) | — | 54.021 vs 53.891 |
+
+Bảy bất biến của bốn nhánh kiểm lại sau khi dựng: câu đem chấm trùng S1 ở cả ba nhánh, S1 không
+chứa khai báo, 1.074 nhãn ở cả ba, S2-nopoint sạch ô toạ độ, S2 bỏ toạ độ đúng bằng S2-nopoint,
+S2 khác S2r đúng 1.074 chỗ, khai báo giả mức 2 không trùng toạ độ đích — **đạt cả bảy**.

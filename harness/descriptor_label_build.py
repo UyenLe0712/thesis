@@ -158,12 +158,64 @@ def tier_of(name):
 SCREEN_AREA = [1080 * 2400]      # đặt lại theo từng màn trong main()
 
 
+ANCHOR_MAX_PX = 350       # xa hơn thế thì "cạnh chữ X" không còn là mô tả vị trí nữa
+
+
+def text_anchor(box, name, ocr_rec):
+    """Mỏ neo: chuỗi chữ gần phần tử nhất mà KHÔNG phải nhãn của chính nó.
+
+    Đây là vế duy nhất trong ô thứ tư mang thông tin **không suy ra được từ `<point>`**.
+    Toạ độ đã nói phần tử nằm ở đâu; thứ nó không nói là phần tử nằm CẠNH CÁI GÌ. Với
+    màn dày nút giống nhau — đúng ca mà thành phần này nhắm tới — quan hệ với chữ xung
+    quanh mới là thứ tách được hai nút trông y hệt.
+
+    Ba điều kiện lọc, đều cần thiết:
+      · tâm chuỗi phải nằm NGOÀI hộp phần tử. Chuỗi nằm trong hộp chính là nhãn của nó,
+        lặp lại ô TÊN chứ không phân biệt thêm gì.
+      · chuỗi không được trùng tên phần tử, kể cả khi nằm ngoài hộp.
+      · phải có ít nhất 2 ký tự chữ-số. Không có luật này thì lọt 'α', 'S', '|' — rác
+        OCR một ký tự, đo được là chiếm phần đáng kể trong các ca gần nhất.
+    """
+    cx, cy = (box[0] + box[2]) / 2, (box[1] + box[3]) / 2
+    low = (name or "").strip().lower()
+    best, bd = None, None
+    for t in (ocr_rec or {}).get("items") or []:
+        tx, ty, txt = t.get("cx"), t.get("cy"), (t.get("text") or "").strip()
+        if tx is None or ty is None or not txt:
+            continue
+        if box[0] <= tx <= box[2] and box[1] <= ty <= box[3]:
+            continue                                   # nằm trong hộp = nhãn của chính nó
+        if txt.lower() == low:
+            continue
+        if sum(ch.isalnum() for ch in txt) < 2:
+            continue                                   # rác một ký tự
+        d = ((tx - cx) ** 2 + (ty - cy) ** 2) ** 0.5
+        if d > ANCHOR_MAX_PX:
+            continue
+        if bd is None or d < bd:
+            best, bd = (txt, tx, ty), d
+    if not best:
+        return None
+    txt, tx, ty = best
+    if abs(ty - cy) >= abs(tx - cx):
+        where = "ngay dưới" if ty < cy else "ngay trên"
+    else:
+        where = "bên phải" if tx < cx else "bên trái"
+    return f"{where} chữ “{txt}”"
+
+
 def distinguish(box, cls, name, nds, ocr_rec):
     """Ô thứ tư: nói phần tử này khác gì các phần tử quanh nó.
 
-    Hai vế, tính bằng luật, không đoán:
-      · bao nhiêu phần tử cùng vai trò trên màn
-      · có phần tử nào KHÁC trùng tên không (đây mới là ca mơ hồ thật)
+    Thứ tự ưu tiên đặt theo "vế nào GỠ được mơ hồ", không theo vế nào dễ tính:
+      1. phần tử duy nhất thuộc vai trò đó  — gỡ hẳn, không cần gì thêm
+      2. mỏ neo chữ bên cạnh                — gỡ được, và không trùng thông tin với <point>
+      3. đếm số phần tử cùng loại           — KHÔNG gỡ được gì, chỉ báo là có mơ hồ
+
+    Bản trước xếp ngược: vế đếm đứng trước nên nuốt gần hết, đo ra 85,8% số nhãn chỉ
+    còn con số đếm và 7,3% thật sự phân biệt được (report/106 sửa đổi 6/8 e2). Ca trùng
+    tên là ca mơ hồ nặng nhất nên phải ghép thêm mỏ neo, chứ nói "trùng tên với 2 phần
+    tử khác" mà không nói phân biệt bằng cách nào thì vô dụng.
     """
     same_role = [b for b, c, _ in nds if c == cls and b != box and not overlapped(b, box)]
     dup = 0
@@ -176,15 +228,23 @@ def distinguish(box, cls, name, nds, ocr_rec):
             n2, _ = name_of(b, nm, ocr_rec, a2)
             if n2 and n2.strip().lower() == low:
                 dup += 1
-    if dup:
-        return f"trùng tên với {dup} phần tử khác trên màn", dup, len(same_role)
     rname = ROLE.get(cls) or ("mục" if cls in GENERIC else "phần tử")
     k = len(same_role)
+    anchor = text_anchor(box, name, ocr_rec)
+
+    if dup:
+        # Mơ hồ nặng nhất: có phần tử khác mang đúng tên này. Chỉ nói "trùng tên với N
+        # phần tử" là mô tả triệu chứng. Ghép mỏ neo mới là chỉ được cách gỡ.
+        if anchor:
+            return f"trùng tên với {dup} phần tử khác, {anchor}", dup, k
+        return f"trùng tên với {dup} phần tử khác trên màn", dup, k
     if k == 0:
         return f"{rname} duy nhất trên màn", 0, 0
-    # Đếm chính xác chỉ có nghĩa khi ít. "1 trong 118" là con số vô dụng — với màn dày
-    # phần tử cùng loại thì thứ mô hình cần biết là "phải nói cho thật cụ thể", không
-    # phải con số. Nên chia ba mức thay vì in số thô.
+    if anchor:
+        return anchor, 0, k
+    # Hết đường gỡ — lùi về đếm. Đếm chính xác chỉ có nghĩa khi ít: "1 trong 118" là con
+    # số vô dụng, với màn dày phần tử cùng loại thì thứ mô hình cần biết là "phải nói cho
+    # thật cụ thể", không phải con số. Nên chia hai mức thay vì in số thô.
     if k <= 8:
         return f"1 trong {k+1} phần tử cùng loại", 0, k
     return "màn có nhiều phần tử cùng loại", 0, k
