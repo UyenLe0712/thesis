@@ -388,3 +388,54 @@ vì nó suy ra từ "phần tử khác gần nhất cách 69 px".
 khoảng 3,5 lần. Ngưỡng 3% **không đổi** — nó có căn cứ hình học độc lập. Nhưng phải hạ kỳ
 vọng: nếu bộ trỏ chuyên cũng không đạt, đó là kết cục đã lường trước, xử theo bậc thang ở
 mục 8, **không** được nới ngưỡng sau khi nhìn số.
+
+---
+
+## Sửa đổi 6/8 (e) — luật gộp cụm chưa xác định, và ô "dấu hiệu phân biệt" gần như rỗng nghĩa
+
+Hai chỗ này tìm ra khi rà lại phần free trước lúc tiêu tiền. Cả hai **phải chốt bây giờ**, vì
+sau khi có điểm số thì mọi lựa chọn đều thành lựa-cái-có-lợi.
+
+### (e1) Bản đăng ký nói một đằng, con số MDE lấy một nẻo
+
+Mục 4 viết "gom cụm theo ứng dụng". Nhưng **59,3% bước chạm của tập kiểm không gán được app**
+(1.815/4.463 gán được, 259 app riêng biệt). Bản đăng ký **không nói xử nhóm còn lại thế nào**,
+mà đúng chỗ đó lại quyết định lực thống kê:
+
+| Luật gộp cụm | G | G hiệu dụng (Kish) | MDE khi hai nhánh khác nhau 20% |
+|---|---|---|---|
+| Cụm-đơn: mỗi tác vụ không-rõ-app là một cụm | 1.091 | **454** | **5,9 pp** |
+| Chỉ dùng 40,7% bước gán được app | 259 | **107** | **12,1 pp** |
+| Bảo thủ: gom hết bước không-rõ-app vào một cụm | 260 | 3 | không dùng được |
+
+Con số "MDE ước chiếu 4–7 pp" ở mục 6 chỉ đúng dưới luật **cụm-đơn**. Còn "G hiệu dụng ~98"
+từng ghi ở `report/103` lại là con số của luật **app-only** — mà luật đó cho MDE 8,6–14,8 pp.
+Hai con số bị đặt cạnh nhau như thể cùng một phép tính. **Chúng không phải.**
+
+**Chốt:** phân tích chính dùng luật **cụm-đơn** (đúng ý định đã ghi từ trước), và **bắt buộc**
+in kèm phân tích nhạy cảm theo luật app-only. Cam kết trước, không được rút lại:
+
+> Nếu Δ quan sát được nằm giữa hai MDE (tức khoảng **4–9 pp**), kết luận **phụ thuộc luật gộp
+> cụm**. Trường hợp đó phải báo là **chưa kết luận được**, không được chọn luật nào có lợi hơn.
+> Chỉ khi Δ vượt MDE của **cả hai** luật mới được gọi là dương.
+
+### (e2) Ô "dấu hiệu phân biệt" hầu như không phân biệt gì
+
+Đếm trên đủ 1.074 nhãn:
+
+| Nội dung ô | Số | Tỉ lệ |
+|---|---|---|
+| Chỉ đếm số phần tử cùng loại — *"1 trong 8 phần tử cùng loại"*, *"màn có nhiều phần tử cùng loại"* | 921 | **85,8%** |
+| Báo là có mơ hồ nhưng không nói cách gỡ — *"trùng tên với 1 phần tử khác trên màn"* | 75 | 7,0% |
+| Thật sự gỡ được mơ hồ — *"ô nhập liệu duy nhất trên màn"* | 78 | **7,3%** |
+
+Nghĩa là **92,7% số nhãn có ô này rỗng nghĩa về mặt phân biệt**. Đây là ô mang tên của chính
+thành phần đóng góp ("mô tả **phân biệt** trước, phát ngôn sau"), nên phải khai thẳng.
+
+**Chốt cách đọc, cam kết trước:**
+
+> Nếu S2 thắng S1, **cấm** quy công cho "tính phân biệt của mô tả". Ô đó không mang đủ thông tin
+> để gánh lời giải thích ấy. Việc quy công phải dựa vào hai nhánh đối chứng đã đăng ký:
+> **S2-nopoint** tách phần đóng góp của ô toạ độ, **S2r** tách phần đóng góp của việc chuỗi dài
+> thêm. Phần dư sau khi trừ hai thứ đó mới được bàn tới nội dung khai báo.
+> Đồng thời phải in bảng phân tầng kết quả theo ba nhóm ô trên (85,8% / 7,0% / 7,3%).
