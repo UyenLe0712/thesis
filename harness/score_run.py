@@ -13,8 +13,11 @@ HAI CHẾ ĐỘ:
                 nhiêu so với điểm chạm thật. Đây là phép đo DỤNG CỤ, không phải đo mô
                 hình. Điều kiện dùng thước chính: sai số trung vị ≤ 3% chiều rộng màn.
 
-  --mode score  Chấm câu do một nhánh sinh ra. Báo cả hai cách chấm (đĩa dung sai và
-                nút-gần-nhất) như report/106 mục 3 yêu cầu, headline là nút-gần-nhất.
+  --mode score  Chấm câu do một nhánh sinh ra. Headline = Ô-VORONOI TÂM: tính trúng khi
+                phần tử gold là phần tử GẦN ĐIỂM TRỎ NHẤT trong số mọi phần tử trên màn
+                (hàm hit_voronoi). Đĩa dung sai báo kèm để minh bạch, KHÔNG phải headline
+                — đo được: sàn của nó là 84,3%, tức trỏ nhầm sang nút bên cạnh vẫn cho
+                qua 84% số ca, gần như không phân biệt được gì (report/106 mục sửa đổi 6/8).
 
 BỘ TRỎ cắm rời qua --grounder, vì cổng A tồn tại chính là để chọn cái nào:
   uground   mô hình chuyên định vị, chạy tại máy (khuyến nghị cho thước chính)
@@ -183,7 +186,7 @@ def main():
         taps = taps[:a.n]
 
     G = make_grounder(a.grounder)
-    units, errs = [], []
+    units, errs, raw = [], [], []
     for i, r in enumerate(taps):
         img = Image.open(os.path.join(TEST, r["image"])).convert("RGB")
         wh = (img.width, img.height)
@@ -191,18 +194,38 @@ def main():
         sent = (r["gold_instruction"] if a.mode == "gate"
                 else preds[(r["episode_id"], r["step_id"])]["pred"])
         if not sent:
-            units.append({**r, "exec": 0, "disk": 0}); continue
+            units.append({**r, "exec": 0, "disk": 0})
+            raw.append({"episode_id": r["episode_id"], "step_id": r["step_id"],
+                        "pred_xy": None, "gold_xy": list(gold_xy), "bo_qua": "câu rỗng"})
+            continue
         pt = G.point(img, sent)
         if pt is None:
-            units.append({**r, "exec": 0, "disk": 0}); continue
+            units.append({**r, "exec": 0, "disk": 0})
+            raw.append({"episode_id": r["episode_id"], "step_id": r["step_id"],
+                        "pred_xy": None, "gold_xy": list(gold_xy), "sent": sent,
+                        "bo_qua": "bộ trỏ không trả toạ độ"})
+            continue
 
         if a.mode == "gate":
             # sai số DỤNG CỤ: lệch bao nhiêu phần trăm chiều rộng màn
             errs.append(math.dist(pt, gold_xy) / wh[0])
+            raw.append({"episode_id": r["episode_id"], "step_id": r["step_id"],
+                        "pred_xy": list(pt), "gold_xy": list(gold_xy), "wh": list(wh),
+                        "err_frac": math.dist(pt, gold_xy) / wh[0]})
         else:
             btns = buttons_of(r)
             s = M.score_step(sent, r["gold_instruction"], pt, gold_xy, btns, wh)
             units.append({**r, "exec": int(s["executable"]), "disk": int(s["hit_disk"])})
+            # GHI THÔ từng bước. Bộ trỏ là khoản đắt nhất trong khâu chấm; không lưu
+            # lại thì mỗi lần đổi luật chấm, đổi dung sai hay thêm một lát cắt đều
+            # phải gọi lại nó trên 4.463 ảnh cho MỖI nhánh — 12-20 đô cho một việc lẽ
+            # ra làm offline trong vài giây.
+            raw.append({"episode_id": r["episode_id"], "step_id": r["step_id"],
+                        "app": r.get("app", ""), "app_seen_in_train": r.get("app_seen_in_train"),
+                        "pred_xy": list(pt), "gold_xy": list(gold_xy), "wh": list(wh),
+                        "n_buttons": len(btns), "sent": sent,
+                        "gold_instruction": r["gold_instruction"],
+                        **{k: int(v) for k, v in s.items()}})
         if (i + 1) % 50 == 0:
             print(f"  {i+1}/{len(taps)}")
 
@@ -217,9 +240,21 @@ def main():
         print(f"  ≤3% (đạt cổng)  : {sum(1 for e in errs if e <= .03)/max(len(errs),1):6.1%} số bước")
         print("-" * 70)
         ok = med <= 0.03
-        print("  ĐẠT — dùng làm thước chính, chạy tiếp theo kế hoạch." if ok else
-              "  RỚT — KHÔNG train theo kế hoạch cũ. Mở report/106 mục 8 chọn bậc dự phòng:\n"
-              "        3-5% → đổi thước chính sang đĩa dung sai, hạ nút-gần-nhất xuống phụ.")
+        # Bậc dự phòng viết lại 6/8 sau khi đo trần và sàn của cả ba ứng viên.
+        # Bậc cũ ("rớt thì đổi sang đĩa dung sai") đã bị BÁC: đĩa có sàn 84,3%, tức
+        # trỏ nhầm sang nút bên cạnh vẫn cho qua 84% số ca.
+        if ok:
+            print("  ĐẠT — dùng Voronoi làm thước chính, chạy tiếp theo kế hoạch.")
+        elif med <= 0.05:
+            print("  5% ≥ lệch > 3% — VẪN giữ Voronoi (trần 93,3%, sàn 2,8%).\n"
+                  "     Bắt buộc in kèm bảng trần ở report/106 và đọc mọi số như CẬN DƯỚI.")
+        elif med <= 0.08:
+            print("  8% ≥ lệch > 5% — vẫn giữ Voronoi (trần 74,4%, sàn 2,8%, dải 71,6 điểm:\n"
+                  "     vẫn tốt hơn mọi ứng viên khác). Đọc như cận dưới, khai kết oan 24,1%.")
+        else:
+            print("  lệch > 8% — ĐỪNG đổi sang thước yếu hơn (đo được: top-2 sàn 61,4%,\n"
+                  "     đĩa dung sai sàn 84,3%). Nâng chấm tay lên 200 câu thành thước\n"
+                  "     đồng-chính, và chỉ báo THỨ HẠNG tương đối giữa các nhánh.")
         res = {"mode": "gate", "grounder": a.grounder, "n": len(errs),
                "median_err": med, "p75_err": p75, "pass": ok}
     else:
@@ -230,7 +265,7 @@ def main():
         print("=" * 70)
         print(f"CHẤM — {os.path.basename(a.preds)}  ·  {len(units)} bước chạm")
         print("=" * 70)
-        print(f"  nút-gần-nhất (headline): {pt_e:6.1%}   KTC95 [{ci_e[0]:.1%}, {ci_e[1]:.1%}]")
+        print(f"  ô-Voronoi tâm (headline): {pt_e:6.1%}   KTC95 [{ci_e[0]:.1%}, {ci_e[1]:.1%}]")
         print(f"  đĩa dung sai (báo kèm) : {pt_d:6.1%}   KTC95 [{ci_d[0]:.1%}, {ci_d[1]:.1%}]")
         print(f"  cụm: {g} (hiệu dụng {geff:.1f})")
         res = {"mode": "score", "preds": a.preds, "n": len(units),
@@ -238,8 +273,14 @@ def main():
                "exec_disk": pt_d, "ci_disk": ci_d, "clusters": g, "g_eff": geff}
 
     if a.out:
+        os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
         json.dump(res, open(a.out, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-        print("\nĐã lưu", a.out)
+        rawp = a.out.rsplit(".", 1)[0] + "_raw.jsonl"
+        with open(rawp, "w", encoding="utf-8") as f:
+            for x in raw:
+                f.write(json.dumps(x, ensure_ascii=False) + "\n")
+        print(f"\nĐã lưu {a.out}\n         {rawp}  ({len(raw)} bước — đổi luật chấm hay "
+              f"thêm lát cắt thì chấm lại từ tệp này, KHÔNG gọi lại bộ trỏ)")
 
 
 if __name__ == "__main__":

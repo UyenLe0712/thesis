@@ -256,3 +256,98 @@ tập giữ-riêng hợp lệ, chỉ là giữ riêng theo **tác vụ** chứ k
 
 **Ghi chú về thời điểm:** cả ba sửa trên quyết định **trước khi huấn luyện dòng nào** và trước mọi
 khoản chi. Không có con số kết quả nào tồn tại ở thời điểm này.
+
+---
+
+### 6/8/2026 (b) — CHỐT LUẬT CHẤM bằng số. Bậc dự phòng cũ đã chết, thay bằng bậc khác.
+
+**Vì sao phải chốt lại.** Vòng rà 11 giám khảo phát hiện: bộ tự kiểm bơm lỗi
+(`exec_injection_validate.py:140`) gọi `hit_nearest_box` — chấm trên **hộp** — trong khi đường
+chấm thật (`score_run.py` → `metric_exec.score_step:195`) gọi `hit_voronoi` — chấm trên **tâm**.
+Tức con số "**8/10**" đang nói về một hàm **khác** với hàm sẽ chấm luận văn. `hit_nearest_box`
+không xuất hiện ở bất kỳ đâu trong đường chấm thật.
+
+**Đã tự đo lại trần và sàn của cả ba ứng viên** trên 250 bước chạm rút ngẫu nhiên từ tập kiểm
+(hạt giống 20260805, nhiễu bơm theo góc ngẫu nhiên, 4 lần mỗi bước; cây trợ năng phủ 250/250,
+trung vị 71 phần tử mỗi màn):
+
+| sai số bộ trỏ | đĩa dung sai 14% | **ô-Voronoi tâm** | hộp-gần-nhất |
+|---|---|---|---|
+| 0% | 100,0% | 100,0% | 100,0% |
+| 3% | 100,0% | **99,7%** | 78,6% |
+| 5% | 100,0% | **93,3%** | 44,6% |
+| 8% | 100,0% | **74,4%** | 20,3% |
+| **SÀN** (trỏ vào tâm phần tử **khác** gần nhất) | **84,3%** | **2,8%** | 4,8% |
+
+**Chốt: headline là `hit_voronoi` trên tâm phần tử của cây trợ năng.** Lý do là **SÀN**, không
+phải trần: dải động 99,7 − 2,8 ≈ **97 điểm** ở ngưỡng cổng A, rộng nhất trong ba ứng viên. Đây
+cũng chính là hàm đang nối dây trong `score_run.py`, nên **không đổi mã chấm** — chỉ chốt bằng
+văn bản và sửa cái nhãn in sai (`score_run.py` đang in "nút-gần-nhất" cho con số Voronoi; nếu
+không sửa thì tên sai đi thẳng vào luận văn).
+
+**Hai thứ bị bác bằng chính bảng trên:**
+
+- **Đĩa dung sai không được làm headline.** Sàn **84,3%** nghĩa là trỏ nhầm sang nút bên cạnh
+  vẫn được cho qua 84% số ca. Dải động chỉ ~16 điểm. Vẫn báo kèm để minh bạch, nhưng chỉ là
+  cột phụ.
+- **`hit_nearest_box` không dùng.** Trần chỉ 78,6% ngay tại ngưỡng cổng A, tức kết oan 21% câu
+  đúng kể cả khi bộ trỏ tốt.
+
+**Bậc dự phòng ở mục 8 — VIẾT LẠI.** Bậc cũ ("rớt cổng A 3–5% → đổi thước chính sang đĩa dung
+sai") là một cái bẫy: nó chuyển sang đúng cái thước gần như không phân biệt được gì. Bậc mới,
+dựa trên bảng trên và một phép đo bổ sung cho top-k:
+
+| Sai số bộ trỏ đo được | Làm gì |
+|---|---|
+| ≤ 5% | Giữ nguyên Voronoi làm headline. Trần 93,3–99,7%, sàn 2,8% — đọc bình thường. |
+| 5–8% | Vẫn giữ Voronoi (trần 74,4%, sàn 2,8%, dải 71,6 điểm — vẫn tốt hơn mọi ứng viên khác). **Bắt buộc** in kèm bảng trần này và diễn giải mọi con số như cận dưới. |
+| > 8% | **Không đổi sang thước yếu hơn.** Đo được: top-2 ở mức này có trần 96,3% nhưng sàn **61,4%** (dải 35 điểm), đĩa dung sai còn tệ hơn. Thay vào đó: nâng **chấm tay lên 200 câu thành thước đồng-chính**, và chỉ báo **thứ hạng tương đối** giữa các nhánh trên cùng thước nhiễu, không báo con số tuyệt đối. |
+
+Hạt giống, cỡ mẫu và mã của phép đo trên: 250 bước, `random.Random(20260805)`, gọi thẳng
+`metric_exec.hit_disk / hit_voronoi / hit_nearest_box`. Con số này quyết **trước** khi có bất kỳ
+kết quả huấn luyện nào.
+
+**Hệ quả bắt buộc — đọc mục sửa đổi 6/8 (c) ngay dưới:** vì thước chốt lại, con số 8/10 của phần
+tự kiểm không còn mô tả thước đang dùng, phải chạy lại.
+
+---
+
+### 6/8/2026 (c) — chạy lại BƠM LỖI bằng đúng dụng cụ. Vẫn 8/10, nhưng **hai tiêu chí rớt đã đổi**.
+
+`harness/exec_injection_v3.py` — giữ nguyên mười tiêu chí và mười ngưỡng đã khoá của bản 2, chỉ
+đổi dụng cụ: ca kiểm lấy từ **tập kiểm thật** (398 bước chạm, trung vị 65 phần tử mỗi màn), danh
+sách nút qua đúng hàm `score_run.buttons_of`, chấm bằng đúng `metric_exec.score_step`.
+
+| Tiêu chí | Bản 2 (dụng cụ sai) | **Bản 3 (dụng cụ thật)** | n |
+|---|---|---|---|
+| fp_paraphrase_thuc_te ≤10% | **59,2% ✘** | **0,0% ✔** | 398 |
+| fp_action_gate ≤15% | ✔ | 0,0% ✔ | 398 |
+| fp_flip_rule ≤5% | ✔ | 0,0% ✔ | 398 |
+| det_nut_canh_gan ≥80% | ✔ | **33,1% ✘** | 121 |
+| det_nut_canh_xa ≥90% | ✔ | 99,6% ✔ | 233 |
+| det_nut_rat_xa ≥95% | ✔ | 100,0% ✔ | 397 |
+| det_flip_heldout ≥50% | **0% ✘** | **20,0% ✘** | 15 |
+| det_wrong_action ≥80% | ✔ | 100,0% ✔ | 369 |
+| det_wrong_content ≥90% | ✔ | 91,1% ✔ | 494 |
+| det_wrong_direction ≥90% | ✔ | 100,0% ✔ | 755 |
+| | 8/10 | **8/10** | |
+
+**Cùng điểm số nhưng khác bản chất — phải trình đúng chỗ này:**
+
+- **Điểm yếu cũ biến mất.** Kết oan câu đúng từ 59,2% xuống **0,0%**. Đường cong kết oan cũng
+  tốt hơn hẳn: lệch 3% → **0,0%** (bản cũ 2,6%) · 5% → 7,5% · 8% → 24,1% (bản cũ 42%) ·
+  13% → 55,0%. Nghĩa là cổng A ở mức 3% có biên rộng hơn ta tưởng.
+- **Điểm yếu mới lộ ra:** thước **không phân biệt được điểm trỏ lệch dưới ~63 px** (bắt được chỉ
+  33,1%). Nguyên nhân là luật gộp phần tử của chính thước: hai tâm cách nhau dưới 24dp ≈ 63 px
+  bị coi là một. Đây là **hành vi cố ý**, không phải lỗi — nút đích trung bình 189×126 px nên
+  lệch dưới 63 px thường vẫn nằm trong cùng một nút. Nhưng phải khai thẳng: thước này đo được
+  "trỏ nhầm sang nút khác", **không** đo được "trỏ hơi lệch trong cùng một nút".
+- **Luật từ ngược nghĩa vẫn rớt** (20%, và chỉ n=15 — cỡ mẫu quá nhỏ để nói gì chắc). Giữ nguyên
+  cách khai của bản 2: đây là lưới thưa cho một chỗ mù nhỏ.
+
+**Đã cân nhắc và loại một phương án:** sửa `hit_nearest_box` bằng cách bỏ hộp lồng nhau (đúng lỗi
+đã gặp ở khâu dựng nhãn). Có cải thiện nhưng không đủ — ở mức lệch 3%, trần 84,2% so với 100% của
+Voronoi, và sàn tệ hơn (9,2% so với 2,8%). Quyết định giữ Voronoi đứng vững.
+
+**Khai bắt buộc khi trình:** phải in cột **n** cạnh mỗi tiêu chí. Có tiêu chí đo trên n=755, có
+tiêu chí chỉ n=15 — trình "8/10" trần trụi là che mất chuyện đó.

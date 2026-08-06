@@ -1,0 +1,85 @@
+{
+ "passed": 8,
+ "total": 10,
+ "criteria": {
+  "fp_paraphrase_thuc_te": {
+   "rate": 0.0,
+   "n": 398,
+   "thr": 0.1,
+   "op": "≤",
+   "pass": true
+  },
+  "fp_action_gate": {
+   "rate": 0.0,
+   "n": 398,
+   "thr": 0.15,
+   "op": "≤",
+   "pass": true
+  },
+  "fp_flip_rule": {
+   "rate": 0.0,
+   "n": 398,
+   "thr": 0.05,
+   "op": "≤",
+   "pass": true
+  },
+  "det_nut_canh_gan": {
+   "rate": 0.3305785123966942,
+   "n": 121,
+   "thr": 0.8,
+   "op": "≥",
+   "pass": false
+  },
+  "det_nut_canh_xa": {
+   "rate": 0.9957081545064378,
+   "n": 233,
+   "thr": 0.9,
+   "op": "≥",
+   "pass": true
+  },
+  "det_nut_rat_xa": {
+   "rate": 1.0,
+   "n": 397,
+   "thr": 0.95,
+   "op": "≥",
+   "pass": true
+  },
+  "det_flip_heldout": {
+   "rate": 0.2,
+   "n": 15,
+   "thr": 0.5,
+   "op": "≥",
+   "pass": false
+  },
+  "det_wrong_action": {
+   "rate": 1.0,
+   "n": 369,
+   "thr": 0.8,
+   "op": "≥",
+   "pass": true
+  },
+  "det_wrong_content": {
+   "rate": 0.9109311740890689,
+   "n": 494,
+   "thr": 0.9,
+   "op": "≥",
+   "pass": true
+  },
+  "det_wrong_direction": {
+   "rate": 1.0,
+   "n": 755,
+   "thr": 0.9,
+   "op": "≥",
+   "pass": true
+  }
+ },
+ "fp_curve": {
+  "0.01": 0.0,
+  "0.03": 0.0,
+  "0.05": 0.07537688442211055,
+  "0.08": 0.24120603015075376,
+  "0.13": 0.550251256281407
+ },
+ "n_items": 398,
+ "instrument": "a11y_centers + hit_voronoi"
+}
