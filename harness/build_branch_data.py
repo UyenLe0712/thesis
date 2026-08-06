@@ -35,9 +35,18 @@ SYS = ("Bạn nhìn ảnh màn hình điện thoại và viết MỘT câu hư�
        "cho người dùng, chỉ rõ cần chạm vào đâu để đi tiếp.")
 
 
-def prompt_of(r, ocr_rec):
-    """Đầu vào — giống hệt nhau ở mọi nhánh."""
-    parts = ["<image>", f"Mục tiêu: {r['goal'].strip()}"]
+def prompt_body(r, ocr_rec):
+    """Phần CHỮ của đầu vào, KHÔNG kèm chỗ dành cho ảnh.
+
+    Tách ra vì hai nơi cần chỗ-dành-cho-ảnh ở hai dạng khác nhau:
+      · lúc DẠY, LLaMA-Factory nhận chuỗi "<image>" rồi tự thay bằng token ảnh thật
+      · lúc CHẤM, phải đưa content dạng danh sách [{'type':'image'}, {'type':'text'}]
+        cho chat template của Qwen, vì template in nguyên văn chuỗi "<image>" chứ
+        KHÔNG thay — đưa chuỗi vào là mô hình chạy mù, không có token ảnh nào.
+    Tách hàm để hai đường dùng chung đúng một nguồn chữ, kiểm được bằng cách render
+    cả hai rồi so chuỗi (xem infer_branch.py --selftest).
+    """
+    parts = [f"Mục tiêu: {r['goal'].strip()}"]
     hist = r.get("history") or []
     if hist:
         parts.append("Đã làm: " + " → ".join(h.strip() for h in hist[-3:]))
@@ -48,6 +57,11 @@ def prompt_of(r, ocr_rec):
             parts.append(f"Chữ đọc được trên màn: {txt}")
     parts.append("Viết câu hướng dẫn cho bước tiếp theo.")
     return "\n".join(parts)
+
+
+def prompt_of(r, ocr_rec):
+    """Đầu vào lúc DẠY — giống hệt nhau ở mọi nhánh."""
+    return "<image>\n" + prompt_body(r, ocr_rec)
 
 
 def strip_point(desc):

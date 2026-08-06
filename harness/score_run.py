@@ -76,6 +76,9 @@ class OpenAIGrounder:
     """gpt-4o-mini vision. ✱ TỐN API. Lệch trung vị ~8% cạnh — vùng kết oan 42%."""
     NAME = "openai"
 
+    BASE = "https://api.openai.com/v1"
+    MODEL = "gpt-4o-mini"
+
     def __init__(self):
         from _http import chat
         from _apikey import get_key
@@ -85,12 +88,12 @@ class OpenAIGrounder:
         import base64, io as _io, re
         b = _io.BytesIO(); img.save(b, format="PNG")
         d = base64.b64encode(b.getvalue()).decode()
-        r = self.chat([{"role": "user", "content": [
+        r = self.chat(self.BASE, self.MODEL, [{"role": "user", "content": [
             {"type": "text", "text":
                 f"Chỉ vào phần tử mà câu sau mô tả. Trả lời DUY NHẤT 'x,y' theo pixel "
                 f"của ảnh (rộng {img.width}, cao {img.height}).\nCâu: {sentence}"},
             {"type": "image_url",
-             "image_url": {"url": f"data:image/png;base64,{d}"}}]}], key=self.key)
+             "image_url": {"url": f"data:image/png;base64,{d}"}}]}], self.key, temperature=0)
         m = re.findall(r"(\d+(?:\.\d+)?)", r or "")
         return (float(m[0]), float(m[1])) if len(m) >= 2 else None
 
