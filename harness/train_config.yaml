@@ -56,7 +56,12 @@ gradient_checkpointing: true
 
 save_steps: 200                   # máy thuê loại rẻ có thể bị ngắt giữa chừng
 save_total_limit: 2
-resume_from_checkpoint: auto
+# KHÔNG khai resume_from_checkpoint. Đây là bẫy ngược: LLaMA-Factory chỉ tự dò
+# checkpoint gần nhất trong output_dir KHI trường này còn bỏ trống
+# (hparams/parser.py — điều kiện `resume_from_checkpoint is None`). Điền bất cứ
+# giá trị nào, kể cả "auto", sẽ tắt đúng cái nó định bật, rồi ném thẳng chuỗi đó
+# cho Trainer như một đường dẫn thư mục và làm hỏng lượt chạy lại. Bỏ trống =
+# tự động chạy tiếp. Cũng vì vậy không được bật overwrite_output_dir.
 logging_steps: 20
 report_to: none
 

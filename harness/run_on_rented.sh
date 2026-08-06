@@ -37,12 +37,38 @@ setup)
   cd "$REPO"
   # tập dạy: 76 shard là ~67GB; mặc định lấy đủ, đổi --shards nếu muốn chạy thử trước
   python harness/build_train_data.py --shards "${SHARDS:-76}"
-  python harness/prep_ocr_train.py
+
+  # OCR — CHẠY SONG SONG THEO SỐ LÕI, đừng để rơi về một luồng.
+  # Đo trên máy 8 lõi: 0,53 ảnh/giây mỗi luồng. Tập dạy đủ ~64.500 ảnh, nên một
+  # luồng mất ~34 giờ còn sáu luồng mất ~5,7 giờ. Trên máy thuê tính tiền theo giờ
+  # thì khoảng chênh đó là hơn 20 đô cho một việc chỉ dùng CPU, trong khi card đồ
+  # hoạ nằm không. prep_ocr_train.py bỏ qua ảnh đã có kết quả nên chạy lại vô hại.
+  NP=${OCR_PROCS:-$(nproc)}
+  echo "   OCR tập dạy bằng $NP luồng"
+  for k in $(seq 0 $((NP - 1))); do
+    python harness/prep_ocr_train.py --shard "$k" --nshard "$NP" &
+  done
+  wait
+  python harness/prep_ocr_train.py --merge
+
   python harness/descriptor_label_build.py
   python harness/build_branch_data.py --img-prefix "$REPO/harness/dg1_cache/train_ac/"
-  # tập kiểm
+
+  # tập kiểm: ảnh phải tải, nhưng KHÔNG OCR lại. Kết quả OCR tập kiểm đã chạy xong
+  # ở máy nhà và nằm sẵn trong repo (harness/dg1_cache/test_ac/ocr.jsonl, 6.969 ảnh,
+  # phủ đủ 6.958 bước). Tập kiểm đã khoá nên tệp này không đổi nữa.
   python harness/build_test_data.py --shards 9
-  python harness/prep_ocr_train.py --split test
+  if [ ! -s harness/dg1_cache/test_ac/ocr.jsonl ]; then
+    echo "   !! thiếu OCR tập kiểm trong repo — chạy lại, mất thêm ~6 giờ"
+    for k in $(seq 0 $((NP - 1))); do
+      python harness/prep_ocr_train.py --split test --shard "$k" --nshard "$NP" &
+    done
+    wait
+    python harness/prep_ocr_train.py --split test --merge
+  else
+    echo "   OCR tập kiểm: dùng bản có sẵn ($(wc -l < harness/dg1_cache/test_ac/ocr.jsonl) ảnh)"
+  fi
+
   cp -r harness/dg1_cache/train_ac/branches "$DATA/"
   echo "Xong. Dữ liệu ở $DATA/branches, ảnh ở $REPO/harness/dg1_cache/"
   ;;
