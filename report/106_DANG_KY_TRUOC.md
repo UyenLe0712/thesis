@@ -558,3 +558,59 @@ Con số 53,3% ở phép thử thứ hai **không phải lỗi**: bước `open_
 **Sửa số:** mục 3 ghi bước không-chạm "chiếm 41% tập kiểm". Đếm lại trên tập kiểm đã chốt:
 **2.495/6.958 = 35,9%** (cuộn 755 · chờ 505 · gõ chữ 494 · mở ứng dụng 469 · quay lại 270). Con số
 41% thuộc bản đếm cũ trước khi loại 11 bản ghi không có câu chuẩn và trước khi chốt tập kiểm.
+
+---
+
+## Sửa đổi 6/8 (i) — ghi trước con số kỳ vọng của cổng A, và ngưỡng "số này có mùi lỗi"
+
+Mục này ghi **trước khi chạy**, và đó là toàn bộ giá trị của nó. Lý do có mục này: vòng rà 6/8
+cho thấy loại lỗi nguy hiểm nhất còn lại không phải lỗi làm chương trình chết, mà là **số ra sai
+nhưng trông hợp lý** — vì lúc đó không ai đi kiểm nữa. Chính cơ chế này đã cứu một lần: hồ sơ ghi
+sai số bộ trỏ 8%, đo ra 29,3%, đi truy vì lệch quá, và moi ra 8% là con số đã lọc bỏ phần hỏng.
+Nếu hồ sơ ghi 30% thì đã gật đầu cho qua.
+
+### Hai điều đo được trước, làm nền cho mọi dự đoán
+
+**Sàn không thể vượt ≈ 0.** Toạ độ chạm của AndroidControl **không phải vị trí ngón tay thô**:
+79,4% điểm chạm nằm trong 1,5 px của tâm một phần tử trợ năng, trung vị **0,7 px**, 9,7% trùng
+khít. Nó là tâm phần tử. Vậy một bộ trỏ hoàn hảo đạt sai số ~0 — ngưỡng 3% khả thi về nguyên tắc,
+không bị chặn bởi bản chất dữ liệu.
+
+**Biên sai số mà thước cho phép** (nửa khoảng cách từ đích sang phần tử khác gần nhất, tính sau
+khi gộp phần tử cách nhau dưới 24dp), đo trên 1.496 bước chạm:
+
+| | px | % bề ngang |
+|---|---|---|
+| Phân vị 10 | 39 | 3,6% |
+| Phân vị 25 | 52 | 4,8% |
+| **Trung vị** | **67** | **6,2%** |
+| Phân vị 75 | 92 | 8,6% |
+
+Suy ra tỉ lệ qua được nếu bộ trỏ lệch đều một mức: **2% → 100,0% · 3% → 98,6% · 5% → 72,3% ·
+8% → 28,3%**. Ngưỡng 3% đã khoá nằm **dưới cả phân vị 10** của biên, nên nó là ngưỡng chặt có căn
+cứ hình học chứ không phải con số chọn bừa.
+
+### Dự đoán ghi trước cho UGround
+
+Sai số của một bộ trỏ chuyên gần như bị quyết định bởi **nó có chọn đúng phần tử hay không**, chứ
+không phải trỏ lệch bao nhiêu trong phần tử: chọn đúng thì tâm phần tử ≈ điểm chuẩn nên sai số
+gần 0; chọn nhầm thì rơi thẳng sang phần tử khác, cách 100–300 px tức 10–28%. Phân phối vì vậy
+sẽ **hai cụm**, và trung vị chỉ nói lên tỉ lệ chọn đúng có quá nửa hay không.
+
+| Sai số trung vị đo được | Đọc thế nào |
+|---|---|
+| **< 0,5%** | **NGHI LỖI** — quá đẹp. Phải kiểm bộ trỏ có vô tình nhận được toạ độ chuẩn không, và ảnh đưa vào có đúng ảnh của bước đó không |
+| **0,5% – 5%** | **Đúng kỳ vọng.** Đạt cổng hoặc sát cổng, chạy tiếp theo kế hoạch |
+| **5% – 15%** | Kém hơn mong đợi nhưng **hợp lý** — bộ trỏ thật sự vật lộn với màn dày phần tử. Xử theo bậc thang mục 8 |
+| **> 15%** | **NGHI LỖI, không được đọc thành "bộ trỏ kém".** Đây là vùng của gpt-4o-mini (29,3%), mà UGround là mô hình chuyên. Phải loại trừ lỗi trước: sai câu nhắc · nhầm thang toạ độ (0-1000 với pixel thô) · ảnh bị co mà không quy đổi lại · đọc nhầm định dạng đầu ra |
+
+**Bốn dấu hiệu lỗi phải kiểm trong `gate_A_raw.jsonl` TRƯỚC khi kết luận rớt cổng:**
+
+1. **Điểm dồn về giữa màn.** gpt-4o-mini trả `500,400` (thang 0-1000) ở 4/10 lần — đó là đoán bừa.
+   Nếu UGround cũng dồn về một vài toạ độ tròn thì lỗi nằm ở câu nhắc hoặc ở khâu đọc đầu ra.
+2. **Toạ độ toàn số tròn** bội của 50 hay 100 — dấu hiệu mô hình không thật sự trỏ.
+3. **Tỉ lệ không đọc được toạ độ** vượt 5%.
+4. **Sai số tương quan với kích thước ảnh** — dấu hiệu quên quy đổi thang.
+
+**Cam kết:** rớt cổng chỉ được ghi vào hồ sơ là "bộ trỏ không đạt" **sau khi** bốn dấu hiệu trên
+đã loại trừ. Rớt vì lỗi cài đặt thì sửa rồi chạy lại, và **không** tính là một lần thử.
