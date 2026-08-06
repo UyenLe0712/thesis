@@ -24,7 +24,8 @@ BỘ TRỎ cắm rời qua --grounder, vì cổng A tồn tại chính là để
   openai    gpt-4o-mini vision qua API — RẺ nhưng lệch xa, chỉ dùng để chạy thử
             đường ống. ĐO ĐƯỢC 6/8 trên 10 bước tập kiểm: trung vị 29,3% bề ngang
             màn, không bước nào vào nổi 3%. Bốn trong mười lần nó trả đúng giữa
-            màn (500,400 trong thang 0-1000) — tức là đoán bừa, không phải trỏ.
+            màn theo TRỤC NGANG (x=500 trong thang 0-1000) ở 6/10 lần, và toạ độ
+            bội của 50 ở 10/10 lần — tức là đoán trên lưới thô, không phải trỏ.
 
             ⚠ Con số "~8% cạnh" của các bản ghi trước là SAI, đã rút. Kết quả pilot
             lưu trên đĩa ghi median_dist = 0,150 — MƯỜI LĂM phần trăm. "8" nhiều
@@ -378,6 +379,38 @@ def main():
         print(f"  sai số TRUNG VỊ : {med:6.1%} chiều rộng màn")
         print(f"  phân vị 75      : {p75:6.1%}")
         print(f"  ≤3% (đạt cổng)  : {sum(1 for e in errs if e <= .03)/max(len(errs),1):6.1%} số bước")
+
+        # ── bốn dấu hiệu LỖI CÀI ĐẶT (report/106 sửa đổi 6/8 mục i) ──────────────
+        # Rớt cổng chỉ được ghi là "bộ trỏ không đạt" SAU KHI bốn dấu hiệu này đã
+        # loại trừ. Không in ra thì cam kết đó rỗng, nên in ngay cạnh con số chính.
+        n_try = len(raw)
+        n_fail = sum(1 for x in raw if x.get("pred_xy") is None)
+        pts = [tuple(x["pred_xy"]) for x in raw if x.get("pred_xy")]
+        top = collections.Counter(pts).most_common(1)
+        # Bội số phải xét trên thang CHUẨN HOÁ 0-1000, không phải pixel: bộ trỏ trả số
+        # trong thang đó rồi mới quy về pixel, nên "500,400" tròn trịa biến thành
+        # (540, 960) — chẳng chia hết cho 50 nào. Kiểm trên pixel là kiểm nhầm thang,
+        # bộ dò sẽ im lặng đúng lúc cần kêu.
+        norm = [(round(x["pred_xy"][0] / x["wh"][0] * 1000), round(x["pred_xy"][1] / x["wh"][1] * 1000))
+                for x in raw if x.get("pred_xy") and x.get("wh")]
+        round50 = sum(1 for p in norm if p[0] % 50 == 0 and p[1] % 50 == 0)
+        # Kiểu hỏng thật quan sát được ở gpt-4o-mini không phải "rơi vào tâm màn" mà là
+        # "bỏ cuộc theo trục ngang": trả x = đúng giữa rồi đoán y. Đo trên 10 bước thử,
+        # 6/10 có x = 540 = 1080/2. Bắt trục ngang nhạy hơn hẳn bắt cả điểm tâm, vì
+        # chiều dọc mô hình vẫn đoán lung tung nên điểm không rơi vào tâm.
+        midx = sum(1 for p in norm if abs(p[0] - 500) <= 5)
+        print("-" * 70)
+        print("  DẤU HIỆU LỖI CÀI ĐẶT — kiểm trước khi kết luận rớt cổng:")
+        print(f"    không đọc được toạ độ : {n_fail}/{n_try} = {n_fail/max(n_try,1):5.1%}"
+              f"   {'⚠ vượt 5%' if n_fail/max(n_try,1) > .05 else 'ổn'}")
+        if top:
+            (tp, tn) = top[0]
+            print(f"    toạ độ lặp nhiều nhất : {tp} xuất hiện {tn}/{len(pts)} = {tn/len(pts):5.1%}"
+                  f"   {'⚠ dồn một chỗ' if tn/len(pts) > .10 else 'ổn'}")
+        print(f"    toạ độ bội của 50     : {round50}/{len(norm)} = {round50/max(len(norm),1):5.1%}"
+              f"   {'⚠ trỏ theo lưới thô' if round50/max(len(norm),1) > .25 else 'ổn'}")
+        print(f"    x đúng giữa màn       : {midx}/{len(norm)} = {midx/max(len(norm),1):5.1%}"
+              f"   {'⚠ bỏ cuộc theo trục ngang' if midx/max(len(norm),1) > .20 else 'ổn'}")
         print("-" * 70)
         ok = med <= 0.03
         # Bậc dự phòng viết lại 6/8 sau khi đo trần và sàn của cả ba ứng viên.
@@ -396,7 +429,11 @@ def main():
                   "     đĩa dung sai sàn 84,3%). Nâng chấm tay lên 200 câu thành thước\n"
                   "     đồng-chính, và chỉ báo THỨ HẠNG tương đối giữa các nhánh.")
         res = {"mode": "gate", "grounder": a.grounder, "n": len(errs),
-               "median_err": med, "p75_err": p75, "pass": ok}
+               "median_err": med, "p75_err": p75, "pass": ok,
+               "bug_signals": {"parse_fail": n_fail / max(n_try, 1),
+                               "top_point_share": (top[0][1] / len(pts)) if top and pts else 0.0,
+                               "grid50_share": round50 / max(len(norm), 1),
+                               "mid_x_share": midx / max(len(norm), 1)}}
     else:
         pt_e, ci_e, g, geff = cluster_bootstrap(
             units, lambda u: u["app"] or f"ep{u['episode_id']}", lambda u: u["exec"])

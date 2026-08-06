@@ -606,11 +606,21 @@ sẽ **hai cụm**, và trung vị chỉ nói lên tỉ lệ chọn đúng có q
 
 **Bốn dấu hiệu lỗi phải kiểm trong `gate_A_raw.jsonl` TRƯỚC khi kết luận rớt cổng:**
 
-1. **Điểm dồn về giữa màn.** gpt-4o-mini trả `500,400` (thang 0-1000) ở 4/10 lần — đó là đoán bừa.
-   Nếu UGround cũng dồn về một vài toạ độ tròn thì lỗi nằm ở câu nhắc hoặc ở khâu đọc đầu ra.
-2. **Toạ độ toàn số tròn** bội của 50 hay 100 — dấu hiệu mô hình không thật sự trỏ.
-3. **Tỉ lệ không đọc được toạ độ** vượt 5%.
-4. **Sai số tương quan với kích thước ảnh** — dấu hiệu quên quy đổi thang.
+Bốn dấu hiệu này **đã cài thẳng vào `score_run.py --mode gate`** và in ngay dưới con số chính —
+để cam kết ở đây không thành lời suông. Ngưỡng kêu ghi trong ngoặc:
+
+1. **Không đọc được toạ độ** (>5%) — đầu ra sai định dạng so với cách đọc.
+2. **Toạ độ dồn về một chỗ** (>10% rơi vào cùng một điểm) — mô hình bỏ cuộc, trả mặc định.
+3. **Toạ độ bội của 50 trong thang chuẩn hoá 0-1000** (>25%) — trỏ theo lưới thô, không thật sự
+   định vị. Phải xét trên thang chuẩn hoá: bộ trỏ trả `500,400` rồi mới quy về pixel thành
+   `(540, 960)` — chẳng chia hết cho 50 nào, nên kiểm trên pixel là kiểm nhầm thang và bộ dò sẽ
+   im lặng đúng lúc cần kêu.
+4. **x đúng giữa màn** (>20%) — kiểu bỏ cuộc theo trục ngang: trả x = 500 rồi đoán y.
+
+**Đã kiểm bộ dò có hoạt động không**, bằng cách chạy lại chính 10 bước của gpt-4o-mini — một bộ
+trỏ đã biết là hỏng. Ba trong bốn dấu hiệu kêu đúng: dồn một chỗ **30,0%** · bội của 50
+**100,0%** · x đúng giữa **50,0%**. Dấu hiệu còn lại (không đọc được toạ độ) im, đúng, vì đầu ra
+của nó đọc được hết. Một bộ dò không bao giờ kêu thì vô dụng ngang không có.
 
 **Cam kết:** rớt cổng chỉ được ghi vào hồ sơ là "bộ trỏ không đạt" **sau khi** bốn dấu hiệu trên
 đã loại trừ. Rớt vì lỗi cài đặt thì sửa rồi chạy lại, và **không** tính là một lần thử.
