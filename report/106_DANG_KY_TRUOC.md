@@ -37,7 +37,7 @@ Mọi nhánh dùng: cùng bộ dữ liệu nguồn, cùng mô hình gốc Qwen2.
 
 **Thước chính — executability.** Cắt bỏ toàn bộ phần `<desc>` khỏi đầu ra, chỉ giữ câu. Đưa câu cho một bộ trỏ độc lập khác họ với mô hình được chấm, cùng ảnh màn hình, nhận về một điểm. Bước được tính đúng khi: (i) loại thao tác mô hình mô tả khớp loại thao tác chuẩn sau khi gom nhóm chạm (tap/click/open/select coi như một), và (ii) phần tử gần điểm trỏ nhất chính là phần tử chứa toạ độ chuẩn. Cài đặt: `harness/metric_exec.py`.
 
-**Thước phụ bắt buộc — không gây hại.** Trên các bước không phải bước chạm (cuộn, gõ, mở ứng dụng, chờ, quay lại — chiếm 41% tập kiểm), S2 không được thấp hơn S1 quá **3 điểm phần trăm** ở tỉ lệ khớp loại thao tác.
+**Thước phụ bắt buộc — không gây hại.** Trên các bước không phải bước chạm (cuộn, gõ, mở ứng dụng, chờ, quay lại — chiếm 35,9% tập kiểm, xem mục sửa đổi 6/8 h), S2 không được thấp hơn S1 quá **3 điểm phần trăm** ở tỉ lệ khớp loại thao tác.
 
 **Kiểm chéo bằng người.** 100 câu rút ngẫu nhiên có hạt giống cố định, hai người chấm độc lập theo khung `harness/cv_study/`, báo kèm hệ số đồng thuận. Kết quả người dùng để đối chiếu, **không** dùng thay thước chính.
 
@@ -527,3 +527,34 @@ tác `open_app`, không đoán từ chữ trong mục tiêu.
 dạy sẽ dùng. Con số đúng chỉ chốt được sau khi dựng xong dữ liệu dạy trên máy thuê. Kết luận
 "tập kiểm KHÔNG phải app-unseen" **không đổi** — nó dựa trên tập dạy đầy đủ, và mọi phương án
 train đều lấy từ chính tập đó. Chỉ có tỉ lệ chính xác là còn treo.
+
+---
+
+## Sửa đổi 6/8 (h) — thước phụ bắt buộc chưa có mã chạy
+
+Mục 3 đăng ký "thước phụ **bắt buộc** — không gây hại" trên bước không phải bước chạm. Rà lại thì
+`score_run.py --mode score` **lọc sẵn chỉ còn bước chạm**, và không có chỗ nào khác chạy phép kiểm
+này. Nghĩa là tới lúc cần trình, thước bắt buộc sẽ không có số. Đây đúng loại lỗi đã bắt một lần
+ngày 5/8 (thiếu hẳn script suy luận và script chấm) — thước nằm trong hồ sơ nhưng không nằm trong mã.
+
+**Đã bổ sung `score_run.py --mode noharm`.** Chấm bằng đúng hàm của thước chính:
+`canon_action(câu mô hình) == canon_action(câu chuẩn)` — hai câu, không phải câu với mã thao tác,
+để không đẻ ra một định nghĩa "khớp thao tác" thứ hai lệch với định nghĩa đang dùng. Có
+`--baseline` để tính hiệu số theo cặp kèm khoảng tin cậy bootstrap gom cụm, và tự đọc luật 3 điểm
+phần trăm đã khoá.
+
+Kiểm bốn chiều bằng dự đoán dựng sẵn, trước khi có mô hình:
+
+| Phép thử | Kỳ vọng | Đo được |
+|---|---|---|
+| Dự đoán = câu chuẩn | ~100% | **100,0%** |
+| Mọi động từ đổi thành "Tap" | thấp | 53,3% (cuộn tụt còn **1,3%**) |
+| Bản hỏng so với bản chuẩn | RỚT | Δ = −46,7%, KTC95 [−49,5%, −43,8%] → **RỚT** |
+| Bản chuẩn so với chính nó | ĐẠT | Δ = +0,0% → **ĐẠT** |
+
+Con số 53,3% ở phép thử thứ hai **không phải lỗi**: bước `open_app` vẫn khớp vì luật gom nhóm chạm
+đã khoá coi *open* và *tap* là một. Chỗ đáng nhìn là cuộn tụt xuống 1,3% — đúng phần thước phải bắt.
+
+**Sửa số:** mục 3 ghi bước không-chạm "chiếm 41% tập kiểm". Đếm lại trên tập kiểm đã chốt:
+**2.495/6.958 = 35,9%** (cuộn 755 · chờ 505 · gõ chữ 494 · mở ứng dụng 469 · quay lại 270). Con số
+41% thuộc bản đếm cũ trước khi loại 11 bản ghi không có câu chuẩn và trước khi chốt tập kiểm.

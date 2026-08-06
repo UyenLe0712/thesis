@@ -40,8 +40,8 @@ trong git trước khi chạy. Việc kế tiếp là khoản chi đầu tiên (
 | Thao tác khác | cuộn 10,8% · chờ 7,3% · gõ chữ 7,1% · mở ứng dụng 6,8% · quay lại 3,9% |
 | **Kiểm phép ghép** | khớp **37%** vs đối chứng lệch **10%** → chênh 3,7 lần, chắc hơn tập dạy |
 | Rò rỉ với tập dạy | **0 tác vụ trùng** (kiểm 6/8) |
-| ⚠️ Không phải app-unseen | 92% ứng dụng cũng có trong tập dạy — xem mục 8 |
-| Gán được ứng dụng | 44,9% số bước (269 ứng dụng); còn lại thành cụm riêng từng tác vụ |
+| ⚠️ Không phải app-unseen | 92% ứng dụng cũng có trong tập dạy **đầy đủ của AndroidControl** — xem mục 8. Tỉ lệ chính xác so với tập dạy *sẽ dùng* chỉ chốt được sau khi dựng xong dữ liệu trên máy thuê; `harness/tag_app_seen.py` tính lại |
+| Gán được ứng dụng | **40,7%** số bước chạm (259 ứng dụng); còn lại thành cụm riêng từng tác vụ — xem mục 7.1, đây là chỗ quyết định lực thống kê |
 | Mã | `harness/build_test_data.py` |
 
 ### 2.3. OCR — chạy trước cho cả hai tập
@@ -165,7 +165,8 @@ Mã: `harness/build_branch_data.py`.
 |---|---|---|
 | Cấu hình huấn luyện | `harness/train_config.yaml` | một file cho mọi nhánh, chỉ đổi 3 dòng `dataset`/`seed`/`output_dir` |
 | Suy luận | `harness/infer_branch.py` | dùng **chung hàm dựng câu nhắc** với lúc dạy (import, không chép) |
-| Chấm điểm + cổng A | `harness/score_run.py` | bộ trỏ cắm rời, bootstrap gom cụm theo ứng dụng |
+| Chấm điểm + cổng A | `harness/score_run.py` | ba chế độ: `gate` (đo sai số bộ trỏ) · `score` (thước chính trên bước chạm) · `noharm` (thước phụ bắt buộc trên bước không-chạm, có `--baseline` tính hiệu số theo cặp). Bộ trỏ cắm rời, bootstrap gom cụm |
+| Gắn nhãn ứng dụng đã-thấy-lúc-dạy | `harness/tag_app_seen.py` | phải chạy **sau** khâu dựng dữ liệu dạy, vì nhãn là hàm của tập dạy thật sự dùng |
 | Hàm chấm từng bước | `harness/metric_exec.py` | có sẵn từ trước |
 | Chạy trên máy thuê | `harness/run_on_rented.sh` | một lệnh, tự nối lại khi máy rẻ bị ngắt |
 
@@ -278,6 +279,8 @@ sai**, tìm ra nhờ đi kiểm chứ không nhờ báo lỗi.
 | **"Sai số bộ trỏ rẻ = 8% cạnh" là số đã lọc bỏ phần hỏng** | số này đẻ từ `real_offsets()` (`exec_injection_validate.py:144`) — **chỉ lấy các ca bộ trỏ ĐÃ trúng dung sai** rồi mới tính trung vị. Nó lan vào report/98, report/100, report/107 và hai chỗ trong `score_run.py`, và làm khoảng cách tới cổng A trông gần hơn thực tế khoảng 3,5 lần. Nếu tin nó thì sẽ đọc kết quả cổng A sai chiều | rút; dùng số không lọc: 15,0% (công thức `ground_pilot`, n=76) và 29,3% (công thức cổng A, n=10 tập kiểm) |
 | **Hai công thức sai số cùng gọi là "phần trăm"** | `ground_pilot` tính `hypot(dx/W, dy/H)` — lệch dọc chia cho chiều CAO nên nhẹ đi 2,2 lần; cổng A tính `dist(p,g)/W`. Chênh **1,63 lần** trên cùng dữ liệu. Trộn hai số là so nhầm | ghi rõ công thức cạnh mỗi con số; ngưỡng 3% neo theo công thức cổng A vì nó suy ra từ "phần tử khác gần nhất cách 69 px" |
 | **Luật gộp cụm chưa xác định, mà MDE lại phụ thuộc hẳn vào nó** | bản đăng ký ghi "gom cụm theo ứng dụng" nhưng **59,3% bước không gán được app**, và không nói xử nhóm đó ra sao. Luật cụm-đơn cho G hiệu dụng 454 (MDE 5,9 pp); luật app-only cho 107 (MDE 12,1 pp). Con số "MDE 4–7 pp" và con số "G hiệu dụng ~98" từng đứng cạnh nhau như cùng một phép tính — thực ra thuộc hai luật khác nhau. Nếu để hở, sau khi có điểm sẽ tự chọn luật có lợi | chốt luật chính + bắt buộc phân tích nhạy cảm; cam kết trước: Δ rơi vào 4–9 pp thì báo **chưa kết luận được** (`report/106` sửa đổi 6/8 e1) |
+| **Nhãn `app_seen_in_train` không có mã sinh ra** | trường này nằm sẵn trong `test.jsonl` và được `score_run` ghi ra vết để cắt lát phụ, nhưng grep cả repo không thấy dòng nào tính nó — do một lượt vá tay để lại. Không tái lập được thì không kiểm được, và nó **không tự sửa theo tập dạy thật**: đối chiếu với lát dạy đang có thì 2.136/3.130 bản ghi mâu thuẫn | viết `harness/tag_app_seen.py`, nối vào `run_on_rented.sh` ngay sau khâu dựng dữ liệu; phân biệt rõ `None` = *không gán được app* (55,0%) chứ không phải *chưa thấy* |
+| **Thước phụ BẮT BUỘC không có mã chạy** | `report/106` mục 3 đăng ký phép kiểm không-gây-hại trên bước không-chạm, nhưng `score_run --mode score` lọc sẵn chỉ còn bước chạm. Tới lúc trình sẽ không có số — đúng loại lỗi đã bắt ngày 5/8 với script suy luận và script chấm | thêm `--mode noharm` dùng đúng hàm `canon_action` của thước chính, có `--baseline` tính hiệu số theo cặp; kiểm bốn chiều bằng dự đoán dựng sẵn: 100,0% / 53,3% / RỚT −46,7% / ĐẠT +0,0% |
 | **Ô "dấu hiệu phân biệt" rỗng nghĩa 92,7%** | đếm đủ 1.074 nhãn: **85,8% chỉ đếm** ("1 trong 8 phần tử cùng loại"), 7,0% báo có mơ hồ mà không nói cách gỡ, chỉ **7,3%** thật sự gỡ được. Mà đây là ô mang tên của chính thành phần đóng góp. Không bắt thì rất dễ quy công cho "tính phân biệt" trong khi hiệu ứng thật đến từ ô toạ độ | xếp lại thứ tự luật sinh + thêm mỏ neo chữ → gỡ được **75,9%** (mục 3.1); luật đọc kết quả **không nới**: cấm quy công cho tính phân biệt, việc quy công chuyển sang S2-nopoint và S2r (`report/106` sửa đổi 6/8 e2 + f1) |
 | **S2r ghép độ dài theo ký tự trong khi đăng ký ghi token** | mất mát tính trên token, nên "độ dài" cần ghép là token. Đo lại: chỉ **54,0%** cặp nằm trong 2 token, biên độ −17/+14 — trong khi tính theo ký tự thì trung vị lệch 0, nghe như đã khít. Trung bình ~0 nên không lệch hệ thống, nhưng mã không làm đúng thứ đã đăng ký | ghép bằng bộ tách token của `Qwen2.5-VL-3B`: **99,3%** cặp trong 2 token, biên −3/+6 |
 

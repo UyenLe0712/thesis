@@ -205,9 +205,99 @@ def cluster_bootstrap(units, key, val, B=10000, seed=SEED):
     return point, (lo, hi), G, g_eff
 
 
+def load_preds(path):
+    p = {}
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            r = json.loads(line)
+            p[(r["episode_id"], r["step_id"])] = r.get("pred") or ""
+    return p
+
+
+def noharm(a, recs):
+    """Thước phụ BẮT BUỘC — không gây hại trên bước KHÔNG phải bước chạm.
+
+    Bản đăng ký (`report/106` mục 3) yêu cầu: trên các bước cuộn / gõ / mở ứng dụng /
+    chờ / quay lại — 41% tập kiểm — nhánh khai báo không được thấp hơn nhánh thường quá
+    **3 điểm phần trăm** ở tỉ lệ khớp loại thao tác. Đây là lá chắn cho đòn "dạy mô hình
+    tả nút trước khi nói thì nó hỏng ở những bước chẳng có nút nào để tả".
+
+    Cho tới 6/8 **không có dòng mã nào chạy phép kiểm này** — `score_run --mode score`
+    lọc sẵn chỉ còn bước chạm. Đúng loại lỗi đã bắt một lần (thiếu hẳn script suy luận
+    và script chấm): thước nằm trong hồ sơ, tới lúc cần thì không có số.
+
+    Cách chấm dùng đúng hàm của thước chính: so `canon_action` của câu mô hình với
+    `canon_action` của câu chuẩn — hai câu, không phải câu với mã thao tác. Nhờ vậy
+    không đẻ ra một định nghĩa "khớp thao tác" thứ hai lệch với định nghĩa đang dùng.
+    """
+    if not a.preds:
+        sys.exit("Chế độ noharm cần --preds")
+    non_tap = [r for r in recs
+               if r["action"].get("action_type") not in ("click", "long_press")
+               or "x" not in r["action"]]
+    P = load_preds(a.preds)
+    rows = [r for r in non_tap if (r["episode_id"], r["step_id"]) in P]
+    if not rows:
+        sys.exit("Không có bước không-chạm nào trong tệp dự đoán.")
+
+    def unit(r, P):
+        s = P[(r["episode_id"], r["step_id"])]
+        g = r["gold_instruction"]
+        return {"episode_id": r["episode_id"], "app": r.get("app", ""),
+                "action_ok": int(bool(s) and M.canon_action(s) == M.canon_action(g)),
+                "toggle_ok": int(bool(s) and not M.toggle_conflict(s, g)),
+                "empty": int(not s), "gold_type": r["action"].get("action_type", "?")}
+
+    U = [unit(r, P) for r in rows]
+    key = lambda u: u["app"] or f"ep{u['episode_id']}"
+    pt, ci, g, geff = cluster_bootstrap(U, key, lambda u: u["action_ok"])
+    print("=" * 70)
+    print(f"KHÔNG GÂY HẠI — {os.path.basename(a.preds)}  ·  {len(U)} bước KHÔNG chạm")
+    print("=" * 70)
+    print(f"  khớp loại thao tác : {pt:6.1%}   KTC95 [{ci[0]:.1%}, {ci[1]:.1%}]  "
+          f"(G={g}, G hiệu dụng={geff:.0f})")
+    print(f"  không đảo nghĩa    : {sum(u['toggle_ok'] for u in U)/len(U):6.1%}")
+    print(f"  câu rỗng           : {sum(u['empty'] for u in U):6}")
+    by = collections.defaultdict(lambda: [0, 0])
+    for u in U:
+        by[u["gold_type"]][0] += u["action_ok"]; by[u["gold_type"]][1] += 1
+    print("  theo loại thao tác chuẩn:")
+    for k, (h, n) in sorted(by.items(), key=lambda t: -t[1][1]):
+        print(f"     {k:16}{h/n:7.1%}  (n={n})")
+
+    res = {"mode": "noharm", "preds": a.preds, "n": len(U), "action_match": pt,
+           "ci": list(ci), "G": g, "G_eff": geff,
+           "by_type": {k: {"rate": h / n, "n": n} for k, (h, n) in by.items()}}
+
+    if a.baseline:
+        Q = load_preds(a.baseline)
+        both = [r for r in rows if (r["episode_id"], r["step_id"]) in Q]
+        D = []
+        for r in both:
+            u1, u0 = unit(r, P), unit(r, Q)
+            D.append({**u1, "d": u1["action_ok"] - u0["action_ok"]})
+        dpt, dci, _, _ = cluster_bootstrap(D, key, lambda u: u["d"])
+        print("-" * 70)
+        print(f"  so với nền {os.path.basename(a.baseline)} trên {len(D)} bước chung:")
+        print(f"  hiệu số Δ = {dpt:+.1%}   KTC95 [{dci[0]:+.1%}, {dci[1]:+.1%}]")
+        ok = dci[0] >= -0.03
+        print("  " + ("ĐẠT — cận dưới không thấp hơn nền quá 3 điểm phần trăm."
+                      if ok else
+                      "RỚT — cận dưới thấp hơn nền quá 3 điểm phần trăm. Phải khai là\n"
+                      "     thành phần gây hại trên bước không chạm, kể cả khi thước chính thắng."))
+        res.update({"baseline": a.baseline, "delta": dpt, "delta_ci": list(dci), "pass": ok})
+
+    if a.out:
+        json.dump(res, open(a.out, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        print(f"\nĐã lưu {a.out}")
+    return True
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--mode", choices=["gate", "score"], required=True)
+    ap.add_argument("--mode", choices=["gate", "score", "noharm"], required=True)
+    ap.add_argument("--baseline", help="chế độ noharm: tệp dự đoán của nhánh nền (thường S1) "
+                                       "để tính hiệu số theo cặp")
     ap.add_argument("--grounder", default="uground", choices=["uground", "openai"])
     ap.add_argument("--preds", help="tệp dự đoán (chế độ score)")
     ap.add_argument("--out")
@@ -218,6 +308,9 @@ def main():
     recs = [json.loads(l) for l in open(os.path.join(TEST, "test.jsonl"), encoding="utf-8")]
     taps = [r for r in recs if r["action"].get("action_type") in ("click", "long_press")
             and "x" in r["action"]]
+
+    if a.mode == "noharm":
+        sys.exit(0 if noharm(a, recs) else 1)
 
     if a.mode == "score":
         if not a.preds:
