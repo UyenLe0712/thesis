@@ -83,6 +83,39 @@ trong hộp đã chọn **1074/1074** · không còn tên class Android lọt v�
 Hệ toạ độ: lưới **[0,1000]**, không dùng pixel thô — ảnh bị co lại trước khi vào mô hình nên pixel
 gốc vô nghĩa nếu không kèm kích thước. Mã: `harness/descriptor_label_build.py`.
 
+### 3.1. Ô "dấu hiệu phân biệt" — chỗ phải viết kỹ khi lên luận văn
+
+Ô thứ tư của khai báo mang đúng cái tên của thành phần đóng góp, nên nó là chỗ dễ bị vặn nhất.
+Rà lại 6/8 phát hiện bản đầu **rỗng nghĩa 92,7%**: 85,8% số nhãn chỉ ghi một con số đếm kiểu
+*"1 trong 8 phần tử cùng loại"*, thứ báo là **có** mơ hồ chứ không nói gỡ bằng cách nào. Nguyên
+nhân nằm ở thứ tự ưu tiên trong luật sinh — vế đếm đứng trước nên nuốt gần hết.
+
+Đã xếp lại theo tiêu chí *vế nào gỡ được mơ hồ*, và thêm **mỏ neo chữ**: chuỗi OCR gần nhất bên
+cạnh phần tử, kèm hướng — *"ngay dưới chữ «Create folder»"*.
+
+| Nội dung ô | Bản đầu | **Bản dùng** |
+|---|---|---|
+| Mỏ neo chữ | — | **63,9%** |
+| Trùng tên, kèm mỏ neo | — | 4,7% |
+| Phần tử duy nhất trên màn | 7,3% | 7,3% |
+| Trùng tên, không mỏ neo | 7,0% | 2,2% |
+| Chỉ đếm số phần tử cùng loại | 85,8% | 21,9% |
+| **Gỡ được mơ hồ** | **7,3%** | **75,9%** |
+
+**Lý lẽ thiết kế, cần cho phần bảo vệ:** không chọn mô tả vị trí bằng lời (*"nửa dưới, bên phải"*)
+dù nó phủ 100%, vì ô `<point>` đã ghi vị trí chính xác hơn — nói lại bằng lời không thêm thông tin
+nào. Mỏ neo chữ thì **không suy ra được từ toạ độ**: nó là quan hệ với xung quanh, và đúng là thứ
+tách được hai nút trông y hệt nhau.
+
+**Ba luật lọc, đều có lý do đo được:** chuỗi phải nằm **ngoài** hộp phần tử (nằm trong hộp thì nó
+chính là nhãn của phần tử, chỉ lặp lại ô TÊN) · không trùng tên phần tử · ít nhất hai ký tự
+chữ-số (không có luật này thì lọt rác OCR một ký tự kiểu `α`, `S`). Kiểm hướng riêng:
+**737/737 ca đúng chiều, 0 sai**.
+
+**Vẫn phải khai khi trình:** còn 24,1% không gỡ được, và việc sửa nhãn **không phải bằng chứng**
+rằng thành phần có tác dụng. Luật đọc kết quả không đổi — quy công cho tính phân biệt phải đi qua
+S2-nopoint và S2r (`report/106` sửa đổi 6/8 e2 và f1).
+
 ---
 
 ## 4. Dữ liệu bốn nhánh thí nghiệm
@@ -92,21 +125,37 @@ Mọi nhánh dùng **cùng một đầu vào** (ảnh + mục tiêu + lịch s�
 | Nhánh | Đích sinh | Độ dài đích trung bình |
 |---|---|---|
 | s1 | câu | 35,4 ký tự |
-| s2 | `<desc>` thật + câu | 94,5 |
-| s2r | `<desc>` **giả** + câu | 94,4 |
-| s2_nopoint | `<desc>` bỏ ô toạ độ + câu | 78,8 |
+| s2 | `<desc>` thật + câu | 94,8 |
+| s2r | `<desc>` **giả** + câu | 94,3 |
+| s2_nopoint | `<desc>` bỏ ô toạ độ + câu | 79,1 |
 
-**Kiểm bất biến (6/8), tất cả đạt:**
+**Kiểm bất biến, tất cả đạt** (chạy lại đủ sau mỗi lần dựng lại, gần nhất 6/8):
 
-- Đầu vào giống hệt nhau ở 4 nhánh: **1697/1697**
-- s2r khác s2 ở mọi bước có khai báo: **1074/1074**
+- Câu đem chấm của s2 / s2r / s2_nopoint trùng s1: **1697/1697** ở cả ba
+- s1 không chứa khai báo: **0 ca**
+- Số nhãn khai báo bằng nhau ở ba nhánh: **1074 / 1074 / 1074**
 - s2_nopoint còn sót `<point>`: **0**
+- s2 bỏ ô toạ độ đúng bằng s2_nopoint: **1697/1697**
+- s2r khác s2 đúng ở các bước có khai báo: **1074/1074**
+- Khai báo giả mức 2 trùng toạ độ đích: **0 ca**
 - Bước không-chạm giữ đích y hệt ở mọi nhánh: **623/623** → phép kiểm không-gây-hại đọc được
-- Ảnh tồn tại: 200/200 mẫu ngẫu nhiên
 
-**Khai báo giả lệch độ dài trung bình 0,5 ký tự** so với bản thật — sát tới mức không ai đổ được
-hiệu ứng cho chuyện "chuỗi đích dài thêm". Theo tra cứu, nhánh đối chứng kiểu này **chưa nghiên
-cứu nào từng chạy**. Mã: `harness/build_branch_data.py`.
+**Ghép độ dài cho nhánh đối chứng — sửa 6/8.** Bản đăng ký ghi S2r ghép độ dài **token**, nhưng
+mã ghép theo **ký tự**. Trung vị lệch 0 ký tự nghe rất khít; đo lại theo token thì chỉ **54,0%**
+số cặp nằm trong 2 token, biên độ −17/+14. Trung bình vẫn ~0 nên đối chứng không lệch hệ thống,
+song mã không làm đúng thứ đã đăng ký. Đã đổi sang ghép bằng bộ tách token của chính
+`Qwen2.5-VL-3B-Instruct`:
+
+| | trước | sau |
+|---|---|---|
+| Cặp lệch ≤ 2 token | 54,0% | **99,3%** |
+| Biên độ | −17 / +14 | **−3 / +6** |
+| Tổng token đích, S2 vs S2r | — | 54.021 vs 53.891 |
+
+Sát tới mức không ai đổ được hiệu ứng cho chuyện "chuỗi đích dài thêm". Khai báo giả là một khai
+báo **thật của màn khác**, toạ độ thay bằng số ngẫu nhiên — nên nó giống bản thật về hình thức và
+chỉ sai về nội dung. Theo tra cứu, nhánh đối chứng kiểu này **chưa nghiên cứu nào từng chạy**.
+Mã: `harness/build_branch_data.py`.
 
 ---
 
@@ -186,7 +235,24 @@ làm bản ghi — nó chấm bằng `hit_nearest_box` trên hộp OmniParser, *
 | Chênh trần–sàn của thước ⚠️ | **số cũ, ĐỊNH NGHĨA KHÁC** — +44,7 / +32,9 / +19,7 | 76 bước, sàn = điểm khi KHÔNG đưa câu | **Đừng trích chung với bảng trần–sàn ở mục 6.** Bảng mục 6 định nghĩa sàn là *trỏ vào phần tử khác gần nhất*, đo trên 250 bước của tập kiểm, và đó mới là bảng dùng để chọn luật chấm |
 | Cây trợ năng có tên | chỉ **12,6%** phần tử | đo trên 99.131 màn | lý do phải dùng OCR bù |
 | Nhãn trợ năng là rác | **14,7%** tại nút đích | tự kiểm 6/8 | căn cứ của cổng lọc `clean_a11y` |
-| Hình học màn | nút đích 189×126 px · nút khác gần nhất cách 69 px · bộ trỏ rẻ lệch trung vị 108,8 px | lát 76 bước | căn cứ đặt ngưỡng cổng A ở 3% |
+| Hình học màn | nút đích 189×126 px · nút khác gần nhất cách **69 px** | lát 76 bước | căn cứ đặt ngưỡng cổng A ở 3% (~32 px), có biên |
+| **Sai số bộ trỏ rẻ** | **29,3%** bề ngang màn, phân vị 75 là 50,1%, **0 bước** vào nổi 3% | 10 bước tập kiểm, chạy thử 6/8, `score_run --mode gate --grounder openai` | gpt-4o-mini **không dùng để chấm được**; 4/10 lần nó trả đúng giữa màn tức đoán bừa |
+| Phủ của thước trên tập kiểm | **4.452 / 4.463** bước chạm chấm được (99,8%), trung vị 69 phần tử mỗi màn | duyệt đủ tập kiểm qua `score_run.buttons_of` | không mất mẫu ở khâu này |
+
+### 7.1. Lực thống kê — con số quyết định đọc được hay không
+
+Đo trên đủ 4.463 bước chạm của tập kiểm. **59,3% bước không gán được app** (1.815/4.463 gán được,
+259 app riêng biệt, 1.345 tác vụ), nên luật gộp cụm quyết định tất cả:
+
+| Luật gộp cụm | G | G hiệu dụng (Kish) | MDE khi hai nhánh khác nhau 20% |
+|---|---|---|---|
+| Cụm-đơn — mỗi tác vụ không rõ app là một cụm | 1.091 | **454** | **5,9 pp** |
+| Chỉ dùng 40,7% bước gán được app | 259 | **107** | **12,1 pp** |
+| Bảo thủ — gom hết bước không rõ app vào một cụm | 260 | 3 | không dùng được |
+
+Hiệu ứng kỳ vọng của thành phần là **+3…+11 pp, trung vị ~+5** — tức rơi đúng vào vùng mà kết
+luận đổi theo luật gộp cụm. Vì vậy `report/106` sửa đổi 6/8 (e1) đã cam kết trước: Δ rơi vào
+khoảng **4–9 pp** thì báo **chưa kết luận được**, không được chọn luật có lợi hơn.
 
 ---
 
@@ -212,7 +278,8 @@ sai**, tìm ra nhờ đi kiểm chứ không nhờ báo lỗi.
 | **"Sai số bộ trỏ rẻ = 8% cạnh" là số đã lọc bỏ phần hỏng** | số này đẻ từ `real_offsets()` (`exec_injection_validate.py:144`) — **chỉ lấy các ca bộ trỏ ĐÃ trúng dung sai** rồi mới tính trung vị. Nó lan vào report/98, report/100, report/107 và hai chỗ trong `score_run.py`, và làm khoảng cách tới cổng A trông gần hơn thực tế khoảng 3,5 lần. Nếu tin nó thì sẽ đọc kết quả cổng A sai chiều | rút; dùng số không lọc: 15,0% (công thức `ground_pilot`, n=76) và 29,3% (công thức cổng A, n=10 tập kiểm) |
 | **Hai công thức sai số cùng gọi là "phần trăm"** | `ground_pilot` tính `hypot(dx/W, dy/H)` — lệch dọc chia cho chiều CAO nên nhẹ đi 2,2 lần; cổng A tính `dist(p,g)/W`. Chênh **1,63 lần** trên cùng dữ liệu. Trộn hai số là so nhầm | ghi rõ công thức cạnh mỗi con số; ngưỡng 3% neo theo công thức cổng A vì nó suy ra từ "phần tử khác gần nhất cách 69 px" |
 | **Luật gộp cụm chưa xác định, mà MDE lại phụ thuộc hẳn vào nó** | bản đăng ký ghi "gom cụm theo ứng dụng" nhưng **59,3% bước không gán được app**, và không nói xử nhóm đó ra sao. Luật cụm-đơn cho G hiệu dụng 454 (MDE 5,9 pp); luật app-only cho 107 (MDE 12,1 pp). Con số "MDE 4–7 pp" và con số "G hiệu dụng ~98" từng đứng cạnh nhau như cùng một phép tính — thực ra thuộc hai luật khác nhau. Nếu để hở, sau khi có điểm sẽ tự chọn luật có lợi | chốt luật chính + bắt buộc phân tích nhạy cảm; cam kết trước: Δ rơi vào 4–9 pp thì báo **chưa kết luận được** (`report/106` sửa đổi 6/8 e1) |
-| **Ô "dấu hiệu phân biệt" rỗng nghĩa 92,7%** | đếm đủ 1.074 nhãn: **85,8% chỉ đếm** ("1 trong 8 phần tử cùng loại"), 7,0% báo có mơ hồ mà không nói cách gỡ, chỉ **7,3%** thật sự gỡ được. Mà đây là ô mang tên của chính thành phần đóng góp. Không bắt thì rất dễ quy công cho "tính phân biệt" trong khi hiệu ứng thật đến từ ô toạ độ | khai vào hồ sơ; cấm quy công cho tính phân biệt, việc quy công chuyển sang hai nhánh S2-nopoint và S2r (`report/106` sửa đổi 6/8 e2) |
+| **Ô "dấu hiệu phân biệt" rỗng nghĩa 92,7%** | đếm đủ 1.074 nhãn: **85,8% chỉ đếm** ("1 trong 8 phần tử cùng loại"), 7,0% báo có mơ hồ mà không nói cách gỡ, chỉ **7,3%** thật sự gỡ được. Mà đây là ô mang tên của chính thành phần đóng góp. Không bắt thì rất dễ quy công cho "tính phân biệt" trong khi hiệu ứng thật đến từ ô toạ độ | xếp lại thứ tự luật sinh + thêm mỏ neo chữ → gỡ được **75,9%** (mục 3.1); luật đọc kết quả **không nới**: cấm quy công cho tính phân biệt, việc quy công chuyển sang S2-nopoint và S2r (`report/106` sửa đổi 6/8 e2 + f1) |
+| **S2r ghép độ dài theo ký tự trong khi đăng ký ghi token** | mất mát tính trên token, nên "độ dài" cần ghép là token. Đo lại: chỉ **54,0%** cặp nằm trong 2 token, biên độ −17/+14 — trong khi tính theo ký tự thì trung vị lệch 0, nghe như đã khít. Trung bình ~0 nên không lệch hệ thống, nhưng mã không làm đúng thứ đã đăng ký | ghép bằng bộ tách token của `Qwen2.5-VL-3B`: **99,3%** cặp trong 2 token, biên −3/+6 |
 
 ---
 
@@ -260,7 +327,7 @@ sai**, tìm ra nhờ đi kiểm chứ không nhờ báo lỗi.
 
 | # | Việc | Tiền | Chặn ở đâu |
 |---|---|---|---|
-| 1 | Thử đường ống bằng bộ trỏ rẻ, ~30 bước | ~0,3 đô | chưa chạy `score_run.py` thật lần nào |
+| ~~1~~ | ~~Thử đường ống bằng bộ trỏ rẻ~~ — **XONG 6/8**, 10 bước, ~0,002 đô | — | đường ống chạy thông; bộ trỏ rẻ lệch 29,3%, không chấm được |
 | 2 | **Cổng A** — đo sai số bộ trỏ chuyên | 4–8 đô | cần GPU; quyết định thước chính có dùng được không |
 | 3 | Huấn luyện S1 × 2 hạt giống → chấm đủ → **MDE thật** → khoá ngưỡng | 26–34 đô | trình tự cứng, không đảo |
 | 4 | Huấn luyện S2 × 2 hạt giống → chấm | 26–32 đô | |
@@ -269,3 +336,47 @@ sai**, tìm ra nhờ đi kiểm chứ không nhờ báo lỗi.
 | 7 | Chấm tay 100 câu (2 người) · demo tiếng Việt · kiểm không-gây-hại | 0–2 đô | |
 
 Tổng phần chắc chắn **85–112 đô**, dưới ngân sách 200.
+---
+
+## 12. Phần free đã chạy hết — trạng thái sẵn sàng, và những gì còn chưa biết
+
+Chốt 6/8 sau ba vòng rà. Mục này để trả lời đúng một câu: **cái gì đã kiểm bằng cách chạy thật,
+cái gì mới chỉ là tin tưởng.**
+
+### Đã kiểm bằng cách chạy, tin được
+
+| Hạng mục | Bằng chứng |
+|---|---|
+| Mọi script trong `harness/` parse được | chạy đủ |
+| OCR phủ tập kiểm | 6.958/6.958 bước, 0 thiếu, 0 trùng, 0,1% ảnh không ra chữ |
+| Dữ liệu 4 nhánh khớp đúng thứ mã hiện tại sinh ra | dựng lại vào thư mục tạm rồi so từng tệp |
+| Nhãn khai báo khớp mã hiện tại | so MD5 sau khi dựng lại |
+| Bảy bất biến của bốn nhánh | đạt cả bảy |
+| Hướng của mỏ neo chữ | 737/737 đúng chiều |
+| `metric_exec` tự kiểm nội bộ | đạt |
+| `score_run` chế độ chấm, hai chiều | bộ trỏ trả None → 0,0% · trỏ đúng → 100,0% |
+| Câu nhắc lúc suy luận trùng lúc dạy | so chuỗi đã dựng, khớp từng ký tự, 1.272 token ảnh |
+| Bơm lỗi bản 3 trên dụng cụ thật | 8/10, hai chỗ rớt đã khai |
+| Mọi khoá trong `train_config.yaml` | đối chiếu mã nguồn LLaMA-Factory: 0 khoá lạ, giá trị hợp lệ |
+| Đường ống chấm chạm được bộ trỏ thật | chạy 10 bước qua API, ghi vết đủ trường |
+
+### Chưa kiểm được — chỉ biết khi chạy trên máy có GPU
+
+1. `train_config.yaml` **chưa từng chạy** qua LLaMA-Factory. Đã đối chiếu từng khoá với mã nguồn
+   nên chắc hơn nhiều, nhưng đối chiếu không thay được một lượt chạy.
+2. Phép tự kiểm thứ ba của `infer_branch.py` — *lô 1 và lô 8 có ra cùng một câu không* — cần GPU.
+   Phải chạy `--selftest-batch` **trước lượt chấm đầu tiên**.
+3. `UGround` **chưa được nạp lần nào**. Câu nhắc nay đã bê nguyên văn bản chính thức, nhưng cách
+   nó trả toạ độ và hành xử thật thì chưa ai thấy.
+4. `run_on_rented.sh` chưa chạy trên máy thuê nào.
+
+### Rủi ro lớn nhất còn lại, xếp theo mức
+
+1. **Bộ trỏ chuyên có đạt cổng A không.** Hồ sơ cũ tưởng bộ trỏ rẻ cách ngưỡng 8%/3%; thực tế
+   29,3%/3%. UGround mạnh hơn nhiều nhưng chưa ai đo nó trên bộ dữ liệu này. Rớt cổng thì xử theo
+   bậc thang ở `report/106` mục 8, **không nới ngưỡng sau khi nhìn số**.
+2. **Hiệu ứng rơi vào vùng 4–9 pp** — kết luận đổi theo luật gộp cụm, phải báo là chưa kết luận
+   được (mục 7.1).
+3. **Thước không phân biệt được lệch dưới ~63 px** (bơm lỗi bắt được 33,1%). Đây là hành vi cố ý
+   của luật gộp phần tử, nhưng phải khai: thước đo được *trỏ nhầm sang nút khác*, **không** đo
+   được *trỏ hơi lệch trong cùng một nút*.
