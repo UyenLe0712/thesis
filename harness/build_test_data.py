@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-FREE — dựng TẬP KIỂM (app-unseen) cho khâu chấm điểm.
+FREE — dựng TẬP KIỂM cho khâu chấm điểm.
+
+⚠️ Đây KHÔNG phải split app-unseen: 92% ứng dụng trong tập kiểm cũng có ở tập dạy.
+   Nó là tập giữ riêng theo TÁC VỤ (0 tác vụ trùng). Chi tiết + hệ quả: report/106 mục
+   sửa đổi ngày 6/8. Nhãn app_seen_in_train ghi sẵn trong mỗi bản ghi để cắt lát phụ.
 
 Tới giờ mọi thứ đã dựng đều là tập DẠY. Tập kiểm mới là thứ cổng A (đo sai số bộ trỏ)
 và toàn bộ khâu chấm cần: ảnh màn hình + toạ độ chạm thật + câu chuẩn người viết.

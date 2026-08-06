@@ -41,7 +41,8 @@ Mọi nhánh dùng: cùng bộ dữ liệu nguồn, cùng mô hình gốc Qwen2.
 
 **Kiểm chéo bằng người.** 100 câu rút ngẫu nhiên có hạt giống cố định, hai người chấm độc lập theo khung `harness/cv_study/`, báo kèm hệ số đồng thuận. Kết quả người dùng để đối chiếu, **không** dùng thay thước chính.
 
-**Đối tượng chấm.** Toàn bộ bước chạm của tập kiểm app-unseen (khoảng 2.000 bước, không lấy mẫu con).
+**Đối tượng chấm.** Toàn bộ bước chạm của tập kiểm giữ-riêng-theo-tác-vụ — 4.463 bước, không lấy
+mẫu con. *(Sửa 6/8: bản gốc ghi "app-unseen" và ước 2.000 bước; xem mục sửa đổi.)*
 
 ---
 
@@ -200,3 +201,58 @@ còn hơn đoán bừa.
   "bước khó". Lát này là mô tả, **không phải phép kiểm** — phải ghi rõ trong thân luận văn.
 
 Nhật ký đầy đủ của vòng phản biện: `report/107_DEBATE_NGUON_TEN.md`.
+
+---
+
+### 6/8/2026 — sửa mô tả tập kiểm: **KHÔNG phải app-unseen**. Hạ mốc ngoài xuống tham khảo.
+
+**Phát hiện khi rà lại trước khi tiêu tiền.** Mục 3 bản gốc ghi tập kiểm là "app-unseen". Đối
+chiếu thật thì sai: tập kiểm dựng từ split `test` của kho ảnh, và **248/269 app trong đó (92%)
+cũng xuất hiện ở phần dữ liệu dạy**. Chỉ 21 app là chưa từng thấy, ứng với 126 bước / **67 bước
+chạm** — quá ít để làm tập chính.
+
+Nguồn của nhầm lẫn: con số "631 tác vụ app-unseen" trong hồ sơ cũ (`report/103`) lấy từ vòng làm
+việc tháng 7, khi định dùng split app-unseen chính thức của Google. Split đó nằm trong TFRecord
+gzip trên GCS, cần TensorFlow — đúng thứ dự án đã chọn tránh khi chuyển sang bản HuggingFace.
+Bản HF chỉ có split `test` chung, không kèm nhãn phân loại app-unseen / task-unseen.
+
+**Đã kiểm, phần KHÔNG hỏng:** không có tác vụ nào trùng giữa dạy và kiểm (**0/1432**). Đây vẫn là
+tập giữ-riêng hợp lệ, chỉ là giữ riêng theo **tác vụ** chứ không theo **ứng dụng**.
+
+**Sửa như sau:**
+
+1. **Mục 3 đọc lại thành:** "toàn bộ bước chạm của tập kiểm giữ-riêng-theo-tác-vụ (0 tác vụ trùng
+   với tập dạy; phần lớn ứng dụng có xuất hiện trong tập dạy)". Bỏ chữ *app-unseen*.
+2. **Phép so chính (S1 vs S2) không đổi và vẫn hợp lệ**: hai nhánh dùng chung dữ liệu dạy, chung
+   mô hình gốc, chung tập kiểm. Điều kiện đối xứng nên chênh lệch vẫn quy được về can thiệp. Đây
+   là lý do việc này không làm hỏng kết quả chính.
+3. **Mốc ngoài (so với gpt-4o-mini) HẠ xuống tham khảo, kèm khai bắt buộc**: mô hình của luận văn
+   được học các ứng dụng đó, gpt-4o-mini thì không — lợi thế sân nhà. Cấm viết "vượt gpt-4o-mini"
+   như một kết luận độc lập; phải kèm câu về nhiễm ứng dụng ngay tại chỗ trình số.
+4. **Thêm một lát cắt phụ, đăng ký từ bây giờ**: nhóm ứng dụng chưa thấy lúc dạy (67 bước chạm).
+   Khai trước là **thiếu lực nghiêm trọng** — chỉ đọc theo hướng, không kết luận, không dùng để
+   cứu nếu kết quả chính không như ý. Nhãn `app_seen_in_train` (True/False/None) đã ghi sẵn vào
+   từng bản ghi `test.jsonl` để lát này tính được mà không cần quyết định gì thêm về sau.
+
+**Phân bố tập kiểm sau khi gắn nhãn:**
+
+| nhóm | bước | bước chạm |
+|---|---|---|
+| ứng dụng đã thấy lúc dạy | 3.004 | 1.748 |
+| ứng dụng chưa thấy | 126 | 67 |
+| không gán được ứng dụng | 3.828 | 2.648 |
+
+### 6/8/2026 — hai sửa nhỏ cùng lượt rà
+
+- **Loại 11 bản ghi không có câu chuẩn** khỏi tập kiểm (đều là bước 0 của một số tác vụ, phần lớn
+  là `wait`). Nếu để lại sẽ tính vào mẫu số và thành trừ điểm oan. Tập kiểm còn **6.958 bước /
+  4.463 bước chạm / 1.432 tác vụ**.
+- **Khai một giới hạn của nhánh mức 2**: khai báo giả dựng từ nút hàng xóm cùng vai trò, nhưng
+  **162/1074 ca (15,1%) hàng xóm trùng tên với nút đích**. Ở các ca đó khai báo thật và giả chỉ
+  khác toạ độ, nên khoản phạt lề ép mô hình làm câu phụ thuộc toạ độ chứ không phụ thuộc dấu hiệu
+  phân biệt — tức cơ chế không đánh trúng đúng nhóm ca mơ hồ mà nó nhắm tới. Mức 2 vẫn chạy như
+  đăng ký (bản thử nhỏ), nhưng khi đọc kết quả phải tách riêng nhóm 15,1% này, và nếu mức 2 không
+  có tín hiệu thì đây là một cách giải thích phải nêu trước khi kết luận "cơ chế vô dụng".
+
+**Ghi chú về thời điểm:** cả ba sửa trên quyết định **trước khi huấn luyện dòng nào** và trước mọi
+khoản chi. Không có con số kết quả nào tồn tại ở thời điểm này.
