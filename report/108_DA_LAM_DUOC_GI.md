@@ -205,6 +205,10 @@ sai**, tìm ra nhờ đi kiểm chứ không nhờ báo lỗi.
 | **11 bản ghi không có câu chuẩn** | tính vào mẫu số thành trừ điểm oan | loại khỏi tập kiểm |
 | **Khai báo giả trùng tên nút đích 15,1%** | khoản phạt của mức 2 ép mô hình làm câu phụ thuộc toạ độ, không phụ thuộc dấu hiệu phân biệt | khai vào hồ sơ, tách nhóm này khi đọc kết quả mức 2 |
 | **`pgrep -f` đếm cả chính nó** | cảnh báo "tiến trình chết" không bao giờ kêu | đổi sang kiểm tên tiến trình |
+| **Hai bộ trỏ dùng sai câu nhắc** | UGround được huấn luyện với một câu nhắc tiếng Anh cố định, nhưng nhận câu tiếng Việt tự chế; gpt-4o-mini bị hỏi toạ độ pixel trên ảnh nguyên cỡ trong khi `ground_pilot.py` — nơi đẻ ra cặp 32%/69% — hỏi toạ độ chuẩn hoá 0-1000 trên ảnh thu về bề ngang 512. Cổng A sẽ ra số rác và bị đọc thành "bộ trỏ không đạt" | bê nguyên văn câu nhắc chính thức và quy ước cũ |
+| **`resume_from_checkpoint: auto`** | LLaMA-Factory chỉ tự dò checkpoint gần nhất **khi trường này còn trống**; điền vào là tắt đúng cái định bật, rồi ném chuỗi `auto` cho Trainer như một đường dẫn. Máy thuê loại rẻ bị ngắt giữa chừng sẽ không chạy tiếp được — mất cả lượt đã trả tiền | bỏ hẳn dòng đó |
+| **OCR rơi về một luồng trên máy tính tiền** | `run_on_rented.sh` gọi `prep_ocr_train.py` không chia mảnh: 64.500 ảnh tập dạy hết ~34 giờ thay vì ~5,7 giờ, card đồ hoạ nằm không suốt thời gian đó | chia mảnh theo `nproc` |
+| **Kết quả OCR nằm ngoài git** | 6 giờ OCR tập kiểm đã chạy xong ở máy nhà nhưng máy thuê clone repo về sẽ không thấy và làm lại từ đầu | đưa `test_ac/ocr.jsonl` + `test.jsonl` + `train_ac/ocr.jsonl` vào repo; `setup` kiểm tra có sẵn thì bỏ qua |
 
 ---
 
