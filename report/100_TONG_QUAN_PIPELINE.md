@@ -559,7 +559,9 @@ Bơm lỗi với mười ngưỡng khoá trước khi chạy, **đạt tám**:
 
 **Hai chỗ rớt nói lên điều gì:**
 
-- **Chỗ thứ nhất là điều kiện chặn đường.** Bộ trỏ giá rẻ đang lệch trung vị 8% cạnh màn, và ở mức lệch đó cách chấm chặt kết oan phần lớn câu đúng. Bảng đường cong: lệch 1% thì kết oan 0%, lệch 3% thì 2,6%, lệch 5% thì 25%, lệch 8% thì 42%, lệch 13% thì 60%. Nghĩa là **cách chấm chặt chỉ dùng được khi có bộ trỏ chính xác hơn** — sai số trung vị phải xuống dưới 3% cạnh màn.
+- **Chỗ thứ nhất là điều kiện chặn đường.** Bộ trỏ giá rẻ lệch rất xa. Đo lại 6/8 bằng đúng dụng cụ của cổng A: **trung vị 29,3% bề ngang màn** trên 10 bước tập kiểm, không bước nào vào nổi 3%; bốn trong mười lần nó trả đúng giữa màn, tức đoán bừa chứ không trỏ. Đường cong kết oan đo bằng cây trợ năng và luật Voronoi: lệch 1% kết oan 0%, 3% vẫn 0%, 5% lên 7,5%, 8% lên 24,1%, 13% lên 55%. Nghĩa là **cách chấm chặt chỉ dùng được khi có bộ trỏ chính xác hơn nhiều** — sai số trung vị phải xuống dưới 3% bề ngang.
+
+  > ⚠️ **Số cũ ở dòng này đã bị rút.** Bản trước ghi "lệch trung vị 8% cạnh màn" kèm đường cong 2,6%/25%/42%/60%. Cả hai đều sai. Con số 8% không có trong bất kỳ kết quả đo nào — tệp `ground_pilot_results.json` lưu `median_dist = 0,150`, và "8" gần như chắc chắn chép nhầm từ "trung vị **8 từ**" ở câu bên cạnh (chỗ chia đôi câu ngắn/câu dài). Đường cong cũ thì đo trên hộp OmniParser với luật hộp-gần-nhất, không phải dụng cụ sẽ chấm. Thêm nữa, hai script dùng hai công thức khác nhau: `ground_pilot` chia lệch dọc cho chiều CAO (nhẹ đi 2,2 lần), còn cổng A dùng khoảng cách pixel chia bề NGANG — chênh nhau 1,63 lần trên cùng dữ liệu. Ngưỡng 3% nói theo công thức của cổng A.
 - **Chỗ thứ hai đã lường trước.** Luật đảo nghĩa nhận diện bằng bảng từ nên mù với cặp đặc thù giao diện như *next* và *previous*. Nhóm này cố ý giữ riêng, không đưa vào bảng của thước — thêm vào thì điểm thành tuyệt đối nhưng là tự chấm chính mình. Nhẹ đi ở chỗ các cặp đó là hai nút khác nhau nên kênh toạ độ còn cơ hội bắt, và loại thật sự nguy hiểm là công tắc dùng chung một vị trí thì chỉ chiếm **1,06% số bước**.
 
 ### 5.3 Cỡ mẫu và lực thống kê

@@ -387,7 +387,9 @@ Em xin **nói rõ ranh giới ngay để khỏi nói quá**: mấy số dưới 
 
 > **Bổ sung 29/7 — đo với danh sách nút THẬT.** Sau khi lấy được cây trợ năng của bộ dữ liệu (62 phần tử hiển thị mỗi màn, hệ toạ độ đã kiểm là khớp ảnh: điểm gold nằm trong hộp ở **76/76** màn), trần dưới cách chấm chặt chỉ còn **6.6%**. Ba con số giải thích trọn vẹn: phần tử cần chạm rộng **189 × 126 px**, phần tử **khác** gần nhất chỉ cách **69 px**, mà bộ trỏ rẻ lệch trung vị **256 px**. Bộ trỏ lệch xa hơn cả khoảng cách sang phần tử bên cạnh nên gần như luôn rơi vào ô của phần tử khác. → **Con số thấp này đo dụng cụ, không đo câu hướng dẫn.** Và nó cho ngưỡng Cổng A một căn cứ chắc hơn: sai số bộ trỏ phải nhỏ hơn 69 px, nên đặt 3% cạnh màn (~32 px) là có biên an toàn.
 
-**Và một giới hạn nặng hơn cả con số: cách chấm chặt hiện chưa dùng được.** Bơm lỗi cho thấy khi điểm trỏ lệch đúng bằng mức lệch thật của bộ trỏ rẻ (trung vị 87 pixel, tức 8% cạnh), thước chấm theo nút gần nhất **kết oan 59% số câu đúng**:
+**Và một giới hạn nặng hơn cả con số: cách chấm chặt hiện chưa dùng được.** Bơm lỗi cho thấy khi điểm trỏ lệch nhiều thì thước chấm theo nút gần nhất kết oan phần lớn câu đúng:
+
+> ⛔ **Sửa 6/8 — câu này trước ghi "mức lệch thật của bộ trỏ rẻ (trung vị 87 pixel, tức 8% cạnh)". Sai, đã rút.** 87 px lấy từ `real_offsets()` (`exec_injection_validate.py:144`), hàm **chỉ tính trên những ca bộ trỏ ĐÃ trúng dung sai** — lọc bỏ hết phần trượt rồi mới lấy trung vị. Chính đoạn ngay bên trên, dòng 388, đã ghi số không lọc: **256 px**, tức 23,7% bề ngang. Hai con số chỏi nhau cách nhau hai dòng trong cùng một file. Số đúng để dùng là 256 px; đo lại 6/8 trên tập kiểm bằng đúng dụng cụ cổng A cho **29,3%** (n=10). Bảng dưới vì vậy phải đọc là "kết oan ở từng mức lệch giả định", **không** phải "mức thật là 8%".
 
 | Điểm trỏ lệch khỏi gold | 1% cạnh | 3% | 5% | 8% (mức thật) | 13% |
 |---|---|---|---|---|---|

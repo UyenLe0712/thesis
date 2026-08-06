@@ -351,3 +351,40 @@ Voronoi, và sàn tệ hơn (9,2% so với 2,8%). Quyết định giữ Voronoi 
 
 **Khai bắt buộc khi trình:** phải in cột **n** cạnh mỗi tiêu chí. Có tiêu chí đo trên n=755, có
 tiêu chí chỉ n=15 — trình "8/10" trần trụi là che mất chuyện đó.
+
+---
+
+## Sửa đổi 6/8 (d) — chạy thử đường ống, và một con số nền bị rút
+
+**Việc đã làm.** Chạy `score_run.py --mode gate --grounder openai --n 10` trên tập kiểm
+(chi phí dưới 0,01 đô). Mục đích không phải lấy kết quả mà là để lần đầu tiên cho cả đường
+ống chạm vào một bộ trỏ thật. Đường ống **chạy thông**: gọi API, đọc được toạ độ, quy về
+pixel ảnh gốc, ghi `gate10_raw.jsonl` đủ trường.
+
+**Kết quả.** Sai số trung vị **29,3% bề ngang màn**, phân vị 75 là 50,1%, **không bước nào
+vào nổi 3%**. Bốn trong mười lần bộ trỏ trả đúng giữa màn (`500,400` trong thang 0-1000) —
+đoán bừa, không phải trỏ. Điều này không bất ngờ và không đổi kế hoạch: gpt-4o-mini vốn chỉ
+để chạy thử, bộ trỏ dùng cho thước chính là UGround.
+
+**Nhưng nó lật một con số nền của hồ sơ.** Trước đó nhiều chỗ ghi "bộ trỏ rẻ lệch trung vị
+8% cạnh". Truy ra: số đó tính bằng `real_offsets()` (`exec_injection_validate.py:144`), hàm
+**chỉ lấy sai số của những ca bộ trỏ đã trúng dung sai** rồi mới tính trung vị — nghĩa là đã
+loại sạch mọi lần trượt trước khi đo. Trung vị không lọc:
+
+| Nguồn | Công thức | Trung vị | n |
+|---|---|---|---|
+| `ground_pilot_results.json` | `hypot((px−gx)/W, (py−gy)/H)` | **15,0%** | 76 |
+| cổng A, đo 6/8 | `dist(p,g)/W` | **29,3%** | 10 |
+| `report/98` dòng 388 (cây trợ năng) | pixel | **256 px** = 23,7% | 76 |
+| ~~`real_offsets`, đã rút~~ | pixel, *có lọc* | ~~87 px = 8%~~ | — |
+
+Hai chuyện phải tách bạch. **Thứ nhất, lỗi chọn mẫu**: 87 px là trung vị *có điều kiện đã
+trúng*. **Thứ hai, hai công thức khác nhau cùng gọi là "phần trăm"**: `ground_pilot` chia
+lệch dọc cho chiều CAO (2400) nên nhẹ đi 2,2 lần so với chia bề NGANG; trên cùng 10 bước,
+công thức cổng A ra số lớn hơn 1,63 lần. Ngưỡng 3% của cổng A neo theo công thức cổng A,
+vì nó suy ra từ "phần tử khác gần nhất cách 69 px".
+
+**Hệ quả với cách đọc cổng A.** Khoảng cách từ bộ trỏ rẻ tới ngưỡng bị hồ sơ cũ thu nhỏ
+khoảng 3,5 lần. Ngưỡng 3% **không đổi** — nó có căn cứ hình học độc lập. Nhưng phải hạ kỳ
+vọng: nếu bộ trỏ chuyên cũng không đạt, đó là kết cục đã lường trước, xử theo bậc thang ở
+mục 8, **không** được nới ngưỡng sau khi nhìn số.

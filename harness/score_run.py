@@ -21,8 +21,15 @@ HAI CHẾ ĐỘ:
 
 BỘ TRỎ cắm rời qua --grounder, vì cổng A tồn tại chính là để chọn cái nào:
   uground   mô hình chuyên định vị, chạy tại máy (khuyến nghị cho thước chính)
-  openai    gpt-4o-mini vision qua API — RẺ nhưng lệch trung vị ~8% cạnh, tức nằm ở
-            vùng kết oan 42% theo đường cong đã đo. Chỉ dùng để chạy thử đường ống.
+  openai    gpt-4o-mini vision qua API — RẺ nhưng lệch xa, chỉ dùng để chạy thử
+            đường ống. ĐO ĐƯỢC 6/8 trên 10 bước tập kiểm: trung vị 29,3% bề ngang
+            màn, không bước nào vào nổi 3%. Bốn trong mười lần nó trả đúng giữa
+            màn (500,400 trong thang 0-1000) — tức là đoán bừa, không phải trỏ.
+
+            ⚠ Con số "~8% cạnh" của các bản ghi trước là SAI, đã rút. Kết quả pilot
+            lưu trên đĩa ghi median_dist = 0,150 — MƯỜI LĂM phần trăm. "8" nhiều
+            khả năng chép nhầm từ "trung vị 8 TỪ", chỗ chia đôi câu ngắn/câu dài
+            nằm ngay câu bên cạnh trong cùng đoạn.
 
 Chạy:
   python harness/score_run.py --mode gate  --grounder uground --n 300
@@ -89,11 +96,20 @@ class UGround:
 
 
 class OpenAIGrounder:
-    """gpt-4o-mini vision. ✱ TỐN API. Lệch trung vị ~8% cạnh — vùng kết oan 24%.
+    """gpt-4o-mini vision. ✱ TỐN API. Chỉ để chạy thử đường ống, KHÔNG chấm được.
+
+    ⚠ HAI CÔNG THỨC SAI SỐ, ĐỪNG SO THẲNG VỚI NHAU:
+      · `ground_pilot.py` tính  hypot((px-gx)/W, (py-gy)/H)  — lệch dọc chia cho
+        H=2400 nên nhẹ đi 2,2 lần so với lệch ngang. Đo được trung vị 0,150.
+      · cổng A ở dưới tính  dist(p,g)/W  — khoảng cách pixel thật, quy ra phần trăm
+        bề ngang. Đây mới là đại lượng mà ngưỡng 3% nói tới, vì ngưỡng đó suy ra từ
+        "phần tử khác gần nhất cách 69 px".
+    Trên cùng 10 bước, cách sau ra số lớn hơn cách trước 1,63 lần. Nên khi hồ sơ ghi
+    một con số phần trăm cho bộ trỏ, phải hỏi ngay: đo bằng công thức nào.
 
     Câu nhắc, cỡ ảnh và cách đọc toạ độ BÊ NGUYÊN từ `ground_pilot.py` — chính script
-    đã đẻ ra cặp số 32%/69% và đường cong sai số của hồ sơ. Đổi bất kỳ chỗ nào trong ba
-    thứ đó là số mới không so được với số cũ:
+    đã đẻ ra cặp số 32%/69%. Đổi bất kỳ chỗ nào trong ba thứ đó là số mới không so
+    được với số cũ:
       · xin toạ độ CHUẨN HOÁ 0-1000, không xin pixel thô. Mô hình đọc số lớn kém, mà
         ảnh cao 2400 thì pixel thô toàn số lớn.
       · thu ảnh về bề ngang 512 rồi nén JPEG: đủ để trỏ, rẻ hơn nhiều, và né rate-limit.

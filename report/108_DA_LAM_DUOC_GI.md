@@ -209,6 +209,8 @@ sai**, tìm ra nhờ đi kiểm chứ không nhờ báo lỗi.
 | **`resume_from_checkpoint: auto`** | LLaMA-Factory chỉ tự dò checkpoint gần nhất **khi trường này còn trống**; điền vào là tắt đúng cái định bật, rồi ném chuỗi `auto` cho Trainer như một đường dẫn. Máy thuê loại rẻ bị ngắt giữa chừng sẽ không chạy tiếp được — mất cả lượt đã trả tiền | bỏ hẳn dòng đó |
 | **OCR rơi về một luồng trên máy tính tiền** | `run_on_rented.sh` gọi `prep_ocr_train.py` không chia mảnh: 64.500 ảnh tập dạy hết ~34 giờ thay vì ~5,7 giờ, card đồ hoạ nằm không suốt thời gian đó | chia mảnh theo `nproc` |
 | **Kết quả OCR nằm ngoài git** | 6 giờ OCR tập kiểm đã chạy xong ở máy nhà nhưng máy thuê clone repo về sẽ không thấy và làm lại từ đầu | đưa `test_ac/ocr.jsonl` + `test.jsonl` + `train_ac/ocr.jsonl` vào repo; `setup` kiểm tra có sẵn thì bỏ qua |
+| **"Sai số bộ trỏ rẻ = 8% cạnh" là số đã lọc bỏ phần hỏng** | số này đẻ từ `real_offsets()` (`exec_injection_validate.py:144`) — **chỉ lấy các ca bộ trỏ ĐÃ trúng dung sai** rồi mới tính trung vị. Nó lan vào report/98, report/100, report/107 và hai chỗ trong `score_run.py`, và làm khoảng cách tới cổng A trông gần hơn thực tế khoảng 3,5 lần. Nếu tin nó thì sẽ đọc kết quả cổng A sai chiều | rút; dùng số không lọc: 15,0% (công thức `ground_pilot`, n=76) và 29,3% (công thức cổng A, n=10 tập kiểm) |
+| **Hai công thức sai số cùng gọi là "phần trăm"** | `ground_pilot` tính `hypot(dx/W, dy/H)` — lệch dọc chia cho chiều CAO nên nhẹ đi 2,2 lần; cổng A tính `dist(p,g)/W`. Chênh **1,63 lần** trên cùng dữ liệu. Trộn hai số là so nhầm | ghi rõ công thức cạnh mỗi con số; ngưỡng 3% neo theo công thức cổng A vì nó suy ra từ "phần tử khác gần nhất cách 69 px" |
 
 ---
 
@@ -232,6 +234,8 @@ sai**, tìm ra nhờ đi kiểm chứ không nhờ báo lỗi.
 - "câu cộc 35% vs câu rõ 69%" — số đúng là **32/69**
 - "−42,8 là số của bài GCoT" — số tự tính từ hai bảng; bài viết 45,4
 - "UI-Ins: −3,2 vs +4,7" ghép thành một cặp — hai mô hình nền khác nhau
+- **"Bộ trỏ rẻ lệch trung vị 87 px, tức 8% cạnh"** — trung vị tính **chỉ trên các ca đã trúng dung sai**, tức đã loại hết phần trượt. Số không lọc: 15,0% (công thức `ground_pilot`) / 29,3% (công thức cổng A). Chính `report/98` dòng 388 đã ghi 256 px, chỏi với dòng 390 ghi 87 px
+- **Đường cong kết oan "3% → 2,6% · 5% → 25% · 8% → 42% · 13% → 60%"** — đo trên hộp OmniParser với luật hộp-gần-nhất, không phải dụng cụ sẽ chấm. Số của dụng cụ thật (cây trợ năng + Voronoi): 3% → 0% · 5% → 7,5% · 8% → 24,1% · 13% → 55%
 - "GuideMe không đụng toạ độ" — có, GPT-5 trả toạ độ trực tiếp
 - "tập kiểm app-unseen 631 tác vụ" — không áp dụng cho dữ liệu đang dùng (mục 8)
 
