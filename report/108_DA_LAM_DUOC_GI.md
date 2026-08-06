@@ -120,10 +120,22 @@ cứu nào từng chạy**. Mã: `harness/build_branch_data.py`.
 | Hàm chấm từng bước | `harness/metric_exec.py` | có sẵn từ trước |
 | Chạy trên máy thuê | `harness/run_on_rented.sh` | một lệnh, tự nối lại khi máy rẻ bị ngắt |
 
-**Kiểm chạy được (6/8):** câu nhắc lúc chấm khớp lúc dạy **4/4 mục** · `metric_exec.score_step`
-trả đúng · bộ cắt khai báo đúng cả 4 ca (kể cả ca khai báo bị cụt vì chạm trần độ dài) · cây trợ
-năng phủ tập kiểm **200/200** bước mẫu, trung vị 70 nút mỗi màn · điểm chạm gần một nút trong
-danh sách **195/200**.
+**Kiểm chạy được (cập nhật 6/8 sau vòng rà):**
+
+- `infer_branch.py --selftest` — chạy trên CPU, ba phép: chuỗi lúc chấm **trùng lúc dạy từng
+  ký tự** ĐẠT · số token ảnh trong đầu vào **1.272** ĐẠT · phép thứ ba (lô 1 vs lô n ra cùng
+  câu) cần GPU, chạy trên máy thuê trước lượt chấm đầu.
+- `score_run.py` chế độ **score** chạy đủ hai chiều: bộ trỏ trả None → 0,0% · bộ trỏ trỏ đúng
+  (lệch 2% cạnh) → 100,0%.
+- `metric_exec.py` tự kiểm nội bộ qua hết.
+- Cây trợ năng phủ tập kiểm **200/200** bước mẫu, trung vị 70 phần tử mỗi màn; điểm chạm gần
+  một phần tử trong danh sách **195/200**.
+- Dữ liệu 4 nhánh và `descriptors.jsonl` trên đĩa **khớp đúng thứ mã hiện tại sinh ra** (kiểm
+  bằng cách dựng lại vào thư mục tạm rồi so từng byte — cần vì mã đã sửa sau khi dựng).
+
+⚠️ **Phép kiểm cũ đã bị lật, ghi lại để không lặp:** bản trước ghi *"câu nhắc lúc chấm khớp lúc
+dạy 4/4 mục"*. Nó chỉ so **chuỗi ký tự**, không render qua chat template. Render ra thì đầu vào
+có **0 token ảnh** — mô hình chạy mù. Bài học: kiểm phải đi tới đầu ra cuối của đường ống.
 
 ---
 
@@ -133,14 +145,34 @@ danh sách **195/200**.
 lên ảnh. Trỏ đúng phần tử người thật đã chạm thì tính đúng. **Không phải kiểu mô hình cho điểm**
 — barem là toạ độ thật có sẵn trong dữ liệu, đúng sai rạch ròi.
 
-**Tự kiểm bằng bơm lỗi** (phương pháp Sai và cộng sự, EMNLP 2021): cấy 10 loại lỗi biết trước,
-ngưỡng khoá cứng trong mã trước khi chạy. **Đạt 8/10.** Hai tiêu chí chưa đạt, khai đủ:
+**Luật chấm đã chốt bằng số (6/8).** Đo trần và sàn cả ba ứng viên trên 250 bước chạm của tập
+kiểm:
 
-1. Bộ trỏ lệch nhiều thì kết oan câu đúng. Đường cong đã đo: lệch 3% → oan 2,6% · 5% → 25% ·
-   8% → 42% · 13% → 61%. Đây là lý do có **cổng A** (sai số trung vị ≤3% mới dùng).
-2. Luật bắt từ ngược nghĩa chỉ bắt được cặp có trong bảng tay: **0/83** ca ngoài bảng.
+| sai số bộ trỏ | đĩa dung sai | **ô-Voronoi tâm** | hộp-gần-nhất |
+|---|---|---|---|
+| 3% | 100,0% | **100,0%** | 78,6% |
+| 8% | 100,0% | **74,4%** | 20,3% |
+| **SÀN** (trỏ vào phần tử **khác** gần nhất) | **84,3%** | **2,8%** | 4,8% |
 
-Mã: `harness/exec_injection_validate.py`, `harness/metric_exec.py`.
+Chốt **Voronoi** vì SÀN, không vì trần: dải động ~97 điểm. Đĩa dung sai bị loại khỏi vai
+headline — sàn 84,3% nghĩa là trỏ nhầm sang nút bên cạnh vẫn cho qua 84% số ca.
+
+**Tự kiểm bằng bơm lỗi** (phương pháp Sai và cộng sự, EMNLP 2021), **chạy lại bằng đúng dụng cụ
+sẽ chấm** — `harness/exec_injection_v3.py`, 398 bước của tập kiểm, giữ nguyên 10 ngưỡng đã khoá:
+
+**Đạt 8/10**, nhưng hai tiêu chí rớt **khác** bản cũ:
+
+1. ✔ *Kết oan câu đúng: 59,2% → **0,0%***. Đường cong cũng tốt hơn hẳn: lệch 3% → **0,0%** ·
+   5% → 7,5% · 8% → 24,1% · 13% → 55,0%. Cổng A ở 3% có biên rộng hơn tưởng.
+2. ✘ *Không phân biệt được lệch dưới ~63 px* (bắt 33,1%). Là **hành vi cố ý** của luật gộp 24dp,
+   không phải lỗi — nút đích trung bình 189×126 px. Khai: thước đo được "trỏ nhầm sang nút
+   khác", **không** đo được "trỏ hơi lệch trong cùng một nút".
+3. ✘ *Luật từ ngược nghĩa ngoài bảng*: 20,0%, và chỉ n=15 — cỡ mẫu quá nhỏ để kết luận.
+
+Khi trình phải in cột **n** cạnh mỗi tiêu chí: có tiêu chí n=755, có tiêu chí n=15.
+
+Mã: `harness/exec_injection_v3.py` (bản dùng), `harness/exec_injection_validate.py` (bản 2, giữ
+làm bản ghi — nó chấm bằng `hit_nearest_box` trên hộp OmniParser, **không** phải đường chấm thật).
 
 ---
 
@@ -151,7 +183,7 @@ Mã: `harness/exec_injection_validate.py`, `harness/metric_exec.py`.
 | **Bệnh chính: câu mơ hồ** | câu cộc lốc trỏ trúng **32%**, câu tả rõ **69%** | 76 câu chuẩn, chia đôi tại trung vị 8 từ, bộ trỏ gpt-4o-mini, dung sai 14% cạnh | n=38 mỗi nhánh → dấu hiệu chỉ hướng, chưa phải bằng chứng chắc |
 | Tương quan độ dài–trúng | +0,327 | cùng phép đo trên | phải khai vì thước thiên vị câu dài |
 | Lỗi bịa nút không tồn tại | **0–2%** | soi tay 40 ca | đủ để loại hướng chống-bịa |
-| Chênh trần–sàn của thước | +44,7 (vòng dung sai) · +32,9 (gộp tâm) · +19,7 (hộp) | 76 bước | phải trình cả dải, không chọn số đẹp |
+| Chênh trần–sàn của thước ⚠️ | **số cũ, ĐỊNH NGHĨA KHÁC** — +44,7 / +32,9 / +19,7 | 76 bước, sàn = điểm khi KHÔNG đưa câu | **Đừng trích chung với bảng trần–sàn ở mục 6.** Bảng mục 6 định nghĩa sàn là *trỏ vào phần tử khác gần nhất*, đo trên 250 bước của tập kiểm, và đó mới là bảng dùng để chọn luật chấm |
 | Cây trợ năng có tên | chỉ **12,6%** phần tử | đo trên 99.131 màn | lý do phải dùng OCR bù |
 | Nhãn trợ năng là rác | **14,7%** tại nút đích | tự kiểm 6/8 | căn cứ của cổng lọc `clean_a11y` |
 | Hình học màn | nút đích 189×126 px · nút khác gần nhất cách 69 px · bộ trỏ rẻ lệch trung vị 108,8 px | lát 76 bước | căn cứ đặt ngưỡng cổng A ở 3% |
