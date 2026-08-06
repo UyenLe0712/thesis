@@ -27,7 +27,7 @@ trong git trước khi chạy. Việc kế tiếp là khoản chi đầu tiên (
 |---|---|
 | Nguồn | AndroidControl (NeurIPS 2024), ghép hai bản HuggingFace: câu người viết (`HarrytheOrange/parsed_AndroidControl`) + ảnh (`ckg/AndroidControlParsedWithImages-20k`) |
 | Quy mô đã dựng tại máy | 1.697 bước / 347 tác vụ / 843 MB (2 trong 76 shard) |
-| Bước chạm có toạ độ | 1.074 (63,3%) |
+| Bước chạm có toạ độ | 1.075 (63,3%) — dựng được nhãn cho **1.074**; 1 ca điểm chạm nằm ngoài mọi hộp của cây trợ năng |
 | **Kiểm phép ghép** | chữ OCR tại điểm chạm khớp câu chuẩn **47%**, đối chứng ghép-lệch-một-bước **27%** → chênh 1,7 lần, ghép chuẩn |
 | Mã | `harness/build_train_data.py` |
 
@@ -48,7 +48,7 @@ trong git trước khi chạy. Việc kế tiếp là khoản chi đầu tiên (
 
 | | tập kiểm | tập dạy |
 |---|---|---|
-| Phủ | 6.969/6.969 (100%) | đủ |
+| Phủ | 6.969 bản ghi, phủ 6.958/6.958 bước của tập kiểm (100%) | đủ |
 | Dòng chữ mỗi màn (trung vị) | 22 | 21 |
 | Màn không đọc được chữ nào | 0,1% | 0,1% |
 | Bước chạm có chữ gần điểm chạm | 41,4% | — |
