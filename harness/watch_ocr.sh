@@ -51,5 +51,5 @@ while true; do
     break
   fi
   echo "  (Ctrl+C để thoát — OCR vẫn chạy tiếp)"
-  sleep 3
+  sleep 60
 done
