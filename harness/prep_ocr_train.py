@@ -25,21 +25,28 @@ def zone(cx, cy, w, h):
     return f"{ROWS[min(int(cy / h * 3), 2)]}, {COLS[min(int(cx / w * 3), 2)]}"
 
 
-def main(limit=None):
+def main(limit=None, shard=0, nshard=1):
+    """RapidOCR chạy một luồng, ~0,08 ảnh/giây → 6.969 ảnh mất cỡ 24 tiếng.
+    Chia mảnh để chạy nhiều tiến trình song song: mỗi tiến trình ghi tệp riêng
+    (ocr.part{k}.jsonl) nên không tranh nhau khoá ghi; gộp lại bằng --merge."""
     from rapidocr_onnxruntime import RapidOCR
     from PIL import Image
     ocr = RapidOCR()
+    out_path = OUT if nshard == 1 else OUT.replace(".jsonl", f".part{shard}.jsonl")
     done = set()
-    if os.path.exists(OUT):
-        with open(OUT, encoding="utf-8") as f:
-            for line in f:
-                done.add(json.loads(line)["image"])
+    for p in ([out_path] if nshard > 1 else [OUT]):
+        if os.path.exists(p):
+            with open(p, encoding="utf-8") as f:
+                for line in f:
+                    done.add(json.loads(line)["image"])
     recs = [json.loads(l) for l in open(os.path.join(ROOT, _RECFILE), encoding="utf-8")]
     if limit:
         recs = recs[:limit]
+    if nshard > 1:
+        recs = [r for i, r in enumerate(recs) if i % nshard == shard]
     todo = [r for r in recs if r["image"] not in done]
-    print(f"{len(recs)} bước · đã đọc {len(done)} · còn {len(todo)}")
-    with open(OUT, "a", encoding="utf-8") as f:
+    print(f"[mảnh {shard}/{nshard}] {len(recs)} bước · đã đọc {len(done)} · còn {len(todo)}")
+    with open(out_path, "a", encoding="utf-8") as f:
         for i, r in enumerate(todo, 1):
             im = Image.open(os.path.join(ROOT, r["image"])).convert("RGB")
             w, h = im.size
@@ -62,4 +69,21 @@ def main(limit=None):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(); ap.add_argument("--limit", type=int)
     ap.add_argument("--split", default="train", choices=["train", "test"])
-    main(ap.parse_args().limit)
+    ap.add_argument("--shard", type=int, default=0)
+    ap.add_argument("--nshard", type=int, default=1)
+    ap.add_argument("--merge", action="store_true", help="gộp các tệp mảnh thành ocr.jsonl")
+    a = ap.parse_args()
+    if a.merge:
+        import glob
+        seen, n = set(), 0
+        parts = sorted(glob.glob(OUT.replace(".jsonl", ".part*.jsonl")))
+        with open(OUT, "a", encoding="utf-8") as w:
+            for p in parts:
+                for line in open(p, encoding="utf-8"):
+                    k = json.loads(line)["image"]
+                    if k in seen:
+                        continue
+                    seen.add(k); w.write(line); n += 1
+        print(f"Gộp {len(parts)} mảnh → {n} bản ghi vào {OUT}")
+    else:
+        main(a.limit, a.shard, a.nshard)
