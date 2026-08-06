@@ -55,14 +55,27 @@ class UGround:
         self.model = Qwen2VLForConditionalGeneration.from_pretrained(
             path, torch_dtype=torch.bfloat16, device_map="auto").eval()
 
+    # Câu nhắc BÊ NGUYÊN VĂN từ thẻ mô hình chính chủ (osunlp/UGround-V1-2B). Đây là
+    # câu nhắc mô hình được huấn luyện cùng; tự chế câu khác — nhất là bằng tiếng Việt —
+    # sẽ làm nó trỏ tệ đi, rồi cổng A rớt vì lý do sai và ta đổ oan cho bộ trỏ.
+    # Đầu ra theo thang [0,1000), quy về pixel bằng x/1000*rộng.
+    PROMPT = """
+  Your task is to help the user identify the precise coordinates (x, y) of a specific area/element/object on the screen based on a description.
+
+  - Your response should aim to point to the center or a representative point within the described area/element/object as accurately as possible.
+  - If the description is unclear or ambiguous, infer the most relevant area or element based on its likely context or purpose.
+  - Your answer should be a single string (x, y) corresponding to the point of the interest.
+
+  Description: {desc}
+
+  Answer:"""
+
     def point(self, img, sentence):
         import re
         from PIL import Image
         msg = [{"role": "user", "content": [
             {"type": "image"},
-            {"type": "text", "text":
-                f"Trong ảnh này, hãy chỉ vào phần tử mà câu sau mô tả. Trả lời DUY NHẤT "
-                f"một cặp toạ độ dạng (x, y) trong thang 0-1000.\nCâu: {sentence}"}]}]
+            {"type": "text", "text": self.PROMPT.format(desc=sentence)}]}]
         text = self.proc.apply_chat_template(msg, tokenize=False, add_generation_prompt=True)
         inp = self.proc(text=[text], images=[img], return_tensors="pt").to(self.model.device)
         with self.torch.no_grad():
@@ -76,29 +89,47 @@ class UGround:
 
 
 class OpenAIGrounder:
-    """gpt-4o-mini vision. ✱ TỐN API. Lệch trung vị ~8% cạnh — vùng kết oan 42%."""
+    """gpt-4o-mini vision. ✱ TỐN API. Lệch trung vị ~8% cạnh — vùng kết oan 24%.
+
+    Câu nhắc, cỡ ảnh và cách đọc toạ độ BÊ NGUYÊN từ `ground_pilot.py` — chính script
+    đã đẻ ra cặp số 32%/69% và đường cong sai số của hồ sơ. Đổi bất kỳ chỗ nào trong ba
+    thứ đó là số mới không so được với số cũ:
+      · xin toạ độ CHUẨN HOÁ 0-1000, không xin pixel thô. Mô hình đọc số lớn kém, mà
+        ảnh cao 2400 thì pixel thô toàn số lớn.
+      · thu ảnh về bề ngang 512 rồi nén JPEG: đủ để trỏ, rẻ hơn nhiều, và né rate-limit.
+    """
     NAME = "openai"
 
     BASE = "https://api.openai.com/v1"
     MODEL = "gpt-4o-mini"
+    MAXW = 512
+    PROMPT = ("This is a screenshot of a mobile app. A user is told: \"{instr}\". "
+              "Give the location to tap to follow this instruction, as two integers 'x,y' "
+              "in a 0-1000 normalized grid (x=0 left, x=1000 right, y=0 top, y=1000 bottom). "
+              "Answer with ONLY 'x,y', nothing else.")
 
     def __init__(self):
         from _http import chat
         from _apikey import get_key
         self.chat, self.key = chat, get_key()
+        if self.key == "ollama":
+            raise SystemExit("Không thấy khoá API (harness/.openai_key) — không gọi được.")
 
     def point(self, img, sentence):
         import base64, io as _io, re
-        b = _io.BytesIO(); img.save(b, format="PNG")
-        d = base64.b64encode(b.getvalue()).decode()
+        from PIL import Image
+        w, h = img.size
+        sc = img.resize((self.MAXW, int(h * self.MAXW / w)), Image.LANCZOS) if w > self.MAXW else img
+        b = _io.BytesIO(); sc.save(b, "JPEG", quality=85)
+        uri = "data:image/jpeg;base64," + base64.b64encode(b.getvalue()).decode()
         r = self.chat(self.BASE, self.MODEL, [{"role": "user", "content": [
-            {"type": "text", "text":
-                f"Chỉ vào phần tử mà câu sau mô tả. Trả lời DUY NHẤT 'x,y' theo pixel "
-                f"của ảnh (rộng {img.width}, cao {img.height}).\nCâu: {sentence}"},
-            {"type": "image_url",
-             "image_url": {"url": f"data:image/png;base64,{d}"}}]}], self.key, temperature=0)
-        m = re.findall(r"(\d+(?:\.\d+)?)", r or "")
-        return (float(m[0]), float(m[1])) if len(m) >= 2 else None
+            {"type": "text", "text": self.PROMPT.format(instr=sentence)},
+            {"type": "image_url", "image_url": {"url": uri}}]}], self.key, temperature=0)
+        m = re.findall(r"-?\d+\.?\d*", r or "")
+        if len(m) < 2:
+            return None
+        # 0-1000 chuẩn hoá → pixel của ảnh GỐC
+        return (float(m[0]) / 1000 * w, float(m[1]) / 1000 * h)
 
 
 def make_grounder(name):
