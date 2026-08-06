@@ -69,6 +69,11 @@ setup)
     echo "   OCR tập kiểm: dùng bản có sẵn ($(wc -l < harness/dg1_cache/test_ac/ocr.jsonl) ảnh)"
   fi
 
+  # Nhãn "ứng dụng này đã thấy lúc dạy chưa" là HÀM CỦA TẬP DẠY THẬT SỰ DÙNG, nên chỉ
+  # tính đúng được ở đây — sau khi biết dựng bao nhiêu shard. Bỏ bước này thì lát phụ
+  # đã-thấy/chưa-thấy đọc theo một tập dạy khác với tập vừa train.
+  python harness/tag_app_seen.py
+
   cp -r harness/dg1_cache/train_ac/branches "$DATA/"
   echo "Xong. Dữ liệu ở $DATA/branches, ảnh ở $REPO/harness/dg1_cache/"
   ;;

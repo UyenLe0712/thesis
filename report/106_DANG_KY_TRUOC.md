@@ -498,3 +498,32 @@ mã không làm đúng thứ đã đăng ký. Đã đổi sang ghép theo token 
 Bảy bất biến của bốn nhánh kiểm lại sau khi dựng: câu đem chấm trùng S1 ở cả ba nhánh, S1 không
 chứa khai báo, 1.074 nhãn ở cả ba, S2-nopoint sạch ô toạ độ, S2 bỏ toạ độ đúng bằng S2-nopoint,
 S2 khác S2r đúng 1.074 chỗ, khai báo giả mức 2 không trùng toạ độ đích — **đạt cả bảy**.
+
+---
+
+## Sửa đổi 6/8 (g) — nhãn `app_seen_in_train` không tái lập được, và không tự sửa theo tập dạy
+
+Mục sửa đổi 6/8 đầu tiên viết *"Nhãn `app_seen_in_train` đã ghi sẵn trong test.jsonl"* và dùng nó
+làm lát phụ. Rà lại thì **không có dòng mã nào trong repo sinh ra nhãn đó** — nó do một lượt vá
+tay để lại. Hai vấn đề:
+
+- **Không kiểm được.** Không tái lập thì không biết nó tính đúng hay sai.
+- **Không tự sửa theo tập dạy.** Đối chiếu với lát dạy đang có (2 shard, 129 ứng dụng):
+  **2.136/3.130 bản ghi có nhãn mâu thuẫn**. Nhãn cũ cho 96% "đã thấy", nhiều khả năng tính theo
+  toàn bộ 15.283 tác vụ của AndroidControl — đúng **nếu** cuối cùng train đủ 76 shard, sai nếu ít
+  hơn. Mà số shard tới lúc chạy mới biết.
+
+**Chốt:** nhãn này là **hàm của tập dạy thật sự dùng**, nên phải tính sau khi dựng xong dữ liệu
+dạy, không phải lúc dựng tập kiểm. Đã viết `harness/tag_app_seen.py` và nối vào `run_on_rented.sh`
+ngay sau khâu dựng dữ liệu. Luật gán ứng dụng bê nguyên `build_test_data.app_of` — chỉ lấy từ thao
+tác `open_app`, không đoán từ chữ trong mục tiêu.
+
+**Ba giá trị, bắt buộc phân biệt khi đọc:** `True` đã thấy · `False` gán được app và chưa thấy ·
+`None` **không gán được app, tức KHÔNG BIẾT**. Nhóm `None` chiếm **3.828/6.958 = 55,0%** và
+**cấm đọc thành "chưa thấy"**.
+
+**Hệ quả với con số đã công bố.** Câu *"92% ứng dụng trong tập kiểm cũng có ở tập dạy"* ở mục sửa
+đổi 6/8 đầu tiên lấy từ nhãn cũ, tức nói về **toàn bộ tập dạy AndroidControl**, không phải về tập
+dạy sẽ dùng. Con số đúng chỉ chốt được sau khi dựng xong dữ liệu dạy trên máy thuê. Kết luận
+"tập kiểm KHÔNG phải app-unseen" **không đổi** — nó dựa trên tập dạy đầy đủ, và mọi phương án
+train đều lấy từ chính tập đó. Chỉ có tỉ lệ chính xác là còn treo.
