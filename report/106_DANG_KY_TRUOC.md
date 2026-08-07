@@ -624,3 +624,64 @@ của nó đọc được hết. Một bộ dò không bao giờ kêu thì vô d
 
 **Cam kết:** rớt cổng chỉ được ghi vào hồ sơ là "bộ trỏ không đạt" **sau khi** bốn dấu hiệu trên
 đã loại trừ. Rớt vì lỗi cài đặt thì sửa rồi chạy lại, và **không** tính là một lần thử.
+
+---
+
+## Sửa đổi 7/8 — ba thứ đã đăng ký nhưng chưa có mã, và một định nghĩa mơ hồ đủ để đẻ ra kết luận sai
+
+Quét đối chiếu từng thứ đăng ký ở bản này với mã trong `harness/`. Mười hai hạng mục, **chín có
+mã, ba không**. Ghi lại vì đây đã là lần thứ ba cùng một loại lỗi: thứ nằm trong hồ sơ mà không
+nằm trong mã (trước đó: script suy luận và script chấm ngày 5/8, thước phụ không-gây-hại ngày 6/8).
+
+### (a) `--selftest-batch` — cờ được hướng dẫn dùng nhưng không tồn tại
+
+Phép tự kiểm thứ ba (lô 1 và lô n có ra cùng câu không — phép bắt lỗi đệm sai bên) in ra dòng
+*"chạy trên máy thuê bằng `--selftest-batch`"*. **Cờ đó không có trong `argparse`.** Ai làm theo
+hướng dẫn cũng nhận `unrecognized arguments` rồi bỏ qua, và tưởng đã kiểm. Mà đệm sai bên là lỗi
+không báo gì cả, chỉ làm điểm tụt không đều theo thứ tự bản ghi.
+
+Đã cài `selftest_batch()` và cờ tương ứng, đồng thời nối vào `run_on_rented.sh` ở bước `infer`:
+chạy một lần trước lượt sinh đầu tiên, rớt thì dừng hẳn, đạt thì đánh dấu để khỏi chạy lại.
+
+### (b) Thước phụ không-gây-hại chưa được gọi trong kịch bản máy thuê
+
+Chế độ `--mode noharm` đã có từ 6/8 nhưng `run_on_rented.sh` không gọi. Đã thêm lệnh
+`noharm <nhánh> <hạt giống> <nhánh nền> <hạt giống nền>`.
+
+### (c) ⚠️ B-infer — hai cách hiểu, và luật đọc kết quả chỉ đúng với một cách
+
+Bảng ở mục 2 ghi B-infer là *"lúc suy luận nối dòng mô tả phần tử vào đầu vào"*; `report/103`
+ghi *"nhét dòng mô tả nút (dựng từ cây trợ năng + OCR)"*. Hai câu đó đọc được thành hai thí
+nghiệm khác hẳn nhau:
+
+- **Cách 1 — nhét khai báo của ĐÚNG nút đích.** Đây là điều kiện *có lời giải sẵn*: đầu vào đã
+  chỉ thẳng phần tử cần nói tới. Nó gần như chắc chắn thắng S2, và thắng chẳng chứng minh gì.
+- **Cách 2 — nhét DANH SÁCH phần tử trên màn**, không đánh dấu cái nào là đích. Đây mới là phép
+  so công bằng với S2.
+
+**Cách 1 trùng với thí nghiệm đã có.** Mục 5 bước 6 đã đăng ký riêng *"phép thử **trần** trên S1:
+nối dòng khai báo chuẩn vào đầu vào, so với một đoạn đệm vô nghĩa cùng độ dài"* — đúng là cách 1,
+và đã được gọi đúng tên là **trần**. Nếu B-infer cũng là cách 1 thì hai bước là một thí nghiệm.
+
+**Quyết định thì nằm ở luật đọc kết quả.** Mục 6 viết: *"Nếu B-infer đạt trong khoảng nhiễu hạt
+giống so với S2 → phải viết thẳng rằng huấn luyện không hơn việc đưa thông tin lúc suy luận."*
+Luật này **chỉ đúng dưới cách 2**. Dưới cách 1 nó sẽ bắt ta kết luận "huấn luyện mất lý do tồn
+tại" từ việc một điều kiện có-lời-giải-sẵn thắng một điều kiện không có — một kết luận sai.
+
+⇒ **Chốt: B-infer là cách 2.** Danh sách phần tử hiển thị của màn (vai trò, tên nếu có, toạ độ
+`<point>`), **không đánh dấu phần tử nào là đích**, xếp theo thứ tự đọc từ trên xuống, cắt còn tối
+đa 40 phần tử. Bước 6 giữ nguyên vai trò **trần**, tách bạch.
+
+**Giới hạn phải khai kèm:** đo trên 300 màn của tập kiểm, cây trợ năng cho trung vị **89 phần tử
+mỗi màn** nhưng **chỉ 14,1% có tên**. Nên danh sách nhét vào đầu vào phần lớn là vai trò kèm toạ
+độ, ít chữ. Nghĩa là B-infer là một đối thủ **yếu hơn cái tên của nó gợi ra**, và nếu S2 thắng
+B-infer thì **không được** kết luận "huấn luyện hơn đưa-thông-tin-lúc-chạy" một cách tổng quát —
+chỉ được nói là hơn *khi thông tin đưa vào nghèo tên như ở đây*.
+
+### (d) S3-pilot chưa có mã huấn luyện — khai thẳng
+
+Nhánh S3-pilot (khoản phạt lề giữa khai báo thật và khai báo giả từ nút hàng xóm) mới có **dữ
+liệu** (`desc_neg` trong `descriptors.jsonl`, dựng được cho 995/1074 bước) chứ **chưa có mã tính
+mất mát**. Cần một hàm mất mát riêng gắn vào LLaMA-Factory. Chưa viết, và **cố ý chưa viết**: nó
+nằm sau cổng C trong trình tự, còn viết bây giờ thì thành thêm một đoạn mã chưa từng chạy. Nếu tới
+cổng C mà không kịp làm, phải khai là **nhánh đã đăng ký nhưng không chạy**, không được im lặng bỏ.

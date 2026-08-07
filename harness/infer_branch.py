@@ -46,6 +46,87 @@ def strip_desc(s):
 
 VISION = "<|vision_start|><|image_pad|><|vision_end|>"
 
+MAX_ELEMS = 40          # cắt danh sách; màn có trung vị 89 phần tử, nhét hết là phình câu nhắc
+W_SCREEN, H_SCREEN = 1080, 2400
+
+
+def screen_elements(rec):
+    """Danh sách phần tử hiển thị của màn — đầu vào của nhánh B-infer.
+
+    B-infer là đối thủ RẺ NHẤT: không huấn luyện gì thêm, chỉ lấy trọng số S1 rồi nhét
+    thông tin phần tử vào đầu vào lúc chạy. Nếu nó bằng được S2 thì việc huấn luyện mất
+    lý do tồn tại, nên phải đo.
+
+    ⚠ KHÔNG đánh dấu phần tử nào là đích, và KHÔNG dùng toạ độ chuẩn ở bất kỳ đâu. Nhét
+    khai báo của đúng nút đích là một thí nghiệm KHÁC — `report/106` mục 5 bước 6 đã đăng
+    ký riêng và gọi đúng tên là phép thử TRẦN. Trộn hai thứ vào nhau sẽ bắt ta kết luận
+    "huấn luyện mất lý do tồn tại" từ chỗ một điều kiện có-lời-giải-sẵn thắng một điều
+    kiện không có (`report/106` sửa đổi 7/8 mục c).
+
+    Giới hạn phải khai kèm: cây trợ năng cho trung vị 89 phần tử mỗi màn nhưng chỉ 14,1%
+    có tên, nên danh sách này phần lớn là vai trò kèm toạ độ, ít chữ.
+    """
+    import a11y_inventory as A11Y
+    rel = f"episode_{rec['episode_id']}_screenshot_{rec['step_id']}.png"
+    o = A11Y._load(A11Y.key_for(rel) or "")
+    if not o:
+        return []
+    out = []
+    for w in o:
+        if w.get("window_type") == 3:
+            continue
+        for n in w.get("tree", []):
+            if not n.get("is_visible_to_user"):
+                continue
+            b = n.get("bounds_in_screen") or {}
+            x1, y1 = b.get("left", 0), b.get("top", 0)
+            x2, y2 = b.get("right", 0), b.get("bottom", 0)
+            if x2 - x1 < 8 or y2 - y1 < 8:
+                continue
+            # Bỏ KHUNG CHỨA. Không có luật này thì danh sách toàn "(không tên)
+            # <point>500,500</point>" lặp đi lặp lại — tâm của các khung phủ gần hết
+            # màn đều rơi vào giữa. Đây đúng lỗi hộp lồng nhau đã bắt ở khâu dựng nhãn
+            # (report/108 mục 8, dòng đầu), chỉ khác chỗ xuất hiện.
+            if (x2 - x1) * (y2 - y1) > 0.25 * W_SCREEN * H_SCREEN:
+                continue
+            nm = (n.get("content_description") or "").strip()
+            out.append((y1, x1, nm, (x1 + x2) // 2, (y1 + y2) // 2))
+    out.sort()                                   # thứ tự đọc: trên xuống, trái sang phải
+
+    # Gộp phần tử trùng tâm: cây trợ năng lồng nhiều lớp nên một nút hay xuất hiện 2-3
+    # lần với cùng một tâm, chỉ khác lớp bọc.
+    seen, uniq = set(), []
+    for y1, x1, nm, cx, cy in out:
+        k = (cx // 8, cy // 8, nm)
+        if k in seen:
+            continue
+        seen.add(k); uniq.append((nm, cx, cy))
+
+    # Cắt còn MAX_ELEMS: ưu tiên phần tử CÓ TÊN, vì chỉ 14,1% có tên mà danh sách theo
+    # thứ tự đọc thuần sẽ để phần không tên ăn hết chỗ. Giữ nguyên thứ tự đọc trong mỗi
+    # nhóm để tín hiệu vị trí không bị xáo.
+    named = [e for e in uniq if e[0]]
+    anon = [e for e in uniq if not e[0]]
+    keep = named[:MAX_ELEMS] + anon[:max(0, MAX_ELEMS - len(named))]
+    order = {id(e): i for i, e in enumerate(uniq)}
+    keep.sort(key=lambda e: order[id(e)])
+
+    lines = []
+    for nm, cx, cy in keep:
+        px, py = round(cx / W_SCREEN * 1000), round(cy / H_SCREEN * 1000)
+        lines.append(f"{nm or '(không tên)'} <point>{px},{py}</point>")
+    return lines
+
+
+def with_elements(body, rec):
+    """Nối danh sách phần tử vào câu nhắc, đặt TRƯỚC dòng lệnh cuối để không phá cấu trúc."""
+    els = screen_elements(rec)
+    if not els:
+        return body
+    block = "Phần tử trên màn: " + " · ".join(els)
+    tail = "Viết câu hướng dẫn cho bước tiếp theo."
+    return body.replace(tail, block + "\n" + tail) if tail in body else body + "\n" + block
+
 
 def selftest(base=None, n_batch=5):
     """Chứng minh đường chấm khớp đường dạy — chạy được trên CPU, không tốn gì.
@@ -115,20 +196,99 @@ def selftest(base=None, n_batch=5):
     return ok
 
 
+def selftest_batch(a, n_batch=8):
+    """Phép thứ ba của tự kiểm — CẦN GPU, nên tách riêng.
+
+    Sinh cùng một bước ở lô kích thước 1 và ở lô kích thước n, rồi so câu ra. Lệch nhau
+    tức đệm sai bên: với mô hình sinh, đệm bên PHẢI đẩy token đệm vào giữa câu nhắc và
+    chỗ bắt đầu sinh, làm câu ở lô lớn khác câu ở lô một. Lỗi này không báo gì cả — chỉ
+    làm điểm tụt ở mọi nhánh, và tụt không đều theo thứ tự bản ghi.
+
+    Cho tới 7/8 phép này KHÔNG CÓ CỜ ĐỂ CHẠY: dòng in ở phép [3] bảo chạy
+    `--selftest-batch`, mà `argparse` không có cờ đó. Nghĩa là ai làm theo hướng dẫn
+    cũng sẽ nhận lỗi "unrecognized arguments" rồi bỏ qua, và tưởng đã kiểm.
+    """
+    import torch
+    from transformers import Qwen2_5_VLForConditionalGeneration, AutoProcessor
+    from PIL import Image
+
+    proc = AutoProcessor.from_pretrained(a.base, min_pixels=200704, max_pixels=1003520)
+    proc.tokenizer.padding_side = "left"
+    recs = [json.loads(l) for l in open(os.path.join(TEST, "test.jsonl"), encoding="utf-8")][:n_batch]
+    ocr = {}
+    op = os.path.join(TEST, "ocr.jsonl")
+    if os.path.exists(op):
+        for line in open(op, encoding="utf-8"):
+            o = json.loads(line); ocr[o["image"]] = o
+
+    model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+        a.base, torch_dtype=torch.bfloat16, device_map="auto")
+    if a.adapter:
+        from peft import PeftModel
+        model = PeftModel.from_pretrained(model, a.adapter)
+    model.eval()
+
+    def gen(batch):
+        texts, imgs = [], []
+        for r in batch:
+            rr = {"goal": r["goal"], "history": r.get("history") or []}
+            msg = [{"role": "system", "content": SYS},
+                   {"role": "user", "content": [
+                       {"type": "image"},
+                       {"type": "text", "text": "\n" + prompt_body(rr, ocr.get(r["image"]))}]}]
+            texts.append(proc.apply_chat_template(msg, tokenize=False, add_generation_prompt=True))
+            imgs.append(Image.open(os.path.join(TEST, r["image"])).convert("RGB"))
+        inp = proc(text=texts, images=imgs, return_tensors="pt", padding=True).to(model.device)
+        with torch.no_grad():
+            g = model.generate(**inp, max_new_tokens=a.max_new, do_sample=False)
+        return [proc.decode(g[i][len(inp["input_ids"][i]):], skip_special_tokens=True).strip()
+                for i in range(len(batch))]
+
+    print(f"Sinh lô 1 cho {len(recs)} bước...")
+    one = [gen([r])[0] for r in recs]
+    print(f"Sinh lô {len(recs)} một lượt...")
+    many = gen(recs)
+
+    bad = [i for i in range(len(recs)) if one[i] != many[i]]
+    print("=" * 70)
+    print(f"  [3] lô 1 vs lô {len(recs)} : {len(recs)-len(bad)}/{len(recs)} trùng nguyên văn"
+          f"   {'ĐẠT' if not bad else 'RỚT'}")
+    for i in bad[:3]:
+        print(f"      bước {recs[i]['episode_id']}/{recs[i]['step_id']}")
+        print(f"        lô 1  : {one[i][:110]!r}")
+        print(f"        lô lớn: {many[i][:110]!r}")
+    if bad:
+        print("\n  RỚT — gần như chắc chắn là đệm sai bên. Kiểm padding_side='left'.\n"
+              "  KHÔNG chấm khi chưa sửa: mọi con số theo lô đều không tin được.")
+    else:
+        print(f"\n  ĐẠT — đệm bên {proc.tokenizer.padding_side}, chấm theo lô an toàn.")
+    return not bad
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--adapter", default=None, help="thư mục LoRA của nhánh")
     ap.add_argument("--no-adapter", action="store_true", help="chạy mô hình gốc, chưa huấn luyện")
-    ap.add_argument("--out", required=True)
+    ap.add_argument("--out", help="bắt buộc trừ khi chạy --selftest / --selftest-batch")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--base", default=BASE)
     ap.add_argument("--max-new", type=int, default=96)
     ap.add_argument("--batch", type=int, default=8)
     ap.add_argument("--selftest", action="store_true",
                     help="kiểm câu nhắc khớp lúc dạy (CPU, không cần mô hình)")
+    ap.add_argument("--b-infer", action="store_true",
+                    help="nhánh B-infer: nối DANH SÁCH phần tử của màn vào đầu vào lúc chạy "
+                         "(không đánh dấu đích, không dùng toạ độ chuẩn). Dùng với trọng số S1.")
+    ap.add_argument("--selftest-batch", action="store_true",
+                    help="phép [3]: lô 1 và lô n có ra cùng câu không (CẦN GPU). "
+                         "Chạy trước lượt chấm đầu tiên trên máy thuê.")
     a = ap.parse_args()
     if a.selftest:
         sys.exit(0 if selftest(a.base) else 1)
+    if a.selftest_batch:
+        sys.exit(0 if selftest_batch(a, a.batch) else 1)
+    if not a.out:
+        sys.exit("Thiếu --out.")
     if not a.adapter and not a.no_adapter:
         sys.exit("Phải cho --adapter, hoặc --no-adapter nếu cố ý chạy mô hình gốc.")
 
@@ -179,10 +339,13 @@ def main():
             # content dạng DANH SÁCH, không phải chuỗi: chat template của Qwen in
             # nguyên văn chuỗi "<image>" chứ không thay bằng token ảnh. "\n" đứng đầu
             # phần chữ để chuỗi render ra trùng đúng bản LLaMA-Factory dựng lúc dạy.
+            body = prompt_body(rr, ocr.get(r["image"]))
+            if a.b_infer:
+                body = with_elements(body, r)
             msgs.append([{"role": "system", "content": SYS},
                          {"role": "user", "content": [
                              {"type": "image"},
-                             {"type": "text", "text": "\n" + prompt_body(rr, ocr.get(r["image"]))}]}])
+                             {"type": "text", "text": "\n" + body}]}])
         texts = [proc.apply_chat_template(m, tokenize=False, add_generation_prompt=True)
                  for m in msgs]
         inputs = proc(text=texts, images=imgs, return_tensors="pt",

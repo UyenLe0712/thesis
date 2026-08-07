@@ -9,6 +9,8 @@
 #   bash run_on_rented.sh train s1 101   # huấn luyện một nhánh, một hạt giống
 #   bash run_on_rented.sh infer s1 101   # sinh câu trên tập kiểm
 #   bash run_on_rented.sh score s1 101   # chấm
+#   bash run_on_rented.sh binfer s1 101  # nhánh B-infer: không train, nhét danh sách phần tử
+#   bash run_on_rented.sh noharm s2 101 s1 101   # thước phụ: không gây hại
 #
 # TRÌNH TỰ BẮT BUỘC (report/106 mục 5), đừng đảo:
 #   gate → train s1 101 → train s1 202 → infer+score cả hai → đo MDE thật
@@ -114,6 +116,15 @@ PY
 infer)
   branch=${2:?}; seed=${3:?}
   cd "$REPO"
+  # Phép tự kiểm [3] chỉ chạy được ở đây vì cần GPU: lô 1 và lô n phải ra CÙNG câu.
+  # Lệch tức đệm sai bên — lỗi không báo gì, chỉ làm điểm tụt không đều theo thứ tự
+  # bản ghi. Chạy một lần trước lượt sinh đầu tiên là đủ cho mọi nhánh về sau.
+  if [ ! -f "$CKPT/.selftest_batch_ok" ]; then
+    python harness/infer_branch.py --selftest-batch \
+        --adapter "$CKPT/${branch}_seed${seed}" --batch 8 \
+      && touch "$CKPT/.selftest_batch_ok" \
+      || { echo "TỰ KIỂM LÔ RỚT — dừng, đừng chấm."; exit 1; }
+  fi
   python harness/infer_branch.py \
       --adapter "$CKPT/${branch}_seed${seed}" \
       --out "$CKPT/preds_${branch}_seed${seed}.jsonl" \
@@ -127,6 +138,36 @@ score)
       --grounder "${GROUNDER:-uground}" \
       --preds "$CKPT/preds_${branch}_seed${seed}.jsonl" \
       --out "$CKPT/score_${branch}_seed${seed}.json"
+  ;;
+
+binfer)
+  # Nhánh B-infer: KHÔNG huấn luyện gì thêm, dùng trọng số S1, lúc chạy nhét DANH SÁCH
+  # phần tử của màn vào đầu vào. Không đánh dấu đích, không dùng toạ độ chuẩn — nhét
+  # khai báo của đúng nút đích là phép thử TRẦN, một thí nghiệm khác (report/106 sửa
+  # đổi 7/8 mục c).
+  #   bash run_on_rented.sh binfer s1 101
+  branch=${2:-s1}; seed=${3:-101}
+  cd "$REPO"
+  python harness/infer_branch.py --b-infer \
+      --adapter "$CKPT/${branch}_seed${seed}" \
+      --out "$CKPT/preds_binfer_from_${branch}_seed${seed}.jsonl" \
+      ${LIMIT:+--limit $LIMIT}
+  python harness/score_run.py --mode score --grounder "${GROUNDER:-uground}" \
+      --preds "$CKPT/preds_binfer_from_${branch}_seed${seed}.jsonl" \
+      --out "$CKPT/score_binfer_${branch}_seed${seed}.json"
+  ;;
+
+noharm)
+  # Thước phụ BẮT BUỘC (report/106 mục 3): trên bước KHÔNG chạm, nhánh khai báo
+  # không được thấp hơn nhánh nền quá 3 điểm phần trăm. Không tốn bộ trỏ nên rẻ,
+  # nhưng thiếu nó là thiếu một thước đã đăng ký.
+  #   bash run_on_rented.sh noharm s2 101 s1 101
+  branch=${2:?}; seed=${3:?}; bbranch=${4:-s1}; bseed=${5:-101}
+  cd "$REPO"
+  python harness/score_run.py --mode noharm \
+      --preds "$CKPT/preds_${branch}_seed${seed}.jsonl" \
+      --baseline "$CKPT/preds_${bbranch}_seed${bseed}.jsonl" \
+      --out "$CKPT/noharm_${branch}_seed${seed}.json"
   ;;
 
 *)
