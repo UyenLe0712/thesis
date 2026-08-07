@@ -139,6 +139,14 @@ def build(n_shards):
         if not g or sid >= len(g["steps"]):
             st["bo_khong_co_cau_chuan"] += 1
             continue
+        # Bỏ bước KHÔNG CÓ CÂU CHUẨN. Câu chuẩn rỗng mà vẫn tính vào mẫu số thì mọi
+        # nhánh đều bị trừ điểm oan ở đó — không nhánh nào khớp nổi một câu rỗng.
+        # Trước 7/8 luật này nằm ở một lượt vá tay chứ không nằm trong mã, nên dựng lại
+        # ra 6.969 bước trong khi tệp đã khoá có 6.958 — đủ để mẫu ngẫu nhiên của cổng A
+        # lệch khỏi tập đã đăng ký.
+        if not (g["steps"][sid] or "").strip():
+            st["bo_cau_chuan_rong"] += 1
+            continue
         act = g["acts"][sid]
         rel = f"images/ep{eid}_s{sid}.png"
         with open(os.path.join(OUT, rel), "wb") as f:
@@ -154,6 +162,11 @@ def build(n_shards):
             "history": g["steps"][:sid],
         })
     recs.sort(key=lambda r: (r["episode_id"], r["step_id"]))
+    # Nhãn app_seen_in_train là HÀM CỦA TẬP DẠY, không tính được ở đây. Để trống, rồi
+    # chạy harness/tag_app_seen.py sau khi dựng xong dữ liệu dạy. Ghi sẵn khoá để bản
+    # ghi có đủ trường ngay từ đầu, khỏi ai đó tưởng thiếu.
+    for r in recs:
+        r.setdefault("app_seen_in_train", None)
     with open(os.path.join(OUT, "test.jsonl"), "w", encoding="utf-8") as f:
         for r in recs:
             f.write(json.dumps(r, ensure_ascii=False) + "\n")
