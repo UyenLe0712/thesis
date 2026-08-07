@@ -47,6 +47,19 @@ import a11y_inventory as A11Y
 TEST = os.path.join(HERE, "dg1_cache", "test_ac")
 SEED = 20260805                      # khoá ở report/106 mục 10
 
+def pick_dtype():
+    """Chọn kiểu số theo card ĐANG CÓ, đừng ép bf16.
+
+    A100 có bf16; T4 (Turing) và P100 (Pascal) — hai card của Colab/Kaggle bản miễn phí —
+    thì KHÔNG. Ép bf16 ở đó sẽ lỗi hoặc rơi vào đường giả lập chậm khủng khiếp, rồi ta
+    ngồi đổ oan cho bộ trỏ hay cho mô hình. Với suy luận, fp16 không đổi kết luận.
+    """
+    import torch
+    if not torch.cuda.is_available():
+        return torch.float32
+    return torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
+
+
 
 # ─────────────────────────── bộ trỏ ───────────────────────────
 class UGround:
@@ -61,7 +74,7 @@ class UGround:
         self.torch = torch
         self.proc = AutoProcessor.from_pretrained(path)
         self.model = Qwen2VLForConditionalGeneration.from_pretrained(
-            path, torch_dtype=torch.bfloat16, device_map="auto").eval()
+            path, torch_dtype=pick_dtype(), device_map="auto").eval()
 
     # Câu nhắc BÊ NGUYÊN VĂN từ thẻ mô hình chính chủ (osunlp/UGround-V1-2B). Đây là
     # câu nhắc mô hình được huấn luyện cùng; tự chế câu khác — nhất là bằng tiếng Việt —

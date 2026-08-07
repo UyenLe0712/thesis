@@ -46,6 +46,19 @@ def strip_desc(s):
 
 VISION = "<|vision_start|><|image_pad|><|vision_end|>"
 
+def pick_dtype():
+    """Chọn kiểu số theo card ĐANG CÓ, đừng ép bf16.
+
+    A100 có bf16; T4 (Turing) và P100 (Pascal) — hai card của Colab/Kaggle bản miễn phí —
+    thì KHÔNG. Ép bf16 ở đó sẽ lỗi hoặc rơi vào đường giả lập chậm khủng khiếp, rồi ta
+    ngồi đổ oan cho bộ trỏ hay cho mô hình. Với suy luận, fp16 không đổi kết luận.
+    """
+    import torch
+    if not torch.cuda.is_available():
+        return torch.float32
+    return torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
+
+
 MAX_ELEMS = 40          # cắt danh sách; màn có trung vị 89 phần tử, nhét hết là phình câu nhắc
 W_SCREEN, H_SCREEN = 1080, 2400
 
@@ -222,7 +235,7 @@ def selftest_batch(a, n_batch=8):
             o = json.loads(line); ocr[o["image"]] = o
 
     model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
-        a.base, torch_dtype=torch.bfloat16, device_map="auto")
+        a.base, torch_dtype=pick_dtype(), device_map="auto")
     if a.adapter:
         from peft import PeftModel
         model = PeftModel.from_pretrained(model, a.adapter)
@@ -312,7 +325,7 @@ def main():
 
     print(f"Nạp {a.base}" + (f" + LoRA {a.adapter}" if a.adapter else " (mô hình gốc)"))
     model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
-        a.base, torch_dtype=torch.bfloat16, device_map="auto")
+        a.base, torch_dtype=pick_dtype(), device_map="auto")
     if a.adapter:
         from peft import PeftModel
         model = PeftModel.from_pretrained(model, a.adapter)
