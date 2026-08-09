@@ -262,7 +262,27 @@ kiểm. Hai tập lấy từ `train-*.parquet` và `test-*.parquet` nên *lẽ r
 Đọc chữ quanh điểm chạm rồi so với câu chuẩn, đối chứng bằng ghép lệch một bước. Lát 2
 shard cho **47% so với 27%**. Ra chênh dưới 1,4 lần là ghép sai ở đâu đó — dừng, báo mình.
 
-### Ô 0.11d — phân bố nhãn ứng dụng
+### Ô 0.11d — tập kiểm dựng lại có khớp bản đã khoá không
+
+```python
+import json
+T = f"{REPO}/harness/dg1_cache/test_ac"
+recs = [json.loads(l) for l in open(f"{T}/test.jsonl", encoding="utf-8")]
+taps = [r for r in recs if r["action"].get("action_type") in ("click","long_press") and "x" in r["action"]]
+desc = {(json.loads(l)["episode_id"], json.loads(l)["step_id"])
+        for l in open(f"{T}/descriptors.jsonl", encoding="utf-8")}
+phu = sum(1 for r in taps if (r["episode_id"], r["step_id"]) in desc)
+print(f"bước      : {len(recs):,}   ← phải là 6.958")
+print(f"bước chạm : {len(taps):,}   ← phải là 4.463")
+print(f"nhãn khai báo phủ: {phu:,}/{len(taps):,} = {phu/len(taps):.1%}   ← phải ~99,7%")
+```
+
+`build_test_data.py` ở ô 0.10 **ghi đè** `test.jsonl`, trong khi nhãn khai báo mang theo
+trong gói dựng từ bản cũ. Hai bản lệch thì phép thử TRẦN lặng lẽ phủ thiếu — vẫn chạy,
+vẫn ra số, chỉ là số của một tập nhỏ hơn. Đây đúng kiểu lỗi đã bắt hôm 7/8 (bộ lọc 11 bản
+ghi rỗng nằm ở vá tay chứ không nằm trong mã, dựng lại ra 6.969 thay vì 6.958).
+
+### Ô 0.11e — phân bố nhãn ứng dụng
 
 ```python
 import json, collections
@@ -277,7 +297,7 @@ for k, v in c.most_common():
 Nhóm `False` chính là **lát cắt phụ đã đăng ký**. Con số này quyết định lát đó có đủ mẫu
 để báo hay không — dưới ~100 bước chạm thì phải khai là quá nhỏ, không kết luận được.
 
-## 🛑 MỐC DỪNG 3 — dán output ô 0.9, 0.10, 0.11, 0.11b, 0.11c, 0.11d
+## 🛑 MỐC DỪNG 3 — dán output ô 0.9, 0.10, 0.11, 0.11b → 0.11e
 
 Đây là mốc **quan trọng nhất trước khi tiêu tiền thật**. Sau mốc này là 11-18 giờ train.
 Mình cần đối chiếu:
@@ -289,6 +309,7 @@ Mình cần đối chiếu:
 - **9 bất biến** phải đạt cả 9. Rớt một cái là bốn nhánh không so được với nhau
 - **rò rỉ (ô 0.11b) phải bằng 0** — đây là điều kiện sống còn, sai là bỏ cả luận văn
 - **phép ghép (ô 0.11c)** chênh phải trên 1,4 lần
+- **tập kiểm (ô 0.11d)** vẫn 6.958 / 4.463, nhãn khai báo phủ ~99,7%
 - **phân bố `app_seen_in_train`** — quyết định lát cắt phụ có đủ mẫu để báo hay không
 
 ---
