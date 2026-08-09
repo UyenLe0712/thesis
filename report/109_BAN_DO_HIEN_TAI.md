@@ -207,7 +207,18 @@ vast.ai, **1 card A100** (40 GB là đủ), **on-demand** (không interruptible:
 giữa các nhánh lẫn cả phần do cỡ lô khác nhau. `setup` tự kiểm số card và đĩa trống, khác 1 card
 hoặc dưới 90 GB thì dừng hẳn.
 
-**Vì sao không Colab** (rà lại 9/8 sau đề xuất dùng Colab pay-as-you-go + VPN Thổ Nhĩ Kỳ): ngay
+**Đổi quyết định 9/8 chiều — chọn Colab Pro, không thuê vast.ai.** Lý do: đo được máy thật
+(A100 **80 GB** · đĩa 235,7 GB · local-scratch 368 GB · RAM 167 GB · đốt **6,77 đơn vị/giờ**).
+Hai con số trước đó của mình sai: tốc độ đốt không phải 15 mà là 6,77, và card là 80 GB chứ
+không phải 40. Quy ra giá: **$0,677/giờ** (giá thường) so với $0,789 của vast.ai — Colab rẻ hơn
+và card to gấp đôi. Runbook: `harness/run_on_colab.md`.
+
+**Rủi ro còn lại của đường Colab, và cách chặn:** phiên chết giữa chừng → cho `output_dir` trỏ
+vào Drive, LLaMA-Factory tự nối tiếp từ điểm lưu gần nhất · không chắc phiên nào cũng được A100
+→ kiểm card ở đầu mỗi phiên, ra L4/T4 thì không train · cỡ lô giữ `4×4` thay vì `16×1` để chạy
+được cả trên bản 40 GB nếu bị tụt.
+
+**Lập luận cũ (đã lỗi thời, giữ để tra):** vì sao từng loại Colab (rà lại 9/8 sau đề xuất dùng Colab pay-as-you-go + VPN Thổ Nhĩ Kỳ): ngay
 ở giá rẻ nhất nghe được ($6/100 unit), A100 đốt 15 unit/giờ → **$0,90/giờ**, vẫn **đắt hơn**
 vast.ai $0,789 mà lại ít quyền kiểm soát hơn. Ba chỗ tiền không mua được: Colab chỉ hứa "L4 và
 *thỉnh thoảng* A100" (cỡ lô không giữ được qua sáu lượt) · chạy nền 24 giờ là tính năng của
