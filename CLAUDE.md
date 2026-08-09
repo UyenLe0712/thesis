@@ -1,5 +1,24 @@
 # CLAUDE.md — Bối cảnh luận văn (auto-load mỗi phiên)
 
+> ## 🗺️ ĐỌC `report/109_BAN_DO_HIEN_TAI.md` TRƯỚC — một file nắm toàn bộ (9/8/2026)
+> Bài toán · pipeline · 6 nhánh · số đã đo tin được · giới hạn phải khai · trình tự việc kế tiếp ·
+> tiền · luật đọc kết quả · tra ở đâu. Khi mâu thuẫn: `report/106` thắng về *phải làm gì*,
+> `report/108` thắng về *đã đo được gì*, `report/109` thắng về *đang ở đâu*.
+>
+> **⭐ 9/8 — CỔNG A ĐẠT, và toàn bộ phần miễn phí đã chạy xong trên Kaggle T4 (0 đô).**
+> · sai số bộ trỏ trung vị **0,7%** (ngưỡng 3%) · **trần của thước 70,0%** [64,5–75,3] — mọi điểm
+> S1/S2 đọc trên nền 70, không phải 100 · ngưỡng 3% xác nhận bằng dụng cụ thật (dưới 3% → 100%
+> trúng Voronoi, n=188) · G hiệu dụng tập kiểm đủ **454,3**, MDE chiếu 3,9–6,6 pp.
+> · Bốn mắt xích từng "phải thuê máy mới biết" nay đã chạy: cấu hình train được LLaMA-Factory
+> nhận (LoRA khớp 14.966.784 tham số) · tự kiểm lô **8/8** · sinh câu · chấm điểm · B-infer.
+> · Bật `use_cache=True` sau khi kiểm **trùng tuyệt đối 50/50** → chấm một nhánh 48h xuống **5h**,
+> nên **khâu chấm điểm chạy miễn phí trên Kaggle**, không tốn tiền thuê.
+> · Giới hạn mới phải khai: bộ trỏ **bỏ cuộc theo trục ngang 15,3%** số bước · **B-infer thiệt ba
+> phương diện** (câu nhắc dài gấp 2,4 lần vùng đã dạy, cắt còn 40/72 phần tử, 14,1% có tên).
+> · Đã thêm nhánh tham chiếu **mô hình gốc chưa huấn luyện** (report/106 sửa đổi 9/8 mục k).
+> **▶️ VIỆC KẾ:** thuê vast.ai (1× A100 on-demand, đĩa 100 GB, ≥16 lõi) → `setup` → train S1 ×2
+> hạt giống → MDE thật → khoá ngưỡng → mới train S2. Tiền dự kiến **$70–108**.
+
 > ## 🔒 CHỐT 5/8/2026 — ĐÃ ĐĂNG KÝ TRƯỚC VÀ COMMIT, ĐỌC `report/106_DANG_KY_TRUOC.md`
 > **Thầy không gặp được → chạy luôn, không đợi chốt miệng.** Vì mất bước đó, `report/106` gánh vai trò niêm phong thiết kế: khoá 6 nhánh, thước đo, **luật đọc kết quả cho cả 4 kết cục** (dương / dương yếu / trắng / âm), 3 lát cắt, hạt giống 20260805. Đã commit `51ddb35`. Mọi thay đổi về sau **ghi vào mục sửa đổi cuối file, KHÔNG sửa đè**.
 >
