@@ -266,7 +266,8 @@ def selftest_batch(a, n_batch=8):
             imgs.append(Image.open(os.path.join(TEST, r["image"])).convert("RGB"))
         inp = proc(text=texts, images=imgs, return_tensors="pt", padding=True).to(model.device)
         with torch.no_grad():
-            g = model.generate(**inp, max_new_tokens=a.max_new, do_sample=False)
+            g = model.generate(**inp, max_new_tokens=a.max_new, do_sample=False,
+                               use_cache=True)
         return [proc.decode(g[i][len(inp["input_ids"][i]):], skip_special_tokens=True).strip()
                 for i in range(len(batch))]
 
@@ -377,7 +378,8 @@ def main():
         inputs = proc(text=texts, images=imgs, return_tensors="pt",
                       padding=True).to(model.device)
         with torch.no_grad():
-            gen = model.generate(**inputs, max_new_tokens=a.max_new,
+            # xem chú thích use_cache ở score_run.py — kiểm bằng 50/50 trùng tuyệt đối
+            gen = model.generate(**inputs, max_new_tokens=a.max_new, use_cache=True,
                                  do_sample=False, temperature=None, top_p=None)
         for r, g, inp in zip(chunk, gen, inputs["input_ids"]):
             txt = proc.decode(g[len(inp):], skip_special_tokens=True)

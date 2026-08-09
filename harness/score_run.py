@@ -113,7 +113,13 @@ class UGround:
         text = self.proc.apply_chat_template(msg, tokenize=False, add_generation_prompt=True)
         inp = self.proc(text=[text], images=[img], return_tensors="pt").to(self.model.device)
         with self.torch.no_grad():
-            g = self.model.generate(**inp, max_new_tokens=32, do_sample=False)
+            # use_cache=True nói THẲNG, không để mặc định quyết: `generation_config` của
+            # UGround-V1-2B đặt use_cache=False, và trên T4 điều đó làm 32 token mất 38,7 s
+            # thay vì 4,2 s — chậm 9,3 lần cho một phép biến đổi bảo toàn kết quả. Đã kiểm
+            # chứ không suy luận: 50 bước đầu của mẫu cổng A chạy lại với cache bật cho
+            # toạ độ TRÙNG TUYỆT ĐỐI 50/50 với vết đã lưu (ckpt/cache_check.jsonl).
+            g = self.model.generate(**inp, max_new_tokens=32, do_sample=False,
+                                    use_cache=True)
         out = self.proc.decode(g[0][len(inp["input_ids"][0]):], skip_special_tokens=True)
         m = re.findall(r"(\d+(?:\.\d+)?)", out)
         if len(m) < 2:

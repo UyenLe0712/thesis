@@ -766,8 +766,24 @@ bộ trỏ lệch 8-14% bề ngang màn. Giữ ở vai trò báo kèm, không ba
 ### (e) `use_cache=False` trong generation_config của UGround
 
 Đo trên T4: 32 token mất **38,65 s** với cache tắt, **4,16 s** với cache bật — chậm 9,3 lần.
-Cổng A đã chạy ở cấu hình mặc định (tắt), nên **kết quả trên không bị ảnh hưởng**. Trước khi bật
-cache cho các lượt chấm sau, phải chạy lại một phần trong đúng 300 bước đó với cache bật và so
-từng toạ độ với vết đã lưu. Bộ nhớ đệm khoá-giá trị về toán học là phép biến đổi bảo toàn kết
-quả, nhưng ở đây nó đứng giữa cổng A và mọi con số về sau, nên phải có bằng chứng chứ không
-suy luận.
+Cổng A đã chạy ở cấu hình mặc định (tắt), nên **kết quả trên không bị ảnh hưởng**.
+
+**Đã kiểm chứ không suy luận:** chạy lại 50 bước đầu của chính mẫu 300 đó với cache bật, so từng
+toạ độ với vết đã lưu — **trùng tuyệt đối 50/50**, sai khác đúng bằng 0 chứ không phải "trong
+dung sai" (`ckpt/cache_check.jsonl`, 201,5 s cho 50 bước = 4,03 s/bước). ⇒ bật `use_cache=True`
+nói thẳng ở mọi chỗ gọi `generate` trong `score_run.py` và `infer_branch.py`, không để mặc định
+của mô hình quyết. Một lượt chấm đủ 4.463 bước rút từ ~48 giờ xuống **~5 giờ**.
+
+### (f) Cấu trúc cụm của tập kiểm đủ — đầu vào cho MDE
+
+Tính trên toàn bộ 4.463 bước chạm, theo đúng luật cụm-đơn đã khoá ở sửa đổi 6/8 (e1):
+
+| | G | G hiệu dụng | app thật | cụm-đơn |
+|---|---|---|---|---|
+| toàn bộ bước chạm | 1.091 | **454,3** | 259 | 832 |
+| mẫu 300 của cổng A | 239 | 191,5 | 83 | 156 |
+
+Cụm lớn nhất của tập đủ là 58 bước, tức không có ứng dụng nào chi phối. MDE **chiếu** theo
+`2,8·sd/√G_eff`: sd hiệu số theo cặp 0,30 → 3,9 pp · 0,40 → 5,3 pp · 0,50 → 6,6 pp. Vẫn là
+**chiếu, chưa phải đo** — sd thật chỉ biết sau khi có điểm S1 hai hạt giống, và cam kết "Δ rơi
+vào 4-9 pp thì báo chưa kết luận được" giữ nguyên.
