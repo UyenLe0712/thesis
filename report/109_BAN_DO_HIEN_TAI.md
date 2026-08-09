@@ -244,7 +244,7 @@ kịch bản MDE.
 
 ## 9. Nguyên tắc làm việc đã rút ra — phần đáng viết vào chương phương pháp
 
-Tới nay đã bắt được **31 lỗi loại "chạy vẫn trơn nhưng kết quả sai"** (bảng đầy đủ ở
+Tới nay đã bắt được **35 lỗi loại "chạy vẫn trơn nhưng kết quả sai"** (bảng đầy đủ ở
 `report/108` mục 8). Ba bài học lặp lại:
 
 **Rà dấu vết trên đĩa, đừng hỏi trí nhớ.** `infer_branch.py` được cho là "đã sẵn sàng" suốt nhiều

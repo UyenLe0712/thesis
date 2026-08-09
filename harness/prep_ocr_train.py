@@ -10,6 +10,17 @@ Chạy: ~/.venvs/thesis/bin/python harness/prep_ocr_train.py [--limit N] [--spli
 """
 import os, json, argparse
 
+# GHIM MỖI TIẾN TRÌNH VỀ MỘT LUỒNG — phải đặt TRƯỚC khi onnxruntime được nạp.
+# `run_on_rented.sh` chạy song song `nproc` tiến trình. ONNX Runtime mặc định lấy hết
+# số lõi cho phần tính trong một phép, nên trên máy 32 lõi sẽ thành 32 tiến trình ×
+# 32 luồng = hơn 1.000 luồng tranh nhau 32 lõi. Kết quả là chậm hơn cả chạy ít tiến
+# trình, mà nhìn vào chỉ thấy "OCR lâu hơn dự tính" chứ không thấy nguyên nhân — và
+# lâu hơn ở đây là tiền, vì card đồ hoạ nằm không suốt lúc đó. Song song ở mức TIẾN
+# TRÌNH, mỗi tiến trình một luồng, là cách chia đúng cho việc này.
+for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
+           "NUMEXPR_NUM_THREADS", "ORT_NUM_THREADS"):
+    os.environ.setdefault(_v, "1")
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 # --split test  -> chạy trên tập kiểm (cùng mã, để đầu vào lúc chấm giống hệt lúc dạy)
 _SPLIT = "test" if "--split" in os.sys.argv and "test" in os.sys.argv else "train"
@@ -31,7 +42,11 @@ def main(limit=None, shard=0, nshard=1):
     (ocr.part{k}.jsonl) nên không tranh nhau khoá ghi; gộp lại bằng --merge."""
     from rapidocr_onnxruntime import RapidOCR
     from PIL import Image
-    ocr = RapidOCR()
+    # ghim thêm ở tầng thư viện, phòng khi biến môi trường bị ghi đè
+    try:
+        ocr = RapidOCR(intra_op_num_threads=1)
+    except TypeError:
+        ocr = RapidOCR()
     out_path = OUT if nshard == 1 else OUT.replace(".jsonl", f".part{shard}.jsonl")
     done = set()
     for p in ([out_path] if nshard > 1 else [OUT]):

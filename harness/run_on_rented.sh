@@ -30,9 +30,30 @@ cmd=${1:-help}
 case "$cmd" in
 
 setup)
+  # KIỂM MÁY TRƯỚC KHI LÀM GÌ TỐN THỜI GIAN. Ba thứ dưới đây nếu sai thì hoặc hỏng phép
+  # so (nhiều card → cỡ lô bị nhân lên), hoặc chết giữa chừng sau nhiều giờ (hết đĩa).
+  # Biết trong 5 giây rẻ hơn biết sau 3 tiếng.
+  echo "── kiểm máy ──"
+  nvidia-smi --query-gpu=name,memory.total --format=csv,noheader || true
+  NGPU=$(nvidia-smi -L 2>/dev/null | wc -l)
+  FREE=$(df -BG --output=avail "$WS" 2>/dev/null | tail -1 | tr -dc '0-9')
+  FREE=${FREE:-0}
+  echo "   card: $NGPU · lõi: $(nproc) · đĩa trống ở $WS: ${FREE} GB"
+  if [ "$NGPU" -ne 1 ]; then
+    echo "   ⚠️  THẤY $NGPU CARD. LLaMA-Factory sẽ tự chạy song song và NHÂN cỡ lô lên"
+    echo "      (đo được trên Kaggle T4x2: đặt batch 1 mà nó báo Total train batch size = 2)."
+    echo "      Cỡ lô hiệu dụng PHẢI giữ y hệt giữa các nhánh, nếu không hiệu số S2-S1 lẫn"
+    echo "      cả phần do cỡ lô khác nhau. Đặt CUDA_VISIBLE_DEVICES=0 rồi chạy lại."
+    exit 1
+  fi
+  if [ "$FREE" -lt 90 ]; then
+    echo "   ✗ ĐĨA DƯỚI 90 GB — dừng. Đỉnh cần ~70 GB cho ảnh, cộng cache mô hình ~12 GB."
+    exit 1
+  fi
+
   echo "── cài đặt ──"
   pip install -q -U "transformers>=4.49" accelerate peft bitsandbytes datasets \
-      huggingface_hub pyarrow pillow rapidocr_onnxruntime
+      huggingface_hub pyarrow pillow rapidocr_onnxruntime pyyaml
   [ -d "$LF" ] || git clone --depth 1 https://github.com/hiyouga/LLaMA-Factory "$LF"
   pip install -q -e "$LF[torch,metrics]"
 
@@ -47,7 +68,15 @@ setup)
   # luồng mất ~34 giờ còn sáu luồng mất ~5,7 giờ. Trên máy thuê tính tiền theo giờ
   # thì khoảng chênh đó là hơn 20 đô cho một việc chỉ dùng CPU, trong khi card đồ
   # hoạ nằm không. prep_ocr_train.py bỏ qua ảnh đã có kết quả nên chạy lại vô hại.
-  NP=${OCR_PROCS:-$(nproc)}
+  # Số tiến trình = min(số lõi, RAM_GB/2, 24). Mỗi tiến trình RapidOCR ăn ~0,5-1 GB;
+  # lấy đúng bằng số lõi trên máy nhiều lõi ít RAM là chuốc lấy OOM giữa chừng, mà OOM
+  # ở đây giết cả lượt và phải chạy lại từ đầu.
+  _cores=$(nproc)
+  _ramgb=$(( $(awk '/MemAvailable/{print $2}' /proc/meminfo) / 1024 / 1024 ))
+  _byram=$(( _ramgb / 2 )); [ "$_byram" -lt 1 ] && _byram=1
+  NP=${OCR_PROCS:-$(( _cores < _byram ? _cores : _byram ))}
+  [ "$NP" -gt 24 ] && NP=24
+  echo "   ($_cores lõi, ${_ramgb}GB RAM trống → dùng $NP tiến trình)"
   echo "   OCR tập dạy bằng $NP luồng"
   for k in $(seq 0 $((NP - 1))); do
     python harness/prep_ocr_train.py --shard "$k" --nshard "$NP" &
