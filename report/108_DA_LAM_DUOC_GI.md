@@ -7,15 +7,22 @@
 > `report/106` (bản đăng ký trước). Số nào đã bị rút thì ghi vào mục 9 chứ không xoá, để không
 > ai vô tình dùng lại.
 >
-> Cập nhật lần cuối: **6/8/2026**. Chưa huấn luyện mô hình nào, chưa tiêu đồng nào cho GPU.
+> Cập nhật lần cuối: **9/8/2026**. Chưa huấn luyện mô hình nào. Chưa tiêu đồng nào cho GPU —
+> cổng A và toàn bộ phần tiền trạm chạy trên GPU **miễn phí** của Kaggle.
 
 ---
 
 ## 1. Trạng thái một dòng
 
-Toàn bộ phần **không tốn tiền** đã xong và đã kiểm: dữ liệu dạy 4 nhánh, tập kiểm 6.958 bước có
-OCR, nhãn khai báo, và trọn đường ống huấn luyện → suy luận → chấm điểm. Thiết kế đã niêm phong
-trong git trước khi chạy. Việc kế tiếp là khoản chi đầu tiên (cổng A, 4–8 đô).
+**Cổng A đã ĐẠT và toàn bộ đường ống đã chạy thật ít nhất một lần — vẫn chưa tiêu đồng nào.**
+
+Dữ liệu dạy 4 nhánh, tập kiểm 6.958 bước có OCR, nhãn khai báo, đường ống huấn luyện → suy luận
+→ chấm điểm: tất cả đã dựng và đã chạy. Thiết kế niêm phong trong git trước khi chạy. Bốn mắt
+xích từng chỉ tồn tại trên giấy — cổng A, tự kiểm lô, sinh câu, chấm điểm — nay đều có vết chạy
+thật, làm trên T4 miễn phí của Kaggle thay vì máy thuê.
+
+Hai con số định vị mọi kết quả về sau: **sai số bộ trỏ trung vị 0,7%** (ngưỡng 3%) và **trần của
+thước 70,0%**. Việc kế tiếp là khoản chi đầu tiên và cũng là khoản lớn nhất: huấn luyện S1.
 
 ---
 
@@ -291,6 +298,8 @@ sai**, tìm ra nhờ đi kiểm chứ không nhờ báo lỗi.
 | **B-infer định nghĩa mơ hồ đủ để đẻ ra kết luận sai** | hồ sơ đọc được thành hai thí nghiệm: nhét khai báo của **đúng nút đích** (có lời giải sẵn) hay nhét **danh sách phần tử** (so công bằng). Cách thứ nhất trùng với phép thử TRẦN đã đăng ký riêng, và luật đọc kết quả đã khoá — *"B-infer bằng S2 thì huấn luyện mất lý do tồn tại"* — **chỉ đúng dưới cách thứ hai** | chốt cách thứ hai, ghi vào `report/106` sửa đổi 7/8 mục c; cài `--b-infer` |
 | **Danh sách phần tử của B-infer toàn khung chứa** | bản đầu cho ra `(không tên) <point>500,500</point>` lặp lại — tâm các khung phủ gần hết màn đều rơi vào giữa. Đúng lỗi hộp lồng nhau đã bắt ở khâu dựng nhãn, lặp lại ở chỗ mới | lọc hộp lớn hơn 25% màn + gộp trùng tâm + ưu tiên phần tử có tên: tỉ lệ có tên **14,1% → 40,0%** |
 | **Ô "dấu hiệu phân biệt" rỗng nghĩa 92,7%** | đếm đủ 1.074 nhãn: **85,8% chỉ đếm** ("1 trong 8 phần tử cùng loại"), 7,0% báo có mơ hồ mà không nói cách gỡ, chỉ **7,3%** thật sự gỡ được. Mà đây là ô mang tên của chính thành phần đóng góp. Không bắt thì rất dễ quy công cho "tính phân biệt" trong khi hiệu ứng thật đến từ ô toạ độ | xếp lại thứ tự luật sinh + thêm mỏ neo chữ → gỡ được **75,9%** (mục 3.1); luật đọc kết quả **không nới**: cấm quy công cho tính phân biệt, việc quy công chuyển sang S2-nopoint và S2r (`report/106` sửa đổi 6/8 e2 + f1) |
+| **Cache parquet không bao giờ được giải phóng** | `hf_hub_download` giữ lại mọi shard đã tải. 76 shard parquet ~67 GB, mà ảnh PNG bung ra cũng ~67 GB — hai thứ cùng nằm trên đĩa là ~134 GB, cộng tập kiểm và cache mô hình thành ~157 GB. Trên máy thuê container 200 GB thì đó là **hết đĩa giữa chừng, sau khi đã trả tiền cho mấy tiếng tải về** | xoá parquet ngay sau khi đọc xong từng shard, theo `realpath` để xoá cả khối dữ liệu chứ không chỉ liên kết mềm; đỉnh đĩa **134 GB → 70 GB**, container 100 GB là đủ |
+| **Không có git remote, mà `run_on_rented.sh` giả định `git clone`** | máy thuê không có cách nào lấy mã về. Phát hiện lúc rà, trước khi thuê | đóng gói `thesis_rented.zip` 2,7 MB chuyển bằng `scp`, mang theo cả kết quả OCR tập kiểm 14 MB để khỏi chạy lại 6 giờ OCR trên máy tính tiền |
 | **S2r ghép độ dài theo ký tự trong khi đăng ký ghi token** | mất mát tính trên token, nên "độ dài" cần ghép là token. Đo lại: chỉ **54,0%** cặp nằm trong 2 token, biên độ −17/+14 — trong khi tính theo ký tự thì trung vị lệch 0, nghe như đã khít. Trung bình ~0 nên không lệch hệ thống, nhưng mã không làm đúng thứ đã đăng ký | ghép bằng bộ tách token của `Qwen2.5-VL-3B`: **99,3%** cặp trong 2 token, biên −3/+6 |
 
 ---
@@ -339,15 +348,20 @@ sai**, tìm ra nhờ đi kiểm chứ không nhờ báo lỗi.
 
 | # | Việc | Tiền | Chặn ở đâu |
 |---|---|---|---|
-| ~~1~~ | ~~Thử đường ống bằng bộ trỏ rẻ~~ — **XONG 6/8**, 10 bước, ~0,002 đô | — | đường ống chạy thông; bộ trỏ rẻ lệch 29,3%, không chấm được |
-| 2 | **Cổng A** — đo sai số bộ trỏ chuyên | 4–8 đô | cần GPU; quyết định thước chính có dùng được không |
-| 3 | Huấn luyện S1 × 2 hạt giống → chấm đủ → **MDE thật** → khoá ngưỡng | 26–34 đô | trình tự cứng, không đảo |
-| 4 | Huấn luyện S2 × 2 hạt giống → chấm | 26–32 đô | |
-| 5 | S2r, S2-nopoint, B-infer | 26–32 đô | |
-| 6 | Thử mức 2 trên lát nhỏ | 3–6 đô | |
-| 7 | Chấm tay 100 câu (2 người) · demo tiếng Việt · kiểm không-gây-hại | 0–2 đô | |
+| ~~1~~ | ~~Thử đường ống bằng bộ trỏ rẻ~~ — **XONG 6/8** | — | bộ trỏ rẻ lệch 29,3%, không chấm được |
+| ~~2~~ | ~~**Cổng A**~~ — **XONG 9/8, MIỄN PHÍ** trên Kaggle T4 | **0 đô** | ĐẠT: lệch trung vị 0,7% · trần thước 70,0% |
+| ~~2b~~ | ~~Tiền trạm đường sinh câu~~ — **XONG 9/8, MIỄN PHÍ** | **0 đô** | tự kiểm lô 8/8 · sinh câu · chấm điểm · B-infer, cả bốn chạy thật |
+| 3 | Huấn luyện S1 × 2 hạt giống → sinh câu → **MDE thật** → khoá ngưỡng | 19–30 đô | trình tự cứng, không đảo |
+| 4 | Huấn luyện S2 × 2 hạt giống | 17–28 đô | |
+| 5 | S2r, S2-nopoint | 17–28 đô | |
+| 6 | B-infer + mốc mô hình gốc (chỉ suy luận) | 3 đô | |
+| 7 | Thử mức 2 trên lát nhỏ (S3-pilot — **chưa có mã**) | 1 đô | sau cổng C |
+| 8 | Chấm tay 100 câu (2 người) · demo tiếng Việt · kiểm không-gây-hại | 0 đô | |
+| — | Dựng dữ liệu + OCR 64.500 ảnh trên máy thuê | 2 đô | |
+| — | Đĩa 100 GB giữ 5–10 ngày + băng thông ~70 GB | 5–10 đô | tính cả lúc máy tắt |
 
-Tổng phần chắc chắn **85–112 đô**, dưới ngân sách 200.
+Tổng **~$65–100**, dưới ngân sách 200. **Khâu chấm điểm không nằm trong bảng** — đem về Kaggle
+chạy miễn phí, ~5 giờ một nhánh trong hạn mức 30 giờ/tuần, nhờ việc bật cache khoá-giá trị.
 ---
 
 ## 12. Phần free đã chạy hết — trạng thái sẵn sàng, và những gì còn chưa biết
@@ -372,23 +386,146 @@ cái gì mới chỉ là tin tưởng.**
 | Mọi khoá trong `train_config.yaml` | đối chiếu mã nguồn LLaMA-Factory: 0 khoá lạ, giá trị hợp lệ |
 | Đường ống chấm chạm được bộ trỏ thật | chạy 10 bước qua API, ghi vết đủ trường |
 
-### Chưa kiểm được — chỉ biết khi chạy trên máy có GPU
+### Bốn mục "chưa kiểm được" của bản 6/8 — nay đã kiểm hết, ngày 9/8, miễn phí
 
-1. `train_config.yaml` **chưa từng chạy** qua LLaMA-Factory. Đã đối chiếu từng khoá với mã nguồn
-   nên chắc hơn nhiều, nhưng đối chiếu không thay được một lượt chạy.
-2. Phép tự kiểm thứ ba của `infer_branch.py` — *lô 1 và lô 8 có ra cùng một câu không* — cần GPU.
-   Phải chạy `--selftest-batch` **trước lượt chấm đầu tiên**.
-3. `UGround` **chưa được nạp lần nào**. Câu nhắc nay đã bê nguyên văn bản chính thức, nhưng cách
-   nó trả toạ độ và hành xử thật thì chưa ai thấy.
-4. `run_on_rented.sh` chưa chạy trên máy thuê nào.
+| Mục treo hồi 6/8 | Đã làm gì | Kết quả |
+|---|---|---|
+| `train_config.yaml` chưa từng chạy qua LLaMA-Factory | 10 bước trên Kaggle T4, 60 mẫu | nhận cấu hình; **LoRA khớp 14.966.784 tham số** — tính tay ra đúng 36 tầng × 7 mô-đun, xác nhận `freeze_vision_tower` có tác dụng |
+| Tự kiểm lô 1 vs lô n cần GPU | `--selftest-batch --no-adapter --batch 8` | **8/8 trùng nguyên văn** — đệm bên trái đúng, chấm theo lô an toàn |
+| `UGround` chưa được nạp lần nào | cổng A, 300 bước | **ĐẠT**, xem mục 13 |
+| `run_on_rented.sh` chưa chạy | rà tay, chưa chạy | tìm ra 2 lỗi chặn đường (cache parquet · không có git remote), đã vá trước khi thuê |
+
+Thêm ba thứ **chưa từng chạy** mà bản 6/8 không liệt vì không ai để ý: `infer_branch.py` chưa
+sinh một câu nào (không có tệp `preds_*.jsonl` nào trong repo), `score_run --mode score` chưa
+chấm lần nào, và `--b-infer` chưa chèn danh sách lần nào. Cả ba đã chạy ngày 9/8 trên mô hình
+gốc chưa huấn luyện. Cách phát hiện đáng ghi lại: **rà dấu vết trên đĩa**, không hỏi trí nhớ.
+
+### Còn lại chưa kiểm
+
+1. `run_on_rented.sh` vẫn chưa chạy trọn trên máy thuê.
+2. `build_train_data.py` chưa chạy quá 2 shard; bản đủ là 76.
+3. **S3-pilot không có mã** hàm phạt lề — cố ý, nằm sau cổng C.
 
 ### Rủi ro lớn nhất còn lại, xếp theo mức
 
-1. **Bộ trỏ chuyên có đạt cổng A không.** Hồ sơ cũ tưởng bộ trỏ rẻ cách ngưỡng 8%/3%; thực tế
-   29,3%/3%. UGround mạnh hơn nhiều nhưng chưa ai đo nó trên bộ dữ liệu này. Rớt cổng thì xử theo
-   bậc thang ở `report/106` mục 8, **không nới ngưỡng sau khi nhìn số**.
+1. ~~**Bộ trỏ chuyên có đạt cổng A không**~~ — **đã trả lời 9/8: ĐẠT**, lệch trung vị 0,7%.
+   Rủi ro thay thế: **trần của thước chỉ 70,0%**, nên khoảng trống cho S2 hẹp hơn tưởng, và mọi
+   điểm phải đọc trên nền 70 chứ không phải 100.
 2. **Hiệu ứng rơi vào vùng 4–9 pp** — kết luận đổi theo luật gộp cụm, phải báo là chưa kết luận
    được (mục 7.1).
 3. **Thước không phân biệt được lệch dưới ~63 px** (bơm lỗi bắt được 33,1%). Đây là hành vi cố ý
    của luật gộp phần tử, nhưng phải khai: thước đo được *trỏ nhầm sang nút khác*, **không** đo
    được *trỏ hơi lệch trong cùng một nút*.
+
+
+---
+
+## 13. Kết quả đo trên GPU miễn phí — 9/8/2026
+
+Toàn bộ mục này chạy trên **Kaggle Tesla T4, không tốn đồng nào**. Trước đó cả bốn mắt xích ở
+đây đều được xếp vào loại "phải thuê máy mới biết".
+
+### 13.1. Cổng A — ĐẠT
+
+UGround-V1-2B, 300 bước lấy theo hạt giống 20260805 từ 4.463 bước chạm. Vết thô: `ckpt/gate_A_raw.jsonl`.
+
+| | |
+|---|---|
+| **sai số trung vị** | **0,7%** bề ngang màn (ngưỡng khoá trước: ≤3%) |
+| phân vị 75 | 8,8% |
+| số bước ≤3% | 62,7% |
+| phân bố | p10 0,1% · p25 0,2% · p50 0,7% · p75 9,1% · p90 36,3% |
+
+Dụng cụ hai thái cực: trúng thì trúng ngay tâm, trượt thì trượt hẳn. Đo trên **câu chuẩn của
+người viết**, nên đây là phép đo DỤNG CỤ, không đo mô hình nào.
+
+Một trong bốn dấu hiệu lỗi cài đặt có kêu (*x đúng giữa màn 30,7%*, ngưỡng 20%). Truy bằng bảng
+2×2 chéo với vị trí điểm chạm chuẩn: điểm chạm của người cũng nằm giữa màn 18,3% số bước, nhưng
+trong 245 bước có chuẩn **không** ở giữa thì bộ trỏ vẫn trả x giữa ở 46 bước — tính riêng trong
+nhóm trượt là ~45%. Dải "đúng giữa" chỉ chiếm ~1% trục x nên trượt ngẫu nhiên không rơi vào đó
+nhiều thế. ⇒ **kiểu hỏng thật của bộ trỏ** (không nhận ra phần tử thì bỏ trục ngang về giữa),
+ảnh hưởng 15,3% số bước, **không** phải lỗi cài đặt. Làm số xấu đi chứ không đẹp lên, nên cổng
+đạt hợp lệ. Phải khai kèm mỗi lần trình.
+
+### 13.2. Trần của thước = 70,0% — số phải in cạnh mọi kết quả S1/S2
+
+Cổng A đo khoảng cách, thước chính là ô-Voronoi. Đem chính 300 điểm trỏ đó chấm bằng
+`hit_voronoi` (`harness/gate_a_ceiling.py`, offline, không gọi lại bộ trỏ):
+
+| | |
+|---|---|
+| **ô-Voronoi tâm — trần** | **70,0%** KTC95 [64,5%, 75,3%] |
+| đĩa dung sai — trần | 81,3% KTC95 [76,6%, 86,0%] |
+| cụm | 239 (hiệu dụng 191,5) · trung vị 72 phần tử/màn · 0 màn thiếu cây trợ năng |
+
+Câu đưa vào là câu chuẩn nên `action_ok`/`toggle_ok` đúng theo định nghĩa; điểm rút gọn còn đúng
+phần định vị. **Nhánh đạt 45% là đạt 64% của trần, không phải "kém quá nửa".** Và vì câu mô hình
+tệ hơn câu chuẩn, 70,0% là **cận trên**.
+
+### 13.3. Ngưỡng 3% — xác nhận bằng dụng cụ thật, trên tập thật
+
+| dải sai số | n | Voronoi | đĩa |
+|---|---|---|---|
+| ≤3% | 188 | **100,0%** | 100,0% |
+| 3–5% | 21 | 66,7% | 100,0% |
+| 5–8% | 16 | 43,8% | 100,0% |
+| 8–14% | 12 | 8,3% | 100,0% |
+| >14% | 63 | 0,0% | 11,1% |
+
+Dưới 3% **không có ca kết oan nào** — trùng đường cong đo trước bằng dụng cụ mô phỏng (3% → 0%),
+nay xác nhận trên đúng bộ trỏ và đúng tập sẽ chấm. Ngưỡng cổng A không còn là con số mượn.
+
+Bảng này cũng đóng đinh quyết định 6/8: **đĩa dung sai vô dụng để phân biệt** — cho 100% ngay cả
+khi lệch 8–14% bề ngang màn. Giữ ở vai trò báo kèm, không bao giờ làm headline.
+
+### 13.4. Bộ nhớ đệm khoá-giá trị — 9,3 lần, và đã chứng minh không đổi kết quả
+
+`generation_config` của UGround đặt `use_cache=False`. Trên T4: 32 token mất **38,65 s** tắt
+cache, **4,16 s** bật. Không suy luận rằng "toán học bảo toàn nên chắc bằng nhau" — chạy lại 50
+bước đầu của chính mẫu cổng A với cache bật rồi so từng toạ độ: **trùng tuyệt đối 50/50**, sai
+khác đúng bằng 0 (`ckpt/cache_check.jsonl`). Đã bật `use_cache=True` nói thẳng ở mọi chỗ gọi
+`generate`. **Một lượt chấm đủ 4.463 bước: ~48 giờ → ~5 giờ**, tức Kaggle miễn phí gánh được cả
+khâu chấm điểm của mọi nhánh.
+
+### 13.5. Cấu trúc cụm của tập kiểm đủ — đầu vào cho MDE
+
+| | G | G hiệu dụng | app thật | cụm-đơn |
+|---|---|---|---|---|
+| toàn bộ 4.463 bước chạm | 1.091 | **454,3** | 259 | 832 |
+| mẫu 300 của cổng A | 239 | 191,5 | 83 | 156 |
+
+Cụm lớn nhất 58 bước → không ứng dụng nào chi phối. MDE **chiếu** theo `2,8·sd/√G_eff`: sd 0,30
+→ 3,9 pp · 0,40 → 5,3 pp · 0,50 → 6,6 pp. Vẫn là chiếu; sd thật chỉ biết sau khi có điểm S1 hai
+hạt giống. Cam kết "Δ rơi 4–9 pp thì báo chưa kết luận được" giữ nguyên.
+
+### 13.6. Đường sinh câu — bốn phép, đều đạt
+
+| phép | kết quả |
+|---|---|
+| `--selftest` (CPU, 3 phép) | chuỗi lúc chấm trùng lúc dạy ĐẠT · **1.272 token ảnh** trong đầu vào ĐẠT |
+| `--selftest-batch` (GPU) | **8/8 trùng nguyên văn** |
+| sinh câu 20 bước, mô hình gốc | chạy hết, có OCR, câu tiếng Anh đọc được |
+| `--mode score` trên 20 bước đó | in đủ Voronoi + KTC + số cụm, không lỗi |
+| `--b-infer` | câu nhắc nở 580 → 2.076 ký tự; **11/20 bước cho câu khác** bản thường |
+| `metric_exec` tự kiểm nội bộ | 6/6 test, hai giới hạn inventory nêu rõ |
+
+Điểm của mô hình **chưa huấn luyện**: 45,0% Voronoi, KTC95 [23,8%, 68,4%] ở n=20 — rộng tới mức
+**không được trích như một mốc**. Nhưng nó là lý do đăng ký thêm nhánh tham chiếu "mô hình gốc"
+(`report/106` sửa đổi 9/8 mục k): nếu S1 xấp xỉ mô hình gốc thì tiền đề của cả thiết kế lung
+lay, và nên biết trước khi diễn giải Δ giữa S1 và S2.
+
+### 13.7. Độ dài chuỗi — không nhánh nào chạm trần, trừ B-infer
+
+Đếm bằng bộ tách token của Qwen2.5-VL-3B, cộng 320 token thị giác. `cutoff_len: 2048`.
+
+| | trung vị | p95 | tối đa |
+|---|---|---|---|
+| s1 / s2 / s2r / s2_nopoint (đích dạy) | 515–541 | 595–625 | **785** |
+| câu nhắc lúc chấm, thường | 486 | 556 | 763 |
+| câu nhắc **B-infer** | **1.149** | 1.338 | 2.048 |
+
+⇒ **257/300 = 85,7%** bản ghi của B-infer nằm **ngoài** vùng độ dài mô hình từng thấy lúc dạy.
+Cộng với trần 40 phần tử chạm ở gần như mọi màn (trung vị 40 = tối đa 40, trong khi màn có trung
+vị 72 phần tử) và chỉ 14,1% phần tử có tên, B-infer là **đối thủ yếu hơn tên gọi của nó ở ba
+phương diện độc lập**. Nếu nó thua S2 thì không được kết luận thẳng "đưa thông tin lúc chạy kém
+hơn huấn luyện" — phải khai cả ba.
