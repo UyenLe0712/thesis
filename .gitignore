@@ -47,3 +47,8 @@ harness/dg1_cache/train_ac/descriptors.jsonl
 # Tập kiểm dựng tại máy (~8GB, dựng lại bằng harness/build_test_data.py)
 harness/dg1_cache/test_ac/
 harness/dg1_cache/test_ac/images/
+
+# Gói chuyển máy — TÁI TẠO bằng harness/make_bundle.py, đừng commit.
+# Bốn gói này từng được git theo dõi, hai cái nặng 110 MB, và mỗi lần dựng lại là một
+# blob mới nằm vĩnh viễn trong lịch sử. .git phình lên 370 MB cho thứ dựng trong vài giây.
+thesis_*.zip

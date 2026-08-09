@@ -1,5 +1,10 @@
 # Sinh hướng dẫn sử dụng phần mềm cho người đọc — tổng quan hệ thống
 
+> ⚠️ **FILE NÀY LỖI THỜI (rà 9/8/2026).** Nó viết theo bản thiết kế **trước** lúc gia cố, nên
+> số và khung ở đây không khớp với thiết kế đang chạy. Trạng thái hiện tại:
+> **`report/109_BAN_DO_HIEN_TAI.md`** · thiết kế đã niêm phong: `report/106` · số đã đo:
+> `report/108`. Phải sửa file này **trước khi đưa thầy đọc**, nhưng không cản việc chạy.
+
 > Bản đọc nhanh cho người mới tiếp cận đề tài. Chỉ trình bày **bài toán, hệ thống chạy thế nào, và các con số đã đo được**. Mỗi phần viết lời thường trước, công thức và trích dẫn để trong hộp riêng.
 
 ---

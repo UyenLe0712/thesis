@@ -1,5 +1,10 @@
 # Đóng góp của luận văn là gì, đã làm tới đâu, và cần quyết gì
 
+> ⚠️ **FILE NÀY LỖI THỜI (rà 9/8/2026).** Nó viết theo bản thiết kế **trước** lúc gia cố, nên
+> số và khung ở đây không khớp với thiết kế đang chạy. Trạng thái hiện tại:
+> **`report/109_BAN_DO_HIEN_TAI.md`** · thiết kế đã niêm phong: `report/106` · số đã đo:
+> `report/108`. Phải sửa file này **trước khi đưa thầy đọc**, nhưng không cản việc chạy.
+
 > Đọc một lượt là nắm: đóng góp nằm ở đâu, những gì đã chạy xong, chỗ nào còn hở, và bạn cần chọn gì tiếp.
 
 ---
