@@ -231,7 +231,53 @@ for nm, got, want in K:
 print(f"\n{n:,} mẫu mỗi nhánh · {nd:,} khai báo · " + ("TẤT CẢ ĐẠT" if not bad else f"{bad} BẤT BIẾN RỚT"))
 ```
 
-## 🛑 MỐC DỪNG 3 — dán output ô 0.9, 0.10, 0.11
+### Ô 0.11b — RÒ RỈ giữa tập dạy và tập kiểm ⚠️ ô quan trọng nhất phiên 0
+
+```python
+import json
+TR = f"{REPO}/harness/dg1_cache/train_ac/train.jsonl"
+TE = f"{REPO}/harness/dg1_cache/test_ac/test.jsonl"
+etr = {json.loads(l)["episode_id"] for l in open(TR, encoding="utf-8")}
+ete = {json.loads(l)["episode_id"] for l in open(TE, encoding="utf-8")}
+chung = etr & ete
+print(f"tác vụ trong tập dạy : {len(etr):,}")
+print(f"tác vụ trong tập kiểm: {len(ete):,}")
+print(f"TRÙNG NHAU           : {len(chung)}   ← PHẢI LÀ 0")
+if chung: print("   ví dụ:", sorted(chung)[:10])
+```
+
+**Nếu ra khác 0 thì DỪNG TOÀN BỘ, đừng train.** Mô hình học đúng những tác vụ sẽ đem chấm
+thì mọi con số về sau đều vô nghĩa, và đây là lỗi không có cách nào chữa sau khi đã train.
+
+Cho tới nay "0 tác vụ trùng" mới **chỉ kiểm trên lát 2 shard**. Ở quy mô 76 shard chưa ai
+kiểm. Hai tập lấy từ `train-*.parquet` và `test-*.parquet` nên *lẽ ra* rời nhau, nhưng
+"lẽ ra" không phải bằng chứng — và đây là loại sai không sửa được sau khi phát hiện.
+
+### Ô 0.11c — phép ghép ảnh ↔ câu chuẩn còn đúng ở quy mô đủ không
+
+```python
+!cd {REPO} && python harness/build_train_data.py --check 2>&1 | tail -5
+```
+
+Đọc chữ quanh điểm chạm rồi so với câu chuẩn, đối chứng bằng ghép lệch một bước. Lát 2
+shard cho **47% so với 27%**. Ra chênh dưới 1,4 lần là ghép sai ở đâu đó — dừng, báo mình.
+
+### Ô 0.11d — phân bố nhãn ứng dụng
+
+```python
+import json, collections
+c = collections.Counter(json.loads(l).get("app_seen_in_train")
+                        for l in open(f"{REPO}/harness/dg1_cache/test_ac/test.jsonl", encoding="utf-8"))
+tot = sum(c.values())
+for k, v in c.most_common():
+    ten = {True: "app ĐÃ thấy lúc dạy", False: "app CHƯA thấy", None: "không gán được app"}[k]
+    print(f"  {ten:22} {v:6,} = {v/tot:5.1%}")
+```
+
+Nhóm `False` chính là **lát cắt phụ đã đăng ký**. Con số này quyết định lát đó có đủ mẫu
+để báo hay không — dưới ~100 bước chạm thì phải khai là quá nhỏ, không kết luận được.
+
+## 🛑 MỐC DỪNG 3 — dán output ô 0.9, 0.10, 0.11, 0.11b, 0.11c, 0.11d
 
 Đây là mốc **quan trọng nhất trước khi tiêu tiền thật**. Sau mốc này là 11-18 giờ train.
 Mình cần đối chiếu:
@@ -241,8 +287,9 @@ Mình cần đối chiếu:
   ~7% · có hàng xóm ~92%. Lệch xa mấy con số này (đo trên lát 1.697 và trên tập kiểm
   4.448, hai lần đều khớp nhau) nghĩa là khâu dựng nhãn hỏng ở quy mô lớn
 - **9 bất biến** phải đạt cả 9. Rớt một cái là bốn nhánh không so được với nhau
-- **`tag_app_seen`**: phân bố đã-thấy / chưa-thấy / không-gán-được ở quy mô đủ. Con số
-  này quyết định lát cắt phụ có đủ mẫu để báo hay không
+- **rò rỉ (ô 0.11b) phải bằng 0** — đây là điều kiện sống còn, sai là bỏ cả luận văn
+- **phép ghép (ô 0.11c)** chênh phải trên 1,4 lần
+- **phân bố `app_seen_in_train`** — quyết định lát cắt phụ có đủ mẫu để báo hay không
 
 ---
 
@@ -381,6 +428,38 @@ trỏ sai và phiên chết là mất sạch — dừng ngay, sửa, chạy lạ
 Bật script chống ngủ ở một tab khác. Phiên chết thì: bật lại → ô A.1 → ô 0.3 → restart →
 A.1 → A.2 → **A.4** (bỏ qua A.3) — nó tự dò điểm lưu gần nhất mà nối tiếp.
 
+### Ô A.5b — THỬ NỐI TIẾP, chỉ làm ở lượt train ĐẦU TIÊN ⚠️
+
+Chờ tới khi ô A.5 thấy **checkpoint-200** xuất hiện trên Drive, rồi cố ý giết tiến trình
+và bật lại:
+
+```python
+import subprocess, glob, os, time
+print("điểm lưu hiện có:", [os.path.basename(x) for x in sorted(glob.glob(f"{D}/ckpt/{BRANCH}_seed{SEED}/checkpoint-*"))])
+subprocess.run("pkill -f llamafactory-cli", shell=True); time.sleep(5)
+print("đã giết tiến trình")
+```
+```python
+!cd {REPO} && nohup llamafactory-cli train /content/cfg.yaml > /content/resume.log 2>&1 &
+```
+```python
+import time; time.sleep(120)
+L = open("/content/resume.log", encoding="utf-8", errors="ignore").read()
+import re
+print("có nhận ra điểm lưu:", "Resuming" in L or "checkpoint" in L.lower())
+print("bắt đầu lại từ bước:", re.findall(r"'epoch': '([\d.]+)'", L)[:3] or "chưa in")
+print([l for l in L.splitlines() if "esum" in l or "heckpoint" in l][:4])
+```
+
+**Vì sao bỏ 5 phút làm chuyện này.** Một lượt train mất 11-18 giờ, mà phiên Colab gần như
+chắc chắn đứt ít nhất một lần. Toàn bộ kế hoạch dựa vào chỗ LLaMA-Factory tự dò điểm lưu
+gần nhất mà chạy tiếp — thứ đã cố ý dựng bằng cách **bỏ trống** `resume_from_checkpoint`
+(lỗi bắt ngày 7/8: điền vào là tắt đúng cái định bật). Cơ chế đó **chưa từng được chạy thử
+lần nào**. Biết nó hỏng ở phút thứ 30 thì mất 30 phút; biết ở giờ thứ 11 thì mất 11 giờ.
+
+Nó phải in ra chỗ nhận điểm lưu và bắt đầu lại từ epoch > 0. Nếu bắt đầu lại từ 0 thì cơ
+chế nối tiếp **không hoạt động** — dừng, báo mình, đừng để chạy tiếp.
+
 ### Ô A.6 — tự kiểm lô (CHỈ lần đầu tiên trong cả chiến dịch)
 
 ```python
@@ -439,8 +518,46 @@ print(f"còn sót <desc> trong pred: {sum(1 for r in R if '<desc>' in r['pred'])
 print(f"độ dài câu trung vị: {sorted(len(r['pred']) for r in R)[len(R)//2]} ký tự")
 ```
 
-**Điều kiện kết thúc phiên train:** `ckpt/…` và `preds_…jsonl` nằm trên Drive, ô A.9 sạch.
-**Tắt máy ngay.**
+**Điều kiện kết thúc phiên train:** `ckpt/…` và `preds_…jsonl` nằm trên Drive, ô A.9
+sạch, **ô A.10 đã chạy**. Rồi mới tắt máy.
+
+---
+
+### Ô A.10 — LƯU VẾT lên Drive ⚠️ chạy trước khi tắt máy, mọi phiên
+
+```python
+import os, shutil, json, glob
+V = f"{D}/logs/{BRANCH}_seed{SEED}"
+os.makedirs(V, exist_ok=True)
+for f in ("/content/cfg.yaml", "/content/train.log", "/content/probe.log",
+          "/content/resume.log", "/content/infer.log", "/content/preds_smoke.jsonl"):
+    if os.path.exists(f): shutil.copy(f, V)
+for f in glob.glob(f"{REPO}/harness/descriptor_build_stats*.json"): shutil.copy(f, f"{D}/logs/")
+# đường cong mất mát tách riêng, để vẽ hình cho luận văn mà không phải mở lại log
+import re
+L = open("/content/train.log", encoding="utf-8", errors="ignore").read()
+pts = [{"epoch": float(e), "loss": float(l)} for e, l in
+       zip(re.findall(r"'epoch': '([\d.]+)'", L), re.findall(r"'loss': '([\d.]+)'", L))]
+json.dump(pts, open(f"{V}/loss_curve.json", "w"), indent=1)
+print(f"{len(os.listdir(V))} tệp trong {V} · {len(pts)} điểm mất mát")
+print(os.listdir(V))
+```
+
+**Vì sao phải giữ từng thứ:**
+
+| Tệp | Dùng vào việc gì |
+|---|---|
+| `cfg.yaml` của TỪNG lượt | **bằng chứng** cho câu "sáu nhánh chỉ khác nhau ba dòng". Không có nó thì đó là lời khai, không phải chứng cứ |
+| `train.log` + `loss_curve.json` | hình đường cong mất mát trong luận văn; và để thấy lượt nào phân kỳ |
+| `probe.log` | giây-mỗi-bước, dùng cho phần báo cáo chi phí tính toán |
+| `resume.log` | chứng minh cơ chế nối tiếp có chạy |
+| `preds_*.jsonl` | câu mô hình viết — cần cho chấm tay, cho ví dụ định tính, cho mọi phân tích sau |
+| `score_*_raw.jsonl` | toạ độ bộ trỏ **từng bước**. Đổi luật chấm hay thêm lát cắt thì tính lại từ đây, khỏi gọi lại bộ trỏ |
+| `descriptor_build_stats*.json` | thống kê nhãn ở quy mô đủ, để đối chiếu với con số báo trong luận văn |
+| thư mục `ckpt/` | bộ trọng số. Cần khi muốn sinh lại câu, hoặc khi hội đồng đòi chạy thử |
+
+**Nguyên tắc: thứ gì tính lại tốn tiền hoặc tốn giờ thì phải nằm trên Drive trước khi tắt
+máy.** Colab xoá sạch `/content` khi phiên chết, không hỏi lại.
 
 ---
 
@@ -552,6 +669,43 @@ Gói cổng A (`thesis_kaggle_gateA.zip`) chỉ có **300 ảnh**, không đủ 
 Cần một gói khác gồm đủ ảnh bước chạm (~1,7 GB) hoặc dựng lại tập kiểm ngay trên Kaggle
 bằng `build_test_data.py --shards 9`. Mình sẽ dựng gói đó khi bạn có tệp dự đoán đầu tiên —
 ghi ở đây để không quên là **nó chưa tồn tại**.
+
+# Đối chiếu với bản đăng ký — mục nào chạy ở đâu
+
+Bảng này để soi xem runbook có bỏ sót thứ đã cam kết không. Cột cuối là chỗ duy nhất được
+phép ghi "chưa có mã", và ghi thì phải khai trong luận văn.
+
+| Mục trong `report/106` | Chạy ở đâu trong runbook |
+|---|---|
+| Cổng A — sai số bộ trỏ ≤3% | ✅ **đã xong 9/8** trên Kaggle, ĐẠT 0,7%. **Đừng chạy lại**, tốn tiền vô ích |
+| §5 bước 3 — S1 hai hạt giống | phiên train ×2, ô A.2 đổi `SEED` |
+| §5 bước 3 — chấm đủ | Kaggle, miễn phí |
+| §5 bước 4 — MDE thật + cỡ nhiễu hạt giống | mốc dừng 6 |
+| §5 bước 5 — khoá ngưỡng vào `report/106` | mốc dừng 6, mình ghi |
+| §5 bước 6 — phép thử TRẦN | ô cuối, `--ceiling gold` + `--ceiling filler` |
+| §5 bước 7 — S2 hai hạt giống | phiên train ×2 |
+| §5 bước 8 — S2r, S2-nopoint, B-infer | phiên train ×2 + ô `--b-infer` |
+| Sửa đổi 9/8 (k) — mốc mô hình gốc | ô `--no-adapter` |
+| §5 bước 9 — S3-pilot (khoản phạt lề) | ⛔ **CHƯA CÓ MÃ** hàm mất mát. Dữ liệu đã sửa 9/8. Không kịp thì khai *"đã đăng ký nhưng không chạy"* |
+| §3 — thước không-gây-hại (BẮT BUỘC) | mục "sau khi có điểm", `--mode noharm` |
+| §5 bước 10 — chấm tay 100 câu, 2 người | ⛔ **chưa có mã bộ chấm mù** |
+| §5 bước 10 — demo tiếng Việt | mục "sau khi có điểm" |
+| Ba lát cắt đã đăng ký | mục "sau khi có điểm", tính từ `score_*_raw.jsonl` |
+| §2 — hạt giống 101/202 (303 nếu cổng kích hoạt) | ô A.2 |
+| §10 — hạt giống lấy mẫu 20260805 | trong mã, không đụng vào |
+| §6 — luật đọc kết quả | mốc dừng 6, đọc **trước** khi nhìn số |
+
+**Bốn phép kiểm không nằm trong bản đăng ký nhưng runbook bắt buộc**, vì chúng chặn đúng
+những kiểu hỏng đã bắt được:
+
+| Phép | Ô | Chặn gì |
+|---|---|---|
+| rò rỉ tác vụ dạy ↔ kiểm | 0.11b | mô hình học đúng đề thi — không sửa được sau khi train |
+| phủ OCR 100% | 0.9 | vài nghìn bước vào huấn luyện với đầu vào thiếu chữ |
+| 9 bất biến bốn nhánh | 0.11 | bốn nhánh không so được với nhau |
+| thử nối tiếp | A.5b | phiên đứt ở giờ thứ 11 mà không nối lại được |
+
+---
 
 # Bốn điều tuyệt đối không đổi giữa chừng
 

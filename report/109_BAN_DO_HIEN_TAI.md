@@ -226,6 +226,12 @@ Pro+ chứ không phải pay-as-you-go, mà một lượt train mất 11-18 gi�
 dữ liệu ở R2/HF **không** giải được chỗ thứ ba: lúc train, 67 GB ảnh vẫn phải nằm trên đĩa máy
 vì mỗi lượt duyệt đọc lại toàn bộ.
 
+**Runbook: `harness/run_on_colab.md`** — 34 ô mã, **6 mốc dừng** để dán kết quả ra phân tích
+trước khi tiêu tiếp, ô kiểm sau mỗi khâu, và bảng đối chiếu từng mục của `report/106` với chỗ nó
+chạy. Bốn phép kiểm không nằm trong bản đăng ký nhưng bắt buộc: **rò rỉ tác vụ dạy↔kiểm** (chưa
+ai kiểm ở quy mô 76 shard, sai là bỏ cả luận văn) · phủ OCR 100% · 9 bất biến bốn nhánh · **thử
+nối tiếp sau khi cố ý giết tiến trình** (cơ chế chống mất phiên chưa từng chạy thử).
+
 **Phần đúng của ý đó đã lấy:** `run_on_rented.sh save` gói lại thứ **đắt-dựng-rẻ-lưu** — kết quả
 OCR (~120 MB, tốn 2-4 giờ CPU), nhãn khai báo, dữ liệu bốn nhánh — để `scp` về máy nhà. Mất máy
 sau `setup` mà không có gói này là trả lại 2-4 giờ tiền máy cho đúng thứ đã có. `restore` bung
