@@ -300,6 +300,8 @@ sai**, tìm ra nhờ đi kiểm chứ không nhờ báo lỗi.
 | **Ô "dấu hiệu phân biệt" rỗng nghĩa 92,7%** | đếm đủ 1.074 nhãn: **85,8% chỉ đếm** ("1 trong 8 phần tử cùng loại"), 7,0% báo có mơ hồ mà không nói cách gỡ, chỉ **7,3%** thật sự gỡ được. Mà đây là ô mang tên của chính thành phần đóng góp. Không bắt thì rất dễ quy công cho "tính phân biệt" trong khi hiệu ứng thật đến từ ô toạ độ | xếp lại thứ tự luật sinh + thêm mỏ neo chữ → gỡ được **75,9%** (mục 3.1); luật đọc kết quả **không nới**: cấm quy công cho tính phân biệt, việc quy công chuyển sang S2-nopoint và S2r (`report/106` sửa đổi 6/8 e2 + f1) |
 | **Cache parquet không bao giờ được giải phóng** | `hf_hub_download` giữ lại mọi shard đã tải. 76 shard parquet ~67 GB, mà ảnh PNG bung ra cũng ~67 GB — hai thứ cùng nằm trên đĩa là ~134 GB, cộng tập kiểm và cache mô hình thành ~157 GB. Trên máy thuê container 200 GB thì đó là **hết đĩa giữa chừng, sau khi đã trả tiền cho mấy tiếng tải về** | xoá parquet ngay sau khi đọc xong từng shard, theo `realpath` để xoá cả khối dữ liệu chứ không chỉ liên kết mềm; đỉnh đĩa **134 GB → 70 GB**, container 100 GB là đủ |
 | **Không có git remote, mà `run_on_rented.sh` giả định `git clone`** | máy thuê không có cách nào lấy mã về. Phát hiện lúc rà, trước khi thuê | đóng gói `thesis_rented.zip` 2,7 MB chuyển bằng `scp`, mang theo cả kết quả OCR tập kiểm 14 MB để khỏi chạy lại 6 giờ OCR trên máy tính tiền |
+| **Ô thứ tư của khai báo GIẢ là hằng số** | `desc_neg` ghi `"phần tử hàng xóm"` ở **994/995 = 99,9%** bản ghi, khai báo thật không bao giờ mang chuỗi đó (trùng 0/995; mỏ neo chữ 68,6% so với 0%). Khoản phạt lề của S3-pilot khi đó chỉ dạy mô hình **dò một chuỗi**, không cần nhìn ảnh — mà lề vẫn đẹp nên con số trông y như thành công | tính bằng đúng hàm dùng cho khai báo thật, chạy trên chính phần tử hàng xóm. Sau khi vá: mỏ neo 80,8% vs 74,0% · đếm 17,9% vs 23,6% · không còn chuỗi hằng nào. Bốn nhánh dựng lại: **nội dung không đổi một mẫu** |
+| **`build_test_data` ghi đè `test.jsonl` mà nhãn khai báo dựng từ bản cũ** | trong runbook Colab, ô dựng tập kiểm chạy **sau** khi đã bung nhãn khai báo mang theo. Hai bản lệch một bản ghi thì phép thử TRẦN lặng lẽ phủ thiếu — vẫn chạy, vẫn ra số, chỉ là số của một tập nhỏ hơn | thêm ô đối chiếu ba con số ngay sau đó: 6.958 bước · 4.463 bước chạm · nhãn phủ ~99,7% |
 | **OCR song song không ghim luồng — càng nhiều lõi càng chậm** | `run_on_rented.sh` chạy `nproc` tiến trình RapidOCR, mà ONNX Runtime mặc định lấy **hết số lõi** cho phần tính trong một phép. Trên máy 32 lõi thành 32 tiến trình × 32 luồng = hơn 1.000 luồng tranh 32 lõi. Nhìn vào chỉ thấy "OCR lâu hơn dự tính", mà lâu ở đây là tiền vì card nằm không. Ước tính "32 lõi = 1,1 giờ" khi đó sai hẳn | ghim `OMP_NUM_THREADS=1` (đặt **trước** khi onnxruntime nạp) + `RapidOCR(intra_op_num_threads=1)`; song song ở mức tiến trình |
 | **Số tiến trình OCR lấy đúng bằng số lõi, không nhìn RAM** | mỗi tiến trình RapidOCR ăn ~0,5–1 GB. Máy nhiều lõi ít RAM sẽ hết bộ nhớ giữa chừng, mà OOM ở đây giết cả lượt và phải chạy lại từ đầu | `NP = min(số lõi, RAM trống/2, 24)`, in ra để biết đã chọn gì |
 | **`pyyaml` không có trong danh sách cài, mà lệnh `train` cần** | bước sinh cấu hình cho từng nhánh dùng `import yaml`. Ảnh nền PyTorch trơn không chắc có sẵn — hỏng ở đúng lúc bắt đầu lượt train đầu tiên | thêm vào `pip install` của `setup` |
@@ -536,3 +538,51 @@ Cộng với trần 40 phần tử chạm ở gần như mọi màn (trung vị 
 vị 72 phần tử) và chỉ 14,1% phần tử có tên, B-infer là **đối thủ yếu hơn tên gọi của nó ở ba
 phương diện độc lập**. Nếu nó thua S2 thì không được kết luận thẳng "đưa thông tin lúc chạy kém
 hơn huấn luyện" — phải khai cả ba.
+
+
+---
+
+## 14. Rà runbook trước khi tiêu tiền — 9/8/2026
+
+Sau khi chốt dùng Colab Pro thay vì thuê máy, soạn `harness/run_on_colab.md` rồi rà lại ba lượt.
+Mục này ghi những gì lượt rà tìm ra, vì chúng là loại **thiếu sót trong quy trình**, khác với
+lỗi trong mã ở mục 8 — nhưng hậu quả bằng nhau.
+
+### 14.1. Ba kiểu hỏng âm thầm trong bản runbook đầu
+
+| | Hậu quả nếu để nguyên | Đã xử |
+|---|---|---|
+| OCR chạy trong ô, không chạy nền | 3 giờ đổ hàng vạn dòng vào trình duyệt cho tới lúc treo tab; tab treo giữa lúc OCR là mất cả khâu | mọi khâu trên 10 phút chạy `nohup … > log &`, theo dõi bằng ô nhẹ |
+| Không có ô kiểm phủ OCR | gộp từ 12 phần rời mà một tiến trình chết sớm thì tệp gộp **vẫn hợp lệ**, chỉ thiếu vài nghìn ảnh — những bước đó vào huấn luyện với đầu vào thiếu chữ, khác hẳn lúc chấm | ô đối chiếu phủ với `train.jsonl` (phải 0 thiếu) + ô theo dõi in **số tiến trình còn sống** |
+| Không thăm dò trước khi cam kết 15 giờ | không biết có tràn bộ nhớ, không biết giây/bước nên không tính được số đơn vị thật | ô chạy 20 bước rồi trích từ log: tham số huấn luyện (chờ 14.966.784), cỡ lô hiệu dụng (chờ 16), giây/bước, có tràn bộ nhớ không |
+
+### 14.2. Bốn phép kiểm bắt buộc, không nằm trong bản đăng ký
+
+| Phép | Chặn gì |
+|---|---|
+| **rò rỉ tác vụ dạy ↔ kiểm** ở quy mô 76 shard | "0 tác vụ trùng" **mới chỉ kiểm trên lát 2 shard**. Trùng thì mô hình học đúng đề thi, và **không có cách nào chữa sau khi đã train** |
+| phủ OCR 100% | xem 14.1 |
+| 9 bất biến bốn nhánh ở quy mô đủ | rớt một cái là bốn nhánh không so được với nhau |
+| **thử nối tiếp** sau khi cố ý giết tiến trình | cả kế hoạch Colab dựa vào việc LLaMA-Factory tự dò điểm lưu mà chạy tiếp — cơ chế dựng bằng cách **cố ý bỏ trống** `resume_from_checkpoint` (lỗi bắt 7/8) và **chưa từng chạy thử**. Biết nó hỏng ở phút 30 mất 30 phút; biết ở giờ thứ 11 mất 11 giờ |
+
+### 14.3. Bốn khâu đã đăng ký mà bản runbook đầu bỏ sót
+
+Thước **không-gây-hại** (bắt buộc, 35,9% bước không phải bước chạm) · **ba lát cắt** đã đăng ký
+(toàn tập / lát khó / app chưa thấy) · **chấm tay 100 câu hai người** · **bản trình diễn tiếng
+Việt**. Cả bốn không cần GPU. Bỏ quên thì tới lúc trình không có số — đúng loại lỗi đã bắt bốn
+lần (script suy luận, script chấm, thước không-gây-hại, phép thử trần).
+
+### 14.4. Lưu vết — quy tắc chốt
+
+**Thứ gì tính lại tốn tiền hoặc tốn giờ thì phải nằm trên Drive trước khi tắt máy.** Colab xoá
+sạch `/content` khi phiên chết. Danh sách bắt buộc: `cfg.yaml` của **từng** lượt (đây là **bằng
+chứng** cho câu "sáu nhánh chỉ khác ba dòng" — không có nó thì đó là lời khai) · `train.log` +
+`loss_curve.json` (hình trong luận văn) · `probe.log` (giây/bước, cho phần chi phí tính toán) ·
+`resume.log` · `preds_*.jsonl` · `score_*_raw.jsonl` · `descriptor_build_stats*.json` · `ckpt/`.
+
+### 14.5. Trạng thái runbook
+
+35 ô mã · 0 lỗi cú pháp · **6 mốc dừng** để dán kết quả ra phân tích trước khi tiêu tiếp · 14
+lệnh gọi script, 0 cờ sai khi đối chiếu với `argparse` thật · một bảng ánh xạ **từng mục của
+`report/106`** sang chỗ nó chạy, trong đó ghi thẳng hai chỗ **chưa có mã** (hàm phạt lề S3-pilot,
+bộ chấm tay mù).

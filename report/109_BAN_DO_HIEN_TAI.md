@@ -3,8 +3,9 @@
 > **Dành cho ai:** chính mình sau vài tuần quên mất, hoặc bất kỳ ai cần hiểu dự án đang ở đâu mà
 > không muốn đọc 12 file report.
 >
-> **Ngày:** 9/8/2026. **Trạng thái:** xong hết phần miễn phí, cổng A đã đạt, sắp thuê máy huấn
-> luyện. Chưa tiêu đồng nào cho GPU.
+> **Ngày:** 9/8/2026. **Trạng thái:** xong hết phần miễn phí · cổng A ĐẠT · toàn bộ đường ống đã
+> chạy thật ít nhất một lần · runbook Colab soạn xong và rà ba lượt. **Chưa tiêu đồng nào cho
+> GPU.** Việc kế: mua đơn vị điện toán Colab rồi chạy `harness/run_on_colab.md` từ ô 0.1.
 >
 > **Ba file kia dùng khi nào:** `report/106` = bản đăng ký trước (thiết kế đã niêm phong, luật
 > đọc kết quả) · `report/108` = sổ kê khai (đã làm gì, số nào tin được) · `report/100` = giới
@@ -158,8 +159,9 @@ Mọi bảng kết quả phải in con số 70,0 cạnh bên.
 
 ```
 ✅ 1. Commit bản đăng ký              (report/106, đã niêm phong)
-✅ 2. Cổng A                          (ĐẠT 0,7%)
+✅ 2. Cổng A                          (ĐẠT 0,7% — ĐỪNG chạy lại, tốn tiền vô ích)
 ✅ 2b. Tiền trạm đường sinh câu       (4 phép, đều đạt — miễn phí)
+✅ 2c. Runbook Colab + rà 3 lượt      (harness/run_on_colab.md, 6 mốc dừng)
 ▶️ 3. Huấn luyện S1 × 2 hạt giống → sinh câu → chấm đủ
    4. Tính MDE THẬT + cỡ nhiễu hạt giống = |S1(101) − S1(202)|
    5. KHOÁ ngưỡng đậu/rớt, ghi vào mục sửa đổi report/106 kèm ngày
@@ -239,6 +241,27 @@ sau `setup` mà không có gói này là trả lại 2-4 giờ tiền máy cho �
 
 ---
 
+### Sáu mốc dừng của runbook — dán kết quả ra phân tích rồi mới chạy tiếp
+
+| | Sau khi | Chặn khoản chi nào |
+|---|---|---|
+| 1 | nhận diện máy | tải 67 GB về nhầm chỗ |
+| 2 | dựng dữ liệu dạy | 3 giờ OCR trên dữ liệu sai |
+| 3 | OCR + nhãn + bốn nhánh + **kiểm rò rỉ** | 11-18 giờ train |
+| 4 | thăm dò 20 bước | cam kết 15 giờ mà chưa biết hết bao nhiêu đơn vị |
+| 5 | sinh câu thử 20 bước | 1,5 giờ sinh câu vứt đi |
+| 6 | chấm xong **cả hai** hạt giống S1 | bốn lượt train S2/S2r/S2-nopoint |
+
+Mốc 6 là mốc quyết định của cả luận văn: từ hai điểm S1 tính **cỡ nhiễu hạt giống**, **MDE
+thật**, và **khoảng trống còn lại so với trần 70,0%**. S1 mà đã sát 70 thì S2 không còn chỗ để
+hơn — phải bàn lại trước khi tiêu thêm, chứ không phải train xong bốn nhánh rồi mới biết.
+
+**Kiểm rò rỉ ở mốc 3 là phép quan trọng nhất.** "0 tác vụ trùng giữa dạy và kiểm" mới chỉ kiểm
+trên lát 2 shard; ở quy mô 76 shard chưa ai kiểm. Trùng thì mô hình học đúng đề thi, và không có
+cách nào chữa sau khi đã train.
+
+---
+
 ## 7. Luật đọc kết quả — đã viết TRƯỚC khi thấy số, không được sửa
 
 Gọi **Δ = điểm S2 − điểm S1**, trung bình trên các hạt giống, KTC95 bằng wild cluster bootstrap
@@ -274,7 +297,7 @@ kịch bản MDE.
 
 ## 9. Nguyên tắc làm việc đã rút ra — phần đáng viết vào chương phương pháp
 
-Tới nay đã bắt được **35 lỗi loại "chạy vẫn trơn nhưng kết quả sai"** (bảng đầy đủ ở
+Tới nay đã bắt được **37 lỗi loại "chạy vẫn trơn nhưng kết quả sai"** (bảng đầy đủ ở
 `report/108` mục 8). Ba bài học lặp lại:
 
 **Rà dấu vết trên đĩa, đừng hỏi trí nhớ.** `infer_branch.py` được cho là "đã sẵn sàng" suốt nhiều
