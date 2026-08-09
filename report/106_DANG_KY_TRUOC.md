@@ -685,3 +685,89 @@ liệu** (`desc_neg` trong `descriptors.jsonl`, dựng được cho 995/1074 bư
 mất mát**. Cần một hàm mất mát riêng gắn vào LLaMA-Factory. Chưa viết, và **cố ý chưa viết**: nó
 nằm sau cổng C trong trình tự, còn viết bây giờ thì thành thêm một đoạn mã chưa từng chạy. Nếu tới
 cổng C mà không kịp làm, phải khai là **nhánh đã đăng ký nhưng không chạy**, không được im lặng bỏ.
+
+---
+
+## Sửa đổi 9/8/2026 — KẾT QUẢ CỔNG A, và trần của thước
+
+Cổng A đã chạy thật: UGround-V1-2B, 300 bước của tập kiểm lấy theo hạt giống 20260805, trên
+Tesla T4 của Kaggle (miễn phí). Vết thô lưu ở `ckpt/gate_A_raw.jsonl`.
+
+### (a) Cổng A ĐẠT
+
+| | |
+|---|---|
+| sai số trung vị | **0,7%** bề ngang màn (ngưỡng đã khoá: ≤3%) |
+| phân vị 75 | 8,8% |
+| số bước ≤3% | 62,7% |
+| phân bố | p10 0,1% · p25 0,2% · p50 0,7% · p75 9,1% · p90 36,3% |
+
+Dụng cụ này hai thái cực: trúng thì trúng ngay tâm, trượt thì trượt hẳn. **⇒ dùng ô-Voronoi làm
+thước chính, chạy tiếp theo kế hoạch.**
+
+Nhắc lại để khỏi đọc nhầm về sau: con số này đo trên **câu chuẩn do người viết**, tức đầu vào
+hoàn hảo. Nó đo DỤNG CỤ, không đo mô hình nào cả.
+
+### (b) Một trong bốn dấu hiệu lỗi cài đặt có kêu — đã truy, và nó KHÔNG phải lỗi cài đặt
+
+Dấu hiệu "x đúng giữa màn" kêu ở 30,7% (ngưỡng 20%). Truy bằng bảng 2×2, chéo với vị trí của
+chính điểm chạm chuẩn:
+
+| | n | trung vị | ≤3% |
+|---|---|---|---|
+| trỏ giữa · chuẩn **giữa** | 46 | 0,4% | 82,6% |
+| trỏ giữa · chuẩn **lệch** | 46 | 12,2% | 6,5% |
+| trỏ lệch · chuẩn giữa | 9 | 44,3% | 0,0% |
+| trỏ lệch · chuẩn lệch | 199 | 0,4% | 73,9% |
+
+Điểm chạm chuẩn của người cũng nằm giữa màn ở **18,3%** số bước — hợp lý, vì hàng danh sách,
+thanh tìm kiếm và nút toàn chiều rộng đều có tâm ở giữa. Nhưng trong 245 bước có chuẩn **không**
+ở giữa, bộ trỏ vẫn trả x đúng giữa ở 46 bước; tính riêng trong nhóm trượt thì khoảng 45% số lần
+trượt là trượt về đúng giữa màn. Dải "đúng giữa" chỉ chiếm ~1% trục x, nên trượt ngẫu nhiên
+không rơi vào đó nhiều thế được.
+
+⇒ **Đây là một kiểu hỏng thật của bộ trỏ** (không nhận ra phần tử thì bỏ trục ngang về giữa),
+ảnh hưởng **15,3%** số bước. Nó làm con số xấu đi chứ không đẹp lên, nên cổng A đạt một cách hợp
+lệ. **Phải khai kèm mỗi lần trình cổng A.**
+
+### (c) TRẦN CỦA THƯỚC = 70,0% — số phải in cạnh mọi kết quả S1/S2
+
+Cổng A đo khoảng cách, còn thước chính là ô-Voronoi. Đem chính 300 điểm trỏ đó chấm bằng
+`hit_voronoi` (mã: `harness/gate_a_ceiling.py`, chạy offline, không gọi lại bộ trỏ):
+
+| | |
+|---|---|
+| **ô-Voronoi tâm — trần** | **70,0%**  KTC95 [64,5%, 75,3%] |
+| đĩa dung sai — trần | 81,3%  KTC95 [76,6%, 86,0%] |
+| cụm | 239 (hiệu dụng 191,5) · trung vị 72 phần tử mỗi màn · 0 màn thiếu cây trợ năng |
+
+Vì câu đưa vào là câu chuẩn nên `action_ok` và `toggle_ok` đúng theo định nghĩa; điểm
+executable rút gọn còn đúng phần định vị. **Mọi điểm S1/S2 phải đọc trên nền 70, không phải
+100.** Một nhánh đạt 45% là đạt 64% của trần chứ không phải "kém quá nửa". Và vì câu mô hình
+khác câu chuẩn, 70,0% là **cận trên**: bộ trỏ nhận câu tệ hơn thì chỉ có thể tệ đi.
+
+### (d) Ngưỡng 3% được xác nhận bằng dụng cụ thật, trên tập kiểm thật
+
+| dải sai số | n | Voronoi | đĩa |
+|---|---|---|---|
+| ≤3% | 188 | **100,0%** | 100,0% |
+| 3-5% | 21 | 66,7% | 100,0% |
+| 5-8% | 16 | 43,8% | 100,0% |
+| 8-14% | 12 | 8,3% | 100,0% |
+| >14% | 63 | 0,0% | 11,1% |
+
+Dưới 3% thì **không có ca kết oan nào** — đúng như đường cong đo trước bằng Voronoi trên cây trợ
+năng (3% → 0%), nay xác nhận lại trên đúng dụng cụ và đúng tập sẽ dùng để chấm. Ngưỡng cổng A
+không còn là con số mượn.
+
+Bảng này cũng chốt lại việc đã quyết ngày 6/8: **đĩa dung sai vô dụng** — nó cho 100% ngay cả khi
+bộ trỏ lệch 8-14% bề ngang màn. Giữ ở vai trò báo kèm, không bao giờ làm headline.
+
+### (e) `use_cache=False` trong generation_config của UGround
+
+Đo trên T4: 32 token mất **38,65 s** với cache tắt, **4,16 s** với cache bật — chậm 9,3 lần.
+Cổng A đã chạy ở cấu hình mặc định (tắt), nên **kết quả trên không bị ảnh hưởng**. Trước khi bật
+cache cho các lượt chấm sau, phải chạy lại một phần trong đúng 300 bước đó với cache bật và so
+từng toạ độ với vết đã lưu. Bộ nhớ đệm khoá-giá trị về toán học là phép biến đổi bảo toàn kết
+quả, nhưng ở đây nó đứng giữa cổng A và mọi con số về sau, nên phải có bằng chứng chứ không
+suy luận.
