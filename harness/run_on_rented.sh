@@ -12,6 +12,8 @@
 #   bash run_on_rented.sh binfer s1 101  # nhánh B-infer: không train, nhét danh sách phần tử
 #   bash run_on_rented.sh base           # mốc tham chiếu: mô hình gốc, không huấn luyện
 #   bash run_on_rented.sh ceiling s1 101 # phép thử TRẦN (bước 6) + đối chứng độ dài
+#   bash run_on_rented.sh save           # gói thứ đắt-dựng-rẻ-lưu để kéo về máy nhà
+#   bash run_on_rented.sh restore        # bung gói đó ở máy mới
 #   bash run_on_rented.sh noharm s2 101 s1 101   # thước phụ: không gây hại
 #
 # TRÌNH TỰ BẮT BUỘC (report/106 mục 5), đừng đảo:
@@ -186,6 +188,44 @@ binfer)
   python harness/score_run.py --mode score --grounder "${GROUNDER:-uground}" \
       --preds "$CKPT/preds_binfer_from_${branch}_seed${seed}.jsonl" \
       --out "$CKPT/score_binfer_${branch}_seed${seed}.json"
+  ;;
+
+save)
+  # GÓI LẠI THỨ ĐẮT-DỰNG-RẺ-LƯU, để mất máy không phải làm lại từ đầu.
+  #
+  # 67 GB ảnh thì KHÔNG gói: tải lại từ HuggingFace nhanh hơn kéo từ bất cứ kho nào.
+  # Thứ đáng giữ là những gì tốn CPU: kết quả OCR (~120 MB, 2-4 giờ dựng), nhãn khai
+  # báo (~35 MB), dữ liệu bốn nhánh (~230 MB). Mất máy sau `setup` mà không có gói này
+  # là trả lại 2-4 giờ tiền máy cho đúng thứ đã có.
+  #
+  #   bash run_on_rented.sh save
+  #   # rồi từ MÁY NHÀ:  scp -P <cổng> root@<địa-chỉ>:/workspace/derived.tar.gz .
+  cd "$REPO"
+  tar czf "$WS/derived.tar.gz" \
+      harness/dg1_cache/train_ac/ocr.jsonl \
+      harness/dg1_cache/train_ac/train.jsonl \
+      harness/dg1_cache/train_ac/descriptors.jsonl \
+      harness/dg1_cache/train_ac/branches \
+      harness/dg1_cache/test_ac/ocr.jsonl \
+      harness/dg1_cache/test_ac/test.jsonl \
+      harness/dg1_cache/test_ac/descriptors.jsonl \
+      2>/dev/null || true
+  ls -lh "$WS/derived.tar.gz"
+  echo "Kéo về máy nhà:  scp -P <cổng> root@<địa-chỉ>:$WS/derived.tar.gz ."
+  echo "Bung ở máy mới:  tar xzf derived.tar.gz -C \$REPO   (rồi setup sẽ bỏ qua khâu OCR)"
+  ;;
+
+restore)
+  # Bung gói derived.tar.gz đã kéo về, để `setup` ở máy mới chỉ còn tải ảnh.
+  #   scp -P <cổng> derived.tar.gz root@<máy mới>:/workspace/  &&  bash run_on_rented.sh restore
+  cd "$REPO"
+  [ -f "$WS/derived.tar.gz" ] || { echo "Không thấy $WS/derived.tar.gz"; exit 1; }
+  tar xzf "$WS/derived.tar.gz" -C "$REPO"
+  echo "Đã bung. Kiểm:"
+  for f in train_ac/ocr.jsonl train_ac/descriptors.jsonl test_ac/ocr.jsonl test_ac/descriptors.jsonl; do
+    n=$(wc -l < "harness/dg1_cache/$f" 2>/dev/null || echo 0)
+    echo "   $f: $n dòng"
+  done
   ;;
 
 base)

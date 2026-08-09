@@ -204,8 +204,21 @@ vast.ai, **1 card A100** (40 GB là đủ), **on-demand** (không interruptible:
 độ tin cậy ≥0,98. Chuyển mã bằng `thesis_rented.zip` (2,7 MB, có sẵn kết quả OCR tập kiểm).
 
 **Dùng đúng một hạng card cho cả sáu lượt** — cỡ lô hiệu dụng phải giữ y hệt, nếu không hiệu số
-giữa các nhánh lẫn cả phần do cỡ lô khác nhau. Lệnh đầu tiên trên máy mới luôn là `nvidia-smi`,
-`nproc`, `df -h`.
+giữa các nhánh lẫn cả phần do cỡ lô khác nhau. `setup` tự kiểm số card và đĩa trống, khác 1 card
+hoặc dưới 90 GB thì dừng hẳn.
+
+**Vì sao không Colab** (rà lại 9/8 sau đề xuất dùng Colab pay-as-you-go + VPN Thổ Nhĩ Kỳ): ngay
+ở giá rẻ nhất nghe được ($6/100 unit), A100 đốt 15 unit/giờ → **$0,90/giờ**, vẫn **đắt hơn**
+vast.ai $0,789 mà lại ít quyền kiểm soát hơn. Ba chỗ tiền không mua được: Colab chỉ hứa "L4 và
+*thỉnh thoảng* A100" (cỡ lô không giữ được qua sáu lượt) · chạy nền 24 giờ là tính năng của
+Pro+ chứ không phải pay-as-you-go, mà một lượt train mất 11-18 giờ · đĩa không chọn được. Lưu
+dữ liệu ở R2/HF **không** giải được chỗ thứ ba: lúc train, 67 GB ảnh vẫn phải nằm trên đĩa máy
+vì mỗi lượt duyệt đọc lại toàn bộ.
+
+**Phần đúng của ý đó đã lấy:** `run_on_rented.sh save` gói lại thứ **đắt-dựng-rẻ-lưu** — kết quả
+OCR (~120 MB, tốn 2-4 giờ CPU), nhãn khai báo, dữ liệu bốn nhánh — để `scp` về máy nhà. Mất máy
+sau `setup` mà không có gói này là trả lại 2-4 giờ tiền máy cho đúng thứ đã có. `restore` bung
+ở máy mới. **Không** gói 67 GB ảnh: tải lại từ HuggingFace nhanh hơn kéo từ bất cứ kho nào.
 
 ---
 
