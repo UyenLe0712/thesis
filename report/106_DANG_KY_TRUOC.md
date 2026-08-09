@@ -893,3 +893,33 @@ trên máy thuê, vì dựng lại sau là dựng lại từ đầu.
 
 **Không ảnh hưởng nhánh nào khác:** S2r bốc khai báo giả từ **màn khác** chứ không dùng
 `desc_neg` (`build_branch_data.py` dòng 97-149), nên đối chứng của phép so chính vẫn sạch.
+
+
+### (m) Phép thử TRẦN (bước 6) không có mã ở bất cứ đâu — đã cài, 9/8
+
+Rà `run_on_rented.sh` đối chiếu với trình tự cứng mục 5 thì bước 6 — *"nối dòng khai báo chuẩn
+vào đầu vào, so với một đoạn đệm vô nghĩa cùng độ dài"* — **không có lệnh nào chạy được**, và
+`infer_branch.py` cũng không có chế độ đó. Đây là chỗ thứ tư cùng loại đã bắt (sau script suy
+luận, script chấm, thước không-gây-hại): nằm trong hồ sơ, tới lúc cần thì không có gì chạy.
+
+**Đã cài:**
+
+- `descriptor_label_build.py --split test` — dựng nhãn khai báo cho tập kiểm. Đo được:
+  **4.448/4.463 = 99,7%** bước chạm dựng được; tên rõ 74,1% · vai trò rõ 74,9% · trùng tên 7,6%
+  — khớp sát tập dạy (73,8% / 76,0% / 7,0%), tức hai tập cùng phân bố.
+  ⚠ Tập kiểm **không ghi w/h** và **4,75% ảnh không phải 1080×2400** (có cả 1440×3120 và
+  1080×2340). Mặc định cứng sẽ tính sai ô `<point>` ở đúng nhóm đó mà không báo gì — nay đọc
+  kích thước thật từ tệp ảnh.
+- `infer_branch.py --ceiling gold|filler` — nối khai báo chuẩn của phần tử đích vào đầu vào, và
+  nhánh đệm vô nghĩa **ghép độ dài theo TOKEN** (không theo ký tự — đúng lỗi đã bắt ở S2r ngày
+  7/8). Đo trên 120 bản ghi: **120/120 lệch ≤2 token**, và đệm luôn dài hơn gold đúng 1 token,
+  tức đối chứng lệch về phía **bất lợi cho nhánh gold**, không nới tay.
+- `run_on_rented.sh ceiling <nhánh> <hạt giống>` chạy cả hai rồi chấm.
+- Chặn cứng: `--b-infer` và `--ceiling` **không chạy chung được** — hai thí nghiệm khác nhau.
+
+**Luật đọc:** trần là **hiệu số gold − filler**. Hiệu số gold − S1 gồm cả phần do đầu vào dài
+thêm, không được dùng thay.
+
+### (n) Nhánh tham chiếu mô hình gốc — đã có lệnh
+
+`run_on_rented.sh base` chạy `--no-adapter` rồi chấm. Chỉ tốn suy luận.

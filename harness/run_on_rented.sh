@@ -10,6 +10,8 @@
 #   bash run_on_rented.sh infer s1 101   # sinh câu trên tập kiểm
 #   bash run_on_rented.sh score s1 101   # chấm
 #   bash run_on_rented.sh binfer s1 101  # nhánh B-infer: không train, nhét danh sách phần tử
+#   bash run_on_rented.sh base           # mốc tham chiếu: mô hình gốc, không huấn luyện
+#   bash run_on_rented.sh ceiling s1 101 # phép thử TRẦN (bước 6) + đối chứng độ dài
 #   bash run_on_rented.sh noharm s2 101 s1 101   # thước phụ: không gây hại
 #
 # TRÌNH TỰ BẮT BUỘC (report/106 mục 5), đừng đảo:
@@ -155,6 +157,46 @@ binfer)
   python harness/score_run.py --mode score --grounder "${GROUNDER:-uground}" \
       --preds "$CKPT/preds_binfer_from_${branch}_seed${seed}.jsonl" \
       --out "$CKPT/score_binfer_${branch}_seed${seed}.json"
+  ;;
+
+base)
+  # NHÁNH THAM CHIẾU (đăng ký 9/8, report/106 mục k): mô hình GỐC, không huấn luyện gì.
+  # Trả lời câu mà sáu nhánh kia không trả lời: bản thân việc SFT mua được bao nhiêu.
+  # Nếu S1 xấp xỉ mốc này thì tiền đề của cả thiết kế lung lay, và nên biết TRƯỚC khi
+  # diễn giải Δ giữa S1 và S2. Chỉ tốn suy luận, không tốn huấn luyện.
+  #   bash run_on_rented.sh base
+  cd "$REPO"
+  python harness/infer_branch.py --no-adapter \
+      --out "$CKPT/preds_base.jsonl" ${LIMIT:+--limit $LIMIT}
+  python harness/score_run.py --mode score --grounder "${GROUNDER:-uground}" \
+      --preds "$CKPT/preds_base.jsonl" --out "$CKPT/score_base.json"
+  ;;
+
+ceiling)
+  # PHÉP THỬ TRẦN — report/106 mục 5 BƯỚC 6, chạy trên S1 trước khi train S2.
+  # Nối khai báo CHUẨN của đúng phần tử đích vào đầu vào lúc suy luận: nếu phát không
+  # công cho mô hình đúng thứ mà tầng khai báo cố sinh ra, điểm lên tới đâu. Nhánh
+  # 'filler' là đối chứng độ dài — đoạn đệm vô nghĩa cùng số token, để loại khả năng
+  # điểm tăng chỉ vì đầu vào dài thêm.
+  #
+  # ⚠ KHÔNG phải B-infer. B-infer nhét DANH SÁCH phần tử, không chỉ ra cái nào là đích.
+  # Phép này nhét thẳng lời giải. Đọc lẫn hai thứ sẽ ra kết luận sai (sửa đổi 7/8 mục c).
+  #   bash run_on_rented.sh ceiling s1 101
+  branch=${2:-s1}; seed=${3:-101}
+  cd "$REPO"
+  # nhãn khai báo cho TẬP KIỂM — chỉ phép này cần, dựng một lần
+  [ -s harness/dg1_cache/test_ac/descriptors.jsonl ] || \
+      python harness/descriptor_label_build.py --split test
+  for m in gold filler; do
+    echo "── trần: $m ──"
+    python harness/infer_branch.py --ceiling "$m" \
+        --adapter "$CKPT/${branch}_seed${seed}" \
+        --out "$CKPT/preds_ceiling_${m}_${branch}_seed${seed}.jsonl" ${LIMIT:+--limit $LIMIT}
+    python harness/score_run.py --mode score --grounder "${GROUNDER:-uground}" \
+        --preds "$CKPT/preds_ceiling_${m}_${branch}_seed${seed}.jsonl" \
+        --out "$CKPT/score_ceiling_${m}_${branch}_seed${seed}.json"
+  done
+  echo "ĐỌC: hiệu số gold − filler mới là trần. gold − S1 gồm cả phần do đầu vào dài thêm."
   ;;
 
 noharm)

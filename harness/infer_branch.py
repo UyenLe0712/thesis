@@ -154,6 +154,58 @@ def with_elements(body, rec):
     return body.replace(tail, block + "\n" + tail) if tail in body else body + "\n" + block
 
 
+def load_test_descriptors():
+    """Nhãn khai báo CHUẨN của tập kiểm — dựng bằng
+    `descriptor_label_build.py --split test`. Chỉ dùng cho phép thử TRẦN."""
+    p = os.path.join(TEST, "descriptors.jsonl")
+    if not os.path.exists(p):
+        sys.exit("Thiếu " + p + " — chạy: python harness/descriptor_label_build.py --split test")
+    d = {}
+    for line in open(p, encoding="utf-8"):
+        r = json.loads(line)
+        d[(r["episode_id"], r["step_id"])] = r["desc"]
+    return d
+
+
+def filler_like(desc, tok):
+    """Đoạn đệm vô nghĩa dài BẰNG khai báo chuẩn, tính theo TOKEN.
+
+    Nhánh đối chứng của phép thử trần tồn tại để loại một khả năng duy nhất: điểm tăng
+    chỉ vì đầu vào dài thêm. Ghép theo ký tự là ghép nhầm đại lượng — mất mát và ngân
+    sách ngữ cảnh đều tính theo token. Đây đúng lỗi đã bắt ở S2r ngày 7/8 (ghép ký tự
+    trong khi bản đăng ký ghi token: chỉ 54,0% cặp lệch ≤2 token).
+    """
+    n = len(tok.encode(desc))
+    unit = " nihil"
+    k = max(1, len(tok.encode(unit)))
+    out = (unit * max(1, round(n / k))).strip()
+    # tỉa cho khít: bớt/thêm từng đơn vị cho tới khi lệch ≤1 token
+    while len(tok.encode(out)) > n + 1 and " " in out:
+        out = out.rsplit(" ", 1)[0]
+    while len(tok.encode(out)) < n - 1:
+        out += unit
+    return out
+
+
+def with_ceiling(body, rec, mode, descs, tok):
+    """Phép thử TRẦN — report/106 mục 5 bước 6.
+
+    Nối khai báo CHUẨN của đúng phần tử đích vào đầu vào lúc suy luận. Nó cho biết
+    **trần trên của thiết kế**: nếu mô hình được phát không công đúng thứ mà tầng khai
+    báo cố sinh ra, điểm lên tới đâu. Nhánh `filler` là đối chứng độ dài.
+
+    ⚠️ KHÔNG phải B-infer. B-infer nhét DANH SÁCH phần tử của màn, không đánh dấu cái
+    nào là đích — một phép so công bằng. Phép trần nhét thẳng lời giải. Hai thứ này
+    từng bị đọc lẫn vào nhau; đã tách bạch ở report/106 sửa đổi 7/8 mục c.
+    """
+    d = descs.get((rec["episode_id"], rec["step_id"]))
+    if not d:
+        return body
+    block = "Khai báo phần tử đích: " + (d if mode == "gold" else filler_like(d, tok))
+    tail = "Viết câu hướng dẫn cho bước tiếp theo."
+    return body.replace(tail, block + "\n" + tail) if tail in body else body + "\n" + block
+
+
 def selftest(base=None, n_batch=5):
     """Chứng minh đường chấm khớp đường dạy — chạy được trên CPU, không tốn gì.
 
@@ -306,6 +358,10 @@ def main():
     ap.add_argument("--b-infer", action="store_true",
                     help="nhánh B-infer: nối DANH SÁCH phần tử của màn vào đầu vào lúc chạy "
                          "(không đánh dấu đích, không dùng toạ độ chuẩn). Dùng với trọng số S1.")
+    ap.add_argument("--ceiling", choices=["gold", "filler"],
+                    help="phép thử TRẦN (report/106 mục 5 bước 6): nối khai báo CHUẨN của "
+                         "phần tử đích vào đầu vào (gold), hoặc đoạn đệm vô nghĩa cùng số "
+                         "token (filler, đối chứng độ dài). KHÔNG phải --b-infer.")
     ap.add_argument("--selftest-batch", action="store_true",
                     help="phép [3]: lô 1 và lô n có ra cùng câu không (CẦN GPU). "
                          "Chạy trước lượt chấm đầu tiên trên máy thuê.")
@@ -316,6 +372,8 @@ def main():
         sys.exit(0 if selftest_batch(a, a.batch) else 1)
     if not a.out:
         sys.exit("Thiếu --out.")
+    if a.b_infer and a.ceiling:
+        sys.exit("--b-infer và --ceiling là HAI thí nghiệm khác nhau, không chạy chung.")
     if not a.adapter and not a.no_adapter:
         sys.exit("Phải cho --adapter, hoặc --no-adapter nếu cố ý chạy mô hình gốc.")
 
@@ -352,6 +410,12 @@ def main():
     proc = AutoProcessor.from_pretrained(a.base, min_pixels=200704, max_pixels=1003520)
     proc.tokenizer.padding_side = "left"
 
+    CEIL_DESCS = load_test_descriptors() if a.ceiling else {}
+    if a.ceiling:
+        thieu = sum(1 for r in recs if (r["episode_id"], r["step_id"]) not in CEIL_DESCS)
+        print(f"Phép thử TRẦN ({a.ceiling}): có khai báo chuẩn cho "
+              f"{len(recs)-thieu}/{len(recs)} bước; {thieu} bước giữ nguyên đầu vào.")
+
     out = open(a.out, "w", encoding="utf-8")
     t0, done = time.time(), 0
     for i in range(0, len(recs), a.batch):
@@ -369,6 +433,8 @@ def main():
             body = prompt_body(rr, ocr.get(r["image"]))
             if a.b_infer:
                 body = with_elements(body, r)
+            if a.ceiling:
+                body = with_ceiling(body, r, a.ceiling, CEIL_DESCS, proc.tokenizer)
             msgs.append([{"role": "system", "content": SYS},
                          {"role": "user", "content": [
                              {"type": "image"},

@@ -28,6 +28,19 @@ ROOT = os.path.join(HERE, "dg1_cache", "train_ac")
 OUT_JSONL = os.path.join(HERE, "dg1_cache", "train_ac", "descriptors.jsonl")
 OUT_STATS = os.path.join(HERE, "descriptor_build_stats.json")
 
+
+def set_split(split):
+    """Chuyển sang tập kiểm. Cần cho PHÉP THỬ TRẦN (report/106 mục 5 bước 6): nối khai
+    báo CHUẨN vào đầu vào lúc suy luận để biết trần trên của thiết kế. Trước 9/8 bước
+    này không có mã ở bất cứ đâu — cùng loại với ba chỗ đã bắt (script suy luận, script
+    chấm, thước không-gây-hại): nằm trong hồ sơ, tới lúc cần thì không có gì chạy."""
+    global ROOT, OUT_JSONL, OUT_STATS
+    d = "test_ac" if split == "test" else "train_ac"
+    ROOT = os.path.join(HERE, "dg1_cache", d)
+    OUT_JSONL = os.path.join(ROOT, "descriptors.jsonl")
+    OUT_STATS = os.path.join(HERE, f"descriptor_build_stats_{split}.json"
+                             if split == "test" else "descriptor_build_stats.json")
+
 ROLE = {
     "Button": "nút", "ImageButton": "nút hình", "ImageView": "hình/biểu tượng",
     "TextView": "chữ bấm được", "EditText": "ô nhập liệu", "CheckBox": "ô đánh dấu",
@@ -271,14 +284,28 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=0, help="chỉ chạy N bước đầu (0 = tất cả)")
     ap.add_argument("--abs", action="store_true", help="dùng pixel thô thay vì lưới [0,1000]")
+    ap.add_argument("--split", choices=["train", "test"], default="train",
+                    help="test = dựng nhãn cho tập kiểm, dùng cho phép thử TRẦN")
     args = ap.parse_args()
+    set_split(args.split)
 
     ocr = {}
     with open(os.path.join(ROOT, "ocr.jsonl"), encoding="utf-8") as f:
         for line in f:
             r = json.loads(line)
             ocr[r["image"]] = r
-    recs = [json.loads(l) for l in open(os.path.join(ROOT, "train.jsonl"), encoding="utf-8")]
+    fn = "test.jsonl" if args.split == "test" else "train.jsonl"
+    recs = [json.loads(l) for l in open(os.path.join(ROOT, fn), encoding="utf-8")]
+    if args.split == "test":
+        # Tập kiểm KHÔNG ghi w/h, và 4,75% ảnh không phải 1080x2400 (đo 400 mẫu: có cả
+        # 1440x3120 và 1080x2340). Mặc định cứng 1080x2400 sẽ tính sai ô <point> ở đúng
+        # nhóm ảnh đó mà không báo gì. Đọc kích thước thật từ tệp ảnh.
+        from PIL import Image
+        for r in recs:
+            r.setdefault("target_instruction", r.get("gold_instruction", ""))
+            if "w" not in r:
+                with Image.open(os.path.join(ROOT, r["image"])) as im:
+                    r["w"], r["h"] = im.size
     taps = [r for r in recs if r["action"].get("action_type") in ("click", "long_press")
             and "x" in r["action"]]
     if args.limit:
@@ -338,7 +365,15 @@ def main():
             npt = (ncx, ncy) if args.abs else (int(round(ncx / max(w, 1) * 1000)),
                                                int(round(ncy / max(h, 1) * 1000)))
             nrole = ROLE.get(ncls) or ("mục" if ncls in GENERIC else "phần tử")
-            neg_desc = desc_str(nrole, nname, npt, "phần tử hàng xóm")
+            # Ô thứ tư của khai báo GIẢ phải tính bằng ĐÚNG hàm đã dùng cho khai báo
+            # thật, chạy trên chính phần tử hàng xóm. Bản trước điền hằng số "phần tử
+            # hàng xóm" — đo được 994/995 = 99,9% bản ghi mang đúng chuỗi đó, còn khai
+            # báo thật không bao giờ mang nó (trùng 0/995; mỏ neo chữ 68,6% so với 0%).
+            # Khoản phạt lề khi đó chỉ dạy mô hình dò MỘT CHUỖI, không dạy tính phân
+            # biệt: không cần nhìn ảnh vẫn tách được. Mà lề vẫn đẹp, nên con số trông
+            # y như một thành công. Xem report/106 sửa đổi 9/8 mục l.
+            nhint, _, _ = distinguish(nb, ncls, nname, nds, ocr_rec)
+            neg_desc = desc_str(nrole, nname, npt, nhint)
             st["co_hang_xom"] += 1
 
         rows.append({
