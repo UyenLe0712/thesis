@@ -873,3 +873,23 @@ nào trả lời câu hỏi: *bản thân việc SFT mua được bao nhiêu?* N
 Nhánh này **chỉ tốn suy luận, không tốn huấn luyện** (~1,5 giờ máy), và đăng ký ở đây là hợp lệ
 vì **chưa có nhánh nào được huấn luyện, chưa thấy một con số thật nào**. Vai trò: **tham chiếu,
 không phải headline**. Headline vẫn là Δ = S2 − S1.
+
+
+### (l) S3-pilot: khai báo giả tách được bằng một chuỗi cố định — phải sửa dữ liệu trước khi viết mã
+
+Rà `desc_neg` trong `descriptors.jsonl` (995/1074 bước) thấy **ô thứ tư của khai báo giả là hằng
+số**: chuỗi `"phần tử hàng xóm"` xuất hiện ở **994/995 = 99,9%** bản ghi, trong khi ô thứ tư của
+khai báo thật không bao giờ mang chuỗi đó (**trùng 0/995**). Khai báo thật có mỏ neo chữ ở 68,6%,
+khai báo giả **0%**.
+
+⇒ Khoản phạt lề sẽ **không dạy được gì về tính phân biệt**. Mô hình chỉ cần học "chuỗi *phần tử
+hàng xóm* là bản xấu" — một luật dò chữ, không cần nhìn ảnh. Nếu để nguyên mà chạy, S3-pilot có
+thể cho lề rất đẹp và con số đó **hoàn toàn vô nghĩa**.
+
+**Cách sửa đã chốt:** ô thứ tư của khai báo giả phải tính bằng **đúng hàm đã dùng cho khai báo
+thật**, nhưng chạy trên phần tử hàng xóm — tức mỏ neo chữ của chính nó, hoặc vế đếm của chính
+nó. Sửa nằm trong `descriptor_label_build.py`, phải xong **trước** khi dựng dữ liệu ở quy mô đủ
+trên máy thuê, vì dựng lại sau là dựng lại từ đầu.
+
+**Không ảnh hưởng nhánh nào khác:** S2r bốc khai báo giả từ **màn khác** chứ không dùng
+`desc_neg` (`build_branch_data.py` dòng 97-149), nên đối chứng của phép so chính vẫn sạch.
