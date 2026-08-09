@@ -90,7 +90,8 @@ AndroidControl (NeurIPS 2024)
 | **S2-nopoint** | khai báo bỏ ô toạ độ + câu | công thuộc về toạ độ hay thuộc về tính phân biệt |
 | **B-infer** | dùng trọng số S1, lúc chạy nhét danh sách phần tử vào đầu vào | huấn luyện có hơn đưa-thông-tin-lúc-chạy không |
 | **Mô hình gốc** | không huấn luyện | bản thân SFT mua được bao nhiêu *(thêm 9/8)* |
-| ~~S3-pilot~~ | S2 + khoản phạt lề | **chưa có mã**, nằm sau cổng C |
+| **Phép thử TRẦN** | nối khai báo CHUẨN vào đầu vào lúc chạy, + đối chứng đệm cùng số token | trần trên của thiết kế — nếu phát không công đúng thứ tầng khai báo cố sinh ra thì điểm lên tới đâu |
+| ~~S3-pilot~~ | S2 + khoản phạt lề | **chưa có mã hàm mất mát**, nằm sau cổng C |
 
 Mỗi nhánh huấn luyện **hai hạt giống** (101, 202). Cặp hạt giống của S1 làm **null thực nghiệm**:
 chênh lệch giữa hai lần chạy cùng thiết kế chính là cỡ nhiễu, và Δ phải lớn hơn cỡ nhiễu đó.
@@ -233,7 +234,7 @@ kịch bản MDE.
 
 | | Trạng thái |
 |---|---|
-| **S3-pilot** (khoản phạt lề, mức 2) | **chưa có mã** hàm mất mát. Cố ý — nằm sau cổng C. Nếu không kịp, phải khai là *đã đăng ký nhưng không chạy*, không được im lặng bỏ |
+| **S3-pilot** (khoản phạt lề, mức 2) | **chưa có mã** hàm mất mát. Cố ý — nằm sau cổng C. Nếu không kịp, phải khai là *đã đăng ký nhưng không chạy*, không được im lặng bỏ. Dữ liệu thì đã sửa xong 9/8: ô thứ tư của khai báo giả từng là hằng số `"phần tử hàng xóm"` ở 99,9% bản ghi, tách được mà không cần nhìn ảnh |
 | Chấm tay 100 câu, 2 người | cần câu do mô hình sinh |
 | Demo tiếng Việt định tính | cần mô hình đã huấn luyện |
 | `report/100`, `101`, `102` | chưa khớp với thiết kế hiện tại (vẫn theo bản trước gia cố) |
@@ -243,7 +244,7 @@ kịch bản MDE.
 
 ## 9. Nguyên tắc làm việc đã rút ra — phần đáng viết vào chương phương pháp
 
-Tới nay đã bắt được **26 lỗi loại "chạy vẫn trơn nhưng kết quả sai"** (bảng đầy đủ ở
+Tới nay đã bắt được **31 lỗi loại "chạy vẫn trơn nhưng kết quả sai"** (bảng đầy đủ ở
 `report/108` mục 8). Ba bài học lặp lại:
 
 **Rà dấu vết trên đĩa, đừng hỏi trí nhớ.** `infer_branch.py` được cho là "đã sẵn sàng" suốt nhiều
