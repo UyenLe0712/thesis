@@ -53,11 +53,24 @@ def pick_dtype():
     A100 có bf16; T4 (Turing) và P100 (Pascal) — hai card của Colab/Kaggle bản miễn phí —
     thì KHÔNG. Ép bf16 ở đó sẽ lỗi hoặc rơi vào đường giả lập chậm khủng khiếp, rồi ta
     ngồi đổ oan cho bộ trỏ hay cho mô hình. Với suy luận, fp16 không đổi kết luận.
+
+    ⚠ ĐỪNG hỏi `torch.cuda.is_bf16_supported()`. PyTorch đời mới trả True cho cả T4 vì
+    mặc định nó tính luôn đường GIẢ LẬP — đo được trên Kaggle ngày 9/8: Tesla T4 báo
+    True. Hỏi thẳng đời kiến trúc: bf16 chạy thật từ Ampere (sm_80) trở lên.
     """
     import torch
     if not torch.cuda.is_available():
         return torch.float32
-    return torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
+    return torch.bfloat16 if torch.cuda.get_device_capability()[0] >= 8 else torch.float16
+
+
+def dtype_kw():
+    """transformers 5 đổi tên tham số `torch_dtype` thành `dtype`; bản 4.x chỉ hiểu tên
+    cũ. Kaggle ngày 9/8 cài sẵn 5.0.0, máy nhà thì 4.x — cùng một dòng mã phải chạy
+    được ở cả hai chỗ, không thì lại sinh ra một khác biệt môi trường vô hình."""
+    import transformers
+    major = int(transformers.__version__.split(".")[0])
+    return {("dtype" if major >= 5 else "torch_dtype"): pick_dtype()}
 
 
 
@@ -74,7 +87,7 @@ class UGround:
         self.torch = torch
         self.proc = AutoProcessor.from_pretrained(path)
         self.model = Qwen2VLForConditionalGeneration.from_pretrained(
-            path, torch_dtype=pick_dtype(), device_map="auto").eval()
+            path, device_map="auto", **dtype_kw()).eval()
 
     # Câu nhắc BÊ NGUYÊN VĂN từ thẻ mô hình chính chủ (osunlp/UGround-V1-2B). Đây là
     # câu nhắc mô hình được huấn luyện cùng; tự chế câu khác — nhất là bằng tiếng Việt —

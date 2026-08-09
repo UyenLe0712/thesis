@@ -77,8 +77,17 @@ try:
     print(f"       cuda           : {cuda}")
     if cuda:
         print(f"       card           : {torch.cuda.get_device_name(0)}")
-        print(f"       bf16           : {torch.cuda.is_bf16_supported()}"
-              "   (T4/P100 không có — pick_dtype tự lùi về fp16)")
+        cap = torch.cuda.get_device_capability()
+        # is_bf16_supported() KHÔNG dùng được: PyTorch đời mới tính cả đường giả lập nên
+        # T4 cũng báo True. Hỏi đời kiến trúc — bf16 chạy thật từ Ampere (sm_80).
+        print(f"       kiến trúc      : sm_{cap[0]}{cap[1]}"
+              f"  → bf16 thật: {cap[0] >= 8}"
+              f"   (torch tự khai: {torch.cuda.is_bf16_supported()})")
+        sys.path.insert(0, HERE)
+        import score_run
+        print(f"       kiểu số sẽ dùng: {score_run.pick_dtype()}")
+        print(f"       tên tham số    : {list(score_run.dtype_kw())[0]}"
+              f"   (transformers {__import__('transformers').__version__})")
         free, total = torch.cuda.mem_get_info()
         print(f"       bộ nhớ         : {total/2**30:.1f} GB, trống {free/2**30:.1f} GB")
     else:
