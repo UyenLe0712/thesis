@@ -51,7 +51,19 @@ def load_gold():
     return gold
 
 
-def iter_images(n_shards):
+def _drop_parquet(path):
+    """Xoá parquet vừa đọc xong — xem chú thích cùng tên ở build_train_data.py."""
+    try:
+        real = os.path.realpath(path)
+        if real != path and os.path.exists(real):
+            os.remove(real)
+        if os.path.islink(path) or os.path.exists(path):
+            os.remove(path)
+    except OSError as e:
+        print(f"   (không xoá được {path}: {e})")
+
+
+def iter_images(n_shards, keep_parquet=False):
     from huggingface_hub import hf_hub_download
     import pyarrow.parquet as pq
     for i in range(n_shards):
@@ -64,6 +76,9 @@ def iter_images(n_shards):
                 if isinstance(j, (bytes, str)):
                     j = json.loads(j)
                 yield j, r["png"]["bytes"]
+        del pf
+        if not keep_parquet:
+            _drop_parquet(path)
 
 
 def app_of(acts, goal):
@@ -91,7 +106,7 @@ def check(n_shards=1, n_check=60):
     ocr = RapidOCR()
     gold = load_gold()
     hit = tot = shuf_hit = shuf_tot = 0
-    for j, png in iter_images(n_shards):
+    for j, png in iter_images(n_shards, keep_parquet=True):
         eid, sid = int(j["episode_id"]), int(j["step_id"])
         g = gold.get(eid)
         if not g or sid >= len(g["steps"]):

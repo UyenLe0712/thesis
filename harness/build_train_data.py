@@ -50,7 +50,30 @@ def load_gold():
     return gold
 
 
-def iter_images(n_shards):
+def _drop_parquet(path):
+    """Xoá tệp parquet vừa dùng xong, cả liên kết lẫn khối dữ liệu thật.
+
+    `hf_hub_download` giữ mọi shard đã tải trong cache. Với 76 shard thì parquet chiếm
+    ~67 GB, mà ảnh PNG bung ra cũng ~67 GB — hai thứ cùng nằm trên đĩa là ~134 GB, chưa
+    kể tập kiểm và cache mô hình. Trên máy thuê đĩa 200 GB thì đó là hết chỗ ở đúng lúc
+    đang chạy dở, sau khi đã trả tiền cho mấy tiếng tải về. Mỗi shard chỉ đọc đúng một
+    lần theo thứ tự nên xoá ngay sau khi đọc xong là an toàn; đỉnh đĩa hạ còn ~70 GB.
+
+    Cache của HF là liên kết mềm trỏ vào thư mục `blobs`, nên xoá mỗi liên kết thì khối
+    dữ liệu vẫn nằm nguyên đó — phải theo `realpath` mà xoá.
+    """
+    import os
+    try:
+        real = os.path.realpath(path)
+        if real != path and os.path.exists(real):
+            os.remove(real)
+        if os.path.islink(path) or os.path.exists(path):
+            os.remove(path)
+    except OSError as e:
+        print(f"   (không xoá được {path}: {e})")
+
+
+def iter_images(n_shards, keep_parquet=False):
     from huggingface_hub import hf_hub_download
     import pyarrow.parquet as pq
     for i in range(n_shards):
@@ -62,6 +85,9 @@ def iter_images(n_shards):
                 if isinstance(j, (bytes, str)):
                     j = json.loads(j)
                 yield j, r["png"]["bytes"]
+        del pf
+        if not keep_parquet:
+            _drop_parquet(path)
 
 
 def content_words(s):
@@ -81,7 +107,7 @@ def check(n_shards=1, n_check=60):
     gold = load_gold()
     hit = tot = shuf_hit = shuf_tot = 0
     examples = []
-    for j, png in iter_images(n_shards):
+    for j, png in iter_images(n_shards, keep_parquet=True):
         eid, sid = int(j["episode_id"]), int(j["step_id"])
         g = gold.get(eid)
         if not g or sid >= len(g["steps"]):
