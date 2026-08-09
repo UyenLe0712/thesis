@@ -822,3 +822,54 @@ token thị giác (trần theo `image_max_pixels: 1003520`):
 
 Biên còn rộng gấp 2,6 lần. Đồng thời xác nhận lại phép ghép độ dài của S2r trên **toàn bộ** dữ
 liệu chứ không chỉ trên mẫu: trung vị 540 so với 541 của S2, chênh 1 token.
+
+---
+
+## Sửa đổi 9/8/2026 (bổ sung) — tiền trạm đường sinh câu, chạy miễn phí trước khi thuê máy
+
+Rà dấu vết trên đĩa cho thấy `infer_branch.py` **chưa từng chạy một lần nào** (không có tệp
+`preds_*.jsonl` nào trong repo), và `score_run --mode score` cũng vậy. Nếu để nguyên thì lỗi ở
+hai script này chỉ lộ ra **sau 18 giờ tiền máy** của lượt train đầu. Đã chạy hết trên Kaggle T4
+bằng mô hình gốc chưa huấn luyện.
+
+### (i) Ba mắt xích đã thông
+
+| phép | kết quả |
+|---|---|
+| `--selftest-batch` (lô 1 vs lô 8) | **8/8 trùng nguyên văn** — đệm bên trái đúng, chấm theo lô an toàn |
+| sinh câu 20 bước | chạy hết, có OCR, câu tiếng Anh đọc được |
+| `--mode score` trên 20 bước đó | in đủ ô-Voronoi + khoảng tin cậy + số cụm, không lỗi |
+
+Điểm của mô hình **chưa huấn luyện**: 45,0% ô-Voronoi, KTC95 [23,8%, 68,4%] trên n=20. Khoảng
+tin cậy rộng tới mức không kết luận được gì — **không được trích như một mốc**. Nhưng nó gợi một
+việc nên làm, xem mục (k).
+
+### (j) B-infer: câu nhắc dài gấp đôi vùng đã thấy lúc dạy — GIỚI HẠN MỚI PHẢI KHAI
+
+Đo trên 300 bản ghi, đếm bằng bộ tách token của Qwen2.5-VL-3B, cộng 320 token thị giác:
+
+| | trung vị | p95 | tối đa |
+|---|---|---|---|
+| câu nhắc thường | 486 | 556 | 763 |
+| câu nhắc B-infer | **1.149** | 1.338 | 2.048 |
+
+Chuỗi dài nhất trong toàn bộ dữ liệu dạy là **785 token** (sửa đổi mục h). ⇒ **257/300 = 85,7%**
+bản ghi của B-infer nằm ngoài vùng độ dài mô hình từng thấy. Thêm nữa, trần 40 phần tử chạm ở
+gần như mọi màn (trung vị 40 = tối đa 40, trong khi màn có trung vị 72 phần tử), nên danh sách
+đưa vào luôn là bản đã cắt.
+
+**Hệ quả cho luật đọc kết quả:** nếu B-infer thua S2, **không được** kết luận thẳng "đưa thông
+tin lúc chạy kém hơn huấn luyện". Phải khai kèm hai điều kiện làm B-infer thiệt: câu nhắc dài
+gấp 2,4 lần vùng đã dạy, và danh sách bị cắt còn 40/72 phần tử. Cộng với giới hạn đã khai ở sửa
+đổi 7/8 mục c (chỉ 14,1% phần tử có tên), B-infer là **đối thủ yếu hơn tên gọi của nó** ở ba
+phương diện độc lập.
+
+### (k) Đề xuất thêm một nhánh tham chiếu: mô hình gốc, không huấn luyện
+
+Sáu nhánh đã đăng ký đều là nhánh **đã huấn luyện** (trừ B-infer, dùng trọng số S1). Không nhánh
+nào trả lời câu hỏi: *bản thân việc SFT mua được bao nhiêu?* Nếu S1 xấp xỉ mô hình gốc thì tiền
+đề của cả thiết kế lung lay, và tốt nhất là biết điều đó trước khi diễn giải Δ giữa S1 và S2.
+
+Nhánh này **chỉ tốn suy luận, không tốn huấn luyện** (~1,5 giờ máy), và đăng ký ở đây là hợp lệ
+vì **chưa có nhánh nào được huấn luyện, chưa thấy một con số thật nào**. Vai trò: **tham chiếu,
+không phải headline**. Headline vẫn là Δ = S2 − S1.
