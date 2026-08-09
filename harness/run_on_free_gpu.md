@@ -20,11 +20,17 @@ UGround-V1-2B là mô hình 2 tỉ tham số làm suy luận, fp16 chỉ tốn k
 300 bước mất chừng 10–15 phút.
 
 ```bash
-git clone <repo> thesis && cd thesis
 pip install -q transformers accelerate pillow
-python harness/build_test_data.py --shards 2        # 2 shard là đủ cho 300 bước
+python harness/kaggle_precheck.py                   # vài giây, không cần mạng
 python harness/score_run.py --mode gate --grounder uground --n 300 --out gate_A.json
 ```
+
+> **⚠ Bản trước ghi `--shards 2` "đủ cho 300 bước" — SAI, đã sửa.** Mẫu 300 bước lấy
+> bằng cách xáo TOÀN BỘ 4.463 bước chạm với hạt giống 20260805 rồi cắt 300 đầu. Dựng
+> 2 shard cho ra một `test.jsonl` ngắn hơn, nên mẫu xáo ra là một tập KHÁC với tập đã
+> đăng ký — mà chương trình vẫn chạy trơn và vẫn in ra một con số. Muốn dựng lại thì
+> phải đủ `--shards 9`; hoặc mang sẵn 300 ảnh đó theo, đúng cái `kaggle_precheck.py`
+> kiểm ở mục [3].
 
 Đọc kết quả theo đúng bảng đã khoá ở `report/106` sửa đổi 6/8 mục i — **đọc trước khi nhìn số**:
 dưới 0,5% là nghi lỗi vì quá đẹp · 0,5–5% đúng kỳ vọng · 5–15% kém nhưng hợp lý · trên 15% là
