@@ -787,3 +787,38 @@ Cụm lớn nhất của tập đủ là 58 bước, tức không có ứng dụ
 `2,8·sd/√G_eff`: sd hiệu số theo cặp 0,30 → 3,9 pp · 0,40 → 5,3 pp · 0,50 → 6,6 pp. Vẫn là
 **chiếu, chưa phải đo** — sd thật chỉ biết sau khi có điểm S1 hai hạt giống, và cam kết "Δ rơi
 vào 4-9 pp thì báo chưa kết luận được" giữ nguyên.
+
+
+### (g) Cấu hình huấn luyện đã được LLaMA-Factory nhận — chạy thử 10 bước, miễn phí
+
+Chạy trên Kaggle T4, 60 mẫu nhánh S1, 10 bước (`thesis_kaggle_smoketrain.zip`). Mục đích là
+kiểm cấu hình, **không** lấy trọng số — đã xoá ngay sau khi chạy.
+
+**Tham số huấn luyện đếm được: 14.966.784.** Tính tay lại cho Qwen2.5-VL-3B: 36 tầng ×
+(q 32.768 + k 18.432 + v 18.432 + o 32.768 + gate 104.448 + up 104.448 + down 104.448) =
+14.966.784 — khớp từng chữ số. ⇒ LoRA r=8 gắn đúng cả 7 mô-đun trên đủ 36 tầng, và
+`freeze_vision_tower: true` có tác dụng thật (không đóng băng thì con số phải lớn hơn nhiều).
+Ảnh vào thật: `<image>` không có ảnh đi kèm thì bộ xử lý Qwen2-VL báo lỗi cứng, không im lặng.
+
+**Không được đọc từ lượt chạy này:** mất mát không giảm (1,508 → 2,025). Ở 10 bước cỡ lô 2 thì
+đó là chênh lệch giữa các mẫu, không phải chênh lệch do học. `grad_norm: inf` ở bước 8 là fp16
+tràn số trên T4, máy thuê chạy bf16 sẽ không gặp.
+
+**Ghi nhớ cho máy thuê:** Kaggle cấp T4 ×2 nên nó tự chạy song song và cỡ lô hiệu dụng thành 2
+thay vì 1. Cỡ lô hiệu dụng phải giữ y hệt giữa các nhánh, nên trước mỗi lượt train phải kiểm số
+card thật sự có.
+
+### (h) `cutoff_len: 2048` không cắt cụt nhánh nào
+
+Đếm bằng chính bộ tách token của `Qwen2.5-VL-3B` trên toàn bộ 1.697 mẫu mỗi nhánh, cộng 320
+token thị giác (trần theo `image_max_pixels: 1003520`):
+
+| nhánh | trung vị | p95 | tối đa | vượt 2048 |
+|---|---|---|---|---|
+| s1 | 515 | 595 | 756 | 0 |
+| s2 | 541 | 625 | 785 | 0 |
+| s2r | 540 | 625 | 785 | 0 |
+| s2_nopoint | 531 | 612 | 771 | 0 |
+
+Biên còn rộng gấp 2,6 lần. Đồng thời xác nhận lại phép ghép độ dài của S2r trên **toàn bộ** dữ
+liệu chứ không chỉ trên mẫu: trung vị 540 so với 541 của S2, chênh 1 token.
