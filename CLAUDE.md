@@ -16,8 +16,21 @@
 > · Giới hạn mới phải khai: bộ trỏ **bỏ cuộc theo trục ngang 15,3%** số bước · **B-infer thiệt ba
 > phương diện** (câu nhắc dài gấp 2,4 lần vùng đã dạy, cắt còn 40/72 phần tử, 14,1% có tên).
 > · Đã thêm nhánh tham chiếu **mô hình gốc chưa huấn luyện** (report/106 sửa đổi 9/8 mục k).
-> **▶️ VIỆC KẾ:** thuê vast.ai (1× A100 on-demand, đĩa 100 GB, ≥16 lõi) → `setup` → train S1 ×2
-> hạt giống → MDE thật → khoá ngưỡng → mới train S2. Tiền dự kiến **$70–108**.
+> **⚙️ CHỐT MÁY 9-10/8 — dùng GOOGLE COLAB, KHÔNG thuê vast.ai** (`report/108` mục 15). Đo máy
+> thật: A100 **80 GB**, đốt **6,77 đơn vị/giờ** → **$0,677/giờ**, rẻ hơn vast.ai $0,789 và card
+> to gấp đôi. Hai con số cũ của trợ lý đều sai (tưởng 15 đơn vị/giờ, tưởng 40 GB) → **giá GPU
+> phải đo/tra tại thời điểm quyết, cấm nhớ**. Về chỗ lưu: thứ bắt buộc sống qua các phiên chỉ
+> ~3 GB (derived.tar.gz 400 MB + ckpt + preds) — 15 GB miễn phí cũng đủ chạy trọn luận văn,
+> 67 GB ảnh tải lại từ HuggingFace 20–40 phút ≈ $0,3/phiên. *Phần đắt không phải phần to.*
+> (`drive.mount` chỉ gắn Drive của chính tài khoản chạy Colab — cross-account không làm được.)
+>
+> **✅ 10/8 — ĐÃ MUA Colab** trên tài khoản có sẵn **Drive 5 TB** (cùng tài khoản, đúng điều
+> kiện `drive.mount`). Chỗ lưu dư → bật `CAT_ANH_DAY = True` ở ô 0.12, cất luôn 67 GB ảnh dạy.
+>
+> **▶️ VIỆC KẾ:** chạy **`harness/run_on_colab.md`** tuần tự **từ ô 0.1** (35 ô, 6 mốc dừng) →
+> dừng ở **MỐC DỪNG 1**, dán kết quả ra phân tích rồi mới chạy tiếp. Sau đó: train S1 ×2 hạt
+> giống → chấm (Kaggle, miễn phí) → **MDE thật** → khoá ngưỡng → mới train S2. Dự kiến
+> **$70–108**.
 
 > ## 🔒 CHỐT 5/8/2026 — ĐÃ ĐĂNG KÝ TRƯỚC VÀ COMMIT, ĐỌC `report/106_DANG_KY_TRUOC.md`
 > **Thầy không gặp được → chạy luôn, không đợi chốt miệng.** Vì mất bước đó, `report/106` gánh vai trò niêm phong thiết kế: khoá 6 nhánh, thước đo, **luật đọc kết quả cho cả 4 kết cục** (dương / dương yếu / trắng / âm), 3 lát cắt, hạt giống 20260805. Đã commit `51ddb35`. Mọi thay đổi về sau **ghi vào mục sửa đổi cuối file, KHÔNG sửa đè**.

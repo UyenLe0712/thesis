@@ -3,9 +3,17 @@
 > **Dành cho ai:** chính mình sau vài tuần quên mất, hoặc bất kỳ ai cần hiểu dự án đang ở đâu mà
 > không muốn đọc 12 file report.
 >
-> **Ngày:** 9/8/2026. **Trạng thái:** xong hết phần miễn phí · cổng A ĐẠT · toàn bộ đường ống đã
-> chạy thật ít nhất một lần · runbook Colab soạn xong và rà ba lượt. **Chưa tiêu đồng nào cho
-> GPU.** Việc kế: mua đơn vị điện toán Colab rồi chạy `harness/run_on_colab.md` từ ô 0.1.
+> **Ngày:** 10/8/2026. **Trạng thái:** xong hết phần miễn phí · cổng A ĐẠT · toàn bộ đường ống
+> đã chạy thật ít nhất một lần · runbook Colab soạn xong và rà ba lượt · kho mã đã dọn. **Chưa
+> tiêu đồng nào cho GPU.**
+>
+> **✅ 10/8 — ĐÃ MUA Colab**, trên tài khoản Google có sẵn **Drive 5 TB** (Colab và Drive cùng
+> một tài khoản, đúng điều kiện `drive.mount` đòi). Chỗ lưu dư dả nên bật luôn `CAT_ANH_DAY =
+> True` ở ô 0.12 — cất cả 67 GB ảnh dạy, khỏi tải lại mỗi phiên.
+>
+> **▶️ VIỆC KẾ:** mở `harness/run_on_colab.md`, chạy tuần tự **từ ô 0.1**, dừng ở **MỐC DỪNG 1**
+> và dán kết quả ra để phân tích trước khi chạy tiếp. Sáu mốc dừng đều đứng ngay trước một khoản
+> chi lớn.
 >
 > **Ba file kia dùng khi nào:** `report/106` = bản đăng ký trước (thiết kế đã niêm phong, luật
 > đọc kết quả) · `report/108` = sổ kê khai (đã làm gì, số nào tin được) · `report/100` = giới
@@ -199,45 +207,62 @@ Mọi bảng kết quả phải in con số 70,0 cạnh bên.
 
 Trần ngân sách 200 đô. Chấm điểm **không tính tiền** vì chạy trên Kaggle.
 
-### Máy thuê — cấu hình đã chốt
+### Máy — đã chốt: Google Colab, KHÔNG thuê vast.ai
 
-vast.ai, **1 card A100** (40 GB là đủ), **on-demand** (không interruptible: mất máy là mất 67 GB
-đã tải và 2 giờ OCR), đĩa **100 GB**, **≥16 lõi CPU**, download ≥500 Mbps, Max Duration ≥7 ngày,
-độ tin cậy ≥0,98. Chuyển mã bằng `thesis_rented.zip` (2,7 MB, có sẵn kết quả OCR tập kiểm).
+Chốt 9/8 chiều, sau khi **đo được máy thật** thay vì ước: A100 **80 GB** · đĩa 235,7 GB ·
+local-scratch 368 GB · RAM 167 GB · đốt **6,77 đơn vị/giờ**. Hai con số của bản kế hoạch trước
+đó đều sai theo hướng bất lợi cho Colab: tốc độ đốt không phải 15 mà là 6,77, và card là 80 GB
+chứ không phải 40. Quy ra **$0,677/giờ** so với $0,789 của vast.ai — Colab **rẻ hơn và card to
+gấp đôi**. Số đơn vị cần mua: **600–900** (~$58–87).
 
-**Dùng đúng một hạng card cho cả sáu lượt** — cỡ lô hiệu dụng phải giữ y hệt, nếu không hiệu số
-giữa các nhánh lẫn cả phần do cỡ lô khác nhau. `setup` tự kiểm số card và đĩa trống, khác 1 card
-hoặc dưới 90 GB thì dừng hẳn.
+Runbook: **`harness/run_on_colab.md`** — 35 ô mã, **6 mốc dừng**, ô kiểm sau mỗi khâu, và bảng
+đối chiếu từng mục của `report/106` với chỗ nó chạy.
 
-**Đổi quyết định 9/8 chiều — chọn Colab Pro, không thuê vast.ai.** Lý do: đo được máy thật
-(A100 **80 GB** · đĩa 235,7 GB · local-scratch 368 GB · RAM 167 GB · đốt **6,77 đơn vị/giờ**).
-Hai con số trước đó của mình sai: tốc độ đốt không phải 15 mà là 6,77, và card là 80 GB chứ
-không phải 40. Quy ra giá: **$0,677/giờ** (giá thường) so với $0,789 của vast.ai — Colab rẻ hơn
-và card to gấp đôi. Runbook: `harness/run_on_colab.md`.
+**Rủi ro của đường Colab, và cách chặn:** phiên chết giữa chừng → `output_dir` trỏ vào Drive,
+LLaMA-Factory tự nối tiếp từ điểm lưu gần nhất (**đã có ô thử nối tiếp bằng cách cố ý giết tiến
+trình** — cơ chế này chưa từng chạy thật) · không chắc phiên nào cũng được A100 → kiểm card ở
+đầu mỗi phiên, ra L4/T4 thì **không train** · cỡ lô giữ `4×4` thay vì `16×1` để chạy được cả
+trên bản 40 GB nếu bị tụt hạng. **Dùng đúng một hạng card cho cả sáu lượt** — cỡ lô hiệu dụng
+phải giữ y hệt, nếu không hiệu số giữa các nhánh lẫn cả phần do cỡ lô khác nhau.
 
-**Rủi ro còn lại của đường Colab, và cách chặn:** phiên chết giữa chừng → cho `output_dir` trỏ
-vào Drive, LLaMA-Factory tự nối tiếp từ điểm lưu gần nhất · không chắc phiên nào cũng được A100
-→ kiểm card ở đầu mỗi phiên, ra L4/T4 thì không train · cỡ lô giữ `4×4` thay vì `16×1` để chạy
-được cả trên bản 40 GB nếu bị tụt.
+### Lưu trữ — chỉ cần ~3 GB, KHÔNG cần Drive 5 TB
 
-**Lập luận cũ (đã lỗi thời, giữ để tra):** vì sao từng loại Colab (rà lại 9/8 sau đề xuất dùng Colab pay-as-you-go + VPN Thổ Nhĩ Kỳ): ngay
-ở giá rẻ nhất nghe được ($6/100 unit), A100 đốt 15 unit/giờ → **$0,90/giờ**, vẫn **đắt hơn**
-vast.ai $0,789 mà lại ít quyền kiểm soát hơn. Ba chỗ tiền không mua được: Colab chỉ hứa "L4 và
-*thỉnh thoảng* A100" (cỡ lô không giữ được qua sáu lượt) · chạy nền 24 giờ là tính năng của
-Pro+ chứ không phải pay-as-you-go, mà một lượt train mất 11-18 giờ · đĩa không chọn được. Lưu
-dữ liệu ở R2/HF **không** giải được chỗ thứ ba: lúc train, 67 GB ảnh vẫn phải nằm trên đĩa máy
-vì mỗi lượt duyệt đọc lại toàn bộ.
+| phải sống qua các phiên | cỡ |
+|---|---|
+| `derived.tar.gz` — OCR + nhãn khai báo + dữ liệu bốn nhánh | ~400 MB |
+| điểm lưu huấn luyện (`save_total_limit: 2`) | ~360 MB mỗi lượt |
+| `preds_*.jsonl` × 7 | ~15 MB |
+| log, `cfg.yaml` từng lượt, đường cong mất mát | vài MB |
+| **tổng** | **~3 GB — vừa trong 15 GB miễn phí** |
 
-**Runbook: `harness/run_on_colab.md`** — 34 ô mã, **6 mốc dừng** để dán kết quả ra phân tích
-trước khi tiêu tiếp, ô kiểm sau mỗi khâu, và bảng đối chiếu từng mục của `report/106` với chỗ nó
-chạy. Bốn phép kiểm không nằm trong bản đăng ký nhưng bắt buộc: **rò rỉ tác vụ dạy↔kiểm** (chưa
-ai kiểm ở quy mô 76 shard, sai là bỏ cả luận văn) · phủ OCR 100% · 9 bất biến bốn nhánh · **thử
-nối tiếp sau khi cố ý giết tiến trình** (cơ chế chống mất phiên chưa từng chạy thử).
+Thứ chiếm chỗ là **67 GB ảnh tập dạy**, và thứ đó *không đáng lưu*:
+`build_train_data.py --shards 76` tải lại từ HuggingFace trong 20–40 phút ≈ 3 đơn vị ≈ $0,3 mỗi
+phiên; tám phiên hết chừng **$2,4**. Nguyên tắc rút ra: **phần đắt không phải phần to** — 67 GB
+ảnh lấy lại lúc nào cũng được, còn 400 MB `derived.tar.gz` là 3 giờ CPU, mất là mất tiền thật.
 
-**Phần đúng của ý đó đã lấy:** `run_on_rented.sh save` gói lại thứ **đắt-dựng-rẻ-lưu** — kết quả
-OCR (~120 MB, tốn 2-4 giờ CPU), nhãn khai báo, dữ liệu bốn nhánh — để `scp` về máy nhà. Mất máy
-sau `setup` mà không có gói này là trả lại 2-4 giờ tiền máy cho đúng thứ đã có. `restore` bung
-ở máy mới. **Không** gói 67 GB ảnh: tải lại từ HuggingFace nhanh hơn kéo từ bất cứ kho nào.
+Hệ quả thực tế: **mua đơn vị ở tài khoản Google nào tiện nhất**, không phải tách tài khoản để
+mượn dung lượng. Thực tế 10/8 đã mua trên tài khoản có sẵn **Drive 5 TB**, nên chỗ lưu không
+còn là ràng buộc — bật `CAT_ANH_DAY = True` ở ô 0.12 để cất luôn 67 GB ảnh dạy, tiết kiệm
+20-40 phút mỗi phiên train. Điều đáng giữ lại là **lập luận**: nếu chỉ có 15 GB thì vẫn chạy
+được trọn luận văn, chỉ mất thêm ~$2,4.
+
+(Đã tra: `drive.mount` **chỉ** gắn Drive của chính tài khoản đang chạy Colab —
+đăng nhập tài khoản khác ra màn hình trắng "Close this tab"; thư mục "Shared with me" cũng
+không hiện trong bản gắn. Nguồn: googlecolab/colabtools#2419. Nếu buộc phải cross-account thì
+đường duy nhất đáng tin là `rclone` với token của tài khoản kia, không phải chia sẻ thư mục.)
+
+**Lập luận cũ (đã lỗi thời, giữ để tra vì sao từng bác Colab):** hồi 9/8 sáng còn tính A100 đốt
+15 đơn vị/giờ → $0,90/giờ, đắt hơn vast.ai $0,789 mà ít quyền kiểm soát hơn; cộng ba chỗ "tiền
+không mua được": Colab chỉ hứa "L4 và *thỉnh thoảng* A100" · chạy nền 24 giờ là tính năng của
+Pro+ · đĩa không chọn được. Cấu hình vast.ai từng chốt, nay là **đường lui**: 1 card A100
+on-demand, đĩa 100 GB, ≥16 lõi, ≥500 Mbps, Max Duration ≥7 ngày, độ tin cậy ≥0,98; chuyển mã
+bằng `python harness/make_bundle.py rented`. `run_on_rented.sh setup` tự kiểm số card và đĩa
+trống, khác 1 card hoặc dưới 90 GB thì dừng hẳn.
+
+**Bốn phép kiểm không nằm trong bản đăng ký nhưng bắt buộc**, đều đã có ô riêng trong runbook:
+**rò rỉ tác vụ dạy↔kiểm** (chưa ai kiểm ở quy mô 76 shard, sai là bỏ cả luận văn) · phủ OCR
+100% · 9 bất biến bốn nhánh · **thử nối tiếp sau khi cố ý giết tiến trình** (cơ chế chống mất
+phiên chưa từng chạy thử).
 
 ---
 

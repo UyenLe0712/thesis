@@ -586,3 +586,69 @@ chứng** cho câu "sáu nhánh chỉ khác ba dòng" — không có nó thì đ
 lệnh gọi script, 0 cờ sai khi đối chiếu với `argparse` thật · một bảng ánh xạ **từng mục của
 `report/106`** sang chỗ nó chạy, trong đó ghi thẳng hai chỗ **chưa có mã** (hàm phạt lề S3-pilot,
 bộ chấm tay mù).
+
+---
+
+## 15. Chọn máy và chỗ lưu — 9-10/8/2026
+
+Mục này ghi lại một quyết định **bị đảo ngược bằng số đo**, vì cách nó bị đảo đáng nhớ hơn kết
+luận: hai con số mình đưa ra từ trí nhớ đều sai theo cùng một hướng, và cả hai đều bất lợi cho
+phương án cuối cùng thắng.
+
+### 15.1. Colab, không phải vast.ai
+
+Ước ban đầu: A100 trên Colab đốt 15 đơn vị/giờ, card 40 GB → $0,90/giờ, đắt hơn vast.ai $0,789.
+Nhờ đo trên máy thật:
+
+| | ước của mình | đo được |
+|---|---|---|
+| tốc độ đốt | 15 đơn vị/giờ | **6,77** |
+| bộ nhớ card | 40 GB | **80 GB** |
+| quy ra giá | $0,90/giờ | **$0,677/giờ** |
+
+Đĩa 235,7 GB · local-scratch 368 GB · RAM 167 GB. ⇒ Colab **rẻ hơn vast.ai và card to gấp đôi**.
+Quyết định đảo. Số đơn vị cần mua: **600–900** (~$58–87), nằm trong dự toán $70–108 ở
+`report/109` §6.
+
+**Bài học ghi lại:** giá GPU là loại số phải đo hoặc tra tại thời điểm quyết, không được nhớ.
+Đây là lần thứ hai một con số nhớ-nhầm suýt lái cả kế hoạch — lần trước là
+`torch.cuda.is_bf16_supported()` trả `True` trên T4 (mục 8).
+
+### 15.2. Không cần Drive 5 TB
+
+Đặt câu hỏi ngược: **thứ gì thật sự phải sống qua các phiên?**
+
+| | cỡ |
+|---|---|
+| `derived.tar.gz` — OCR + nhãn khai báo + dữ liệu bốn nhánh | ~400 MB |
+| điểm lưu huấn luyện (`save_total_limit: 2`) | ~360 MB mỗi lượt |
+| `preds_*.jsonl` × 7 | ~15 MB |
+| log, `cfg.yaml` từng lượt, đường cong mất mát | vài MB |
+| **tổng** | **~3 GB** |
+
+Vừa trong **15 GB miễn phí** của bất kỳ tài khoản Google nào. Thứ chiếm chỗ là **67 GB ảnh tập
+dạy**, mà `build_train_data.py --shards 76` tải lại từ HuggingFace trong 20–40 phút ≈ 3 đơn vị
+≈ $0,3/phiên; tám phiên hết ~$2,4 — rẻ hơn mọi phương án lưu trữ, kể cả miễn phí, tính cả công.
+
+**Nguyên tắc rút ra: phần đắt không phải phần to.** 67 GB ảnh lấy lại lúc nào cũng được; 400 MB
+`derived.tar.gz` là 3 giờ CPU. Chỗ cần bảo vệ là cái nhỏ.
+
+**Việc đã làm thật (10/8):** mua đơn vị trên tài khoản có sẵn Drive 5 TB, nên chỗ lưu không còn
+là ràng buộc — `CAT_ANH_DAY = True` ở ô 0.12, cất luôn 67 GB ảnh dạy. Phần lập luận trên vẫn
+giữ vì nó là **điều kiện đủ tối thiểu**: nếu phải chạy lại ở tài khoản 15 GB, luận văn vẫn chạy
+trọn, chỉ tốn thêm ~$2,4.
+
+### 15.3. Cross-account: không làm được theo cách tưởng
+
+Đã tra thay vì đoán: `drive.mount` **chỉ** gắn Drive của chính tài khoản đang chạy Colab. Đăng
+nhập tài khoản khác thì ra màn hình trắng "Close this tab"; thư mục "Shared with me" **không**
+hiện trong bản gắn (googlecolab/colabtools#2419). Nếu buộc phải tách tài khoản thì đường duy
+nhất đáng tin là `rclone` với token của tài khoản kia — nhưng theo 15.2 thì không cần tách.
+
+### 15.4. Kho mã đã dọn
+
+Bỏ **4 gói zip khỏi git** (247 MB; `.git` từng phình tới 370 MB cho thứ dựng lại trong vài
+giây) → thay bằng `harness/make_bundle.py` với 4 kiểu gói: `rented` · `gate` · `infer` ·
+`score`. Archive `harness/cv_study/` và `report/85`, `report/101`. `launch_ocr.sh` (có đường
+dẫn cứng `/mnt/d/Master/Thesis` và một đường scratchpad chết) đã archive — nó từng nằm trong
+gói chuyển máy.

@@ -30,10 +30,17 @@ Có **6 mốc dừng**. Mỗi mốc ghi rõ dán cái gì.
 
 | | |
 |---|---|
-| Mua đơn vị | ước **600-900**. Mua dư — hết units giữa lượt train là mất phiên |
-| Drive | tạo `MyDrive/thesis/` — chỗ duy nhất sống sót qua các phiên |
-| Tải lên Drive | `thesis_rented.zip` (3,3 MB) |
+| Mua đơn vị | ước **600-900** (~$58-87). Mua dư — hết units giữa lượt train là mất phiên |
+| Tài khoản | **bất kỳ tài khoản Google nào tiện nhất.** `drive.mount` chỉ gắn Drive của chính tài khoản chạy Colab, nên Colab và Drive phải cùng một tài khoản |
+| Drive | tạo `MyDrive/thesis/` — chỗ duy nhất sống sót qua các phiên. **15 GB miễn phí là đủ** |
+| Tải lên Drive | `thesis_rented.zip` (3,3 MB) — dựng bằng `python harness/make_bundle.py rented` |
 | Runtime | A100. **Kiểm lại mỗi phiên**, Colab hay tụt về L4 |
+
+**Vì sao 15 GB đủ.** Thứ phải sống qua các phiên chỉ ~3 GB: `derived.tar.gz` (~400 MB) ·
+điểm lưu huấn luyện (~360 MB/lượt, `save_total_limit: 2`) · `preds_*.jsonl` (~15 MB) · log
+và `cfg.yaml`. **67 GB ảnh tập dạy không lưu** — tải lại từ HuggingFace 20-40 phút ≈ 3 đơn
+vị ≈ $0,3 mỗi phiên, rẻ hơn mọi cách lưu. Nếu Drive của bạn rộng thì cứ cất thêm
+`train_images.tar` cho nhanh (ô 0.12), nhưng đó là tiện nghi chứ không bắt buộc.
 
 ---
 
@@ -317,22 +324,34 @@ Mình cần đối chiếu:
 ### Ô 0.12 — cất lên Drive ⚠️ ĐỪNG BỎ QUA
 
 ```python
-import os
+import os, shutil
+CAT_ANH_DAY = True    # Drive 5 TB → cất luôn, khỏi tải lại 20-40 phút mỗi phiên
+
 os.makedirs(f"{D}/ckpt", exist_ok=True); os.makedirs(f"{D}/preds", exist_ok=True)
 !cd {REPO} && tar czf {D}/derived.tar.gz \
     harness/dg1_cache/train_ac/ocr.jsonl harness/dg1_cache/train_ac/train.jsonl \
     harness/dg1_cache/train_ac/descriptors.jsonl harness/dg1_cache/train_ac/branches \
     harness/dg1_cache/test_ac/ocr.jsonl harness/dg1_cache/test_ac/test.jsonl \
     harness/dg1_cache/test_ac/descriptors.jsonl
-!cd {REPO}/harness/dg1_cache/train_ac && tar cf {D}/train_images.tar images
 !cd {REPO}/harness/dg1_cache/test_ac  && tar cf {D}/test_images.tar images
+if CAT_ANH_DAY:
+    !cd {REPO}/harness/dg1_cache/train_ac && tar cf {D}/train_images.tar images
+print("Drive trống:", f"{shutil.disk_usage(D)[2]/2**30:.1f} GB")
 !ls -lh {D}/*.tar*
 ```
 
-`derived.tar.gz` là ~3 giờ CPU đóng thành một tệp. Hai tệp ảnh để các phiên sau chép một
-tệp lớn thay vì tải lại 85 shard — nhanh hơn và không phụ thuộc HuggingFace còn sống.
+`derived.tar.gz` (~400 MB) là **~3 giờ CPU đóng thành một tệp** — đây là thứ đắt nhất trong
+phiên này, mất là mất tiền thật. `test_images.tar` (~2,5 GB) cần cho mọi lượt sinh câu.
 
-**Điều kiện kết thúc phiên 0:** ba tệp nằm trên Drive, mốc dừng 3 đã qua. **Tắt máy.**
+**67 GB ảnh dạy: `CAT_ANH_DAY = True` vì tài khoản Colab này có Drive 5 TB.** Tiết kiệm
+20-40 phút mỗi phiên train (~3 đơn vị ≈ $0,3/phiên, tám phiên ≈ $2,4), và không phụ thuộc
+HuggingFace còn sống. Nếu sau này chạy ở tài khoản khác chỉ có 15 GB thì đặt `False` — ô A.1
+tự tải lại, không hỏng gì.
+
+⏱️ Ghi tar 67 GB lên Drive mất khá lâu (thường 40-90 phút). Cứ để chạy, đừng đóng tab.
+
+**Điều kiện kết thúc phiên 0:** `derived.tar.gz` + `test_images.tar` + `train_images.tar` nằm
+trên Drive, mốc dừng 3 đã qua. **Tắt máy.**
 
 ---
 
@@ -348,13 +367,19 @@ os.makedirs(WS, exist_ok=True)
 zipfile.ZipFile(f"{D}/thesis_rented.zip").extractall(WS)
 REPO = f"{WS}/thesis"; os.chdir(REPO)
 !tar xzf {D}/derived.tar.gz -C {REPO}
-!tar xf {D}/train_images.tar -C {REPO}/harness/dg1_cache/train_ac
 !tar xf {D}/test_images.tar  -C {REPO}/harness/dg1_cache/test_ac
+if os.path.exists(f"{D}/train_images.tar"):          # có cất ở ô 0.12 thì bung ra
+    !tar xf {D}/train_images.tar -C {REPO}/harness/dg1_cache/train_ac
+else:                                                # không thì tải lại, 20-40 phút
+    !cd {REPO} && nohup python harness/build_train_data.py --shards 76 > {D}/redl.log 2>&1 &
+    print("→ đang tải lại 67 GB ảnh dạy. Theo dõi bằng ô 0.5, xong mới chạy ô A.2.")
 print("card :", torch.cuda.get_device_name(0), "| số card:", torch.cuda.device_count(),
       "| bf16 thật:", torch.cuda.get_device_capability()[0] >= 8)
-print("ảnh dạy :", len(os.listdir(f"{REPO}/harness/dg1_cache/train_ac/images")))
 print("ảnh kiểm:", len(os.listdir(f"{REPO}/harness/dg1_cache/test_ac/images")))
 ```
+
+⚠️ Nhánh tải-lại chạy nền. **Chờ nó xong** (ô 0.5 in đủ số ảnh khớp `train.jsonl`) rồi mới
+sang ô A.2 — bắt đầu train khi ảnh còn thiếu thì mất cả lượt mà log không báo gì.
 
 **Card không phải A100 thì DỪNG PHIÊN.** Đổi runtime hoặc chờ lúc khác. Train trên L4
 với cỡ lô khác là hỏng cả bảng ablation, mà nhìn bảng không thấy.
