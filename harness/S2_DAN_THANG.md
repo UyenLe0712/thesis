@@ -569,13 +569,22 @@ while True:
             else:
                 toc = " · chưa đủ hai mốc để tính tốc độ"
 
-            # ── tb10 = trung bình 10 điểm log cuối (=200 bước); so với 200 bước trước ──
+            # ── tb10 = trung bình 10 điểm log cuối (=200 bước) ─────────────────
+            # So với 200 bước trước là VÔ NGHĨA ở đuôi lịch: mức trôi thật ~0,004
+            # nhỏ ngang nhiễu của chính tb10 ⇒ nhãn lật qua lật lại thuần do nhiễu.
+            # Cửa sổ 1.000 bước mới tách được tín hiệu khỏi nhiễu.
             tb10 = sum(r["loss"] for r in h[-10:]) / len(h[-10:])
-            tb_t = sum(r["loss"] for r in h[-20:-10]) / 10 if len(h) >= 20 else None
-            if tb_t is None:      xu = "chưa đủ 20 điểm để so"
-            elif tb10 <= tb_t:    xu = f"✅ giảm {so(tb_t-tb10)} so 200 bước trước"
-            elif tb10 - tb_t < 0.02: xu = f"✅ đi ngang (+{so(tb10-tb_t)}, trong biên nhiễu 0,0215)"
-            else:                 xu = f"⚠️ nhích lên {so(tb10-tb_t)} — ngó thêm 2-3 nấc nữa"
+            def tb(a, b):
+                g = h[a:b]
+                return sum(r["loss"] for r in g) / 10 if len(g) == 10 else None
+            tb_gan, tb_xa = tb(-20, -10), tb(-60, -50)     # 200 · 1.000 bước trước
+            xu = f"· so 200 bước {so(tb10-tb_gan,4) if tb_gan else '—'} (nhiễu, đừng đọc) "
+            if   tb_xa is None:            xu += "· chưa đủ 1.000 bước để so"
+            elif tb10 <= tb_xa - 0.005:    xu += f"· so 1.000 bước {so(tb10-tb_xa)} ✅ đang giảm"
+            elif tb10 <= tb_xa + 0.010:    xu += (f"· so 1.000 bước {so(tb10-tb_xa)} ✅ phẳng"
+                                                  " — bình thường ở đuôi lịch cosine")
+            else:                          xu += (f"· so 1.000 bước +{so(tb10-tb_xa)}"
+                                                  " ⚠️ TĂNG THẬT — ngó lại")
 
             # ── lr có khớp lịch cosine không ────────────────────────────────────
             lr, lk = x.get("lr"), lr_lich(b, tong)
