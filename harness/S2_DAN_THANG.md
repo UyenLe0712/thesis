@@ -921,6 +921,20 @@ chạy. Máy ảo đã mất **10 lần**; đừng để tệp nào chỉ nằm 
 | −2,8 … +1,7 pp | **TRẮNG** — kết quả âm có kiểm soát |
 | ≤ −2,8 pp | **ÂM** — báo thẳng |
 
+#### 🔒 Chẩn đoán đăng ký trước — ghi 19/8, **trước khi có bất kỳ điểm S2 nào**
+
+Xem tay 20 câu của lượt s2/101 đã thấy nhiễu trong trường *dấu hiệu phân biệt*:
+`just below the text “① 舜”` — OCR đọc nhầm biểu tượng thành chữ Hán. Nhiễu có sẵn trong nhãn
+dựng tự động, mô hình chỉ học lại.
+
+**Nếu Δ rơi vào vùng TRẮNG**, kiểm giả thuyết này **bằng số**: đếm tỉ lệ khai báo có ký tự lạ
+(CJK, ký hiệu ngoài bảng thường) trong `preds_s2_*.jsonl` **và** trong nhãn dạy
+`descriptors.jsonl` → phân tầng executability theo *khai báo sạch* / *có rác*, ghép cặp với S1
+trên cùng bước → chỉ khi hai nhóm chênh rõ mới được nói nhiễu nhãn là nguyên nhân.
+
+⚠️ Ghi **trước khi chấm** để nó không thành lời bào chữa nghĩ ra sau. S2 thắng thì **cấm** dùng
+mục này giải thích hậu kỳ theo chiều ngược lại. Chi tiết: `report/110` mục 4j-16.
+
 Báo kèm bắt buộc: bốn con số riêng lẻ · tỉ lệ bước bất đồng (mốc: null **6,4%** · can thiệp
 thật **24%**) · phân tầng theo độ dài câu. Hai hạt giống S2 lệch nhau **> 1,5 pp** thì **dừng
 lại truy nguyên nhân** trước khi đọc Δ.
