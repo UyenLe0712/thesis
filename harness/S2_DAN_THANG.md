@@ -525,6 +525,27 @@ hms = lambda s: f"{int(max(s,0))//3600}h{(int(max(s,0))%3600)//60:02d}m"
 so  = lambda x, n=4: f"{x:.{n}f}".replace(".", ",") if x is not None else "—"
 ng  = lambda n: f"{n:,}".replace(",", ".")            # 8.072 chứ không phải 8,072
 
+def giay(t):                              # "6:24:50" · "1 day, 2:03:04" · số
+    try:
+        if isinstance(t, (int, float)): return float(t)
+        p = str(t).split(", ")[-1].split(":")
+        return sum(float(x)*m for x, m in zip(reversed(p), (1, 60, 3600)))
+    except Exception: return None
+
+def quang():
+    """Hai mốc XA NHẤT còn thuộc CÙNG một phiên, đọc theo elapsed_time của
+    trainer — không đụng đồng hồ tường nên không dính trễ hỏi 60 giây.
+    Đi ngược từ cuối, dừng ngay khi elapsed hoặc bước thôi tăng = mốc resume."""
+    i = len(h) - 1
+    while i > 0:
+        a, b_ = giay(h[i-1].get("elapsed_time")), giay(h[i].get("elapsed_time"))
+        if a is None or b_ is None or a >= b_ or h[i-1]["current_steps"] >= h[i]["current_steps"]:
+            break
+        i -= 1
+    d_b = h[-1]["current_steps"] - h[i]["current_steps"]
+    d_t = (giay(h[-1].get("elapsed_time")) or 0) - (giay(h[i].get("elapsed_time")) or 0)
+    return (d_t/d_b, d_b) if d_b > 0 and d_t > 0 else (None, 0)
+
 def lr_lich(b, tong):                     # lr mà lịch cosine LẼ RA phải cho ở bước b
     w = int(WARM * tong)
     if b <= w: return LR0 * b / max(w, 1)
@@ -560,11 +581,12 @@ while True:
 
         if b != truoc or time.time() - lan_in > NHIP_IM:
             # ── tốc độ + giờ xong: neo MỘT mốc rồi chia cả quãng ────────────────
-            toc = ""
-            if neo and b > neo[0]:
-                sb  = (time.time() - neo[1]) / (b - neo[0])
+            sb, n_b = quang()                     # chuẩn: đọc từ elapsed_time của trainer
+            if sb is None and neo and b > neo[0]:  # đường lui: đồng hồ tường
+                sb, n_b = (time.time() - neo[1]) / (b - neo[0]), b - neo[0]
+            if sb:
                 dg  = "✅" if sb < 11.5 else "⚠️ chậm bất thường"
-                toc = (f" · {so(sb,2)} s/bước {dg} · còn {hms((tong-b)*sb)}"
+                toc = (f" · {so(sb,2)} s/bước {dg} (đo trên {ng(n_b)} bước) · còn {hms((tong-b)*sb)}"
                        f" → xong ~{time.strftime('%H:%M %d/%m', time.localtime(time.time()+(tong-b)*sb))}")
             else:
                 toc = " · chưa đủ hai mốc để tính tốc độ"
@@ -580,9 +602,8 @@ while True:
             tb_gan, tb_xa = tb(-20, -10), tb(-60, -50)     # 200 · 1.000 bước trước
             xu = f"· so 200 bước {so(tb10-tb_gan,4) if tb_gan else '—'} (nhiễu, đừng đọc) "
             if   tb_xa is None:            xu += "· chưa đủ 1.000 bước để so"
-            elif tb10 <= tb_xa - 0.005:    xu += f"· so 1.000 bước {so(tb10-tb_xa)} ✅ đang giảm"
-            elif tb10 <= tb_xa + 0.010:    xu += (f"· so 1.000 bước {so(tb10-tb_xa)} ✅ phẳng"
-                                                  " — bình thường ở đuôi lịch cosine")
+            elif tb10 <= tb_xa + 0.010:    xu += (f"· so 1.000 bước {so(tb10-tb_xa)} ✅ giảm chậm"
+                                                  " / phẳng — đúng đuôi lịch cosine")
             else:                          xu += (f"· so 1.000 bước +{so(tb10-tb_xa)}"
                                                   " ⚠️ TĂNG THẬT — ngó lại")
 
