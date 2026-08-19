@@ -513,51 +513,63 @@ import json, os, time, glob, math
 
 os.environ["TZ"] = "Asia/Ho_Chi_Minh"; time.tzset()   # ⚠️ Colab chạy giờ UTC, lệch 7 tiếng
 
-NHIP, NHIP_IM = 60, 600      # nhịp hỏi · nhịp in lại khi bước không đổi
+NHIP, NHIP_IM = 60, 300      # nhịp hỏi · nhịp in lại khi bước không đổi
 LR0, WARM     = 1.0e-4, 0.05 # khớp train_config.yaml: learning_rate · warmup_ratio, cosine
-MOC_S_BUOC    = 10.3         # A100 đã đo: S2 10,22 · S1 10,29-10,38 s/bước
+NGUONG_SB     = 11.5         # A100 đã đo 10,2; vượt mốc này là chậm bất thường
 RANH_EPOCH    = 4036         # ranh giới lượt duyệt 2 — tb10 tụt một nấc ở đây là BÌNH THƯỜNG
 
 tl, t0 = f"{OUT}/trainer_log.jsonl", time.time()
-neo, truoc, lan_in = None, None, 0
+truoc, lan_in = None, 0
 gio = lambda: time.strftime("%H:%M:%S")
 hms = lambda s: f"{int(max(s,0))//3600}h{(int(max(s,0))%3600)//60:02d}m"
-so  = lambda x, n=4: f"{x:.{n}f}".replace(".", ",") if x is not None else "—"
-ng  = lambda n: f"{n:,}".replace(",", ".")            # 8.072 chứ không phải 8,072
+so  = lambda x, n=4: "—" if x is None else f"{x:.{n}f}".replace(".", ",")
+sod = lambda x, n=4: "—" if x is None else f"{x:+.{n}f}".replace(".", ",")
+ng  = lambda n: f"{n:,}".replace(",", ".")
 
 def giay(t):                              # "6:24:50" · "1 day, 2:03:04" · số
     try:
         if isinstance(t, (int, float)): return float(t)
         p = str(t).split(", ")[-1].split(":")
-        return sum(float(x)*m for x, m in zip(reversed(p), (1, 60, 3600)))
+        return sum(float(v)*m for v, m in zip(reversed(p), (1, 60, 3600)))
     except Exception: return None
 
-def quang():
-    """Hai mốc XA NHẤT còn thuộc CÙNG một phiên, đọc theo elapsed_time của
-    trainer — không đụng đồng hồ tường nên không dính trễ hỏi 60 giây.
-    Đi ngược từ cuối, dừng ngay khi elapsed hoặc bước thôi tăng = mốc resume."""
-    i = len(h) - 1
-    while i > 0:
-        a, b_ = giay(h[i-1].get("elapsed_time")), giay(h[i].get("elapsed_time"))
-        if a is None or b_ is None or a >= b_ or h[i-1]["current_steps"] >= h[i]["current_steps"]:
-            break
-        i -= 1
-    d_b = h[-1]["current_steps"] - h[i]["current_steps"]
-    d_t = (giay(h[-1].get("elapsed_time")) or 0) - (giay(h[i].get("elapsed_time")) or 0)
-    return (d_t/d_b, d_b) if d_b > 0 and d_t > 0 else (None, 0)
-
-def lr_lich(b, tong):                     # lr mà lịch cosine LẼ RA phải cho ở bước b
-    w = int(WARM * tong)
-    if b <= w: return LR0 * b / max(w, 1)
-    return LR0 * 0.5 * (1 + math.cos(math.pi * (b - w) / max(tong - w, 1)))
-
-def doc():                                # khử trùng lặp theo bước, giữ lần SAU CÙNG
-    d = {}
+def doc():
+    """Chuỗi bước TĂNG NGẶT.
+    trainer_log.jsonl ghi NỐI THÊM, nên sau khi chạy tiếp nó còn dòng của phiên
+    cũ với số bước CAO HƠN chỗ đang chạy (phiên trước chết ở 4.740 trong khi
+    điểm lưu là 4.600). Lấy max hay sort theo bước thì ô này in 4.740 đứng yên
+    suốt ~24 phút, trông y hệt train đang chạy. Nên: gặp bước tụt thì VỨT mọi
+    dòng ≥ nó — đó là dòng của phiên đã chết."""
+    h = []
     for l in open(tl, encoding="utf-8"):
         try: r = json.loads(l)
-        except: continue
-        if r.get("loss") is not None: d[r["current_steps"]] = r
-    return [d[k] for k in sorted(d)]
+        except Exception: continue
+        if r.get("loss") is None: continue
+        while h and h[-1]["current_steps"] >= r["current_steps"]: h.pop()
+        h.append(r)
+    return h
+
+def toc_do(h, tran=None):
+    """s/bước đọc từ elapsed_time của TRAINER, không đụng đồng hồ tường ⇒ không
+    dính trễ hỏi 60 giây. Chỉ đi trong CÙNG phiên: elapsed đếm lại từ 0 sau mỗi
+    lần chạy tiếp, nên chỗ nó thôi tăng chính là mốc resume. `tran` giới hạn cửa
+    sổ để đo nhịp GẦN ĐÂY."""
+    i = len(h) - 1
+    while i > 0:
+        a, b = giay(h[i-1].get("elapsed_time")), giay(h[i].get("elapsed_time"))
+        if a is None or b is None or a >= b: break
+        if tran and h[-1]["current_steps"] - h[i-1]["current_steps"] > tran: break
+        i -= 1
+    db = h[-1]["current_steps"] - h[i]["current_steps"]
+    dt = (giay(h[-1].get("elapsed_time")) or 0) - (giay(h[i].get("elapsed_time")) or 0)
+    return (dt/db, db) if db > 0 and dt > 0 else (None, 0)
+
+def lr_lich(b, tong):
+    """lr mà lịch cosine LẼ RA phải cho. Đã hiệu chuẩn trên 8 điểm thật của lượt
+    s2: HF dùng ceil cho warmup và ghi lr của bước b−1 ⇒ lệch 0,013% thay vì 0,10%."""
+    w, b = math.ceil(WARM * tong), b - 1
+    if b <= w: return LR0 * b / max(w, 1)
+    return LR0 * 0.5 * (1 + math.cos(math.pi * (b - w) / (tong - w)))
 
 print(f"[{gio()}] theo dõi {OUT} · nhịp {NHIP}s · ⏹ để dừng ô này (train KHÔNG chết theo)",
       flush=True)
@@ -566,63 +578,70 @@ while True:
     try:
         lg   = sorted(glob.glob("/content/train_*.log"))[-1]
         tuoi = time.time() - os.path.getmtime(lg)
+        with open(lg, "rb") as f:                    # đuôi log, để phân biệt mã hoá token
+            f.seek(max(0, os.path.getsize(lg) - 4000)); duoi = f.read().decode("utf-8", "ignore")
 
-        if not os.path.exists(tl):
-            print(f"[{gio()}] chưa tới bước 1 — mã hoá token ({hms(time.time()-t0)} rồi, ~42 phút)"
+        h = doc() if os.path.exists(tl) else []
+        if not h:
+            print(f"[{gio()}] chưa có bước nào — mã hoá token ({hms(time.time()-t0)} rồi, ~42 phút)"
                   f" · log {tuoi:.0f}s trước", flush=True)
             time.sleep(NHIP); continue
 
-        h = doc()
-        if not h: time.sleep(NHIP); continue
         x, b, tong = h[-1], h[-1]["current_steps"], h[-1]["total_steps"]
-
-        if truoc is not None and b != truoc and neo is None:
-            neo = (b, time.time())        # neo vào bước ĐẦU TIÊN của phiên này
-
-        if b != truoc or time.time() - lan_in > NHIP_IM:
-            # ── tốc độ + giờ xong: neo MỘT mốc rồi chia cả quãng ────────────────
-            sb, n_b = quang()                     # chuẩn: đọc từ elapsed_time của trainer
-            if sb is None and neo and b > neo[0]:  # đường lui: đồng hồ tường
-                sb, n_b = (time.time() - neo[1]) / (b - neo[0]), b - neo[0]
-            if sb:
-                dg  = "✅" if sb < 11.5 else "⚠️ chậm bất thường"
-                toc = (f" · {so(sb,2)} s/bước {dg} (đo trên {ng(n_b)} bước) · còn {hms((tong-b)*sb)}"
+        # Dòng cuối được ghi bao lâu rồi? Lúc train chạy, trainer ghi mỗi 20 bước
+        # (~205 s). Cũ hơn 5 phút ⇒ KHÔNG có bước nào đang chạy, dù .log vẫn nhúc
+        # nhích: hoặc đang mã hoá token sau khi chạy tiếp, hoặc treo. Không có phép
+        # này thì ô in số bước của phiên TRƯỚC kèm giờ xong rất hợp lý — suốt 42 phút.
+        tuoi_tl = time.time() - os.path.getmtime(tl)
+        dung = tuoi_tl > 300
+        canh = (b != truoc) or (time.time() - lan_in > NHIP_IM) \
+               or (tuoi > 180 and time.time() - lan_in > 120)
+        if canh:
+            # ── tốc độ: hai cửa sổ, cả hai đều CHÍNH XÁC vì đọc từ elapsed_time ──
+            sb, n_b   = toc_do(h)                    # cả phiên → dùng cho giờ xong
+            sb_g, n_g = toc_do(h, 400)               # 400 bước gần đây → bắt chậm dần
+            if dung:
+                ly_do = ("⏳ đang mã hoá token (~42 phút), số dưới là của phiên TRƯỚC"
+                         if "Running tokenizer" in duoi or "Converting format" in duoi
+                         else "⚠️ KHÔNG ghi bước nào — nghi treo, chạy ô chẩn đoán")
+                toc = f" · dòng cuối {tuoi_tl/60:.0f} phút trước · {ly_do}"
+            elif sb:
+                canh_bao = " ⚠️ CHẬM BẤT THƯỜNG" if sb_g and sb_g > NGUONG_SB else ""
+                if sb_g and sb and sb_g > sb * 1.15: canh_bao += " ⚠️ đang chậm dần"
+                toc = (f" · {so(sb,2)} s/bước trên {ng(n_b)} bước"
+                       f" (gần đây {so(sb_g,2)} trên {ng(n_g)}){canh_bao or ' ✅'}"
+                       f" · còn {hms((tong-b)*sb)}"
                        f" → xong ~{time.strftime('%H:%M %d/%m', time.localtime(time.time()+(tong-b)*sb))}")
+            elif "Running tokenizer" in duoi or "Converting format" in duoi:
+                toc = " · ⏳ đang mã hoá token, chưa có bước mới của phiên này"
             else:
                 toc = " · chưa đủ hai mốc để tính tốc độ"
 
-            # ── tb10 = trung bình 10 điểm log cuối (=200 bước) ─────────────────
-            # So với 200 bước trước là VÔ NGHĨA ở đuôi lịch: mức trôi thật ~0,004
-            # nhỏ ngang nhiễu của chính tb10 ⇒ nhãn lật qua lật lại thuần do nhiễu.
-            # Cửa sổ 1.000 bước mới tách được tín hiệu khỏi nhiễu.
-            tb10 = sum(r["loss"] for r in h[-10:]) / len(h[-10:])
-            def tb(a, b):
-                g = h[a:b]
-                return sum(r["loss"] for r in g) / 10 if len(g) == 10 else None
-            tb_gan, tb_xa = tb(-20, -10), tb(-60, -50)     # 200 · 1.000 bước trước
-            xu = f"· so 200 bước {so(tb10-tb_gan,4) if tb_gan else '—'} (nhiễu, đừng đọc) "
-            if   tb_xa is None:            xu += "· chưa đủ 1.000 bước để so"
-            elif tb10 <= tb_xa + 0.010:    xu += (f"· so 1.000 bước {so(tb10-tb_xa)} ✅ giảm chậm"
-                                                  " / phẳng — đúng đuôi lịch cosine")
-            else:                          xu += (f"· so 1.000 bước +{so(tb10-tb_xa)}"
-                                                  " ⚠️ TĂNG THẬT — ngó lại")
+            # ── tb10 = 10 điểm log cuối (=200 bước). Cửa sổ 200 bước là NHIỄU ở đuôi
+            #    lịch (mức trôi thật ~0,004 ≈ nhiễu của chính tb10) ⇒ phán quyết lấy
+            #    từ cửa sổ 1.000 bước. ────────────────────────────────────────────
+            tb  = lambda a, z: (sum(r["loss"] for r in h[a:z]) / 10) if len(h[a:z]) == 10 else None
+            tb10, tb_gan, tb_xa = tb(-10, None), tb(-20, -10), tb(-60, -50)
+            xu = f"· so 200 bước {sod(tb10-tb_gan) if tb_gan else '—'} (nhiễu, đừng đọc) "
+            if   tb_xa is None:         xu += "· chưa đủ 1.000 bước để so"
+            elif tb10 <= tb_xa + 0.010: xu += f"· so 1.000 bước {sod(tb10-tb_xa)} ✅ giảm chậm / phẳng"
+            else:                       xu += f"· so 1.000 bước {sod(tb10-tb_xa)} ⚠️ TĂNG THẬT — ngó lại"
 
-            # ── lr có khớp lịch cosine không ────────────────────────────────────
+            # ── lr có bám lịch không ─────────────────────────────────────────────
             lr, lk = x.get("lr"), lr_lich(b, tong)
-            dl = abs(lr - lk) / lk * 100 if lr else None
-            slr = (f"{lr:.3e} · lịch {lk:.3e} · lệch {so(dl,2)}% "
-                   f"{'✅' if dl is not None and dl < 1 else '⚠️ SAI LỊCH'}") if lr else "— (thiếu trường lr)"
+            dl  = abs(lr - lk) / lk * 100 if lr is not None else None
+            slr = (f"{lr:.3e} · lịch {lk:.3e} · lệch {so(dl,3)}% "
+                   f"{'✅' if dl < 0.2 else '⚠️ SAI LỊCH'}") if dl is not None else "— (thiếu trường lr)"
 
-            # ── điểm lưu mới nhất bao lâu rồi (bằng chứng máy còn sống) ─────────
-            ck = sorted(glob.glob(f"{OUT}/checkpoint-*"), key=lambda p: int(p.rsplit("-",1)[1]))
+            # ── điểm lưu mới nhất: bằng chứng máy còn sống, xem được từ điện thoại ──
+            ck  = sorted(glob.glob(f"{OUT}/checkpoint-*"), key=lambda q: int(q.rsplit("-",1)[1]))
             sck = "chưa có"
             if ck:
                 tck = (time.time() - os.path.getmtime(ck[-1])) / 60
-                sck = (f"{os.path.basename(ck[-1])} ({tck:.0f} phút trước "
-                       f"{'✅' if tck < 45 else '⚠️'})")
+                sck = f"{os.path.basename(ck[-1])} ({tck:.0f} phút trước {'✅' if tck < 45 else '⚠️'})"
 
-            ep = "  ⚠️ sát ranh giới lượt duyệt 2 — tb10 tụt một nấc ở đây là BÌNH THƯỜNG" \
-                 if abs(b - RANH_EPOCH) <= 200 else ""
+            ep = "\n          ⚠️ sát bước 4.036 = ranh giới lượt duyệt 2 — tb10 tụt một nấc ở đây" \
+                 " là BÌNH THƯỜNG, không phải khái quát tốt hơn" if abs(b - RANH_EPOCH) <= 200 else ""
             print(f"[{gio()}] bước {ng(b)}/{ng(tong)} ({100*b/tong:.1f}%){toc}\n"
                   f"          loss {so(x['loss'])} (một lô, nhiễu ±0,10) · tb10 {so(tb10)} {xu}\n"
                   f"          lr {slr} · lưu {sck} · log {tuoi:.0f}s trước"
@@ -660,20 +679,30 @@ hơn. Ô tự dán cảnh báo khi tới gần.
 chỉ đi 0,4712 → 0,4554 trong khi lr tụt 1,61e-05 → **2,28e-07**.
 
 
-**Năm điểm nó khác ô 10:**
+**Sáu chỗ nó khác ô 10 — mỗi chỗ là một cách đọc sai đã bắt được bằng log dựng lại:**
 
-· **Tốc độ neo MỘT mốc rồi chia cả quãng.** Hỏi 60 giây một lần trên cửa sổ 20 bước (~205 giây)
-cho ra răng cưa **9,0/12,0 s/bước** và giờ xong nhảy vài tiếng; neo mốc thì sai **0,2%**. Mốc
-neo đặt ở bước ĐẦU TIÊN của phiên này, nên nó cũng không dính `elapsed_time` hỏng sau resume.
-· **Nhật ký cuộn, `flush=True`, CẤM `clear_output`** — giữ lịch sử để đối chiếu về sau. Chỉ in
-khi số bước đổi, cộng một dòng nhịp sống mỗi 10 phút để phân biệt *train đứng yên* với *ô chết*.
-· **Bọc `try`** — mất gắn Drive giữa chừng thì in một dòng lỗi rồi hỏi tiếp, không làm chết ô
-theo dõi. Thấy `FileNotFoundError` lặp lại trên `trainer_log.jsonl` là dấu hiệu **nhân Python
-restart làm rớt gắn Drive**: chạy ô chẩn đoán, **đừng bấm lại ô 8**.
-· **Khử trùng lặp theo số bước, giữ lần SAU CÙNG.** `trainer_log.jsonl` **ghi nối thêm**, nên
-sau mỗi lần chạy tiếp nó có dòng trùng bước của phiên trước. Không khử thì tb10 tính lẫn dòng cũ.
-· **Đặt múi giờ Việt Nam** (`TZ=Asia/Ho_Chi_Minh`). Colab chạy giờ **UTC**, không đặt thì dòng
-`xong ~08:15` sớm hơn thực tế **7 tiếng** — vô tình lại trông giống lượt train chạy nhanh.
+· ⭐ **Vứt dòng của phiên đã chết.** `trainer_log.jsonl` **ghi nối thêm**, mà điểm lưu luôn đi
+sau log tới 180 bước (`save_steps: 200` vs `logging_steps: 20`). Phiên trước chết ở 4.740 nhưng
+chạy tiếp từ **4.600** ⇒ trong tệp có sẵn dòng 4.620…4.740 của phiên cũ, **số bước cao hơn chỗ
+đang chạy thật**. Lấy `max` hay `sort` theo bước là ô in **4.740 đứng yên ~24 phút** kèm giờ
+xong rất hợp lý. Nay gặp bước tụt thì **vứt mọi dòng ≥ nó**.
+· ⭐ **Tốc độ đọc từ `elapsed_time` của trainer, không đụng đồng hồ tường.** Ô hỏi 60 giây/lần
+còn trainer ghi mỗi 20 bước (~205 giây) ⇒ trễ ngẫu nhiên tới 60 giây ở **cả hai đầu** cửa sổ,
+cho răng cưa 9,00 ↔ 10,50 s/bước và giờ xong nhảy một tiếng. Đọc từ log thì hết trễ, **có số
+ngay từ dòng đầu**, và tự dò mốc resume (elapsed đếm lại từ 0). In hai cửa sổ: cả phiên (dùng
+cho giờ xong) và **400 bước gần đây** (bắt chậm dần).
+· ⭐ **Phân biệt *đang mã hoá token* với *treo*, bằng mtime của `trainer_log.jsonl`.** Lúc train
+chạy, tệp này được ghi mỗi ~205 giây. Cũ hơn **5 phút** ⇒ không có bước nào đang chạy, dù
+`.log` vẫn nhúc nhích. Không có phép này thì suốt 42 phút mã hoá token sau mỗi lần chạy tiếp,
+ô in số bước của **phiên trước** kèm giờ xong đẹp đẽ.
+· **`lr` so với lịch đã hiệu chuẩn.** HF dùng `ceil` cho warmup (**404** bước) và ghi `lr` của
+bước **b−1**; khớp đúng hai điều đó thì lệch tụt **0,100% → 0,013%** trên 8 điểm thật ⇒ ngưỡng
+cảnh báo siết được xuống **0,2%**, đủ nhạy để bắt việc chạy nhầm lịch.
+· **Nhật ký cuộn, `flush=True`, CẤM `clear_output`.** In khi bước đổi, mỗi 5 phút khi đứng yên,
+và **ngay lập tức** khi log im quá 3 phút.
+· **Bọc `try` + đặt `TZ=Asia/Ho_Chi_Minh`.** Mất gắn Drive thì in một dòng lỗi rồi hỏi tiếp,
+không chết ô. Colab chạy giờ **UTC** — không đặt múi giờ thì `xong ~08:15` sớm hơn thực tế
+**7 tiếng**, vô tình trông giống lượt train chạy nhanh.
 
 **Bản chạy từ Terminal Colab** (biểu tượng `>_` góc dưới trái) — độc lập hoàn toàn với nhân
 Python, dùng khi nhân bận hoặc vừa restart:
