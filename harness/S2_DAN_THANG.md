@@ -1,4 +1,7 @@
-# S2 — dán thẳng, mười ô, theo đúng thứ tự
+# S2 — dán thẳng, theo đúng thứ tự
+
+**Ô 1–10b = huấn luyện · ô 11–15 = xong lượt rồi làm gì.** Mục *Nếu phiên đứt giữa chừng*
+nằm giữa hai phần đó.
 
 Bản tự đủ. Không phải mở `run_on_colab.md`. Giải thích *vì sao* nằm ở
 `harness/colab_train_s2.md`; file này chỉ có việc phải làm.
@@ -752,18 +755,131 @@ dòng cuối cũ, vì nó bằng điểm-lưu + `logging_steps`.
 
 ---
 
-## Xong lượt 101
+## Xong lượt 101 — năm ô nữa, ~2 giờ, không tốn thêm GPU đáng kể
 
-1. Xem 20 câu sinh thử (ô A.7 của `run_on_colab.md`). **Nhìn `<desc>` có đúng khuôn không** —
-   khai báo lệch định dạng thì khâu cắt bỏ nó lúc chấm sẽ hỏng mà không báo gì.
-2. Sinh đủ 6.958 câu (ô A.8, ~1,5 giờ).
-3. Lưu vết lên Drive (ô A.10) **trước khi tắt máy**.
-4. Tải `preds_s2_seed101.jsonl` về máy nhà, chạy:
+### Ô 11 — 🛑 lượt train KẾT THÚC THẬT chưa
+
+```python
+import json, os
+P  = f"{D}/ckpt/{BRANCH}_seed{SEED}"
+st = json.load(open(f"{P}/trainer_state.json"))
+ls = [x["loss"] for x in st["log_history"] if "loss" in x]
+n  = lambda v: f"{v:,.0f}".replace(",", ".")
+print("global_step      :", n(st["global_step"]), "← phải 8.072")
+print("adapter          :", round(os.path.getsize(f"{P}/adapter_model.safetensors")/1e6, 1),
+      "MB ← S1 là 59,9")
+print("total_flos/bước  :", n(st["total_flos"]/st["global_step"]/1e9),
+      "GF ← GHI LẠI, đối chiếu với hạt giống 202")
+print("loss 20 điểm cuối:", round(sum(ls[-20:])/20, 4), "· số điểm log:", len(ls))
+```
+
+⛔ **Đừng trích `all_results.json`** ở ba trường `train_loss` · `train_runtime` ·
+`*_per_second` — chúng **hỏng sau khi chạy tiếp** (HF cộng loss từ lúc khởi động lại rồi chia
+cho cả 8.072 bước). Lượt S1 từng cho `train_loss` **0,0151** trong khi số thật ≈ **0,447**.
+Trường `total_flos` thì **không** hỏng.
+
+⚠️ `total_flos/bước` của S2 sẽ **cao hơn** S1 (513.164 GF) vì đích có thêm dòng `<desc>` —
+bình thường. Con số này là mốc đối chiếu với hạt giống 202: hai lượt S1 khớp nhau **0,013%**,
+và đó là bằng chứng "không mất bước nào" **không vòng tròn**, thay cho phép ngoại suy từ thăm dò.
+
+### Ô 12 — 🛑 SINH 20 CÂU THỬ. Mốc dừng quan trọng nhất của lượt này
+
+```python
+!cd {REPO} && python harness/infer_branch.py --adapter {D}/ckpt/{BRANCH}_seed{SEED} \
+    --out /content/preds_smoke.jsonl --limit 20
+```
+```python
+import json
+R = list(map(json.loads, open("/content/preds_smoke.jsonl", encoding="utf-8")))
+for r in R[:8]:
+    print(f"[{r['episode_id']}/{r['step_id']}]\n  chuẩn: {r['gold_instruction']}"
+          f"\n  câu  : {r['pred']}\n  thô  : {r['raw'][:140]}\n")
+import re
+kh = [r for r in R if re.search(r"<desc>[^|]+\|[^|]+\|\s*<point>\d+,\d+</point>\s*\|", r["raw"])]
+print(f"khuôn <desc> đúng 4 phần: {len(kh)}/{len(R)}   ← cần gần hết")
+print(f"còn sót <desc> trong câu : {sum(1 for r in R if '<desc>' in r['pred'])}   ← PHẢI LÀ 0")
+```
+
+Đây là chỗ **phải nhìn bằng mắt**, không chỉ đọc số: `raw` phải có `<desc>` đúng khuôn bốn
+phần `vai trò | tên | <point>x,y</point> | dấu hiệu`, còn `pred` phải là **câu sạch**. Khuôn
+lệch thì khâu cắt bỏ `<desc>` lúc chấm hỏng **mà không báo gì**, và mọi điểm S2 thành rác —
+đúng lớp lỗi "chạy vẫn trơn, kết quả sai" mà cả dự án đang phòng.
+
+**Bỏ ô A.6 và A.7b của `run_on_colab.md`** — tự kiểm lô và thử nối tiếp khâu sinh câu đã chạy
+xong từ chiến dịch S1, đừng trả tiền lại.
+
+### Ô 13 — sinh đủ 6.958 câu, ~1,5 giờ, chạy nền
+
+```python
+import subprocess
+ILOG = f"/content/infer_{BRANCH}_seed{SEED}.log"
+subprocess.Popen(["python", "harness/infer_branch.py",
+                  "--adapter", f"{D}/ckpt/{BRANCH}_seed{SEED}",
+                  "--out",     f"{D}/preds/preds_{BRANCH}_seed{SEED}.jsonl"],
+                 cwd=REPO, stdout=open(ILOG, "a"), stderr=subprocess.STDOUT,
+                 start_new_session=True)
+print("đã khởi động →", ILOG)
+```
+
+Theo dõi (chạy lại nhiều lần được):
+
+```python
+import subprocess, os
+p = f"{D}/preds/preds_{BRANCH}_seed{SEED}.jsonl"
+n = sum(1 for _ in open(p, encoding="utf-8")) if os.path.exists(p) else 0
+song = "infer_branch" in subprocess.run(["ps","-eo","args"], capture_output=True, text=True).stdout
+print(f"{n:,} / 6.958   ·   {'đang chạy' if song else 'ĐÃ DỪNG'}")
+!tail -2 /content/infer_{BRANCH}_seed{SEED}.log
+```
+
+Khâu này **ghi dần và nối tiếp được** — đứt phiên thì chạy lại đúng ô trên, nó đọc tệp cũ rồi
+sinh nốt phần thiếu. ⚠️ Chữ ký lượt chạy sẽ chặn nếu tệp đích là của nhánh khác.
+
+### Ô 14 — kiểm tệp dự đoán
+
+```python
+import json
+R = list(map(json.loads, open(f"{D}/preds/preds_{BRANCH}_seed{SEED}.jsonl", encoding="utf-8")))
+tap = [r for r in R if r["action"].get("action_type") in ("click","long_press") and "x" in r["action"]]
+rong = sum(1 for r in R if not r["pred"].strip())
+print(f"bản ghi  : {len(R):,}   ← phải là 6.958")
+print(f"bước chạm: {len(tap):,}   ← phải là 4.463")
+print(f"câu rỗng : {rong} = {rong/len(R):.1%}   ← S1 bỏ đúng 1 bước, (18710, 1)")
+print(f"sót <desc>: {sum(1 for r in R if '<desc>' in r['pred'])}   ← PHẢI LÀ 0")
+print(f"độ dài câu trung vị: {sorted(len(r['pred']) for r in R)[len(R)//2]} ký tự  ← S1 là 33")
+```
+
+### Ô 15 — LƯU VẾT lên Drive ⚠️ chạy TRƯỚC KHI TẮT MÁY
+
+```python
+import os, shutil, json, glob
+V = f"{D}/logs/{BRANCH}_seed{SEED}"; os.makedirs(V, exist_ok=True)
+for f in ["/content/cfg.yaml", LOG, f"/content/infer_{BRANCH}_seed{SEED}.log",
+          "/content/preds_smoke.jsonl"]:
+    if os.path.exists(f): shutil.copy(f, V)
+st = f"{D}/ckpt/{BRANCH}_seed{SEED}/trainer_state.json"
+pts = [x for x in json.load(open(st))["log_history"] if "loss" in x]
+json.dump(pts, open(f"{V}/loss_curve.json", "w"), indent=1)
+print(f"{len(os.listdir(V))} tệp trong {V} · {len(pts)} điểm mất mát")
+print(sorted(os.listdir(V)))
+```
+
+Đường cong mất mát lấy từ `trainer_state.json` của điểm lưu cuối chứ **không** từ log: đó là
+bản chính thức, không lệ thuộc chuyện log có bị ghi đè hay không.
+
+**Điều kiện kết thúc phiên:** `ckpt/` và `preds_….jsonl` nằm trên Drive · ô 14 sạch · ô 15 đã
+chạy. Máy ảo đã mất **10 lần**; đừng để tệp nào chỉ nằm ở `/content`.
+
+### Rồi mới sang hạt giống 202
+
+1. Tải `preds_s2_seed101.jsonl` về máy nhà, chạy
    `python3 harness/kiem_preds.py runs/preds_s2_seed101.jsonl`
-   → phải **8/8 ĐẠT**, bước bỏ **trùng khít** `[(18710, 1)]` như S1.
-5. Đổi `SEED = 202` ở ô 5, chạy lại từ ô 5.
-
-**Chấm để cuối cùng**, sau khi có cả hai hạt giống — Kaggle 30 giờ/tuần, mỗi lượt 5,6 giờ.
+   → phải **8/8 ĐẠT**, bước bỏ **trùng khít** `[(18710, 1)]` như S1. Trùng khít thì ghép cặp
+   McNemar sạch trên **cùng 4.462 bước**, không phải trừ bù.
+2. Đổi `SEED = 202` ở **ô 5**, chạy lại từ ô 5. Lượt này là lượt **MỚI**: dòng
+   `BÊN TRONG output_dir` phải in `[]`, và ô 7b phải sạch **cả bảy phép**, không còn ngoại lệ
+   nào. Bỏ ô 5a · 5b · 5c · 6; giữ ô 7 (kiểm vàng) — nó phải báo đúng ba khoá khác.
+3. **Chấm để cuối cùng**, sau khi có cả hai hạt giống — Kaggle 30 giờ/tuần, mỗi lượt 5,6 giờ.
 
 ## Luật đọc kết quả — đã khoá 17/8, đừng sửa sau
 
