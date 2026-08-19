@@ -1147,11 +1147,36 @@ luận là đọc nhiễu; và so `tb10` với **200 bước trước** ở đu�
 (~0,004) nhỏ ngang nhiễu của chính `tb10` — phải so **1.000 bước**.
 ⇒ **Mẫu hình cũ lặp lại lần nữa: mọi lỗi nằm ở khâu MÔ TẢ/ĐO, không ở khâu train.**
 
+⭐ **Bước 18175/0 sinh *"Open Tripadvisor app"* thay vì Foursquare — S1 hạt giống 101, S1 hạt
+giống 202 và nay S2 hạt giống 101 đều mắc đúng lỗi đó ở đúng bước đó.** Ba lượt train độc lập,
+hai nhánh khác nhau ⇒ đây là đặc tính của **màn hình/dữ liệu**, không phải của nhánh. Đọc được
+đúng một điều: đường ống chạy đúng và tất định. n=8, **cấm** suy ra gì về chất lượng.
+
 **Khuôn `<desc>` ĐẠT** (mốc dừng quan trọng nhất của lượt này): 20 bước thử → **11 bước có
 `<desc>`, 11/11 đúng khuôn bốn phần**, **0** bước còn sót `<desc>` trong câu đem chấm.
 ⚠️ Tỉ lệ 11/20 **không phải** dấu hiệu hỏng — chỉ bước **chạm** mới có khai báo (4.463/6.958 =
 64%). Phép kiểm bản đầu chia cho toàn bộ 20 nên in `11/20 ← cần gần hết`, trông như rớt; đã sửa
 mẫu số.
+
+#### Vì sao KHÔNG early stopping — câu hỏi nảy ra lúc theo dõi 19/8, và là câu giám khảo dễ hỏi
+
+Ở đuôi lịch, `tb10` gần như phẳng (5.400 → 6.180 chỉ đi 0,3053 → 0,2988) nên câu hỏi tự nhiên
+là *"sao không dừng sớm cho đỡ 5 giờ"*. Bốn lý do, lý do đầu là cứng nhất:
+
+1. **`report/106` đã đăng ký trước và khoá luật chọn điểm lưu**: *dùng bản cuối 2 lượt duyệt
+   cho mọi nhánh*, kèm chữ **CẤM chọn theo điểm trên tập kiểm**. Early stopping chính là chọn
+   mô hình theo một thước — làm thế là phá niêm phong thiết kế, mà niêm phong đó đang gánh vai
+   "không có thầy chốt miệng".
+2. **Không có tập validation để dừng theo.** Hai lựa chọn thay thế đều hỏng: dừng theo **loss
+   huấn luyện** thì vô nghĩa (nó gần như luôn giảm, kể cả khi đang học vẹt); dừng theo **tập
+   kiểm** thì đó là rò rỉ, vì chính tập kiểm dùng để báo executability.
+3. **S1 và S2 phải cùng ngân sách huấn luyện thì hiệu `S2 − S1` mới đọc được.** S1 chạy đủ
+   8.072 bước; S2 dừng ở 6.200 thì hiệu lẫn cả phần "ít bước hơn" và ablation mất nghĩa.
+4. **Loss không phải thước.** Loss của S2 tính trên cả `<desc>` lẫn câu, trong khi chấm chỉ lấy
+   **câu sau khi cắt bỏ `<desc>`**. Loss phẳng không kết luận được gì về chất lượng câu.
+
+Và về mặt tiền: muốn biết bản 6.200 có gần bằng bản 8.072 không thì **phải chấm cả hai**, mỗi
+lượt 5,6 giờ quota Kaggle (trần 30 giờ/tuần) — đắt hơn 5 giờ Colab định tiết kiệm.
 
 #### 🔒 CHẨN ĐOÁN ĐĂNG KÝ TRƯỚC — ghi 19/8, **trước khi có bất kỳ điểm S2 nào**
 
