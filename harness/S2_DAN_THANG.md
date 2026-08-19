@@ -664,8 +664,11 @@ done
 
 ## Nếu phiên đứt giữa chừng
 
-Chạy lại: **ô 1 → Restart → ô 2 → ô 3 → ô 5 → ô 5c → ô 7b → ô 8 → ô 9 → ô 10b.**
+Chạy lại: **ô 1 → Restart → ô 2 → ô 3 → ô 4 → ô 5 → ô 5c → ô 7b → ô 8 → ô 9 → ô 10b.**
 Bỏ ô 6 (đã thăm dò) và ô 7 (cfg không đổi).
+
+⚠️ **Đừng bỏ ô 4.** Máy ảo mới thì bộ đệm HuggingFace rỗng, LLaMA-Factory phải tải lại trọng
+số Qwen2.5-VL-3B; không có `HF_TOKEN` là chết ở khâu nạp mô hình. Mất 5 giây.
 
 ⚠️ **Đừng bỏ ô 7b.** Ô 2 bung `derived.tar.gz` — bản **tiếng Việt** — nên mỗi lần dựng lại máy
 là dữ liệu có nguy cơ lùi về bản cũ. Ô 2 đã tự bung đè `derived_train_en.tar.gz`, và phép ④ của
