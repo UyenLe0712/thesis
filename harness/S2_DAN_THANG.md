@@ -34,6 +34,13 @@ TR, TE = f"{REPO}/harness/dg1_cache/train_ac", f"{REPO}/harness/dg1_cache/test_a
 dem = lambda d: len(os.listdir(d)) if os.path.isdir(d) else 0
 
 !tar xzf {D}/derived.tar.gz -C {REPO}
+# ⚠️ BẮT BUỘC: bung ĐÈ bản tiếng Anh lên. derived.tar.gz là bản khai báo TIẾNG VIỆT
+#    (trước 14/8). Quên dòng này là train tiếp trên dữ liệu KHÁC mà log không báo gì.
+if os.path.exists(f"{D}/derived_train_en.tar.gz"):
+    !tar xzf {D}/derived_train_en.tar.gz -C {REPO}
+    print("đã bung đè bản TIẾNG ANH ✅")
+else:
+    print("⛔ DỪNG — không thấy derived_train_en.tar.gz, phải chạy lại ô 5a")
 os.makedirs(f"{TR}/images", exist_ok=True)
 goi = sorted(glob.glob(f"{D}/train_images_p*.tar"))
 if dem(f"{TR}/images") >= 64567:
@@ -54,6 +61,7 @@ print("cutoff  :", yaml.safe_load(open(f"{REPO}/harness/train_config.yaml",
 | `A100` · số card **1** | 2 card thì LLaMA-Factory tự nhân cỡ lô — **dừng** |
 | ảnh dạy **64.567** | thiếu ⇒ train hỏng mà log không báo — **dừng** |
 | cutoff **2560** | in 2048 ⇒ gói Drive là bản trước 11/8 — **dừng, tải gói mới** |
+| `đã bung đè bản TIẾNG ANH ✅` | không thấy ⇒ khai báo còn tiếng Việt, `S2−S1` sẽ lẫn phần chuyển ngữ — **dừng** |
 
 ## Ô 3 — kiểm gói mã
 
@@ -641,8 +649,13 @@ done
 
 ## Nếu phiên đứt giữa chừng
 
-Chạy lại: **ô 1 → Restart → ô 2 → ô 3 → ô 5 → ô 5c → ô 8 → ô 9 → ô 10b.**
+Chạy lại: **ô 1 → Restart → ô 2 → ô 3 → ô 5 → ô 5c → ô 7b → ô 8 → ô 9 → ô 10b.**
 Bỏ ô 6 (đã thăm dò) và ô 7 (cfg không đổi).
+
+⚠️ **Đừng bỏ ô 7b.** Ô 2 bung `derived.tar.gz` — bản **tiếng Việt** — nên mỗi lần dựng lại máy
+là dữ liệu có nguy cơ lùi về bản cũ. Ô 2 đã tự bung đè `derived_train_en.tar.gz`, và phép ④ của
+ô 7b là chỗ **xác nhận bằng số** (`tiếng Việt ở khuôn mẫu: 0`). Phép ② của ô 7b sẽ kêu
+*"output_dir đã có checkpoint"* — ở lần chạy tiếp thì đó là **ĐÚNG**, bỏ qua đúng dòng đó.
 
 Ô 5 phải in `BÊN TRONG output_dir` **CÓ `checkpoint-*`** — LLaMA-Factory tự chạy tiếp từ đó.
 Dòng chú thích `← lượt MỚI phải là []` **không áp cho lần chạy tiếp**; ở đây thấy rỗng mới là
