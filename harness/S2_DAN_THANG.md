@@ -782,6 +782,28 @@ Trường `total_flos` thì **không** hỏng.
 bình thường. Con số này là mốc đối chiếu với hạt giống 202: hai lượt S1 khớp nhau **0,013%**,
 và đó là bằng chứng "không mất bước nào" **không vòng tròn**, thay cho phép ngoại suy từ thăm dò.
 
+### Ô 11b — 🛑 BUNG ẢNH TẬP KIỂM ⚠️ **bắt buộc**, ô 2 không bung ảnh này
+
+```python
+import os
+TE = f"{REPO}/harness/dg1_cache/test_ac"
+n  = len(os.listdir(f"{TE}/images")) if os.path.isdir(f"{TE}/images") else 0
+print("ảnh kiểm đang có:", n)
+if n < 6958:
+    !tar xf {D}/test_images.tar -C {TE}
+    print("đã bung:", len(os.listdir(f"{TE}/images")), "← cần 6.958")
+```
+
+Ô 2 chỉ bung ảnh **dạy** (`train_images_p*.tar`). Ảnh **kiểm** 3,2 GB không cần trong suốt
+24 giờ train nên máy ảo mới không có nó, và khâu sinh câu chết ngay dòng đầu:
+
+```
+FileNotFoundError: …/test_ac/images/ep18171_s0.png
+```
+
+Bung lại mất ~3 phút. Cùng lớp với phép ⑤ của ô 7b (đường dẫn ảnh dạy) — chỉ khác là phép
+đó canh lúc train, còn ô này canh lúc sinh câu.
+
 ### Ô 12 — 🛑 SINH 20 CÂU THỬ. Mốc dừng quan trọng nhất của lượt này
 
 ```python
