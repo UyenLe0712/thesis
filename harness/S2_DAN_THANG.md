@@ -273,6 +273,21 @@ nếu không thì phép thăm dò chạy trên mẫu thường, tức không th�
 !cp {B}/s2_long.json {B}/dataset_info.json {D}/branches_backup/
 ```
 
+## Ô 5c — SAO LƯU ĐIỂM LƯU trước khi chạy tiếp  ⚠️ ~2 phút, **chỉ khi nối tiếp một lượt dở**
+
+```python
+import os, shutil, glob
+BK = f"{D}/ckpt_backup/{BRANCH}_seed{SEED}"; os.makedirs(BK, exist_ok=True)
+for c in sorted(glob.glob(f"{OUT}/checkpoint-*")):
+    d = f"{BK}/{os.path.basename(c)}"
+    if not os.path.exists(d): shutil.copytree(c, d)
+print("đã sao lưu:", sorted(os.listdir(BK)))
+```
+
+Chặn đúng một kịch bản: nếu nó **không** nhận ra điểm lưu và bắt đầu lại từ 0 thì
+`save_total_limit: 2` **lặng lẽ xoá** hai bản cũ khi bản thứ ba ra đời — lúc phát hiện thì hết
+đường về. 182 MB mỗi bản.
+
 ## Ô 6 — 🛑 THĂM DÒ BỘ NHỚ 12 PHÚT  ⚠️ **KHÔNG ĐƯỢC BỎ**
 
 S2 là nhánh **nặng nhất**. Cấu hình đang dùng được chọn bằng các lượt đo trên `gui_s1`; một
@@ -665,20 +680,7 @@ hỏng. ⛔ **Đừng xoá `output_dir`** (đoạn `shutil.rmtree(OUT)` ở ô 5
 lưu này. Phần train đã làm **không mất**; giá một lần đứt là ~42 phút mã hoá token cộng phần
 bước từ điểm lưu cuối tới lúc chết (≤200 bước ≈ 34 phút).
 
-### Ô 5c — sao lưu điểm lưu trước khi chạy tiếp  ⚠️ ~2 phút, chỉ khi nối tiếp
-
-```python
-import os, shutil, glob
-BK = f"{D}/ckpt_backup/{BRANCH}_seed{SEED}"; os.makedirs(BK, exist_ok=True)
-for c in sorted(glob.glob(f"{OUT}/checkpoint-*")):
-    d = f"{BK}/{os.path.basename(c)}"
-    if not os.path.exists(d): shutil.copytree(c, d)
-print("đã sao lưu:", sorted(os.listdir(BK)))
-```
-
-Chặn đúng một kịch bản: nếu nó **không** nhận ra điểm lưu và bắt đầu lại từ 0 thì
-`save_total_limit: 2` **lặng lẽ xoá** hai bản cũ khi bản thứ ba ra đời — lúc phát hiện thì hết
-đường về. 182 MB mỗi bản.
+**Ô 5c nằm ở trên, ngay trước ô 6** — sao lưu `checkpoint-*` sang `ckpt_backup/`.
 
 **Kiểm nó có chạy tiếp thật không.** Sau ô 8 khoảng 40 giây, từ Terminal Colab:
 `grep -m1 "Resuming training from" /content/train_s2_seed101.log`. Trống **ngay lúc đầu** là
