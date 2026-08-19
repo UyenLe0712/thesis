@@ -817,9 +817,16 @@ for r in R[:8]:
     print(f"[{r['episode_id']}/{r['step_id']}]\n  chuẩn: {r['gold_instruction']}"
           f"\n  câu  : {r['pred']}\n  thô  : {r['raw'][:140]}\n")
 import re
-kh = [r for r in R if re.search(r"<desc>[^|]+\|[^|]+\|\s*<point>\d+,\d+</point>\s*\|", r["raw"])]
-print(f"khuôn <desc> đúng 4 phần: {len(kh)}/{len(R)}   ← cần gần hết")
-print(f"còn sót <desc> trong câu : {sum(1 for r in R if '<desc>' in r['pred'])}   ← PHẢI LÀ 0")
+# ⚠️ MẪU SỐ là số bước CÓ <desc>, không phải toàn bộ. Chỉ bước CHẠM mới có khai
+# báo (4.463/6.958 = 64%); bước mở app, gõ, cuộn thì không — đó là thiết kế, không
+# phải hỏng. Lấy nhầm mẫu số thì 11/20 trông như rớt trong khi thật ra là 11/11.
+KH  = re.compile(r"<desc>[^|]+\|[^|]+\|\s*<point>\d+,\d+</point>\s*\|[^|]+</desc>", re.S)
+co  = [r for r in R if "<desc>" in r["raw"]]
+dung = [r for r in co if KH.search(r["raw"])]
+print(f"có <desc>        : {len(co)}/{len(R)}   ← ~64% là đúng thiết kế")
+print(f"đúng khuôn 4 phần: {len(dung)}/{len(co)}   ← HAI SỐ PHẢI BẰNG NHAU")
+print(f"sót <desc> trong câu: {sum(1 for r in R if '<desc>' in r['pred'])}   ← PHẢI LÀ 0")
+for r in co[:3]: print("   ", KH.search(r["raw"]).group()[:120] if KH.search(r["raw"]) else "⛔ " + r["raw"][:120])
 ```
 
 Đây là chỗ **phải nhìn bằng mắt**, không chỉ đọc số: `raw` phải có `<desc>` đúng khuôn bốn
