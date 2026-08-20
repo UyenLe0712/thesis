@@ -1210,6 +1210,48 @@ ký tự lặp ≥10 lần · khai báo dài >200), đếm tỉ lệ, **so độ
 sách bước lên Drive kèm md5. **Chạy trước khi chấm** ⇒ phép phân tầng sau này là **đăng ký
 trước**, không phải bới số sau khi thấy điểm.
 
+#### Đếm kỹ trên 4.462 bước đã sinh — và một quả mìn chưa nổ ở phía TẬP KIỂM
+
+Chạy ô 14c trên `preds_s2_seed101.jsonl`, đối chiếu với nhãn dựng sẵn ở máy nhà:
+
+| | s2/101 | mốc so |
+|---|---|---|
+| **không sinh `<desc>`** | **323 = 7,2%** | bộ dựng nhãn phủ **99,66%** bước chạm (4.448/4.463) |
+| mở thẻ mà không đóng | 1 | → `strip_desc` xoá từ `<desc>` tới hết ⇒ **câu rỗng** |
+| khai báo có rác | 26 = **0,63%** | nhãn dạy **1,21%** · nhãn kiểm **0,94%** |
+
+**① ⭐ Con số đáng chú ý nhất KHÔNG phải rác, mà là 323 bước (7,2%) mô hình không sinh khai báo
+nào.** Ở đó **thành phần đóng góp của S2 đơn giản là không kích hoạt** — nó hành xử y như S1.
+⇒ Lát cắt phân tầng tự nhiên, **đăng ký trước từ đây**: so executability trên nhóm *có kích
+hoạt* và nhóm *không kích hoạt*, ghép cặp với S1 trên cùng bước. Nếu S2 chỉ hơn ở nhóm có kích
+hoạt thì cơ chế đúng như thiết kế; nếu hơn đều ở cả hai nhóm thì phần hơn **không đến từ thành
+phần**, mà từ thứ khác — và đó là đòn phản biện nặng, tự tìm ra trước còn hơn bị hỏi.
+
+**② ✅ Mô hình LỌC rác chứ không khuếch đại** (0,63% vs 0,94–1,21% ở nhãn). Trả lời câu hỏi đặt
+ra hôm 19/8 theo chiều thuận.
+
+**③ ⛔ Giả thuyết "rác ăn mất ngân sách sinh" RÚT ở dạng tổng quát.** Độ dài câu trung vị nhóm
+rác **37** vs nhóm sạch **35** — nhóm rác còn *dài hơn*. n=26 nên nhiễu, nhưng không có dấu
+hiệu ăn mòn ở mức phân bố. `(20011, 2)` là **đuôi đơn lẻ**, không phải mẫu hình. Giữ ca hỏng,
+bỏ phần suy rộng. *(Bài học lặp lại: một ca sinh động rất dễ được nâng thành cơ chế; phải đếm
+mới biết.)*
+
+**④ ⛔ Lỗ trong chính phép đếm bản đầu:** khai báo **không đóng thẻ** thì `<desc>(.*?)</desc>`
+không khớp ⇒ ca nặng nhất **vô hình với cờ**. Đã đọc `infer_branch.py:40-43` xác nhận không
+đóng thẻ ⇒ câu rỗng, mà chỉ có 1 câu rỗng ⇒ đúng 1 ca. Ô 14c nay đếm riêng ba nhóm thay vì dựa
+vào suy luận đó.
+
+**⑤ ⛔⛔ QUẢ MÌN CHƯA NỔ — `test_ac/descriptors.jsonl` VẪN LÀ TIẾNG VIỆT.** Dựng 9/8, nội dung
+kiểu `mục | 回 Text | <point>135,789</point> | bên phải chữ “Comment”`. Mục sửa đổi **(q)** ngày
+14/8 chỉ dựng lại phần **tập dạy**. Mà `infer_branch.py:480` cho **`--ceiling gold`** và
+**`--ceiling filler`** nhét thẳng khai báo tập kiểm **vào câu nhắc**; hai nhánh đó **có đăng ký
+trong `report/106`**.
+· **Chưa nhánh nào đã chấm bị dính** — lượt trần dùng thẳng `gold_instruction`
+(`runs/preds_ceiling_human.jsonl`), không đụng tệp này.
+· ⇒ **Phải chạy `descriptor_label_build.py --split test` trước khi chạy hai nhánh đó**, nếu
+không là tái diễn đúng nhầm lẫn ngôn ngữ đã suýt làm hỏng lượt train — lần này ở phía tập kiểm,
+và lần này **không có ô 7b nào canh**.
+
 #### 🔒 CHẨN ĐOÁN ĐĂNG KÝ TRƯỚC — ghi 19/8, **trước khi có bất kỳ điểm S2 nào**
 
 Trong 3 khai báo đầu tiên xem tay đã thấy **một ca rác**:

@@ -936,11 +936,22 @@ cham = lambda r: r["action"].get("action_type") in ("click","long_press") and "x
 
 P = f"{D}/preds/preds_{BRANCH}_seed{SEED}.jsonl"
 R = [json.loads(l) for l in open(P, encoding="utf-8")]
-co  = [(r, desc(r)) for r in R if cham(r) and desc(r)]
+CH  = [r for r in R if cham(r)]
+co  = [(r, desc(r)) for r in CH if desc(r)]
 rac = [(r, d) for r, d in co if LA.search(d) or LAP.search(d) or len(d) > DAI]
+# ⚠️ Hai nhóm KHÔNG lọt vào `co`, phải đếm riêng — regex <desc>(.*?)</desc> không
+#    khớp khi thẻ không đóng, tức ca NẶNG NHẤT lại vô hình với cờ.
+ho   = [r for r in CH if "<desc>" in r["raw"] and "</desc>" not in r["raw"]]  # mở mà không đóng
+khong= [r for r in CH if "<desc>" not in r["raw"]]                           # không sinh khai báo
 
-print(f"bước chạm có <desc>: {len(co):,}")
-print(f"   CÓ RÁC          : {len(rac):,} = {len(rac)/max(len(co),1):.2%}")
+print(f"bước chạm            : {len(CH):,}")
+print(f"   có <desc> đóng thẻ: {len(co):,} = {len(co)/len(CH):.2%}"
+      f"   ← bộ dựng nhãn phủ 99,66% bước chạm")
+print(f"   MỞ mà KHÔNG đóng  : {len(ho):,}   ← ngân sách sinh cạn giữa khai báo ⇒ MẤT CÂU")
+print(f"   không sinh <desc> : {len(khong):,} = {len(khong)/len(CH):.2%}"
+      f"   ← thành phần S2 KHÔNG kích hoạt, ở đây nó hành xử như S1")
+print(f"   trong nhóm có desc, CÓ RÁC: {len(rac):,} = {len(rac)/max(len(co),1):.2%}"
+      f"   ← nhãn dạy 1,21%, nhãn kiểm 0,94%")
 for r, d in rac[:5]: print(f"   [{r['episode_id']}/{r['step_id']}] {d[:90]!r}")
 
 # độ dài câu ở hai nhóm — cơ chế nghi ngờ là khai báo rác ăn mất ngân sách sinh
@@ -952,18 +963,26 @@ print(f"độ dài câu trung vị · nhóm RÁC {dai(True)} vs nhóm SẠCH {da
 # đóng băng lên Drive: có tệp này thì phép phân tầng sau khi chấm là ĐĂNG KÝ TRƯỚC
 F = f"{D}/preds/co_rac_{BRANCH}_seed{SEED}.json"
 json.dump({"dinh_nghia": {"ky_tu_la": LA.pattern, "lap": LAP.pattern, "dai": DAI},
-           "co_desc": len(co), "co_rac": sorted(map(list, kr))},
+           "buoc_cham": len(CH), "co_desc": len(co),
+           "co_rac":      sorted(map(list, kr)),
+           "mo_khong_dong": sorted([r["episode_id"], r["step_id"]] for r in ho),
+           "khong_co_desc": sorted([r["episode_id"], r["step_id"]] for r in khong)},
           open(F, "w"), ensure_ascii=False)
 print("đã đóng băng →", F, "· md5", hashlib.md5(open(F,"rb").read()).hexdigest()[:12])
 ```
 
-**Vì sao chạy trước khi chấm.** Lượt s2/101 bỏ đúng một bước `(20011, 2)`, và `raw` của nó là
-`<desc>tappable text | 7 徇␣␣␣…` — **U+200A lặp tới hết ngân sách sinh**, nên không còn chỗ cho
-câu. Mất hẳn câu là **đuôi nặng nhất**; cùng cơ chế ở mức nhẹ hơn chỉ **cắt ngắn** câu, và
-phép đếm câu rỗng không thấy được. Cột `độ dài câu trung vị` ở trên là chỗ nhìn ra điều đó.
+**Ba con số ô này trả lời, theo mức quan trọng giảm dần** (số của lượt s2/101, 19/8):
 
-⚠️ Đây là kiểu hỏng mà **S1 về cấu trúc không thể có** — không có khai báo thì không có chỗ để
-vòng lặp xảy ra trước khi tới câu. Phải khai như **giới hạn của nhánh S2**, không lấp liếm.
+| | s2/101 | đọc thế nào |
+|---|---|---|
+| **không sinh `<desc>`** | **323 = 7,2%** | ⭐ lát cắt đáng phân tầng nhất. Bộ dựng nhãn phủ **99,66%** bước chạm, mô hình chỉ sinh khai báo ở **92,74%** ⇒ trên ~7% quần thể **thành phần S2 không kích hoạt**, ở đó nó hành xử y như S1 |
+| **mở mà không đóng thẻ** | 1 | `(20011, 2)`: `<desc>tappable text \| 7 徇␣␣␣…`, **U+200A lặp tới hết ngân sách sinh** ⇒ `strip_desc` (dòng 40–43) xoá từ `<desc>` tới hết ⇒ **câu rỗng**. Kiểu hỏng **S1 về cấu trúc không thể có** — phải khai như giới hạn của nhánh |
+| **khai báo có rác** | 26 = 0,63% | ✅ **thấp hơn nhãn**: nhãn dạy 1,21% · nhãn kiểm 0,94% ⇒ mô hình **lọc bớt**, không khuếch đại |
+
+⛔ **Giả thuyết "rác ăn mất ngân sách sinh" ĐÃ RÚT ở dạng tổng quát.** Độ dài câu trung vị nhóm
+rác **37** vs nhóm sạch **35** — nhóm rác còn *dài hơn*. n=26 nên trung vị nhiễu, nhưng **không
+có dấu hiệu ăn mòn ở mức phân bố**. Ca `(20011, 2)` là **đuôi đơn lẻ**, giữ như một ca hỏng đã
+ghi; bỏ phần suy rộng.
 
 ### Ô 15 — LƯU VẾT lên Drive ⚠️ chạy TRƯỚC KHI TẮT MÁY
 
