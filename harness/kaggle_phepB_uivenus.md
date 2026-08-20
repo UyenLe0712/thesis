@@ -164,29 +164,44 @@ hay S2. **CẤM** dò cỡ bằng điểm của một nhánh — đó là chỉn
 
 ### Ô 2b-vá — chạy TRƯỚC ô 2b
 
-Bản `score_run.py` trên dataset Kaggle là bản **cũ**, chưa có `VENUS_MIN/MAX_PIXELS`, nên biến
-môi trường chưa từng được đọc — đó mới là lý do thật khiến ba lượt ô 2b đầu ra trùng nhau.
-(Commit `a58d684` thậm chí gọi `AutoProcessor.from_pretrained(path)` trơn, tức chạy ở **cỡ mặc
-định của chính UI-Venus**.) Ô này vá bản trong `/kaggle/working`, khỏi upload lại dataset, và
-**in ra mã cũ** để biết chắc lượt thăm dò đã chạy ở cỡ nào.
+Bản `score_run.py` trên dataset Kaggle là bản working tree cũ: lớp `UIVenus` **ghi cứng**
+`min_pixels=2000000, max_pixels=4800000`, chưa đọc biến môi trường. Đó là lý do ba lượt ô 2b
+đầu ra trùng nhau — và cũng xác nhận lượt thăm dò 1,57% đã chạy ở **3.354 token (1092×2408)**.
+
+⛔ **Bẫy đã cắn một lần, đừng cắn lại:** `s.index("self.proc = AutoProcessor.from_pretrained(")`
+lấy lần xuất hiện **đầu tiên trong file**, mà đó là của lớp **`UGround`** (đứng trước `UIVenus`).
+Vá kiểu đó sửa nhầm `UGround`; chạy `--grounder uivenus` thì `UGround.__init__` không được gọi
+lần nào ⇒ không có dòng `[UIVenus]`, kết quả trùng y như cũ, **không một lỗi nào**. Ô dưới neo
+tìm kiếm **trong lớp `UIVenus`** và `assert` cả hai chiều: vá phải nằm trong `UIVenus`, và
+**không được** lọt sang lớp trước nó.
 
 ```python
-import re
-SR = "/kaggle/working/harness/score_run.py"
-s = open(SR, encoding="utf-8").read()
+import os, shutil, glob, ast
 
-if "VENUS_MIN_PIXELS" in s and "ip.min_pixels" in s:
-    print("đã vá từ trước ✅")
-else:
-    # tìm câu lệnh self.proc = AutoProcessor.from_pretrained(...) dù xuống dòng kiểu gì
-    i = s.index("self.proc = AutoProcessor.from_pretrained(")
-    j = s.index("(", i); d = 0
-    for k in range(j, len(s)):
-        d += (s[k] == "(") - (s[k] == ")")
-        if d == 0:
-            j = k + 1; break
-    print("── mã CŨ ──\n" + s[i:j] + "\n")
-    moi = '''mn = int(os.environ.get("VENUS_MIN_PIXELS", 2000000))
+# ── 1. chép lại harness SẠCH từ dataset (ô vá trước đã sửa nhầm lớp UGround) ──
+WS = "/kaggle/working"
+mp = glob.glob("/kaggle/input/**/harness/score_run.py", recursive=True)
+assert mp, "DỪNG: không thấy harness/score_run.py trong dataset"
+if os.path.exists(f"{WS}/harness"):
+    shutil.rmtree(f"{WS}/harness")
+shutil.copytree(os.path.dirname(mp[0]), f"{WS}/harness")
+SR = f"{WS}/harness/score_run.py"
+print("đã chép lại harness sạch từ", mp[0])
+
+# ── 2. vá, NEO TRONG LỚP UIVenus ────────────────────────────────────────────
+s = open(SR, encoding="utf-8").read()
+c = s.index("class UIVenus")
+het = s.find("\ndef ", c)                      # hết lớp UIVenus
+i = s.index("self.proc = AutoProcessor.from_pretrained(", c)
+assert i < het, "DỪNG: không thấy from_pretrained bên trong lớp UIVenus"
+j = s.index("(", i); d = 0
+for k in range(j, len(s)):
+    d += (s[k] == "(") - (s[k] == ")")
+    if d == 0:
+        j = k + 1; break
+print("\n── mã CŨ trong UIVenus ──\n" + s[i:j])
+
+moi = '''mn = int(os.environ.get("VENUS_MIN_PIXELS", 2000000))
         mx = int(os.environ.get("VENUS_MAX_PIXELS", 4800000))
         self.proc = AutoProcessor.from_pretrained(path, min_pixels=mn, max_pixels=mx)
         ip = self.proc.image_processor
@@ -195,12 +210,18 @@ else:
         ip.min_pixels, ip.max_pixels = mn, mx
         print(f"[UIVenus] xin min={mn} max={mx} -> giu min={getattr(ip,'min_pixels',None)} "
               f"max={getattr(ip,'max_pixels',None)} size={getattr(ip,'size',None)}", flush=True)'''
-    s = s[:i] + moi + s[j:]
-    open(SR, "w", encoding="utf-8").write(s)
-    print("── mã MỚI ──\n" + moi + "\n")
+open(SR, "w", encoding="utf-8").write(s[:i] + moi + s[j:])
 
-import ast; ast.parse(open(SR, encoding="utf-8").read())
-print("cú pháp hợp lệ ✅ — chạy ô 2b được rồi")
+# ── 3. kiểm: UIVenus đã đổi, UGround KHÔNG đổi ──────────────────────────────
+t = open(SR, encoding="utf-8").read()
+ast.parse(t)
+cv = t.index("class UIVenus")
+assert "VENUS_MIN_PIXELS" in t[cv:], "⛔ vá không nằm trong UIVenus"
+assert "VENUS_MIN_PIXELS" not in t[:cv], "⛔ vá lọt sang lớp khác (UGround?)"
+ug = t[t.index("class UGround"):t.index("class OpenAIGrounder")]
+print("\nUGround giữ nguyên:", "from_pretrained(path)" in ug, "· không dính env:",
+      "VENUS_" not in ug)
+print("cú pháp hợp lệ ✅ — chạy lại ô 2b được rồi")
 ```
 
 ⚠️ Bản vá này chỉ sống trong **phiên hiện tại**. Trước lượt ô 5 chạy dài (hoặc bất kỳ lượt
