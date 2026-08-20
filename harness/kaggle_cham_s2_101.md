@@ -194,6 +194,111 @@ dataset rồi chạy lại, nó chấm tiếp chứ không từ đầu.
 
 ---
 
+## Bước 4b — CHẠY BẰNG COMMIT (khi phải tắt máy nhà)
+
+Lượt chấm 5,6 giờ mà không ngồi canh được thì dùng **Save Version → Save & Run All (Commit)**.
+Nó chạy trong môi trường lô, **không lệ thuộc trình duyệt**. Runbook cũ khuyên chạy tương tác,
+nhưng lời khuyên đó dành cho **lượt ĐẦU của một đường ống chưa từng chạy** — đường chấm này
+đã chạy trọn **bốn lần** (trần · s1/101 · s1/202 · Base) nên rủi ro còn lại chỉ là hạ tầng.
+
+### Ba thiết lập PHẢI đúng, kiểm trước khi bấm Commit
+
+| | vì sao |
+|---|---|
+| **Internet: ON** | `UGround.__init__` nạp `osunlp/UGround-V1-2B` **từ HuggingFace** (`score_run.py:97`). Tắt mạng là chết ở khâu nạp mô hình sau ~2 phút |
+| **Accelerator: GPU T4 ×2** | panel hay tự trả về *None* khi mở lại notebook |
+| **Input: dataset đã lên version mới** | thiếu bước này thì ô 1 rớt `assert` ngay, mất một lượt commit |
+
+### Trước khi Commit: chạy tương tác ô 0 và ô 1
+
+Hai ô đó xong trong ~1 phút và bắt gần hết các lỗi chặn. Rớt `assert` trong commit thì vẫn
+biết, nhưng phải chờ hàng đợi và mất một lượt.
+
+### Ô 2 bản commit — có ĐỒNG HỒ CHẶN
+
+```python
+import os, subprocess, time
+
+os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
+os.environ["TRANSFORMERS_VERBOSITY"] = "error"
+os.environ["PYTHONUNBUFFERED"] = "1"
+RAC      = ("it/s", "s/it", "it]")
+TRAN_GIO = 8.0        # mong đợi 5,6 giờ; quá 8 là có gì đó hỏng
+
+def chay(ten, preds, nhip=15):
+    log = f"{WS}/log_{ten}.txt"
+    with open(log, "w") as fw:
+        p = subprocess.Popen(
+            ["python", "-u", f"{WS}/harness/score_run.py", "--mode", "score",
+             "--grounder", "uground", "--preds", preds,
+             "--out", f"{WS}/score_{ten}.json"],
+            stdout=fw, stderr=subprocess.STDOUT)
+        t0 = tlast = time.time(); dem, du = 0, ""
+        with open(log) as fr:
+            while True:
+                *dong, du = (du + fr.read()).split("\n")
+                for l in dong:
+                    if any(k in l for k in RAC): continue
+                    dem += 1
+                    if dem <= 3000 or "bước/giây" in l:
+                        print(l, flush=True); tlast = time.time()
+                if p.poll() is not None: break
+                # ⏱ ĐỒNG HỒ CHẶN — biến "mất trắng" thành "mất một nửa"
+                if time.time() - t0 > TRAN_GIO*3600:
+                    print(f"⚠️ QUÁ {TRAN_GIO} GIỜ — giết tiến trình để notebook kết thúc SẠCH,"
+                          " nhờ vậy tệp thô dở vẫn được lưu thành Output", flush=True)
+                    p.terminate()
+                    try: p.wait(120)
+                    except Exception: p.kill()
+                    break
+                if time.time() - tlast > 120:
+                    print(f"  [{time.strftime('%H:%M:%S')}] {ten} · "
+                          f"{(time.time()-t0)/60:.0f} phút · vẫn đang chạy", flush=True)
+                    tlast = time.time()
+                time.sleep(nhip)
+    print(f"── {ten} dừng · mã thoát {p.returncode} · {(time.time()-t0)/60:.0f} phút", flush=True)
+    return p.returncode
+
+chay(TEN, PREDS)
+```
+
+⭐ **Đồng hồ chặn là chỗ khác biệt duy nhất, và nó quan trọng.** Commit **thất bại** thì Kaggle
+**không lưu `/kaggle/working`** — mất cả tệp thô đã ghi dần, tức mất trọn 5-8 giờ quota. Giết
+tiến trình rồi để notebook **chạy hết bình thường** thì commit **thành công**, Output được lưu,
+và `score_run.py` **nối tiếp được** từ tệp thô dở ở lượt sau. Đây chính là kịch bản đã cắn ngày
+17/8: lượt đó treo **7 giờ** rồi mất sạch.
+
+### Ô 3 bản commit — chịu được lượt chấm dở
+
+```python
+import json, os
+
+fj, fr = f"{WS}/score_{TEN}.json", f"{WS}/score_{TEN}_raw.jsonl"
+raw = [json.loads(l) for l in open(fr, encoding="utf-8")] if os.path.exists(fr) else []
+print(f"tệp thô: {len(raw):,} / 4.463 bước")
+
+if not os.path.exists(fj):
+    print("⚠️ CHƯA XONG — không có tệp điểm. Tải score_*_raw.jsonl về, đưa lên dataset,")
+    print("   chạy lại: score_run.py sẽ CHẤM TIẾP phần còn thiếu, không làm lại từ đầu.")
+else:
+    r  = json.load(open(fj)); e = r["exec_voronoi"]*100
+    ci = [c*100 for c in r["ci_voronoi"]]
+    ok = [o for o in raw if "bo_qua" not in o]
+    aok = sum(o["action_ok"] for o in ok)/len(ok)*100
+    print(f"s2/101 : {e:5.2f}%  KTC95 [{ci[0]:.1f} – {ci[1]:.1f}]  n={r['n']}")
+    print(f"action_ok: {aok:.1f}%   (S1 đạt 94,4%)")
+    print("mốc so — trần 75,73 · S1/202 59,62 · S1/101 59,11 · Base 47,59 · sàn 12,0")
+    print("\n⛔ HỎNG CƠ HỌC ⇒ DỪNG" if (e < 12.0 or aok < 85.0)
+          else "\n✅ KHÔNG hỏng cơ học ⇒ train hạt giống 202, bất kể con số trên")
+    print("⛔ CHƯA đọc Δ — luật đòi TRUNG BÌNH HAI HẠT GIỐNG (report/106 mục w)")
+```
+
+### Sau khi Commit
+
+Đóng trình duyệt, tắt máy thoải mái. Xem lại ở tab **Versions** của notebook; xong thì tải hai
+tệp ở panel **Output**. ⚠️ Chọn **Save & Run All (Commit)**, **không** phải *Quick Save* — Quick
+Save chỉ chụp lại trạng thái hiện tại, không chạy gì.
+
 ## Bước 5 — ô 3: đọc kết quả, và ÁP LUẬT ĐÃ KHOÁ
 
 ```python
