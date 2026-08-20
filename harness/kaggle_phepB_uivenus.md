@@ -162,38 +162,76 @@ nhận vá xong: ba grid khác nhau thật — **1.272 / 2.475 / 3.354** token.
 (`--mode gate`). Câu chuẩn giống hệt ở mọi nhánh nên cỡ chọn kiểu này **không thể** thiên vị S1
 hay S2. **CẤM** dò cỡ bằng điểm của một nhánh — đó là chỉnh dụng cụ theo kết quả.
 
-### Ô 2b-vá — chạy TRƯỚC ô 2b
+### Ô 2b — VÁ + DÒ CỠ ẢNH (một ô duy nhất, ~15 phút)
 
 Bản `score_run.py` trên dataset Kaggle là bản working tree cũ: lớp `UIVenus` **ghi cứng**
-`min_pixels=2000000, max_pixels=4800000`, chưa đọc biến môi trường. Đó là lý do ba lượt ô 2b
-đầu ra trùng nhau — và cũng xác nhận lượt thăm dò 1,57% đã chạy ở **3.354 token (1092×2408)**.
+`min_pixels=2000000, max_pixels=4800000`, chưa đọc biến môi trường. Đó là lý do lượt dò đầu ra
+trùng nhau — và cũng xác nhận lượt thăm dò 1,57% chạy ở **3.354 token (1092×2408)**.
 
-⛔ **Bẫy đã cắn một lần, đừng cắn lại:** `s.index("self.proc = AutoProcessor.from_pretrained(")`
-lấy lần xuất hiện **đầu tiên trong file**, mà đó là của lớp **`UGround`** (đứng trước `UIVenus`).
-Vá kiểu đó sửa nhầm `UGround`; chạy `--grounder uivenus` thì `UGround.__init__` không được gọi
-lần nào ⇒ không có dòng `[UIVenus]`, kết quả trùng y như cũ, **không một lỗi nào**. Ô dưới neo
-tìm kiếm **trong lớp `UIVenus`** và `assert` cả hai chiều: vá phải nằm trong `UIVenus`, và
-**không được** lọt sang lớp trước nó.
+⛔ **Bẫy đã cắn một lần.** `s.index("self.proc = AutoProcessor.from_pretrained(")` lấy lần xuất
+hiện **đầu tiên trong file**, mà đó là của lớp **`UGround`** đứng trước `UIVenus`. Vá kiểu đó
+sửa nhầm `UGround`; chạy `--grounder uivenus` thì lớp bị vá không được gọi lần nào ⇒ không có
+dòng `[UIVenus]`, ba cỡ vẫn trùng, **không một lỗi nào**. Ô dưới neo tìm kiếm **trong lớp
+`UIVenus`** và `assert` hai chiều.
+
+⛔ **Luật chọn cỡ, khoá trước khi nhìn:** chọn theo sai số trên **câu chuẩn của người**
+(`--mode gate`). Câu chuẩn giống hệt ở mọi nhánh nên cỡ chọn kiểu này **không thể** thiên vị S1
+hay S2. **CẤM** dò cỡ bằng điểm của một nhánh — đó là chỉnh dụng cụ theo kết quả.
 
 ```python
-import subprocess, os, json, time
-WS = "/kaggle/working"; SR = f"{WS}/harness/score_run.py"
+# ══ VÁ + DÒ CỠ ẢNH — một ô duy nhất, chạy lại nhiều lần không sao ══
+import os, shutil, glob, ast, subprocess, json, time
+WS = "/kaggle/working"
 
-# ── kiểm ô 2b-vá đã chạy và vá ĐÚNG LỚP ────────────────────────────────────
-t = open(SR, encoding="utf-8").read()
+# ── 1. chép lại harness SẠCH từ dataset (xoá dấu vết ô vá hỏng trước đó) ────
+mp = glob.glob("/kaggle/input/**/harness/score_run.py", recursive=True)
+assert mp, "DỪNG: không thấy harness/score_run.py trong dataset"
+if os.path.exists(f"{WS}/harness"):
+    shutil.rmtree(f"{WS}/harness")
+shutil.copytree(os.path.dirname(mp[0]), f"{WS}/harness")
+SR = f"{WS}/harness/score_run.py"
+print("① đã chép lại harness sạch từ", mp[0])
+
+# ── 2. vá, NEO TRONG LỚP UIVenus (đừng vá nhầm UGround đứng trước nó) ───────
+s = open(SR, encoding="utf-8").read()
+c = s.index("class UIVenus")
+het = s.find("\ndef ", c)
+i = s.index("self.proc = AutoProcessor.from_pretrained(", c)
+assert i < het, "DỪNG: không thấy from_pretrained bên trong lớp UIVenus"
+j = s.index("(", i); d = 0
+for k in range(j, len(s)):
+    d += (s[k] == "(") - (s[k] == ")")
+    if d == 0:
+        j = k + 1; break
+print("\n② mã CŨ trong UIVenus:\n" + s[i:j])
+open(SR, "w", encoding="utf-8").write(s[:i] + '''mn = int(os.environ.get("VENUS_MIN_PIXELS", 2000000))
+        mx = int(os.environ.get("VENUS_MAX_PIXELS", 4800000))
+        self.proc = AutoProcessor.from_pretrained(path, min_pixels=mn, max_pixels=mx)
+        ip = self.proc.image_processor
+        if isinstance(getattr(ip, "size", None), dict):
+            ip.size = {"shortest_edge": mn, "longest_edge": mx}
+        ip.min_pixels, ip.max_pixels = mn, mx
+        print(f"[UIVenus] xin min={mn} max={mx} -> giu min={getattr(ip,'min_pixels',None)} "
+              f"max={getattr(ip,'max_pixels',None)} size={getattr(ip,'size',None)}", flush=True)''' + s[j:])
+
+t = open(SR, encoding="utf-8").read(); ast.parse(t)
 cv = t.index("class UIVenus")
-assert "VENUS_MIN_PIXELS" in t[cv:], "DỪNG: chưa vá UIVenus — chạy ô 2b-vá trước"
-assert "VENUS_MIN_PIXELS" not in t[:cv], "DỪNG: vá lọt sang lớp trước UIVenus — chạy lại ô 2b-vá"
-print("vá nằm đúng trong lớp UIVenus ✅")
+assert "VENUS_MIN_PIXELS" in t[cv:], "⛔ vá không nằm trong UIVenus"
+assert "VENUS_MIN_PIXELS" not in t[:cv], "⛔ vá lọt sang lớp trước UIVenus"
+print("   vá nằm đúng trong UIVenus ✅ · UGround nguyên vẹn:",
+      "VENUS_" not in t[t.index("class UGround"):cv])
 
+# ── 3. dò ba cỡ ảnh ─────────────────────────────────────────────────────────
 CO = [(200704, 1003520, "1.272 token  (672×1484)"),
       (200704, 2007040, "2.475 token  (924×2100)"),
       (2000000, 4800000, "3.354 token  (1092×2408)")]
+os.makedirs(f"{WS}/out", exist_ok=True)
 kq = []
+print("\n③ dò cỡ ảnh — 3 lượt × 30 bước")
 for mn, mx, ten in CO:
     tag = f"do_{mx//1000}k"
     for e in (f"{WS}/out/{tag}.json", f"{WS}/out/{tag}_raw.jsonl"):
-        if os.path.exists(e): os.remove(e)          # cấu hình khác ⇒ KHÔNG nối tiếp
+        if os.path.exists(e): os.remove(e)        # cấu hình khác ⇒ KHÔNG nối tiếp
     env = {**os.environ, "VENUS_MIN_PIXELS": str(mn), "VENUS_MAX_PIXELS": str(mx)}
     t0 = time.time()
     with open(f"{WS}/out/{tag}.log", "w") as f:
@@ -202,10 +240,10 @@ for mn, mx, ten in CO:
                        stdout=f, stderr=subprocess.STDOUT, cwd=WS, env=env)
     lg = open(f"{WS}/out/{tag}.log", encoding="utf-8", errors="ignore").read()
     bang = next((l for l in lg.splitlines() if "[UIVenus]" in l), "⛔ KHÔNG THẤY dòng [UIVenus]")
-    j = json.load(open(f"{WS}/out/{tag}.json"))
+    jj = json.load(open(f"{WS}/out/{tag}.json"))
     gy = (time.time() - t0 - 90) / 30
-    kq.append((ten, j["median_err"], j["p75_err"], gy))
-    print(f"\n{ten}\n  {bang}\n  trung vị {j['median_err']:.3%} · p75 {j['p75_err']:.3%}"
+    kq.append((ten, jj["median_err"], jj["p75_err"], gy))
+    print(f"\n  {ten}\n    {bang}\n    trung vị {jj['median_err']:.3%} · p75 {jj['p75_err']:.3%}"
           f" · ~{gy:.1f} s/bước", flush=True)
 
 print(f"\n{'cấu hình':<28}{'trung vị':>10}{'p75':>10}{'s/bước':>9}")
@@ -214,74 +252,14 @@ for ten, m, p75, gy in kq:
 print("\n  mốc UGround trên ĐÚNG 30 bước này: trung vị 0,600% · p75 3,600% · ≤3%: 73,3%")
 
 if len({round(r[1], 6) for r in kq}) == 1:
-    print("\n⚠️ BA CỠ RA TRÙNG NHAU. Kiểm ba dòng [UIVenus] ở trên:")
-    print("   · có dòng, và min/max KHÁC nhau ⇒ cỡ ảnh ĐÃ đổi thật, mà sai số không đổi")
+    print("\n⚠️ BA CỠ RA TRÙNG NHAU. Đọc ba dòng [UIVenus] ở trên:")
+    print("   · min/max KHÁC nhau ở ba dòng ⇒ cỡ ảnh ĐÃ đổi thật mà sai số không đổi")
     print("     ⇒ KẾT LUẬN THẬT: cỡ ảnh không phải nguyên nhân. Chốt 3.354 token, sang ô 4.")
-    print("   · không có dòng, hoặc min/max giống nhau ⇒ vá vẫn chưa ăn, chạy lại ô 2b-vá.")
+    print("   · min/max giống nhau, hoặc thiếu dòng ⇒ vá chưa ăn, báo lại.")
 else:
     best = min(kq, key=lambda r: r[1])
     print(f"\n⇒ chọn: {best[0]} — trung vị {best[1]:.3%}, {best[3]:.1f} s/bước")
-    print("   Ghi lại VENUS_MIN/MAX_PIXELS của cỡ này, dùng Y HỆT cho ô 4 và ô 5.")
-```
-
-
-⚠️ Bản vá này chỉ sống trong **phiên hiện tại**. Trước lượt ô 5 chạy dài (hoặc bất kỳ lượt
-commit nào), phải đưa `harness/score_run.py` bản mới lên dataset — nếu không lượt đó lại chạy
-mã cũ và cỡ ảnh lại không đổi.
-
-```python
-import subprocess, os, json, time, re
-WS = "/kaggle/working"; SR = f"{WS}/harness/score_run.py"
-
-# ── vá bản đang nằm trong working (idempotent) ──────────────────────────────
-s = open(SR, encoding="utf-8").read()
-old = 'self.proc = AutoProcessor.from_pretrained(path, min_pixels=mn, max_pixels=mx)'
-if "ip.min_pixels" not in s:
-    assert old in s, "DỪNG: không khớp mã — bản score_run.py trên dataset khác bản đang có"
-    open(SR, "w", encoding="utf-8").write(s.replace(old, old + '''
-        ip = self.proc.image_processor
-        if isinstance(getattr(ip, "size", None), dict):
-            ip.size = {"shortest_edge": mn, "longest_edge": mx}
-        ip.min_pixels, ip.max_pixels = mn, mx
-        print(f"[UIVenus] giu min={getattr(ip,'min_pixels',None)} "
-              f"max={getattr(ip,'max_pixels',None)} size={getattr(ip,'size',None)}", flush=True)''', 1))
-    print("đã vá score_run.py ✅")
-else:
-    print("score_run.py đã vá từ trước ✅")
-
-CO = [(200704, 1003520, "1.272 token  (672×1484)"),
-      (200704, 2007040, "2.475 token  (924×2100)"),
-      (2000000, 4800000, "3.354 token  (1092×2408)")]
-kq = []
-for mn, mx, ten in CO:
-    tag = f"do_{mx//1000}k"
-    for e in (f"{WS}/out/{tag}.json", f"{WS}/out/{tag}_raw.jsonl"):
-        if os.path.exists(e): os.remove(e)          # cấu hình khác ⇒ KHÔNG nối tiếp
-    env = {**os.environ, "VENUS_MIN_PIXELS": str(mn), "VENUS_MAX_PIXELS": str(mx)}
-    t0 = time.time()
-    with open(f"{WS}/out/{tag}.log", "w") as f:
-        subprocess.run(["python", "-u", SR, "--mode", "gate", "--grounder", "uivenus",
-                        "--n", "30", "--out", f"{WS}/out/{tag}.json"],
-                       stdout=f, stderr=subprocess.STDOUT, cwd=WS, env=env)
-    lg = open(f"{WS}/out/{tag}.log", encoding="utf-8", errors="ignore").read()
-    bang = next((l for l in lg.splitlines() if "[UIVenus]" in l), "⛔ KHÔNG THẤY dòng [UIVenus]")
-    j = json.load(open(f"{WS}/out/{tag}.json"))
-    gy = (time.time() - t0 - 90) / 30
-    kq.append((ten, j["median_err"], j["p75_err"], gy))
-    print(f"\n{ten}\n  {bang}\n  trung vị {j['median_err']:.3%} · p75 {j['p75_err']:.3%}"
-          f" · ~{gy:.1f} s/bước", flush=True)
-
-print(f"\n{'cấu hình':<28}{'trung vị':>10}{'p75':>10}{'s/bước':>9}")
-for ten, m, p75, gy in kq:
-    print(f"  {ten:<26}{m:>9.3%}{p75:>10.3%}{gy:>8.1f}")
-print("\n  mốc UGround trên ĐÚNG 30 bước này: trung vị 0,600% · p75 3,600% · ≤3%: 73,3%")
-
-med = [round(r[1], 6) for r in kq]
-assert len(set(med)) > 1, ("⛔ BA CỠ VẪN RA TRÙNG NHAU ⇒ cỡ ảnh vẫn không đổi thật. "
-                           "Đừng đọc bảng này. Kiểm dòng [UIVenus] ở trên.")
-best = min(kq, key=lambda r: r[1])
-print(f"\n⇒ chọn: {best[0]} — trung vị {best[1]:.3%}, {best[3]:.1f} s/bước")
-print("   Ghi lại VENUS_MIN/MAX_PIXELS của cỡ này, dùng Y HỆT cho ô 4 và ô 5.")
+    print("   Dùng VENUS_MIN/MAX_PIXELS của cỡ này Y HỆT cho ô 4 và ô 5.")
 ```
 
 ### Đọc ô 2b
