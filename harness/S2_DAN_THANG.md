@@ -1005,6 +1005,28 @@ bản chính thức, không lệ thuộc chuyện log có bị ghi đè hay khô
 **Điều kiện kết thúc phiên:** `ckpt/` và `preds_….jsonl` nằm trên Drive · ô 14 sạch · ô 15 đã
 chạy. Máy ảo đã mất **10 lần**; đừng để tệp nào chỉ nằm ở `/content`.
 
+### 🔒 Luật quyết định cho lượt 202 — khoá 20/8, **trước khi nhìn điểm của s2/101**
+
+`report/106` mục 5 bước 7 ghi *"Huấn luyện S2 hai hạt giống. Chấm."*; lý do "chấm để cuối"
+trong file này là **quota Kaggle 30 giờ/tuần**, **không** phải lý do phương pháp. Nên nhìn điểm
+101 trước là hợp lệ — với điều kiện luật quyết định được khoá **trước** khi nhìn:
+
+> **Lượt 202 vẫn chạy, bất kể điểm của s2/101 cao hay thấp.**
+> Ngoại lệ duy nhất là **hỏng cơ học**, định nghĩa bằng số, không bằng cảm nhận:
+> · executability **< 12,0%** (sàn đã đo của thước) — nghĩa là câu sinh ra vô dụng, hoặc
+> · `action_ok` **< 85%** (S1 đạt 94,4%) — nghĩa là mô hình không còn gọi đúng loại thao tác.
+> Rơi vào hai ca đó thì **dừng để truy lỗi**, không train tiếp. Mọi kết quả khác — kể cả S2
+> thấp hơn S1 — **vẫn chạy 202 và vẫn báo cáo**.
+
+⚠️ Không khoá trước thì kịch bản hỏng là: thấy 101 thấp ⇒ bỏ nhánh ⇒ chỉ những nhánh may mắn
+mới có đủ hai hạt giống ⇒ mọi Δ báo ra đều **chọn lọc theo kết quả**. Đó mới là chỗ thiên lệch,
+chứ không phải việc nhìn.
+
+💡 **Chạy song song, hai máy khác nhau, không đụng nhau:** Colab train 202 (~26 giờ) trong khi
+Kaggle chấm 101 (~5,6 giờ, 0 đồng). Sau ~5,6 giờ đã biết 101 có hỏng cơ học không, lúc đó 202
+mới đi được ~20% ⇒ nếu phải giết thì chỉ mất ~25 đơn vị (~$2,5), thay vì mất trọn $13 khi làm
+tuần tự sai thứ tự.
+
 ### Ô 16 — 🛑 TRƯỚC KHI TIÊU TIỀN CHO HẠT GIỐNG 202 ⚠️ chạy **sau ô 5 (`SEED = 202`)**
 
 ```python
