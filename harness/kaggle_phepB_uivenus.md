@@ -459,35 +459,84 @@ tiếp, chỉ chấm thêm 270 bước mỗi cỡ:
 Và 300 bước đó **đúng là 300 bước cổng A của UGround** (trùng 300/300) ⇒ so hai dụng cụ **ghép
 cặp hoàn hảo**, miễn phí. Lượt này vừa chọn cỡ vừa là ô 4, không tốn thêm gì.
 
+⚠️ **Nhân Kaggle restart là mất sạch `/kaggle/working`** — cả `harness/` đã vá lẫn tệp thô. Nguy
+hiểm không phải ở lỗi `FileNotFoundError` (nó kêu ngay), mà ở chỗ **`harness` tự lùi về bản trên
+dataset — bản CHƯA VÁ** ⇒ ba cỡ lại chạy y hệt nhau, im lặng. Ô dưới tự dựng lại thư mục `out`,
+tự chép và vá `harness`, `assert` vá đúng lớp, rồi mới chạy; mất 30 bước cũ thì nó chấm đủ 300
+(thêm ~13 phút cả ba).
+
 ```python
-import subprocess, os, sys, time, json, glob
+# ══ Ô 4 — cổng A 300 bước cho CẢ BA CỠ · tự dựng lại mọi thứ sau khi nhân restart ══
+import os, sys, glob, shutil, ast, json, time, subprocess
 WS = "/kaggle/working"
-H = next(d for d in [f"{WS}/harness"] +
-         [os.path.dirname(p) for p in
-          glob.glob("/kaggle/input/**/harness/score_run.py", recursive=True)]
-         if os.path.exists(f"{d}/score_run.py"))
+os.makedirs(f"{WS}/out", exist_ok=True)
+
+# ── 1. bảo đảm harness có mặt VÀ đã vá (nhân restart là mất sạch) ───────────
+SR = f"{WS}/harness/score_run.py"
+if not os.path.exists(SR):
+    mp = glob.glob("/kaggle/input/**/harness/score_run.py", recursive=True)
+    assert mp, "DỪNG: không thấy harness trong dataset"
+    shutil.copytree(os.path.dirname(mp[0]), f"{WS}/harness")
+    print("đã chép lại harness từ dataset")
+
+s = open(SR, encoding="utf-8").read()
+cv = s.index("class UIVenus")
+if "VENUS_MIN_PIXELS" not in s[cv:]:
+    i = s.index("self.proc = AutoProcessor.from_pretrained(", cv)
+    j = s.index("(", i); d = 0
+    for k in range(j, len(s)):
+        d += (s[k] == "(") - (s[k] == ")")
+        if d == 0:
+            j = k + 1; break
+    open(SR, "w", encoding="utf-8").write(s[:i] + '''mn = int(os.environ.get("VENUS_MIN_PIXELS", 2000000))
+        mx = int(os.environ.get("VENUS_MAX_PIXELS", 4800000))
+        self.proc = AutoProcessor.from_pretrained(path, min_pixels=mn, max_pixels=mx)
+        ip = self.proc.image_processor
+        if isinstance(getattr(ip, "size", None), dict):
+            ip.size = {"shortest_edge": mn, "longest_edge": mx}
+        ip.min_pixels, ip.max_pixels = mn, mx
+        print(f"[UIVenus] xin min={mn} max={mx} -> giu min={getattr(ip,'min_pixels',None)} "
+              f"max={getattr(ip,'max_pixels',None)} size={getattr(ip,'size',None)}", flush=True)''' + s[j:])
+    print("đã vá UIVenus")
+t = open(SR, encoding="utf-8").read(); ast.parse(t)
+cv = t.index("class UIVenus")
+assert "VENUS_MIN_PIXELS" in t[cv:], "⛔ vá không nằm trong UIVenus"
+assert "VENUS_MIN_PIXELS" not in t[:cv], "⛔ vá lọt sang lớp trước UIVenus"
+print("harness sẵn sàng, vá đúng lớp ✅")
+
+# ── 2. chạy ba cỡ, nhanh trước ─────────────────────────────────────────────
 PX  = {1003: (200704, 1003520), 2007: (200704, 2007040), 4800: (2000000, 4800000)}
 TEN = {1003: "1.272 tok (672×1484)", 2007: "2.475 tok (924×2100)",
        4800: "3.354 tok (1092×2408)"}
-
-for k in (1003, 2007, 4800):                      # nhanh trước, mất phiên thì còn số
+GY  = {1003: 1.4, 2007: 5.2, 4800: 8.3}
+for k in (1003, 2007, 4800):
+    raw = f"{WS}/out/do_{k}k_raw.jsonl"
+    da = sum(1 for _ in open(raw, encoding="utf-8")) if os.path.exists(raw) else 0
+    print(f"\n===== {TEN[k]} → 300 bước (đã có {da}, còn {300-da}, "
+          f"~{(300-da)*GY[k]/60:.0f} phút) =====", flush=True)
+    if da >= 300:
+        print("  xong từ trước, bỏ qua"); continue
     mn, mx = PX[k]
     env = {**os.environ, "VENUS_MIN_PIXELS": str(mn), "VENUS_MAX_PIXELS": str(mx)}
     LOG = f"{WS}/out/do_{k}k_300.log"
-    print(f"\n===== {TEN[k]} → 300 bước =====", flush=True)
     t0 = time.time(); f = open(LOG, "w")
-    p = subprocess.Popen([sys.executable, "-u", f"{H}/score_run.py", "--mode", "gate",
-                          "--grounder", "uivenus", "--n", "300",
-                          "--out", f"{WS}/out/do_{k}k.json"],
+    p = subprocess.Popen([sys.executable, "-u", SR, "--mode", "gate", "--grounder", "uivenus",
+                          "--n", "300", "--out", f"{WS}/out/do_{k}k.json"],
                          stdout=f, stderr=subprocess.STDOUT, cwd=WS, env=env)
     while p.poll() is None:
         time.sleep(120)
         print(f"[{time.strftime('%H:%M:%S')}] {TEN[k]} · {(time.time()-t0)/60:.0f} phút",
               flush=True)
     f.close()
+    lg = open(LOG, encoding="utf-8", errors="ignore").read()
+    bang = next((l for l in lg.splitlines() if "[UIVenus]" in l), "⛔ THIẾU dòng [UIVenus]")
+    if p.returncode != 0:
+        print(f"  ⛔ mã thoát {p.returncode}\n{lg[-1500:]}"); continue
     j = json.load(open(f"{WS}/out/do_{k}k.json"))
-    print(f"  xong {(time.time()-t0)/60:.0f} phút · sai số trung vị {j['median_err']:.2%}"
+    print(f"  {bang}")
+    print(f"  xong {(time.time()-t0)/60:.0f} phút · trung vị {j['median_err']:.2%}"
           f" · p75 {j['p75_err']:.2%}", flush=True)
+print("\n⇒ xong ô 4. Chạy Ô 2D (copy lại từ runbook, bản mới) để chọn cỡ theo TRẦN.")
 ```
 
 Rồi **chạy lại ô 2d** — giờ nó đọc ba tệp thô 300 bước và cho trần Voronoi kèm KTC dùng được.
