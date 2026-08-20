@@ -1180,8 +1180,8 @@ lượt 5,6 giờ quota Kaggle (trần 30 giờ/tuần) — đắt hơn 5 giờ 
 
 #### ⭐ BƯỚC BỎ CỦA S2 KHÁC S1 — và nó cho thấy một CƠ CHẾ, không phải một ca lẻ
 
-`preds_s2_seed101.jsonl`: 6.958 bản ghi · 4.463 bước chạm · **0** sót `<desc>` trong câu · độ
-dài câu trung vị **31** ký tự (S1: 33) · đúng **một** câu rỗng — nhưng ở bước **`(20011, 2)`**,
+`preds_s2_seed101.jsonl`: 6.958 bản ghi · 4.463 bước chạm · **0** sót `<desc>` trong câu · đúng
+**một** câu rỗng — nhưng ở bước **`(20011, 2)`**,
 trong khi **cả hai** hạt giống S1 bỏ `(18710, 1)`.
 
 Ô 14 chỉ **đếm** số câu rỗng nên không lộ ra điều đó; phải hỏi *bước nào* (ô 14b mới thêm).
@@ -1204,6 +1204,12 @@ là phỏng đoán: rác không chỉ làm khai báo xấu, nó **kích hoạt v
 3. ⭐ **Mất hẳn câu chỉ là ĐUÔI NẶNG NHẤT.** Cùng cơ chế ở mức nhẹ hơn sẽ **cắt ngắn** câu chứ
    không giết hẳn — và phép đếm câu rỗng **không thấy được**. Đây mới là chỗ có thể ăn mòn điểm
    S2 một cách âm thầm.
+
+⚠️ **Độ dài câu: hai nhánh BẰNG NHAU, không nhánh nào lợi thế.** Trung vị toàn bộ 6.958 bước
+**31 vs 31**; trên 4.462 bước chạm **34 (S2) vs 33 (S1)**. Ghi chú ban đầu viết *"S2 31 vs S1
+33 ⇒ S2 chịu bất lợi"* là **so lệch quần thể** (trung vị toàn bộ của bên này với trung vị bước
+chạm của bên kia) — **đã rút**. Cách đọc đúng còn **mạnh hơn**: phân bố độ dài như nhau nên
+thiên vị câu dài (**5,4 pp**) **không giải thích được chênh lệch theo chiều nào cả**.
 
 ⇒ Đã thêm **ô 14c**: khoá định nghĩa *"khai báo có rác"* (dấu cách lạ · CJK · ký tự hỏng · một
 ký tự lặp ≥10 lần · khai báo dài >200), đếm tỉ lệ, **so độ dài câu hai nhóm**, rồi ghi danh

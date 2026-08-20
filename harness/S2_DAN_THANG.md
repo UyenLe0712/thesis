@@ -869,13 +869,20 @@ sinh nốt phần thiếu. ⚠️ Chữ ký lượt chạy sẽ chặn nếu t�
 ```python
 import json
 R = list(map(json.loads, open(f"{D}/preds/preds_{BRANCH}_seed{SEED}.jsonl", encoding="utf-8")))
-tap = [r for r in R if r["action"].get("action_type") in ("click","long_press") and "x" in r["action"]]
+cham = lambda r: r["action"].get("action_type") in ("click","long_press") and "x" in r["action"]
+tap = [r for r in R if cham(r)]
 rong = sum(1 for r in R if not r["pred"].strip())
 print(f"bản ghi  : {len(R):,}   ← phải là 6.958")
 print(f"bước chạm: {len(tap):,}   ← phải là 4.463")
 print(f"câu rỗng : {rong} = {rong/len(R):.1%}   ← S1 bỏ đúng 1 bước, (18710, 1)")
 print(f"sót <desc>: {sum(1 for r in R if '<desc>' in r['pred'])}   ← PHẢI LÀ 0")
-print(f"độ dài câu trung vị: {sorted(len(r['pred']) for r in R)[len(R)//2]} ký tự  ← S1 là 33")
+tv = lambda v: sorted(v)[len(v)//2]
+# ⚠️ So ĐÚNG QUẦN THỂ. Trung vị toàn bộ 6.958 bước và trung vị 4.462 bước chạm là
+# hai số khác nhau (31 vs 34 ở s2/101); lấy số này so với số kia là kết luận nhầm
+# về thiên vị độ dài — đã mắc thật ngày 20/8.
+print(f"độ dài câu trung vị · toàn bộ {tv([len(r['pred']) for r in R])}"
+      f" · bước chạm {tv([len(r['pred']) for r in R if cham(r) and r['pred'].strip()])} ký tự")
+print(f"   ← s1/101: toàn bộ 31 · bước chạm 33")
 ```
 
 ### Ô 14b — 🛑 BƯỚC BỎ LÀ BƯỚC NÀO ⚠️ chạy nếu `câu rỗng` ≠ 0
