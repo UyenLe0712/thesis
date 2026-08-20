@@ -1016,14 +1016,21 @@ loi = []
 moi = yaml.safe_load(open("/content/cfg.yaml", encoding="utf-8"))
 cu  = yaml.safe_load(open(f"{D}/logs/s2_seed101/cfg.yaml", encoding="utf-8"))
 khac = {k for k in set(moi) | set(cu) if moi.get(k) != cu.get(k)}
-print("① CẤU HÌNH · khác lượt 101 ở:", sorted(khac))
+print("① CẤU HÌNH · khác lượt 101 ở:", sorted(khac) or "KHÔNG KHÁC GÌ")
 for k in sorted(khac): print(f"     {k}: {cu.get(k)}  →  {moi.get(k)}")
-if khac != {"seed", "output_dir"}: loi.append(f"cfg khác ở {sorted(khac - {'seed','output_dir'})}")
+if not khac:
+    loi.append("cfg GIỐNG HỆT lượt 101 ⇒ chưa đổi SEED = 202 ở ô 5, chạy ô 5 rồi chạy lại ô này")
+elif khac - {"seed", "output_dir"}:
+    loi.append(f"cfg khác ở khoá LẠ: {sorted(khac - {'seed','output_dir'})}")
+elif khac != {"seed", "output_dir"}:
+    loi.append(f"cfg mới khác đúng {sorted(khac)} — thiếu một trong hai, kiểm lại ô 5")
 
 # ② DỮ LIỆU trùng khít từng byte với lượt 101 — mạnh hơn phép "0 tiếng Việt"
 md5 = hashlib.md5(open(f"{B}/s2.json","rb").read()).hexdigest()
 print(f"\n② DỮ LIỆU · s2.json md5 {md5}")
-print("   ← lượt 101 là 4d7d3c62b3a0d0bb1a7a5a4d1b0c8e9f (thay bằng số THẬT sau lần chạy đầu)")
+MOC_MD5 = "5f6dace913d909ef74a5529ce5be1ec8"        # đo 20/8, cùng máy đã sinh preds s2/101
+print(f"   ← lượt 101: {MOC_MD5}  {'TRÙNG KHÍT ✅' if md5 == MOC_MD5 else '⛔ KHÁC BỘ DỮ LIỆU'}")
+if md5 != MOC_MD5: loi.append("s2.json KHÁC bộ đã dạy lượt 101 — hai hạt giống sẽ không so được")
 
 # ③ khai báo phủ đủ bước chạm trong TẬP DẠY ở quy mô đủ
 rows = json.load(open(f"{B}/s2.json", encoding="utf-8"))
@@ -1043,8 +1050,10 @@ nhau vẫn có thể cùng "0 tiếng Việt". `md5` đóng chỗ hở đó. Ph�
 dựng nhãn chạy lỗi thì `s2.json` vẫn đủ 64.567 mẫu nhưng **thiếu khai báo**, và lúc đó S2 lặng
 lẽ biến thành S1.
 
-📌 **Số đã đo, dùng làm mốc cho lượt 202:** khai báo phủ **99,91%** bước chạm ở tập dạy
-(1.074/1.075, lát thăm dò) ⇒ mô hình được dạy sinh `<desc>` ở gần như **mọi** bước chạm.
+📌 **Số đã đo, dùng làm mốc cho lượt 202** — nay có ở **quy mô đủ**, không còn phải suy từ lát
+thăm dò: `s2.json` có **41.099/64.567 = 63,65%** mẫu mang `<desc>`, so với **41.191** bước chạm
+của tập dạy ⇒ khai báo phủ **99,78%** bước chạm. (Lát thăm dò cho 1.074/1.075 = 99,91%, khớp.)
+⇒ mô hình được dạy sinh `<desc>` ở gần như **mọi** bước chạm.
 Vậy mà s2/101 chỉ sinh ở **92,72%** bước chạm tập kiểm ⇒ **7,26% là khoảng hụt khái quát hoá
 của MÔ HÌNH, không phải tính chất của dữ liệu.** Đây là kết quả đáng báo cáo, **không phải lỗi
 cần sửa** — không chạy lại gì.
