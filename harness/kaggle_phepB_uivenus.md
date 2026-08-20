@@ -270,18 +270,83 @@ else:
     print("   Dùng VENUS_MIN/MAX_PIXELS của cỡ này Y HỆT cho ô 4 và ô 5.")
 ```
 
-### Đọc ô 2b
+### Đọc ô 2b — ⛔ ĐỪNG chọn theo trung vị
 
-· Cỡ nào cho **trung vị thấp nhất** thì lấy cỡ đó, ghi lại `VENUS_MIN/MAX_PIXELS` và **dùng
-  y hệt** cho ô 4 và ô 5. Ghi vào mục sửa đổi kèm ba con số — để sau này chứng minh được cỡ
-  chọn theo câu chuẩn, không theo nhánh.
-· Cả ba cỡ đều kém UGround rõ rệt (trung vị > 1,5%, p75 > 20%) ⇒ **đó là kết quả**, không phải
-  lỗi: UI-Venus mạnh hơn trên ScreenSpot nhưng yếu hơn trên ảnh AndroidControl. Vẫn chạy tiếp
-  được, nhưng phải đọc theo mục **Bẫy pha loãng** dưới đây.
-· n=30 nên đừng chốt vội trên chênh lệch nhỏ; chỉ khi một cỡ hơn hẳn (trung vị lệch > 2 lần)
-  mới coi là kết luận.
+Kết quả 20/8, ba cỡ đổi thật (ba dòng `[UIVenus]` khác nhau):
+
+| cỡ | trung vị | p75 | s/bước |
+|---|---|---|---|
+| 1.272 tok | 1,984% | 36,75% | **1,4** |
+| 2.475 tok | **1,224%** | 36,79% | 5,2 |
+| 3.354 tok | 1,568% | **28,87%** | 8,3 |
+
+⛔ **Trung vị và p75 chỉ ngược nhau ⇒ luật "chọn trung vị thấp nhất" của bản runbook đầu là
+SAI tiêu chí.** Thước là quyết định **ngưỡng**: `hit_disk` đòi `|dx| ≤ 0,14·W` và
+`|dy| ≤ 0,14·H`. Trung vị 1,2% hay 1,6% đều thừa sức nằm trong dung sai — chênh lệch ở đó
+**không đổi một bước nào**. Thứ quyết định điểm là **cái đuôi**: bao nhiêu bước bắn ra ngoài
+14%. Chọn theo trung vị là chọn theo con số không liên quan tới đại lượng đang đo.
+
+⇒ Chọn bằng **ô 2d**, theo `hit_disk` và trần Voronoi. Vẫn đo trên **câu chuẩn của người** nên
+luật cũ giữ nguyên: không thể thiên vị S1 hay S2.
 
 ---
+
+## Ô 2d — CHỌN CỠ THEO TRẦN (0 giây GPU)
+
+Đọc lại ba tệp thô ô 2b đã ghi, tính đúng đại lượng thước dùng. Mốc UGround trên **đúng 30 bước
+ấy**: `hit_disk` **83,3%** · >14% **16,7%** · ≤3% **73,3%**.
+
+⚠️ Phần trần Voronoi gọi `buttons_of` nên cần cây trợ năng — lượt đầu tải từ HuggingFace, mất
+vài phút. Phần `hit_disk` không cần gì, chạy tức thì; nếu phần Voronoi lỗi thì vẫn chọn được.
+
+```python
+# ══ CHỌN CỠ THEO TRẦN, không theo trung vị — 0 giây GPU ══
+import json, os, sys, subprocess
+WS = "/kaggle/working"
+sys.path.insert(0, f"{WS}/harness")
+import metric_exec as M
+
+print(f"{'cỡ':<26}{'hit_disk':>10}{'>14%':>8}{'≤3%':>8}{'s/bước':>9}")
+print("-" * 61)
+GY = {1003: 1.4, 2007: 5.2, 4800: 8.3}          # s/bước đo ở ô 2b
+ten = {1003: "1.272 tok (672×1484)", 2007: "2.475 tok (924×2100)",
+       4800: "3.354 tok (1092×2408)"}
+kq = {}
+for k in (1003, 2007, 4800):
+    p = f"{WS}/out/do_{k}k_raw.jsonl"
+    if not os.path.exists(p):
+        print(f"  {ten[k]:<24} ⏳ thiếu tệp thô"); continue
+    o = [json.loads(l) for l in open(p, encoding="utf-8")]
+    hd = sum(M.hit_disk(tuple(x["pred_xy"]), tuple(x["gold_xy"]), tuple(x["wh"]))
+             for x in o if x.get("pred_xy"))
+    e = [x["err_frac"] for x in o]
+    kq[k] = hd / len(o)
+    print(f"  {ten[k]:<24}{hd/len(o):>9.1%}{sum(1 for v in e if v > .14)/len(o):>8.1%}"
+          f"{sum(1 for v in e if v <= .03)/len(o):>8.1%}{GY[k]:>9.1f}")
+print(f"\n  {'UGround (mốc)':<24}{0.833:>9.1%}{0.167:>8.1%}{0.733:>8.1%}{'~4.5':>9}")
+
+# trần Voronoi — thước chính; cần cây trợ năng nên có thể tải vài phút
+print("\n── trần Voronoi (thước chính) ──")
+for k in (1003, 2007, 4800):
+    p = f"{WS}/out/do_{k}k_raw.jsonl"
+    if not os.path.exists(p): continue
+    r = subprocess.run([sys.executable, f"{WS}/harness/gate_a_ceiling.py", "--raw", p,
+                        "--out", f"{WS}/out/tran_{k}k.json"],
+                       capture_output=True, text=True, cwd=WS)
+    ln = [l for l in r.stdout.splitlines() if "Voronoi" in l and "thước chính" in l]
+    print(f"  {ten[k]:<24}{ln[0].split(':')[1].strip() if ln else '⛔ ' + r.stderr[-160:]}")
+
+if kq:
+    best = max(kq, key=kq.get)
+    print(f"\n⇒ CHỌN {ten[best]} — hit_disk cao nhất {kq[best]:.1%}")
+    print(f"   VENUS_MIN_PIXELS={200704 if best != 4800 else 2000000} "
+          f"VENUS_MAX_PIXELS={best * 1000 + (520 if best == 1003 else 40 if best == 2007 else 0)}")
+    print(f"\n   giá ô 5 ở cỡ này ({GY[best]} s/bước), 3 nhánh:")
+    for m in (2532, 1266, 633):
+        h = m * 3 * GY[best] / 3600
+        print(f"     lát {m:>5}: {m*3:>5} lượt · {h:5.1f} giờ"
+              f"{'  ✅ gọn một phiên' if h <= 11 else '  ⚠️ cắt phiên'}")
+```
 
 *(Ô 2c cũ — kiểm `image_grid_thw` bằng bộ xử lý ảnh, không cần GPU — đã xong việc và bị gỡ.
 Kết quả: ảnh 1080×2400 cho grid **1.272 / 2.475 / 3.354** token ở ba mức `max_pixels`, xác nhận
