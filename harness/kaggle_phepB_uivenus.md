@@ -296,56 +296,71 @@ luật cũ giữ nguyên: không thể thiên vị S1 hay S2.
 Đọc lại ba tệp thô ô 2b đã ghi, tính đúng đại lượng thước dùng. Mốc UGround trên **đúng 30 bước
 ấy**: `hit_disk` **83,3%** · >14% **16,7%** · ≤3% **73,3%**.
 
-⚠️ Phần trần Voronoi gọi `buttons_of` nên cần cây trợ năng — lượt đầu tải từ HuggingFace, mất
-vài phút. Phần `hit_disk` không cần gì, chạy tức thì; nếu phần Voronoi lỗi thì vẫn chọn được.
+⚠️ Ô tự tìm `harness` — ưu tiên bản trong `/kaggle/working`, không có thì lấy thẳng từ dataset.
+Phần trần Voronoi gọi `buttons_of` nên cần cây trợ năng, lượt đầu tải từ HuggingFace mất vài
+phút; phần `hit_disk` không cần gì và chạy tức thì, nên hỏng phần Voronoi vẫn chọn được.
 
 ```python
 # ══ CHỌN CỠ THEO TRẦN, không theo trung vị — 0 giây GPU ══
-import json, os, sys, subprocess
+import json, os, sys, glob, subprocess
 WS = "/kaggle/working"
-sys.path.insert(0, f"{WS}/harness")
+
+# ── tìm harness: ưu tiên bản trong working, không có thì lấy thẳng từ dataset ──
+H = next((d for d in [f"{WS}/harness"] +
+          [os.path.dirname(p) for p in
+           glob.glob("/kaggle/input/**/harness/metric_exec.py", recursive=True)]
+          if os.path.exists(f"{d}/metric_exec.py")), None)
+assert H, "DỪNG: không thấy metric_exec.py ở đâu cả"
+sys.path.insert(0, H)
+print("harness →", H)
 import metric_exec as M
 
-print(f"{'cỡ':<26}{'hit_disk':>10}{'>14%':>8}{'≤3%':>8}{'s/bước':>9}")
+print(f"\n{'cỡ':<26}{'hit_disk':>10}{'>14%':>8}{'≤3%':>8}{'s/bước':>9}")
 print("-" * 61)
-GY = {1003: 1.4, 2007: 5.2, 4800: 8.3}          # s/bước đo ở ô 2b
-ten = {1003: "1.272 tok (672×1484)", 2007: "2.475 tok (924×2100)",
+GY  = {1003: 1.4, 2007: 5.2, 4800: 8.3}                    # s/bước đo ở ô 2b
+PX  = {1003: (200704, 1003520), 2007: (200704, 2007040), 4800: (2000000, 4800000)}
+TEN = {1003: "1.272 tok (672×1484)", 2007: "2.475 tok (924×2100)",
        4800: "3.354 tok (1092×2408)"}
 kq = {}
 for k in (1003, 2007, 4800):
     p = f"{WS}/out/do_{k}k_raw.jsonl"
     if not os.path.exists(p):
-        print(f"  {ten[k]:<24} ⏳ thiếu tệp thô"); continue
+        print(f"  {TEN[k]:<24} ⏳ thiếu {p}"); continue
     o = [json.loads(l) for l in open(p, encoding="utf-8")]
     hd = sum(M.hit_disk(tuple(x["pred_xy"]), tuple(x["gold_xy"]), tuple(x["wh"]))
              for x in o if x.get("pred_xy"))
     e = [x["err_frac"] for x in o]
     kq[k] = hd / len(o)
-    print(f"  {ten[k]:<24}{hd/len(o):>9.1%}{sum(1 for v in e if v > .14)/len(o):>8.1%}"
+    print(f"  {TEN[k]:<24}{hd/len(o):>9.1%}{sum(1 for v in e if v > .14)/len(o):>8.1%}"
           f"{sum(1 for v in e if v <= .03)/len(o):>8.1%}{GY[k]:>9.1f}")
-print(f"\n  {'UGround (mốc)':<24}{0.833:>9.1%}{0.167:>8.1%}{0.733:>8.1%}{'~4.5':>9}")
+print(f"  {'UGround (mốc)':<24}{0.833:>9.1%}{0.167:>8.1%}{0.733:>8.1%}{'~4.5':>9}")
 
-# trần Voronoi — thước chính; cần cây trợ năng nên có thể tải vài phút
+# ── trần Voronoi = thước chính; cần cây trợ năng nên lượt đầu tải vài phút ──
 print("\n── trần Voronoi (thước chính) ──")
+GA = f"{H}/gate_a_ceiling.py"
 for k in (1003, 2007, 4800):
     p = f"{WS}/out/do_{k}k_raw.jsonl"
     if not os.path.exists(p): continue
-    r = subprocess.run([sys.executable, f"{WS}/harness/gate_a_ceiling.py", "--raw", p,
-                        "--out", f"{WS}/out/tran_{k}k.json"],
-                       capture_output=True, text=True, cwd=WS)
-    ln = [l for l in r.stdout.splitlines() if "Voronoi" in l and "thước chính" in l]
-    print(f"  {ten[k]:<24}{ln[0].split(':')[1].strip() if ln else '⛔ ' + r.stderr[-160:]}")
+    r = subprocess.run([sys.executable, GA, "--raw", p, "--out", f"{WS}/out/tran_{k}k.json"],
+                       capture_output=True, text=True, cwd=os.path.dirname(H) or WS)
+    ln = [l for l in r.stdout.splitlines() if "thước chính" in l]
+    print(f"  {TEN[k]:<24}"
+          + (ln[0].split(":", 1)[1].strip() if ln else "⛔ " + (r.stderr or "")[-200:]))
 
 if kq:
     best = max(kq, key=kq.get)
-    print(f"\n⇒ CHỌN {ten[best]} — hit_disk cao nhất {kq[best]:.1%}")
-    print(f"   VENUS_MIN_PIXELS={200704 if best != 4800 else 2000000} "
-          f"VENUS_MAX_PIXELS={best * 1000 + (520 if best == 1003 else 40 if best == 2007 else 0)}")
-    print(f"\n   giá ô 5 ở cỡ này ({GY[best]} s/bước), 3 nhánh:")
+    mn, mx = PX[best]
+    print(f"\n⇒ CHỌN {TEN[best]} — hit_disk cao nhất {kq[best]:.1%}")
+    print(f"   VENUS_MIN_PIXELS={mn}  VENUS_MAX_PIXELS={mx}   ← dùng Y HỆT cho ô 4 và ô 5")
+    print(f"\n   giá ô 5 ở cỡ này ({GY[best]} s/bước), 3 nhánh Base·S1·S2:")
     for m in (2532, 1266, 633):
         h = m * 3 * GY[best] / 3600
-        print(f"     lát {m:>5}: {m*3:>5} lượt · {h:5.1f} giờ"
-              f"{'  ✅ gọn một phiên' if h <= 11 else '  ⚠️ cắt phiên'}")
+        print(f"     lát {m:>5}: {m*3:>5} lượt gọi · {h:5.1f} giờ"
+              f"{'  ✅ gọn một phiên' if h <= 11 else '  ⚠️ phải cắt phiên'}")
+    if len(kq) > 1 and max(kq.values()) - min(kq.values()) < 0.05:
+        print("\n⚠️ Ba cỡ chênh nhau dưới 5 điểm trên n=30 — trong nhiễu lấy mẫu.")
+        print("   Nếu vậy chọn cỡ NHANH NHẤT (1.272 tok, 1,4 s/bước) và khai rõ trong bài")
+        print("   rằng cỡ ảnh chọn theo tốc độ vì trần không phân biệt được ở n=30.")
 ```
 
 *(Ô 2c cũ — kiểm `image_grid_thw` bằng bộ xử lý ảnh, không cần GPU — đã xong việc và bị gỡ.
