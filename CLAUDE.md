@@ -1,397 +1,672 @@
 # CLAUDE.md — Bối cảnh luận văn (auto-load mỗi phiên)
 
-> ## 🗺️ ĐỌC `report/109_BAN_DO_HIEN_TAI.md` TRƯỚC — một file nắm toàn bộ (9/8/2026)
-> Bài toán · pipeline · 6 nhánh · số đã đo tin được · giới hạn phải khai · trình tự việc kế tiếp ·
-> tiền · luật đọc kết quả · tra ở đâu. Khi mâu thuẫn: `report/106` thắng về *phải làm gì*,
-> `report/108` thắng về *đã đo được gì*, `report/109` thắng về *đang ở đâu*.
->
-> **⭐ 9/8 — CỔNG A ĐẠT, và toàn bộ phần miễn phí đã chạy xong trên Kaggle T4 (0 đô).**
-> · sai số bộ trỏ trung vị **0,7%** (ngưỡng 3%) · **trần của thước 70,0%** [64,5–75,3] — mọi điểm
-> S1/S2 đọc trên nền 70, không phải 100 · ngưỡng 3% xác nhận bằng dụng cụ thật (dưới 3% → 100%
-> trúng Voronoi, n=188) · G hiệu dụng tập kiểm đủ **454,3**, MDE chiếu 3,9–6,6 pp.
-> · Bốn mắt xích từng "phải thuê máy mới biết" nay đã chạy: cấu hình train được LLaMA-Factory
-> nhận (LoRA khớp 14.966.784 tham số) · tự kiểm lô **8/8** · sinh câu · chấm điểm · B-infer.
-> · Bật `use_cache=True` sau khi kiểm **trùng tuyệt đối 50/50** → chấm một nhánh 48h xuống **5h**,
-> nên **khâu chấm điểm chạy miễn phí trên Kaggle**, không tốn tiền thuê.
-> · Giới hạn mới phải khai: bộ trỏ **bỏ cuộc theo trục ngang 15,3%** số bước · **B-infer thiệt ba
-> phương diện** (câu nhắc dài gấp 2,4 lần vùng đã dạy, cắt còn 40/72 phần tử, 14,1% có tên).
-> · Đã thêm nhánh tham chiếu **mô hình gốc chưa huấn luyện** (report/106 sửa đổi 9/8 mục k).
-> **⚙️ CHỐT MÁY 9-10/8 — dùng GOOGLE COLAB, KHÔNG thuê vast.ai** (`report/108` mục 15). Đo máy
-> thật: A100 **80 GB**, đốt **6,77 đơn vị/giờ** → **$0,677/giờ**, rẻ hơn vast.ai $0,789 và card
-> to gấp đôi. Hai con số cũ của trợ lý đều sai (tưởng 15 đơn vị/giờ, tưởng 40 GB) → **giá GPU
-> phải đo/tra tại thời điểm quyết, cấm nhớ**. Về chỗ lưu: thứ bắt buộc sống qua các phiên chỉ
-> ~3 GB (derived.tar.gz 400 MB + ckpt + preds) — 15 GB miễn phí cũng đủ chạy trọn luận văn,
-> 67 GB ảnh tải lại từ HuggingFace 20–40 phút ≈ $0,3/phiên. *Phần đắt không phải phần to.*
-> (`drive.mount` chỉ gắn Drive của chính tài khoản chạy Colab — cross-account không làm được.)
->
-> **✅ 10/8 — ĐÃ MUA Colab** trên tài khoản có sẵn **Drive 5 TB** (cùng tài khoản, đúng điều
-> kiện `drive.mount`). Chỗ lưu dư → bật `CAT_ANH_DAY = True` ở ô 0.12, cất luôn 67 GB ảnh dạy.
->
-> **▶️ VIỆC KẾ:** chạy **`harness/run_on_colab.md`** tuần tự **từ ô 0.1** (35 ô, 6 mốc dừng) →
-> dừng ở **MỐC DỪNG 1**, dán kết quả ra phân tích rồi mới chạy tiếp. Sau đó: train S1 ×2 hạt
-> giống → chấm (Kaggle, miễn phí) → **MDE thật** → khoá ngưỡng → mới train S2. Dự kiến
-> **$70–108**.
+> Dọn 18/8/2026. Bản đầy đủ trước khi dọn (1.263 dòng, có toàn bộ nhật ký chạy máy
+> tháng 7–8 và khung prompting cũ đã bị bác): `report/_archive/CLAUDE_MD_TRUOC_DON_18_8_2026.md`.
+> Mở file đó khi cần tra *"vì sao hồi đó quyết định X"*, không phải để biết trạng thái hiện tại.
 
-> ## 🔒 CHỐT 5/8/2026 — ĐÃ ĐĂNG KÝ TRƯỚC VÀ COMMIT, ĐỌC `report/106_DANG_KY_TRUOC.md`
-> **Thầy không gặp được → chạy luôn, không đợi chốt miệng.** Vì mất bước đó, `report/106` gánh vai trò niêm phong thiết kế: khoá 6 nhánh, thước đo, **luật đọc kết quả cho cả 4 kết cục** (dương / dương yếu / trắng / âm), 3 lát cắt, hạt giống 20260805. Đã commit `51ddb35`. Mọi thay đổi về sau **ghi vào mục sửa đổi cuối file, KHÔNG sửa đè**.
->
-> **Đã dựng xong, chạy được ngay khi có máy:**
-> · `harness/descriptor_label_build.py` — nhãn khai báo bản thật (`<point>` toạ độ, không còn lưới 3×3). Bắt 2 lỗi: cây trợ năng lồng nhau làm "trùng tên" thổi từ 30%→6,9%, và tên class Android lọt vào nhãn.
-> · `harness/build_branch_data.py` — 4 nhánh s1/s2/s2r/s2_nopoint, định dạng sharegpt. **Khai báo giả của s2r lệch độ dài trung bình 0,5 ký tự** nên không đổ hiệu ứng cho "chuỗi dài thêm" được. 623/1697 bước không-chạm giữ đích y hệt ở mọi nhánh → phép kiểm không-gây-hại đọc được.
-> · `harness/build_test_data.py` — **tập kiểm 6.969 bước / 1.432 tác vụ / 4.465 bước chạm (64,1%)**, ghép chuẩn (khớp 37% vs đối chứng lệch 10%). ⚠️ chỉ **44,9% gán được app** → số cụm hiệu dụng do nhóm cụm-đơn chi phối, MDE thật phải tính lại từ đây.
-> · `harness/infer_branch.py` · `harness/score_run.py` (gồm **cổng A**) · `harness/run_on_rented.sh` — ba mắt xích trước đó KHÔNG tồn tại: chưa có script suy luận, `metric_exec.py` hoá ra chỉ là thư viện hàm chấm chứ không có gì gộp số.
-> · `harness/train_config.yaml` viết lại: bỏ khung Student/Student-RAW cũ, một file cho mọi nhánh chỉ đổi 3 dòng. Bắt 2 lỗi: **thiếu `seed`** (giao thức 2 hạt giống không có chỗ khai) và `val_size: held_out_by_app` là giá trị không hợp lệ.
->
-> **⚖️ QUYẾT ĐỊNH 5/8 — nguồn tên trong nhãn: BÁC việc đảo sang OCR-trước, áp A′.** Chi tiết `report/107_DEBATE_NGUON_TEN.md`. Phát hiện: dump cây trợ năng **không có trường `text`**, chỉ `content_description` (tên chức năng). Tưởng phải đảo sang OCR vì câu chuẩn theo OCR gấp 3,2 lần — nhưng vòng phản biện bóc ra: bán kính thật chỉ **72/1074 = 6,7%**; bỏ 32 ca chuỗi-số-có-sẵn-trong-mục-tiêu còn 40 ca lõi (OCR 12 – trợ năng 3); và **11/12 ca OCR thắng là do nhãn trợ năng RÁC**. ⇒ ưu thế của OCR là ưu thế của **lọc rác**, không phải của thứ tự. Đã áp: cổng `clean_a11y` (14,7% nhãn là rác) + cổng hình học ≤25% màn (25 ca hộp to, **0/25 khớp câu chuẩn**) + luật ghép OCR cùng dòng. Nhãn: tên rõ 77,2%→**73,8%**, không tên 19,9%→**23,4%** (ít tên hơn nhưng sạch hơn). **Cấm dùng A′ giải thích hậu kỳ nếu S2 thắng** — nó nằm dưới mọi kịch bản MDE.
->
-> **📒 SỔ KÊ KHAI = `report/108_DA_LAM_DUOC_GI.md`** — mở file này khi cần biết đã làm được gì, số nào tin được tới đâu, mã ở đâu. Có mục riêng liệt kê **24 lỗi đã bắt được** (loại chạy vẫn trơn nhưng kết quả sai) và **danh sách số đã bị rút, cấm dùng lại**.
-> **⚠️ SỬA 6/8 — TẬP KIỂM KHÔNG PHẢI APP-UNSEEN:** 92% ứng dụng trong tập kiểm cũng có ở tập dạy (chỉ 21 app unseen = 67 bước chạm). Con số "631 tác vụ app-unseen" của hồ sơ cũ KHÔNG áp dụng cho dữ liệu đang dùng. Phép so chính S1-vs-S2 **vẫn hợp lệ** (hai nhánh đối xứng, 0 tác vụ trùng dạy/kiểm), nhưng **mốc so gpt-4o-mini hạ xuống tham khảo** và bắt buộc khai lợi thế sân nhà. Nhãn `app_seen_in_train` đã ghi sẵn trong test.jsonl. Tập kiểm chốt: **6.958 bước / 4.463 bước chạm / 1.432 tác vụ**.
-> **▶️ VIỆC KẾ:** (1) chạy OCR tập kiểm `prep_ocr_train.py --split test` (free, vài tiếng) → (2) thử đường ống bằng bộ trỏ rẻ ~30 bước (~$0.3) → (3) **cổng A** ($4-8, cần GPU) → (4) train s1 ×2 hạt giống → chấm đủ → **MDE thật** → khoá ngưỡng → (5) mới train s2.
-> **Slide + script trình bày:** `LUAN_VAN_SLIDE_v9.pptx` (23 slide chính + 4 slide dự phòng ẩn chứa ảnh bảng gốc) · `report/104` (script 15 phút) · `report/105` (nguồn từng con số, ảnh bảng cắt từ PDF gốc). ⚠️ **3/4 số trong bảng bằng chứng là hiệu tự trừ từ bảng của họ, không phải số in sẵn** — khai trước khi bị vặn.
-
-> ## 🧭 NGUỒN-SỰ-THẬT HIỆN TẠI (cập nhật 29/7/2026) — ĐỌC HAI FILE NÀY TRƯỚC
-> **`report/100_TONG_QUAN_PIPELINE.md`** = bản cho người CHƯA biết gì, chỉ có bài toán + pipeline + số. Không kể lịch sử. **Đây là file đưa thầy đọc trước** (thầy muốn nghe pipeline, không quan tâm đã làm gì).
-> **`report/98_BAN_TRINH_THAY_DAY_DU.md`** = hồ sơ đầy đủ, có cả phần tự kiểm và các chỗ còn hở, dùng khi thầy hỏi sâu. Slide: **`LUAN_VAN_SLIDE_v9.pptx`** (4/8 — 22 slide trọn flow theo report/103, style mẫu bài giảng Lê Văn Luyện: 4:3, chàm 322164, khối xám bo góc, Cambria; build `ppt_build/build_v9.js`, preview `ppt_build/_preview_v9/preview.html`; bìa còn ô trống học viên/GVHD/trường + chữ "PU © 2026" ở footline phải sửa). Bản PDF LaTeX cùng nội dung: `slides/LUAN_VAN_SLIDE_v9.tex` (build tectonic). v7/v8 pptx cũ → `slides/old_pptx/`.
->
-> ## ⭐⭐ CHỐT 1/8/2026 — THÀNH PHẦN ĐÓNG GÓP ĐÃ KHOÁ, ĐỌC `report/103_CHOT_THANH_PHAN.md`
-> **🔎 VÒNG RÀ 3/8 (đã vá thẳng vào 103 v3 + memory `verify-vong-3-8`):** ① −42,8 của GCoT là **số TỰ TÍNH** từ Table 3−4, bài chỉ viết 45,4 — trích phải chú thích; Table 5 (+4,5/+5,8) đúng số NHƯNG họ train from-scratch với data quen đề, không tách được nguyên nhân → ablation S1-vs-S2 của mình chặt hơn, chủ động khoe. ② Cặp "35/69" → số đúng **32/69** (chia trung vị 8 từ, 76 câu gold, `ground_pilot`). ③ UI-Ins −3,2/+4,7 là **hai model nền khác nhau**, cấm ghép cặp. ④ LLaVA-CoT +3,4 gồm retracing, thuần cấu trúc +1,5. ⑤ GuideMe xác nhận: prompting GPT-5, KHÔNG train, chấm bằng user study 18 người, CÓ trả toạ độ. ⑥ Debate 9 phương án gia cố: **0 adopt, khung giữ nguyên**; 3 thứ lấy về đã vá vào 103: lỗ off-policy mức 2 (§2) · phép thử nhân quả trên S1 trước khi train S2 (§5+§8) · thước dự phòng chọn-trong-danh-sách kèm điều kiện chống tự-chấm (cuối §8). Chi tiết: 103 mục 14.
-> Bốn vòng tra tài liệu độc lập (fable, 1/8) đã lật 3 điểm. **Chốt MỘT thành phần: "mô tả phân biệt trước, phát ngôn sau"** — đích sinh `[vai trò | tên | <point>x,y</point> | dấu hiệu phân biệt]` rồi mới tới câu; chấm chỉ lấy câu. Headline = ablation S1 (SFT trơn) vs S2.
-> · **✅ NỖI LO GCoT TAN**: số âm −42,8 là **prompting zero-shot**; chính bài đó Table 5 cho thấy **TRAIN theo thứ tự grounding-trước thì độ đúng TĂNG +4,5 / +5,8** (LLaVA-7B/13B). Đừng trích một nửa nữa. (2503.12799 = **preprint**; bài ICCV 2025 là bài KHÁC, 2507.02859.)
-> · **⛔ GIÁM SÁT CHÚ Ý RÚT KHỎI THÂN**: 2511.12738 KHÔNG còn là preprint — **WACV 2026**, tên thật *"Direct Visual Grounding by Directing Attention of Visual Tokens"*, **fine-tune chính Qwen2.5-VL-7B**, đúng cơ chế định làm (KL trên attention visual token, target Gaussian từ bbox, λ=1). Cộng: Liu AAAI-17 độ lớn thật chỉ **+0,7…+0,9 BLEU-4**; ước công lại **8–10 ngày**; FOCUS (ICML 2026) cũng bbox-attention-loss. → chỉ giữ **đo attention IoU** (~$1, không train) làm mục phân tích tuỳ chọn.
-> · **✅ KHE CÒN MỞ 3 PHÍA**: 2606.18101 (*Trust the Right Teacher*) và 2605.00642 (*GUI-SD*) — verify tận nguồn, **cả hai đích sinh THUẦN TOẠ ĐỘ**, PI là ảnh vẽ khung làm INPUT; 2606.18101 nguyên văn *"the target response contains no additional natural-language reasoning or rationale"*.
-> · **Ràng buộc thiết kế có căn cứ**: descriptor phải CÓ CẤU TRÚC + CÓ TOẠ ĐỘ, vì văn tự do cho dấu ÂM (Shikra bằng lời −7,39 vs chain-có-point +5,90; UI-Ins free-form −3,2 vs +4,7). Hiệu ứng kỳ vọng +3…+11, trung vị ~+5; bằng chứng gần nhà nhất = **Aguvis bỏ inner monologue → AndroidControl-Low −11,4**.
-> · **🔑 ĐIỀU KIỆN TIÊN QUYẾT — LỰC THỐNG KÊ** *(sửa 2/8 sau phản biện: bản cũ chia sai quần thể — 2.400 bước là của 752 ep, còn 78 app chỉ phủ 363/631 ep gán được)*: chấm đủ bước chạm toàn tập kiểm + **quy tắc cụm-đơn cho 268 ep không gán app** (G 78→346, G_eff ~35→~98). MDE **ƯỚC CHIẾU** ~4–7 pp; số chốt PHẢI tính lại từ điểm S1 thật (2 seed) trước khi khoá ngưỡng — trình tự cứng: S1×2 seed → chấm đủ → MDE thật → khoá ngưỡng → mới train S2.
-> · **⚖️ VÒNG PHẢN BIỆN ĐỐI KHÁNG 2/8 (3 giám khảo độc lập): ĐỦ-CÓ-ĐIỀU-KIỆN.** 4 đòn chí mạng đã vá vào 103 v2 (§16 = nhật ký đòn→xử): (1) seed — S1/S2 phải **×2–3 seed**, cặp seed S1 làm null thực nghiệm; (2) MDE chiếu ≠ MDE đo; (3) quần thể 31-bước/app sai; (4) **thiếu dự phòng nếu bộ trỏ chuyên rớt Cổng A** → bậc thang 3 mức ở §14. Điều kiện hội đồng giả: **pilot mức-2 (loss) BẮT BUỘC** trong thân · nhánh **B-infer** (descriptor vào input lúc suy luận, không train) · no-harm cho 41% bước không-chạm · chấm tay 100 câu 2 người · demo tiếng Việt định tính · câu thủ LUPI (Vapnik) cho đòn "S2 dùng thêm dữ liệu" · chương đo lường = đóng góp có tên trong thân. Số cũng bị vá: 8/10 bơm lỗi PHẢI kèm 2 mục rớt (fp_paraphrase 59,2% FAIL · đảo-nghĩa held-out 0%) · dải Voronoi phải trình đủ kể cả +6,6/+3,9 · 35/69 đo trên câu GOLD + confound độ dài · pilot descriptor đo bản zone-3×3 chứ CHƯA phải bản `<point>` (phải nâng script). Tiền mới: **$85–112** (trần $123–162 nếu kích hoạt seed 3 + scale mức 2).
-> · **Mức 2 (margin/unlikelihood hàng xóm) = cùng thành phần, quyết ở cổng tuần 3 bằng số.** Khe GUI mở (Widget Captioning + Screen2Words CE thuần; LPO ACL26 làm trên toạ độ; DPO-GUI làm trên trajectory) NHƯNG cơ chế bị **Mao CVPR 2016 MMI-MM** chiếm trọn → cấm chữ "mới", phải chủ động trích. TRL DPOTrainer hỗ trợ VLM, ví dụ chính chủ dùng Qwen2.5-VL-3B + QLoRA.
-> · **Đối chứng đăng ký trước**: S1 · S2 · **S2r (prefix SAI cùng độ dài — chưa tiền lệ nào chạy)** · S2-nopoint · phân tầng độ dài + độ mơ hồ · chấm tay. Bộ trỏ chấm khác họ, không nhiễm AC.
-> · **Giới hạn phải khai**: *"Do GUI Grounders Truly Understand UI Elements?"* (**Findings EACL 2026**) — đổi cách diễn đạt làm bộ trỏ SOTA trượt tới 84% ⇒ đạn bắn vào thước executability, phải nêu trước.
->
-> **Hai đóng góp:** (1) MÔ HÌNH — Qwen2.5-VL-3B QLoRA, headline = ablation nội bộ SFT-trơn vs SFT+thành-phần; "hơn gpt-4o-mini" chỉ phụ. (2) ĐÁNH GIÁ — executability (bộ trỏ khôi phục toạ độ + control không-câu + luật đảo-nghĩa + chấm nút-gần-nhất) + faithfulness (phụ, trên MobileViews), validate bằng bơm lỗi.
->
-> **⭐ THÀNH PHẦN THÊM ĐÃ CHỐT 29/7 (sau 2 vòng debate Fable 5) = HAI LỚP, bỏ hướng RFT làm trụ:**
-> · **Lớp 1 "trỏ trước viết sau"** — đích huấn luyện = `<point>x,y</point>` rồi mới tới câu; lúc chấm cắt bỏ phần toạ độ. Dùng toạ độ gold mà SFT trơn bỏ phí. **Sạch nhất về phản biện** (không công cụ ngoài ở cả hai phía dạy/chấm), chi phí ~0.
-> · **Lớp 2 "danh sách chữ làm đầu vào"** — OCR ra danh sách chữ + vị trí, nối vào đầu vào lúc dạy VÀ lúc chạy (module đứng trước). Đánh trúng cơ chế hỏng số 1 (gọi sai/mơ hồ tên nút: câu cộc 35% vs câu tả rõ 69%). **Bắt buộc 2 đối chứng**: nhánh chỉ-đưa-lúc-chạy, và nhánh giả dược đưa danh sách của MÀN KHÁC.
-> · **RFT tự-sinh-tự-lọc = TUỲ CHỌN**, không làm trụ: bộ trỏ rẻ kết oan 42-59% → tập lọc chỉ sạch ~70% (huấn luyện trên 1/3 nhãn sai); đắt nhất; mang tiếng luyện-đúng-bài-thi. Muốn chạy phải qua cổng riêng (bộ trỏ lọc ≥85% trúng, ≤10% giữ nhầm, khác họ với bộ trỏ chấm).
-> · Cả hai lớp đều làm câu DÀI hơn mà thước thiên vị câu dài → **bắt buộc phân tầng theo độ dài câu + báo phân bố độ dài + chấm tay vài chục câu**.
->
-> **📊 SỐ ĐÃ ĐO (bản 28-29/7, đã qua phản biện; chi tiết `memory/exec-metric-status-28-7`):** chênh trần−sàn DƯƠNG ở mọi cách chấm nhưng phải trình DẢI: **+44.7 (đĩa) · +32.9 (gộp tâm) · +19.7 (hộp, loại hộp chứa gold = đúng bản chất nhất)**; n=76 nên CI ±10. Bơm lỗi bản 2 **đạt 8/10** ngưỡng khoá trước. Bước chạm 59.1%, gõ/cuộn/mở app 28.9%. Công tắc dùng chung vị trí 1.06%. G=78 app (hiệu dụng 34.8) trên 363/631 ep gán được.
-> **⛔ ĐÃ BỊ RÚT, đừng dùng lại:** "dải thật [13…45]" · "chênh 32.9 + hai bộ dò đồng thuận" · "bơm lỗi 9/10 độc lập" (bản 1 có 5 nhánh hằng đẳng thức) · "bộ dò trả nhiều hộp cho cùng một nút" (SAI, 286 cặp hộp sát nhau đều IoU=0) · "SD 0.362 đo từ pilot" (thực ra = √2 × sd một nhánh) · lập luận Material Design 48dp.
-> **🚧 CHẶN ĐƯỜNG LỚN NHẤT:** cách chấm chặt kết oan nhiều khi bộ trỏ lệch. Đường cong đo bằng dụng cụ thật (cây trợ năng + Voronoi): lệch 3% kết oan 0%, 5% → 7,5%, 8% → 24,1%, 13% → 55%. → điều kiện tiên quyết Cổng A = **sai số trỏ trung vị ≤3% bề ngang**, KHÔNG phải "trúng 80%".
-> **⛔ SỬA 6/8 — "trung vị 8% cạnh" LÀ SỐ SAI, ĐÃ RÚT.** Nó đẻ ra từ `real_offsets()` trong `exec_injection_validate.py:144`, hàm này **chỉ lấy sai số của những ca bộ trỏ ĐÃ TRÚNG dung sai** rồi mới tính trung vị — loại sạch mọi lần trượt. Số không lọc: **15,0%** theo công thức `ground_pilot` (`median_dist` lưu trên đĩa, n=76) và **29,3%** theo công thức cổng A (đo 6/8, n=10 tập kiểm). Thêm nữa hai script dùng hai công thức khác nhau — `ground_pilot` chia lệch dọc cho chiều CAO nên nhẹ đi 2,2 lần, cổng A dùng khoảng cách pixel chia bề NGANG; chênh 1,63 lần trên cùng dữ liệu. Ngưỡng 3% nói theo công thức cổng A. ⇒ **gpt-4o-mini chưa bao giờ gần cổng A**, và khoảng cách tới ngưỡng bị hồ sơ cũ thu nhỏ khoảng 3,5 lần. **MDE chưa khoá được** (pilot 3.5 bước/app, nhiễu > tín hiệu; bảo thủ 10.7-16.0 pp).
->
-> **💾 NGUỒN DỮ LIỆU MỚI (29/7) — gỡ hai nút thắt cũ:** `HarrytheOrange/parsed_AndroidControl` (HF) có **`step_instructions` cho cả 15.283 episode** (nguồn dạy cho train split, trước giờ vẫn treo) + **`all_forest_dict.zip` 452MB = cây trợ năng thật 99.131 màn** (bounds/class_name/content_description), không cần GCS + tensorflow. ⚠️ Đo rồi: trung vị **86 phần tử/màn** nhưng **chỉ 12.6% có TÊN** (22/120 màn có 0% nhãn) → **chỉ dùng cho chấm vị trí**, KHÔNG thay được OCR ở khâu lấy tên, KHÔNG đo được faithfulness trên AC. Bản `ckg/AndroidControlParsedWithImages-20k` có ảnh nhưng đã parse thành định dạng agent, **mất step_instructions** — đừng dùng làm nguồn dạy.
->
-> **📚 VÒNG TRA TÀI LIỆU 29/7 — KẾT QUẢ BUỘC HẠ GIỌNG (đã verify tận nguồn):**
-> · **Lớp 1 có tiền lệ:** **GCoT** (preprint 2503.12799) đã so thẳng "định-vị-trước" với "trả-lời-trước"; Shikra/CogCoM(ICLR25)/Visual CoT(NeurIPS24) cùng dòng sinh toạ độ làm bằng chứng. ⚠️ **GCoT đo được: grounding-first làm ĐỊNH VỊ tốt lên nhưng ĐỘ ĐÚNG CÂU TRẢ LỜI kém đi** — rủi ro ngược chiều, phải nêu. (Phản biện: họ prompting mô hình chưa train, ta TRAIN theo thứ tự đó; và ta đo đúng phần định vị.) Trong GUI, Aguvis(ICML25)/UI-R1 đặt **chữ trước toạ độ sau** → ta ĐẢO VAI. ✅ **ĐÃ VERIFY PDF Aguvis (tr.19)**: khuôn mẫu huấn luyện = `Thought: … / Low-level Instruction: … / Action: pyautogui…` — mô hình TỰ SINH cả câu chỉ dẫn mức thấp. Nên phân định phải nói chính xác: bên họ câu chữ là bước trung gian để ra ACTION cho máy và **chất lượng câu không được đánh giá**; bên ta câu chữ là SẢN PHẨM CUỐI cho người đọc, là thứ duy nhất đem chấm.
-> · **⛔ Lớp 2 KHÔNG được kể là đóng góp:** **bài gốc AndroidControl (NeurIPS24) đã fine-tune với danh sách phần tử từ a11y làm INPUT và không dùng screenshot** (verify nguyên văn: *"Our agent implementation does not directly leverage the page screenshot"*). Thêm Mind2Web(NeurIPS23) train trên danh sách ứng viên nhiễu; Widget Captioning(EMNLP20)/Screen2Words(UIST21) train với cây phần tử ở input; **RAFT(COLM24)** đã trả lời "train-với-nhiễu hơn chỉ-đưa-lúc-chạy" ở miền RAG. → hạ xuống **lựa chọn thiết kế có ablation**.
-> · **✅ ĐIỂM PHÂN ĐỊNH VẪN VỮNG:** trong bài gốc AC, `step_instructions` là **INPUT** (mớm cho agent đoán action); ta dùng làm **ĐÍCH SINH**. Ngược hướng — đây là chỗ định vị rõ nhất.
-> · **Đối chứng THIẾU vừa bổ sung cho lớp 1:** (a) có/không prefix toạ độ · (b) **prefix toạ độ SAI/ngẫu nhiên** (loại khả năng điểm tăng do chuỗi dài thêm) · (c) toạ độ cho sẵn trong prompt làm trần trên. Lưu ý ngân sách token: prefix làm chuỗi dài ra → nhánh đối chứng cần tiền tố giả cùng độ dài.
-> · **CẤM DÙNG:** "đầu tiên"/"novel"/"cơ chế mới" cho cả hai lớp · đặt tên kêu cho thứ tự sinh rồi dùng như thuật ngữ chuẩn · nói "GuideMe không đụng toạ độ" (mô tả công khai cho thấy nó CÓ định vị để tô sáng; chỉ chưa rõ có train hay không).
->
-> **🔬 ĐO THÊM 29/7 (chiều):** · **Bộ tứ với cây trợ năng THẬT** (62 phần tử/màn, hệ toạ độ đã kiểm khớp ảnh: gold nằm trong hộp 76/76): **trần 6.6% · sàn 0.0% · chênh +6.6**. Chẩn đoán trọn vẹn: phần tử đích **189×126 px**, phần tử KHÁC gần nhất chỉ cách **69 px**, bộ trỏ rẻ lệch trung vị **256 px** → gần như luôn rơi vào ô phần tử khác. **Con số thấp này đo DỤNG CỤ, không đo câu.** Củng cố ngưỡng Cổng A: sai số phải < 69px → đặt 3% cạnh (~32px) là có biên. `harness/a11y_inventory.py` + `voronoi_sensitivity.py`.
-> · **✅ DỮ LIỆU DẠY ĐÃ THÔNG:** ghép `HarrytheOrange` (câu người viết, 15.283 ep) với `ckg/…WithImages` (ảnh) theo (episode_id, step_id). Kiểm ghép ĐÚNG bằng OCR tại điểm chạm: khớp **47%** vs đối chứng ghép-lệch-một-bước **27%**. Số ảnh > số bước đúng 1 là **ảnh màn cuối**, không phải lỗi. Đã dựng **1.697 bước / 2 shard** (833 MB) → `harness/dg1_cache/train_ac/` (`train.jsonl` + `images/`). Toàn bộ 76 shard ~67GB → chỉ dựng vài shard ở máy, còn lại tải thẳng trên Colab. Code: `harness/build_train_data.py`, `prep_ocr_train.py` (đang chạy nền).
->
-> **🏛️ TRỤ ĐÓNG GÓP MÔ HÌNH ĐÃ CHỐT 29/7 (1 vòng phản biện + 2 vòng tra tiền lệ) — chi tiết `memory/tru-dong-gop-model-chot-29-7`:**
-> **"MÔ TẢ TRƯỚC, PHÁT NGÔN SAU"** — đích huấn luyện hai tầng: sinh bộ mô tả có cấu trúc `[vai trò | chữ hoặc hình | vị trí | dấu hiệu phân biệt]` rồi mới sinh câu; nhãn tầng mô tả dựng TỰ ĐỘNG từ hộp a11y tại điểm chạm gold + OCR + caption crop. Lúc chấm chỉ lấy câu. → ứng viên DUY NHẤT mà **mô hình lúc suy luận hành xử khác** ⇒ đóng góp MÔ HÌNH, không phải data.
-> **Đã loại:** DPO cặp câu-đúng/tả-nhầm-hàng-xóm (bắn trượt cơ chế hỏng — lỗi số 1 là câu MƠ HỒ 35% vs 69%, không phải nhầm nút vì K2 đo bịa 0-2%; lại ký sinh vào tầng viết lại) · người-nói-người-nghe (tiền lệ trực diện + vòng vo + nhánh "gpt-4o-mini + listener" có thể thắng) · che-ngữ-cảnh (không đổi chữ nào trong đích nên vẫn kẹt câu cụt). **Viết lại nhãn có đặc quyền = GIỮ nhưng hạ xuống TẦNG DỮ LIỆU**, khai thẳng là tiền xử lý.
-> **⛔ TIỀN LỆ BẮT BUỘC PHÂN ĐỊNH (đã verify):** dòng REG phân biệt đã chiếm ý "câu phải đủ để bên kia trỏ đúng" **từ 2016 cả ở tầng huấn luyện** (Mao CVPR16 MMI · Luo CVPR17 critic trong vòng train · Yu CVPR17 · White CogSci20) → cấm chữ "đầu tiên"/"mới"; thủ sẵn đòn "sao không đưa bộ trỏ vào vòng train như Luo 2017" = vì bộ trỏ cũng là thước chấm. **Widget Captioning (EMNLP20) — ĐÃ TRÍCH PDF VERIFY: loss chỉ cross-entropy thuần, KHÔNG có thành phần phân biệt** dù họ nêu rõ vấn đề hai icon giống nhau → **ĐÂY LÀ KHE của trụ**. Vẽ dấu gold rồi nhờ mô hình lớn sinh mô tả: **UGround (ICLR25 Oral)** + UI-Ins, nhưng làm ĐẦU VÀO cho grounder. PI trong GUI: **Trust the Right Teacher (2606.18101)** + GUI-SD (2605.00642), đầu ra là TOẠ ĐỘ. **AndroidControl-Curated (2510.18488)** sửa instruction nhưng chỉ mẫu bị mọi agent làm hỏng, để làm sạch benchmark.
-> **✅ CHỖ TRỐNG CÒN:** `step_instructions` làm ĐÍCH SINH · đưa tính phân biệt vào MỤC TIÊU huấn luyện trong miền GUI.
-> **3 điều kiện để không bị quy về đóng góp DỮ LIỆU:** (1) bảng ablation phải là bảng về MÔ HÌNH (student-không-PI / student-có-PI / teacher-ảnh-sạch / teacher-ảnh-đánh-dấu) · (2) phải **vượt teacher chạy trên ảnh sạch** ở ít nhất một thước · (3) baseline hợp lệ của teacher-có-PI là **cùng mô hình đó trên ảnh trần**. **Rủi ro số 1:** tầng mô tả cần TÊN mà a11y chỉ 12.6% có tên → tầng giữa rác thì hai tầng TỆ HƠN một tầng, phải đo trước. **Việc trước khi khoá framing:** đọc toàn văn 2606.18101 + 2605.00642, nếu có nhánh sinh VĂN BẢN thì khe đóng.
->
-> **⏳ QUYẾT ĐỊNH ĐANG CHỜ USER (29/7 chiều) = `report/102_QUYET_DINH_GIA_CO_TRU.md`.** Hai vòng phản biện Fable độc lập (hội đồng khó tính + quét phương án lần cuối) cùng kết luận: GIỮ pipeline nhưng trụ hiện tại KHÔNG gánh nổi vai đóng góp chính (P(S2−S1 vượt MDE) ~20%; GCoT tiền lệ dấu ÂM; loss vẫn là CE thuần = đúng cái mình chê Widget Captioning). **Ba miếng gia cố đề xuất:** (1) toạ độ gold `<point>` vào bộ mô tả — nhãn sạch phủ 100%, chi phí 0; (2) **margin/DPO-descriptor với mô tả giả từ nút hàng xóm** — biến phân-biệt-trong-đích thành phân-biệt-trong-LOSS, lấp đúng khe Widget Captioning; né được lập luận giết DPO cũ (nhắm ambiguity màn hình, không nhắm wrong-neighbor hiếm); khả thi đã đo: 100% bước có hàng xóm, 66% có tên, 45% cùng vai trò; (3) trường phân biệt tính bằng luật + cờ AMBIG (lá chắn đòn thước-thiên-vị-câu-dài). **Thiết kế lực:** ghép cặp từng bước + lát-khó đăng ký trước + chấm đủ 631 ep → P vượt MDE lên ~40-50%. **Đo mới 29/7:** nhãn descriptor dựng được 77% tên rõ / 20% cần caption crop (KHÔNG phải 43% như ước cũ — ghép a11y+OCR-trong-hộp mạnh hơn từng nguồn); UGround SẠCH (không AC trong recipe); GTA1 nghi nhiễm dây chuyền qua OS-Atlas → RL xuống hàng vòng-2. Nhánh mới: S2 (mô tả có point → câu) · S3 (S2+margin, cổng thử tuần 3) · S3r (negative ngẫu nhiên, đối chứng cơ chế). **3 kịch bản phải chốt với thầy TRƯỚC KHI TRAIN** (null / hoà-nhưng-rẻ / B1c thắng) — ghi ở report/102 §7. Code đo: `harness/descriptor_label_pilot.py` · `descriptor_label_results.json`.
->
-> **💰 RÀNG BUỘC ĐỔI 29/7 CHIỀU MUỘN (user nói rõ, GHI ĐÈ mọi ràng buộc ngân sách/thời gian cũ):**
-> · ⚠️⚠️ **HẠN NỘP = 2 THÁNG (~8 tuần), user xác nhận 29/7.** Câu "không áp lực thời gian" trước đó KHÔNG đúng thực tế — trừ 2-3 tuần viết luận văn + gặp thầy + chuẩn bị bảo vệ thì **phần thực nghiệm chỉ còn ~5-6 tuần**, CHẶT HƠN cả con số "6 tuần" dùng lúc đầu (hồi đó chưa trừ phần viết). **Mọi kế hoạch xây dưới giả định "thời gian thoải mái" PHẢI tính lại** — nhất là hướng giám sát chú ý (rủi ro cài đặt cao nhất: hook nội bộ Qwen2.5-VL, tắt flash-attn chọn lọc, map bbox→visual token qua M-RoPE + merge/pool, dò layer + λ).
-> · **Trần 200$ nhưng ƯU TIÊN TIẾT KIỆM** — "tiết kiệm nhất có thể thôi". 200$ là trần, không phải mục tiêu.
-> · **Ưu tiên số 1 = ĐỘ MỚI + ĐỘ CHÍNH XÁC** để bảo vệ luận văn. Chấp nhận "cần nhiều máy hơn cũng không sao".
->
-> **🔬 VÒNG QUÉT NGÂN SÁCH MỚI (Fable, 29/7) — KẾT QUẢ CHÍNH:**
-> · **200$ là THỪA.** Kế hoạch tốt nhất chỉ ~**60-110$**, trần xấu nhất ~150$. Giá tra 29/7: vast.ai A100-80GB **$0.40-0.93/h** (interruptible $0.27-0.40); RunPod A100 $1.39; **Colab Pro+ TỆ NHẤT bảng** (~$1.50/h hiệu dụng, chỉ 33h/gói $50) → **KHÔNG dùng Colab, dùng vast.ai interruptible** (bỏ deadline rồi thì gián đoạn vô hại, chỉ cần checkpoint mỗi 200-500 bước).
-> · Chi phí mốc (A100 $0.72/h, Qwen2.5-VL, ~75-85k mẫu-bước, 2 epoch): QLoRA 3B toàn bộ dữ liệu **$13-16** · QLoRA 7B **$29-36** · full-FT 3B $16-20 · 3 seed × 2 nhánh $80-95 · **pilot trên lát 1.697 bước có sẵn = $0.3-2/run (4090 interruptible)** · **chạy UGround-7B chấm toàn bộ 1.543 ep test = $3-6 ← KHOẢN HỜI NHẤT** (hạ MDE mà không cần model tốt hơn).
-> · **NÚT THẮT THẬT không phải tiền** mà là (1) công cài đặt/gỡ lỗi, (2) MDE của thước. **Thứ đổi bản chất là BỎ DEADLINE** — cho phép mua độ mới bằng *pilot rẻ* thay vì *canh bạc*.
->
-> **⭐ HƯỚNG KIẾN TRÚC MỚI = GIÁM SÁT CHÚ Ý (attention supervision).** Ép attention của token đang sinh dồn vào hộp bbox phần tử đích; nhãn = hộp a11y, **sạch 100%**. Can thiệp CƠ CHẾ NỘI BỘ, không đổi chuỗi output → claim dày hơn hẳn "lược đồ giám sát", khó bị gọi là prompting/data-engineering.
-> · **Tiền lệ (đã verify):** **Liu et al. AAAI 2017** (arXiv 1605.09553) "Attention Correctness in Neural Image Captioning" — giám sát attention làm **CHẤT LƯỢNG CAPTION TỐT LÊN**, không chỉ attention đúng hơn. ⭐ **Đây là bằng chứng NGƯỢC CHIỀU với nỗi lo GCoT** (grounding-first làm câu kém đi) — cơ chế khác: GCoT ép sinh thêm bước, attention-sup ép nội bộ. · **arXiv 2511.12738** (KLAL, preprint 11/2025) đã làm attention-sup cho VLM hiện đại **nhưng output là REC/định vị, không phải sinh câu, không GUI** → khe còn: attention-sup bằng bbox a11y khi TRAIN SINH CÂU CHO NGƯỜI trên GUI. · Attention-Driven GUI Grounding (AAAI 2025) = tuning-free, không train.
-> · **Cài trên Qwen2.5-VL:** hook 2-4 layer giữa-cuối, tắt flash-attn CHỈ ở layer đó (eager), target map = đều trong bbox / ~0 ngoài, loss KL cộng trọng số λ. Chậm ~1.3-2× → **$20-30/run toàn dữ liệu**.
-> · **⭐ ƯU THẾ QUYẾT ĐỊNH: KIỂM RẺ ĐƯỢC.** Có thước trung gian RIÊNG, miễn phí, không đụng bộ chấm = **attention IoU** so với bbox gold. Tách 2 mắt xích kiểm độc lập: (1) "loss có kéo attention vào đúng nút không" → **~$1**; (2) "attention đúng có làm câu phân biệt hơn không" → $2-5. Mọi phương án khác phải train xong mới biết.
-> · ⚠️ **KHÔNG có Qwen2.5-VL 0.5B** (nhỏ nhất là 3B; Qwen2-VL có 2B). Đừng đổi họ model để pilot — cơ chế attention không chuyển giao đáng tin giữa các họ.
-> · **ĐÃ LOẠI:** đầu phụ heatmap/bbox (GUI-Actor NeurIPS 2025 arXiv 2506.03143 chiếm; phần còn lại là multi-task đổi tên) · adapter riêng cho định vị/viết câu (engineering thuần) · mở vision encoder (siêu tham số, không phải đóng góp).
->
-> **📋 CHIẾN LƯỢC CHỐT = C' "pilot rẻ → chỉ scale cái sống".** Giữ trụ mô-tả-trước-phát-ngôn-sau + 2 miếng gia cố (`<point>` + margin-hàng-xóm) làm xương sống; thêm attention-sup làm **mũi nhọn độ mới**, chỉ scale sau khi qua 2 cổng rẻ. **KHÔNG train 7B** trừ khi 3B rớt mốc gpt-4o-mini (nút bấm dự phòng $30). Xác suất ước: P(thắng 2 mốc) ~0.70-0.75 · P(thành phần vượt MDE) **~0.50-0.60** · P(mất trắng) ~0.03.
-> **Lộ trình 4 giai đoạn (tiền cộng dồn):** GĐ0 cài + chạy khói 200 mẫu **~$5** (cổng: chạy được cơ học) → GĐ1 thử 4 nhánh trên lát 1.697 bước + quét λ/layer **~$15-25** (cổng: attention IoU tăng rõ VÀ executability không tụt) → GĐ2 scale cái sống lên toàn bộ 15.283 tác vụ + chấm toàn bộ test **~$50-80** (cổng: thắng SFT-trơn) → GĐ3 nhiều seed cho cặp headline **~$90-130**. Rớt cổng nào cũng còn kết quả dùng được (kể cả kết quả âm có kiểm soát về attention-sup).
->
-> **📄 FILE QUYẾT ĐỊNH = `report/102_QUYET_DINH_GIA_CO_TRU.md`** (đã viết lại 29/7 cho dễ hiểu: §1 đóng góp là gì · §2 đã làm được gì · §3 vấn đề · §4 ba cách gia cố · §7 quyết định · §8 một trang). ⚠️ **CHƯA thêm phương án attention-sup vào file này** — việc kế tiếp. Và **report/100, 101 chưa khớp với 102** (vẫn theo bản trước gia cố).
->
-> **🗂️ ĐÃ DỌN 29/7:** report/ còn 12 file (29 file → `report/_archive/`); harness/ còn 19 script (53 thứ → `harness/_archive/`, gồm toàn bộ khung prompting cũ + 7.6MB emb cache). Slide v5/v6 + 7 build script cũ → `_archive/slides/` và `ppt_build/_archive/`. Gộp hết PDF trùng.
->
-> **▶️ VIỆC KẾ (thứ tự cứng):** (1) free: đo lại bộ tứ với cây trợ năng thật · khảo sát 91 cặp với NGƯỜI (cần 2 người chấm độc lập, ngưỡng đã khoá) · dựng data dạy + chạy OCR sẵn → (2) **Cổng B: train SFT-trơn TRƯỚC rồi đo** (biết còn bao nhiêu room; hẹp hơn MDE thì kết quả không đọc được) → (3) Cổng A: bộ trỏ chuyên (UGround, KHÔNG OS-Atlas vì nhiễm AC) → (4) gặp thầy → (5) train lớp 1, rồi lớp 2 + 2 đối chứng.
-> Khi mâu thuẫn: report/100 + report/98 (bản 29/7) > report/99 > 93/94 > phần dưới.
+**Trao đổi bằng tiếng Việt.** Văn phong: xem mục cuối file.
 
 ---
 
-> # ⬇️ TỪ ĐÂY XUỐNG HẾT §0 = LỊCH SỬ (đã bị khối 🧭 trên THAY)
-> Chỉ mở khi cần tra "vì sao hồi đó quyết định X". **KHÔNG phải trạng thái hiện tại** — trạng thái hiện tại nằm ở khối 🧭 trên cùng + `report/98`/`report/99`. Mọi "thứ tự đọc mỗi phiên", "việc kế", "đọc đầu tiên" bên dưới đều LỖI THỜI.
+## 🗂️ Bản đồ kho
 
-> ## 🚨 [LỊCH SỬ] Phản biện đối kháng (2026-07-19)
->
-> **Một vòng PHẢN BIỆN ĐỐI KHÁNG (7 giám khảo độc lập bị bịt mắt khỏi file tóm tắt + vòng bác bỏ chéo; 27/39 đòn nặng sống sót) đã LẬT vài kết luận chính. → `report/90_phan_bien_doi_khang.md` (bản đọc được) + `report/90b` (nguyên văn 27 đòn).**
->
-> ~~**Thứ tự đọc mỗi phiên: `report/88` → `report/90`.**~~ ⬆️ LỖI THỜI — nay đọc khối 🧭 trên cùng + `report/98`.
->
-> **NHỮNG THỨ ĐÃ BỊ RÚT — đừng lặp lại:**
-> 1. ⛔ **"metric-gate PASSED / AUC=1.000 / tách (action,target) giải được chỗ K1 chết"** — SAI. Bộ bơm-lỗi dựng nhánh paraphrase bằng cách gọi chính `target_of()` của thước rồi dán lại output (`metric_v1_validate.py:117`) → Jaccard=1 tất yếu; nhánh sai-đích bị ép giao-rỗng token (`:97`) → Jaccard=0 tất yếu. **AUC=1.000 là hằng đẳng thức `P(1.0>0.0)`, phương sai bằng 0; cổng "AUC<0.80 → DỪNG" không có đường kích hoạt.** Đo lại bằng paraphrase THẬT (`filter option`↔`funnel icon`): **kết oan 10/10, AUC=0.35**. Backstop bge-m3 không cứu (`gmail tab`↔`calendar tab` [bịa] 0.717 > `search bar`↔`magnifying glass` [thật] 0.490). Vòng-2 "ca khó" **không có code lẫn JSON** trong repo.
-> 2. ⛔ **"MDE 8-9pp @ G=150-250 → đủ lực"** — G đếm từ SAI QUẦN THỂ (`ac_test_200ep.json` = test chung). Trên đúng app_unseen: **41% ep gán được app (không phải 72%), 42 app distinct, tập trung mạnh** (Pinterest 14) chứ không singleton → **MDE thật ≈12.5-14.4pp**. Bộ gán app còn tách 1 app thành nhiều cụm (`The Washington Post` vs `Washington post`) + đẻ cụm rác (`On the Pinerest`) → **G thổi phồng, CI hẹp giả**. Trục TRUNG THỰC (G=12) chưa điền ô MDE, ước **~32pp = thiếu lực**, null sẽ không đọc được gì.
-> 3. ⛔ **"model ĐẦU TIÊN sinh hướng dẫn nhiều-bước cho NGƯỜI ĐỌC"** — **GuideMe (CHI 2026, DOI 10.1145/3772318.3791448)** đã chiếm ở mức tác vụ (VLM + screenshot + UI info → hướng dẫn từng bước cho người già). Hạ xuống **"model nhỏ mở đầu tiên được HUẤN LUYỆN cho tác vụ này"**. Bản thảo report/57 sạch (0 hit "first"), overclaim chỉ ở đây.
-> 4. ⚠️ **RỦI RO SỐ 1 MỚI — con số headline có thể không diễn giải được:** Student train trên gold AC nói đúng phương ngữ annotator; Teacher zero-shot nói khác nên **bị kết oan có hệ thống** → Δ(Student−Teacher) có thể chỉ đo **khớp giọng**, không đo đúng hơn. Đo được: chỉ đổi lựa chọn bề mặt của thước (gộp tap/open, containment thay Jaccard, bỏ từ chỉ vị trí) làm điểm teacher nhảy **0.286→0.604** mà không đổi chữ nội dung nào. **Bắt buộc thêm nhánh Teacher-STYLE-MATCHED** trước khi train. (Điều này ĐẢO câu cũ "action∧target bớt nhạy phong cách" — token-overlap là thước NHẠY phong cách nhất.)
-> 5. ⚠️ **Gold AC không phải "hướng dẫn cho người":** trung vị **6 từ**, 48.9% câu ≤5 từ, 60.4% mở đầu bằng click/tap, **167/842 cặp bước liền nhau trùng y hệt**, có câu hỏng (`Click on the top at the bottom right corner`). Phải chọn: khai thẳng là "sinh mô tả thao tác bằng NL", HOẶC giữ claim "cho người" + thêm tầng viết-lại + eval NGƯỜI.
-> 6. ⚠️ Sửa số các kill-test: K1 chạy trên **30 màn/7 app** (không phải 127); K2 trên **80 màn của 1 app**, 40 ca soi tay = **~18 widget distinct**; OCR glyph đếm nhầm substring → đếm lại standalone: `+`=11, `X`=13, mũi tên=**0**, `✓`=**0** ⇒ **OCR không cứu được icon thuần**, bỏ mệnh đề "không cần model dò icon".
->
-> **VIỆC KẾ — theo đúng thứ tự, A→D đều FREE, KHÔNG train trước khi xong:**
-> **A** dừng overclaim (✅ ĐÃ LÀM 19/7: vá report/84/85/88 + 73/74/75 + file này) → **B** ✅ **ĐÃ CHẠY 19/7 (report/92) → THƯỚC RỚT CỔNG THẬT, AUC=0.336** trên 51 ca thật viết tay (v1 rỗng vì hằng đẳng thức; v2 `harness/metric_v2*.py` vá xong lỗi cơ học vẫn rớt). Lý do BẢN CHẤT: embedding đo gần-chủ-đề nên đặt `inbox↔outbox`=0.76 CAO HƠN `search↔magnifying glass`=0.55 → **không ngưỡng nào tách cùng-nút khỏi khác-nút**. Từ-điển-ký-hiệu kéo lên 0.735 (vẫn <0.80, số lạc quan vì dict overlap test). **⇒ CỔNG RỚT — KHÔNG train cho tới khi thầy quyết 1 trong 3 đường: (1) từ-điển chuẩn hoá dựng độc lập + held-out; (2) đổi thước chính (LLM-judge/grounding); (3) thu hẹp → đẩy trọng tâm sang chương đo-lường.** → **C** construct-validity với NGƯỜI (**bộ chấm đã dựng sẵn: `harness/cv_study/rate_A.html` + `rate_B.html`, 91 cặp teacher, free; phân tích: `harness/cv_analyze.py`** — CÀNG NÊN CHẠY: xác nhận người có coi icon↔tên là "cùng nút" không) → **D** gán app lại cho 631 ep + tính lại G/MDE cả hai trục → **E** GẶP THẦY (mang: thước rớt + 3 đường + framing sau GuideMe) → **F** mới train.
->
-> ⚠️ **SCOOP 19/7 (report/92, deep-research verify DOI): vòng cũ (report/82) BỎ SÓT hai bài CHI 2026.** **GuideMe (CHI 2026, 10.1145/3772318.3791448)** làm đúng tác vụ "người cao tuổi hỏi trong app → VLM sinh hướng dẫn từng bước cho người" → **giết claim "tác vụ mới/đầu tiên"** (nhưng nó KHÔNG train model, KHÔNG benchmark, KHÔNG dùng AC → phần model + đánh giá định lượng của ta còn sống). **AskEase (CHI 2026, 10.1145/3772318.3790661)** = desktop screen-reader, lân cận. Đóng góp 1+2 (người-đọc, nhiều-bước) CHẾT như tính-mới độc l*; đóng góp 3 (reference-free VH) + 4 (AC làm đích sinh) SỐNG. **Trục tính-mới = tổ hợp: model nhỏ mở ĐƯỢC-TRAIN + tái lập được × AC-làm-đích × eval-VH-có-cổng-bơm-lỗi.** Việc hở: **lấy PDF GuideMe (ACM chặn 403) TRƯỚC khi khoá framing với thầy** — câu "GuideMe không train" mới là suy đoán.
-> **Quyết NGAY tuần này (không đợi E): bỏ hay giữ FAIR 15/8** — 27 ngày, chưa có dòng code train nào, AC train-split chưa tải, abstract FAIR trong KE_HOACH vẫn đang bán đóng góp lọc-bịa ĐÃ CHẾT từ 18/7.
->
-> ⚠️ **Mọi dòng §0 bên dưới viết TRƯỚC 19/7 — chỗ nào mâu thuẫn với khối này thì khối này thắng.**
+`README.md` ở gốc kho = bản đồ thư mục (tái cấu trúc 16/8/2026).
 
-> ## ⚡ [LỊCH SỬ — không còn dùng] điều hướng cũ (mọi con trỏ dưới đây LỖI THỜI: report/88/00/71/72/85 là bối cảnh cũ; trạng thái hiện tại = khối 🧭 đầu file + report/98)
->
-> **⚠️ FILE ĐÃ DỌN GỌN 19/7:** report/ giờ chỉ còn bộ hướng LAI đang dùng; khung prompting cũ (00-52) + chuỗi pre-LAI (61-68) + các bản tóm tắt cũ (00/70/71/72/77/80/83) + slide v1-v4 đã dời sang `report/_archive/` (khôi phục được). **Nhiều con trỏ file trong CLAUDE.md phía dưới nay trỏ vào file đã archive — nếu không thấy trong report/, tìm ở report/_archive/.**
->
-> **Nguồn-sự-thật TRẠNG THÁI HIỆN TẠI = `report/88_TOAN_CANH_CHI_TIET.md`** — đọc file đó ĐẦU TIÊN mỗi phiên (toàn cảnh chi tiết: đề tài · câu chuyện đổi hướng · 4 phép thử · thiết kế LAI cuối · kế hoạch dựng-data + train · việc tiếp theo · bản đồ file). Kèm: `report/_archive/85` (đăng-ký-trước, đã commit) · `report/89` (review slide + câu thủ) · `LUAN_VAN_SLIDE_v5.pptx` (slide trình thầy). *(report/00 cũ đã archive.)* File CLAUDE.md này = **nhật ký quyết định**, dòng §0 dưới cùng = mới nhất.
->
-> **1 dòng trạng thái (2026-07-18):** hướng đã chốt = **"Faithful Distillation"** (train Qwen2.5-VL-3B, SFT-LoRA, chỉ một-màn). **Split 18/12 ĐÃ commit (`3776212`); pool train 498 màn/220 app, K-leak sạch.** ⛔ *report/85 (thay 56) đã bị VÁ 19/7 — cổng thước không hợp lệ, G/MDE tính sai; xem khối 🚨 trên.* **PIPELINE CUỐI ĐÃ CHỐT = `report/71`:** giữ nguyên xương sống + THÊM "trục ĐÚNG" (Step-SR-theo-tên trên AndroidControl, map gold(x,y)→a11y-tree→tên nút) ở **vai phụ + hậu-đăng-ký + phải hỏi thầy**; ưu tiên **B (đọc tay fallback) > A (thêm app test) > trục ĐÚNG thu gọn > C (bịa nhiều teacher)**; 2 vá nhỏ pipeline = OCR-ở-bước-lọc + 10-câu-fallback. **PLAN dán-thẳng-chat-mới = `report/72`.** 3 vòng nâng cấp A/B/C đã chạy 18/7 → `report/66/67/68`. → **Việc kế = VIỆC 0 (K1 kill-test matcher, free) → VIỆC 1 (đọc tay fallback) → VIỆC 2 (pilot MDE + đo bịa teacher mới, ✱$1-2) → HỎI THẦY → mới sang train.** Nộp 2 bài: **FAIR** (15/8, tiếng Anh, model) + **VCL** (30/8, tiếng Việt, sinh-tiếng-Việt).
->
-> **⚠️ K1 ĐÃ CHẠY 18/7 (`report/73`, code `harness/k1_matcher_killtest.py`): bộ đối chiếu embedding-đơn RỚT.** Ở τ=0.55: bỏ lọt 47,5% bịa gần-nghĩa + kết oan 47,5% paraphrase (κ=0,38); phân bố paraphrase-thật vs bịa-gần-nghĩa **chồng lấn 40/40 → không τ nào tách được**. bge-m3 đỡ chút, không giải quyết (⇒ OpenAI cũng vậy). So-chuỗi thuần bắt bịa gần-nghĩa (5% bỏ lọt) nhưng giết paraphrase khác-ngôn-ngữ (97,5% kết oan) → **hai chiều lỗi do 2 cơ chế ngược** ⇒ **phải nâng trọng tài đa-tín-hiệu (so-chuỗi + embedding + OCR), KHÔNG chỉ bơm τ = sửa PIPELINE.** VH coverage 62,4% (37,6% nút icon-only → OCR). Với VCL: cân nhắc hướng dẫn GIỮ tên nút hiển thị thay vì dịch.
->
-> **⚠️ K2 ĐÃ CHẠY 18/7 (`report/74`, code `harness/k2_hallucination_types.py`, FREE trên 80 output teacher cache): LẬT NGƯỢC lo của K1.** 127 bước teacher thật: verbatim 68,5%; 40 ca không-verbatim soi tay = **0 ca bịa-gần-nghĩa**, mà 35/40 là **NÚT THẬT bị VH bỏ nhãn** (icon `+`/`✓`/mũi tên 20 · field mô tả 11 · chữ-hoa ADD/EXPENSES 4) + 3 artifact `<...>`. → **(1) lỗi thật = KẾT OAN (đánh oan nút thật), KHÔNG phải bỏ lọt → OCR/nhận-icon là FIX SỐ 1** (20/40 là icon); **(2) bộ lọc hiện tại có nguy cơ LÀM HẠI data** (viết-lại nút thật thành mô tả mơ hồ) → phải sửa matcher TRƯỚC build data; **(3) gpt-4o-mini bịa RẤT ÍT (~0-2%), con số "~¼ bịa" cũ nhiều khả năng là kết-oan đọc nhầm → nghi ngờ 5 thành hiện thực: ít bịa thì Tier 1 dễ null tầm thường.** Phải mang K1+K2 lên gặp thầy: sửa trọng tài (OCR) + có thể chỉnh khung đóng góp.
->
-> **⚠️ VIỆC OCR ĐÃ CHẠY 18/7 (`report/75`, code `harness/ocr_vh_coverage.py`, RapidOCR ONNX/CPU/free trên 127 màn): OCR giúp KHIÊM TỐN, không đủ một mình.** Độ phủ nhãn nút-cỡ-nút +6 điểm (74→80%; thô +11 micro/+16 macro nhưng ~28% là rác chữ-hiển-thị); khung toạ độ khớp. Cứu được nhãn text (OK/Search/X/tab) NHƯNG **không cứu icon thuần** (`+`/`✓`/mũi tên = 20/40 ca kết-oan K2). → **trọng tài lành mạnh = đa tầng: so-chuỗi → VH → OCR-chặt → TỪ-ĐIỂN-KÝ-HIỆU (+→add, ✓→confirm, ✕→close...) → fallback.** Từ-điển-icon rẻ/tất định, cứu đúng phần OCR chịu thua. **Ba kill-test K1/K2/OCR = `report/73/74/75`.**
->
-> **⚠️ VIỆC 1 (đọc tay fallback) ĐÃ CHẠY 18/7 (`report/76`, 127 câu fallback thật): giả định "mô tả chung chung dùng được" ĐỨNG NỬA VỜI.** 0/127 rơi câu-trơ (tốt), nhưng ~80% chỉ LẶP LẠI MỤC TIÊU (không chỉ vị trí/hình), 20% lặp động từ sượng ("Tap...let you tap"). Cộng K2 (fallback thay NÚT THẬT) → fallback thường làm hướng dẫn TỆ ĐI. Fix hiệu quả nhất = fallback ÍT ĐI (nâng matcher), không phải viết câu hay hơn. **→ 4 kill-test free XONG (K1/K2/OCR/VIỆC1 = report/73-76), gói lại thành hồ sơ gặp thầy `report/77`.** Điểm quyết định lớn nhất: **nghi ngờ 5 (teacher bịa ~0-2%, không phải ¼) → tiền đề "lọc bỏ bịa" lung lay, có thể phải chỉnh khung đóng góp.** Việc kế = GẶP THẦY trước, rồi mới pilot MDE/build (đừng đổ tiền train trước khi chốt khung với thầy).
->
-> **⚠️ CHỐT NHÁNH 18/7 (`report/78`, debate A-vs-B 5 agent): chọn LAI, NÂNG CẤP report/71.** Trục ĐÚNG (Step-SR-theo-tên trên AndroidControl, TỪNG-BƯỚC-NHƯ-MỘT-MÀN, vẫn MỘT MÀN — KHÔNG phải nhánh nhiều-màn) **LÊN TRỤ CHÍNH**; Tier 1 (LỌC vs THÔ) **xuống readout phụ gần-miễn-phí** (vì K2: teacher bịa ~0 → Tier 1 dễ null tầm thường); K1/K2/OCR/VIỆC1 gói thành **chương đóng-góp đo-lường**. **Xử confound lệch-miền = đóng khung SO SÁNH CẶP (difference-in-differences):** chấm Student-LỌC/Student-THÔ/Teacher-BASE trên CÙNG lát AndroidControl → lệch-miền triệt tiêu trong hiệu-số; estimand = hiệu-cặp, KHÔNG phải Step-SR tuyệt đối. **HAI khe hở chưa dập:** (a) giả định "lệch tác động đồng đều mọi nhánh" không test được (MobileViews không gold); (b) **construct-validity**: Step-SR đo thao-tác-agent, đề tài là hướng-dẫn-cho-NGƯỜI → cần nghiên-cứu-nhỏ đối chiếu "khớp-gold" vs "người-chấm-đúng" vài chục mẫu. **Tính mới KHÔNG phải "3B on-device" (ZonUI/UI-R1/LLaVA-KD đã chiếm) mà là "sinh HƯỚNG DẪN nhiều-bước cho NGƯỜI + đánh giá KÉP no-gold(VH)+gold(Step-SR)".** **CỔNG SỐNG-CHẾT trước khi cam kết: pilot AndroidControl ~10-20 bước — Step-SR không suy biến sàn-0 + tỉ lệ map gold→a11y→tên đủ cao (thừa hưởng đúng bệnh VH-thiếu-nhãn ~20% icon). Hỏng → rơi về "nghiên cứu đo-lường + A-mô-tả".** Thứ tự: pilot AndroidControl (go/no-go) → gặp thầy → khoá report/56+71 → build.
->
-> **⚠️ PILOT AndroidControl ĐÃ CHẠY 18/7 đêm (`report/79`, code `harness/pilot_androidcontrol.py`, tự chủ): GO — nhưng ĐỔI CƠ CHẾ trục ĐÚNG.** (1) Khung toạ độ gold↔ảnh KHỚP SẠCH (ảnh 1080×2400 & 1440×3120, gold=pixel; "Search"/"Next"/"+" trúng điểm) → giải toả rủi ro #1 report/71. (2) Cách report/78 giả định (map gold(x,y)→a11y→TÊN nút) YẾU: chỉ 40% (OCR-tại-điểm, cận dưới) / 52% relaxed vì **~48% gold-click nhắm ICON/ẢNH không chữ**; **a11y-tree KHÔNG có ở mirror HF** (chỉ GCS gốc, cần tensorflow+GB). (3) **PHÁT HIỆN THEN CHỐT: AndroidControl có gold `step_instructions` (hướng-dẫn NGƯỜI viết từng bước, đã công bố NeurIPS24)** → **đổi trục ĐÚNG sang so hướng-dẫn-model ↔ gold-step-instruction (văn bản)**: phủ ~100% bước, KHÔNG cần a11y, **gỡ khe construct-validity lớn nhất của report/78** (người↔người). Giữ point-in-bbox grounding làm phụ. Giữ difference-in-differences (student vs teacher trên CÙNG lát AC) + pre-register lát gần-miền. **CHƯA test: Step-SR THỰC (cần model sinh — bước sau); metric so-instruction cần định nghĩa + bơm-lỗi-validate + luật align đa-bước↔đơn-bước.** Việc kế: tải AC-test local → thiết kế+validate metric so-instruction → nghiên-cứu-nhỏ construct-validity → gặp thầy (report/78+79) → generate → đo hiệu-cặp.
->
-> **⚠️ CHỐT THIẾT KẾ CUỐI 19/7 (`report/81`, debate 5 agent — user TỰ CHỐT đi LAI, không đợi thầy): LẬT một điểm lớn so report/78.** **Train:** một model, tín hiệu CHÍNH = **gold `step_instructions` của AndroidControl**; MobileViews-distilled = data AUX (ablation bật/tắt, KHÔNG bỏ). **Đo trục ĐÚNG (chính) ngay trên app-unseen split của CHÍNH AndroidControl (IN-DISTRIBUTION held-out, KHÔNG cross-dataset)** — cắt khung difference-in-differences của report/78 vì confound parallel-trends không kiểm định được. Trục TRUNG THỰC (phụ) = student bịa? trên MobileViews (Tier 2, tắt VH). ScreenSpot phụ. **Metric = 3 lớp:** tách mỗi bước thành (action, target) [vá đúng bẫy K1 — "Gmail tab" vs "Calendar tab" là mismatch cứng dù embedding gần]; gióng bằng phủ-tập; headline = coverage-recall target-khớp-CÓ-ĐIỀU-KIỆN-action-đúng + F1 + order-τ partial (Fagin, KHÔNG Kendall τ-b); LLM-judge khác-họ chỉ cross-check. **Validate metric = bơm-lỗi LÀM CỔNG** (pre-register ngưỡng; mấu chốt: tách-phân-phối AUC≥0.80 — chính chỗ K1 chết; rớt → dừng, sửa thước, KHÔNG train). **KHÔNG bỏ MobileViews, KHÔNG cần dataset mới** (nâng cấp tuỳ chọn: tải AC-full nặng có a11y-tree để gom 2 trục cùng màn — phải đếm label-coverage trước). **⚠️ RỦI RO SỐ 1 (report tự khai, không dập bằng số): TÍNH MỚI MỎNG** — train-trên-gold đẩy về gần supervised (SeeClick/UI-R1/Aguvis); K2 đã GIẾT đóng góp lọc-bịa, đừng giả vờ nó sống. Tính mới dời sang: output-type=hướng-dẫn-cho-NGƯỜI + dual-eval(gold+no-gold) + chương đo-lường K1-K2-OCR-VIỆC1. **Cần verify chưa bị scoop + hỏi thầy về framing.** report/56 pre-register PHẢI đối chiếu+commit lại TRƯỚC train. Việc free trước: đối chiếu report/56 · tải AC-test local · build+bơm-lỗi-validate metric (CỔNG) · mini-study construct-validity.
->
-> **⚠️ VERIFY TÍNH-MỚI CHỐNG SCOOP 19/7 (`report/82`, deep-research 4 agent): LẤP MỘT PHẦN — seam CÒN TRỐNG ở tổ hợp trọn gói, HẸP.** Không bài nào phủ đủ 4 thành phần: người-đọc-là-NGƯỜI + hướng-dẫn-nhiều-bước-theo-câu-hỏi + đánh-giá-KÉP(reference-free-VH + gold) + VLM-nhỏ-on-device. **TÍNH MỚI PHÒNG-THỦ-ĐƯỢC (đặt làm trục):** (1) reference-free dùng nguồn NGOÀI có cấu trúc (VH) bắt bịa, KHÔNG self-probe — phân định sạch với FaithScore/ALOHa; (2) **AndroidControl step_instruction làm TARGET SINH** (không phải input) — chưa ai làm, mọi bài dùng AC đều để instruction ở INPUT cho action-prediction; (3) tổ hợp 4 thành phần. **KHÔNG ĐƯỢC CLAIM (sẽ bị đập):** "dual-eval là phát kiến" (hybrid-metric RUBER/BLEURT/BARTScore đã có), "sinh hướng-dẫn-GUI-cho-người là mới hoàn toàn" (CHI2023 Wang + GUITrans2Act phải phân định), "small on-device VLM" làm trục chính (yếu nhất → hạ xuống đặc-tính-triển-khai). **Bài phải phân định:** GUITrans2Act (arXiv 2606.12817 preprint — video-input, TQ, agent teach-repeat, không AC), CHI2023 Wang (QA/summ không multi-step how-to), FaithScore (self-probe). **CHƯA đọc full-text GUITrans2Act/HalluClear/TIST2022 + chưa quét CHI/UIST/venue-TQ → phải làm trước khi viết related-work.** Framing chốt để hỏi thầy: trục tính-mới = đánh-giá-kép-VH + AC-as-generation-target; cân đối "đóng góp model" vs "đóng góp đánh giá".
->
-> **⚠️ CHỐT 19/7 (user khẳng định lại): LUẬN VĂN NHẤT ĐỊNH PHẢI CÓ ĐÓNG GÓP MODEL — model là một TRỤ, KHÔNG hạ xuống "vật thí nghiệm/nền".** (Có lúc trợ lý hiểu nhầm user nới ràng buộc này — KHÔNG, ràng buộc train-model vẫn CỨNG.) Hoà giải với report/82: đóng góp model KHÔNG dựa vào "VLM 3B nhỏ on-device" (đông: ZonUI/UI-R1/LLaVA-KD) mà dựa vào **TÁC VỤ MỚI = model đầu tiên SINH HƯỚNG DẪN NHIỀU BƯỚC CHO NGƯỜI ĐỌC từ 1 ảnh+câu hỏi** (mọi model GUI khác sinh action-cho-máy) — chính là seam report/82 xác nhận còn trống. → **HAI đóng góp NGANG nhau: (1) MODEL (tác vụ mới) + (2) ĐÁNH GIÁ (cặp thước VH-faithfulness + gold-correctness + phát hiện đo-lường 4 kill-test).** "on-device 3B" = đặc-tính-triển-khai, KHÔNG phải trục tính-mới. Thiết kế report/81 KHÔNG đổi, chỉ chốt cách kể model.
->
-> **⚠️ THỰC THI 4 VIỆC FREE 19/7 (tuần tự):** **(2) ✅ tải AndroidControl-test local** — 200 ep/1042 step-instruction (`dataset_samples/androidcontrol_test/ac_test_200ep.json`; repo có 1543 ep). **(3) ⛔ BUILD + BƠM-LỖI-VALIDATE THƯỚC — ~~CỔNG QUA~~ CỔNG KHÔNG HỢP LỆ (vá 19/7)** (`report/84`, code `harness/metric_v1_validate.py`): tách bước thành (action, target), khớp target = chồng-từ-nội-dung + bge-m3 backstop 0.85. ~~AUC=1.000~~ ⛔ **hằng đẳng thức, không phải phép đo; ca thật cho AUC=0.35, kết oan 10/10.** Câu "tách (action,target) giải được đúng chỗ K1 chết" ĐÃ BỊ RÚT. detection 1.0, FP 0.0, bge cứu-nhầm-ca-khó chỉ 5%. Hoài nghi còn: paraphrase-synonym có thể kết-oan (chỉnh backstop khi có output model); parser trích còn thô (validate bộ-trích khi có output). **(1) ✅ viết bản đăng-ký-trước MỚI `report/_archive/85` (thay report/56 v1, giữ 56 làm bản ghi)** — trục ĐÚNG chính (coverage action∧target trên AC app-unseen in-distribution, Student vs Teacher-BASE) + trung thực phụ (MobileViews Tier2) + ngưỡng bơm-lỗi đóng băng + 3 kết cục. **(4) ⏸ construct-validity NGƯỜI = HOÃN** (cần output model thật, chưa train). **→ Xong khâu FREE cốt lõi.** **[số app + lát ✅ chốt vào report/85 19/7]:** test set = **app_unseen split CHÍNH THỨC 631 ep** (reece124); app CỰC đa dạng (~114 distinct/200 ep, phần lớn singleton → G lớn ~150-250) → **trục ĐÚNG dùng wild-cluster bootstrap, KHÔNG exact sign-flip; trục TRUNG THỰC (MV G=12) giữ exact sign-flip**. **BỎ "lát gần-miền"** (hedge cross-dataset, nay in-distribution nên vô nghĩa + tránh cherry-pick). Gán app = open_app+trích-goal (~72%). **[MDE ✅ 19/7 — `report/86`, code `harness/mde_pilot.py`, ✱ đã tốn ~$0.5 gpt-4o-mini vision]:** đo teacher trên ảnh thật AC app-unseen (26 app, ~85 bước): **teacher điểm-đúng = 30% → KHÔNG suy biến sàn-0** (phần này VẪN ĐỨNG); ~~MDE ≈ 8-9 pp @ G=150-200 → đủ lực~~ ⛔ **G đếm sai file → MDE thật ≈12.5-14.4pp** (vẫn dưới ngưỡng nhưng SÁT). Ngưỡng 15-20pp vốn là cơ chế chữa cháy của trục MobileViews, trục ĐÚNG phải có ngưỡng riêng. Hướng hiệu ứng kỳ vọng DƯƠNG (student train-trên-AC-gold có lợi-thế-sân-nhà vs teacher zero-shot). Giới hạn khai: thước per-bước nghiêm (nhiều-bước-hợp-lệ, gold ghi một) → 30% là cận-dưới, headline coverage-episode cao hơn. ⛔ ~~report/85 giờ ĐỦ ĐIỀU KIỆN COMMIT~~ — **KHÔNG đủ điều kiện; đã ra bản-vá-1 ngày 19/7, phải sửa V1-V4 rồi commit lại** (chỉ còn chốt số-app-chính-xác + [MDE trung thực MV] lúc build). ⛔ **Việc kế ĐÃ ĐỔI → xem khối 🚨 đầu file: A→B→C→D→E rồi mới train.** Tóm gần đây: `report/83`; kết quả free-prep: `report/84/85/86`.
->
-> **Thứ tự đọc khi cần đào sâu:** `report/00` (đầu tiên) → **`report/70` (TẤT-CẢ-TRONG-MỘT dễ hiểu, có PDF)** hoặc `report/54` (bản kỹ thuật tự-đủ) → **`report/71` (PIPELINE CUỐI đã chốt + plan gốc)** + **`report/72` (PLAN dán-chat-mới)** → `report/56` (ngưỡng đã khoá) → `report/65` (6 nghi ngờ) · `report/63` (vòng nâng cấp) → `report/KE_HOACH_2_BAI_BAO.md` (2 bài) → `report/53` (khi bắt tay code). Kết quả 3 vòng: `report/66/67/68`. Nền: `report/61`+`62`+`64`. Log gốc `report/50/52/55/43/44/48` chỉ mở khi tra "vì sao quyết định X".
->
-> **⚠️ "7 vòng debate là ĐỦ, chỉ còn THỰC THI" — câu này viết 12/7, nay đã lỗi thời.** Vòng 16-17/7 tìm được nghi ngờ thật (matcher). Nhưng cách xử vẫn là **kill-test free chạy trước**, KHÔNG mở deep-research/debate mới trước khi K1/K2 có số.
->
-> **⚠️ BỘ THÍ NGHIỆM — ĐỪNG DÙNG NHẦM:** bộ thật của khung model = **TN0–TN7 (Tier 1/Tier 2)** ở `report/54` mục "Bộ thí nghiệm đầy đủ" (nguồn gốc: `report/53` §5 + `report/56`). Bộ **E1–E16** ở `report/43` Ch.13 + `report/47` là của **khung prompting CŨ ĐÃ BỊ THẦY BÁC** — chỉ còn nhóm validate-thước-đo (E4–E7) được tái dùng, đã gộp vào TN5/TN6. `report/43:1211` trỏ "M1–M5 ở Chương 0 §0.10" là **CON TRỎ HỎNG** (§0.10 giờ là "Rủi ro"; bảng M1–M5 ở `43:305` thuộc phụ lục RLVR đã bị bác) — đừng đi theo.
->
-> **⚠️ NHÁNH ĐA-MÀN (DG2) = NGOÀI PHẠM VI MÙA NÀY** — đã thiết kế xong + có trụ bình duyệt đủ 6 thành phần, nhưng treo trên cổng K-pair chưa chạy → để dành bài mở rộng. `report/54` có mục riêng dán cờ 🚩 để thủ khi thầy hỏi, KHÔNG xin duyệt chạy.
->
-> **Nếu §0 (dưới) mâu thuẫn với `report/00`/`report/54` → hai file report thắng** (mới hơn). Các mục §1–§6 khung prompting cũ đã bị §0 đè — chỉ giữ để tham chiếu kỹ thuật.
+| thư mục | chứa gì |
+|---|---|
+| `harness/` | mã dựng dữ liệu, train, sinh câu, chấm điểm, runbook Colab/Kaggle |
+| `report/` | ghi chú và báo cáo đánh số; `report/papers/` = ghi chú tài liệu tham khảo |
+| `runs/` | kết quả chấm — ba nhánh chính ở gốc, `gate_a/` · `paraphrase/` · `floor/` · `venus/` (chưa chạy) |
+| `paper/fair2026/` | bài FAIR (LaTeX, IEEEtran) |
+| `thesis/` | luận văn LaTeX |
+| `slides/` | `LUAN_VAN_SLIDE.pptx` + `build/` + `latex/` |
+| `_bundles/` | gói zip mang lên Colab/Kaggle (`make_bundle.py` dựng lại được) |
 
-> Auto-load khi làm việc trong `D:\Master\Thesis`. Trao đổi với user bằng **tiếng Việt**.
-> Nội bộ gọi tắt **DG1 = một màn**, **DG2 = nhiều màn**; nhưng **trong SLIDE/thuyết trình phải nói "một màn / nhiều màn", KHÔNG dùng chữ "DG1/DG2"**.
+`harness/` và `report/` **giữ nguyên tên** (597 và 1991 tham chiếu; layout gói zip mà runbook
+Colab phụ thuộc cũng dùng tên `harness`).
+
+**Luật đọc kết quả:** tải từ Kaggle về **đặt thẳng vào thư mục của phép đo đó**
+(`runs/README.md` ghi rõ). Đã có lần bốn tệp lạc vào `report/papers/`, mất một lượt dọn.
+
+## 📚 Đọc file nào
+
+| cần biết | mở |
+|---|---|
+| cơ chế kỹ thuật toàn dự án, từ đầu | `report/112_HIEU_TOAN_BO_KY_THUAT.md` |
+| đang ở đâu | `report/109_BAN_DO_HIEN_TAI.md` |
+| phải làm gì (đăng ký trước, đã niêm phong) | `report/106_DANG_KY_TRUOC.md` |
+| đã đo được gì, số nào tin tới đâu, số nào đã rút | `report/108_DA_LAM_DUOC_GI.md` |
+| phân tích bốn nhánh + sàn | `report/113_PHAN_TICH_BON_NHANH.md` |
+| tiền lệ đã tra (executability, Zhao, GCoT) | `report/114_TIEN_LE_CAN_XAC_MINH.md` |
+| nhật ký chạy máy Colab chi tiết | `report/110_PHIEN_0_COLAB_11_8.md` |
+| script trình bày với thầy | `report/111_SCRIPT_GAP_THAY_12_8.md` + `slides/LUAN_VAN_SLIDE.pptx` |
+| nguồn từng con số trong bảng trích từ bài khác | `report/105_NGUON_SO_BANG_GOC.md` |
+| cách chia hai bài báo | mục *Hai bài báo* trong file này — ⛔ **KHÔNG** dùng `report/KE_HOACH_2_BAI_BAO.md`, bản đó đã chết |
+
+Mâu thuẫn thì: `106` thắng về *phải làm gì* · `108` về *đã đo được gì* · `109` về *đang ở đâu* ·
+`112` về *cơ chế hoạt động*.
 
 ---
 
-## 0. ⚠️ BƯỚC NGOẶT 2026-07-08 — ĐỌC TRƯỚC TIÊN (đè lên khung cũ §2–§4 khi mâu thuẫn)
+## ⭐ TRẠNG THÁI 20/8/2026 — S2 HẠT GIỐNG 101 ĐÃ TRAIN + ĐÃ CHẤM: **57,2%, THẤP HƠN S1**
 
-> **📍 FILE TỔNG HỢP MỚI NHẤT (2026-07-12): `report/00_TONG_HOP_TAT_CA.md`** — gộp trọn context (đề tài · model · 2 bài FAIR/VCL · lịch/chi phí · trạng thái · việc tiếp theo · bản đồ file) vào 1 file, đọc-đầu-tiên. Các bullet §0 dưới là log quyết định chi tiết theo thời gian; file 00 là ảnh chụp gọn tại 2026-07-12.
+| trần **75,7** | S1/202 **59,6** | S1/101 **59,1** | **S2/101 57,2** [55,4–58,9] | Base **47,6** |
 
-- **Thầy BÁC khung hiện tại** vì *"chủ yếu prompting (gpt-4o-mini API + so embedding), chưa thấy MODEL đâu"*. Yêu cầu cứng của thạc sĩ trường: **luận văn PHẢI có một MÔ HÌNH do học viên HUẤN LUYỆN**, không chỉ ghép công cụ qua prompting. Thầy góp ý: pipeline vẽ từng-bước-nhỏ · mỗi bước gắn một model · mục tiêu = tạo ra model.
-- **ĐÃ CHỐT hướng (2026-07-09, sau 3 DEBATE + 2 deep-research):** **"FAITHFUL DISTILLATION"** — fine-tune (**SFT-LoRA, KHÔNG RL**) một VLM nhỏ **Qwen2.5-VL-3B** làm bộ **SINH hướng dẫn**, chưng cất từ teacher gpt-4o-mini nhưng **chỉ trên dữ liệu ĐÃ LỌC BỊA** (qua lớp trung-thực-hoá). Đóng góp = **quy trình lọc-faithfulness tạo data + model on-device** (KHÔNG phải "distillation" trần). **Đo bằng %fallback↓/hữu-ích + robust-khi-không-VH** (KHÔNG đo faithfulness-sau-hậu-kiểm vì bão hoà); chống vòng lặp (lọc `nomic` ≠ chấm `bge-m3`+judge+người), held-out theo APP, paired design. Ràng buộc user: **model=đóng góp chính, eval no-gold=chương phụ, <3 tháng, cắt nhiều-màn khỏi train**. → **Kiến trúc đầy đủ + trụ citation: `report/43` CHƯƠNG 0** (đã viết lại 2026-07-09); chi tiết debate + 8 điều kiện: `report/50` §9. **ĐÃ BỊ BÁC (đừng làm lại):** grounding-RLVR (§7), generator-RLVR + classifier (§8). Trụ bình-duyệt: VGA (EMNLP24), KnowAda (NAACL25), BLIP-CapFilt (ICML22), ALLaVA, LLaVA-KD (ICCV25), VLsI (CVPR25), Mind-the-Gap (ICLR25). FEWL = **preprint bổ trợ** (chưa xác nhận venue bình duyệt — verify 2026-07-12, đừng xếp chung hàng "trụ bình-duyệt" ở trên).
-- **KHÔNG làm lại từ đầu:** 3 dataset + bộ thước đo no-gold + literature **GIỮ NGUYÊN** (tái dùng để train/đo model). Chỉ đổi **TRỤC trình bày** (pipeline-prompting → train-model). Mục tiêu mới ~ *"Xây dựng mô hình sinh hướng dẫn GUI bám-màn"*.
-- **Compute:** user sẽ **mua Colab Pro** (đủ LoRA/QLoRA 3B-7B; KHÔNG đủ train from-scratch lớn).
-- **⚠️ 2026-07-09 DEBATE VÒNG 4 (tính-mới) XONG** (`wf_0dda570e-48a`) → **`report/52_debate_tinh_moi_faithful_distillation.md`**: pipeline SỐNG nhưng **KHÔNG được nói "quy trình lọc-faithfulness MỚI"** (đã có STaR/KnowAda/CapFilt/VGA). Tính mới thu hẹp về **2 điểm**: (a) lọc bằng nguồn NGOÀI có cấu trúc (VH, không self-probe) cho hành vi rủi-ro-cao; (b) **TRỤ THỰC NGHIỆM SỐ MỘT = faithfulness khi TẮT VH lúc suy luận** (held-out theo app, có thể null thật — đây là nơi quyết định sống-chết của luận văn, phải pre-register ngưỡng trước pilot). Ablation raw-vs-filtered chỉ là điều-kiện-cần, KHÔNG phải trụ. Phải thêm citation: STaR (Zelikman 2022), FaithDial/BEGIN (Dziri TACL22), WinDOM/Trust-the-Right-Teacher/LiteGUI/CORA (dòng GUI-agent 2026). report/43 Chương 0 đã vá theo hướng này.
-- **📌 FILE ĐỌC-HIỂU-TRỌN-PIPELINE — TỰ THÂN ĐẦY ĐỦ, KHÔNG CẦN MỞ FILE KHÁC (2026-07-12):** **`report/54_PIPELINE_FINAL_DOC_HIEU_TOAN_BO.md`** — gộp TOÀN BỘ nội dung từ report/50/52/53/55 vào một file: Phần 1 = giọng người-thường dễ hiểu (bối cảnh, ý tưởng, tính mới, đủ-ngưỡng-thạc-sĩ, rủi ro); Phần 2 = phụ lục kỹ thuật đầy đủ (config YAML, data schema, công thức thống kê, 11 rủi ro kỹ thuật, bảng so sánh precedent, lịch sử quyết định). report/43/50/52/53/55 giữ lại làm log gốc, KHÔNG cần đọc nữa — mọi cập nhật nội dung từ nay ưu tiên sửa thẳng vào report/54. **7 vòng debate coi như ĐỦ** — việc còn lại là THỰC THI (pilot hạ tầng + gặp thầy), không phải research thêm.
-- **⚠️ 2026-07-12 AUDIT ĐỘ VỮNG PIPELINE (Fable 5, đối chiếu 64 quyết định + xác minh citation/thống kê qua web):** verdict **CẦN-VÁ → ĐÃ VÁ cùng ngày**. Thiết kế đứng vững (60/64 quyết định khớp nhất quán report/50→54, không bị nghiên cứu 2025-2026 nào scoop), nhưng phát hiện 6 lỗ tài liệu/pre-registration đã vá thẳng vào `report/54` (Phụ lục E chủ yếu) + `report/53` §5.2/§5.6: (1) định nghĩa "đủ lớn" (Δ_train) ở Tier 2 từng mâu thuẫn giữa 2 file — giờ CHỈ CÒN một định nghĩa (đo trên 18 train-apps, cùng điều kiện tắt-VH như Tier 2); (2) Tier 1 giờ có ngưỡng đậu/rớt bằng số (trước chỉ định tính); (3) công thức MDE thêm vế cận-trên thận trọng + phương án dự phòng 15/15; (4) thêm bước dedup perceptual-hash (phòng 2 app khác tên cùng template UI); (5) **UI-R1 = AAAI 2026, KHÔNG PHẢI AAAI 2025** (đã sửa ở dòng trên + report/50) — bài được AAAI chính thức chấp nhận cho kỳ 2026, hội nghị họp 1/2026; (6) khoá thứ tự thực thi (freeze split + commit pre-reg TRƯỚC bất kỳ lệnh gọi API/GPU nào, kể cả pilot). **KHÔNG có lỗi thiết kế nào phải làm lại** — chỉ vá tài liệu, tuần 1 vẫn bắt đầu bằng `dg3_freeze_split.py` như kế hoạch.
-- **⚠️ 2026-07-10 DEBATE VÒNG 5 (đủ-ngưỡng-thạc-sĩ + build-plan) XONG** (`wf_a4401c9d-f93`) → **`report/53_ke_hoach_build_model.md`**: verdict **ĐỦ-CÓ-ĐIỀU-KIỆN** (chuẩn thạc sĩ KHÔNG đòi SOTA, chấp nhận đóng góp constructive/technological — Rutgers/Auckland/UIC + Thông tư 23/2021/TT-BGDĐT). **Điều kiện bắt buộc: TÁCH 2 TẦNG thực nghiệm** — Tier 1 (Student-lọc vs Student-RAW, VH vẫn có lúc suy luận, gần chắc dương = lưới an toàn) và Tier 2 (Student vs Teacher-BASE, TẮT VH lúc suy luận = trụ chính, có thể null). Báo cáo ĐỘC LẬP để null ở Tier 2 không kéo sập Tier 1. Kế hoạch build CỤ THỂ (framework LLaMA-Factory, QLoRA r=8/alpha=16 freeze-vision, split app 18/12, exact sign-flip test G=12, ngưỡng đậu/rớt pre-register) đã chốt trong report/53, kèm 11 rủi ro kỹ thuật đã rà + cách né. Việc bắt buộc trước khi chốt với thầy: pilot hạ tầng 5-10 app + nói trước khả năng null Tier 2.
-- **Deep-research XONG** (`wf_ed61af89`, verify 20/25 claim) → **`report/50_deepresearch_model_centric.md`** (bản chốt: xếp hạng + khuyến nghị + chi phí). **Trụ bình duyệt neo hướng mới:** UI-R1 (arXiv 2503.21620, chấp nhận **AAAI 2026** — KHÔNG PHẢI AAAI 2025, sửa 2026-07-12; reward point-in-bbox, 136 mẫu) · SE-GUI (NeurIPS 2025) · GUI-Actor (NeurIPS 2025) · ZonUI/Qwen-GUI-3B (WACV 2026, LoRA 3B trên 1 GPU 24GB). Còn lại = preprint (verify ID trước khi trích). **Compute:** Colab Pro+ ~$100–150 cả luận văn (hoặc thuê GPU <$50). **⚠ Cảnh báo:** precedent là agent-bấm-nút CÓ gold → đóng góp model đặt ở grounding/verifier, phần sinh hướng dẫn giữ no-gold. Chi tiết: memory `advisor-pivot-must-train-model`.
-- **HỆ QUẢ:** §2–§4 bên dưới (khung "hai đóng góp = hệ thống + đánh giá", pipeline prompting) là **bối cảnh CŨ đang chờ tái khung** — *nội dung kỹ thuật (dataset/metric/citation) vẫn đúng & tái dùng*, nhưng "đóng góp A = hệ thống prompting" sẽ đổi thành **"đóng góp = MÔ HÌNH train được"**. Deck v2 (22 slide) + v3 (chỉ-pipeline) + report/38/43 hiện vẫn theo khung cũ → cập nhật SAU khi chốt hướng. **KHÔNG xoá report cũ** (user định xoá nhưng đã can — phần lớn tái dùng được; nếu dọn thì ARCHIVE, không xoá).
+Mẫu số **4.463** cho mọi nhánh (`score_run.py:516` cho câu rỗng vào quần thể với `exec = 0`;
+câu *"cùng 4.462 bước"* ở các file cũ **không chính xác**). Ghép cặp **S2−S1/101 = −1,93 pp**
+[−3,06 · −0,75]; **S2 vẫn hơn Base +9,59 pp**. `action_ok` 94,9% ⇒ không hỏng cơ học.
 
----
+⛔ **MỚI MỘT HẠT GIỐNG ⇒ CHƯA ĐỌC Δ.** Luật (`report/106` mục (w)) đòi **trung bình hai hạt
+giống**; nhiễu giữa hai hạt giống S1 đo được ±1,3 pp. Giữ nguyên thì Δ rơi dải **TRẮNG**
+(−2,8…+1,7) = *kết quả âm có kiểm soát*, một trong bốn kết cục đã đăng ký trước.
 
-## 1. Đề tài (CHỐT)
+**▶️ VIỆC ĐANG CHỜ: train s2 hạt giống 202** — ô 5 (`SEED = 202`) → ô 16 → ô 7b → ô 8 của
+`harness/S2_DAN_THANG.md` (nay có **ô 1–10b train · 11–16 sau train**). Luật đã khoá **trước**
+khi nhìn điểm: **202 vẫn chạy bất kể con số**, trừ hỏng cơ học (`exec < 12,0%` hoặc
+`action_ok < 85%`). Bỏ nhánh lúc này thì mọi Δ báo về sau đều **chọn lọc theo kết quả**.
+⛔ **Đừng** đổi thước · đổi luật cắt `<desc>` · chọn điểm lưu khác. Dự án đã tự khai **hai lần**
+nới ngưỡng sau khi thấy điểm — đừng có lần thứ ba, nhất là khi sửa sẽ làm số **đẹp lên**.
 
-- **Tên:** Sinh tự động hướng dẫn sử dụng phần mềm bằng LLM, từ ảnh giao diện (UI screenshot) + câu hỏi use-case.
-- **Hợp đồng I/O:** vào = **1 ảnh** (một màn) **hoặc N ảnh đã xáo trộn** (nhiều màn, qua input router) + 1 câu hỏi ngôn ngữ tự nhiên → ra = **hướng dẫn từng bước** cho người đọc, bám ngữ cảnh ảnh.
-- **Tính chất:** multimodal (ảnh+text→text). **KHÔNG** có dataset hướng dẫn chuẩn do người soạn để làm ground truth → đó là cái khó trung tâm.
-- **Bài báo neo khung đánh giá:** Chim, Ive, Liakata — *Evaluating Synthetic Data Generation from User Generated Text* (**Computational Linguistics 51(1):191–233, 2025**, tạp chí, KHÔNG phải "ACL 2025"). Ta KHÔNG kế thừa bài toán sinh (họ text→text), chỉ **kế thừa khung ĐÁNH GIÁ** (Intrinsic + Extrinsic) cho "synthetic text không có đáp án chuẩn".
+### 🔬 Chẩn đoán: 7,3% số bước gánh 34% chênh lệch (`report/110` 4j-18 · `harness/phan_tich_s2.py`)
 
----
+Lát cắt **đăng ký trước 19/8**, trước khi có bất kỳ điểm S2 nào:
 
-## 2. HAI đóng góp NGANG NHAU (BẤT BIẾN — user rất kiên quyết, ĐỪNG ĐỂ TRÔI)
+| nhóm | n | S1 | S2 | Δ |
+|---|---|---|---|---|
+| **CÓ** kích hoạt (sinh `<desc>`) | 4.138 | 62,2% | 60,8% | **−1,38** |
+| **KHÔNG** kích hoạt | 325 | 19,7% | 10,8% | **−8,92** |
 
-> **⚠️ CẬP NHẬT 2026-07-08 (§0 đè lên phần này):** thầy yêu cầu luận văn phải TRAIN MODEL thật → khung "đóng góp A = hệ thống prompting" đang được tái khung thành **"đóng góp = MÔ HÌNH train được"**. Đóng góp B (phương pháp đánh giá no-gold) GIỮ, thành *tín hiệu train + cách đo model*. Phần dưới là lý lẽ cũ (vẫn hữu ích để hiểu vì sao A không phải "chỉ engineering"), nhưng **trục chính đã đổi** — xem §0.
+Nhóm 325 là chỗ mô hình **đoán sai loại thao tác** — viết *"swipe up"*, *"go back"* thay vì gọi
+tên nút. Trần ở đó **68,3%** ⇒ bước giải được, thước không mù. ⭐ **Base gọi đúng loại thao tác
+nhiều hơn CẢ HAI bản đã huấn luyện** (83,4% vs S1 55,1% vs S2 38,8%) ⇒ đây là **cái giá của
+SFT**, S2 chỉ khuếch đại. Giả thuyết chưa kiểm: tập dạy chỉ gắn khai báo cho bước **chạm** nên
+mô hình học tắt *"có khai báo ⇔ là chạm"* ⇒ nhánh **`s2_nopoint`** nay đáng chạy hơn hẳn.
 
-- **(A) HỆ THỐNG sinh hướng dẫn bám-sát-màn** = **lớp trung-thực-hoá** (đối chiếu accessibility tree/VH → bước bịa thì viết lại thành **mô tả bằng lời, KHÔNG đoán nút khác**; model-agnostic, triển khai được) **+ khối sắp thứ tự màn** (hỏi cặp → Copeland → phá vòng min-feedback-arc-set, dùng 5 cue).
-- **(B) PHƯƠNG PHÁP ĐÁNH GIÁ** không-gold, không-tự-chấm (một màn + nhiều màn).
-- **Trục phân định hai nhánh = "CÓ gold trajectory để chấm hay KHÔNG"** (*gold trajectory* = chuỗi thao tác đúng có sẵn trong dataset).
-- ⚠️ **KHÔNG hạ A xuống "chỉ engineering".** Đòn "faithfulness by-construction" là **câu hỏi cần thủ**, không phải lý do demote. Cách thủ: (1) faithfulness tăng vì hệ ĐẠT MỤC TIÊU THIẾT KẾ; (2) báo trung thực **tỉ-lệ-bịa-bản-gốc + %fallback** (không khoe 100%); (3) A là research nhờ **đối-chứng-thất-bại đo được** (phương án "đoán nút gần nhất" → lỗi ngầm → chốt "chỉ mô tả"); (4) DG2/Step-SR cho **con số năng-lực-thật**.
-- **ĐIỀU KIỆN giữ "ngang nhau": DG2/Step-SR PHẢI ra số dương thật.** Trọng lượng A đến từ **PHÁT HIỆN thực nghiệm** (đo bịa nhiều model + đối-chứng-thất-bại + DG2 sắp-thứ-tự + phân-tích-cue), KHÔNG từ độ phức tạp code.
-- Vẫn **KHÔNG claim SOTA leaderboard** (setup khác: sinh hướng dẫn cho người, không phải agent bấm máy). "null vẫn đậu" áp cho nhánh B + phần đo-cơ-chế; claim chắc-thắng của A kỳ vọng DƯƠNG.
-- **Tách 2 bài — CHỐT 2026-07-12 (bản 3, sau deep-research venue + trao đổi user): NỘP CẢ HAI mùa này, tách theo DỮ LIỆU/GÓC-NHÌN (không phải một-màn/nhiều-màn nữa vì nhiều-màn chưa kịp build):**
-  - **FAIR (nộp TRƯỚC 15/8 · TIẾNG ANH · danh giá) = BÀI MÔ HÌNH flagship** (Faithful Distillation, Qwen2.5-VL-3B, Tier1/Tier2 định lượng trên MobileViews-English). Hợp FAIR (có track VLM). = chở yêu-cầu-train-model của thầy. **KHÓ + GẤP.**
-  - **VCL (nộp SAU 30/8 · TIẾNG VIỆT · dễ hơn) = BÀI SINH-TIẾNG-VIỆT** (cho model — train English — sinh hướng dẫn BẰNG TIẾNG VIỆT trên màn MobileViews English có sẵn + đánh giá no-gold; câu hỏi = chuyển-giao Anh→Việt). **KHÔNG cần dataset tiếng Việt** (đã quét MobileViews local 231 file → chỉ 2 màn chữ Việt lẻ, không có app Việt; user không tự chụp được → góc "app Việt" bỏ). Output tiếng Việt + câu hỏi khác → phân biệt FAIR; ⚠ data nguồn dùng chung nên overlap cao hơn, bù bằng output+câu-hỏi khác. **Smoke-test tuần 1:** model sinh tiếng Việt dùng được không → nếu tệ, fallback bài "phương-pháp-đánh-giá thuần" (headline bơm-lỗi). User xác nhận VCL "miễn có chất ngôn ngữ là được" → fit OK.
-  - **FALLBACK CỨNG: VCL = sàn chắc, FAIR = stretch.** FAIR 15/8 không kịp → BỎ FAIR giữ VCL, model đi venue sau. Không để FAIR làm hỏng VCL.
-  - **Nhiều-màn (Copeland+min-FAS) + learned reranker (tuỳ chọn +~$10/+~5-6 ngày)** = để dành bài tiếng Anh mở rộng sau (FAIR'27/quốc tế), KHÔNG kịp mùa này.
-  - **⚠ Rủi ro:** tải nặng (build+2 bài, 1 tiếng Anh, ~7 tuần); salami-slicing (chống bằng khác-data+khác-câu-hỏi+trích-chéo). **CHƯA verify (đừng bịa):** CFP/deadline VCL2026 (30/8 = user nhớ), dual-submission policy 2 venue, index/tỉ-lệ-nhận. **Nguồn venue:** deep-research `wf_ef24768f`. Chi tiết đầy đủ: `report/KE_HOACH_2_BAI_BAO.md` (bản 3, §0 = quyết định + context).
+**Bốn lời giải thích thay thế ĐÃ LOẠI:** độ dài câu (âm ở cả lát dài lẫn ngắn; phân bố hai
+nhánh như nhau) · lát cắt app (âm cả ba) · lỗi `canon_action` go-back (Δ −1,93 → −1,86 khi
+`strict_back`) · khai báo rác OCR (26 bước, Δ **+7,69**, p=0,63 — ngược chiều).
+⚠️ Giới hạn phải khai: nhóm 325 định nghĩa bằng **hành vi của chính S2**.
 
----
+### Bốn bẫy của lượt train, tái diễn mỗi lần dựng lại máy
 
-## 3. Pipeline (CHỐT — một hệ duy nhất, input router)
+**① Dữ liệu trên Drive là bản tiếng Việt.** Mục sửa đổi (q) ngày 14/8 đổi nhãn khai báo sang
+tiếng Anh; gói `derived.tar.gz` trên Drive vẫn là bản cũ. Đã dựng lại 18/8, cất ở
+`MyDrive/thesis/derived_train_en.tar.gz` (bản Việt sao lưu `branches_vi_0818/`).
+⚠️ **Phiên đứt thì sau ô 2 PHẢI bung `derived_train_en.tar.gz` đè lên** — ô 2 bung
+`derived.tar.gz` là bản CŨ, quên bước này là train trên dữ liệu khác mà log không báo gì.
+Kiểm ba phép đã đạt: 0 tiếng Việt ở khuôn mẫu · 9/9 bất biến · s2r ghép độ dài token 99,9%.
+`total_flos` bản Anh 10.812.978 vs bản Việt 10.816.688, lệch **0,03%** ⇒ đổi ngôn ngữ không đổi
+độ dài chuỗi, xác nhận (q) là thay đổi thuần từ vựng bằng một con số độc lập.
 
-> **⚠️ KHUNG CŨ — nội dung kỹ thuật vẫn TÁI DÙNG cho hướng model** (VLM-mù → so-embedding vs VH → viết-lại là chính lớp lọc-bịa của Faithful Distillation). **DG2/nhiều-màn = HOÃN** khỏi mùa này. Bản chốt hiện tại: `report/54`.
+**② Ô thăm dò PHẢI `shutil.rmtree("/content/probe_s2long")` trước.** Không xoá thì
+LLaMA-Factory chạy tiếp từ checkpoint cũ, **nhảy qua** 20 bước rồi chạy đúng một bước: log vẫn
+in `Training completed`, vẫn có `total_flos`, trông y như đạt. Đọc bằng **hai con số**:
+`train_runtime` ~220 s (không phải ~15) và loss ~2,4 (không phải ~0,1).
 
-**DG1 (một màn) = 3 HỘP:**
-1. **VLM sinh MÙ** — chỉ thấy ẢNH + CÂU HỎI, **KHÔNG** thấy danh sách nút → bản BASE. (Câu hỏi cũng không chứa tên nút → model phải tự đọc ảnh, đó mới là chỗ nó bịa.)
-2. **THUẬT TOÁN so-embedding** đối chiếu từng tên nút với View Hierarchy → khớp (≥τ) / bịa (<τ). Không phải LLM.
-3. Bước bịa → **viết lại thành MÔ TẢ bằng lời** (KHÔNG đoán nút khác, KHÔNG tra VH gán tên). Đây là **PA2** (bỏ hẳn "correction" cũ vì correction sửa-bậy → silent error).
+**③ "Connecting" / "Not connected to runtime" trên trình duyệt KHÔNG phải máy chết.** 18/8
+tưởng đứt và suýt dựng lại; `elapsed_time` 6:24:50 cho 2.260 bước = 10,22 s/bước, khớp liền
+mạch từ bước 0 trong 0,2% ⇒ chưa hề đứt. Bằng chứng thật: PID còn sống, hoặc thư mục điểm lưu
+trên Drive có bản mới trong **~34 phút** (200 bước × 10,2 s). Theo dõi bằng Terminal Colab hoặc
+mở Google Drive từ điện thoại, không cần nhân Python.
 
-**DG2 (nhiều màn) = KẾ THỪA NGUYÊN DG1 + thêm STAGE-0 ở đầu:** N ảnh xáo → hỏi VLM từng CẶP "màn nào trước?" → **Copeland** (đếm cặp thắng, phá hoà tất định) → phá vòng mâu thuẫn (min-feedback-arc-set; **M2 2026-07-02: trọng số từ margin-Copeland/self-consistency/min-cardinality, KHÔNG dùng confidence VLM tự-khai vì calibrate kém**) → chuỗi đã sắp → chạy pipeline DG1 cho từng màn. **N=1 → Stage-0 rỗng → về DG1.** *(Nền peer-reviewed từng thành phần: `report/39` — pairwise Qin NAACL24 · Copeland Dwork WWW01 · min-FAS Ailon JACM08 · tác vụ Sort-Story EMNLP16 · τ Fagin SIAM06/Lapata CL06 · cue-attribution Gardner EMNLP20 [trụ khái niệm].)*
+**④ Tên trường thật trong `trainer_log.jsonl`:** `current_steps` · `total_steps` · `loss` ·
+**`lr`** (KHÔNG phải `learning_rate`) · `epoch` · `percentage` · `elapsed_time` ·
+`remaining_time`. **Không có `grad_norm`** — trường đó chỉ ở dòng stdout.
+⚠️ `elapsed_time`/`remaining_time` hỏng sau khi chạy tiếp; ô theo dõi tự tính bằng mốc neo.
+Đã kiểm `lr` chạy đúng lịch: bước 2.260, cosine tính 8,622e-05, trainer ghi 8,624e-05 (0,02%).
 
-**LUẬT VÀNG (chống leakage):** VH + đáp án vàng **CHỈ vào lúc CHẤM**, không vào lúc sinh/sắp. Câu hỏi không chứa tên nút. "Chấm baseline" là bước ĐÁNH GIÁ, không phải bước trong hệ deploy (deploy = sinh→kiểm→né bịa).
-
-**5 ORDERING CUES** (trả lời "model dựa vào đâu biết thứ tự"): gating · nav-affordance (Next/Back) · state-delta (toggle, ô trống→điền, badge) · title-progression · drill-down. Signal-attribution = **stratification một-cue** (chỉ giữ cặp phân biệt bởi đúng 1 cue), KHÔNG che pixel, KHÔNG tin lời model tự khai.
-
----
-
-## 4. Metric + tính hợp lệ (CHỐT)
-
-> **⚠️ KHUNG CŨ — metric/thống kê TÁI DÙNG để đo model** (trung-thực ALOHa · anti-circularity nomic-lọc/bge-m3-chấm · perturbation-validate · cluster-bootstrap). Đã bổ sung cho hướng model: exact **sign-flip G=12** + MDE + Tier1/Tier2. Bản chốt hiện tại: `report/54` Phụ lục E.
-
-**DG1 (so View Hierarchy):**
-- **Trung thực** = 1 − bịa/(bước-nhắc-nút) [ALOHa, NAACL 2024]. **Headline = TỈ-LỆ-BỊA BẢN GỐC** (~¼), KHÔNG phải ~100% sau sửa (trần do thiết kế). **(M4 2026-07-02: báo dạng "CÓ ĐIỀU KIỆN recall-VH" — loại nút icon-only/nhãn-chung khỏi mẫu số; ~¼ = quan sát sơ bộ 1 model, KHÔNG làm headline-phát-hiện tổng quát.)**
-- **Đúng-nhãn (label fidelity)** = gọi đúng tên hiển thị [**TỰ ĐỊNH NGHĨA — khai thẳng**, khớp-chuỗi ≠ clarity].
-- **Đúng-chỗ (grounding, point-in-bbox)** = (x,y) trong khung nút [SeeClick, ACL 2024; ngưỡng dung sai 14% từ AITW, NeurIPS 2023]. ⚠️ **(x,y) phải từ bộ trỏ ĐỘC LẬP kiểu ScreenSpot dự đoán từ tên+ảnh, KHÔNG lấy tâm bbox đã khớp** (nếu lấy tâm → tautology 100%). **(M1 2026-07-02: RA KHỎI headline một-màn — chỉ dùng ở DG2 [có gold-coords] hoặc đối chứng ScreenSpot-v2.)**
-
-**DG2 (so đáp án vàng):**
-- **τ thứ-tự-bộ-phận** = (C−D)/|M|, chỉ phạt **cặp bắt buộc** [**ĐÚNG TÊN = Fagin 2006 "Comparing partial rankings" + Lapata CL 2006; KHÔNG phải "Kendall τ-b"**]. Nhãn cặp-bắt-buộc **suy từ GOLD** bằng quy tắc nhân-quả (màn B chỉ hiện sau gold-action ở A), KHÔNG từ model/cue-detector (chống tự-chấm). Cặp tự-do (điền email/sđt) đảo vẫn đúng.
-- **Step-SR** (teacher-forced) = bước đúng/bước-gold; bước đúng = đúng loại thao tác VÀ sai lệch ≤14% [AndroidControl, NeurIPS 2024]. Trục tham chiếu chuẩn ngành, KHÔNG claim ngang leaderboard.
-
-**Anti-circularity:** QUYẾT matched/fallback = **nomic** (τA); CHẤM = **bge-m3 ĐỘC LẬP** (họ khác) + LLM-judge nhị phân khác-họ + token-overlap = **3 cơ chế**. (gpt-4o-mini là generator → LLM-judge KHÔNG dùng GPT-family.)
-
-**Validate metric = PERTURBATION tự động** (bơm lỗi đã-biết ĐỘC LẬP matcher, đo detection/false-positive/đơn-điệu) [Sai et al., EMNLP 2021]. Thầy KHÔNG ưa chấm-người → human-correlation = future-work, KHÔNG trong đậu/rớt. Đóng khung "perturbation = độ nhạy = điều kiện cần, chưa phải convergent validity".
-
-**Protocol validate matcher/judge (CHỐT — 6 nguyên tắc GIỜ ĐỀU có TRỤ peer-reviewed; chi tiết `report/27` §7 + `report/22` §7):** (1) matcher đo theo NGỮ NGHĨA + validate vs người 80–120 cặp → báo **P/R + Cohen's κ**, freeze τ [trụ: **ALOHa NAACL 2024**; bổ trợ CHAIR EMNLP 2018]; (2) gán-tay tối thiểu = few-pairwise/HITLC → giảm **~80%** [trụ: **Active Evaluation ACL 2022, Outstanding Paper** — số peer-reviewed là 80%, KHÔNG phải "89%"]; (3) judge KHÁC HỌ generator + neo người, KHÔNG validate judge bằng nhãn-LLM [trụ: **Panickssery NeurIPS 2024** + Zheng NeurIPS 2023]; (4) VH/a11y KHÔNG phải ground truth (>77% app thiếu nhãn) → biện minh hậu-kiểm+fallback [trụ: **Chen ICSE 2020** Distinguished Paper]; (5) validate metric CHÍNH = perturbation [trụ: **Sai EMNLP 2021** + Ribeiro ACL 2020]; (6) bỏ human-correlation làm cổng đậu/rớt [trụ: **Clark ACL-IJCNLP 2021**]. Preprint (Han 2510.09738 quy-trình-2-bước; Liu 2505.19176; Spiliopoulou 2508.06709) **chỉ bổ trợ**; nếu chạy 2-bước thì κ người-người **TỰ ĐO lại** (không mượn 0.801).
-
-**Thống kê:** cluster bootstrap theo **APP** (màn cùng app không độc lập) + CI 95% + Holm (đa-metric) + seed cố định + 10k resample + pre-register ngưỡng TRƯỚC khi nhìn kết quả + ≥30 episode/mốc N.
+**Ô 7b tiền bay — bảy phép kiểm 10 giây trước khi bấm train:** cfg đúng nhánh · không sót
+`max_steps` · `output_dir` rỗng · 64.567 mẫu · 0 tiếng Việt · **đường dẫn ảnh mở được** (sai
+prefix thì chết SAU 42 phút mã hoá token) · đĩa ≥20 GB · ~8.072 bước.
+⚠️ Ô 7b in **8.071** do làm tròn; trainer chạy **8.072** (`ceil(64.567/16)=4.036` ×2).
 
 ---
 
-## 5. Dataset (3 bộ, VAI CỐ ĐỊNH) + citation đã verify
+## ▶️ VIỆC KẾ — một danh sách duy nhất, thứ tự theo giá
 
-| Bộ | Nội dung | Gold? | Vai |
+Mọi danh sách "việc kế" cũ rải rác trong file đã bị danh sách này thay.
+
+1. **Train s2 hạt giống 202** (~26 giờ, ~126 đơn vị) → chấm (~5,6 giờ Kaggle, 0 đồng) → chạy
+   lại `harness/phan_tich_s2.py` → **mới** đọc Δ theo luật khoá.
+2. **Cắt 2 trang bài FAIR** (đang 10, giới hạn 8) — xem mục Bài FAIR.
+3. **Nhánh `s2_nopoint`** — nay đáng chạy hơn hẳn: nó tách *"có khai báo"* khỏi *"có toạ độ"*,
+   đúng chỗ chẩn đoán 4j-18 chỉ ra.
+4. **Phép B: bộ trỏ thứ hai `UI-Venus-Ground-7B`**, lát 500 bước, ~6 giờ Kaggle. Đóng giới hạn
+   nặng nhất còn mở (chưa thay dụng cụ lần nào). Mốc so tính sẵn **73,4 / 58,8 / 47,6**.
+5. ⛔ **Mìn chưa nổ:** `test_ac/descriptors.jsonl` **vẫn tiếng Việt** (dựng 9/8; mục (q) chỉ
+   dựng lại tập dạy). `infer_branch.py:480` nhét nó vào câu nhắc cho `--ceiling gold|filler`.
+   **Chạy `descriptor_label_build.py --split test` TRƯỚC** hai nhánh đó — không có ô 7b nào canh.
+
+**Ràng buộc tài nguyên:** Kaggle **30 giờ GPU/tuần** (mỗi lượt chấm 5,6 giờ ⇒ tối đa 5
+lượt/tuần, đừng dồn). Đơn vị Colab: **đếm lại trong phiên**, con số ghi trong file lỗi thời rất
+nhanh. Dataset Kaggle đã dựng: `thesis-score` (1,69 GB, 4.463 ảnh) và `thesis-preds` (805 KB).
+
+---
+
+## 📊 SỐ ĐANG DÙNG
+
+Tất cả chấm bằng UGround trên **cùng 4.462 bước chạm** (1 bước bị bỏ vì câu rỗng, cùng một bước
+`(18710, 1)` ở cả hai hạt giống ⇒ ghép cặp McNemar sạch).
+
+| nhánh | executability | KTC95 | hit_voronoi thuần | action_ok |
+|---|---|---|---|---|
+| Câu chuẩn của người (trần) | **75,7%** | [74,1 – 77,3] | 75,8 | 100 |
+| S1 hạt giống 101 | **59,1%** | [57,3 – 60,8] | 60,2 | 94,4 |
+| Mô hình gốc (Base) | **47,6%** | — | 48,9 | 96,5 |
+
+· McNemar đều p<0,001: S1−Base **+11,5 pp** (χ²=243) · Human−S1 **+16,6 pp** (χ²=580, c=843
+bước người trúng mà S1 trượt ← đúng vùng S2 nhắm) · Human−Base **+28,1 pp**.
+· **Hai hạt giống:** S1 hơn Base **+11,52 / +12,03 pp**; nhiễu giữa hạt giống **0,52 pp** ⇒ tín
+hiệu gấp **22×**. `total_flos`/bước **513.164 vs 513.229 (0,013%)**.
+· **MDE thật 2,2 pp** (bootstrap cụm, SE 0,79 pp, hệ số nở do cụm chỉ **1,10×**). Con số ước cũ
+2,7–4,5 pp đã rút.
+· **Cổng A ĐẠT:** sai số bộ trỏ trung vị **0,7%** (ngưỡng 3%); G hiệu dụng tập kiểm **454,3**.
+Sai số **theo từng nhánh 0,67 / 2,00 / 7,82** ⇒ cổng A chỉ chứng nhận cho nhánh trần.
+
+### Sàn của thước (đo 18/8, Kaggle, lát 800 bước, trần trên lát 74,9%)
+
+| nhánh | câu thành gì | điểm | KTC95 |
 |---|---|---|---|
-| **MobileViews** (preprint arXiv, ghi rõ v1/v3 khi trích) | ảnh + VH + bbox | KHÔNG | **một màn / DG1** |
-| **AndroidControl** (NeurIPS 2024 D&B, peer-reviewed) | episode nhiều màn + a11y tree + gold action mỗi bước | CÓ | **nhiều màn / DG2 + Step-SR** |
-| **ScreenSpot-v2** (OS-Atlas, **ICLR 2025**; gốc SeeClick ACL 2024) | ảnh + bbox chuẩn | — | **đối chứng grounding** + bù credibility MobileViews |
+| `f1_trong` | `"Tap the button."` mọi bước | **12,0%** | [9,7 – 14,4] |
+| `f3_lechman` | câu **thật** của bước khác — đúng văn phong, **sai màn** | **6,1%** | [4,5 – 7,9] |
+| `f2_khongten` | giữ vị trí, **bỏ tên** | 68,0% toàn lát · **61,1%** phần bị đụng | — |
 
-- Cả MobileViews LẪN AndroidControl đều CÓ nguồn phần tử (VH / a11y tree). Bộ chỉ-có-ảnh-trần → cần bộ dò (recall-conditioned, **cổng K1**). Thực tiễn: on-device có a11y tree LIVE qua AccessibilityService (trợ năng).
-- **AITW (NeurIPS 2023):** nguồn ngưỡng 14% = **trích bắt buộc**; làm dataset đối chứng = tuỳ chọn. **Mind2Web = future-work** (nhánh web, chỉ có DOM không bbox).
-- AndroidControl để đo DG2: **episode bị xáo trộn**, model xếp lại, gold verify. Số đã verify: 15,283 episode/833 app; mean ~5.5 step; p95=13. **Chưa có count theo từng N → phải tự đếm histogram (cổng KN).**
-- **Citation khác đã verify:** Chim = CL 51(1) 2025; oracle = Barr TSE 2015. Nguyên tắc: xương sống phương pháp chỉ trích peer-reviewed; preprint (OmniParser/Qwen) chỉ là hiện vật kỹ thuật.
-- **DATASET đã verify sâu (2026-07-03, deep-research+debate `wf_6d07419b` → chương chuẩn luận văn `report/44`):** MobileViews = **preprint arXiv 2409.14337** (v3 đổi tên "Million-scale"; **giấy phép MIT**; BUPT+Tsinghua; thu-thập TỰ ĐỘNG bằng bot VLM-DroidBot; **paper 1,2M nhưng bản công khai = 600K**, ta dùng **127 màn/30 app** [`kept_screens_final.json`, mở rộng 2026-07-06; pilot cũ 81/17 lỗi thời]; VH schema trường `class`+`bounds`lồng`[[x1,y1],[x2,y2]]`). AndroidControl = **"On the Effects of Data Scale on UI Control Agents", Li et al. Google DeepMind, NeurIPS 2024 D&B** (arXiv 2406.03679; **CC0**; người-thật Pixel ~1 năm; 8 loại thao tác; **test=1.542 KHÔNG phải 2.855**). ScreenSpot-v2 = **kèm OS-Atlas ICLR 2025** (gốc SeeClick ACL 2024; **apache-2.0**; 1.272 chỉ dẫn = 502 mobile/334 desktop/436 web; sửa 11,32% lỗi nhãn; bbox `[x1,y1,x2,y2]`).
-- **⚠ 5 ĐIỀU KIỆN CHỐT TRƯỚC KHI IN (report/44 §8):** (1) không in test "2.855"→dùng 1.542; (2) tính độ-phủ-nhãn VH (`dg1_vh_coverage.py`); (3) hiệu chỉnh khung toạ độ MobileViews (lệch width/height) TRƯỚC khi tính grounding; (4) đối chiếu tác giả OS-Atlas trên OpenReview; (5) KHÔNG khẳng định affiliation Xiaomi.
-- **5 cổng cứng:** K1 (đo recall detector) · KN (histogram độ dài episode) · KZ' (prior-art sắp-ảnh — đã GO) · KB (chống leak step-index: strip metadata + tái mã hoá ảnh + che status bar/đồng hồ/pin/badge + loại episode 2-ảnh trùng-pixel) · **K-pair (M2 2026-07-02: đo acc-pairwise THÔ của VLM vs gold TRƯỚC khi tổng hợp Copeland — nếu ~0.5 thì Stage-0 vô hiệu, khai thẳng)**. KN + KZ' đã GO.
-- **Prior-art phải thừa nhận** (sắp-ảnh): Sort-Story (EMNLP 2016, dùng Spearman), Wu et al. (ACL 2022), RankGPT (EMNLP 2023, listwise). Độ mới ta = miền GUI + điều-kiện-hoá mục tiêu + gắn ordering→sinh hướng dẫn + partial-order từ gold + signal-attribution. Thêm related-work: VLM-SlideEval (2510.22045), Screen-flow (2503.06067), No Free Labels (2503.05061). **+ Must-cite 2025-2026 (freshness scan `report/42`, đã verify):** FaithScore (Findings EMNLP24, reference-free faithfulness LVLM — ta khác: verify với VH có cấu trúc) · Reliability-without-Validity (2606.19544, hậu thuẫn κ-headline) · LLM-as-Meta-Judge (2603.09403, gần ý-tưởng nhánh B → phải phân định miền GUI) · Ref-free-eval survey (2501.12011) · VECTOR/What-Happens-When (2512.08979, "VLM mù thời gian" → luận cứ DG2+anti-leak) · UI-TARS (2501.12326, phân biệt setup) · GUI-Odyssey (ICCV25)/AMEX/ScreenSpot-Pro (acknowledge landscape).
-- **Tiền lệ pipeline-đơn-giản-mà-đậu:** G-Eval / SelfCheckGPT / FActScore / RAGAS / ALOHa / BERTScore.
+· **Dải dùng được 62,9 điểm** (không phải 74,9, cũng không phải 35,7 như kịch bản xấu). Vị trí
+trong dải trên lát này: Base **58,3%** · S1 **74,4%**.
+· ⛔ **Dự đoán "sàn ≈40%" của phản biện BỊ BÁC.** Nó suy từ việc 40,4% số bước cả ba nhánh cùng
+trúng. **Suy sàn từ tỉ lệ đồng thuận là suy sai.**
+· ⭐ `f3` (6,1%) **thấp hơn** `f1` (12,0%), hai KTC không chồng lấn ⇒ **đòn nhiễm văn phong bị
+giết bằng số**: câu văn phong hoàn hảo mà sai nội dung ăn thấp nhất trong mọi thứ đã đo. Bộ trỏ
+thật sự đọc câu. Cộng phép "cùng nội dung khác văn phong" (+0,9…+1,9 pp, không ý nghĩa), giả
+thuyết văn phong bị đánh từ **hai hướng độc lập**.
+· ⭐ **Gọi tên đắt gấp 8 lần chỉ chỗ:** bỏ **TÊN** giữ vị trí **−28,5 pp** (193 bước, b=58 c=3,
+χ²=47,8, p<0,001) vs bỏ **VỊ TRÍ** giữ tên −3,5 pp (198 bước, b=8 c=1, p=0,046). Hai quần thể
+gần bằng nhau nên so trực tiếp được ⇒ chữ **"Element Identification"** ở nhan đề **ĐÚNG**.
+⚠️ Con số của bài là **−28,5 pp trên PHẦN BỊ ĐỤNG**, không phải −6,9 pp toàn lát — `f2` chỉ đụng
+24,1% số bước, pha loãng 4,15 lần.
+Đọc bằng `python3 harness/doc_san.py`; luật đọc khoá trước ở `harness/make_floor.py`.
 
----
+### Phép diễn đạt lại (17/8, trên câu chuẩn của người, lát 800)
 
-## 6. Trạng thái hiện tại (cập nhật 2026-07-08)
+| biến thể | đổi gì | phần bị đụng | executability | McNemar |
+|---|---|---|---|---|
+| `p1_verb` | động từ thao tác | 725 bước (90,6%) | 76,8 → **77,0** | b=13 c=14, p=1,000 |
+| `p2_order` | trật tự câu | 211 bước (26,4%) | 89,6 → **90,0** | b=0 c=1, p=1,000 |
+| `p4_both` | `p1`+`p2` cùng lúc | 203 bước (25,4%) | 90,1 → **91,1** | b=0 c=2, p=0,480 |
+| `p3_nopos` | **bỏ** mệnh đề vị trí | 198 bước (24,8%) | 89,4 → **85,9** | b=8 c=1, **p=0,046** |
 
-> **⛔ TRẠNG THÁI DƯỚI ĐÂY ĐÃ LỖI THỜI (mốc 2026-07-08, khung prompting).** Trạng thái MỚI NHẤT (2026-07-12) = **`report/00_TONG_HOP_TAT_CA.md` §6**. Giữ phần dưới chỉ để tham chiếu kỹ thuật kết-quả-sơ-bộ; ĐỪNG coi là việc-đang-làm.
+**Con số đi vào bài:** ba biến thể bảo toàn nghĩa (`p1`·`p2`·`p4`) = **1.139 bước viết lại · 30
+bước đổi chiều (2,6%)** · hiệu ròng **+0,35 pp**, KTC95 **[−0,59 · +1,29]** ⇒ mép dưới loại được
+mọi mức tụt > 0,6 pp. Đọc bằng `python3 harness/phep_a_ghep_cap.py` — **đừng** đọc
+`score_para_*.json` trần, con số tổng bị pha loãng 3,8 lần.
+· **Cơ chế: hỏng tất-cả-hoặc-không.** Bỏ mệnh đề vị trí không làm trung vị sai số nhích
+(0,24% → 0,24%) mà làm đuôi bung: p90 **6,88 → 31,16**, p95 **27,54 → 62,38**.
+· ⚠️ Phần bị đụng là phần **dễ nhất** (trần 89,6% vs 74,9% toàn lát). Bỏ vị trí ở câu khó có thể
+đắt hơn, **chưa đo**.
+· ⚠️ **Câu chữ:** viết *"bộ trỏ bền trước việc đổi động từ và đổi trật tự câu"*. **CẤM** viết
+*"bền trước diễn đạt lại"* — Jandial et al. đổi *cách mô tả phần tử*, nặng hơn hẳn; `action_ok`
+giữ 100% ở cả ba biến thể ⇒ phép viết lại này không đụng phần bộ trỏ phải giải. Và **CẤM** dùng
+hàng *"paraphrase 0,0%"* của bảng bơm lỗi để phản bác họ — bộ bơm lỗi không gọi bộ trỏ lần nào.
+Chi tiết: `paper/fair2026/PHEP_A_DIEN_DAT_LAI.md` · cơ chế: `report/112` §6.7.
 
-**Giai đoạn:** đề cương/thiết kế, có kết quả SƠ BỘ. Đã qua review sâu (3 agent) → phát hiện & VÁ circularity: matcher VỪA sửa VỪA chấm → faithfulness ~100% là tautology. Vá = PA2 (chỉ matched/fallback) + chấm bằng bge-m3 độc lập. Claim DG1 thu hẹp: **DUY NHẤT = "giảm tham-chiếu-nút-không-tồn-tại, giá = %fallback"** (bỏ claim đúng-nhãn; "sửa-đúng" để dành DG2/Step-SR).
+### Lát cắt và độ bền
 
-**Kết quả sơ bộ (gpt-4o-mini, mẫu nhỏ):** tỉ lệ bịa bản gốc ~¼ số bước; lớp đối chiếu nâng faithfulness ở mọi τ nhưng **CI còn chạm 0 (n nhỏ, 1 app cũ)**; fallback ~19%; label-fidelity & format đứng yên (no-harm). Bản chính (**127 màn/30 app**, `kept_screens_final.json`) **chưa chạy** (cần API).
+· **Năm luật chấm khác nhau** (`harness/rule_sensitivity.py`, 698 bước): trần trôi **56,6 →
+82,2%** nhưng **thứ tự ba nhánh không đổi ở luật nào**, chênh S1−Base nằm gọn **9,5–13,0 pp** —
+lá chắn mạnh nhất của chương đo lường.
+· **Thước tất định:** cùng chuỗi + cùng ảnh ⇒ cùng toạ độ, **0 bất đồng trên 1.625 phép so** qua
+bốn lượt độc lập khác thứ tự và cách gom lô ⇒ loại luôn khả năng kết quả phụ thuộc lô hay thứ tự.
+· **κ 0,867** toàn tập, **0,650 có điều kiện** trên 1.652 bước viết khác nhau — luôn trình kèm
+điều kiện.
+· **Không lợi thế sân nhà:** app đã-thấy **59,1%** (n=1.737) · chưa-thấy **59,0%** (n=78) ·
+không-gán-được **59,2%** (n=2.647). **95,6% app tập kiểm cũng có ở tập dạy**, nhưng 3.828/6.958
+bước (55%) **không gán được app** = *không biết*, cấm đọc thành *chưa thấy*.
+· **Thiên vị câu dài 5,4 pp** (câu >33 ký tự 61,9% vs ≤33 là 56,5%). Base dài trung vị 71 ký tự,
+S1 chỉ 33 ⇒ thiên vị nghiêng về Base ⇒ **S1 > Base là kết luận mạnh**. S2r kiểm soát độ dài
+*tiền tố*, không kiểm soát độ dài *câu ra* ⇒ **bắt buộc phân tầng độ dài khi đọc S2**.
+· **Thước mù 24,3%:** 1.083 bước câu người cũng trượt, 72% do bộ trỏ sai >14% bề ngang. Sai số
+lưỡng cực (trúng 0,4% · trượt 26,2%). 935 bước (21%) cả ba nhánh cùng trượt ⇒ **trần 75,7% là
+giới hạn DỤNG CỤ, không phải của ngôn ngữ.**
+· **Chỗ hỏng đúng chỗ S2 nhắm:** trong 1.824 bước S1 trượt, chỉ 251 do sai thao tác, **1.573
+(86%) là thao tác đúng mà bộ trỏ không tìm ra nút** ⇒ lỗi ở cách gọi tên/tả phần tử.
 
-**Deliverables trình thầy:**
-- `report/36` — thuyết minh đầy đủ DG1+DG2 (người mới hiểu, ví dụ số + Q&A giám khảo) — **NGUỒN-SỰ-THẬT phần một-màn** (thay `25` cũ đã archive).
-- `report/38` — **BẢN TRÌNH BÀY BẢO VỆ** (văn phong học thuật, bám slide, luận điểm + trích dẫn + phụ lục Q&A).
-- `LUAN_VAN_SLIDE.pptx` — **deck v11 = 17 slide** (văn phong học thuật, đủ 3 dataset, nói "một màn/nhiều màn"). Build: `ppt_build/build.js` (pptxgenjs, ảnh thật `_img/`).
+### Dữ liệu
 
-**Debate slide 2026-07-01 (5 phản biện→verify→tổng hợp; 19/32 sống): phán quyết nguyên-trạng THẤP–TB, ĐÃ VÁ 4 blocker vào deck v11 + file 38:**
-1. Mâu thuẫn ví dụ Confirm/OK → S9 đổi bước-ảo-giác thành "Mở Cài đặt" (nút không tồn tại); Confirm/OK CHỈ giữ ở label-fidelity; thêm quy tắc τ.
-2. Thiếu con số → THÊM slide "Kết quả sơ bộ" (nhãn trung thực: mẫu nhỏ/1 model/CI chạm 0/đang chạy 80+ màn) + hạ "ngang nhau" → có điều kiện DG2 dương.
-3. Grounding tautology → nêu rõ (x,y) từ bộ trỏ độc lập, không lấy tâm bbox.
-4. VH thiếu/nhiễu nhãn → khai độ-phủ-nhãn + loại nút nhãn-chung khỏi mẫu số + giới hạn.
-- **CÒN LÀM (free):** tính CON SỐ độ-phủ-nhãn thật từ mv_multiapp; verify venue citation a11y-tree không đầy đủ (Ross et al.) TRƯỚC khi trích.
+**Dạy:** 64.567 bước / 41.191 chạm (63,8%) / 12.895 tác vụ · OCR phủ 100% và qua kiểm chéo máy ·
+nhãn khai báo khớp cả 5 số tham chiếu dưới 1 điểm · **9/9 bất biến** · **rò rỉ dạy-kiểm = 0** ·
+phép ghép hai kho HF đúng (48% vs đối chứng lệch 20%, n=400).
+**Kiểm:** 6.958 bước / 4.463 bước chạm / 1.432 tác vụ · **139 bước chưa-thấy app (22 app)**.
+`history` trong câu nhắc **là câu chuẩn do người viết** ở các bước trước (trùng nguyên văn
+5.318/5.318) ⇒ khâu chấm là **teacher-forced trên ngữ cảnh**, mọi số tuyệt đối đọc kèm điều kiện đó.
 
-**Deep-research validate-metric: ✅ XONG.** (2026-07-01) 6 claim U1–U6 verify (5 SUPPORTED+1 PARTIAL, cả 6 preprint→bổ trợ) → `27` §6. **+ (2026-07-02)** tìm+xác minh **TRỤ peer-reviewed cho cả 6 nguyên tắc** (Panickssery NeurIPS24 · ALOHa NAACL24 · Active-Eval ACL22 · Sai EMNLP21 · Chen ICSE20 · Clark ACL-IJCNLP21) → `27` §7; đính chính số HITLC **89%→80%**. Protocol đầy đủ ở §4 trên + `22` §7.
+**Nguồn:** ghép hai kho HuggingFace theo `(episode_id, step_id)` —
+`HarrytheOrange/parsed_AndroidControl` (câu người viết cho cả 15.283 episode + `all_forest_dict.zip`
+= cây trợ năng 99.131 màn) với `ckg/AndroidControlParsedWithImages-20k` (ảnh).
+⚠️ Bản `ckg` đã parse thành định dạng agent nên **mất `step_instructions`** — đừng dùng làm nguồn dạy.
+⚠️ Cây trợ năng có trung vị 86 phần tử/màn nhưng **chỉ 12,6% có tên** ⇒ chỉ dùng cho vị trí, không
+thay được OCR ở khâu lấy tên.
+AndroidControl gốc = Li et al., Google DeepMind, **NeurIPS 2024 D&B** (arXiv 2406.03679, CC0).
 
-**+ (2026-07-02) nền peer-reviewed pipeline DG2:** cả 6 thành phần Stage-0 đã có trụ bình-duyệt (5 trụ chính-danh + (e) cue-attribution chỉ trụ KHÁI NIỆM Gardner EMNLP20 = chỗ đóng-góp-mới, không phải lỗ hổng) → **`report/39`**. Caveat: quote Copeland (Dwork) cần đối chiếu PDF; Screen-flow 2503.06067 = preprint.
+### ⛔ Số đã rút — cấm dùng lại
 
-**+ (2026-07-02) DEBATE giám-khảo với PIPELINE (5 phản biện→verify→chủ-tịch, workflow chạy xong 36 đòn/12 sống): PASS-CÓ-ĐIỀU-KIỆN — KHÔNG lỗi thiết kế; rủi ro = tài liệu + chưa-có-số. 5 MAJOR phải vá (chi tiết `report/40` §4):**
-  - **M1** rút point-in-bbox KHỎI metric một-màn → dời DG2 (tránh tautology tâm-bbox).
-  - **M2** thêm **cổng K-pair** đo acc-pairwise THÔ vs gold (sàn >0.5) TRƯỚC khi tổng hợp; **BỎ "cắt cạnh ít-chắc-nhất"** (VLM calibrate kém) → margin-Copeland/self-consistency/min-cardinality-FAS + ablation phá-vòng.
-  - **M3** thống kê: **wild-cluster bootstrap-t (Cameron-Gelbach-Miller 2008)** + báo G≈17 caveat under-coverage; **timestamp pre-reg = `git init` + commit report/22 TRƯỚC khi chạy** (repo hiện non-git!); số hiện = "exploratory".
-  - **M4** tính độ-phủ-nhãn VH → tỉ-lệ-bịa dạng khoảng "có điều kiện recall-VH" + loại nút icon-only/nhãn-chung; xoá overclaim file 36 d.99 ("có sẵn khung nút nên rủi ro bị chặn" — mâu thuẫn Chen ICSE20).
-  - **M5** đổi "hai ngang nhau" → **"ngang nhau CÓ ĐIỀU KIỆN (chờ DG2 dương)"** ở 36/38/slide; dời trụ chống-"chỉ-engineering" sang 3 chân ĐÃ CÓ (silent-error · tỉ-lệ-bịa-gốc · %fallback).
-  - Lá chắn giữ nguyên: luật-vàng chống-leak · đối-chứng-thất-bại đo được · nền peer-reviewed đầy đủ.
-  - **ĐÃ ÁP (2026-07-02, chỉ .md — user review + chạy code mai):** M1/M3/M4/M5 vào framing + pre-register (`report/22` §8) + `report/36` (bỏ overclaim "rủi ro bị chặn", grounding ra khỏi một-màn) + CLAUDE §3/§4/§5. Viết sẵn `harness/dg1_vh_coverage.py` (M4 — CHƯA chạy). **CẦN CHẠY CODE (mai):** M4 tính độ-phủ-nhãn, M3 `git init`+commit, M2 cổng K-pair khi prototype DG2. File A-Z người-mới: **`report/41`**.
+| số cũ | thật ra | vì sao |
+|---|---|---|
+| trần **70,0%** | **75,7%** | đo trên mẫu con 300, đo lại đủ 4.462 bước 15/8 |
+| `total_flos` **3.857.778.344 GF** | **4.142.257.957 GF** (513.164/bước) | đọc sai; lập luận "khớp ngoại suy 0,32%" còn **vòng tròn** |
+| MDE **2,7–4,5 pp** | **2,2 pp** | hệ số nở do cụm 1,10× chứ không phải 1,5–2× |
+| bộ trỏ trượt **84%** khi đổi diễn đạt | 84% = **năng suất của một agent đối kháng** trên desktop | xem mục Tiền lệ |
+| "UGround sạch, không có AndroidControl" | **SAI**, Bảng 1 có AC 47K | xem mục Giới hạn |
+| "bộ trỏ khác họ mô hình được chấm" | **SAI**, UGround-V1-2B dựng trên Qwen2-VL | như trên |
+| trung vị sai số trỏ **8% cạnh** | **15,0%** (`ground_pilot`) / **29,3%** (công thức cổng A) | hàm cũ chỉ lấy sai số của ca ĐÃ TRÚNG |
+| app_seen: **604 bước** chưa-thấy | **139 bước / 22 app** | chạy bằng bản mã có lỗi regex |
+| room **485 bước (10,9 pp)** | **741 bước (16,6 pp)** | kéo theo trần 75,7 |
+| dự báo sàn loss 0,548 | — | ngoại suy hàm mũ không mô hình hoá được nhịp epoch 2 |
 
-**+ (2026-07-03) FRESHNESS SCAN 2025-2026 (`report/42`, `wf_3d7cdc91`): KHÔNG lỗi thời, KHÔNG bị scoop.** Không ai ghép "sinh hướng dẫn cho người + no-gold eval GUI". Chỉ cần: (a) **thêm ~8 cite định vị** vào related-work (đã liệt §5); (b) **✱ nên thêm ≥1 generator đời mới** (GPT-4.1 / Gemini-2.5-Flash / Qwen3-VL) cạnh gpt-4o-mini để bảng số không kẹt model cũ — HỎI USER. Bài gần nhất phải PHÂN ĐỊNH: LLM-as-Meta-Judge (2603.09403) [khác: miền GUI + bơm-lỗi-độc-lập-matcher]. Thiết kế lõi VỮNG 2026 (niche VH-structured-check độc nhất; perturbation-validate đang là dòng sống).
-
-**+ (2026-07-03) DEBATE giám-khảo-2026 "pipeline+metric phù hợp 2026?" (`report/42` §6, `wf_73dfaaf9`, 25 đòn/13 sống): PHÙ-HỢP-CẦN-ĐIỀU-CHỈNH.** Không lỗi thời/scoop nhưng bằng-chứng neo 1 model đời-2024 → **3 PHẢI NÂNG (điều kiện đậu 2026):** **M1** (nguy hiểm nhất, 4/13 đòn) đo bịa trên ≥1 **frontier 2025-26 rẻ** (Gemini-2.5-Flash/GPT-4.1-mini) cạnh gpt-4o-mini → báo tỉ-lệ-bịa **đường-cong per-model** không headline "¼" tĩnh (`env VLM_MODEL` sẵn, không sửa code — ✱API); **M2** thêm **baseline listwise một-shot** (RankGPT-style) chấm cùng τ+Step-SR+cột-chi-phí, reframe pairwise = **substrate-audit** (cho stratification 1-cue + intransitivity audit + partial-order-from-gold, trích VECTOR "VLM mù thời gian"); **M3** reframe A: "model-agnostic BY CONSTRUCTION kiểm trên 3 đời model" + đẩy **niche on-device** (a11y-tree live + model nhỏ không gọi được frontier → nối AskEase CHI26), neo "A ngang B" vào DG2/Step-SR + đối-chứng-thất-bại (KHÔNG vào độ-lớn con số bịa). **ĐÒN NGUY HIỂM NHẤT + thủ sẵn:** xem `report/42` §6 (frontier "chữa bệnh sắp tự khỏi" → thủ bằng đường-cong-bịa >0 ở frontier + niche on-device).
-
-**+ (2026-07-06) DEBATE bộ thí nghiệm (3 phản biện: thừa/trùng · clarity · thiếu/cần-thiết): KHÔNG lỗi thiết kế, KHÔNG trùng khoa học — nhưng phình đếm-số + lỗ trình bày. ĐÃ VÁ TRỌN vào `report/43` Ch.13:** tái-khung "15 TN" → **~7 cốt lõi thật** (E1+E2 = một run hai readout; E6 = mục-con validate-B; E9 = cổng; E10–E13 = contingent); thêm **E16** (kiểm-hữu-ích định tính, RQ7) + **arm "nạp VH lúc sinh"** trong E2 (đo leakage nội bộ); định nghĩa **PMR (Def 5.6)** + silent-error-rate + N_eff/wild-cluster/MDE; thêm **bảng mẫu shell** T3/T8 + ánh xạ RQ→E→T/F + ngưỡng đậu/rớt định lượng; inter-annotator κ người-người cho E5. **DATA MỞ RỘNG:** MobileViews **81/17 → 127/30** (`kept_screens_final.json`, khớp cỡ-mục-tiêu pre-reg + m̄≈4,2); ScreenSpot 501 mobile sẵn; AndroidControl **scan 1.600 ep (nguồn `smolagents/android-control` test=3.051; ckg-parsed BỎ vì 52% gap) + chọn 286 ep** (`dg2_sample.py`→`dg2_episodes.json`, KN PASS N∈{4,5,6}; re-scan app từ `goal`+`open_app` → **237 app / 1 unknown** [số cũ 96/169 lỗi thời]). **Chốt mẫu 3 bộ (GỘP, nguồn-sự-thật): `report/48_dataset_selection.md`** (đã xoá `48_chon_mau`). **G=30 một-màn (G_eff-Kish≈24) / G nhiều-màn=237-app (194 singleton) — đã vá mâu thuẫn G≈17 cũ.** **DEBATE item-selection 4-giám-khảo (2026-07-06): HỢP LÝ-CÓ-ĐIỀU-KIỆN; 3 lỗ CAO = MIN_ACT bias + cắt N≥7 + ScreenSpot iOS/demote; estimand=macro-per-app (cấm "đại diện").**
-
-**Đã dọn file (2026-07-01, cập nhật 2026-07-08):** `report/` có **24 file lõi** (bản đồ §10 — đã thêm 44/45/47/48/49); harness dọn script cũ; mọi file cũ ở `report/_archive/` (37 file) + `harness/_archive/` (khôi phục được). **Git hygiene (2026-07-08):** thêm `.gitignore` + gỡ `ppt_build/node_modules` (353 file) & `*.pdf` khỏi git index (vẫn còn trên đĩa).
-
----
-
-## 7. Môi trường + code harness
-
-- **Máy KHÔNG-GPU** → VLM nhìn-ảnh PHẢI dùng API cloud (`gpt-4o-mini`, key ở `harness/.openai_key` — **KHÔNG in ra**). Ollama local: `nomic-embed-text`, `bge-m3` (chấm độc lập), `llama3.2`, `qwen2.5vl:3b/7b`.
-- **⚠️ 2026-07-08: user sẽ MUA Colab Pro** để train/fine-tune model (LoRA/QLoRA 3B-7B) — bù cho việc máy không GPU. Đây là môi trường train chính cho hướng model mới (§0).
-- Windows: chạy Python phải `$env:PYTHONIOENCODING="utf-8"`.
-- **Dữ liệu:** `dataset_samples/mv_multiapp/` → lọc rác + mở rộng → **127 màn/30 app** (`harness/kept_screens_final.json`, chốt 2026-07-06; pilot cũ 81/17 lỗi thời). ScreenSpot mobile = **501 item** (290 text/211 icon, `screenspot_full/screenspot_mobile_v2.json`). AndroidControl = **đã scan 1.600 ep + chọn 286 ep** (`smolagents/android-control` test; `dg2_sample.py`→`dg2_episodes.json`, 237 app; ảnh tải sau khi chạy). app MobileViews = `screen.split("_")[0]` → cluster-by-app được. **Chốt mẫu chi tiết: `report/48_dataset_selection.md`.**
-- **Harness (`harness/`):** `dg1_data.py` (lọc rác), `dg1_run.py` (sinh BASE, PA2, retry-429, resume theo tag), `dg1_pa2_score.py` (derive PA2 + cluster bootstrap + Holm + seed), `dg1_independent_score.py` (chấm bge-m3 + đo silent-error), `dg1_scorer.py` (load VH, point-in-bbox), `aloha_match.py`, `dg1_questions.py`, `dg1_filter_data.py`, `fetch_mobileviews.py`, `_http.py`/`_apikey.py`. *(Đã dọn 2026-07-01: file cũ/superseded chuyển `harness/_archive/` — dg1_score_all [circular, KHÔNG dùng], run_dg1_trial(2), score_v2, effectiveness_ab, generate_cache, trackB, gen_cache/; report cũ ở `report/_archive/`.)*
-
----
-
-## 8. Việc tiếp theo + nguyên tắc
-
-- **Free (chưa làm):** freeze τA + báo precision/recall matcher (tập gán-tay 80–120 cặp, precision≥0.95); dựng perturbation harness (lỗi bơm độc-lập matcher); module LLM-judge khác-họ; tính con số độ-phủ-nhãn VH. *(Nguồn-trụ peer-reviewed cho protocol validate: ĐÃ XONG — `report/27` §7.)*
-- **✱ Tốn API ~$0.05 (HỎI USER TRƯỚC):** sinh câu hỏi affordance-seeded + cổng answerability; sinh BASE 127 màn.
-- **Kill-test tuần-1:** K1 (recall) + KN (đếm histogram) + KB (chống leak) → chốt khung với thầy → harness → ablation.
-- **NGUYÊN TẮC CHI TIỀN (user nhấn mạnh):** chạy MỘT lần cho đúng; mọi bước ✱ phải HỎI USER TRƯỚC; ưu tiên local/free + cache.
-
----
-
-## 9. Điểm CHƯA CHỐT
-
-- **Model open/closed:** ~~khuyến nghị bắt đầu VLM API (gpt-4o-mini) làm lõi~~ → **ĐỔI (2026-07-08, §0):** fine-tune model mở (Qwen2.5-VL 3B/7B, LoRA) giờ là **TRUNG TÂM** (không còn tuỳ chọn) vì thầy yêu cầu train model thật; gpt-4o-mini hạ vai thành **teacher để distill**. Hướng train cụ thể chốt sau deep-research (`report/50`).
-- **Tiếng Việt:** thầy ưu tiên VN, nhưng dataset chuẩn là EN/ZH → định lượng chạy EN/ZH; VN = demo định tính + ~120 mẫu app VN cho chuyên gia (nói rõ với thầy: KHÔNG có bảng số VN định lượng).
-- **Nhánh web (Mind2Web):** future-work.
-
----
-
-## 10. Bản đồ file `report/` (biết chỗ đào chi tiết)
-
-- **⭐ ĐỌC ĐẦU TIÊN:** `report/00_TONG_HOP_TAT_CA.md` (trạng thái hiện tại) · `report/54_PIPELINE_FINAL_DOC_HIEU_TOAN_BO.md` (pipeline/model tự-đủ) · `report/KE_HOACH_2_BAI_BAO.md` (2 bài FAIR/VCL) · `report/53_ke_hoach_build_model.md` (config/build khi code).
-
-- **Nguồn-sự-thật / tham chiếu:** `05` (final plan — thắng khi mâu thuẫn) · `01` (metrics) · `02` (datasets) · `04` (feasibility + kill-test K1/KN/KZ'/KB) · `12` (runbook chạy thử) · `22` (pre-registration + §7 protocol validate)
-- **DG1 lõi:** `36` (nguồn-sự-thật một-màn) · `26` (review 3-agent + đối-chứng-thất-bại correction→silent-error). *(`25` cũ tự-mâu-thuẫn — correction đã bỏ + bảng "100%/80 màn" circular — ĐÃ archive.)*
-- **Research / debate:** `27` (deep-research validate-metric — §6 kết quả + §7 trụ peer-reviewed) · `28` (LLM-judge protocol) · `39` (nền peer-reviewed pipeline DG2) · `40` (debate giám-khảo với pipeline — **§4 phán quyết CHÍNH THỨC PASS-có-điều-kiện + 5 fix M1–M5**; §3 interim bù độ phủ) · `42` (freshness scan 2025-2026: KHÔNG lỗi thời/scoop + must-cite)
-- **Người mới / thuyết phục:** `41` (giải thích A–Z) · **`43` (HỒ SƠ TOÀN DIỆN — văn phong khoa học, định nghĩa/công thức/mã giả, ví dụ chạy đầu-cuối, thủ-sẵn giám khảo)** · **`44` (CHƯƠNG DỮ LIỆU chuẩn luận văn — 3 bộ verify tận file: nguồn/venue/quy mô/giấy phép/cấu trúc/ví dụ thật/hạn chế + 5 điều kiện chốt)** · `49` (giải đáp thắc mắc theo đợt — Q&A tích luỹ khi đọc 43)
-- **Thiết kế TN / dữ liệu:** `45` (verify pipeline progress) · `47` (thiết kế thí nghiệm) · **`48` (CHỐT MẪU 3 bộ — nguồn-sự-thật dataset selection)**
-- **Trình bày / nộp:** `30` (abstract VCL) · `36` (thuyết minh đầy đủ) · `38` (bản bảo vệ + Q&A, có PDF font-VN qua `report/md2pdf.py`) · `LUAN_VAN_SLIDE.pptx` (deck v11, build `ppt_build/build.js`) · `LUAN_VAN_SLIDE_v2.pptx` (deck v12 từ 43, build `ppt_build/build_v2.js`)
-- **Kế hoạch / sổ:** `KE_HOACH_2_BAI_BAO` · `RESEARCH_LEDGER`. File cũ/superseded ở `report/_archive/` (37 file).
-- **⚠️ HƯỚNG MODEL MỚI (§0):** **`report/50_deepresearch_model_centric.md`** — deep-research chọn phương pháp train-model + 3 vòng debate chốt "Faithful Distillation". **`report/52_debate_tinh_moi_faithful_distillation.md`** — debate vòng 4 kiểm tra tính-mới (2026-07-09): CÓ-NHƯNG-CẦN-VÁ. **`report/53_ke_hoach_build_model.md`** — debate vòng 5 (2026-07-10): verdict ĐỦ-CÓ-ĐIỀU-KIỆN + kế hoạch build model đầy đủ (framework/config/data-pipeline/Colab/thống kê), xem §0 trên. **`report/61_deepresearch_faithful_distillation_verified.md`** (2026-07-16, ĐÃ verify đối kháng — bản chốt của `59`) — 6 câu hỏi mở về DPO-trên-cặp-lọc/mode-collapse/risk-coverage/VH-coverage/xếp-hạng-đóng-góp; **CHƯA thay đổi thiết kế đã pre-register (`56`)**, chỉ là input chờ user quyết định có nâng cấp thước đo (risk-coverage/AURC) hay thêm nhánh DPO hay không. **Chuỗi rà-soát-lại theo yêu cầu user (16-17/7):** `62` (giải thích 61 dễ hiểu) · `63` (plan nâng cấp chia nhỏ 5 vòng A-E: risk-coverage/template/OCR/DPO/so-sánh) · `64` (thiết kế lại từ trang trắng — trùng xương sống, khác 5 điểm, lớn nhất = thiếu trục "ĐÚNG" → đề xuất AndroidControl từng-bước) · **`65` (tự phản biện 6 nghi ngờ + plan kiểm chứng K1-K3/D1-D3/R1-R2 — user sẽ tự thực thi từng vòng; K1 kill-test matcher hai chiều là việc ĐẦU TIÊN, free)**.
-- **Tiện ích:** `report/md2pdf.py` (md→PDF font tiếng Việt DejaVu; `python3 report/md2pdf.py <số|đường-dẫn>`, mặc định 43).
+Danh sách đầy đủ + 24 lỗi đã bắt: `report/108`.
 
 ---
 
-## Ghi chú làm việc cho trợ lý
+## 📄 BÀI FAIR'2026 — ĐANG 10 TRANG, GIỚI HẠN 8
+
+**Hạn 31/8, nộp qua EDAS** (`edas.info/index.php?c=35461`; EasyChair đã đóng). Track **Natural
+Language Processing**. Không phản biện ẩn danh ⇒ giữ tên tác giả. Mẫu IEEE, nộp PDF nên bản
+`IEEEtran` dùng được. Tác giả: Lê Đoàn Phương Uyên · Nguyễn Hồng Bửu Long · Faculty of
+Information Technology, University of Science, VNU-HCM.
+
+⛔ **Lệnh dựng đúng: `tectonic -X compile main.tex --outdir .`** (ghi sẵn ở
+`paper/fair2026/README.md:76` và `thesis/build.sh`). Máy **không có `xelatex`**; trợ lý từng tự
+chế `xelatex … >/dev/null 2>&1`, `command not found` bị nuốt, nên mọi lần báo *"8 trang, 0
+overfull"* đều là đọc PDF cũ. Lặp hơn mười lần trong một ngày.
+⇒ **Luật: KHÔNG `>/dev/null 2>&1` trên lệnh dựng; kiểm `ls -la main.pdf` xem mốc giờ trước khi
+tin số trang.** Mọi câu *"vẫn 8 trang"* rải trong ghi chú cũ đều sai và đã bị xoá khi dọn file này.
+
+**Số thật:** bài **10 trang** (đếm lại 18/8 từ `main.pdf`) · luận văn **77 trang**.
+**⇒ PHẢI CẮT 2 TRANG.** Ứng viên cắt, theo thứ tự: **① §III Task Definition and Dataset
+Construction** (dòng 199–306, ~1,5–2 trang) — cắt còn nửa trang và trích bài VCL, vì VCL nhận đúng
+phần này (xem mục *Hai bài báo*); ② mục **bơm lỗi** (bài tự khai 5/10 hàng là hằng đẳng thức và
+**0/10 hàng gọi tới bộ trỏ**); ③ mục **so với thước có tham chiếu** (luận cứ đồng thuận BLEU/ROUGE
+đã tự hạ).
+**Đừng cắt phần mới** — đó đúng là thứ bốn giám khảo nói đang thiếu.
+
+**Đã vá vào bài:** sàn 12,0 · `f3` 6,1 · cặp 28,5-vs-3,5 · §VII thay đoạn *"floor we have not
+measured"* bằng phép đo · §VIII đoạn gọi-tên-vs-chỉ-chỗ · bản không-tham-chiếu (lệch ≤0,20 pp) ·
+κ có điều kiện · sai số bộ trỏ theo nhánh · điều kiện đảo nghĩa · đếm mục sửa đổi **27, 21 trước
+điểm đầu tiên** · lát cắt ngoài ba lát đăng ký **gắn nhãn thăm dò** · hạ luận cứ đồng thuận
+BLEU/ROUGE · tách mức câu vs mức hệ thống · tự khai hai lần nới ngưỡng sau khi thấy điểm kèm
+phản chứng.
+
+**Luận văn (77 trang):** `thesis/chapters/ch5_thuocdo.tex` thêm mục **Sàn của thước** ·
+`ch6_thucnghiem.tex` thêm mục **Lặp lại lượt huấn luyện** (bảng hai hạt giống · κ có điều kiện ·
+tất định 2.810/2.810 · sáu lát cắt đều tái lập).
+⛔ **Quét toàn kho sau mỗi lần rút số** — `total_flos` sai đã sống trong `.tex` nhiều ngày sau khi
+đã rút ở `CLAUDE.md` và `report/108`.
+
+---
+
+## 📰 HAI BÀI BÁO — CÁCH CHIA (quyết 18/8; user giao trợ lý quyết, sẽ bàn lại sau)
+
+**Nộp cả hai, cách nhau một ngày: VCL 30/8 · FAIR 31/8.** 12 ngày kể từ 18/8.
+
+### Venue
+
+| | **FAIR'2026** | **VCL2026** |
+|---|---|---|
+| tên đầy đủ | — | **Hội thảo Quốc gia lần 4 về Ngôn ngữ học Tính toán** |
+| ngày họp | — | HUFLIT, **27/11/2026** |
+| chủ đề | track **Natural Language Processing** | **"AI tạo sinh, Ngôn ngữ và Trách nhiệm xã hội"** |
+| ngôn ngữ bài | tiếng Anh | **tiếng Việt** |
+| hạn nộp | **31/8**, qua EDAS | **30/8** |
+| trang | `edas.info/index.php?c=35461` | `https://vcl.huflit.edu.vn/` |
+
+⚠️ **Ba thứ chưa lấy được, phải tự mở phần hướng dẫn gửi bài của VCL** (trang chủ VCL2026 không
+đăng, đã tra 18/8): **giới hạn số trang** · **mẫu định dạng** · **chính sách trùng lặp / nộp đồng
+thời**. Điều thứ ba quan trọng nhất vì hai bài dùng chung bộ dữ liệu và chung mô hình, nộp cách
+nhau một ngày. Hạn **30/8 là user nhớ**, CFP chưa xác minh.
+
+### FAIR = bài CHÍNH = **THƯỚC ĐO** (giữ nguyên bài đang có)
+
+Nhan đề hiện tại đã tự chọn phần của nó: *"Executability: A Reference-Free Metric for Element
+Identification in Generated GUI Instructions"*. S1/Base trong đó đóng vai **chứng minh dụng cụ đo
+được**, và abstract đã tiêu con số **59,4 vs 47,6**.
+
+**Bốn lý do đặt bài chính ở đây, không ở bài mô hình:**
+1. Phần đo **đã chịu được bốn lượt phản biện độc lập**; bảy lỗi bắt được trong hai ngày không lỗi
+   nào ở khâu đo. Phần mô hình chưa qua vòng phản biện nào.
+2. **Đã viết xong**, chỉ còn cắt 2 trang. Viết lại FAIR thành bài mô hình trong 12 ngày là tự sát.
+3. **Không phụ thuộc S2** — lượt train đang chạy, đăng ký trước ước P(vượt MDE) ≈ 50%. Đặt cửa
+   chính vào một con số chưa biết là sai.
+4. **Là phần khó thật:** sàn 12,0 · câu sai màn 6,1 thấp hơn cả câu rỗng · gọi tên đắt gấp 8 lần
+   chỉ chỗ — chưa ai đo. Còn "grounding trước, sinh sau" thì GCoT và Aguvis đã đi qua, S2 chỉ
+   mạnh hơn ở chỗ ablation sạch hơn.
+
+### VCL = bài ĐƠN GIẢN = **NHÃN MÔ TẢ PHẦN TỬ**
+
+Rút từ **`thesis/chapters/ch3_dulieu.tex`** (291 dòng, **đã sẵn tiếng Việt**, không phải dịch):
+nguồn và phép ghép đa nguồn · kiểm phép ghép · quy mô, chia tập, rò rỉ · trích chữ trên màn ·
+**nhãn mô tả tự động** (hai cổng lọc thêm sau khi đo · ô dấu hiệu phân biệt phải làm lại · chất
+lượng nhãn ở quy mô đủ · một quyết định đã tranh luận rồi bác) · bốn nhánh và bất biến cấu trúc.
+
+⚠️ **Đóng khung theo hướng NGÔN NGỮ, đừng đóng khung "chúng tôi dựng bộ dữ liệu"** — VCL là hội
+thảo ngôn ngữ học tính toán. Câu chuyện đúng là **sinh biểu thức quy chiếu cho phần tử giao diện**:
+gọi tên thế nào để bên kia trỏ đúng, khi **22% phần tử không có tên** và **7,6% trùng tên**. Đó là
+dòng REG (Mao CVPR16 · Yu CVPR17 · Luo CVPR17) đặt vào miền GUI, hợp chủ đề "AI tạo sinh và ngôn
+ngữ" của họ. Nhắc lại luật cũ: **cấm chữ "đầu tiên"/"mới"** cho ý này, dòng REG chiếm từ 2016.
+
+**Không đợi S2 · không phải dịch · không phải chạy thêm phép đo nào.**
+
+### Vì sao cách chia này ăn nhau
+
+Phần VCL lấy **đúng là phần FAIR đang phải cắt**: `paper/fair2026/main.tex` **§III Task Definition
+and Dataset Construction (dòng 199–306, ~1,5–2 trang)** trùng gần hết với ch3. Cắt §III xuống nửa
+trang + trích VCL ⇒ FAIR về 8 trang. Một nhát dao giải hai việc.
+
+### Bảng phân số — chống trùng lặp
+
+| số | thuộc bài nào |
+|---|---|
+| trần 75,7 · sàn 12,0 / 6,1 · cổng A · 5 luật chấm · diễn đạt lại · gọi-tên-vs-chỉ-chỗ · tất định · κ | **FAIR, độc quyền** |
+| Base 47,6 · S1 59,1 (hạt 101) và 59,4 (trung bình hai hạt, số trong abstract) · S2 (khi có) | **FAIR, độc quyền** |
+| ghép hai kho 2,4× · rò rỉ 0 · OCR phủ 100% · chất lượng nhãn (73,6 / 22,0 / 7,6) · hai cổng lọc · quyết định A′ bị bác · 9 bất biến | **VCL, độc quyền** |
+| quy mô 64.567 / 6.958 / 4.463 | cả hai nêu — **VCL tả đủ, FAIR một câu + trích VCL** |
+
+**Trích chéo dạng *"đang bình duyệt"*** — nộp cách nhau một ngày nên không bài nào có ID/DOI.
+Phần dùng chung phải **viết lại câu chữ**, không bê nguyên (khác ngôn ngữ nên rủi ro thấp).
+
+### S2 nằm ở đâu
+
+**S2 là một hàng thêm vào bảng kết quả của FAIR, KHÔNG phải headline của bài nào.** Kịp (22–23/8)
+thì thêm, không kịp thì bỏ — không bài nào chết theo. Nhờ vậy câu hỏi *"S2 trắng thì VCL làm gì"*
+tự tan; user chọn "quyết sau khi có số" và nay không còn phải quyết.
+Headline của luận văn vẫn là S2 vs S1 (`thesis/ch6`), không đổi.
+
+### Lịch 12 ngày
+
+| ngày | việc |
+|---|---|
+| 19–21/8 | viết nháp VCL từ ch3 · song song cắt §III của FAIR |
+| 22–23/8 | S2 có số → thêm hàng vào bảng FAIR |
+| 24–27/8 | hoàn thiện hai bài · rà trùng theo bảng phân số · kiểm citation |
+| 28–29/8 | đọc soát · dựng PDF bằng `tectonic` (**kiểm `ls -la main.pdf` mốc giờ trước khi tin số trang**) |
+| 30/8 · 31/8 | nộp VCL · nộp FAIR |
+
+### Phương án đã cân nhắc và gác lại
+
+**VCL đi hướng tiếng Việt thật:** dịch câu chuẩn của người sang tiếng Việt rồi đo lại
+executability, xem thước có sống qua đổi ngôn ngữ không. Hợp venue nhất, nhưng tốn thêm một lượt
+chấm Kaggle 5,6 giờ + dựng bản dịch. **Gác vì user muốn VCL đơn giản.** Nếu sau này còn thời gian
+thì đây là mục thêm đáng giá nhất cho VCL.
+
+### ⛔ Hai thứ đã chết, đừng theo
+
+· **`report/KE_HOACH_2_BAI_BAO.md` (bản 3, 12/7)** định VCL = *sinh hướng dẫn tiếng Việt trên màn
+MobileViews*. Chết cả hai vế: MobileViews đã rời khỏi đề tài, và không có thí nghiệm tiếng Việt nào.
+File vẫn giữ để tra lịch sử.
+· **Skill `.claude/skills/vcl-fair-paper/SKILL.md`** vẫn tả khung **DG1/DG2** (ReOrder-Tutor,
+Copeland, MobileViews, ScreenSpot, "không fine-tune", GPT-4o E2E) — khung prompting **đã bị bác
+19/7**. Bảng chia bài trong skill đó (VCL=DG1, FAIR=DG2) **sai hoàn toàn với hiện trạng**. Cần
+viết lại hoặc gỡ; trước khi làm việc đó thì **đừng theo skill, theo mục này**.
+
+---
+
+## 🎓 TIỀN LỆ VÀ PHÂN ĐỊNH (đã tra tận nguồn — `report/114`)
+
+**① Chữ "executability" đã có chủ.** *Open Grounded Planning*, **ACL 2024, tr. 4982–5003**
+(arXiv 2406.02903), mục 3.3.2: *"Executability is the proportion of executable cases…"*.
+Nhưng của họ là **tra bảng ký hiệu trên văn bản** — không mô hình, không màn hình, miền
+WikiHow/công cụ/robot. Của ta là **hành vi + thị giác**. ⇒ **GIỮ TÊN**, đã vá một câu phân định
+vào Introduction của `main.tex` ngay lần dùng đầu.
+
+**② Zhao et al. EACL 2021 (tr. 1302–1316)** — vừa hậu thuẫn vừa cảnh báo, đã trích:
+*"BLEU, ROUGE, METEOR and CIDEr are ineffective for evaluating grounded navigation
+instructions"* ⇒ hậu thuẫn hạ luận cứ đồng thuận BLEU/ROUGE. ⚠️ Nhưng thước không-tham-chiếu của
+họ thắng ở **mức CÂU**; để xếp hạng **HỆ THỐNG** chính họ khuyên dùng SPICE (có tham chiếu), mà
+toàn bộ Mục VII của ta là khẳng định mức hệ thống — đã trích vào *Scope of the construct*.
+Họ **có** neo người, ta không.
+
+**③ GUITrans2Act (2606.12817) không phải scoop** — preprint 6/2026 không venue, đầu vào là
+**video**, abstract không nhắc mô hình định vị.
+
+**④ GCoT: 2503.12799 vẫn là preprint không venue**; bài ICCV 2025 là bài KHÁC (2507.02859).
+Ghi chú của ta đúng từ 1/8, agent nói sai. ⭐ Lần này ghi chú mình thắng agent ⇒ **agent cũng
+phải kiểm như mọi nguồn khác: không tin ngay, cũng không bỏ ngay.**
+Về nội dung GCoT: số âm −42,8 là **prompting zero-shot** và là **số tự tính** từ Table 3−4 (bài
+chỉ viết 45,4); chính bài đó Table 5 cho thấy **TRAIN theo thứ tự grounding-trước thì tăng +4,5 /
++5,8**. Đừng trích một nửa.
+
+**⑤ Jandial et al. (Findings EACL 2026) — con số 84% đã bị rút.** Nguyên văn abstract: *"Our
+agent reports high success rate (upto 84%) in generating instructions that fail the
+state-of-the-art GUI grounding models."* ⇒ 84% là **tỉ lệ thành công của một agent đối kháng**
+chuyên chế câu phá mô hình, trên **desktop Windows** — không phải tỉ lệ trượt khi diễn đạt lại,
+không phải trên di động. Sai từ 29/7, sống 20 ngày, đã vào bản thảo.
+**Cách trích đúng (đã vá vào `main.tex` hai chỗ):** trích họ cho luận điểm *"độ chính xác đo trên
+MỘT câu tốt nhất cho mỗi phần tử là thổi phồng năng lực thật"*; nêu 84% kèm đúng điều kiện
+(năng suất của tìm kiếm đối kháng trên desktop), và **trường hợp di động họ để ngỏ chính là của ta**.
+
+**⑥ Chữ cấm dùng.** Không viết *"đầu tiên"/"novel"/"cơ chế mới"* cho thứ tự sinh hay cho việc đưa
+danh sách phần tử vào đầu vào — bài gốc AndroidControl (NeurIPS 24) đã fine-tune với danh sách
+a11y làm INPUT; dòng REG phân biệt (Mao CVPR16 · Luo CVPR17 · Yu CVPR17) đã chiếm ý *"câu phải đủ
+để bên kia trỏ đúng"* từ 2016. **Điểm phân định còn vững:** trong bài gốc AC `step_instructions`
+là **INPUT**, ta dùng làm **ĐÍCH SINH**; và đưa tính phân biệt vào **mục tiêu huấn luyện** trong
+miền GUI (Widget Captioning EMNLP20 loss chỉ cross-entropy thuần — đã trích PDF verify).
+
+---
+
+## ⛔ GIỚI HẠN CÒN MỞ
+
+**Bộ trỏ không sạch** (lật 16/8, đã tra tận nguồn, đã vá vào bài):
+· UGround **có AndroidControl 47K nhãn người** trong recipe (Bảng 1, arXiv 2410.05243), cùng
+Widget Caption 41K · UIBert 16K · AITZ 8K.
+· UGround-V1-2B dựng trên **Qwen2-VL**, **cùng dòng** với Qwen2.5-VL-3B đang bị chấm.
+· Phần còn đứng: họ lấy từ **split train**, tập kiểm của ta từ **split test** ⇒ không chồng lấn ở
+mức màn hình, không phải rò rỉ nhãn. Nhưng bộ trỏ đã thấy **văn phong chú thích** của kho này, mà
+s1 được dạy viết đúng văn phong đó ⇒ **còn một lời giải thích thay thế cho chênh lệch S1−Base**.
+Cách duy nhất đóng: chấm lát ≥500 bước bằng **UI-Venus-Ground-7B** (việc kế số 3).
+
+**Chưa thay dụng cụ lần nào** — bộ trỏ chính là thước. **Không có neo ngoài nào** (đã quyết không
+chấm người). Trong ba lỗ ghi ở `report/112` §11.3, hai đã đóng (sàn · gọi-tên-hay-chỉ-chỗ).
+
+**Bộ trỏ thứ hai đã tra xong 15/8, đừng tra lại:** chọn `inclusionAI/UI-Venus-Ground-7B`
+(Apache-2.0, ScreenSpot-v2 mobile 99,0/90,0, mạnh hơn UGround 95,0/83,3, sạch AndroidControl).
+Ưu tiên **A100 hơn T4** vì NF4 ăn vào đúng thứ cổng A đo. Dự phòng: Phi-Ground-4B (ngoài họ Qwen
+nhưng yếu ở mobile) · ShowUI-2B (⚠️ lỗi tràn số fp16 → NaN).
+⛔ **Đã loại:** GUI-G2-3B (trùng nền) · **Jedi (CÓ AndroidControl** dù tự quảng bá chỉ dữ liệu
+tổng hợp) · CogAgent (link chết) · Aria-UI (25,3B) · SE-GUI/GUI-G1/GUI-R1/Holo1/POINTS-GUI-G.
+⚠️ **Câu chữ:** viết *"bộ trỏ không được huấn luyện trên AndroidControl"*; **CẤM** viết *"chưa
+từng thấy màn hình di động"* — chúng dùng Widget Captioning/UI RefExp/RICO đều là kho Android
+(và ba nguồn đó 2020/2021/2017 **có trước** AndroidControl 6/2024).
+⛔ Câu *"mọi bộ trỏ GUI mở đều dựng trên họ Qwen-VL"* là **SAI** (Phi-Ground dựng trên
+Phi-3.5-Vision) — đã lỡ vào Limitations và đã vá.
+
+**Bốn lượt phản biện độc lập (18/8) — phán quyết: hợp lệ, nhưng phải hẹp hơn nhan đề.**
+Toàn văn `report/112` §11. Đứng vững, không lượt nào lật được: SFT hơn mô hình gốc hai hạt giống
+độc lập · cùng nội dung khác văn phong không ý nghĩa · 5 luật chấm không đổi thứ tự · thước tất
+định · 1.139 câu viết lại +0,35 pp · **thước không xếp văn máy trên văn người** (lá chắn tốt nhất,
+đã đưa vào §VII) · không lợi thế sân nhà · đăng ký trước kiểm được bằng `git log`.
+
+⭐ **Mẫu hình quan trọng nhất: bảy lỗi bắt được trong hai ngày, KHÔNG lỗi nào ở khâu ĐO.** Tất cả
+nằm ở **câu chữ mô tả**: 84% của Jandial · "bộ trỏ khác họ/sạch AC" · "reference-free" ở nhan đề ·
+`hit_disk` là "đĩa" · hạt Voronoi là "tâm phần tử" · κ trình thiếu điều kiện · đếm mục sửa đổi.
+Phần **đo** giữ nguyên qua mọi lượt soi. ⇒ **Chỗ phải soi tiếp là VĂN BẢN, không phải mã.** Và cụ
+thể: mọi lỗi sinh ra ở khâu **tóm tắt một nguồn thành câu ngắn cho tiện trích**, rồi câu ngắn sống
+nhiều tuần vì không ai mở lại nguồn.
+
+**Tả đúng dụng cụ** (ba chỗ từng tả sai, đọc từ `harness/metric_exec.py`):
+· `hit_disk` là **hình chữ nhật** |dx|≤0,14·W ∧ |dy|≤0,14·H — dung sai dọc rộng gấp **2,2×** ngang
+(336 vs 151 px), không phải đĩa Euclid.
+· Hạt Voronoi là **chính điểm chạm**, không phải tâm phần tử.
+· `hit_voronoi` **bao gồm** luật đĩa (`if not hit_disk(...): return False`) ⇒ Voronoi là bản
+**siết chặt** của luật quy ước, **cấm trình như hai lựa chọn ngang hàng**.
+· Bộ bơm lỗi **không gọi bộ trỏ lần nào** ⇒ hàng "paraphrase 0,0%" chỉ đo cổng chữ.
+· Hình trong bài dựng bằng `harness/make_fig_voronoi.py` có `assert` gọi thẳng hàm của thước nên
+hình không thể trái mã.
+· Lỗi `canon_action` **cố tình không sửa**: `go back` quy về *tap* (81 bước S1, 47 Base; sửa thì
+59,12→58,81 và 47,60→47,40) — giữ nguyên để ba nhánh đã chấm còn tái lập được, thêm cờ
+`strict_back=True` cho lượt mới + mục sửa đổi (v).
+
+---
+
+## 🔒 THIẾT KẾ ĐÃ NIÊM PHONG (5/8/2026, commit `51ddb35`)
+
+`report/106_DANG_KY_TRUOC.md` khoá: 6 nhánh · thước đo · **luật đọc kết quả cho cả 4 kết cục**
+(dương / dương yếu / trắng / âm) · 3 lát cắt · hạt giống 20260805.
+**Mọi thay đổi về sau ghi vào mục sửa đổi cuối file, KHÔNG sửa đè.** Hiện có **27 mục, 21 mục
+trước điểm số đầu tiên**. Các mục đáng nhớ: (k) thêm nhánh mô hình gốc · (o) máy + cấu hình P9 +
+luật chọn điểm lưu · (p) vá `tag_app_seen` · (q) nhãn khai báo sang tiếng Anh · (r) MDE thật 2,2 pp
+⇒ dải "4–9 pp không kết luận được" của luật cũ sẽ vứt bỏ một hiệu ứng thật · (v) `strict_back`.
+
+**Thành phần đóng góp đã chốt 1/8** (`report/103_CHOT_THANH_PHAN.md`): **"mô tả phân biệt trước,
+phát ngôn sau"** — đích sinh `[vai trò | tên | <point>x,y</point> | dấu hiệu phân biệt]` rồi mới
+tới câu; chấm chỉ lấy câu. Headline = **ablation S1 (SFT trơn) vs S2**.
+· Ràng buộc thiết kế có căn cứ: descriptor phải **có cấu trúc + có toạ độ** — văn tự do cho dấu ÂM
+(Shikra bằng lời −7,39 vs chain-có-point +5,90; UI-Ins free-form −3,2 vs +4,7, ⚠️ hai model nền
+khác nhau, cấm ghép cặp). Hiệu ứng kỳ vọng +3…+11, trung vị ~+5; bằng chứng gần nhà nhất =
+Aguvis bỏ inner monologue → AndroidControl-Low **−11,4**.
+· Đối chứng đã đăng ký: S1 · S2 · **S2r (tiền tố SAI cùng độ dài)** · S2-nopoint · phân tầng độ
+dài và độ mơ hồ.
+· **Hai đóng góp:** (1) MÔ HÌNH — Qwen2.5-VL-3B QLoRA, headline là ablation nội bộ; (2) ĐÁNH GIÁ —
+executability + validate bằng bơm lỗi.
+
+**Quyết định 5/8 về nguồn tên trong nhãn** (`report/107`): **bác** việc đảo sang OCR-trước, áp A′.
+Ưu thế của OCR hoá ra là ưu thế của **lọc rác**, không phải của thứ tự (11/12 ca OCR thắng là do
+nhãn trợ năng rác). Đã áp cổng `clean_a11y` (14,7% nhãn là rác) + cổng hình học ≤25% màn + luật
+ghép OCR cùng dòng. **Cấm dùng A′ giải thích hậu kỳ nếu S2 thắng.**
+
+---
+
+## ⚙️ VẬN HÀNH — bài học đã trả giá
+
+**Cấu hình train chốt = P9:** `train_config.yaml` + đúng một khoá `enable_liger_kernel: true`.
+A100, 4-bit + gradient checkpointing, `cutoff_len` 2560, `preprocessing_num_workers: 8`.
+**10,3 s/bước · 8.072 bước · ~23 giờ train · ~123 đơn vị/lượt.**
+· ⛔ Hai kết luận ngược trực giác, **đừng thử lại**: **QLoRA 4-bit NHANH HƠN bf16** ở bài này
+(10,70 vs 14,76 s/bước) — 3B đủ nhỏ để giải nén không thành nút thắt; và **chỗ ngốn bộ nhớ là
+BẢNG LOGITS chứ không phải trọng số** — P4 tràn nhưng P4+liger chạy được, vì liger gộp
+cross-entropy nên khỏi dựng bảng 151.936 từ vựng × ~1.500 token × 4 mẫu ở fp32.
+· ✅ **Liger không đổi phép tính**: cùng 200 mẫu cùng hạt giống, loss trùng tới chữ số thứ tư ⇒
+dùng được mà không phải sửa hồ sơ đăng ký trước.
+· ✅ **Đổi card không đổi kết quả**: L4 vs A100 cùng `seed 101`, loss 20 bước trùng ba chữ số,
+`total_flos` y hệt.
+· ⛔ **P10 (tắt gradient checkpointing) bị loại — tràn bộ nhớ ở chuỗi dài.** Chạy ngọt trên mẫu
+thường, chết trên 200 mẫu dài nhất của s2. **12 phút thăm dò cứu một lượt train 20 giờ.**
+⇒ **probe trên mẫu ĐẦU TẬP không đủ kết luận về bộ nhớ**; mọi cấu hình đụng bộ nhớ phải thử lại
+trên **nhánh nặng nhất với mẫu dài nhất**.
+· **Mỗi biến thể chỉ đổi MỘT thứ** — bản đo đầu ghép hai thay đổi nên tràn trước khi trả lời được
+câu nào.
+
+**Colab:** tài khoản dùng **đơn vị trả trước, KHÔNG có `background execution`** ⇒ phải sống chung
+với mất máy ảo. **Tám lần mất máy trong hai lượt S1, ~18 giờ, ~85 đơn vị.** Thiết kế cất Drive
+hoạt động đúng: mỗi lần mất chỉ tốn 80–180 bước + thời gian dựng lại.
+· **Đồng bộ Drive mỗi 5 phút.** Mất máy 10/8 (chưa có) = 42 đơn vị + 8 giờ; 11/8 (đã có) = 3 phút.
+· Toàn bộ giá của một lần đứt nằm ở **mã hoá token**, không ở khâu nhảy qua lô (1.600 lô ≈ 17 giây).
+· **`MOC` phải lấy theo dòng log cuối, KHÔNG theo số điểm lưu** — `logging_steps: 20` mà
+`save_steps: 200` ⇒ log chạy trước điểm lưu tới 180 bước. Dấu hiệu phiên mới đã ghi thật: **số
+bước TỤT XUỐNG**.
+· **`grep "Resuming training from"` trống ngay sau khi khởi động là báo động giả** — dòng đó in
+sau ~40 giây nạp thư viện. Hỏi ba thứ trước khi `pkill`: `getsize(log)` · `ps -p <PID>` · `tail`.
+· **Nhân Python restart làm rớt gắn Drive** — ô theo dõi văng `FileNotFoundError` trong khi tệp
+vẫn nằm nguyên trên Drive. Thấy lỗi này thì chạy ô chẩn đoán, đừng chạy lại lệnh train.
+· **Ô kiểm vàng A.2b** (`harness/run_on_colab.md`): so cfg lượt này với cfg lượt tham chiếu, **chỉ
+4 khoá được phép khác** (`seed` · `output_dir` · `dataset` · `preprocessing_num_workers`), khoá
+thứ năm là **dừng hẳn**. Chạy 3 lần trong ngày 16/8, lần nào cũng 38/38.
+· **Phép kiểm rẻ "điểm lưu có trọn không": ghi dở thì bản CUỐI phải NHỎ HƠN bản trước.**
+· ⛔ Ba số trong `all_results.json` **sai sau resume, cấm trích**: `train_loss`, `train_runtime`,
+`*_per_second` (HF chia cho `elapsed`). `total_flos` **không** hỏng. Dùng `trainer_state.json`.
+· ⛔ Phép thử "gập nắp mang máy đi làm" **thất bại** — ba lệnh `powercfg` + lid *Do nothing* không
+đủ, log ngừng ghi ngay. Đừng thử lại.
+
+**Kaggle:** quota **30 giờ GPU/tuần**. Chấm một nhánh ~5,6 giờ, **0 đồng**.
+· ⛔ **Lượt commit từng treo 7 giờ vì log ngập.** `tqdm` ngoài terminal in mỗi cập nhật thành một
+dòng (>1.400 dòng cho một lần nạp mô hình); Kaggle chặn log khi vượt trần ⇒ tiến trình kẹt cứng ở
+lệnh ghi stdout. Bằng chứng: hai mục log `59.8s` và `25560.4s` **nội dung giống hệt nhau**, cùng
+cụt giữa chữ.
+· **Vá gốc:** tắt thanh tiến trình bằng biến môi trường **và** cho tiến trình con ghi **ra tệp**
+(`Popen(stdout=f)`), cộng nhịp sống in từ notebook mỗi 2 phút. Runbook
+`harness/kaggle_pheA_CHAY_LAI.md`.
+· **Chạy tương tác, đừng Save Version** cho lượt đầu — commit bị huỷ thì Kaggle không lưu
+`/kaggle/working`.
+· **Không có dòng nhịp sống nào sau 4 phút thì dừng ngay.** Chi phí biết mình sai: 7 giờ → 4 phút.
+· ⚠️ **Đừng ước lượng nhịp hỏng bằng cảm giác** — trợ lý từng chẩn "chạy CPU nên chậm 10–20 lần"
+và khuyên chờ 6 giờ; log nói khác hẳn. Và từng suy "hai lần mất máy cách nhau 1,5 giờ ⇒ lượt train
+không bao giờ về đích" rồi đề nghị mua gói mới; đọc `checkpoint-4800` mới biết phiên đó chạy 6,6
+giờ. **Lấy hiệu số bước giữa hai điểm lưu.**
+
+**Bốn câu hỏi trước khi tiêu tiền GPU:** khâu này có thật sự dùng GPU không · máy chết bây giờ thì
+mất bao nhiêu · chuỗi cần chấm đã từng được chấm chưa · mốc so nào rẻ hơn mà chạy trước được.
+· ⭐ **Tệp thô là tài sản.** Giữ `*_raw.jsonl` thì đổi luật chấm hay đổi tập câu vẫn tính lại được
+**không gọi lại bộ trỏ** — đã tiết kiệm trọn một lượt 5,6 giờ khi chấm lại `p3_nopos_v2` (0 giây
+GPU, so byte, 6 phép `assert` trong `harness/phep_a_hieu_chinh.py`).
+· ⭐ **Mẹo đo trần không cần GPU:** dựng tệp preds với `pred = gold_instruction` rồi chấm như mọi
+nhánh.
+· ⚠️ **Phép kiểm dùng chính phép biến đổi mà nó cần phát hiện thì mù** — `assert` hỏi "bộ trỏ tất
+định không" tự `.strip()` chuỗi, che mất đúng thứ nó cần thấy (72/589 câu chuẩn có dấu cách cuối,
+1 bước đổi hẳn kết luận vì lệch một ký tự).
+· ⚠️ **Phép thử nối tiếp phải xin NHIỀU HƠN số đã có** — xin đúng số đã có thì in `Xong sẵn`,
+trông như đạt mà không chứng minh gì.
+· **Giá GPU phải đo/tra tại thời điểm quyết, cấm nhớ** — hai con số nhớ sai (15 đơn vị/giờ, card
+40 GB) suýt dẫn tới thuê nhầm máy.
+
+---
+
+## 💻 Môi trường + harness
+
+**Máy KHÔNG-GPU** (WSL2). Train trên **Colab** (A100), chấm điểm trên **Kaggle** (T4, miễn phí).
+Ollama local: `nomic-embed-text`, `bge-m3`, `llama3.2`, `qwen2.5vl:3b/7b`.
+Windows/WSL: chạy Python nhớ `PYTHONIOENCODING=utf-8`.
+Chỗ lưu: thứ bắt buộc sống qua các phiên chỉ ~3 GB; 67 GB ảnh tải lại từ HuggingFace 20–40 phút.
+*Phần đắt không phải phần to.* `drive.mount` chỉ gắn Drive của **chính tài khoản** chạy Colab.
+
+**Mã chính trong `harness/`:**
+· dựng dữ liệu — `build_train_data.py` · `build_branch_data.py` · `build_test_data.py` ·
+`descriptor_label_build.py` · `prep_ocr_train.py` · `tag_app_seen.py`
+· train/suy luận/chấm — `train_config.yaml` · `infer_branch.py` · `score_run.py` ·
+`metric_exec.py` (thư viện hàm chấm — **luật chấm mặc định không đổi từ commit `51ddb35`
+ngày 5/8**; bản vá `strict_back` là thêm cờ tuỳ chọn, mặc định tắt, và **hiện chưa commit**) ·
+`gate_a_ceiling.py`
+· phân tích — `phan_tich_bon_nhanh.py` · `phep_a_ghep_cap.py` · `phep_a_hieu_chinh.py` ·
+`mde_that.py` · `rule_sensitivity.py` · `bien_the_khong_tham_chieu.py` · `make_floor.py` ·
+`doc_san.py` · `doc_diem_tam.py` · `kiem_preds.py` (8 phép kiểm tệp preds trước khi tiêu quota) ·
+`make_fig_voronoi.py`
+· runbook — `S2_DAN_THANG.md` · `colab_train_s2.md` · `run_on_colab.md` · `colab_cham_san.md` ·
+`kaggle_cham_san.md` · `kaggle_upload_dataset.md` · `kaggle_pheA_CHAY_LAI.md` · `run_on_rented.sh`
+
+`infer_branch.py` và `score_run.py` đều **ghi dần + xả đệm + nối tiếp được**; `score_run` gộp số
+cuối **từ tệp thô, không từ bộ nhớ**, nên chạy cắt khúc vẫn ra số toàn tập.
+
+**Nguyên tắc chi tiền:** chạy MỘT lần cho đúng; ưu tiên local/free + cache; bước tốn tiền phải
+hỏi trước. Ưu tiên **độ chính xác**, không ngại tốn thời gian lẫn tốn tiền — nhưng kết quả như
+nhau thì chọn chậm-mà-rẻ. Luôn trình bảng **tiền · thời gian · ảnh hưởng độ chính xác**.
+
+---
+
+## ❓ CÒN TREO
+
+- **Cách chia hai bài báo đã quyết 18/8** (mục *Hai bài báo*) nhưng **user nói sẽ bàn lại** — chưa
+  phải chốt cuối. Ba thứ về CFP của VCL còn phải tự tra: giới hạn trang · mẫu định dạng · chính
+  sách trùng lặp.
+
+**Đã chết, đừng hồi sinh:** nhánh **faithfulness trên MobileViews** (đóng góp phụ số 2 theo
+`report/103` ngày 1/8). Kiểm 18/8: **0 lần xuất hiện** trong `report/106 · 108 · 109 · 112 · 113 ·
+114`, trong `paper/fair2026/main.tex` lẫn `thesis/main.tex`. `report/103` là chỗ cuối cùng còn
+nhắc tới nó ⇒ khi 103 mâu thuẫn với các file 106+, **106+ thắng**.
+
+---
+
+## ✍️ Ghi chú làm việc cho trợ lý
+
 - Trao đổi bằng **tiếng Việt**.
-- **VĂN PHONG (user nhấn mạnh 2026-07-15):** dùng từ **tự nhiên**, KHÔNG được lộ giọng AI-gen. Cấm tự chế thuật ngữ rồi dùng như thể chuẩn ngành — đã từng mắc: *"bản kê nút"*, *"bản thiết kế màn hình"* (đều là từ tự bịa; tên thật = **View Hierarchy / VH**, thầy là tiến sĩ AI nên biết thuật ngữ), *"trung-thực-hoá"*. Tránh các cụm máy móc: "Nói một câu:", "Điểm mấu chốt", "đáng nói nhất", "gói gọn", lạm dụng gạch ngang dài. **Yêu cầu kép:** vừa dễ hiểu cho người không chuyên, vừa đủ hàm lượng khoa học (công thức + citation đúng venue) để thuyết phục một **tiến sĩ AI khó tính** — cách làm: lời thường trước, "hộp kỹ thuật" kèm công thức/trụ trích dẫn sau.
-- **CHỐNG TRÙNG LẮP:** trước khi thêm nội dung vào report/54, kiểm xem đã có ở mục khác chưa — file từng phình vì kể cùng một chuyện 3-5 lần (Tier1/Tier2 4 chỗ, "vừa đá bóng vừa thổi còi" 2 lần cách nhau 40 dòng, cả Phụ lục E là bản sao của mục "Bộ thước đo"). Đã dọn 2026-07-15. Giữ layer: **pitch (trang gặp thầy) → giải thích (Phần 1) → công thức (phụ lục)** — mỗi layer phải THÊM thông tin, không nhắc lại.
-- **Sau mọi thay đổi lớn:** cập nhật file report tương ứng + chạy multi-agent debate để kiểm chất lượng (user thích quy trình này); cập nhật CLAUDE.md khi có quyết định mới.
-- Tư vấn model/giá/API Claude/Anthropic: đọc tài liệu, KHÔNG trả lời theo trí nhớ.
+- **Văn phong:** dùng từ **tự nhiên**, KHÔNG lộ giọng AI-gen. Cấm tự chế thuật ngữ rồi dùng như
+  thể chuẩn ngành — đã từng mắc: *"bản kê nút"*, *"bản thiết kế màn hình"* (tên thật là **View
+  Hierarchy / VH**; thầy là tiến sĩ AI nên biết thuật ngữ), *"trung-thực-hoá"*. Tránh các cụm máy
+  móc: "Nói một câu:", "Điểm mấu chốt", "đáng nói nhất", "gói gọn", lạm dụng gạch ngang dài.
+- **Yêu cầu kép:** vừa dễ hiểu cho người không chuyên, vừa đủ hàm lượng khoa học (công thức +
+  citation đúng venue) để thuyết phục một **tiến sĩ AI khó tính**. Cách làm: lời thường trước,
+  "hộp kỹ thuật" kèm công thức và trụ trích dẫn sau.
+- **Chống trùng lắp:** trước khi thêm nội dung vào một file report, kiểm xem đã có ở mục khác
+  chưa. Giữ layer **pitch → giải thích → công thức**; mỗi layer phải THÊM thông tin.
+- **Trước khi một khẳng định vào bài, mở lại NGUỒN, không mở lại ghi chú.** Chữ *"đã xác minh"*
+  trong ghi chú của chính mình không phải bằng chứng — hai khẳng định về bộ trỏ sống 18 ngày, đi
+  vào bản thảo, rồi bị lật bởi một lần mở đúng Bảng 1. Tài liệu tả thước phải đọc từ **mã**,
+  không từ ý định.
 - Citation: chỉ trình peer-reviewed như đã bình duyệt; verify venue/năm trước khi trích.
+- Tư vấn model/giá/API Claude/Anthropic: đọc tài liệu, KHÔNG trả lời theo trí nhớ.
+- Sau thay đổi lớn: cập nhật file report tương ứng và cập nhật file này khi có quyết định mới.
