@@ -176,53 +176,54 @@ tìm kiếm **trong lớp `UIVenus`** và `assert` cả hai chiều: vá phải 
 **không được** lọt sang lớp trước nó.
 
 ```python
-import os, shutil, glob, ast
+import subprocess, os, json, time
+WS = "/kaggle/working"; SR = f"{WS}/harness/score_run.py"
 
-# ── 1. chép lại harness SẠCH từ dataset (ô vá trước đã sửa nhầm lớp UGround) ──
-WS = "/kaggle/working"
-mp = glob.glob("/kaggle/input/**/harness/score_run.py", recursive=True)
-assert mp, "DỪNG: không thấy harness/score_run.py trong dataset"
-if os.path.exists(f"{WS}/harness"):
-    shutil.rmtree(f"{WS}/harness")
-shutil.copytree(os.path.dirname(mp[0]), f"{WS}/harness")
-SR = f"{WS}/harness/score_run.py"
-print("đã chép lại harness sạch từ", mp[0])
-
-# ── 2. vá, NEO TRONG LỚP UIVenus ────────────────────────────────────────────
-s = open(SR, encoding="utf-8").read()
-c = s.index("class UIVenus")
-het = s.find("\ndef ", c)                      # hết lớp UIVenus
-i = s.index("self.proc = AutoProcessor.from_pretrained(", c)
-assert i < het, "DỪNG: không thấy from_pretrained bên trong lớp UIVenus"
-j = s.index("(", i); d = 0
-for k in range(j, len(s)):
-    d += (s[k] == "(") - (s[k] == ")")
-    if d == 0:
-        j = k + 1; break
-print("\n── mã CŨ trong UIVenus ──\n" + s[i:j])
-
-moi = '''mn = int(os.environ.get("VENUS_MIN_PIXELS", 2000000))
-        mx = int(os.environ.get("VENUS_MAX_PIXELS", 4800000))
-        self.proc = AutoProcessor.from_pretrained(path, min_pixels=mn, max_pixels=mx)
-        ip = self.proc.image_processor
-        if isinstance(getattr(ip, "size", None), dict):
-            ip.size = {"shortest_edge": mn, "longest_edge": mx}
-        ip.min_pixels, ip.max_pixels = mn, mx
-        print(f"[UIVenus] xin min={mn} max={mx} -> giu min={getattr(ip,'min_pixels',None)} "
-              f"max={getattr(ip,'max_pixels',None)} size={getattr(ip,'size',None)}", flush=True)'''
-open(SR, "w", encoding="utf-8").write(s[:i] + moi + s[j:])
-
-# ── 3. kiểm: UIVenus đã đổi, UGround KHÔNG đổi ──────────────────────────────
+# ── kiểm ô 2b-vá đã chạy và vá ĐÚNG LỚP ────────────────────────────────────
 t = open(SR, encoding="utf-8").read()
-ast.parse(t)
 cv = t.index("class UIVenus")
-assert "VENUS_MIN_PIXELS" in t[cv:], "⛔ vá không nằm trong UIVenus"
-assert "VENUS_MIN_PIXELS" not in t[:cv], "⛔ vá lọt sang lớp khác (UGround?)"
-ug = t[t.index("class UGround"):t.index("class OpenAIGrounder")]
-print("\nUGround giữ nguyên:", "from_pretrained(path)" in ug, "· không dính env:",
-      "VENUS_" not in ug)
-print("cú pháp hợp lệ ✅ — chạy lại ô 2b được rồi")
+assert "VENUS_MIN_PIXELS" in t[cv:], "DỪNG: chưa vá UIVenus — chạy ô 2b-vá trước"
+assert "VENUS_MIN_PIXELS" not in t[:cv], "DỪNG: vá lọt sang lớp trước UIVenus — chạy lại ô 2b-vá"
+print("vá nằm đúng trong lớp UIVenus ✅")
+
+CO = [(200704, 1003520, "1.272 token  (672×1484)"),
+      (200704, 2007040, "2.475 token  (924×2100)"),
+      (2000000, 4800000, "3.354 token  (1092×2408)")]
+kq = []
+for mn, mx, ten in CO:
+    tag = f"do_{mx//1000}k"
+    for e in (f"{WS}/out/{tag}.json", f"{WS}/out/{tag}_raw.jsonl"):
+        if os.path.exists(e): os.remove(e)          # cấu hình khác ⇒ KHÔNG nối tiếp
+    env = {**os.environ, "VENUS_MIN_PIXELS": str(mn), "VENUS_MAX_PIXELS": str(mx)}
+    t0 = time.time()
+    with open(f"{WS}/out/{tag}.log", "w") as f:
+        subprocess.run(["python", "-u", SR, "--mode", "gate", "--grounder", "uivenus",
+                        "--n", "30", "--out", f"{WS}/out/{tag}.json"],
+                       stdout=f, stderr=subprocess.STDOUT, cwd=WS, env=env)
+    lg = open(f"{WS}/out/{tag}.log", encoding="utf-8", errors="ignore").read()
+    bang = next((l for l in lg.splitlines() if "[UIVenus]" in l), "⛔ KHÔNG THẤY dòng [UIVenus]")
+    j = json.load(open(f"{WS}/out/{tag}.json"))
+    gy = (time.time() - t0 - 90) / 30
+    kq.append((ten, j["median_err"], j["p75_err"], gy))
+    print(f"\n{ten}\n  {bang}\n  trung vị {j['median_err']:.3%} · p75 {j['p75_err']:.3%}"
+          f" · ~{gy:.1f} s/bước", flush=True)
+
+print(f"\n{'cấu hình':<28}{'trung vị':>10}{'p75':>10}{'s/bước':>9}")
+for ten, m, p75, gy in kq:
+    print(f"  {ten:<26}{m:>9.3%}{p75:>10.3%}{gy:>8.1f}")
+print("\n  mốc UGround trên ĐÚNG 30 bước này: trung vị 0,600% · p75 3,600% · ≤3%: 73,3%")
+
+if len({round(r[1], 6) for r in kq}) == 1:
+    print("\n⚠️ BA CỠ RA TRÙNG NHAU. Kiểm ba dòng [UIVenus] ở trên:")
+    print("   · có dòng, và min/max KHÁC nhau ⇒ cỡ ảnh ĐÃ đổi thật, mà sai số không đổi")
+    print("     ⇒ KẾT LUẬN THẬT: cỡ ảnh không phải nguyên nhân. Chốt 3.354 token, sang ô 4.")
+    print("   · không có dòng, hoặc min/max giống nhau ⇒ vá vẫn chưa ăn, chạy lại ô 2b-vá.")
+else:
+    best = min(kq, key=lambda r: r[1])
+    print(f"\n⇒ chọn: {best[0]} — trung vị {best[1]:.3%}, {best[3]:.1f} s/bước")
+    print("   Ghi lại VENUS_MIN/MAX_PIXELS của cỡ này, dùng Y HỆT cho ô 4 và ô 5.")
 ```
+
 
 ⚠️ Bản vá này chỉ sống trong **phiên hiện tại**. Trước lượt ô 5 chạy dài (hoặc bất kỳ lượt
 commit nào), phải đưa `harness/score_run.py` bản mới lên dataset — nếu không lượt đó lại chạy
