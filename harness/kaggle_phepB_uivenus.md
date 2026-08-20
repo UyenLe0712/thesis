@@ -152,30 +152,117 @@ lượt Kaggle treo 7 giờ vì log ngập.
 
 ---
 
-## Ô 3 — chọn cỡ lát theo tốc độ đo được
+## Ô 2b — DÒ CỠ ẢNH (~15 phút, 3 lượt × 30 bước)
+
+**Vì sao cần.** Lượt thăm dò đầu (2,59 MP nguyên cỡ, ~3.300 token ảnh) cho trung vị **1,6%**
+và **p75 28,9%**, trong khi UGround trên **đúng 30 bước ấy** được 0,6% / 3,6%. Bộ trỏ mới đang
+**kém hơn** bộ trỏ cũ, và đuôi dày hơn hẳn. Nghi ngờ đầu tiên là cỡ ảnh: nếu UI-Venus quen cỡ
+nhỏ hơn thì nó trỏ tệ đi mà chẳng báo gì.
+
+⛔ **Luật chọn cỡ, khoá trước khi nhìn:** chọn theo sai số trên **câu chuẩn của người**
+(`--mode gate`). Câu chuẩn **giống hệt nhau ở mọi nhánh** nên cỡ chọn kiểu này **không thể**
+thiên vị S1 hay S2. **CẤM** dò cỡ bằng điểm của một nhánh — đó là chỉnh dụng cụ theo kết quả,
+đúng thứ phải tránh. Đây cũng là lý do phải dò **trước** ô 4, không phải sau.
 
 ```python
-import json, math
-GIAY = float(input("giây/bước đo được ở ô 2: ").strip())   # ví dụ 9.5
-TRAN_PHIEN = 11.0     # Kaggle cắt phiên ở 12 giờ — chừa 1 giờ
-QUOTA = 30.0          # giờ GPU còn lại trong tuần
+import subprocess, os, json, time
+WS = "/kaggle/working"
+CO = [(200704, 1003520, "mặc định Qwen2.5-VL  ~1.280 token"),
+      (200704, 2007040, "trung gian           ~2.560 token"),
+      (2000000, 4800000, "cỡ đang dùng         ~3.300 token")]
+kq = []
+for mn, mx, ten in CO:
+    tag = f"do_{mx//1000}k"
+    env = {**os.environ, "VENUS_MIN_PIXELS": str(mn), "VENUS_MAX_PIXELS": str(mx)}
+    for e in (f"{WS}/out/{tag}.json", f"{WS}/out/{tag}_raw.jsonl"):
+        if os.path.exists(e): os.remove(e)      # cấu hình khác ⇒ KHÔNG nối tiếp tệp cũ
+    t0 = time.time()
+    with open(f"{WS}/out/{tag}.log", "w") as f:
+        subprocess.run(["python", "-u", f"{WS}/harness/score_run.py", "--mode", "gate",
+                        "--grounder", "uivenus", "--n", "30", "--out", f"{WS}/out/{tag}.json"],
+                       stdout=f, stderr=subprocess.STDOUT, cwd=WS, env=env)
+    j = json.load(open(f"{WS}/out/{tag}.json"))
+    gy = (time.time() - t0 - 90) / 30          # trừ ~90 s nạp mô hình
+    kq.append((ten, j["median_err"], j["p75_err"], gy))
+    print(f"  {ten}  trung vị {j['median_err']:.2%}  p75 {j['p75_err']:.2%}  ~{gy:.1f} s/bước",
+          flush=True)
 
-print(f"\n{'việc':<34}{'lượt gọi':>9}{'giờ':>8}   ")
-print("-"*56)
-gate = (300-30) * GIAY / 3600
-print(f"{'ô 4  cổng A đủ 300 bước':<34}{270:>9}{gate:>7.1f}h")
-for m in (2532, 1266, 633):
-    h = m*2*GIAY/3600
-    ghi = "✅ một phiên" if h <= TRAN_PHIEN else f"⚠️ phải cắt {math.ceil(h/TRAN_PHIEN)} phiên"
-    print(f"{'ô 5  S1+S2 lát '+str(m):<34}{m*2:>9}{h:>7.1f}h   {ghi}")
-print(f"\nquota tuần còn {QUOTA:.0f} giờ. Cổng A + lát đủ = {gate + 2532*2*GIAY/3600:.1f} giờ")
+print(f"\n{'cấu hình':<38}{'trung vị':>10}{'p75':>9}{'s/bước':>9}")
+for ten, m, p75, gy in kq:
+    print(f"  {ten:<36}{m:>9.2%}{p75:>9.2%}{gy:>8.1f}")
+print("\nMốc UGround trên ĐÚNG 30 bước này: trung vị 0,60% · p75 3,60% · ≤3%: 73,3%")
+best = min(kq, key=lambda r: r[1])
+print(f"\n⇒ chọn: {best[0]}  (trung vị thấp nhất)")
 ```
 
-**Luật chọn, khoá trước khi nhìn số:** lấy **lát lớn nhất mà quota cho phép**, không lấy theo
-kết quả. Lát 633 chỉ đọc được dấu — dùng khi quota không đủ, và **phải khai trong bài** là lát
-đó không phân giải được độ lớn.
+### Đọc ô 2b
+
+· Cỡ nào cho **trung vị thấp nhất** thì lấy cỡ đó, ghi lại `VENUS_MIN/MAX_PIXELS` và **dùng
+  y hệt** cho ô 4 và ô 5. Ghi vào mục sửa đổi kèm ba con số — để sau này chứng minh được cỡ
+  chọn theo câu chuẩn, không theo nhánh.
+· Cả ba cỡ đều kém UGround rõ rệt (trung vị > 1,5%, p75 > 20%) ⇒ **đó là kết quả**, không phải
+  lỗi: UI-Venus mạnh hơn trên ScreenSpot nhưng yếu hơn trên ảnh AndroidControl. Vẫn chạy tiếp
+  được, nhưng phải đọc theo mục **Bẫy pha loãng** dưới đây.
+· n=30 nên đừng chốt vội trên chênh lệch nhỏ; chỉ khi một cỡ hơn hẳn (trung vị lệch > 2 lần)
+  mới coi là kết luận.
 
 ---
+
+## ⚠️ BẪY PHA LOÃNG — phải đọc trước khi diễn giải bất kỳ con số nào
+
+Đây là chỗ phép B dễ bị đọc sai nhất, và nó không tự lộ ra.
+
+**Nếu UI-Venus là dụng cụ TỆ HƠN, thì Δ(S2−S1) sẽ tự động co về 0** — không phải vì UGround
+thiên vị, mà vì thước nhiễu hơn thì mọi chênh lệch đều bị pha loãng. Nghĩa là:
+
+> Δ ≈ 0 dưới UI-Venus **KHÔNG** chứng minh được *"UGround thiên vị văn phong AC"*.
+> Nó cũng khớp hoàn toàn với *"UI-Venus đo kém hơn nên chẳng phân biệt được gì"*.
+
+**Cách tách hai khả năng: phải có một CHỨNG NHÂN — chênh lệch đã biết là thật.** Dùng
+**S1 − Base = +11,52 pp** (UGround, χ²=243, p<1e-56). Đây là hiệu lớn, chắc, không ai cãi.
+
+| dưới UI-Venus | S1−Base | S2−S1 | kết luận |
+|---|---|---|---|
+| giữ ~11 pp | về ~0 | ✅ **thước cũ thiên vị thật** — phát hiện mạnh |
+| giữ ~11 pp | vẫn ~−2 | ✅ **S2 thua thật**, tái lập qua hai dụng cụ |
+| tụt còn ~5 pp | về ~0 | ⛔ **pha loãng** — không kết luận được gì về S2 |
+
+⇒ **Phải chấm thêm nhánh Base trên đúng lát ấy.** Không có nó thì lượt chạy này không trả lời
+được câu hỏi ban đầu. Cộng vào ô 5, xem lại ô 3 để tính giờ.
+
+Thước phụ rẻ hơn, có sẵn từ ô 4 **không tốn thêm giây GPU nào**: chạy
+`python3 harness/gate_a_ceiling.py --raw runs/venus/venus_gate_raw.jsonl` để lấy **trần của
+UI-Venus** trên đúng 300 bước cổng A. Trần tụt bao nhiêu phần trăm so với 75,7% chính là mức
+nén của thang đo.
+
+---
+
+## Ô 3 — chọn cỡ lát theo tốc độ đo được
+
+Ba nhánh phải chấm: **S1 · S2 · Base**. Base là **chứng nhân** chống bẫy pha loãng, không
+phải phần thêm cho đủ bộ — thiếu nó thì lượt chạy không trả lời được câu hỏi ban đầu.
+
+```python
+import math
+GIAY = float(input("giây/bước của cỡ đã chọn ở ô 2b: ").strip())
+PHIEN, QUOTA = 11.0, 30.0      # Kaggle cắt phiên ở 12 giờ · quota 30 giờ/tuần
+
+gate = 270 * GIAY / 3600
+print(f"  ô 4  cổng A (còn 270 bước)              {gate:>5.1f}h")
+print(f"\n  {'lát':>6}{'lượt gọi':>10}{'giờ':>8}   ")
+for m in (2532, 1266, 633):
+    h = m * 3 * GIAY / 3600
+    ghi = "✅ gọn một phiên" if h <= PHIEN else f"⚠️ cắt {math.ceil(h/PHIEN)} phiên"
+    tot = "✅" if gate + h <= QUOTA else "⛔ quá quota tuần"
+    print(f"  {m:>6}{m*3:>10}{h:>7.1f}h   {ghi}  · cả cổng A {gate+h:.1f}h {tot}")
+```
+
+**Luật chọn, khoá trước khi nhìn kết quả:** lấy **lát lớn nhất mà quota cho phép**. Lát 633 chỉ
+đọc được **dấu**, không đọc được độ lớn — dùng được, nhưng phải khai đúng như vậy trong bài.
+
+Ước lượng ở 10 s/bước (số của lượt thăm dò, ô 2b có thể hạ xuống): lát 1.266 × 3 nhánh ≈ **10,6
+giờ** — vừa một phiên. Lát 2.532 × 3 ≈ 21 giờ — phải cắt hai phiên, nhưng `score_run.py` nối
+tiếp được nên cắt phiên không mất gì ngoài thời gian.
 
 ## Ô 4 — cổng A đủ 300 bước (nối tiếp từ ô 2, không chấm lại 30 bước cũ)
 
@@ -202,40 +289,52 @@ print("mã thoát", p.returncode)
 print(open(f"{WS}/out/venus_gate.json").read())
 ```
 
-## Ô 5 — chấm S1 và S2 trên lát đã chọn
+## Ô 5 — chấm Base, S1, S2 trên lát đã chọn
 
-Đổi `LAT` thành cỡ đã chốt ở ô 3. **Chạy S1 trước, xong mới S2** — mất phiên giữa chừng thì ít
-nhất có một nhánh trọn vẹn, và `score_run.py` nối tiếp được từ tệp thô.
+Thứ tự **Base → S1 → S2** cố ý: mất phiên giữa chừng thì thứ còn lại vẫn đủ để đọc một phép so
+trọn vẹn, và `score_run.py` nối tiếp được từ tệp thô ở lượt sau.
+
+⚠️ **Đặt `VENUS_*_PIXELS` đúng cỡ đã chốt ở ô 2b.** Đổi cỡ giữa các nhánh là ba nhánh đo bằng
+ba dụng cụ khác nhau — hỏng cả lượt mà không có gì báo.
 
 ```python
 import subprocess, time, os
 WS = "/kaggle/working"
-LAT = 2532                      # ← 2532 | 1266 | 633, lấy từ ô 3
-TRAN_GIO = 11.0                 # giết tiến trình trước khi Kaggle cắt phiên, để tệp thô kịp lưu
+LAT = 1266                     # ← lấy từ ô 3
+MN, MX = 200704, 1003520       # ← lấy từ ô 2b
+TRAN_GIO = 11.0                # giết tiến trình trước khi Kaggle cắt phiên, để tệp thô kịp lưu
+env = {**os.environ, "VENUS_MIN_PIXELS": str(MN), "VENUS_MAX_PIXELS": str(MX)}
 
-for nhanh in ("s1", "s2"):
+for nhanh in ("base", "s1", "s2"):
     ten = f"venus_{nhanh}_{LAT}"
-    src = [c for c in P.values() if ten in c][0]
-    out = f"{WS}/out/score_{ten}.json"
-    LOG = f"{WS}/out/{ten}.log"
+    src = [c for c in P.values() if os.path.basename(c) == f"preds_{ten}.jsonl"][0]
+    out, LOG = f"{WS}/out/score_{ten}.json", f"{WS}/out/{ten}.log"
     print(f"\n===== {ten} =====", flush=True)
     t0 = time.time(); f = open(LOG, "w")
     p = subprocess.Popen(["python", "-u", f"{WS}/harness/score_run.py",
                           "--mode", "score", "--grounder", "uivenus",
                           "--preds", src, "--n", str(LAT), "--out", out],
-                         stdout=f, stderr=subprocess.STDOUT, cwd=WS)
+                         stdout=f, stderr=subprocess.STDOUT, cwd=WS, env=env)
     while p.poll() is None:
         time.sleep(120)
-        gio = (time.time()-t0)/3600
+        gio = (time.time() - t0) / 3600
         n = sum(1 for _ in open(LOG)) if os.path.exists(LOG) else 0
-        print(f"[{time.strftime('%H:%M:%S')}] {ten} · {gio:.2f}h · {n} dòng", flush=True)
+        print(f"[{time.strftime('%H:%M:%S')}] {ten} · {gio:.2f}h · {n} dòng log", flush=True)
         if gio > TRAN_GIO:
             print("⚠️ QUÁ TRẦN GIỜ — giết tiến trình để notebook kết thúc SẠCH, "
-                  "nhờ vậy tệp thô dở vẫn được lưu thành Output", flush=True)
+                  "nhờ vậy tệp thô dở vẫn lưu được thành Output", flush=True)
             p.terminate(); break
     f.close()
     print(f"{ten}: mã thoát {p.returncode} · {(time.time()-t0)/3600:.2f} giờ", flush=True)
 ```
+
+**Mốc đối chiếu, đo bằng UGround trên ĐÚNG các lát này** (tính sẵn, offline):
+
+| lát | S1 − Base (UGround) | S2 − S1 (UGround, quy về 4.463) |
+|---|---|---|
+| 2.532 | **+10,35** pp [+8,39 · +12,40] | −1,93 pp [−3,06 · −0,75] |
+| 1.266 | **+11,69** pp [+9,00 · +14,41] | *(bootstrap lại khi có số)* |
+| 633 | **+11,06** pp [+7,50 · +14,73] | *(nt)* |
 
 ## Ô 6 — gom tệp mang về
 

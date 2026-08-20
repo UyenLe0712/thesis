@@ -64,79 +64,99 @@ def phan_1_cong_a():
     return med
 
 
+def _so(ten, A, B, khoa, he_so=1.0):
+    ea = sum(A[k]["exec"] for k in khoa) / len(khoa) * 100
+    eb = sum(B[k]["exec"] for k in khoa) / len(khoa) * 100
+    b, c, chi, p = mcnemar(A, B, khoa)
+    pt, (lo, hi) = boot_hieu([(cum(A[k]), A[k]["exec"], B[k]["exec"]) for k in khoa])
+    q, qlo, qhi = pt * he_so * 100, lo * he_so * 100, hi * he_so * 100
+    print(f"  {ten:<26}{ea:>6.1f}%{eb:>6.1f}%{q:>+9.2f} [{qlo:+6.2f},{qhi:+6.2f}]"
+          f"  {b:>4}/{c:<4} {p:.2g}")
+    return q, qlo, qhi
+
+
 def phan_2_s1_s2(lat):
-    """Δ(S2−S1) theo UI-Venus, và cùng đại lượng đó theo UGround trên ĐÚNG các bước ấy."""
-    V1 = nap_tho(os.path.join(VEN, f"score_venus_s1_{lat}_raw.jsonl"))
-    V2 = nap_tho(os.path.join(VEN, f"score_venus_s2_{lat}_raw.jsonl"))
-    if not (V1 and V2):
-        return False
-    U1 = nap("score_s1_seed101_raw.jsonl")
-    U2 = nap("score_s2_seed101_raw.jsonl")
-    khoa = sorted(set(V1) & set(V2) & set(U1) & set(U2))
+    """Hai phép so, hai dụng cụ, trên cùng một lát:
+       · S2 − S1  = câu hỏi chính
+       · S1 − Base = CHỨNG NHÂN chống bẫy pha loãng."""
+    V = {n: nap_tho(os.path.join(VEN, f"score_venus_{n}_{lat}_raw.jsonl"))
+         for n in ("base", "s1", "s2")}
+    if not (V["s1"] and V["s2"]):
+        return None
+    U = {"s1": nap("score_s1_seed101_raw.jsonl"),
+         "s2": nap("score_s2_seed101_raw.jsonl"),
+         "base": nap("score_base_raw.jsonl")}
+    khoa = sorted(set(V["s1"]) & set(V["s2"]) & set(U["s1"]) & set(U["s2"]))
+    he = N_KHAC / N_TOAN
     print("\n" + "=" * 78)
-    print(f"② S2 − S1 TRÊN LÁT {lat} BƯỚC CÂU KHÁC NHAU — hai dụng cụ cạnh nhau")
+    print(f"② LÁT {lat} BƯỚC CÂU KHÁC NHAU — hai dụng cụ cạnh nhau (n={len(khoa)})")
     print("=" * 78)
-    print(f"  ghép cặp trên {len(khoa)} bước\n")
-    # hệ số quy về mẫu số toàn tập: bước hai nhánh viết GIỐNG hệt đóng góp đúng 0 vào
-    # tử số nhưng VẪN nằm trong mẫu số 4.463
-    he_so = N_KHAC / N_TOAN
-    print(f"  {'dụng cụ':<12}{'S1':>7}{'S2':>7}{'Δ trên lát':>13}"
-          f"{'Δ quy về 4.463':>17}   b / c      p")
-    print("  " + "-" * 74)
-    ket = {}
-    for ten, A, B in (("UGround", U1, U2), ("UI-Venus", V1, V2)):
-        ea = sum(A[k]["exec"] for k in khoa) / len(khoa) * 100
-        eb = sum(B[k]["exec"] for k in khoa) / len(khoa) * 100
-        b, c, chi, p = mcnemar(A, B, khoa)
-        pt, (lo, hi) = boot_hieu([(cum(A[k]), A[k]["exec"], B[k]["exec"]) for k in khoa])
-        # quy về toàn tập: nhân hệ số, cả điểm lẫn hai mép KTC
-        q, qlo, qhi = pt * he_so * 100, lo * he_so * 100, hi * he_so * 100
-        print(f"  {ten:<12}{ea:>6.1f}%{eb:>6.1f}%{pt*100:>+9.2f}pp"
-              f"{q:>+10.2f} [{qlo:+.2f},{qhi:+.2f}]  {b:>4}/{c:<4} {p:.2g}")
-        ket[ten] = (q, qlo, qhi)
-    print(f"\n  (Δ trên lát nhân {he_so:.4f} = {N_KHAC}/{N_TOAN}. Bước hai nhánh viết giống"
-          f"\n   hệt đóng góp đúng 0 — đã kiểm bằng UGround: 1.931 bước, 0 bất đồng.)")
-    print(f"\n  Mốc đối chiếu — Δ đo trên TOÀN BỘ 4.463 bước bằng UGround: −1,93 pp"
-          f" [−3,06 · −0,75]")
-    return ket
-
-
-def phan_3_phan_quyet(ket):
-    print("\n" + "=" * 78)
-    print("③ PHÁN QUYẾT theo bảng bốn ô đã khoá TRƯỚC khi chạy")
-    print("=" * 78)
-    if not ket or "UI-Venus" not in ket:
-        print("  ⏳ chưa đủ dữ liệu")
-        return
-    q, lo, hi = ket["UI-Venus"]
-    if hi < 0:
-        print(f"  Δ = {q:+.2f} pp, KTC95 [{lo:+.2f},{hi:+.2f}] — mép trên DƯỚI 0.")
-        print("  ⇒ S2 vẫn THUA dưới bộ trỏ sạch AndroidControl.")
-        print("  ⇒ Kết luận vững: thành phần khai báo không có ích. Bỏ nhánh S2 được, sạch sẽ.")
-        print("     Bài viết: 'kết quả âm, tái lập qua hai dụng cụ đo độc lập'.")
-    elif lo > 0:
-        print(f"  Δ = {q:+.2f} pp, KTC95 [{lo:+.2f},{hi:+.2f}] — mép dưới TRÊN 0.")
-        print("  ⇒ ĐẢO DẤU khi đổi dụng cụ. Đây là phát hiện về THƯỚC, không phải về S2.")
-        print("  ⛔ ĐỪNG báo 'S2 thắng'. Phải chạy thêm trước khi khẳng định:")
-        print("     · lát lớn hơn để loại nhiễu lấy mẫu")
-        print("     · kiểm câu của S1 có thật sự 'giống văn phong AC' hơn không (đo được offline)")
+    print(f"  {'phép so':<26}{'A':>6}{'B':>6}{'Δ (pp)':>10}{'KTC95':>16}  b / c      p")
+    print("  " + "-" * 76)
+    r = {}
+    print("  ── S2 − S1, quy về mẫu số 4.463 ──")
+    r["s2s1_U"] = _so("UGround", U["s1"], U["s2"], khoa, he)
+    r["s2s1_V"] = _so("UI-Venus", V["s1"], V["s2"], khoa, he)
+    if V["base"]:
+        kb = sorted(set(khoa) & set(V["base"]) & set(U["base"]))
+        print(f"  ── S1 − Base (CHỨNG NHÂN), trên lát, n={len(kb)} ──")
+        r["base_U"] = _so("UGround", U["base"], U["s1"], kb)
+        r["base_V"] = _so("UI-Venus", V["base"], V["s1"], kb)
     else:
-        print(f"  Δ = {q:+.2f} pp, KTC95 [{lo:+.2f},{hi:+.2f}] — KTC CHỨA 0.")
-        print("  ⇒ Dưới bộ trỏ sạch, chênh lệch S2−S1 KHÔNG còn ý nghĩa thống kê.")
-        print("  ⇒ Không đọc thành 'S2 tốt'. Đọc thành: một phần chênh lệch đo bằng UGround")
-        print("     có thể do bộ trỏ quen văn phong AndroidControl. Cả hai số phải vào bài.")
-    u = ket.get("UGround")
-    if u:
-        print(f"\n  Trên cùng lát này: UGround {u[0]:+.2f} pp · UI-Venus {q:+.2f} pp"
-              f" · chênh {q-u[0]:+.2f} pp")
+        print("  ⏳ chưa có nhánh Base — KHÔNG đọc được phần ③ (xem mục Bẫy pha loãng)")
+    print(f"\n  (Δ của S2−S1 nhân {he:.4f} = {N_KHAC}/{N_TOAN}: bước hai nhánh viết giống hệt"
+          f"\n   đóng góp đúng 0 vào tử số nhưng vẫn nằm trong mẫu số. S1−Base không quy đổi"
+          f"\n   — lát này không phải lát 'câu khác nhau' của cặp đó.)")
+    return r
+
+
+def phan_3_phan_quyet(r):
+    print("\n" + "=" * 78)
+    print("③ PHÁN QUYẾT — bảng đã khoá TRƯỚC khi chạy")
+    print("=" * 78)
+    if not r or "s2s1_V" not in r:
+        print("  ⏳ chưa đủ dữ liệu"); return
+    if "base_V" not in r:
+        print("  ⛔ THIẾU NHÁNH BASE ⇒ KHÔNG kết luận được.")
+        print("     Δ(S2−S1) co về 0 dưới UI-Venus khớp với CẢ HAI cách giải thích:")
+        print("     'UGround thiên vị văn phong AC'  và  'UI-Venus đo kém hơn nên pha loãng'.")
+        print("     Chứng nhân S1−Base là thứ duy nhất tách được hai cái đó."); return
+    q, lo, hi = r["s2s1_V"]
+    bU, bV = r["base_U"][0], r["base_V"][0]
+    giu = bV / bU if bU else 0
+    print(f"  Chứng nhân S1−Base: UGround {bU:+.2f} pp → UI-Venus {bV:+.2f} pp"
+          f"  (giữ được {giu:.0%})")
+    if giu < 0.6:
+        print(f"\n  ⛔ PHA LOÃNG: chứng nhân chỉ còn {giu:.0%}. Dụng cụ mới nén cả thang đo,")
+        print("     nên Δ(S2−S1) nhỏ đi là chuyện cơ học. KHÔNG kết luận gì về S2.")
+        print("     Việc phải làm: đọc trần của UI-Venus (gate_a_ceiling.py) để đo mức nén.")
+        return
+    print(f"  ✅ chứng nhân giữ được {giu:.0%} ⇒ thang đo không bị nén, Δ dưới đây đọc được.\n")
+    if hi < 0:
+        print(f"  Δ(S2−S1) = {q:+.2f} pp [{lo:+.2f},{hi:+.2f}] — mép trên DƯỚI 0.")
+        print("  ⇒ S2 vẫn THUA dưới bộ trỏ sạch AndroidControl. Kết luận vững:")
+        print("     thành phần khai báo không có ích. Bỏ nhánh S2 được, sạch sẽ.")
+        print("     Câu cho bài: 'kết quả âm, tái lập qua hai dụng cụ đo độc lập'.")
+    elif lo > 0:
+        print(f"  Δ(S2−S1) = {q:+.2f} pp [{lo:+.2f},{hi:+.2f}] — mép dưới TRÊN 0. ĐẢO DẤU.")
+        print("  ⇒ Phát hiện về THƯỚC, không phải về S2. ⛔ ĐỪNG báo 'S2 thắng' vội —")
+        print("     chạy lát lớn hơn, và đo xem câu S1 có thật giống văn phong AC hơn không.")
+    else:
+        print(f"  Δ(S2−S1) = {q:+.2f} pp [{lo:+.2f},{hi:+.2f}] — KTC CHỨA 0.")
+        print("  ⇒ Dưới bộ trỏ sạch, chênh lệch S2−S1 không còn ý nghĩa thống kê, mà thang")
+        print("     đo KHÔNG bị nén (chứng nhân còn nguyên) ⇒ một phần chênh lệch đo bằng")
+        print("     UGround có thể do bộ trỏ quen văn phong AndroidControl.")
+        print("     Cả hai con số phải vào bài, không chọn một.")
+    print(f"\n  Trên cùng lát: UGround {r['s2s1_U'][0]:+.2f} pp · UI-Venus {q:+.2f} pp"
+          f" · chênh {q - r['s2s1_U'][0]:+.2f} pp")
 
 
 def phan_0_tu_kiem():
     """Chứng minh phép rút gọn còn đúng, bằng chính dữ liệu UGround đã có.
 
     Chấm 2.532 bước rồi nhân 2532/4463 phải tái tạo ĐÚNG hiệu ghép cặp của cả 4.463 bước.
-    Nếu ai đó đổi danh sách bước, đổi mẫu số, hay đổi cách nạp tệp, phép kiểm này rớt
-    ngay — thay vì âm thầm cho ra một con số trông hợp lý."""
+    Ai đổi danh sách bước, đổi mẫu số, hay đổi cách nạp tệp thì phép kiểm này rớt ngay —
+    thay vì âm thầm cho ra một con số trông hợp lý."""
     U1, U2 = nap("score_s1_seed101_raw.jsonl"), nap("score_s2_seed101_raw.jsonl")
     src = os.path.join(VEN, f"preds_venus_s1_{N_KHAC}.jsonl")
     if not os.path.exists(src):

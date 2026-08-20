@@ -34,10 +34,10 @@ BỘ TRỎ cắm rời qua --grounder, vì cổng A tồn tại chính là để
 
 Chạy:
   python harness/score_run.py --mode gate  --grounder uground --n 300
-  python harness/score_run.py --mode score --preds ckpt/preds_s1_seed101.jsonl \
-                              --grounder uground --out ckpt/score_s1_seed101.json
+  python harness/score_run.py --mode score --preds runs/preds_s1_seed101.jsonl \
+                              --grounder uground --out runs/score_s1_seed101.json
 """
-import os, sys, json, math, random, argparse, statistics, collections
+import os, sys, json, math, time, random, argparse, statistics, collections
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -76,9 +76,22 @@ def dtype_kw():
 
 # ─────────────────────────── bộ trỏ ───────────────────────────
 class UGround:
-    """Bộ trỏ chuyên. Khác họ với mô hình được chấm, và đã xác minh recipe huấn luyện
-    của nó không chứa AndroidControl (report/103) — nếu không thì giám khảo từng học
-    chính đề thi."""
+    """Bộ trỏ chuyên.
+
+    ⛔ SỬA 16/8/2026 — hai câu cũ ở đây ĐỀU SAI, đã tra tận nguồn:
+      · "khác họ với mô hình được chấm" → SAI. UGround-V1-2B dựng trên **Qwen2-VL**
+        (thấy ngay ở dòng `Qwen2VLForConditionalGeneration` bên dưới), cùng dòng với
+        Qwen2.5-VL-3B đang bị chấm.
+      · "recipe huấn luyện không chứa AndroidControl" → SAI. Bảng 1 của arXiv
+        2410.05243 liệt kê **AndroidControl 47K phần tử, nhãn người**, cạnh Widget
+        Caption 41K · UIBert 16K · AITZ 8K.
+
+    Phần còn đứng: họ lấy từ **split train** ("we use the human-annotated actions from
+    the training set"), còn tập kiểm của ta dựng từ split test ⇒ **không chồng lấn ở
+    mức màn hình**. Nhưng bộ trỏ ĐÃ thấy văn phong chú thích của kho này, mà s1 lại
+    được dạy viết đúng văn phong đó ⇒ còn một lời giải thích thay thế cho chênh lệch
+    s1-vs-base mà sáu đòn phản biện chưa loại được. Bài FAIR đã khai ở mục Limitations.
+    Cách duy nhất đóng: chấm lại lát ≥500 bước bằng bộ trỏ đã xác minh sạch AC."""
     NAME = "uground"
 
     def __init__(self, path="osunlp/UGround-V1-2B"):
@@ -117,7 +130,7 @@ class UGround:
             # UGround-V1-2B đặt use_cache=False, và trên T4 điều đó làm 32 token mất 38,7 s
             # thay vì 4,2 s — chậm 9,3 lần cho một phép biến đổi bảo toàn kết quả. Đã kiểm
             # chứ không suy luận: 50 bước đầu của mẫu cổng A chạy lại với cache bật cho
-            # toạ độ TRÙNG TUYỆT ĐỐI 50/50 với vết đã lưu (ckpt/cache_check.jsonl).
+            # toạ độ TRÙNG TUYỆT ĐỐI 50/50 với vết đã lưu (runs/gate_a/cache_check.jsonl).
             g = self.model.generate(**inp, max_new_tokens=32, do_sample=False,
                                     use_cache=True)
         out = self.proc.decode(g[0][len(inp["input_ids"][0]):], skip_special_tokens=True)
@@ -181,8 +194,72 @@ class OpenAIGrounder:
         return (float(m[0]) / 1000 * w, float(m[1]) / 1000 * h)
 
 
+
+class UIVenus:
+    """Bộ trỏ THỨ HAI, dùng để trả lời đòn nhiễm dữ liệu của UGround.
+
+    Vì sao chọn nó (tra 16/8/2026, không lấy từ trí nhớ): báo cáo kỹ thuật
+    arXiv 2508.10833 mục 3.2.1 liệt kê dữ liệu grounding gồm **Widget Captioning ·
+    UI RefExp · SeeClick-Web · ShowUI · OmniAct** — **KHÔNG có AndroidControl**. Đây
+    đúng là thứ UGround thiếu (UGround có 47K phần tử AndroidControl từ split train).
+
+    ⚠️ NHƯNG nó **vẫn dựng trên Qwen2.5-VL**, tức CÙNG HỌ với mô hình được chấm. Nó
+    đóng đòn *nhiễm dữ liệu*, KHÔNG đóng đòn *cùng họ*. Đừng viết trong bài rằng phép
+    lặp này giải quyết cả hai. Muốn khác họ thì phải là Phi-Ground (nền Phi-3.5-Vision),
+    nhưng nó yếu hẳn ở màn di động (78,1 ScreenSpot-v2) nên trần tụt vì lý do khác.
+
+    Câu nhắc và cách giải mã BÊ NGUYÊN VĂN từ thẻ mô hình chính chủ. Mô hình trả về
+    HỘP [x1,y1,x2,y2] theo pixel của ảnh SAU khi bộ xử lý thay đổi kích thước, nên phải
+    chuẩn hoá theo `image_grid_thw × 14` rồi mới nhân lại với kích thước ảnh gốc — lấy
+    thẳng số nó trả về là sai hệ toạ độ, và sai kiểu đó không hề báo lỗi.
+    """
+    NAME = "uivenus"
+    PROMPT = ("Outline the position corresponding to the instruction: {desc}. "
+              "The output should be only [x1,y1,x2,y2].")
+
+    def __init__(self, path="inclusionAI/UI-Venus-Ground-7B"):
+        import torch
+        from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration
+        self.torch = torch
+        # min/max_pixels theo thẻ mô hình. Ảnh AndroidControl 1080x2400 = 2,59 MP nên
+        # rơi đúng trong dải; đừng hạ xuống cho "nhẹ máy" — đổi độ phân giải là đổi
+        # dụng cụ, rồi lại đổ oan cho bộ trỏ như đã từng.
+        # Đổi được bằng biến môi trường để dò cỡ ảnh mà KHÔNG phải sửa mã trên Kaggle.
+        # ⛔ Luật chọn cỡ, khoá trước: chọn theo sai số trên CÂU CHUẨN CỦA NGƯỜI (--mode
+        # gate). Câu chuẩn giống hệt nhau ở mọi nhánh nên không thể thiên vị S1 hay S2.
+        # CẤM dò cỡ bằng điểm của một nhánh — đó là chỉnh dụng cụ theo kết quả.
+        mn = int(os.environ.get("VENUS_MIN_PIXELS", 2000000))
+        mx = int(os.environ.get("VENUS_MAX_PIXELS", 4800000))
+        print(f"[UIVenus] min_pixels={mn:,} max_pixels={mx:,}"
+              f" (~{mx // 784:,} token ảnh tối đa)", flush=True)
+        self.proc = AutoProcessor.from_pretrained(path, min_pixels=mn, max_pixels=mx)
+        # KHÔNG flash_attention_2: T4/P100 của Kaggle là Turing/Pascal, không hỗ trợ.
+        self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+            path, device_map="auto", attn_implementation="sdpa", **dtype_kw()).eval()
+
+    def point(self, img, sentence):
+        import re
+        msg = [{"role": "user", "content": [
+            {"type": "image", "image": img},
+            {"type": "text", "text": self.PROMPT.format(desc=sentence)}]}]
+        text = self.proc.apply_chat_template(msg, tokenize=False, add_generation_prompt=True)
+        inp = self.proc(text=[text], images=[img], return_tensors="pt").to(self.model.device)
+        with self.torch.no_grad():
+            g = self.model.generate(**inp, max_new_tokens=64, do_sample=False, use_cache=True)
+        out = self.proc.decode(g[0][len(inp["input_ids"][0]):], skip_special_tokens=True)
+        m = re.findall(r"(\d+(?:\.\d+)?)", out)
+        if len(m) < 4:
+            return None
+        x1, y1, x2, y2 = (float(v) for v in m[:4])
+        # hệ toạ độ của mô hình = ảnh sau khi resize; grid_thw cho kích thước đó
+        grid = inp["image_grid_thw"][0]
+        in_w, in_h = int(grid[2]) * 14, int(grid[1]) * 14
+        cx, cy = (x1 + x2) / 2 / in_w, (y1 + y2) / 2 / in_h
+        return (cx * img.width, cy * img.height)
+
+
 def make_grounder(name):
-    return {"uground": UGround, "openai": OpenAIGrounder}[name]()
+    return {"uground": UGround, "openai": OpenAIGrounder, "uivenus": UIVenus}[name]()
 
 
 # ─────────────────────────── nút trên màn ───────────────────────────
@@ -262,6 +339,12 @@ def noharm(a, recs):
     Cách chấm dùng đúng hàm của thước chính: so `canon_action` của câu mô hình với
     `canon_action` của câu chuẩn — hai câu, không phải câu với mã thao tác. Nhờ vậy
     không đẻ ra một định nghĩa "khớp thao tác" thứ hai lệch với định nghĩa đang dùng.
+
+    ⚠️ 16/8/2026 — dùng `strict_back=True`. Quần thể ở đây có bước **quay lại** thật,
+    mà bản mặc định của `canon_action` quy `go back` / `navigate back` về *chạm* (lỗi
+    thứ tự quét, xem `metric_exec.canon_action`). Với bản mặc định, phép kiểm này
+    **không đo được thứ nó tuyên bố đo**. Ba nhánh đã chấm giữ bản mặc định để còn tái
+    lập; phép kiểm này chưa chạy lần nào nên vá ngay là hợp lệ. `report/106` mục (v).
     """
     if not a.preds:
         sys.exit("Chế độ noharm cần --preds")
@@ -277,7 +360,8 @@ def noharm(a, recs):
         s = P[(r["episode_id"], r["step_id"])]
         g = r["gold_instruction"]
         return {"episode_id": r["episode_id"], "app": r.get("app", ""),
-                "action_ok": int(bool(s) and M.canon_action(s) == M.canon_action(g)),
+                "action_ok": int(bool(s) and M.canon_action(s, strict_back=True)
+                                 == M.canon_action(g, strict_back=True)),
                 "toggle_ok": int(bool(s) and not M.toggle_conflict(s, g)),
                 "empty": int(not s), "gold_type": r["action"].get("action_type", "?")}
 
@@ -331,7 +415,8 @@ def main():
     ap.add_argument("--mode", choices=["gate", "score", "noharm"], required=True)
     ap.add_argument("--baseline", help="chế độ noharm: tệp dự đoán của nhánh nền (thường S1) "
                                        "để tính hiệu số theo cặp")
-    ap.add_argument("--grounder", default="uground", choices=["uground", "openai"])
+    ap.add_argument("--grounder", default="uground",
+                    choices=["uground", "openai", "uivenus"])
     ap.add_argument("--preds", help="tệp dự đoán (chế độ score)")
     ap.add_argument("--out")
     ap.add_argument("--n", type=int, default=0, help="chỉ chạy N bước (0 = tất cả)")
@@ -353,14 +438,83 @@ def main():
             for line in f:
                 p = json.loads(line)
                 preds[(p["episode_id"], p["step_id"])] = p
+        n_tap_du = len(taps)
         taps = [r for r in taps if (r["episode_id"], r["step_id"]) in preds]
+        # ⚠ Tệp dự đoán DỞ DANG là kiểu hỏng không có tiếng động: khâu chấm vẫn chạy trơn
+        # suốt mấy tiếng rồi in ra một con số trông bình thường, chỉ khác là nó tính trên
+        # một phần tập kiểm. `infer_branch.py` nối tiếp được nên tệp dở dang là chuyện
+        # thường gặp — mất máy giữa lượt sinh câu là có ngay.
+        if len(taps) < n_tap_du:
+            print(f"⚠️  TỆP DỰ ĐOÁN THIẾU: chỉ có {len(taps)}/{n_tap_du} bước chạm.")
+            print("    Chạy nốt infer_branch.py (nó tự nối tiếp) rồi hãy chấm — đừng chấm")
+            print("    tệp dở, con số ra sẽ tính trên một phần tập kiểm mà không có gì báo.")
+            if len(taps) < n_tap_du * 0.99 and not a.n:
+                sys.exit("    Thiếu quá 1% — DỪNG. Thêm --n nếu cố ý chấm một lát nhỏ.")
     if a.n:
         random.Random(SEED).shuffle(taps)
         taps = taps[:a.n]
 
-    G = make_grounder(a.grounder)
     units, errs, raw = [], [], []
+
+    # ── GHI THÔ NGAY TỪNG BƯỚC, NỐI TIẾP ĐƯỢC (thêm 11/8/2026) ──────────────────────
+    # Bản trước gom `raw` trong bộ nhớ và chỉ ghi ra đĩa sau vòng lặp. Khâu này gọi bộ
+    # trỏ trên 4.463 ảnh, mất ~5 giờ mỗi nhánh; máy dừng giữa chừng là mất trắng, mà
+    # Colab lẫn Kaggle đều có thể thu hồi máy (đã xảy ra hai lần ngày 10 và 11/8, cả
+    # hai đều ở khoảng 90% công việc). Giờ mỗi bước ghi ngay và xả đệm, chạy lại thì
+    # đọc tệp thô cũ rồi chỉ chấm phần thiếu.
+    rawp = (a.out.rsplit(".", 1)[0] + "_raw.jsonl") if a.out else None
+    xong = set()
+    if rawp:
+        os.makedirs(os.path.dirname(os.path.abspath(rawp)), exist_ok=True)
+        if os.path.exists(rawp):
+            sach, cu = [], []
+            for line in open(rawp, encoding="utf-8"):
+                try:
+                    o = json.loads(line)
+                except Exception:
+                    continue          # dòng ghi dở lúc mất máy — loại hẳn
+                xong.add((o["episode_id"], o["step_id"]))
+                sach.append(line)
+                cu.append(o)
+            open(rawp, "w", encoding="utf-8").writelines(sach)
+
+            # ⚠️ TỆP THÔ CÓ ĐÚNG CỦA NHÁNH NÀY KHÔNG — kiểm bằng chính câu đã chấm.
+            # Tên tệp thô suy từ --out. Quên đổi --out khi sang nhánh khác (chép lại dòng
+            # lệnh là ra ngay) thì mọi bước đều nằm trong `xong`, vòng lặp bỏ qua sạch,
+            # rồi khâu gộp in ra con số của NHÁNH TRƯỚC dưới tên nhánh mới. Chạy trong
+            # vài giây, không lỗi, không cảnh báo — kiểu hỏng đắt nhất trong cả chiến dịch
+            # vì nó đẻ ra một con số trông hoàn toàn hợp lý.
+            if a.mode == "score":
+                lech = [o for o in cu if "sent" in o
+                        and (o["episode_id"], o["step_id"]) in preds
+                        and o["sent"] != preds[(o["episode_id"], o["step_id"])]["pred"]]
+                if lech:
+                    print(f"⛔ TỆP THÔ KHÔNG KHỚP TỆP DỰ ĐOÁN: {len(lech)}/{len(cu)} bước có "
+                          f"câu khác nhau.\n   thô : {lech[0]['sent'][:80]!r}\n"
+                          f"   dự đoán: {preds[(lech[0]['episode_id'], lech[0]['step_id'])]['pred'][:80]!r}")
+                    sys.exit(f"   Gần như chắc chắn {rawp} là của nhánh khác — đổi --out, "
+                             "hoặc xoá tệp thô nếu cố ý chấm lại.")
+            print(f"Nối tiếp: đã chấm {len(xong)} bước, còn {len(taps) - len(xong)}")
+    # Bộ trỏ nạp SAU khi đã kiểm tệp thô (đổi 12/8): nó là mô hình 2 tỉ tham số, nạp mất
+    # vài phút và chiếm VRAM. Hai trường hợp hay gặp mà lẽ ra không cần nạp nó lần nào:
+    # tệp thô của nhánh khác (thoát ngay ở trên), và lượt đã chấm xong hết chỉ cần gộp
+    # lại số từ tệp thô.
+    con_lai = [r for r in taps if (r["episode_id"], r["step_id"]) not in xong]
+    G = make_grounder(a.grounder) if con_lai else None
+    if not con_lai:
+        print(f"Đã chấm đủ {len(xong)} bước từ trước — chỉ gộp lại số, không nạp bộ trỏ.")
+    fraw = open(rawp, "a", encoding="utf-8") if rawp else None
+    t0 = time.time()
+
+    def ghi(d):
+        raw.append(d)
+        if fraw:
+            fraw.write(json.dumps(d, ensure_ascii=False) + "\n")
+            fraw.flush()
+
     for i, r in enumerate(taps):
+        if (r["episode_id"], r["step_id"]) in xong:
+            continue
         img = Image.open(os.path.join(TEST, r["image"])).convert("RGB")
         wh = (img.width, img.height)
         gold_xy = (float(r["action"]["x"]), float(r["action"]["y"]))
@@ -368,23 +522,25 @@ def main():
                 else preds[(r["episode_id"], r["step_id"])]["pred"])
         if not sent:
             units.append({**r, "exec": 0, "disk": 0})
-            raw.append({"episode_id": r["episode_id"], "step_id": r["step_id"],
-                        "pred_xy": None, "gold_xy": list(gold_xy), "bo_qua": "câu rỗng"})
+            ghi({"episode_id": r["episode_id"], "step_id": r["step_id"],
+                 "app": r.get("app", ""), "app_seen_in_train": r.get("app_seen_in_train"),
+                 "pred_xy": None, "gold_xy": list(gold_xy), "bo_qua": "câu rỗng"})
             continue
         pt = G.point(img, sent)
         if pt is None:
             units.append({**r, "exec": 0, "disk": 0})
-            raw.append({"episode_id": r["episode_id"], "step_id": r["step_id"],
-                        "pred_xy": None, "gold_xy": list(gold_xy), "sent": sent,
-                        "bo_qua": "bộ trỏ không trả toạ độ"})
+            ghi({"episode_id": r["episode_id"], "step_id": r["step_id"],
+                 "app": r.get("app", ""), "app_seen_in_train": r.get("app_seen_in_train"),
+                 "pred_xy": None, "gold_xy": list(gold_xy), "sent": sent,
+                 "bo_qua": "bộ trỏ không trả toạ độ"})
             continue
 
         if a.mode == "gate":
             # sai số DỤNG CỤ: lệch bao nhiêu phần trăm chiều rộng màn
             errs.append(math.dist(pt, gold_xy) / wh[0])
-            raw.append({"episode_id": r["episode_id"], "step_id": r["step_id"],
-                        "pred_xy": list(pt), "gold_xy": list(gold_xy), "wh": list(wh),
-                        "err_frac": math.dist(pt, gold_xy) / wh[0]})
+            ghi({"episode_id": r["episode_id"], "step_id": r["step_id"],
+                 "pred_xy": list(pt), "gold_xy": list(gold_xy), "wh": list(wh),
+                 "err_frac": math.dist(pt, gold_xy) / wh[0]})
         else:
             btns = buttons_of(r)
             s = M.score_step(sent, r["gold_instruction"], pt, gold_xy, btns, wh)
@@ -393,14 +549,39 @@ def main():
             # lại thì mỗi lần đổi luật chấm, đổi dung sai hay thêm một lát cắt đều
             # phải gọi lại nó trên 4.463 ảnh cho MỖI nhánh — 12-20 đô cho một việc lẽ
             # ra làm offline trong vài giây.
-            raw.append({"episode_id": r["episode_id"], "step_id": r["step_id"],
-                        "app": r.get("app", ""), "app_seen_in_train": r.get("app_seen_in_train"),
-                        "pred_xy": list(pt), "gold_xy": list(gold_xy), "wh": list(wh),
-                        "n_buttons": len(btns), "sent": sent,
-                        "gold_instruction": r["gold_instruction"],
-                        **{k: int(v) for k, v in s.items()}})
-        if (i + 1) % 50 == 0:
-            print(f"  {i+1}/{len(taps)}")
+            ghi({"episode_id": r["episode_id"], "step_id": r["step_id"],
+                 "app": r.get("app", ""), "app_seen_in_train": r.get("app_seen_in_train"),
+                 "pred_xy": list(pt), "gold_xy": list(gold_xy), "wh": list(wh),
+                 "n_buttons": len(btns), "sent": sent,
+                 "gold_instruction": r["gold_instruction"],
+                 **{k: int(v) for k, v in s.items()}})
+        if (i + 1) % 20 == 0:
+            xong_gio = len(xong) + len(raw)
+            # tốc độ tính trên phần CHẤM TRONG LƯỢT NÀY (= len(raw)). Bản cũ lấy
+            # `i + 1 - len(xong)`, mà lúc chạy tiếp thì các bước đã xong nằm rải rác nên
+            # số này âm ở đầu vòng → tốc độ âm → "còn ~-3 phút".
+            sp = len(raw) / max(time.time() - t0, 1)
+            print(f"  [{time.strftime('%H:%M:%S')}] {xong_gio}/{len(taps)} = "
+                  f"{xong_gio/max(len(taps),1):5.1%} · {sp:.2f} bước/giây · còn ~"
+                  f"{(len(taps)-xong_gio)/max(sp,1e-6)/60:.0f} phút", flush=True)
+
+    # ── GỘP LẠI TỪ TỆP THÔ, KHÔNG TỪ BỘ NHỚ ────────────────────────────────────────
+    # Chạy nối tiếp thì `units`/`errs` chỉ chứa phần vừa chấm trong lượt này; phần của
+    # lượt trước nằm trên đĩa. Đọc lại tệp thô để con số cuối luôn tính trên TOÀN BỘ,
+    # bất kể lượt chạy bị cắt làm mấy khúc.
+    if fraw:
+        fraw.close()
+        raw = [json.loads(l) for l in open(rawp, encoding="utf-8")]
+        units, errs = [], []
+        for o in raw:
+            if a.mode == "gate":
+                if "err_frac" in o:
+                    errs.append(o["err_frac"])
+            else:
+                units.append({"app": o.get("app", ""), "episode_id": o["episode_id"],
+                              "exec": int(o.get("executable", 0)),
+                              "disk": int(o.get("hit_disk", 0))})
+        print(f"Gộp từ tệp thô: {len(raw)} bản ghi")
 
     if a.mode == "gate":
         med = statistics.median(errs) if errs else 1.0
@@ -484,10 +665,11 @@ def main():
     if a.out:
         os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
         json.dump(res, open(a.out, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-        rawp = a.out.rsplit(".", 1)[0] + "_raw.jsonl"
-        with open(rawp, "w", encoding="utf-8") as f:
-            for x in raw:
-                f.write(json.dumps(x, ensure_ascii=False) + "\n")
+        if not fraw:                      # chế độ không có --out thì mới phải ghi ở đây
+            rawp = a.out.rsplit(".", 1)[0] + "_raw.jsonl"
+            with open(rawp, "w", encoding="utf-8") as f:
+                for x in raw:
+                    f.write(json.dumps(x, ensure_ascii=False) + "\n")
         print(f"\nĐã lưu {a.out}\n         {rawp}  ({len(raw)} bước — đổi luật chấm hay "
               f"thêm lát cắt thì chấm lại từ tệp này, KHÔNG gọi lại bộ trỏ)")
 
