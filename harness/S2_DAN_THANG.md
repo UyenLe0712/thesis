@@ -1005,6 +1005,50 @@ bản chính thức, không lệ thuộc chuyện log có bị ghi đè hay khô
 **Điều kiện kết thúc phiên:** `ckpt/` và `preds_….jsonl` nằm trên Drive · ô 14 sạch · ô 15 đã
 chạy. Máy ảo đã mất **10 lần**; đừng để tệp nào chỉ nằm ở `/content`.
 
+### Ô 16 — 🛑 TRƯỚC KHI TIÊU TIỀN CHO HẠT GIỐNG 202 ⚠️ chạy **sau ô 5 (`SEED = 202`)**
+
+```python
+import yaml, json, hashlib
+B = f"{REPO}/harness/dg1_cache/train_ac/branches"
+loi = []
+
+# ① cfg lượt này vs lượt 101 — CHỈ được khác `seed` và `output_dir`
+moi = yaml.safe_load(open("/content/cfg.yaml", encoding="utf-8"))
+cu  = yaml.safe_load(open(f"{D}/logs/s2_seed101/cfg.yaml", encoding="utf-8"))
+khac = {k for k in set(moi) | set(cu) if moi.get(k) != cu.get(k)}
+print("① CẤU HÌNH · khác lượt 101 ở:", sorted(khac))
+for k in sorted(khac): print(f"     {k}: {cu.get(k)}  →  {moi.get(k)}")
+if khac != {"seed", "output_dir"}: loi.append(f"cfg khác ở {sorted(khac - {'seed','output_dir'})}")
+
+# ② DỮ LIỆU trùng khít từng byte với lượt 101 — mạnh hơn phép "0 tiếng Việt"
+md5 = hashlib.md5(open(f"{B}/s2.json","rb").read()).hexdigest()
+print(f"\n② DỮ LIỆU · s2.json md5 {md5}")
+print("   ← lượt 101 là 4d7d3c62b3a0d0bb1a7a5a4d1b0c8e9f (thay bằng số THẬT sau lần chạy đầu)")
+
+# ③ khai báo phủ đủ bước chạm trong TẬP DẠY ở quy mô đủ
+rows = json.load(open(f"{B}/s2.json", encoding="utf-8"))
+cd = sum(1 for x in rows if "<desc>" in x["messages"][-1]["content"])
+print(f"\n③ KHAI BÁO · {cd:,}/{len(rows):,} mẫu có <desc> = {cd/len(rows):.2%}"
+      f"   ← phải ≈63,8% (tỉ lệ bước chạm)")
+if not 0.60 <= cd/len(rows) <= 0.68: loi.append(f"tỉ lệ có <desc> là {cd/len(rows):.2%}, ngoài dải")
+
+print("\n" + "="*58)
+print("✅ ĐƯỢC PHÉP TIÊU TIỀN — sang ô 7b" if not loi else "⛔ DỪNG:")
+for x in loi: print("   ·", x)
+```
+
+**Vì sao ba phép này chứ không phải phép khác.** Phép ④ của ô 7b chỉ chứng minh dữ liệu là
+**tiếng Anh**, không chứng minh nó **trùng khít** bộ đã dạy lượt 101 — hai lần dựng lại khác
+nhau vẫn có thể cùng "0 tiếng Việt". `md5` đóng chỗ hở đó. Phép ③ canh chuyện ngược lại: bộ
+dựng nhãn chạy lỗi thì `s2.json` vẫn đủ 64.567 mẫu nhưng **thiếu khai báo**, và lúc đó S2 lặng
+lẽ biến thành S1.
+
+📌 **Số đã đo, dùng làm mốc cho lượt 202:** khai báo phủ **99,91%** bước chạm ở tập dạy
+(1.074/1.075, lát thăm dò) ⇒ mô hình được dạy sinh `<desc>` ở gần như **mọi** bước chạm.
+Vậy mà s2/101 chỉ sinh ở **92,72%** bước chạm tập kiểm ⇒ **7,26% là khoảng hụt khái quát hoá
+của MÔ HÌNH, không phải tính chất của dữ liệu.** Đây là kết quả đáng báo cáo, **không phải lỗi
+cần sửa** — không chạy lại gì.
+
 ### Rồi mới sang hạt giống 202
 
 1. Tải `preds_s2_seed101.jsonl` về máy nhà, chạy
