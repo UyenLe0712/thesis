@@ -913,9 +913,8 @@ if not cr:
     print("✅ bước bỏ KHÔNG phải bước chạm ⇒ không vào quần thể chấm,"
           " ghép cặp vẫn trên 4.462 bước như S1")
 else:
-    print(f"⚠️ bước bỏ LÀ bước chạm và KHÁC S1 ⇒ quần thể ghép cặp = GIAO hai nhánh"
-          f" = {giao:,} bước")
-    print("   Phải khai trong bài; câu 'chấm trên cùng 4.462 bước' không còn đúng nguyên văn.")
+    print(f"⚠️ bước bỏ LÀ bước chạm và KHÁC S1 — điểm headline KHÔNG đổi (mẫu số vẫn"
+          f" 4.463, câu rỗng tính là trượt), nhưng phân tích đọc TỆP THÔ lấy giao = {giao:,}")
 ```
 
 **Vì sao phải hỏi tới bước nào chứ không chỉ đếm.** Hai hạt giống S1 bỏ **đúng cùng một bước**
@@ -1100,10 +1099,16 @@ cần sửa** — không chạy lại gì.
 
 ## Luật đọc kết quả — đã khoá 17/8, đừng sửa sau
 
-⚠️ **Quần thể ghép cặp = GIAO các bước có câu của hai nhánh đem so.** Hai hạt giống S1 cùng
-bỏ `(18710, 1)` nên trước nay là **4.462**; lượt s2/101 bỏ `(20011, 2)` ⇒ S2-vs-S1 chạy trên
-**4.461**. Chênh ~0,02 pp, **không đổi kết luận**, nhưng câu *"chấm trên cùng 4.462 bước"*
-trong `report/112` và bản thảo bài báo **phải sửa** khi S2 vào bảng.
+⚠️ **Phân biệt HAI mẫu số — đếm thật trên bốn tệp thô đã có, 20/8:**
+· **Điểm headline (`score_*.json`): mẫu số 4.463 cho MỌI nhánh.** `score_run.py:516` cho câu
+rỗng vào quần thể với `exec = 0` chứ **không** loại ra; nó chỉ mang khoá `bo_qua` trong tệp thô.
+⇒ bước bỏ khác nhau **không ảnh hưởng gì** tới bảng chính.
+· **Phân tích đọc TỆP THÔ** (`mde_that.py` · `doc_san.py` · `phan_tich_bon_nhanh.py` đều bỏ
+dòng `bo_qua`): Base 4.463 · trần 4.463 · mỗi lượt S1 4.462 · s2/101 4.462 ⇒ **giao S2∩S1 =
+4.461**. Chênh ~0,02 pp, không đổi kết luận.
+⚠️ Câu *"mọi nhánh chấm trên cùng 4.462 bước"* trong `report/112`, `runs/README.md` và bản thảo
+bài báo **vốn đã không chính xác** — Base và trần có 4.463 dòng dùng được. Sửa một thể khi S2
+vào bảng.
 
 Δ = S2 − S1, trung bình hai hạt giống, ghép cặp (`report/106` mục sửa đổi (w)):
 

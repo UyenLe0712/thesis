@@ -1198,9 +1198,12 @@ là phỏng đoán: rác không chỉ làm khai báo xấu, nó **kích hoạt v
 1. ⚠️ **Kiểu hỏng này S1 về cấu trúc KHÔNG THỂ có** — không có khai báo thì không có chỗ cho
    vòng lặp xảy ra *trước khi* tới câu. Thành phần đóng góp của S2 mang rủi ro riêng ⇒ **phải
    khai như giới hạn của nhánh**, không lấp liếm.
-2. ⚠️ **Quần thể ghép cặp S2-vs-S1 = 4.461 bước**, không phải 4.462. Chênh ~0,02 pp nên **không
-   đổi kết luận**, nhưng câu *"chấm trên cùng 4.462 bước"* trong `report/112` và bản thảo bài
-   báo **phải sửa** khi S2 vào bảng.
+2. ⚠️ **Hai mẫu số, đừng lẫn** (đếm thật trên bốn tệp thô, 20/8): **điểm headline có mẫu số
+   4.463 cho MỌI nhánh** — `score_run.py:516` cho câu rỗng vào quần thể với `exec = 0` chứ không
+   loại ra ⇒ bước bỏ khác nhau **không ảnh hưởng bảng chính**. Chỉ các **phân tích đọc tệp thô**
+   (`mde_that` · `doc_san` · `phan_tich_bon_nhanh` đều bỏ dòng `bo_qua`) mới xuống 4.462 mỗi
+   nhánh, **giao S2∩S1 = 4.461**. ⇒ Câu *"mọi nhánh chấm trên cùng 4.462 bước"* ở `report/112`
+   và `runs/README.md` **vốn đã sai** — Base và trần có 4.463 dòng dùng được.
 3. ⭐ **Mất hẳn câu chỉ là ĐUÔI NẶNG NHẤT.** Cùng cơ chế ở mức nhẹ hơn sẽ **cắt ngắn** câu chứ
    không giết hẳn — và phép đếm câu rỗng **không thấy được**. Đây mới là chỗ có thể ăn mòn điểm
    S2 một cách âm thầm.
