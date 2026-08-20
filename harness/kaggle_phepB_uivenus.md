@@ -162,8 +162,50 @@ nhận vá xong: ba grid khác nhau thật — **1.272 / 2.475 / 3.354** token.
 (`--mode gate`). Câu chuẩn giống hệt ở mọi nhánh nên cỡ chọn kiểu này **không thể** thiên vị S1
 hay S2. **CẤM** dò cỡ bằng điểm của một nhánh — đó là chỉnh dụng cụ theo kết quả.
 
-Ô dưới tự vá bản `score_run.py` trong `/kaggle/working` (chạy lại nhiều lần không sao), in dòng
-`[UIVenus]` làm bằng chứng cỡ đã đổi thật, và **tự chặn** nếu ba kết quả lại trùng nhau.
+### Ô 2b-vá — chạy TRƯỚC ô 2b
+
+Bản `score_run.py` trên dataset Kaggle là bản **cũ**, chưa có `VENUS_MIN/MAX_PIXELS`, nên biến
+môi trường chưa từng được đọc — đó mới là lý do thật khiến ba lượt ô 2b đầu ra trùng nhau.
+(Commit `a58d684` thậm chí gọi `AutoProcessor.from_pretrained(path)` trơn, tức chạy ở **cỡ mặc
+định của chính UI-Venus**.) Ô này vá bản trong `/kaggle/working`, khỏi upload lại dataset, và
+**in ra mã cũ** để biết chắc lượt thăm dò đã chạy ở cỡ nào.
+
+```python
+import re
+SR = "/kaggle/working/harness/score_run.py"
+s = open(SR, encoding="utf-8").read()
+
+if "VENUS_MIN_PIXELS" in s and "ip.min_pixels" in s:
+    print("đã vá từ trước ✅")
+else:
+    # tìm câu lệnh self.proc = AutoProcessor.from_pretrained(...) dù xuống dòng kiểu gì
+    i = s.index("self.proc = AutoProcessor.from_pretrained(")
+    j = s.index("(", i); d = 0
+    for k in range(j, len(s)):
+        d += (s[k] == "(") - (s[k] == ")")
+        if d == 0:
+            j = k + 1; break
+    print("── mã CŨ ──\n" + s[i:j] + "\n")
+    moi = '''mn = int(os.environ.get("VENUS_MIN_PIXELS", 2000000))
+        mx = int(os.environ.get("VENUS_MAX_PIXELS", 4800000))
+        self.proc = AutoProcessor.from_pretrained(path, min_pixels=mn, max_pixels=mx)
+        ip = self.proc.image_processor
+        if isinstance(getattr(ip, "size", None), dict):
+            ip.size = {"shortest_edge": mn, "longest_edge": mx}
+        ip.min_pixels, ip.max_pixels = mn, mx
+        print(f"[UIVenus] xin min={mn} max={mx} -> giu min={getattr(ip,'min_pixels',None)} "
+              f"max={getattr(ip,'max_pixels',None)} size={getattr(ip,'size',None)}", flush=True)'''
+    s = s[:i] + moi + s[j:]
+    open(SR, "w", encoding="utf-8").write(s)
+    print("── mã MỚI ──\n" + moi + "\n")
+
+import ast; ast.parse(open(SR, encoding="utf-8").read())
+print("cú pháp hợp lệ ✅ — chạy ô 2b được rồi")
+```
+
+⚠️ Bản vá này chỉ sống trong **phiên hiện tại**. Trước lượt ô 5 chạy dài (hoặc bất kỳ lượt
+commit nào), phải đưa `harness/score_run.py` bản mới lên dataset — nếu không lượt đó lại chạy
+mã cũ và cỡ ảnh lại không đổi.
 
 ```python
 import subprocess, os, json, time, re
