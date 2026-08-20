@@ -878,6 +878,49 @@ print(f"sót <desc>: {sum(1 for r in R if '<desc>' in r['pred'])}   ← PHẢI L
 print(f"độ dài câu trung vị: {sorted(len(r['pred']) for r in R)[len(R)//2]} ký tự  ← S1 là 33")
 ```
 
+### Ô 14b — 🛑 BƯỚC BỎ LÀ BƯỚC NÀO ⚠️ chạy nếu `câu rỗng` ≠ 0
+
+```python
+import json
+R = {(r["episode_id"], r["step_id"]): r for r in
+     map(json.loads, open(f"{D}/preds/preds_{BRANCH}_seed{SEED}.jsonl", encoding="utf-8"))}
+cham = lambda r: r["action"].get("action_type") in ("click","long_press") and "x" in r["action"]
+rong = [k for k, r in R.items() if not r["pred"].strip()]
+S1   = [(18710, 1)]                      # bước bỏ của CẢ HAI hạt giống S1
+
+print("bước bỏ lượt này:", rong)
+print("bước bỏ của S1  :", S1)
+for k in rong:
+    r = R[k]
+    print(f"\n{k}  chạm={cham(r)}")
+    print(f"   chuẩn: {r['gold_instruction']!r}")
+    print(f"   thô  : {r['raw'][:220]!r}")
+    if "<desc>" in r["raw"]:
+        print("   ⚠️ raw CÓ <desc> mà không còn câu ⇒ kiểu hỏng RIÊNG của S2:"
+              " khai báo nuốt trọn phần sinh")
+
+cr   = [k for k in rong if cham(R[k])]
+giao = 4463 - len(set(cr) | {k for k in S1 if k in R and cham(R[k])})
+print(f"\nbước chạm có câu: {sum(1 for r in R.values() if cham(r) and r['pred'].strip()):,} / 4.463")
+if not cr:
+    print("✅ bước bỏ KHÔNG phải bước chạm ⇒ không vào quần thể chấm,"
+          " ghép cặp vẫn trên 4.462 bước như S1")
+else:
+    print(f"⚠️ bước bỏ LÀ bước chạm và KHÁC S1 ⇒ quần thể ghép cặp = GIAO hai nhánh"
+          f" = {giao:,} bước")
+    print("   Phải khai trong bài; câu 'chấm trên cùng 4.462 bước' không còn đúng nguyên văn.")
+```
+
+**Vì sao phải hỏi tới bước nào chứ không chỉ đếm.** Hai hạt giống S1 bỏ **đúng cùng một bước**
+`(18710, 1)`, nhờ vậy mọi so sánh ghép cặp chạy trên **cùng 4.462 bước** — sạch, không phải
+trừ bù. Nhánh khác bỏ bước khác thì quần thể ghép cặp là **giao** của hai bên, và con số
+"4.462" trong bài phải sửa. Chênh lệch do một hai bước chỉ ~0,02 pp nên **không đổi kết luận**,
+nhưng câu chữ sai thì bị bắt.
+
+⚠️ Nếu `raw` **có `<desc>` mà không còn câu**, đó là kiểu hỏng **riêng của S2** — khai báo
+chiếm trọn phần sinh. Một ca thì chỉ là giai thoại; **hạt giống 202 cũng vậy thì phải đếm cho
+tử tế** và khai như một giới hạn của nhánh, không lấp liếm.
+
 ### Ô 15 — LƯU VẾT lên Drive ⚠️ chạy TRƯỚC KHI TẮT MÁY
 
 ```python
