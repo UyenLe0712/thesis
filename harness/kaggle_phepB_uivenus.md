@@ -423,49 +423,66 @@ for m in (2532, 1266, 633):
 giờ** — vừa một phiên. Lát 2.532 × 3 ≈ 21 giờ — phải cắt hai phiên, nhưng `score_run.py` nối
 tiếp được nên cắt phiên không mất gì ngoài thời gian.
 
-## Ô 4 — cổng A đủ 300 bước
+## Ô 4 — cổng A 300 bước cho **CẢ BA CỠ**, rồi mới chọn (~67 phút)
 
-`--n 300` tái lập **đúng 300 bước** mà UGround đã chạy ở cổng A (kiểm rồi: trùng 300/300, vì
-`score_run.py` xáo bằng hạt giống cố định 20260805). Nên đây là phép so **ghép cặp hoàn hảo**
-giữa hai dụng cụ trên cùng ảnh, cùng câu.
+**Vì sao không chọn ở ô 2d.** Trần Voronoi của UGround trên đúng 30 bước ấy là **80,0%** với
+KTC95 **[63,3 – 93,3]** — rộng **±15 điểm**. Ở n=30 mỗi bước đáng 3,3 điểm, nên ba cỡ chênh
+nhau vài điểm là **nhiễu lấy mẫu thuần**. Ở n=300 thì KTC còn **±5,4 điểm** (đo được ở lượt
+cổng A của UGround: 70,0% [64,5 – 75,3]) — phân biệt được chênh lệch từ ~7 điểm trở lên.
 
-⚠️ **Nối tiếp chỉ hợp lệ khi cùng cỡ ảnh.** `venus_gate_raw.jsonl` đang chứa 30 bước đo ở
-`max_pixels=4800000` (lượt ô 2). Nếu ô 2b chốt cỡ **khác**, 30 bước cũ đo bằng dụng cụ khác
-⇒ ô dưới **xoá tệp thô** rồi chấm lại từ đầu. Đúng 300 bước ấy là 300 bước cổng A của UGround
-(trùng 300/300, xáo bằng hạt giống cố định 20260805) ⇒ so sai số hai dụng cụ **ghép cặp hoàn hảo**.
+**Vì sao rẻ.** Ba tệp thô ô 2b đã có sẵn **30 bước mỗi cỡ**, và `--n 300` lấy đúng 300 bước đầu
+của cùng danh sách xáo bằng hạt giống 20260805 ⇒ 30 bước cũ là **tập con**, `score_run.py` nối
+tiếp, chỉ chấm thêm 270 bước mỗi cỡ:
+
+| cỡ | s/bước | 270 bước |
+|---|---|---|
+| 1.272 tok | 1,4 | **6 phút** |
+| 2.475 tok | 5,2 | 23 phút |
+| 3.354 tok | 8,3 | 37 phút |
+
+Và 300 bước đó **đúng là 300 bước cổng A của UGround** (trùng 300/300) ⇒ so hai dụng cụ **ghép
+cặp hoàn hảo**, miễn phí. Lượt này vừa chọn cỡ vừa là ô 4, không tốn thêm gì.
 
 ```python
-import subprocess, time, os
-WS = "/kaggle/working"; LOG = f"{WS}/out/gate300.log"
-MN, MX = 2000000, 4800000        # ← cỡ đã chốt ở ô 2b
-RAW = f"{WS}/out/venus_gate_raw.jsonl"
+import subprocess, os, sys, time, json, glob
+WS = "/kaggle/working"
+H = next(d for d in [f"{WS}/harness"] +
+         [os.path.dirname(p) for p in
+          glob.glob("/kaggle/input/**/harness/score_run.py", recursive=True)]
+         if os.path.exists(f"{d}/score_run.py"))
+PX  = {1003: (200704, 1003520), 2007: (200704, 2007040), 4800: (2000000, 4800000)}
+TEN = {1003: "1.272 tok (672×1484)", 2007: "2.475 tok (924×2100)",
+       4800: "3.354 tok (1092×2408)"}
 
-if MX != 4800000 and os.path.exists(RAW):
-    os.remove(RAW)               # 30 bước cũ đo ở cỡ khác ⇒ KHÔNG nối tiếp được
-    print("đã xoá tệp thô cũ (đo ở cỡ khác) — chấm lại đủ 300 bước")
-
-env = {**os.environ, "VENUS_MIN_PIXELS": str(MN), "VENUS_MAX_PIXELS": str(MX)}
-t0 = time.time(); f = open(LOG, "w")
-p = subprocess.Popen(["python", "-u", f"{WS}/harness/score_run.py",
-                      "--mode", "gate", "--grounder", "uivenus", "--n", "300",
-                      "--out", f"{WS}/out/venus_gate.json"],
-                     stdout=f, stderr=subprocess.STDOUT, cwd=WS, env=env)
-while p.poll() is None:
-    time.sleep(120)
-    n = sum(1 for _ in open(LOG)) if os.path.exists(LOG) else 0
-    print(f"[{time.strftime('%H:%M:%S')}] còn sống · {(time.time()-t0)/60:.0f} phút · "
-          f"{n} dòng log", flush=True)
-f.close()
-print("mã thoát", p.returncode)
-print(open(f"{WS}/out/venus_gate.json").read())
+for k in (1003, 2007, 4800):                      # nhanh trước, mất phiên thì còn số
+    mn, mx = PX[k]
+    env = {**os.environ, "VENUS_MIN_PIXELS": str(mn), "VENUS_MAX_PIXELS": str(mx)}
+    LOG = f"{WS}/out/do_{k}k_300.log"
+    print(f"\n===== {TEN[k]} → 300 bước =====", flush=True)
+    t0 = time.time(); f = open(LOG, "w")
+    p = subprocess.Popen([sys.executable, "-u", f"{H}/score_run.py", "--mode", "gate",
+                          "--grounder", "uivenus", "--n", "300",
+                          "--out", f"{WS}/out/do_{k}k.json"],
+                         stdout=f, stderr=subprocess.STDOUT, cwd=WS, env=env)
+    while p.poll() is None:
+        time.sleep(120)
+        print(f"[{time.strftime('%H:%M:%S')}] {TEN[k]} · {(time.time()-t0)/60:.0f} phút",
+              flush=True)
+    f.close()
+    j = json.load(open(f"{WS}/out/do_{k}k.json"))
+    print(f"  xong {(time.time()-t0)/60:.0f} phút · sai số trung vị {j['median_err']:.2%}"
+          f" · p75 {j['p75_err']:.2%}", flush=True)
 ```
 
-⭐ **Trần của UI-Venus lấy MIỄN PHÍ từ tệp thô này**, không tốn thêm giây GPU nào:
-`python3 harness/gate_a_ceiling.py --raw runs/venus/venus_gate_raw.jsonl`.
-Trần tụt bao nhiêu so với **75,7%** chính là **mức nén của thang đo** — con số cần cho mục
-*Bẫy pha loãng*.
+Rồi **chạy lại ô 2d** — giờ nó đọc ba tệp thô 300 bước và cho trần Voronoi kèm KTC dùng được.
 
+⛔ **Luật chọn, giữ nguyên tinh thần cũ:** chọn theo **trần trên câu chuẩn của người**, thứ
+giống hệt ở mọi nhánh nên không thể thiên vị S1 hay S2. Nếu ba trần **chồng KTC lên nhau** thì
+trần không phân biệt được ⇒ chọn **cỡ nhanh nhất**, và khai rõ trong bài rằng cỡ ảnh chọn theo
+tốc độ vì trần không phân biệt được ở n=300.
 
+⭐ Trần của cỡ thắng chính là **mức nén thang đo** cần cho mục *Bẫy pha loãng*: so với **75,7%**
+của UGround trên toàn tập, hoặc **70,0%** trên đúng 300 bước này.
 
 ## Ô 5 — chấm Base, S1, S2 trên lát đã chọn
 
