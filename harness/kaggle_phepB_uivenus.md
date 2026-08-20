@@ -24,6 +24,24 @@ số đẹp hơn. Lý do đổi dụng cụ là *nó mạnh hơn và sạch hơn
 
 ---
 
+## Trình tự chạy — copy theo đúng thứ tự ô trong file này
+
+| ô | việc | giờ |
+|---|---|---|
+| **Bước 1** | đưa `runs/venus/` lên dataset · GPU **T4 ×2** · Internet **ON** | — |
+| **Ô 0** | kiểm máy | 5 giây |
+| **Ô 1** | đường dẫn + kiểm tệp | 10 giây |
+| **Ô 2** | thăm dò 30 bước — mô hình có vừa máy · giải mã toạ độ có đúng · giây/bước | ~15 phút |
+| **Ô 2b** | vá + dò cỡ ảnh (một ô, tự chép lại harness sạch nên chạy lại được) | ~15 phút |
+| **Ô 3** | chốt cỡ lát theo tốc độ | 10 giây |
+| **Ô 4** | cổng A đủ 300 bước — sai số ghép cặp + trần của UI-Venus | ~45 phút |
+| **Ô 5** | chấm **Base · S1 · S2** trên lát đã chốt | 5–18 giờ |
+| **Ô 6** | gom tệp mang về | 1 phút |
+| — | `python3 harness/phan_tich_venus.py` tại máy | 0 đồng |
+
+⛔ **Ô 5 là lượt chạy dài.** Trước nó phải đưa `harness/score_run.py` **bản mới** lên dataset —
+bản vá của ô 2b chỉ sống trong phiên hiện tại. Quên là lượt đó chạy mã cũ, im lặng suốt gần 9 tiếng.
+
 ## Vì sao chỉ cần chấm 2.532 bước chứ không phải 4.463
 
 Bộ trỏ **tất định** (0 bất đồng trên 1.625 phép so, bốn lượt độc lập). Bước nào S1 và S2 sinh
@@ -152,17 +170,7 @@ lượt Kaggle treo 7 giờ vì log ngập.
 
 ---
 
-## Ô 2b — DÒ CỠ ẢNH (~15 phút, 3 lượt × 30 bước)
-
-**Chạy ô 2c TRƯỚC.** Lượt 2b đầu tiên (20/8) cho ba cỡ ra sai số trùng tới hai chữ số thập phân
-(1,57% / 28,87% cả ba) vì `min_pixels`/`max_pixels` bị `transformers` nuốt im lặng. Ô 2c đã xác
-nhận vá xong: ba grid khác nhau thật — **1.272 / 2.475 / 3.354** token.
-
-⛔ **Luật chọn cỡ, khoá trước khi nhìn:** chọn theo sai số trên **câu chuẩn của người**
-(`--mode gate`). Câu chuẩn giống hệt ở mọi nhánh nên cỡ chọn kiểu này **không thể** thiên vị S1
-hay S2. **CẤM** dò cỡ bằng điểm của một nhánh — đó là chỉnh dụng cụ theo kết quả.
-
-### Ô 2b — VÁ + DÒ CỠ ẢNH (một ô duy nhất, ~15 phút)
+## Ô 2b — VÁ + DÒ CỠ ẢNH (một ô duy nhất, ~15 phút)
 
 Bản `score_run.py` trên dataset Kaggle là bản working tree cũ: lớp `UIVenus` **ghi cứng**
 `min_pixels=2000000, max_pixels=4800000`, chưa đọc biến môi trường. Đó là lý do lượt dò đầu ra
@@ -275,48 +283,9 @@ else:
 
 ---
 
-## Ô 2c — KIỂM cỡ ảnh có thật sự đổi không (10 giây, KHÔNG cần GPU)
-
-**Vì sao có ô này.** Lượt ô 2b đầu tiên cho ba cỡ ảnh khác nhau ra sai số **trùng tới hai chữ
-số thập phân** (1,57% / 28,87% cả ba). Trùng kiểu đó nghĩa là **cùng một phép tính** — biến môi
-trường không có tác dụng. `transformers` đời mới chuyển `Qwen2VLImageProcessor` sang
-`size={"shortest_edge","longest_edge"}`, nên `min_pixels`/`max_pixels` truyền vào
-`from_pretrained` bị **nuốt im lặng, không một dòng cảnh báo**.
-
-Ô này chỉ nạp **bộ xử lý ảnh**, không nạp mô hình 7B, nên chạy trong vài giây và không tốn GPU.
-`image_grid_thw` là sự thật cuối cùng: nó cho biết ảnh **thực sự** được đưa vào ở cỡ nào.
-
-```python
-from transformers import AutoProcessor
-from PIL import Image
-import glob, os
-img = Image.open(sorted(glob.glob(f"{TEST}/images/*.png"))[0]).convert("RGB")
-print(f"ảnh gốc {img.width}×{img.height} = {img.width*img.height/1e6:.2f} MP\n")
-print(f"{'xin (max_pixels)':>18}{'grid t,h,w':>16}{'cỡ thật':>14}{'token ảnh':>11}")
-for mn, mx in ((200704, 1003520), (200704, 2007040), (2000000, 4800000)):
-    pr = AutoProcessor.from_pretrained("inclusionAI/UI-Venus-Ground-7B",
-                                       min_pixels=mn, max_pixels=mx)
-    ip = pr.image_processor
-    if isinstance(getattr(ip, "size", None), dict):
-        ip.size = {"shortest_edge": mn, "longest_edge": mx}
-    ip.min_pixels, ip.max_pixels = mn, mx
-    g = pr(text=["x"], images=[img], return_tensors="pt")["image_grid_thw"][0]
-    t, h, w = int(g[0]), int(g[1]), int(g[2])
-    print(f"{mx:>18,}{f'{t},{h},{w}':>16}{f'{w*14}×{h*14}':>14}{h*w//4:>11,}")
-```
-
-**Đọc:** ba dòng phải cho **ba `grid` khác nhau**. Còn giống nhau ⇒ bản `transformers` trên
-Kaggle nuốt cả cách đặt thẳng; lúc đó **đừng dò cỡ nữa**, cứ chạy cỡ mặc định của mô hình và
-ghi vào bài rằng cỡ ảnh chưa kiểm soát được.
-
-Nếu ba dòng khác nhau ⇒ **chạy lại ô 2b** (mã `score_run.py` đã vá, giờ đặt thẳng lên
-`image_processor` và in ra cỡ nó thật sự giữ), rồi mới đọc bảng chọn cỡ.
-
-⚠️ Sau khi vá, **`harness/` trong `/kaggle/working` là bản CŨ** — ô 1 chỉ chép khi thư mục chưa
-tồn tại. Chạy lại ô 1 sau khi đã cập nhật dataset, hoặc xoá tay:
-`import shutil; shutil.rmtree("/kaggle/working/harness")` rồi chạy lại ô 1.
-
----
+*(Ô 2c cũ — kiểm `image_grid_thw` bằng bộ xử lý ảnh, không cần GPU — đã xong việc và bị gỡ.
+Kết quả: ảnh 1080×2400 cho grid **1.272 / 2.475 / 3.354** token ở ba mức `max_pixels`, xác nhận
+cơ chế đổi cỡ hoạt động. Ô 2b nay tự in dòng `[UIVenus]` nên không cần ô kiểm riêng.)*
 
 ## ⚠️ BẪY PHA LOÃNG — phải đọc trước khi diễn giải bất kỳ con số nào
 
@@ -374,21 +343,33 @@ for m in (2532, 1266, 633):
 giờ** — vừa một phiên. Lát 2.532 × 3 ≈ 21 giờ — phải cắt hai phiên, nhưng `score_run.py` nối
 tiếp được nên cắt phiên không mất gì ngoài thời gian.
 
-## Ô 4 — cổng A đủ 300 bước (nối tiếp từ ô 2, không chấm lại 30 bước cũ)
+## Ô 4 — cổng A đủ 300 bước
 
 `--n 300` tái lập **đúng 300 bước** mà UGround đã chạy ở cổng A (kiểm rồi: trùng 300/300, vì
 `score_run.py` xáo bằng hạt giống cố định 20260805). Nên đây là phép so **ghép cặp hoàn hảo**
 giữa hai dụng cụ trên cùng ảnh, cùng câu.
 
+⚠️ **Nối tiếp chỉ hợp lệ khi cùng cỡ ảnh.** `venus_gate_raw.jsonl` đang chứa 30 bước đo ở
+`max_pixels=4800000` (lượt ô 2). Nếu ô 2b chốt cỡ **khác**, 30 bước cũ đo bằng dụng cụ khác
+⇒ ô dưới **xoá tệp thô** rồi chấm lại từ đầu. Đúng 300 bước ấy là 300 bước cổng A của UGround
+(trùng 300/300, xáo bằng hạt giống cố định 20260805) ⇒ so sai số hai dụng cụ **ghép cặp hoàn hảo**.
+
 ```python
-import subprocess, time, threading, os
+import subprocess, time, os
 WS = "/kaggle/working"; LOG = f"{WS}/out/gate300.log"
-t0 = time.time()
-f = open(LOG, "w")
+MN, MX = 2000000, 4800000        # ← cỡ đã chốt ở ô 2b
+RAW = f"{WS}/out/venus_gate_raw.jsonl"
+
+if MX != 4800000 and os.path.exists(RAW):
+    os.remove(RAW)               # 30 bước cũ đo ở cỡ khác ⇒ KHÔNG nối tiếp được
+    print("đã xoá tệp thô cũ (đo ở cỡ khác) — chấm lại đủ 300 bước")
+
+env = {**os.environ, "VENUS_MIN_PIXELS": str(MN), "VENUS_MAX_PIXELS": str(MX)}
+t0 = time.time(); f = open(LOG, "w")
 p = subprocess.Popen(["python", "-u", f"{WS}/harness/score_run.py",
                       "--mode", "gate", "--grounder", "uivenus", "--n", "300",
                       "--out", f"{WS}/out/venus_gate.json"],
-                     stdout=f, stderr=subprocess.STDOUT, cwd=WS)
+                     stdout=f, stderr=subprocess.STDOUT, cwd=WS, env=env)
 while p.poll() is None:
     time.sleep(120)
     n = sum(1 for _ in open(LOG)) if os.path.exists(LOG) else 0
@@ -398,6 +379,13 @@ f.close()
 print("mã thoát", p.returncode)
 print(open(f"{WS}/out/venus_gate.json").read())
 ```
+
+⭐ **Trần của UI-Venus lấy MIỄN PHÍ từ tệp thô này**, không tốn thêm giây GPU nào:
+`python3 harness/gate_a_ceiling.py --raw runs/venus/venus_gate_raw.jsonl`.
+Trần tụt bao nhiêu so với **75,7%** chính là **mức nén của thang đo** — con số cần cho mục
+*Bẫy pha loãng*.
+
+
 
 ## Ô 5 — chấm Base, S1, S2 trên lát đã chọn
 
