@@ -3,17 +3,51 @@
 > **Dành cho ai:** chính mình sau vài tuần quên mất, hoặc bất kỳ ai cần hiểu dự án đang ở đâu mà
 > không muốn đọc 12 file report.
 >
-> **Ngày:** 10/8/2026. **Trạng thái:** xong hết phần miễn phí · cổng A ĐẠT · toàn bộ đường ống
-> đã chạy thật ít nhất một lần · runbook Colab soạn xong và rà ba lượt · kho mã đã dọn. **Chưa
-> tiêu đồng nào cho GPU.**
+> **Ngày:** **18/8/2026** (bản trước 10/8, phần thân từ mục 1 trở xuống còn theo mốc đó).
 >
-> **✅ 10/8 — ĐÃ MUA Colab**, trên tài khoản Google có sẵn **Drive 5 TB** (Colab và Drive cùng
-> một tài khoản, đúng điều kiện `drive.mount` đòi). Chỗ lưu dư dả nên bật luôn `CAT_ANH_DAY =
-> True` ở ô 0.12 — cất cả 67 GB ảnh dạy, khỏi tải lại mỗi phiên.
+> ## Trạng thái một bảng
 >
-> **▶️ VIỆC KẾ:** mở `harness/run_on_colab.md`, chạy tuần tự **từ ô 0.1**, dừng ở **MỐC DỪNG 1**
-> và dán kết quả ra để phân tích trước khi chạy tiếp. Sáu mốc dừng đều đứng ngay trước một khoản
-> chi lớn.
+> | | xong | còn |
+> |---|---|---|
+> | **train** | s1 hạt giống **101** và **202**, mỗi lượt 8.072 bước / 2 epoch | **S2 ×2 hạt giống** (~252 đv ≈ $25) |
+> | **sinh câu** | s1/101 · s1/202 · Base — mỗi nhánh 6.958 câu | S2 |
+> | **chấm** | Human **75,7** · S1/101 **59,1** · **S1/202 59,6** · Base **47,6** · **sàn 12,0** | S2 ×2 sau khi train |
+> | **thước** | cổng A đạt · MDE **2,2 pp** · bền **5 luật** · diễn đạt lại đủ 4 biến thể · **SÀN 12,0%** · **gọi tên đắt gấp 8 lần chỉ chỗ** | bộ trỏ thứ hai · neo người (đã quyết không làm) |
+> | **bài báo** | có số thật, qua **4 lượt phản biện độc lập** ngày 17-18/8 | ⛔ **đang 10 trang, giới hạn 8 — phải cắt 2 trang** |
+> | **tiền** | ~**190 đơn vị Colab ≈ $19** đã tiêu (gồm ~70 mất vì 8 lần đứt máy) | cần thêm ~$10 |
+>
+> **Con số định vị mọi thứ:** dạy được **+11,5 điểm** so với chưa dạy (p<0,001, qua 5 đòn phản
+> biện); S1 đạt **78,1% của trần**; còn **16,6 điểm** dư địa cho S2. ⚠️ Đọc S1 trên nền **75,7**,
+> không phải 100 — 24,3% số bước ngay cả câu người viết cũng không qua được thước.
+>
+> ## Hai chỗ đã bị lật, phải biết trước khi đọc phần dưới
+>
+> · ⛔ **Bộ trỏ KHÔNG sạch.** UGround train trên **AndroidControl 47K** và dựng trên **Qwen2-VL**
+> — cùng dòng mô hình bị chấm. Hai khẳng định ngược lại sống từ 29/7 và đã vào bản thảo.
+> Không phải rò rỉ nhãn (train vs test split) nhưng **nhiễm văn phong chú thích** ⇒ giới hạn
+> nặng nhất còn mở. `report/112` §5.4.
+> · ⛔ **Trần của thước là 75,7%, không phải 70,0%** (đo lại trên đủ 4.462 bước).
+>
+> ## ⭐ 18/8 — SÀN ĐÃ ĐO. Thang đo có đủ hai đầu.
+>
+> | | điểm | nghĩa |
+> |---|---|---|
+> | **sàn** — câu vô nội dung | **12,0%** | dải dùng được **62,9 điểm**, không phải 74,9 |
+> | câu **thật nhưng sai màn** | **6,1%** | thấp hơn sàn ⇒ bộ trỏ **thật sự đọc câu** |
+> | bỏ **tên** vs bỏ **vị trí** | −28,5 vs −3,5 pp | thước đo **gọi tên**, đúng thứ nhan đề nói |
+>
+> Vị trí trong dải: Base **58,3%** · S1 **74,4%**. Chi tiết `report/113` mục I.
+> ⛔ **Bài FAIR đang 10 trang, giới hạn 8** — phải cắt 2 trang trước khi nộp.
+>
+> **▶️ VIỆC KẾ.** Trình tự cứng của `report/106` mục 5 đã **thông hết**: S1 ×2 hạt giống →
+> chấm → MDE thật **2,2 pp** → ngưỡng khoá **2,8 pp** (mục sửa đổi (w), ghi 17/8). ⇒ **train S2
+> được rồi**, runbook `harness/colab_train_s2.md`. ~26 giờ/lượt, ~252 đơn vị ≈ $25 cho hai hạt
+> giống, tính **3 ngày** vì lịch sử 8 lần mất máy.
+> Song song, không cần GPU: **cắt 2 trang bài FAIR** · **tra 4 tiền lệ** ở `report/114` (chữ
+> *executability* có thể đã có chủ — đụng nhan đề) · bộ trỏ thứ hai (⚠️ 7B có thể không vừa T4,
+> kiểm trước khi xếp lịch).
+> ⚠️ **Quota Kaggle 30 giờ/tuần** — tuần này đã tiêu ~21 giờ (7 giờ lượt commit treo + 5,6 giờ
+> s1/202 + 3 giờ ba nhánh sàn + phép A).
 >
 > **Ba file kia dùng khi nào:** `report/106` = bản đăng ký trước (thiết kế đã niêm phong, luật
 > đọc kết quả) · `report/108` = sổ kê khai (đã làm gì, số nào tin được) · `report/100` = giới
@@ -124,14 +158,48 @@ chênh lệch giữa hai lần chạy cùng thiết kế chính là cỡ nhiễu
 | | |
 |---|---|
 | **Cổng A** | **ĐẠT** — sai số bộ trỏ trung vị **0,7%** bề ngang màn, ngưỡng 3% |
-| **Trần của thước** | **70,0%** KTC95 [64,5 – 75,3] |
+| **Trần của thước** | **75,7%** KTC95 [74,1 – 77,3] · n=4.462 *(đo lại 15/8)* |
+| ~~Trần cũ~~ | ~~70,0% [64,5–75,3]~~ — **ĐÃ RÚT**, đo trên mẫu con 300 bước, thấp hơn 5,7 điểm |
 | Ngưỡng 3% có căn cứ | dưới 3% thì **100%** trúng ô Voronoi (n=188) |
 | Đĩa dung sai | **vô dụng** — 100% ngay cả khi lệch 8–14% màn. Chỉ báo kèm |
 | Cụm tập kiểm | G=1.091, **G hiệu dụng 454,3**, cụm lớn nhất 58 bước |
-| MDE **chiếu** | 3,9 – 6,6 pp tuỳ độ lệch chuẩn hiệu số theo cặp |
+| MDE **chiếu** (độc lập) | 3,9 – 6,6 pp |
+| **MDE ghép cặp** (McNemar) | **1,8 – 2,1 pp** chưa cụm · ước **2,7 – 4,5 pp** có cụm |
 
-**Cách đọc trần 70,0%:** một nhánh đạt 45% là đạt **64% của trần**, không phải "kém quá nửa".
-Mọi bảng kết quả phải in con số 70,0 cạnh bên.
+**Cách đọc trần 75,7%:** một nhánh đạt 59,1% là đạt **78% của trần**, không phải "kém 41%".
+Mọi bảng kết quả phải in con số 75,7 cạnh bên.
+⚠️ **Trần là giới hạn của DỤNG CỤ, không phải của ngôn ngữ:** trong 1.083 bước mà câu người
+cũng trượt, **72% là do bộ trỏ sai >14% bề ngang** (bỏ cuộc chứ không phải trỏ lệch nhẹ);
+**935 bước — 21% toàn tập — cả ba nhánh cùng trượt**.
+
+### ⭐ ĐIỂM SỐ ĐÃ ĐO (15-16/8, Kaggle T4, 0 đồng — chi tiết `report/110` mục 4j-12, 4j-13)
+
+| nhánh | executable | KTC95 |
+|---|---|---|
+| **Human (trần)** | **75,7%** | [74,1 – 77,3] |
+| **S1 seed 202** | **59,6%** | [57,9 – 61,3] |
+| **S1 seed 101** | **59,1%** | [57,3 – 60,8] |
+| **S2 seed 101** *(20/8)* | **57,2%** | [55,4 – 58,9] |
+| **Base** (chưa huấn luyện) | **47,6%** | [45,9 – 49,3] |
+
+Ghép cặp trên cùng 4.462 bước, đều p<0,001: **S1−Base +11,5 pp** (χ²=243) · Human−S1 +16,6
+(χ²=580, **843 bước người trúng mà S1 trượt** ← vùng S2 có thể ăn) · Human−Base +28,1.
+**"S1 hơn Base" đã qua năm đòn phản biện** (phong cách · action_ok · loại bước · độ khó màn ·
+phân bố theo cụm), không đòn nào lật được. **Room cho can thiệp: 741 bước = 16,6 pp.**
+**Cập nhật 17-18/8:** hạt giống **202 đã có (59,6%)** ⇒ nhiễu giữa hạt giống **0,52 pp**, tín
+hiệu gấp **22 lần** nhiễu, MDE thật **2,2 pp**, ngưỡng đọc Δ khoá ở **2,8 pp** (`report/106`
+mục (w)).
+
+**⭐ CẬP NHẬT 20/8 — S2 hạt giống 101 đã chấm: 57,2%, THẤP HƠN S1 ~2 pp.** Ghép cặp
+S2−S1/101 = **−1,93 pp** [−3,06 · −0,75]; S2 vẫn **hơn Base +9,6 pp**. ⛔ **Mới MỘT hạt giống
+⇒ chưa đọc Δ** (luật đòi trung bình hai). Giữ nguyên thì Δ rơi dải **TRẮNG** (−2,8…+1,7) =
+*kết quả âm có kiểm soát*, một trong bốn kết cục đã đăng ký trước.
+· **Chẩn đoán (đăng ký trước 19/8, `report/110` 4j-18):** **7,3% số bước gánh 34% chênh lệch** —
+nhóm mô hình **đoán sai loại thao tác** (viết *"swipe up"*, *"go back"* thay vì gọi tên nút).
+Ở đó trần đạt **68,3%** nên bước giải được; và **Base gọi đúng loại thao tác nhiều hơn cả hai
+bản đã huấn luyện** (83,4% vs S1 55,1% vs S2 38,8%) ⇒ **cái giá của SFT**, S2 khuếch đại.
+· Bốn lời giải thích thay thế đã loại: độ dài câu · lát cắt app · lỗi `canon_action` · khai báo rác.
+· **Việc kế: train s2 hạt giống 202**, rồi mới đọc Δ.
 
 ### Đường ống
 
@@ -170,18 +238,19 @@ Mọi bảng kết quả phải in con số 70,0 cạnh bên.
 ✅ 2. Cổng A                          (ĐẠT 0,7% — ĐỪNG chạy lại, tốn tiền vô ích)
 ✅ 2b. Tiền trạm đường sinh câu       (4 phép, đều đạt — miễn phí)
 ✅ 2c. Runbook Colab + rà 3 lượt      (harness/run_on_colab.md, 6 mốc dừng)
-▶️ 3. Huấn luyện S1 × 2 hạt giống → sinh câu → chấm đủ
-   4. Tính MDE THẬT + cỡ nhiễu hạt giống = |S1(101) − S1(202)|
-   5. KHOÁ ngưỡng đậu/rớt, ghi vào mục sửa đổi report/106 kèm ngày
-   6. Phép thử TRẦN trên S1 (nối khai báo chuẩn vào đầu vào)
-   7. Huấn luyện S2 × 2 hạt giống → chấm
-   8. S2r, S2-nopoint, B-infer, mô hình gốc → chấm
-   9. S3-pilot (nếu kịp viết mã)
-  10. Chấm tay 100 câu (2 người) · không-gây-hại · demo tiếng Việt
-  11. Đóng băng số, viết chương kết quả
+✅ 3. Huấn luyện S1 × 2 hạt giống → sinh câu → chấm đủ   (101: 59,1 · 202: 59,6)
+✅ 4. MDE THẬT 2,2 pp + cỡ nhiễu hạt giống 0,52 pp
+✅ 5. KHOÁ ngưỡng **2,8 pp**                            (report/106 mục sửa đổi (w), 17/8)
+✅ 6. Phép thử TRẦN trên S1                             (trần 75,7 trên đủ 4.462 bước)
+✅ 6b. SÀN của thước + gọi-tên-vs-chỉ-chỗ               (12,0 · 6,1 · −28,5 vs −3,5)
+▶️ 7. Huấn luyện S2 × 2 hạt giống → chấm                ← ĐANG Ở ĐÂY (101 chạy từ 18/8)
+   8. S2r, S2-nopoint, B-infer → chấm                   (mô hình gốc đã xong: 47,6)
+   9. Bộ trỏ thứ hai UI-Venus-Ground-7B, lát 500 bước   ← lỗ hợp lệ lớn nhất còn mở
+  10. ~~Chấm tay 100 câu~~ **đã quyết KHÔNG làm** · không-gây-hại · demo tiếng Việt
+  11. Đóng băng số, viết chương kết quả · **cắt 2 trang bài FAIR**
 ```
 
-**Bước 4 và 5 phải xong trước bước 7.** Đảo thì phải ghi lý do và coi kết quả là thăm dò.
+**Bước 4 và 5 đã xong trước bước 7, đúng trình tự đăng ký trước.**
 
 ### Chia việc giữa máy thuê và máy miễn phí
 
@@ -278,7 +347,7 @@ phiên chưa từng chạy thử).
 | 6 | chấm xong **cả hai** hạt giống S1 | bốn lượt train S2/S2r/S2-nopoint |
 
 Mốc 6 là mốc quyết định của cả luận văn: từ hai điểm S1 tính **cỡ nhiễu hạt giống**, **MDE
-thật**, và **khoảng trống còn lại so với trần 70,0%**. S1 mà đã sát 70 thì S2 không còn chỗ để
+thật**, và **khoảng trống còn lại so với trần 75,7%** *(số cũ 70,0 đã rút)*. S1 mà đã sát trần thì S2 không còn chỗ để
 hơn — phải bàn lại trước khi tiêu thêm, chứ không phải train xong bốn nhánh rồi mới biết.
 
 **Kiểm rò rỉ ở mốc 3 là phép quan trọng nhất.** "0 tác vụ trùng giữa dạy và kiểm" mới chỉ kiểm
@@ -348,7 +417,7 @@ vì quá đẹp*. Cùng logic đã bắt được "AUC = 1,000" hồi tháng 7 (
 | Giới thiệu pipeline cho người chưa biết gì | `report/100_TONG_QUAN_PIPELINE.md` ⚠️ chưa cập nhật |
 | Vì sao chốt thành phần này | `report/103_CHOT_THANH_PHAN.md` |
 | Vì sao bác việc đảo sang OCR-trước | `report/107_DEBATE_NGUON_TEN.md` |
-| Kết quả cổng A dạng thô | `ckpt/gate_A_raw.jsonl`, `ckpt/gate_A_ceiling.json` |
+| Kết quả cổng A dạng thô | `runs/gate_a/gate_A_raw.jsonl`, `runs/gate_a/gate_A_ceiling.json` |
 | Lệnh chạy trên máy thuê | `harness/run_on_rented.sh` |
 | Chạy trên GPU miễn phí | `harness/run_on_free_gpu.md` |
 

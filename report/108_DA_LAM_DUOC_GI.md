@@ -7,8 +7,17 @@
 > `report/106` (bản đăng ký trước). Số nào đã bị rút thì ghi vào mục 9 chứ không xoá, để không
 > ai vô tình dùng lại.
 >
-> Cập nhật lần cuối: **9/8/2026**. Chưa huấn luyện mô hình nào. Chưa tiêu đồng nào cho GPU —
-> cổng A và toàn bộ phần tiền trạm chạy trên GPU **miễn phí** của Kaggle.
+> Cập nhật lần cuối: **17/8/2026**.
+>
+> ⚠️ **Mục 1–15 viết ở mốc 9-10/8, khi chưa huấn luyện mô hình nào.** Chúng vẫn đúng về *cách
+> làm* nhưng **không còn là trạng thái**. Trạng thái hiện tại: đã train **hai lượt s1** (hạt
+> giống 101 và 202), đã chấm **ba nhánh** (Human 75,7 · S1 59,1 · Base 47,6), đã chạy **phép
+> diễn đạt lại** và **phép độ bền luật chấm**. Đã tiêu ~**190 đơn vị Colab ≈ $19** cho train;
+> khâu chấm vẫn **0 đồng** trên Kaggle.
+>
+> **Hai mục cập nhật liên tục và luôn đáng đọc:** mục **8** (lỗi đã bắt — nay **38 dòng**) và
+> mục **9** (số đã bị rút). Muốn biết *đang ở đâu* thì đọc `report/109`; muốn hiểu *cơ chế* thì
+> đọc `report/112`.
 
 ---
 
@@ -22,7 +31,17 @@ xích từng chỉ tồn tại trên giấy — cổng A, tự kiểm lô, sinh 
 thật, làm trên T4 miễn phí của Kaggle thay vì máy thuê.
 
 Hai con số định vị mọi kết quả về sau: **sai số bộ trỏ trung vị 0,7%** (ngưỡng 3%) và **trần của
-thước 70,0%**. Việc kế tiếp là khoản chi đầu tiên và cũng là khoản lớn nhất: huấn luyện S1.
+thước 75,7%** (số cũ 70,0% đã rút 15/8).
+
+**⭐ CẬP NHẬT 20/8 — bốn lượt đã chấm, và trụ đóng góp đang ÂM:**
+trần **75,7** · S1/202 **59,6** · S1/101 **59,1** · **S2/101 57,2** · Base **47,6**
+(mẫu số 4.463 cho mọi nhánh).
+· **S1 hơn Base +11,5 pp**, qua năm đòn phản biện — phần này vững.
+· **S2 THẤP HƠN S1 ~2 pp** (ghép cặp −1,93 [−3,06 · −0,75]), tuy vẫn hơn Base +9,6 pp. Mới
+**một** hạt giống nên **chưa đọc Δ**; giữ nguyên thì rơi dải **TRẮNG** = kết quả âm có kiểm soát.
+· Chẩn đoán bằng lát cắt **đăng ký trước**: **7,3% số bước gánh 34% chênh lệch**, là nhóm mô
+hình **đoán sai loại thao tác**. Chi tiết `report/110` mục 4j-18 · mã `harness/phan_tich_s2.py`.
+· Việc kế: **train s2 hạt giống 202** (~26 giờ, ~126 đơn vị) rồi mới đọc Δ.
 
 ---
 
@@ -310,6 +329,16 @@ sai**, tìm ra nhờ đi kiểm chứ không nhờ báo lỗi.
 | **Tập kiểm không ghi w/h, mà 4,75% ảnh không phải 1080×2400** | khâu dựng nhãn mặc định cứng 1080×2400. Có cả 1440×3120 và 1080×2340 trong tập kiểm, nên ô `<point>` của nhóm đó bị tính sai mà không báo gì | đọc kích thước thật từ tệp ảnh khi dựng nhãn cho tập kiểm |
 | **Khai báo giả của S3-pilot tách được bằng một chuỗi cố định** | ô thứ tư của `desc_neg` là hằng số `"phần tử hàng xóm"` ở **994/995 = 99,9%** bản ghi, còn khai báo thật không bao giờ mang chuỗi đó (trùng 0/995; mỏ neo chữ 68,6% so với 0%). Khoản phạt lề sẽ chỉ dạy mô hình dò một chuỗi, không dạy tính phân biệt — mà lề vẫn đẹp, nên con số trông như thành công | tính ô thứ tư của khai báo giả bằng **đúng hàm đã dùng cho khai báo thật**, chạy trên phần tử hàng xóm. Phải sửa trước khi dựng dữ liệu đủ trên máy thuê. S2r không dính vì nó bốc khai báo từ màn KHÁC |
 | **S2r ghép độ dài theo ký tự trong khi đăng ký ghi token** | mất mát tính trên token, nên "độ dài" cần ghép là token. Đo lại: chỉ **54,0%** cặp nằm trong 2 token, biên độ −17/+14 — trong khi tính theo ký tự thì trung vị lệch 0, nghe như đã khít. Trung bình ~0 nên không lệch hệ thống, nhưng mã không làm đúng thứ đã đăng ký | ghép bằng bộ tách token của `Qwen2.5-VL-3B`: **99,3%** cặp trong 2 token, biên −3/+6 |
+| **Regex bỏ mệnh đề vị trí ăn luôn TÊN phần tử** (17/8) | từ *left/right/center* cũng nằm **trong tên** (`the left arrow icon`, `the Right Tick icon`), nên `re.search` khớp-trái-nhất bắt đầu ngay ở *"on the left arrow icon…"* và mệnh đề "vị trí" ngốn cả tên. **7/211 câu `p3_nopos` trơ lại `Tap.`** Ba trong số đó nằm đúng trong 11 bước trúng→trượt ⇒ **28% hiệu ứng thô là lỗi của mình**: gồm cả lỗi −4,7 pp (p=0,009), chỉ câu lành −3,4 pp (p=0,046). Nó rơi vào **nhánh duy nhất có phát hiện dương** | **hai cổng chặn**, không siết regex (siết đã thử: chặn hết 7 ca xấu nhưng giết cả ca lành có mệnh đề vị trí giữa câu). Cổng A: bỏ mệnh đề xong không được trơ động từ. Cổng B: mệnh đề bị bỏ không được chứa danh từ chỉ phần tử. Kiểm 7 ca xấu + 8 ca lành: **0 lọt, 0 mất**. Bản vá phủ rộng hơn mà sạch hơn: 1.159 bước (26,0%) · 0 suy biến vs 1.113 (24,9%) · 35 suy biến |
+| **Ba chỗ tài liệu tả sai chính dụng cụ của mình** (16-17/8) | bài và `report/112` tả `hit_disk` là **đĩa Euclid** — mã dựng **hình chữ nhật**, dung sai dọc rộng gấp **2,2×** ngang (336 vs 151 px trên 1080×2400); tả hạt Voronoi là **tâm phần tử** — mã lấy **điểm chạm**; trình Voronoi và đĩa như **hai lựa chọn** — mã có `if not hit_disk(...): return False`, tức Voronoi **bao gồm** đĩa. Cả ba đều nghe rất hợp lý nên không ai nghi | sửa theo mã; và chặn tái phát bằng cách dựng hình trong bài bằng script có `assert` gọi **thẳng hàm của thước** (`harness/make_fig_voronoi.py`) ⇒ hình không thể trái mã |
+| **`history` trong câu nhắc bị tả là "ba thao tác gần nhất"** (16/8) | thực ra là **`step_instructions` do người viết** ở các bước trước — trùng nguyên văn **5.318/5.318 = 100%**. Nghĩa là khâu chấm **teacher-forced trên ngữ cảnh**, mọi số tuyệt đối phải đọc kèm điều kiện đó. Không khai thì bị đọc thành điểm khi chạy tự do cả chuỗi | vá vào bài + `report/112` §1.6; nêu rõ phép **so giữa các nhánh** vẫn hợp lệ vì cả bốn nhánh nhận ngữ cảnh y hệt |
+| **`ACTION_MAP` quét trái-sang nên `go back` thành *tap*** (16/8) | `go` → *tap* đứng trước `back` → *navigate_back*. Ảnh hưởng **81 bước** S1, **47** Base | **cố tình KHÔNG sửa đè**: sửa thì 59,12→58,81 và 47,60→47,40, chênh gần như không nhích, mà ba nhánh đã chấm sẽ mất khả năng tái lập. Thêm cờ `strict_back=True` cho lượt mới, ghi mục sửa đổi (v), tài liệu hoá trong docstring. **Lỗi đã đo được cái giá thì thành lựa chọn có ghi chép** |
+| **Hàng "paraphrase 0,0%" của bảng bơm lỗi bị dùng để phản bác Jandial et al.** (16/8) | bộ bơm lỗi **không gọi bộ trỏ lần nào** — nó đặt sẵn một điểm tổng hợp rồi hỏi cổng chữ. Hàng đó chỉ nói cổng chữ không bác câu diễn đạt khác; nó **không nói gì** về việc bộ trỏ còn tìm ra nút hay không | rút khỏi bài; thay bằng phép kiểm thật (mục 16) — chấm lại câu chuẩn đã viết lại bằng chính bộ trỏ |
+| **Đường lui của bộ dựng câu không `.strip()`** (17/8) | 72/589 câu chuẩn có **dấu cách ở cuối** trong khi `preds_ceiling_human.jsonl` đã strip sạch (0/6.958). Ở đúng những bước biến thể KHÔNG đổi được — tức lẽ ra phải trùng khít lượt trần — bộ trỏ nhận chuỗi lệch **một ký tự** và trả toạ độ khác ở **6 bước**, **1 bước đổi hẳn kết luận** (lệch **1.219 px = 113% bề ngang**). Số của bài không ảnh hưởng (bước đó nằm NGOÀI phần viết lại, chỉ đụng tổng 0,125 pp) nhưng nó **phá khả năng ghép kết quả từ tệp thô**, thứ tiết kiệm cả giờ GPU | `.strip()` cả hai đường trong `make_paraphrase.py` |
+| **Phát biểu về năng lực mô hình mà không làm phép chia** (18/8) | Trợ lý nói *"tỉ lệ dữ liệu/tham số ~4:1 nên mô hình thiếu năng lực, quá khớp không đáng lo"*. Chia ra thì ngược: **14.966.784 / 64.567 = 232 tham số mỗi mẫu**, tham số nhiều HƠN mẫu. Người dùng hỏi lại *"bạn chắc nha"* nên mới lộ; gật theo thì con số 4:1 đã vào luận văn | rút lập luận, thay bằng **bằng chứng đo được**: loss đuôi dừng ở 0,4486/0,4467 (không tiến về 0) và điểm ngoài mẫu 59,12/59,64 ổn định qua hai hạt giống. ⭐ **Bài học: mọi tỉ lệ nêu ra phải chia trước khi phát biểu** — và câu hỏi *"bạn chắc nha"* đáng được đối xử như một phép kiểm, không phải như một lời trấn an cần đáp |
+| ⛔ **Dựng PDF bằng lệnh KHÔNG TỒN TẠI, và nuốt lỗi nên không ai biết** (18/8) | Trợ lý gọi `xelatex ... >/dev/null 2>&1` để dựng `paper/fair2026/main.tex`, rồi đọc số trang từ `main.pdf`. Máy này **không có `xelatex`** — kho dùng **`tectonic`** (`thesis/build.sh`, `paper/fair2026/README.md` đều ghi đúng). `command not found` bị `2>&1 >/dev/null` nuốt sạch, nên mọi lần báo *"8 trang, 0 overfull"* đều là đọc **PDF cũ hai ngày trước**. Lặp lại **hơn mười lần trong một ngày**, che mất việc bài đã phình lên **10 trang** trong khi giới hạn là 8 | dựng bằng `tectonic -X compile main.tex --keep-logs`, **KHÔNG chuyển hướng stderr**; và trước khi tin số trang thì **kiểm `ls -la main.pdf` xem mốc giờ có phải vừa xong không**. ⭐ **Bài học: lệnh dựng tài liệu phải đọc từ `build.sh`/README của kho, đừng tự chế** — và `>/dev/null 2>&1` trên một lệnh mình chưa từng chạy ở máy này là tự bịt mắt |
+| ⭐ **Phép kiểm tự che mắt mình bằng `.strip()`** (17/8) | script ghép kết quả có `assert` hỏi *"bộ trỏ tất định không"* (cùng câu cùng ảnh ⇒ cùng toạ độ). Nó **đỏ ngay lần chạy đầu**: 6/589 lệch, và chẩn đoán đầu là *"bộ trỏ không tất định"* — **sai**. Chính bản `assert` đó so chuỗi bằng `.strip()`, tức **tự tay xoá đúng thứ nó cần phát hiện**. Nếu tin chẩn đoán đầu thì đã trả 1 giờ GPU để chấm lại một thứ không cần chấm | `tu_kiem()` so chuỗi **nguyên xi**. **Bài học: phép kiểm không được dùng chính phép biến đổi mà nó cần phát hiện** |
+| **Lượt chấm Kaggle treo 7 giờ vì log ngập** (17/8) | `tqdm` ngoài terminal in mỗi cập nhật thành một dòng (>1.400 dòng cho một lần nạp mô hình, × 4 lần); Kaggle chặn log khi vượt trần ⇒ **tiến trình kẹt cứng ở lệnh ghi stdout**. Bằng chứng: log chỉ có hai mục `59.8s` và `25560.4s`, **nội dung giống hệt nhau**, cùng cụt giữa chữ ở `Loading weights: 29% \| 213/729`. Commit bị huỷ thì Kaggle **không lưu** `/kaggle/working` ⇒ mất trắng 7 giờ quota | vá **gốc**: tắt thanh tiến trình **và** cho tiến trình con ghi ra **tệp** thay vì in qua ống log; cộng nhịp sống in từ notebook mỗi 2 phút, độc lập với log con. Chạy **tương tác** cho lượt đầu. `harness/kaggle_pheA_CHAY_LAI.md`. Chi phí biết mình sai: **7 giờ → 4 phút** |
 
 ---
 
@@ -337,6 +366,14 @@ sai**, tìm ra nhờ đi kiểm chứ không nhờ báo lỗi.
 - **Đường cong kết oan "3% → 2,6% · 5% → 25% · 8% → 42% · 13% → 60%"** — đo trên hộp OmniParser với luật hộp-gần-nhất, không phải dụng cụ sẽ chấm. Số của dụng cụ thật (cây trợ năng + Voronoi): 3% → 0% · 5% → 7,5% · 8% → 24,1% · 13% → 55%
 - "GuideMe không đụng toạ độ" — có, GPT-5 trả toạ độ trực tiếp
 - "tập kiểm app-unseen 631 tác vụ" — không áp dụng cho dữ liệu đang dùng (mục 8)
+- **"Trần của thước 70,0% [64,5–75,3]"** (15/8) — đo trên **mẫu con 300 bước** suy từ vết cổng A. Chấm câu chuẩn trên **đủ 4.462 bước** ra **75,7% [74,1–77,3]**: cao hơn **5,7 điểm**, nằm **ngoài mép trên** khoảng tin cậy của chính nó, KTC hẹp từ ±5,4 xuống ±1,6. Kéo theo hai số cũng rút: **room "485 bước / 10,9 pp" → 741 bước / 16,6 pp**, và **"S1 đạt 84,4% của trần" → 78,1%**
+- **"92% ứng dụng tập kiểm cũng có ở tập dạy"** (14/8) — số đúng ở quy mô đủ là **95,6%** trong phần gán được app; con số cũ tính bằng bản mã `tag_app_seen.py` có lỗi regex
+- **"604 bước chưa-thấy lúc dạy"** — tính bằng bản mã có lỗi; số đúng **139 bước / 22 app**
+- **"`total_flos` lượt s1/101 = 3.857.778.344 GF, khớp ngoại suy từ thăm dò trong 0,32%"** (13/8) — **số ghi sai**. Đọc lại 17/8, cả `trainer_state.json` lẫn `all_results.json` của chính lượt đó đều cho **4.142.257.957 GF** (513.164 GF/bước), khớp nhau 0,00%. Kéo theo lập luận cũ phải bỏ vì **vòng tròn**: nó so một con số với chính phép ngoại suy đẻ ra nó. Ngoại suy lệch **7,7%** vì lượt thăm dò chạy `max_samples` = phần đầu tập **chưa trộn**, độ dài chuỗi không đại diện. Bằng chứng thay thế cho "không mất cũng không lặp bước nào": hai lượt độc lập đứt **6** vs **3** lần mà `total_flos`/bước khớp **0,013%** (`report/110` mục 4j-15)
+- **"`all_results.json` sai `total_flos` sau resume"** — sai ở việc quy kết. Trường đó **vẫn đúng**; chỉ `train_loss`, `train_runtime` và hai trường `*_per_second` hỏng, vì chúng chia cho `elapsed`
+- **"MDE ghép cặp ước 2,7–4,5 pp có cụm"** (15/8) — số **đoán**, lấy SE ghép cặp rồi nhân một hệ số nở do cụm tự đặt 1,5–2×. Đo thật bằng bootstrap **theo cụm** trên hiệu ghép cặp: SE **0,79 pp**, hệ số nở chỉ **1,10×** ⇒ **MDE = 2,2 pp**. Hợp lý vì hiệu ghép cặp *triệt tiêu* phần lớn biến thiên giữa các app. ⚠️ Kéo theo: luật đã đăng ký gọi dải **4–9 pp** là *"không kết luận được"* sẽ **vứt bỏ một hiệu ứng thật** có KTC loại trừ 0 ở p<0,001 → mục sửa đổi (t) ghi vào `report/106` **trước khi chấm nhánh xử lý nào**
+- **"Bộ trỏ khác họ với mô hình được chấm"** và **"recipe bộ trỏ không chứa AndroidControl — đã xác minh"** (29/7) — **cả hai SAI**, sống 18 ngày và đi vào bản thảo bài báo. UGround-V1-2B dựng trên **Qwen2-VL**, cùng dòng Qwen2.5-VL-3B đang bị chấm (`score_run.py` nạp bằng `Qwen2VLForConditionalGeneration`); Bảng 1 arXiv **2410.05243** liệt kê **AndroidControl 47K** phần tử nhãn người. Phần còn đứng: họ lấy split **train**, tập kiểm ta lấy split **test** ⇒ không chồng lấn ở mức màn hình, **không phải rò rỉ nhãn** — nhưng bộ trỏ đã thấy **văn phong chú thích** mà S1 được dạy bắt chước, nên còn một lời giải thích thay thế cho chênh S1−Base mà 6 đòn phản biện chưa loại. Đóng bằng bộ trỏ thứ hai đã xác minh sạch (UI-Venus-Ground-7B)
+- **"Mọi bộ trỏ GUI mở đều dựng trên họ Qwen-VL"** — SAI (Phi-Ground dựng trên Phi-3.5-Vision). Câu đó đã lỡ vào Limitations của bài, đã vá
 
 ---
 
@@ -358,7 +395,7 @@ sai**, tìm ra nhờ đi kiểm chứ không nhờ báo lỗi.
 | # | Việc | Tiền | Chặn ở đâu |
 |---|---|---|---|
 | ~~1~~ | ~~Thử đường ống bằng bộ trỏ rẻ~~ — **XONG 6/8** | — | bộ trỏ rẻ lệch 29,3%, không chấm được |
-| ~~2~~ | ~~**Cổng A**~~ — **XONG 9/8, MIỄN PHÍ** trên Kaggle T4 | **0 đô** | ĐẠT: lệch trung vị 0,7% · trần thước 70,0% |
+| ~~2~~ | ~~**Cổng A**~~ — **XONG 9/8, MIỄN PHÍ** trên Kaggle T4 | **0 đô** | ĐẠT: lệch trung vị 0,7% · ~~trần thước 70,0%~~ → **75,7%** (đo lại 15/8 trên đủ 4.462 bước) |
 | ~~2b~~ | ~~Tiền trạm đường sinh câu~~ — **XONG 9/8, MIỄN PHÍ** | **0 đô** | tự kiểm lô 8/8 · sinh câu · chấm điểm · B-infer, cả bốn chạy thật |
 | 3 | Huấn luyện S1 × 2 hạt giống → sinh câu → **MDE thật** → khoá ngưỡng | 19–30 đô | trình tự cứng, không đảo |
 | 4 | Huấn luyện S2 × 2 hạt giống | 17–28 đô | |
@@ -418,7 +455,7 @@ gốc chưa huấn luyện. Cách phát hiện đáng ghi lại: **rà dấu v�
 ### Rủi ro lớn nhất còn lại, xếp theo mức
 
 1. ~~**Bộ trỏ chuyên có đạt cổng A không**~~ — **đã trả lời 9/8: ĐẠT**, lệch trung vị 0,7%.
-   Rủi ro thay thế: **trần của thước chỉ 70,0%**, nên khoảng trống cho S2 hẹp hơn tưởng, và mọi
+   Rủi ro thay thế: **trần của thước 75,7%** (bản cũ ghi 70,0%, đã rút), nên khoảng trống cho S2 hẹp hơn tưởng, và mọi
    điểm phải đọc trên nền 70 chứ không phải 100.
 2. **Hiệu ứng rơi vào vùng 4–9 pp** — kết luận đổi theo luật gộp cụm, phải báo là chưa kết luận
    được (mục 7.1).
@@ -436,7 +473,7 @@ Toàn bộ mục này chạy trên **Kaggle Tesla T4, không tốn đồng nào*
 
 ### 13.1. Cổng A — ĐẠT
 
-UGround-V1-2B, 300 bước lấy theo hạt giống 20260805 từ 4.463 bước chạm. Vết thô: `ckpt/gate_A_raw.jsonl`.
+UGround-V1-2B, 300 bước lấy theo hạt giống 20260805 từ 4.463 bước chạm. Vết thô: `runs/gate_a/gate_A_raw.jsonl`.
 
 | | |
 |---|---|
@@ -456,7 +493,15 @@ nhiều thế. ⇒ **kiểu hỏng thật của bộ trỏ** (không nhận ra p
 ảnh hưởng 15,3% số bước, **không** phải lỗi cài đặt. Làm số xấu đi chứ không đẹp lên, nên cổng
 đạt hợp lệ. Phải khai kèm mỗi lần trình.
 
-### 13.2. Trần của thước = 70,0% — số phải in cạnh mọi kết quả S1/S2
+### 13.2. ~~Trần của thước = 70,0%~~ → **ĐÃ THAY BẰNG 75,7% ngày 15/8**
+
+> ⛔ **Con số 70,0% dưới đây ĐÃ BỊ RÚT.** Nó đo trên **mẫu con 300 bước** (suy từ vết cổng A).
+> Chấm câu chuẩn trên **đủ 4.462 bước** ngày 15/8 ra **75,7% KTC95 [74,1 – 77,3]** — cao hơn
+> **5,7 điểm** và nằm **ngoài mép trên** khoảng tin cậy của chính nó; KTC hẹp từ ±5,4 xuống
+> ±1,6. Xem `report/110` mục 4j-13. Giữ mục này làm bản ghi phép đo cũ, **không dùng số**.
+> Bài học: đại lượng mà mọi số khác đọc dựa vào thì đừng đo trên mẫu con.
+
+#### [bản ghi lịch sử] phép đo 9/8 trên 300 bước
 
 Cổng A đo khoảng cách, thước chính là ô-Voronoi. Đem chính 300 điểm trỏ đó chấm bằng
 `hit_voronoi` (`harness/gate_a_ceiling.py`, offline, không gọi lại bộ trỏ):
@@ -492,7 +537,7 @@ khi lệch 8–14% bề ngang màn. Giữ ở vai trò báo kèm, không bao gi�
 `generation_config` của UGround đặt `use_cache=False`. Trên T4: 32 token mất **38,65 s** tắt
 cache, **4,16 s** bật. Không suy luận rằng "toán học bảo toàn nên chắc bằng nhau" — chạy lại 50
 bước đầu của chính mẫu cổng A với cache bật rồi so từng toạ độ: **trùng tuyệt đối 50/50**, sai
-khác đúng bằng 0 (`ckpt/cache_check.jsonl`). Đã bật `use_cache=True` nói thẳng ở mọi chỗ gọi
+khác đúng bằng 0 (`runs/gate_a/cache_check.jsonl`). Đã bật `use_cache=True` nói thẳng ở mọi chỗ gọi
 `generate`. **Một lượt chấm đủ 4.463 bước: ~48 giờ → ~5 giờ**, tức Kaggle miễn phí gánh được cả
 khâu chấm điểm của mọi nhánh.
 
@@ -652,3 +697,45 @@ giây) → thay bằng `harness/make_bundle.py` với 4 kiểu gói: `rented` ·
 `score`. Archive `harness/cv_study/` và `report/85`, `report/101`. `launch_ocr.sh` (có đường
 dẫn cứng `/mnt/d/Master/Thesis` và một đường scratchpad chết) đã archive — nó từng nằm trong
 gói chuyển máy.
+
+---
+
+## 16. Sàn của thước — phép đo lớn nhất ngày 18/8/2026
+
+Trước hôm nay bảng điểm chỉ có **một đầu**: trần 75,7%. Không biết đầu kia ⇒ không biết
+59,1% là "khá" hay "gần như chưa làm gì". Bốn lượt phản biện độc lập đều chỉ đúng chỗ này,
+và một lượt còn **dự đoán sàn ≈ 40%** — nếu đúng thì dải dùng được chỉ còn 35,7 điểm và mọi
+câu kiểu *"lấp 41% dư địa"* phải tính lại.
+
+**Cách làm.** Ba nhánh đối chứng, mỗi nhánh bẻ **đúng một thứ** khỏi câu chuẩn của người, chấm
+trên lát 800 bước (trần trên lát này 74,9%). Luật đọc **viết trước khi chấm**, nằm trong
+`harness/make_floor.py`; đọc số bằng `python3 harness/doc_san.py`. Kaggle, 3 giờ, 0 đồng.
+
+| nhánh | câu thành gì | điểm | KTC95 |
+|---|---|---|---|
+| `f1_trong` | `"Tap the button."` ở **mọi** bước | **12,0%** | [9,7 – 14,4] |
+| `f3_lechman` | câu **thật của bước khác** — đúng văn phong, sai màn | **6,1%** | [4,5 – 7,9] |
+| `f2_khongten` | giữ vị trí, **bỏ tên** phần tử | 68,0% toàn lát · **61,1%** phần bị đụng | — |
+
+**Ba kết luận, cả ba đều thuận.**
+
+**① Sàn 12,0% ⇒ dải dùng được 62,9 điểm.** Base nằm ở 58,3% của dải, S1 ở 74,4%. Dự đoán
+"sàn ≈40%" của phản biện **bị bác**: nó suy từ chỗ 40,4% số bước cả ba nhánh cùng trúng, mà
+sàn thật 12,0% nghĩa là những bước ấy **dễ KHI CÓ CÂU THẬT**, không dễ vô điều kiện.
+⭐ **Suy sàn từ tỉ lệ đồng thuận là suy sai** — đây là bài học dùng được cho mọi thước.
+
+**② `f3` (6,1%) THẤP HƠN `f1` (12,0%), hai KTC không chồng lấn.** Đòn "thắng nhờ văn phong"
+nói bộ trỏ thưởng cho câu đúng giọng bất kể nội dung. `f3` có văn phong hoàn hảo, độ dài khớp
+(34 vs 35 ký tự), nội dung sai ⇒ theo giả thuyết đó nó phải ăn **cao**. Nó ăn **thấp nhất
+trong mọi thứ đã đo**, dưới cả câu vô nghĩa. ⇒ bộ trỏ **thật sự đọc câu**: câu sai dẫn nó đi
+lạc, câu rỗng để nó rơi về tiên nghiệm thị giác yếu. Cộng phép "cùng nội dung khác văn phong"
+(+0,9…+1,9 pp, không ý nghĩa), giả thuyết văn phong bị đánh từ **hai hướng độc lập**.
+
+**③ Gọi tên đắt gấp 8 lần chỉ chỗ.** Bỏ **tên** giữ vị trí: **−28,5 pp** (193 bước, b=58 c=3,
+χ²=47,8, p<0,001). Bỏ **vị trí** giữ tên: −3,5 pp (198 bước, b=8 c=1, p=0,046). Hai quần thể
+gần bằng nhau nên so trực tiếp được ⇒ chữ *"Element Identification"* ở nhan đề **đúng**.
+⚠️ Con số của bài là **−28,5 pp trên phần bị đụng**, không phải −6,9 pp toàn lát — `f2` chỉ
+đụng 24,1% số bước, pha loãng **4,15 lần**. Đúng cái bẫy đã mắc một lần ở phép A.
+
+⇒ Trong ba lỗ ghi ở `report/112` §11.3, **hai đã đóng**. Còn lại: **chưa thay dụng cụ lần nào**
+(bộ trỏ thứ hai) và **không có neo ngoài nào**. Chi tiết đầy đủ: `report/113` mục I.
