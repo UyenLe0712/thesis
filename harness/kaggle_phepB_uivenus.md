@@ -293,8 +293,18 @@ luật cũ giữ nguyên: không thể thiên vị S1 hay S2.
 
 ## Ô 2d — CHỌN CỠ THEO TRẦN (0 giây GPU)
 
-Đọc lại ba tệp thô ô 2b đã ghi, tính đúng đại lượng thước dùng. Mốc UGround trên **đúng 30 bước
-ấy**: `hit_disk` **83,3%** · >14% **16,7%** · ≤3% **73,3%**.
+Đọc lại ba tệp thô, tính đúng đại lượng thước dùng. **Chạy SAU ô 4**, khi mỗi tệp đã có 300 bước
+— ở 30 bước KTC rộng ±15 điểm nên không quyết được gì.
+
+Mốc UGround trên **đúng các bước ấy** (ô tự chọn hàng theo cỡ mẫu):
+
+| n | `hit_disk` | >14% | ≤3% | trần Voronoi |
+|---|---|---|---|---|
+| 30 | 83,3% | 16,7% | 73,3% | 80,0% [63,3 – 93,3] |
+| **300** | **81,3%** | **21,0%** | **62,7%** | **70,0% [64,5 – 75,3]** |
+
+⚙️ **Ô 2d không cần GPU** (chỉ đọc tệp thô), nhưng phần trần Voronoi **cần Internet** để tải cây
+trợ năng. Đừng đổi Accelerator để chạy nó — Kaggle khởi động lại nhân, không đáng.
 
 ⚠️ Ô tự tìm `harness` — ưu tiên bản trong `/kaggle/working`, không có thì lấy thẳng từ dataset.
 Phần trần Voronoi gọi `buttons_of` nên cần cây trợ năng, lượt đầu tải từ HuggingFace mất vài
@@ -333,7 +343,13 @@ for k in (1003, 2007, 4800):
     kq[k] = hd / len(o)
     print(f"  {TEN[k]:<24}{hd/len(o):>9.1%}{sum(1 for v in e if v > .14)/len(o):>8.1%}"
           f"{sum(1 for v in e if v <= .03)/len(o):>8.1%}{GY[k]:>9.1f}")
-print(f"  {'UGround (mốc)':<24}{0.833:>9.1%}{0.167:>8.1%}{0.733:>8.1%}{'~4.5':>9}")
+# mốc UGround — chọn hàng theo cỡ mẫu, so nhầm n là đọc sai
+n = len(o) if kq else 0
+MOC = {30: (0.833, 0.167, 0.733, "80,0% [63,3–93,3]"),
+       300: (0.813, 0.210, 0.627, "70,0% [64,5–75,3]")}
+m = MOC.get(n, MOC[300])
+print(f"  {'UGround (mốc, n=' + str(n) + ')':<24}{m[0]:>9.1%}{m[1]:>8.1%}{m[2]:>8.1%}{'~4.5':>9}")
+print(f"  {'   trần Voronoi của UGround: ' + m[3]}")
 
 # ── trần Voronoi = thước chính; cần cây trợ năng nên lượt đầu tải vài phút ──
 print("\n── trần Voronoi (thước chính) ──")
