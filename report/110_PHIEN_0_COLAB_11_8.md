@@ -1178,6 +1178,38 @@ là *"sao không dừng sớm cho đỡ 5 giờ"*. Bốn lý do, lý do đầu l
 Và về mặt tiền: muốn biết bản 6.200 có gần bằng bản 8.072 không thì **phải chấm cả hai**, mỗi
 lượt 5,6 giờ quota Kaggle (trần 30 giờ/tuần) — đắt hơn 5 giờ Colab định tiết kiệm.
 
+#### ⭐ BƯỚC BỎ CỦA S2 KHÁC S1 — và nó cho thấy một CƠ CHẾ, không phải một ca lẻ
+
+`preds_s2_seed101.jsonl`: 6.958 bản ghi · 4.463 bước chạm · **0** sót `<desc>` trong câu · độ
+dài câu trung vị **31** ký tự (S1: 33) · đúng **một** câu rỗng — nhưng ở bước **`(20011, 2)`**,
+trong khi **cả hai** hạt giống S1 bỏ `(18710, 1)`.
+
+Ô 14 chỉ **đếm** số câu rỗng nên không lộ ra điều đó; phải hỏi *bước nào* (ô 14b mới thêm).
+
+**`raw` của bước ấy:** `<desc>tappable text | 7 徇␣␣␣␣…` — **U+200A (hair space) lặp tới hết
+ngân sách sinh**, kèm một chữ Hán và một ký tự hỏng. Mô hình rơi vào **vòng lặp lặp ký tự ngay
+trong phần khai báo**, tiêu sạch token, **không còn chỗ để sinh câu**. Câu chuẩn là
+`"Set time 7' o clock in the clock"` — màn đồng hồ, chỗ OCR đọc rác nhất.
+
+⇒ **Chẩn đoán đăng ký trước hôm qua (rác OCR trong khai báo) nay có cơ chế cụ thể**, không còn
+là phỏng đoán: rác không chỉ làm khai báo xấu, nó **kích hoạt vòng lặp nuốt ngân sách sinh**.
+
+**Ba hệ quả:**
+1. ⚠️ **Kiểu hỏng này S1 về cấu trúc KHÔNG THỂ có** — không có khai báo thì không có chỗ cho
+   vòng lặp xảy ra *trước khi* tới câu. Thành phần đóng góp của S2 mang rủi ro riêng ⇒ **phải
+   khai như giới hạn của nhánh**, không lấp liếm.
+2. ⚠️ **Quần thể ghép cặp S2-vs-S1 = 4.461 bước**, không phải 4.462. Chênh ~0,02 pp nên **không
+   đổi kết luận**, nhưng câu *"chấm trên cùng 4.462 bước"* trong `report/112` và bản thảo bài
+   báo **phải sửa** khi S2 vào bảng.
+3. ⭐ **Mất hẳn câu chỉ là ĐUÔI NẶNG NHẤT.** Cùng cơ chế ở mức nhẹ hơn sẽ **cắt ngắn** câu chứ
+   không giết hẳn — và phép đếm câu rỗng **không thấy được**. Đây mới là chỗ có thể ăn mòn điểm
+   S2 một cách âm thầm.
+
+⇒ Đã thêm **ô 14c**: khoá định nghĩa *"khai báo có rác"* (dấu cách lạ · CJK · ký tự hỏng · một
+ký tự lặp ≥10 lần · khai báo dài >200), đếm tỉ lệ, **so độ dài câu hai nhóm**, rồi ghi danh
+sách bước lên Drive kèm md5. **Chạy trước khi chấm** ⇒ phép phân tầng sau này là **đăng ký
+trước**, không phải bới số sau khi thấy điểm.
+
 #### 🔒 CHẨN ĐOÁN ĐĂNG KÝ TRƯỚC — ghi 19/8, **trước khi có bất kỳ điểm S2 nào**
 
 Trong 3 khai báo đầu tiên xem tay đã thấy **một ca rác**:
