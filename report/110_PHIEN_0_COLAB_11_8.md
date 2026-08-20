@@ -1278,6 +1278,48 @@ số chứ không bằng lời**:
 ⚠️ Ghi mục này **trước khi chấm** chính là để nó không trở thành lời bào chữa nghĩ ra sau khi
 thấy điểm xấu. Nếu S2 thắng, **cấm** dùng mục này để giải thích hậu kỳ theo chiều ngược lại.
 
+### 4j-17. ⭐ ĐIỂM S2 HẠT GIỐNG 101: **57,18%** — THẤP HƠN S1 (20/8, Kaggle commit, 5,5 giờ)
+
+| nhánh | executability | KTC95 | n |
+|---|---|---|---|
+| trần (câu người) | 75,73% | 74,1 – 77,3 | 4.463 |
+| S1 hạt 202 | 59,62% | 57,9 – 61,3 | 4.463 |
+| S1 hạt 101 | 59,11% | 57,3 – 60,8 | 4.463 |
+| **S2 hạt 101** | **57,18%** | **55,4 – 58,9** | 4.463 |
+| Base | 47,59% | 45,9 – 49,3 | 4.463 |
+
+`action_ok` **94,9%** (S1 94,4%) · đĩa dung sai 67,4% · cụm 1.091 (hiệu dụng 454,3) · mã thoát
+0 · 330 phút. Chạy bằng **Save & Run All (Commit)** với đồng hồ chặn 8 giờ — không cần ngồi canh.
+
+**Thước không đổi:** `metric_exec.py` có đúng **một** commit từ 5/8; thay đổi chưa commit chỉ
+**thêm** tham số `strict_back` với mặc định giữ nguyên hành vi, và chế độ `score` không dùng nó.
+⇒ S2 chấm bằng đúng thước đã chấm S1 · Base · trần.
+
+**S2 đang THẤP HƠN S1 ~2,2 pp** (so trung bình hai hạt giống S1 = 59,37%). Nhiễu giữa hai hạt
+giống S1 là **0,51 pp** ⇒ 2,2 pp lớn gấp ~4 lần nhiễu, khó là ngẫu nhiên thuần. Nhưng **một
+hạt giống chưa kết luận được** — đó chính là lý do luật đòi hai.
+
+Giữ nguyên thì Δ ≈ **−2,2 pp** rơi vào dải **TRẮNG** (−2,8 … +1,7) của luật khoá 17/8, tức
+**kết quả âm có kiểm soát** — một trong bốn kết cục `report/106` đã đăng ký trước.
+
+**✅ KHÔNG hỏng cơ học** theo luật khoá 20/8 (ngưỡng: `exec < 12,0%` hoặc `action_ok < 85%`)
+⇒ **train hạt giống 202 như đã cam kết**. Giá trị của việc khoá luật trước nằm đúng ở đây: bỏ
+nhánh lúc này thì mọi Δ báo ra về sau đều đã **chọn lọc theo kết quả**.
+
+⛔ **Đừng làm ba thứ sau, dù cám dỗ:** đổi thước · đổi luật cắt `<desc>` · chọn điểm lưu khác.
+Hồ sơ đăng ký trước sinh ra để chặn đúng những việc đó, và dự án đã tự khai **hai lần** nới
+ngưỡng sau khi thấy điểm (`report/112`).
+
+**Việc kế, theo thứ tự:**
+1. Train s2 hạt giống **202** (~26 giờ, ~126 đơn vị) → chấm → **mới** đọc Δ ghép cặp McNemar.
+2. **Lát cắt đã đăng ký trước, miễn phí, tính từ tệp thô:** phân tầng theo *thành phần có kích
+   hoạt hay không* (**324 bước = 7,26%** không sinh `<desc>`; danh sách đóng băng ở
+   `runs/co_rac_s2_seed101.json`). Nay lát cắt này **quan trọng hơn hẳn**: nếu S2 thua **chỉ ở
+   nhóm có kích hoạt** thì thủ phạm đúng là thành phần; thua đều cả hai nhóm thì nguyên nhân
+   nằm ở chỗ khác (chuỗi đích dài hơn, ngân sách sinh, phân bố dữ liệu).
+3. Điều còn đứng vững, **không bị lung lay bởi kết quả này**: S1 hơn Base **+11,5 pp** qua 5
+   đòn phản biện · chương đo lường (sàn 12,0 · trần 75,7 · gọi-tên-vs-chỉ-chỗ · diễn đạt lại).
+
 ## 5. Bốn lỗi bắt được trong phiên này
 
 1. **Ô theo dõi OCR đếm DÒNG thay vì ẢNH KHÁC NHAU.** 957 dòng trùng làm nó báo 100,5% và
