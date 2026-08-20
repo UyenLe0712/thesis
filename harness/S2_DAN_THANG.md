@@ -921,6 +921,50 @@ nhưng câu chữ sai thì bị bắt.
 chiếm trọn phần sinh. Một ca thì chỉ là giai thoại; **hạt giống 202 cũng vậy thì phải đếm cho
 tử tế** và khai như một giới hạn của nhánh, không lấp liếm.
 
+### Ô 14c — 🔒 ĐÓNG BĂNG CỜ "KHAI BÁO CÓ RÁC" ⚠️ phải chạy **TRƯỚC KHI CHẤM**
+
+```python
+import json, re, hashlib, os
+# Định nghĩa khoá cứng ở đây, 19/8, TRƯỚC khi có bất kỳ điểm S2 nào.
+LA  = re.compile(r"[\u2000-\u200f\ufeff\ufffd\u3000-\u303f\u4e00-\u9fff]")  # cách lạ · CJK · ký tự hỏng
+LAP = re.compile(r"(.)\1{9,}")                                              # một ký tự lặp ≥10 lần
+DAI = 200                                                                   # khai báo dài bất thường
+
+desc = lambda r: (lambda m: m.group(1) if m else None)(
+       re.search(r"<desc>(.*?)</desc>", r["raw"], re.S))
+cham = lambda r: r["action"].get("action_type") in ("click","long_press") and "x" in r["action"]
+
+P = f"{D}/preds/preds_{BRANCH}_seed{SEED}.jsonl"
+R = [json.loads(l) for l in open(P, encoding="utf-8")]
+co  = [(r, desc(r)) for r in R if cham(r) and desc(r)]
+rac = [(r, d) for r, d in co if LA.search(d) or LAP.search(d) or len(d) > DAI]
+
+print(f"bước chạm có <desc>: {len(co):,}")
+print(f"   CÓ RÁC          : {len(rac):,} = {len(rac)/max(len(co),1):.2%}")
+for r, d in rac[:5]: print(f"   [{r['episode_id']}/{r['step_id']}] {d[:90]!r}")
+
+# độ dài câu ở hai nhóm — cơ chế nghi ngờ là khai báo rác ăn mất ngân sách sinh
+kr = {(r["episode_id"], r["step_id"]) for r, _ in rac}
+dai = lambda g: (lambda v: sorted(v)[len(v)//2] if v else 0)(
+      [len(r["pred"]) for r, _ in co if ((r["episode_id"], r["step_id"]) in kr) == g])
+print(f"độ dài câu trung vị · nhóm RÁC {dai(True)} vs nhóm SẠCH {dai(False)} ký tự")
+
+# đóng băng lên Drive: có tệp này thì phép phân tầng sau khi chấm là ĐĂNG KÝ TRƯỚC
+F = f"{D}/preds/co_rac_{BRANCH}_seed{SEED}.json"
+json.dump({"dinh_nghia": {"ky_tu_la": LA.pattern, "lap": LAP.pattern, "dai": DAI},
+           "co_desc": len(co), "co_rac": sorted(map(list, kr))},
+          open(F, "w"), ensure_ascii=False)
+print("đã đóng băng →", F, "· md5", hashlib.md5(open(F,"rb").read()).hexdigest()[:12])
+```
+
+**Vì sao chạy trước khi chấm.** Lượt s2/101 bỏ đúng một bước `(20011, 2)`, và `raw` của nó là
+`<desc>tappable text | 7 徇␣␣␣…` — **U+200A lặp tới hết ngân sách sinh**, nên không còn chỗ cho
+câu. Mất hẳn câu là **đuôi nặng nhất**; cùng cơ chế ở mức nhẹ hơn chỉ **cắt ngắn** câu, và
+phép đếm câu rỗng không thấy được. Cột `độ dài câu trung vị` ở trên là chỗ nhìn ra điều đó.
+
+⚠️ Đây là kiểu hỏng mà **S1 về cấu trúc không thể có** — không có khai báo thì không có chỗ để
+vòng lặp xảy ra trước khi tới câu. Phải khai như **giới hạn của nhánh S2**, không lấp liếm.
+
 ### Ô 15 — LƯU VẾT lên Drive ⚠️ chạy TRƯỚC KHI TẮT MÁY
 
 ```python
@@ -954,6 +998,11 @@ chạy. Máy ảo đã mất **10 lần**; đừng để tệp nào chỉ nằm 
 3. **Chấm để cuối cùng**, sau khi có cả hai hạt giống — Kaggle 30 giờ/tuần, mỗi lượt 5,6 giờ.
 
 ## Luật đọc kết quả — đã khoá 17/8, đừng sửa sau
+
+⚠️ **Quần thể ghép cặp = GIAO các bước có câu của hai nhánh đem so.** Hai hạt giống S1 cùng
+bỏ `(18710, 1)` nên trước nay là **4.462**; lượt s2/101 bỏ `(20011, 2)` ⇒ S2-vs-S1 chạy trên
+**4.461**. Chênh ~0,02 pp, **không đổi kết luận**, nhưng câu *"chấm trên cùng 4.462 bước"*
+trong `report/112` và bản thảo bài báo **phải sửa** khi S2 vào bảng.
 
 Δ = S2 − S1, trung bình hai hạt giống, ghép cặp (`report/106` mục sửa đổi (w)):
 
