@@ -185,8 +185,12 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--shards", type=int, default=1)
+    # Trước 11/8 phép kiểm ghép gọi cứng check(n_shards=1) và bỏ qua --shards, nên nó
+    # luôn chạy trên 60 mẫu của đúng một shard — khoảng tin cậy ±12,6 điểm, hẹp hơn hẳn
+    # mọi phép kiểm khác của phiên 0. Mở hai tham số ra để siết được khi cần.
+    ap.add_argument("--n-check", type=int, default=60, dest="n_check")
     a = ap.parse_args()
     if a.check:
-        check(n_shards=1)
+        check(n_shards=a.shards, n_check=a.n_check)
     else:
         build(a.shards)

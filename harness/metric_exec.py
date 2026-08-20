@@ -43,8 +43,27 @@ ACTION_MAP = {
 }
 
 
-def canon_action(text):
-    for w in re.findall(r"[a-z]+", (text or "").lower()):
+def canon_action(text, strict_back=False):
+    """Quy câu về một lớp thao tác.
+
+    ⚠️ LỖI ĐÃ BIẾT (phát hiện 16/8/2026, giữ nguyên hành vi mặc định để ba nhánh đã
+    chấm còn tái lập được): vòng quét chạy từ trái sang, mà `go` và `navigate` (→ tap)
+    đứng trước `back` trong câu, nên `go back`, `navigate back`, `press the back
+    button` đều ra "tap" — lớp `navigate_back` gần như không thể đạt tới. Đo được ảnh
+    hưởng trên quần thể chấm (toàn bước chạm): 81 bước đổi phán quyết ở s1, 47 ở base,
+    0 ở nhánh trần; điểm đổi 59,12 → 58,81 và 47,60 → 47,40, chênh lệch giữa hai nhánh
+    gần như không đổi.
+
+    Vì `report/106` khoá thước trước khi có điểm, ta KHÔNG chấm lại ba nhánh bằng bản
+    vá — sửa thước sau khi thấy điểm đúng là thứ hồ sơ đăng ký sinh ra để chặn, kể cả
+    khi sửa làm số xấu đi. Bản vá bật bằng `strict_back=True` và **bắt buộc** dùng cho
+    phép kiểm không-gây-hại trên bước không-chạm (nơi thao tác `back` là thật và
+    chiếm phần đáng kể), vì phép kiểm đó chưa chạy lần nào. Xem `report/106` mục sửa
+    đổi (v)."""
+    ws = re.findall(r"[a-z]+", (text or "").lower())
+    if strict_back and "back" in ws:
+        return "navigate_back"
+    for w in ws:
         if w in ACTION_MAP:
             return ACTION_MAP[w]
     return "tap"

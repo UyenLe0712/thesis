@@ -16,7 +16,7 @@ Vì câu mô hình = câu chuẩn nên `action_ok` và `toggle_ok` đúng theo �
 executable rút gọn còn đúng phần định vị. Không gọi bộ trỏ lần nào — chỉ đọc lại vết đã
 lưu, nên chạy bao nhiêu lần cũng miễn phí.
 
-Chạy:  python harness/gate_a_ceiling.py [--raw ckpt/gate_A_raw.jsonl]
+Chạy:  python harness/gate_a_ceiling.py [--raw runs/gate_a/gate_A_raw.jsonl]
 """
 import os, sys, json, argparse, statistics, collections
 

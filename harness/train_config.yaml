@@ -12,9 +12,12 @@
 # Trình tự bắt buộc (report/106 mục 5): chạy đủ s1 hai hạt giống, chấm, đo MDE
 # thật, khoá ngưỡng — RỒI MỚI chạy s2. Không đảo.
 #
-# Máy: vast.ai A100-80GB (bf16). Nếu rơi xuống card Turing đời cũ không có bf16
-# thì đổi bf16→false, fp16→true và ghi lại vào mục sửa đổi của report/106, vì
-# đổi độ chính xác số học giữa các nhánh là làm hỏng phép so.
+# Máy (chốt 11/8/2026, thay dòng "vast.ai A100-80GB" cũ): Google Colab. Chọn giữa
+# L4 (24 GB, 1,54 đơn vị/giờ) và A100-SXM4-40GB (5,3 đơn vị/giờ) bằng ô A.3 — đo
+# giây-mỗi-bước trên cả hai rồi khoá MỘT loại cho cả tám lượt, không trộn. Cả hai
+# đều có bf16 thật. Card Turing đời cũ không có bf16 thì đổi bf16→false, fp16→true
+# và ghi vào mục sửa đổi của report/106, vì đổi độ chính xác số học giữa các nhánh
+# là làm hỏng phép so.
 
 model_name_or_path: Qwen/Qwen2.5-VL-3B-Instruct
 trust_remote_code: true
@@ -41,7 +44,19 @@ quantization_bit: 4               # QLoRA 4-bit NF4
 quantization_method: bnb
 
 template: qwen2_vl                # dùng chung Qwen2-VL và Qwen2.5-VL
-cutoff_len: 2048                  # đủ cho ảnh + mục tiêu + ~24 dòng OCR + đích
+cutoff_len: 2560                  # nâng từ 2048 ngày 11/8, TRƯỚC lượt train đầu tiên
+# Lý do, đo trên đủ 64.567 mẫu (không cần ảnh — lấy kích thước từ train.jsonl rồi tính
+# token thị giác bằng smart_resize): ảnh chiếm 1.272 token, tổng dài nhất của nhánh s2 là
+# 2.017 — dư đúng 31 token so với trần 2.048 cũ. Biên đó mỏng hơn cả sai số của phép đếm
+# (phần khung hội thoại là số ƯỚC, không đo).
+#
+# Cắt cụt ở đây là loại hỏng không có tiếng động: LLaMA-Factory cắt từ ĐUÔI, mà đuôi là
+# đích sinh — mất phần <desc> hoặc mất luôn câu. Mẫu vẫn vào huấn luyện, loss vẫn tính,
+# log không báo gì. Tệ hơn: đích của s2 dài hơn s1 (thêm dòng khai báo) nên s2 bị cắt
+# nhiều hơn, tức phép so S2−S1 thiên vị đúng chiều làm s2 trông kém đi.
+#
+# Nâng trần KHÔNG tốn thêm gì: đệm là theo mẫu dài nhất trong từng lô, không đệm tới
+# cutoff_len. Dữ liệu không dài ra thì bộ nhớ và thời gian không đổi.
 train_on_prompt: false            # chỉ tính mất mát trên lượt trợ lý
 
 per_device_train_batch_size: 4    # ⚠ ĐỔI SỐ NÀY LÀ ĐỔI CHO CẢ SÁU NHÁNH, KHÔNG ĐỔI

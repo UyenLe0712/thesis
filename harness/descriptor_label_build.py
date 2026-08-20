@@ -41,12 +41,17 @@ def set_split(split):
     OUT_STATS = os.path.join(HERE, f"descriptor_build_stats_{split}.json"
                              if split == "test" else "descriptor_build_stats.json")
 
+# Nhãn xuất ra bằng TIẾNG ANH (đổi 14/8/2026, TRƯỚC khi train nhánh s2 — xem mục sửa
+# đổi report/106 ngày 14/8). Lý do: đích của s2 trước đây là khai báo tiếng Việt rồi
+# mới tới câu tiếng Anh, nên s2 khác s1 ở HAI thứ (có khai báo + có chuyển ngữ) và
+# hiệu s2−s1, tức con số headline, lẫn cả phần do chuyển ngữ. Chỉ đổi chuỗi xuất ra,
+# KHÔNG đổi một dòng logic nào.
 ROLE = {
-    "Button": "nút", "ImageButton": "nút hình", "ImageView": "hình/biểu tượng",
-    "TextView": "chữ bấm được", "EditText": "ô nhập liệu", "CheckBox": "ô đánh dấu",
-    "Switch": "công tắc", "RadioButton": "nút chọn", "Spinner": "hộp chọn",
-    "SeekBar": "thanh kéo", "ToggleButton": "công tắc", "CheckedTextView": "mục chọn",
-    "AutoCompleteTextView": "ô nhập liệu", "MultiAutoCompleteTextView": "ô nhập liệu",
+    "Button": "button", "ImageButton": "icon button", "ImageView": "icon",
+    "TextView": "tappable text", "EditText": "text field", "CheckBox": "checkbox",
+    "Switch": "switch", "RadioButton": "radio button", "Spinner": "dropdown",
+    "SeekBar": "slider", "ToggleButton": "switch", "CheckedTextView": "list option",
+    "AutoCompleteTextView": "text field", "MultiAutoCompleteTextView": "text field",
 }
 GENERIC = {"RelativeLayout", "LinearLayout", "FrameLayout", "ViewGroup", "View",
            "RecyclerView", "ListView", "ScrollView", "ConstraintLayout", "CardView",
@@ -211,10 +216,10 @@ def text_anchor(box, name, ocr_rec):
         return None
     txt, tx, ty = best
     if abs(ty - cy) >= abs(tx - cx):
-        where = "ngay dưới" if ty < cy else "ngay trên"
+        where = "just below" if ty < cy else "just above"
     else:
-        where = "bên phải" if tx < cx else "bên trái"
-    return f"{where} chữ “{txt}”"
+        where = "to the right of" if tx < cx else "to the left of"
+    return f"{where} the text “{txt}”"
 
 
 def distinguish(box, cls, name, nds, ocr_rec):
@@ -241,7 +246,7 @@ def distinguish(box, cls, name, nds, ocr_rec):
             n2, _ = name_of(b, nm, ocr_rec, a2)
             if n2 and n2.strip().lower() == low:
                 dup += 1
-    rname = ROLE.get(cls) or ("mục" if cls in GENERIC else "phần tử")
+    rname = ROLE.get(cls) or ("item" if cls in GENERIC else "element")
     k = len(same_role)
     anchor = text_anchor(box, name, ocr_rec)
 
@@ -249,18 +254,18 @@ def distinguish(box, cls, name, nds, ocr_rec):
         # Mơ hồ nặng nhất: có phần tử khác mang đúng tên này. Chỉ nói "trùng tên với N
         # phần tử" là mô tả triệu chứng. Ghép mỏ neo mới là chỉ được cách gỡ.
         if anchor:
-            return f"trùng tên với {dup} phần tử khác, {anchor}", dup, k
-        return f"trùng tên với {dup} phần tử khác trên màn", dup, k
+            return f"shares a name with {dup} other elements, {anchor}", dup, k
+        return f"shares a name with {dup} other elements on screen", dup, k
     if k == 0:
-        return f"{rname} duy nhất trên màn", 0, 0
+        return f"the only {rname} on screen", 0, 0
     if anchor:
         return anchor, 0, k
     # Hết đường gỡ — lùi về đếm. Đếm chính xác chỉ có nghĩa khi ít: "1 trong 118" là con
     # số vô dụng, với màn dày phần tử cùng loại thì thứ mô hình cần biết là "phải nói cho
     # thật cụ thể", không phải con số. Nên chia hai mức thay vì in số thô.
     if k <= 8:
-        return f"1 trong {k+1} phần tử cùng loại", 0, k
-    return "màn có nhiều phần tử cùng loại", 0, k
+        return f"1 of {k+1} elements of the same kind", 0, k
+    return "many elements of the same kind on screen", 0, k
 
 
 def nearest_other(box, cls, nds):
@@ -277,7 +282,7 @@ def nearest_other(box, cls, nds):
 
 
 def desc_str(role, name, pt, hint):
-    return f"<desc>{role} | {name or '(không tên)'} | <point>{pt[0]},{pt[1]}</point> | {hint}</desc>"
+    return f"<desc>{role} | {name or '(no name)'} | <point>{pt[0]},{pt[1]}</point> | {hint}</desc>"
 
 
 def main():
@@ -330,7 +335,7 @@ def main():
         area_share = (box[2] - box[0]) * (box[3] - box[1]) / (w * h)
         ocr_rec = ocr.get(r["image"])
 
-        role = ROLE.get(cls) or ("mục" if cls in GENERIC else "phần tử")
+        role = ROLE.get(cls) or ("item" if cls in GENERIC else "element")
         st["vai_tro_ro"] += 1 if cls in ROLE else 0
         st["vai_tro_generic"] += 1 if cls in GENERIC else 0
 
@@ -364,7 +369,7 @@ def main():
             ncy = int(round((nb[1] + nb[3]) / 2))
             npt = (ncx, ncy) if args.abs else (int(round(ncx / max(w, 1) * 1000)),
                                                int(round(ncy / max(h, 1) * 1000)))
-            nrole = ROLE.get(ncls) or ("mục" if ncls in GENERIC else "phần tử")
+            nrole = ROLE.get(ncls) or ("item" if ncls in GENERIC else "element")
             # Ô thứ tư của khai báo GIẢ phải tính bằng ĐÚNG hàm đã dùng cho khai báo
             # thật, chạy trên chính phần tử hàng xóm. Bản trước điền hằng số "phần tử
             # hàng xóm" — đo được 994/995 = 99,9% bản ghi mang đúng chuỗi đó, còn khai
@@ -410,7 +415,10 @@ def main():
     print(f"  vai trò rõ                : {st['vai_tro_ro']:5} = {st['vai_tro_ro']/n:5.1%}")
     print(f"  có phần tử TRÙNG TÊN      : {st['co_trung_ten']:5} = {st['co_trung_ten']/n:5.1%}   ← ca mơ hồ thật")
     print(f"  có hàng xóm cùng vai trò  : {st['co_hang_xom']:5} = {st['co_hang_xom']/n:5.1%}   ← dựng được khai báo giả")
-    print(f"  hộp to hơn nửa màn        : {st['hop_qua_to']:5} = {st['hop_qua_to']/n:5.1%}   ← nghi lấy nhầm khung ngoài")
+    # NGƯỠNG THẬT LÀ 1/4 MÀN, không phải nửa — biến đếm ở dòng 344 là `area_share > 0.25`,
+    # đúng bằng cổng hình học trong `name_of()`. Nhãn in ra ghi "nửa màn" là sai từ 5/8;
+    # sửa 11/8 trước khi con số này đi vào luận văn.
+    print(f"  hộp to hơn 1/4 màn        : {st['hop_qua_to']:5} = {st['hop_qua_to']/n:5.1%}   ← chặn không lấy chữ OCR bên trong")
     print("=" * 78)
     print("BA NHÃN ĐẦU, xem thử:")
     for row in rows[:3]:

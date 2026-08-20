@@ -395,6 +395,49 @@ def main():
     if a.limit:
         recs = recs[:a.limit]
 
+    # ── NỐI TIẾP + XẢ ĐỆM (thêm 11/8/2026) ────────────────────────────────────────
+    # Bản trước mở tệp ở chế độ "w" và không gọi flush. Máy ảo Colab bị thu hồi giữa
+    # chừng — đã xảy ra HAI lần trong hai ngày, 10 và 11/8, cả hai lần đều ở khoảng 90%
+    # công việc — là mất trắng cả lượt sinh câu 1,5 giờ. Chiến dịch có cả chục lượt
+    # (4 nhánh × 2 hạt giống + trần gold/filler + B-infer + mô hình gốc), nên đây là
+    # chỗ phơi nhiễm lớn nhất còn lại sau khi khâu OCR đã được vá.
+    # Dòng ghi dở lúc mất điện bị loại hẳn khỏi tệp, không để lại giữa chừng — score_run
+    # đọc bằng json.loads nên một dòng hỏng là hỏng cả lượt chấm.
+    # Chữ ký của lượt chạy, đóng vào TỪNG bản ghi. Nối tiếp mà tệp cũ là của thí nghiệm
+    # khác thì mọi bước đều "đã có", nó in "Xong sẵn" rồi thoát trong hai giây — trông y
+    # như vừa chạy xong, mà thật ra chưa sinh câu nào cho thí nghiệm này. Chiến dịch có
+    # cả chục lượt chỉ khác nhau vài cờ (2 hạt giống × 4 nhánh, trần gold/filler,
+    # B-infer, mô hình gốc), toàn dùng chung một dòng lệnh chép qua chép lại.
+    sig = ("base" if a.no_adapter else f"lora:{os.path.basename(str(a.adapter).rstrip('/'))}")
+    if a.b_infer:
+        sig += "+binfer"
+    if a.ceiling:
+        sig += f"+ceiling_{a.ceiling}"
+
+    xong, sach = set(), []
+    if os.path.exists(a.out):
+        cu = []
+        for line in open(a.out, encoding="utf-8"):
+            try:
+                o = json.loads(line)
+            except Exception:
+                continue
+            xong.add((o["episode_id"], o["step_id"]))
+            sach.append(line)
+            cu.append(o)
+        open(a.out, "w", encoding="utf-8").writelines(sach)
+        khac = {o.get("run") for o in cu if o.get("run") and o["run"] != sig}
+        if khac:
+            sys.exit(f"⛔ {a.out} là của lượt chạy KHÁC: {sorted(khac)} ≠ {sig!r}.\n"
+                     f"   Đổi --out, hoặc xoá tệp cũ nếu cố ý sinh lại.")
+        if cu and not any("run" in o for o in cu):
+            print(f"⚠️  {a.out} không có chữ ký lượt chạy (tệp sinh trước 12/8) — "
+                  f"tự kiểm tra nó đúng là của {sig!r}.")
+        recs = [r for r in recs if (r["episode_id"], r["step_id"]) not in xong]
+        print(f"Nối tiếp: đã có {len(xong)} bước, còn {len(recs)}")
+        if not recs:
+            print(f"Xong sẵn {len(xong)} bước → {a.out}")
+            return
     print(f"Nạp {a.base}" + (f" + LoRA {a.adapter}" if a.adapter else " (mô hình gốc)"))
     model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
         a.base, device_map="auto", **dtype_kw())
@@ -416,7 +459,7 @@ def main():
         print(f"Phép thử TRẦN ({a.ceiling}): có khai báo chuẩn cho "
               f"{len(recs)-thieu}/{len(recs)} bước; {thieu} bước giữ nguyên đầu vào.")
 
-    out = open(a.out, "w", encoding="utf-8")
+    out = open(a.out, "a", encoding="utf-8")
     t0, done = time.time(), 0
     for i in range(0, len(recs), a.batch):
         chunk = recs[i:i + a.batch]
@@ -455,7 +498,9 @@ def main():
                 "gold_instruction": r["gold_instruction"], "action": r["action"],
                 "raw": txt.strip(),            # nguyên văn, giữ để soi lỗi
                 "pred": strip_desc(txt),       # câu đem chấm
+                "run": sig,                    # chữ ký lượt chạy — xem khối nối tiếp
             }, ensure_ascii=False) + "\n")
+        out.flush()          # mỗi lô một lần: mất máy thì mất nhiều nhất một lô
         done += len(chunk)
         if done % 80 < a.batch:
             sp = done / max(time.time() - t0, 1)

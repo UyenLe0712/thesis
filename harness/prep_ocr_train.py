@@ -37,7 +37,14 @@ def zone(cx, cy, w, h):
 
 
 def main(limit=None, shard=0, nshard=1):
-    """RapidOCR chạy một luồng, ~0,08 ảnh/giây → 6.969 ảnh mất cỡ 24 tiếng.
+    """RapidOCR chạy một luồng. Tốc độ ĐO ĐƯỢC, chênh nhau 5,6 lần tuỳ máy:
+      · máy nhà (WSL, 8 lõi)      ~0,08 ảnh/giây → 6.969 ảnh tập kiểm mất cỡ 24 tiếng
+      · Colab A100-40GB (12 lõi)  ~0,451 ảnh/giây (đo 10/8/2026)
+
+    ⚠️ Nhân ra phải nhân với ĐÚNG số ảnh của split đang chạy: tập kiểm 6.969 ảnh, tập dạy
+    64.567 ảnh — gấp 9,3 lần. Runbook từng lấy giờ tính cho tập kiểm gán cho tập dạy, hụt
+    7 lần (2,8 giờ so với ~19 giờ theo tốc độ máy nhà). Đo lại trên máy đang dùng, đừng nhớ.
+
     Chia mảnh để chạy nhiều tiến trình song song: mỗi tiến trình ghi tệp riêng
     (ocr.part{k}.jsonl) nên không tranh nhau khoá ghi; gộp lại bằng --merge."""
     from rapidocr_onnxruntime import RapidOCR

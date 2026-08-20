@@ -208,6 +208,49 @@ print(f"\n⇒ chọn: {best[0]}  (trung vị thấp nhất)")
 
 ---
 
+## Ô 2c — KIỂM cỡ ảnh có thật sự đổi không (10 giây, KHÔNG cần GPU)
+
+**Vì sao có ô này.** Lượt ô 2b đầu tiên cho ba cỡ ảnh khác nhau ra sai số **trùng tới hai chữ
+số thập phân** (1,57% / 28,87% cả ba). Trùng kiểu đó nghĩa là **cùng một phép tính** — biến môi
+trường không có tác dụng. `transformers` đời mới chuyển `Qwen2VLImageProcessor` sang
+`size={"shortest_edge","longest_edge"}`, nên `min_pixels`/`max_pixels` truyền vào
+`from_pretrained` bị **nuốt im lặng, không một dòng cảnh báo**.
+
+Ô này chỉ nạp **bộ xử lý ảnh**, không nạp mô hình 7B, nên chạy trong vài giây và không tốn GPU.
+`image_grid_thw` là sự thật cuối cùng: nó cho biết ảnh **thực sự** được đưa vào ở cỡ nào.
+
+```python
+from transformers import AutoProcessor
+from PIL import Image
+import glob, os
+img = Image.open(sorted(glob.glob(f"{TEST}/images/*.png"))[0]).convert("RGB")
+print(f"ảnh gốc {img.width}×{img.height} = {img.width*img.height/1e6:.2f} MP\n")
+print(f"{'xin (max_pixels)':>18}{'grid t,h,w':>16}{'cỡ thật':>14}{'token ảnh':>11}")
+for mn, mx in ((200704, 1003520), (200704, 2007040), (2000000, 4800000)):
+    pr = AutoProcessor.from_pretrained("inclusionAI/UI-Venus-Ground-7B",
+                                       min_pixels=mn, max_pixels=mx)
+    ip = pr.image_processor
+    if isinstance(getattr(ip, "size", None), dict):
+        ip.size = {"shortest_edge": mn, "longest_edge": mx}
+    ip.min_pixels, ip.max_pixels = mn, mx
+    g = pr(text=["x"], images=[img], return_tensors="pt")["image_grid_thw"][0]
+    t, h, w = int(g[0]), int(g[1]), int(g[2])
+    print(f"{mx:>18,}{f'{t},{h},{w}':>16}{f'{w*14}×{h*14}':>14}{h*w//4:>11,}")
+```
+
+**Đọc:** ba dòng phải cho **ba `grid` khác nhau**. Còn giống nhau ⇒ bản `transformers` trên
+Kaggle nuốt cả cách đặt thẳng; lúc đó **đừng dò cỡ nữa**, cứ chạy cỡ mặc định của mô hình và
+ghi vào bài rằng cỡ ảnh chưa kiểm soát được.
+
+Nếu ba dòng khác nhau ⇒ **chạy lại ô 2b** (mã `score_run.py` đã vá, giờ đặt thẳng lên
+`image_processor` và in ra cỡ nó thật sự giữ), rồi mới đọc bảng chọn cỡ.
+
+⚠️ Sau khi vá, **`harness/` trong `/kaggle/working` là bản CŨ** — ô 1 chỉ chép khi thư mục chưa
+tồn tại. Chạy lại ô 1 sau khi đã cập nhật dataset, hoặc xoá tay:
+`import shutil; shutil.rmtree("/kaggle/working/harness")` rồi chạy lại ô 1.
+
+---
+
 ## ⚠️ BẪY PHA LOÃNG — phải đọc trước khi diễn giải bất kỳ con số nào
 
 Đây là chỗ phép B dễ bị đọc sai nhất, và nó không tự lộ ra.

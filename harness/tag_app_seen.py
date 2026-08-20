@@ -20,6 +20,24 @@ Luật gán ứng dụng bê nguyên `build_test_data.app_of`: chỉ lấy từ 
 không đoán từ chữ trong mục tiêu — vòng phản biện 19/7 đã bắt lỗi cách đoán đó tự đẻ ra
 cụm rác và tách một app thành nhiều cụm, làm khoảng tin cậy hẹp giả.
 
+⚠️ SỬA 12/8/2026 — chính lỗi vừa nói ở trên đã lọt vào đây. Bản đầu suy tên ứng dụng của
+tập dạy bằng regex trên CÂU CHỮ, trong khi tập kiểm đọc thẳng trường `app_name`. Hai bên
+hai nguồn thì lệch hình thức bị đọc thành lệch nội dung. Hai lỗi cụ thể: nó quét `goal`
+trước lịch sử rồi `break`, nên câu mục tiêu dài lọt vào thành tên app
+(`"adidas app and find local outlet stores…"`) và tên sạch trong lịch sử không bao giờ
+được đọc tới; và nó không cắt dấu chấm cuối nên `"amazon app."` không khớp `amazon`.
+Đo trên lát 1.697 bước: 42/129 tên suy ra là rác, và **27 ứng dụng có thật trong tập dạy
+bị đếm nhầm thành chưa-thấy**, gồm `maps`, `youtube music`, `nike`, `citymapper`,
+`skyscanner`, `tripadvisor`. Đây là phần lớn khoảng cách 604-vs-67 ghi ở `report/110`
+mục 4b. Phần còn lại do nguồn khác: con số 67 hôm 6/8 là vá tay không có mã, đối chiếu
+với split train đầy đủ của AndroidControl chứ không phải 12.895 tác vụ thật sự dựng.
+
+`train.jsonl` HOÁ RA có sẵn `action.open_app.app_name` — cùng trường tập kiểm dùng — nên
+nay lấy thẳng từ đó. Chiều lỗi cũng được chọn có chủ ý: gán nhầm thành "đã thấy" chỉ pha
+loãng nhóm lớn (2.526 bước), gán nhầm thành "chưa thấy" thì bóp méo đúng nhóm nhỏ đang
+xét (604 bước). Nên phần suy từ câu chữ được GIỮ làm nguồn phụ, có thống kê riêng để đọc
+được nó đóng góp bao nhiêu.
+
 Ba giá trị, phải phân biệt khi đọc kết quả:
   True   ứng dụng của bước này có mặt trong tập dạy
   False  có gán được ứng dụng, và nó KHÔNG có trong tập dạy
@@ -29,31 +47,57 @@ Chạy:
   ~/.venvs/thesis/bin/python harness/tag_app_seen.py            # gắn lại + in đối chiếu
   ~/.venvs/thesis/bin/python harness/tag_app_seen.py --dry-run  # chỉ xem, không ghi
 """
-import os, sys, json, argparse, collections
+import os, sys, re, ast, json, argparse, collections
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 TRAIN = os.path.join(HERE, "dg1_cache", "train_ac", "train.jsonl")
 TEST = os.path.join(HERE, "dg1_cache", "test_ac", "test.jsonl")
 
+RX_OPEN = re.compile(r"\s*open\s+(?:the\s+)?(.+?)(?:\s+app)?\s*$", re.I)
+
+
+def norm(s):
+    """Chuẩn hoá tên ứng dụng — áp CÙNG hàm cho cả hai bên, không thì lệch hình thức bị
+    đọc thành lệch nội dung. Tập kiểm có ba tên mang ký tự vô hình: `audio\xadmack` (gạch
+    nối mềm), `yandex\xa0maps` (khoảng trắng cứng), `contacts﻿+` (BOM) — mắt thường
+    không thấy, mà so chuỗi thì trượt."""
+    s = (s or "").replace("\xad", "").replace("\xa0", " ").replace("﻿", "")
+    return " ".join(s.lower().split()).strip(" .")
+
+
+def _act(a):
+    """`action` lưu dạng dict hoặc chuỗi repr của dict tuỳ khâu dựng."""
+    if isinstance(a, dict):
+        return a
+    try:
+        return ast.literal_eval(a)
+    except Exception:
+        return {}
+
 
 def train_apps(path):
-    """Ứng dụng có mặt trong tập dạy.
+    """Ứng dụng có mặt trong tập dạy, trả về (tập hợp, thống kê để in ra).
 
-    `train.jsonl` không mang sẵn trường `app`, nên suy từ lịch sử thao tác: dòng lịch sử
-    đầu tiên của một tác vụ là câu chuẩn của bước `open_app`, dạng "open the X app".
-    Đây là cùng một nguồn thông tin mà `build_test_data.app_of` dùng cho tập kiểm, chỉ
-    khác là bên đó đọc thẳng trường `app_name` còn bên này đọc câu đã viết ra.
+    Nguồn CHÍNH = `action.open_app.app_name`, đúng trường `build_test_data.app_of` dùng
+    cho tập kiểm. Nguồn PHỤ = câu chuẩn dạng "Open the X app" trong lịch sử, để bắt các
+    tác vụ mở ứng dụng bằng cách bấm thay vì bằng thao tác `open_app` — tập kiểm không
+    gán được app cho nhóm đó, nhưng ứng dụng thì vẫn có mặt trong dữ liệu dạy.
+
+    KHÔNG quét `goal`: câu mục tiêu dài khớp regex và đẻ ra tên rác (xem đầu tệp).
     """
-    import re
-    apps = set()
+    chinh, phu = set(), set()
     for line in open(path, encoding="utf-8"):
         r = json.loads(line)
-        for h in [r.get("goal", "")] + list(r.get("history") or []):
-            m = re.match(r"\s*open\s+(?:the\s+)?(.+?)(?:\s+app)?\s*$", (h or "").strip(), re.I)
+        a = _act(r.get("action"))
+        if a.get("action_type") == "open_app" and a.get("app_name"):
+            chinh.add(norm(a["app_name"]))
+        for h in (r.get("history") or []):        # mọi dòng, không dừng ở dòng đầu
+            m = RX_OPEN.match((h or "").strip())
             if m:
-                apps.add(m.group(1).strip().lower())
-                break
-    return apps
+                phu.add(norm(m.group(1)))
+    chinh.discard("")
+    phu.discard("")
+    return chinh | phu, {"chinh": len(chinh), "phu_them": len(phu - chinh)}
 
 
 def main():
@@ -65,20 +109,24 @@ def main():
 
     if not os.path.exists(a.train):
         sys.exit(f"Chưa có tập dạy: {a.train}. Chạy build_train_data.py trước.")
-    seen = train_apps(a.train)
+    seen, nguon = train_apps(a.train)
     recs = [json.loads(l) for l in open(a.test, encoding="utf-8")]
 
     old = collections.Counter(r.get("app_seen_in_train") for r in recs)
     changed = 0
+    chua = collections.Counter()
     for r in recs:
-        app = (r.get("app") or "").strip().lower()
+        app = norm(r.get("app"))
         new = (app in seen) if app else None
         if new != r.get("app_seen_in_train"):
             changed += 1
+        if new is False:
+            chua[app] += 1
         r["app_seen_in_train"] = new
     new_c = collections.Counter(r.get("app_seen_in_train") for r in recs)
 
-    print(f"Ứng dụng có trong tập dạy : {len(seen)}")
+    print(f"Ứng dụng có trong tập dạy : {len(seen)}"
+          f"  (trường app_name {nguon['chinh']} + suy từ câu chữ {nguon['phu_them']})")
     print(f"Bước của tập kiểm         : {len(recs)}")
     print(f"{'':26}{'trước':>8}{'sau':>8}")
     for k, nm in ((True, "đã thấy lúc dạy"), (False, "CHƯA thấy lúc dạy"),
@@ -90,6 +138,13 @@ def main():
     if lab:
         print(f"\nTrong phần gán được app: {new_c.get(True,0)/lab:.1%} đã thấy lúc dạy.")
     print("⚠ Nhóm 'không gán được app' là KHÔNG BIẾT, không được đọc thành 'chưa thấy'.")
+
+    # In hẳn danh sách để soi bằng mắt: lát cắt phụ này nhỏ, một cái tên gán nhầm cũng
+    # đủ đổi con số. Tên trông quen mà nằm ở đây thì gần như chắc là lỗi chuẩn hoá.
+    if chua:
+        print(f"\n{len(chua)} ứng dụng CHƯA thấy lúc dạy ({sum(chua.values())} bước):")
+        for app, n in chua.most_common():
+            print(f"  {n:5}  {app}")
 
     if a.dry_run:
         print("\n--dry-run: không ghi gì.")

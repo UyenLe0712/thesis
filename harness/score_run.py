@@ -230,9 +230,20 @@ class UIVenus:
         # CẤM dò cỡ bằng điểm của một nhánh — đó là chỉnh dụng cụ theo kết quả.
         mn = int(os.environ.get("VENUS_MIN_PIXELS", 2000000))
         mx = int(os.environ.get("VENUS_MAX_PIXELS", 4800000))
-        print(f"[UIVenus] min_pixels={mn:,} max_pixels={mx:,}"
-              f" (~{mx // 784:,} token ảnh tối đa)", flush=True)
         self.proc = AutoProcessor.from_pretrained(path, min_pixels=mn, max_pixels=mx)
+        # ⛔ 20/8/2026 — truyền min/max_pixels vào from_pretrained là CHƯA ĐỦ.
+        # transformers đời mới chuyển Qwen2VLImageProcessor sang
+        # size={"shortest_edge","longest_edge"}; hai khoá cũ bị NUỐT IM LẶNG, không
+        # cảnh báo. Bắt được vì ba cỡ ảnh khác nhau cho sai số trùng tới hai chữ số
+        # thập phân (1,57% / 28,87% cả ba) — trùng kiểu đó nghĩa là cùng một phép tính.
+        # Đặt thẳng lên image_processor, cả hai đời khoá, rồi IN RA để kiểm được.
+        ip = self.proc.image_processor
+        if isinstance(getattr(ip, "size", None), dict):
+            ip.size = {"shortest_edge": mn, "longest_edge": mx}
+        ip.min_pixels, ip.max_pixels = mn, mx
+        print(f"[UIVenus] xin min={mn:,} max={mx:,} → image_processor giữ "
+              f"min={getattr(ip,'min_pixels',None)} max={getattr(ip,'max_pixels',None)} "
+              f"size={getattr(ip,'size',None)}", flush=True)
         # KHÔNG flash_attention_2: T4/P100 của Kaggle là Turing/Pascal, không hỗ trợ.
         self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
             path, device_map="auto", attn_implementation="sdpa", **dtype_kw()).eval()
