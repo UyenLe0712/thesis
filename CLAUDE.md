@@ -131,8 +131,18 @@ Mọi danh sách "việc kế" cũ rải rác trong file đã bị danh sách n�
 2. **Cắt 2 trang bài FAIR** (đang 10, giới hạn 8) — xem mục Bài FAIR.
 3. **Nhánh `s2_nopoint`** — nay đáng chạy hơn hẳn: nó tách *"có khai báo"* khỏi *"có toạ độ"*,
    đúng chỗ chẩn đoán 4j-18 chỉ ra.
-4. **Phép B: bộ trỏ thứ hai `UI-Venus-Ground-7B`**, lát 500 bước, ~6 giờ Kaggle. Đóng giới hạn
-   nặng nhất còn mở (chưa thay dụng cụ lần nào). Mốc so tính sẵn **73,4 / 58,8 / 47,6**.
+4. **Phép B: bộ trỏ thứ hai `UI-Venus-Ground-7B`** — ĐÃ DỰNG XONG, đang chạy thăm dò (20/8).
+   Runbook `harness/kaggle_phepB_uivenus.md` · đọc kết quả `harness/phan_tich_venus.py` ·
+   chi tiết `report/110` mục **4j-19**. Ba điều phải nhớ:
+   · ⭐ **chỉ cần chấm 2.532/4.463 bước** — bước nào S1 và S2 viết câu y hệt thì mọi bộ trỏ cho
+     cùng kết quả (1.931 bước, UGround 0 bất đồng); nhân `2532/4463` tái tạo ĐÚNG hiệu cả tập,
+     tự kiểm trùng tới 1e-9. Cắt đôi giá GPU mà không xấp xỉ gì.
+   · ⭐ **BẪY PHA LOÃNG:** dụng cụ tệ hơn thì Δ(S2−S1) tự co về 0 vì lý do cơ học, khớp luôn với
+     giả thuyết "UGround thiên vị" ⇒ **phải chấm cả Base** làm chứng nhân (mốc UGround +10,35 /
+     +11,69 / +11,06 pp trên ba lát). Thiếu Base là lượt chạy vô nghĩa.
+   · ⚠️ **UI-Venus KÉM HƠN UGround trên ảnh này** (30 bước: trung vị 1,57% vs 0,60%, p75 28,87%
+     vs 3,60%) dù mạnh hơn trên ScreenSpot ⇒ điểm ScreenSpot không chuyển sang miền này.
+     Chạy được T4×2, ~8,3 s/bước, giải mã toạ độ đúng.
 5. ⛔ **Mìn chưa nổ:** `test_ac/descriptors.jsonl` **vẫn tiếng Việt** (dựng 9/8; mục (q) chỉ
    dựng lại tập dạy). `infer_branch.py:480` nhét nó vào câu nhắc cho `--ceiling gold|filler`.
    **Chạy `descriptor_label_build.py --split test` TRƯỚC** hai nhánh đó — không có ô 7b nào canh.
@@ -462,7 +472,7 @@ mức màn hình, không phải rò rỉ nhãn. Nhưng bộ trỏ đã thấy **
 s1 được dạy viết đúng văn phong đó ⇒ **còn một lời giải thích thay thế cho chênh lệch S1−Base**.
 Cách duy nhất đóng: chấm lát ≥500 bước bằng **UI-Venus-Ground-7B** (việc kế số 3).
 
-**Chưa thay dụng cụ lần nào** — bộ trỏ chính là thước. **Không có neo ngoài nào** (đã quyết không
+**Chưa thay dụng cụ lần nào** — bộ trỏ chính là thước. *(Phép B đang chạy, xem việc kế số 4.)* **Không có neo ngoài nào** (đã quyết không
 chấm người). Trong ba lỗ ghi ở `report/112` §11.3, hai đã đóng (sàn · gọi-tên-hay-chỉ-chỗ).
 
 **Bộ trỏ thứ hai đã tra xong 15/8, đừng tra lại:** chọn `inclusionAI/UI-Venus-Ground-7B`
@@ -589,6 +599,19 @@ cụt giữa chữ.
 và khuyên chờ 6 giờ; log nói khác hẳn. Và từng suy "hai lần mất máy cách nhau 1,5 giờ ⇒ lượt train
 không bao giờ về đích" rồi đề nghị mua gói mới; đọc `checkpoint-4800` mới biết phiên đó chạy 6,6
 giờ. **Lấy hiệu số bước giữa hai điểm lưu.**
+
+⛔ **Hai lỗi câm ngày 20/8, cùng một mẫu hình — phép thử CHƯA HỀ DIỄN RA mà báo như đã diễn ra:**
+· **Dataset Kaggle giữ bản mã cũ.** Ba lượt dò cỡ ảnh ra sai số **trùng tới hai chữ số thập
+  phân** vì lớp `UIVenus` trên dataset ghi cứng tham số, chưa đọc biến môi trường.
+· **Ô vá sửa nhầm lớp.** `s.index("self.proc = AutoProcessor.from_pretrained(")` lấy lần xuất
+  hiện **đầu tiên trong file** = lớp `UGround`, đứng trước `UIVenus`. Chạy `--grounder uivenus`
+  thì lớp bị vá không được gọi lần nào ⇒ không lỗi, không cảnh báo, kết quả y như cũ.
+⇒ **Cách chặn duy nhất hiệu quả: bắt tiến trình IN RA cấu hình nó thật sự đang dùng, rồi kiểm
+dòng đó — đừng kiểm mã nguồn.** Đọc mã chỉ chứng minh mã trên máy này, không chứng minh mã đang
+chạy trên máy kia.
+⇒ ⭐ **Kết quả trùng nhau tới nhiều chữ số giữa các cấu hình KHÁC nhau là dấu hiệu HỎNG**, không
+phải dấu hiệu bền vững. Suýt đọc thành *"cỡ ảnh không ảnh hưởng"*.
+⇒ Bản vá trong `/kaggle/working` **chỉ sống trong phiên**; lượt chạy dài phải upload dataset mới.
 
 **Bốn câu hỏi trước khi tiêu tiền GPU:** khâu này có thật sự dùng GPU không · máy chết bây giờ thì
 mất bao nhiêu · chuỗi cần chấm đã từng được chấm chưa · mốc so nào rẻ hơn mà chạy trước được.

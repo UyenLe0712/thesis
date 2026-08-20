@@ -1455,3 +1455,116 @@ Drive nhưng ảnh từ HF, bên kia sửa dữ liệu thì hai bên lệch nhau
 
 Sau đó: nạp thêm ~400-600 đơn vị (~$40-60) → đo L4-vs-A100 cho train bằng ô A.3 → train S1
 ×2 hạt giống → chấm (Kaggle, miễn phí) → **MDE thật** → khoá ngưỡng → mới train S2.
+
+---
+
+### 4j-19. PHÉP B — ĐỔI BỘ TRỎ SANG UI-VENUS: dựng xong, thăm dò xong, chưa chấm (20/8)
+
+**Câu hỏi:** điểm S2 thấp hơn S1 có phải do **dụng cụ đo** không? UGround có **47K phần tử
+AndroidControl nhãn người** trong công thức (Bảng 1, arXiv 2410.05243), mà S1/S2 được dạy viết
+đúng văn phong chú thích của kho đó ⇒ còn một lời giải thích thay thế: bộ trỏ **quen giọng**
+chứ không phải câu tốt hơn. `UI-Venus-Ground-7B` (arXiv 2508.10833 §3.2.1) không có
+AndroidControl. ⚠️ Nó **vẫn nền Qwen2.5-VL** ⇒ đóng đòn *nhiễm dữ liệu*, **không** đóng đòn
+*cùng họ*; đừng viết là giải quyết cả hai.
+
+Mã: `harness/kaggle_phepB_uivenus.md` (runbook) · `harness/phan_tich_venus.py` (đọc offline).
+
+#### ⭐ (a) Phép rút gọn lát KHÔNG MẤT MÁT — cắt đôi chi phí GPU
+
+Bộ trỏ **tất định** ⇒ bước nào S1 và S2 sinh **câu y hệt nhau** thì mọi bộ trỏ cho cùng kết
+quả, đóng góp **đúng 0** vào hiệu ghép cặp. Đếm thật: **1.931/4.463 bước (43,3%)** viết giống
+hệt, và trên đúng các bước đó UGround cho **0 bất đồng**.
+
+Chấm **2.532** bước còn lại rồi nhân `2532/4463` **tái tạo đúng** hiệu của cả tập — không xấp
+xỉ. Tự kiểm gắn trong `phan_tich_venus.py` (`phan_0_tu_kiem`), chạy bằng dữ liệu UGround có sẵn:
+
+| | |
+|---|---|
+| lát 2.532 → quy về 4.463 | **−1,9270 pp** |
+| tính thẳng trên 4.463 | **−1,9270 pp** |
+| `b/c` | **340/254** ở cả hai |
+
+Sai lệch < 1e-9. Phép kiểm này rớt ngay nếu ai đổi danh sách bước, đổi mẫu số, hay đổi cách nạp
+tệp — thay vì âm thầm cho ra một con số trông hợp lý.
+
+Cỡ lát và độ chính xác (SE đã nhân 1,10 — hệ số nở do gom cụm):
+
+| lát | SE của Δ | nửa KTC95 | đọc được gì |
+|---|---|---|---|
+| 2.532 | 0,60 pp | ±1,18 | phân giải được hiệu 1,9 pp |
+| 1.266 | 0,85 pp | ±1,67 | phân giải được, sát mép |
+| 633 | 1,20 pp | ±2,35 | chỉ đọc được **dấu** |
+
+Thêm một món miễn phí: `--n 300` tái lập **đúng 300 bước** cổng A của UGround (trùng 300/300,
+do xáo bằng hạt giống cố định 20260805) ⇒ so sai số hai dụng cụ **ghép cặp hoàn hảo**.
+
+#### ⭐ (b) BẪY PHA LOÃNG — và chứng nhân S1−Base
+
+Chỗ dễ đọc sai nhất, và nó không tự lộ ra: **nếu UI-Venus là dụng cụ tệ hơn thì Δ(S2−S1) tự co
+về 0** — không phải vì UGround thiên vị, mà vì thước nhiễu hơn thì mọi chênh lệch đều bị pha
+loãng. Nghĩa là *"Δ ≈ 0 dưới bộ trỏ sạch"* khớp với **cả hai** cách giải thích và tự nó chẳng
+chứng minh gì.
+
+Tách bằng một **chứng nhân** — chênh lệch đã biết chắc là thật: **S1 − Base**. Mốc UGround tính
+sẵn trên đúng từng lát: **+10,35** [+8,39·+12,40] (2.532) · **+11,69** (1.266) · **+11,06** (633).
+
+| dưới UI-Venus | S1−Base | S2−S1 | đọc thành |
+|---|---|---|---|
+| giữ ~11 pp | về ~0 | thước cũ **thiên vị thật** |
+| giữ ~11 pp | vẫn ~−2 | **S2 thua thật**, tái lập qua hai dụng cụ |
+| tụt còn ~5 pp | về ~0 | **pha loãng** — không kết luận gì được |
+
+⇒ phải chấm **ba nhánh** (Base · S1 · S2), không phải hai. `phan_tich_venus.py` **từ chối kết
+luận** nếu thiếu Base hoặc nếu chứng nhân giữ dưới 60%.
+
+⭐ Tệp preds của Base **dựng lại được từ trường `sent`** của `score_base_raw.jsonl` — đóng luôn
+cảnh báo *"`preds_base.jsonl` còn nằm ở Drive"* trong `runs/README.md`.
+
+#### (c) Thăm dò 30 bước — bộ trỏ chạy được, nhưng KÉM HƠN UGround
+
+Nạp được trên **T4 ×2** (29,1 GB; 7B fp16 ≈ 15,2 GB nên **một T4 không đủ**). Giải mã toạ độ
+**đúng** — 0 lỗi đọc, không dấu hiệu cài đặt sai; sai hệ toạ độ thì trung vị phải cỡ 30–50%.
+Tốc độ **~8,3 s/bước**. Cỡ ảnh của lượt này: **3.354 token (1092×2408)**.
+
+| trên ĐÚNG 30 bước như nhau | UGround | UI-Venus |
+|---|---|---|
+| trung vị | 0,60% | **1,57%** |
+| p75 | 3,60% | **28,87%** |
+| ≤3% (đạt cổng) | 73,3% | 60,0% |
+
+Cả hai đạt ngưỡng cổng A (3%), nhưng UI-Venus **đuôi dày hơn hẳn**. Nó mạnh hơn UGround trên
+ScreenSpot-v2 mobile (99,0/90,0 vs 95,0/83,3) mà yếu hơn trên ảnh AndroidControl ⇒ **điểm
+ScreenSpot không chuyển sang miền này**. ⚠️ n=30, chờ cổng A đủ 300 bước mới chốt.
+
+#### (d) ⛔ HAI LỖI CÂM ĐÃ CẮN — cùng một mẫu hình
+
+**① Dataset Kaggle giữ bản mã cũ.** Lớp `UIVenus` trên dataset **ghi cứng**
+`min_pixels=2000000, max_pixels=4800000`, chưa đọc biến môi trường. Ba lượt dò cỡ ảnh ra sai số
+**trùng tới hai chữ số thập phân** (1,568% / 28,866% cả ba). Trùng kiểu đó = **cùng một phép
+tính**. Bằng chứng phụ: cỡ *nhỏ nhất lại chậm nhất* (9,6 vs 8,3 s/bước) — ngược lẽ thường.
+⚠️ Tôi quy lỗi nhầm cho `transformers` nuốt tham số; **không có bằng chứng nào** cho điều đó.
+
+**② Ô vá sửa nhầm lớp.** `s.index("self.proc = AutoProcessor.from_pretrained(")` lấy lần xuất
+hiện **đầu tiên trong file** — mà đó là của lớp **`UGround`**, đứng trước `UIVenus`. Vá kiểu đó
+sửa `UGround`; chạy `--grounder uivenus` thì `UGround.__init__` không được gọi lần nào ⇒ không
+có dòng `[UIVenus]`, ba cỡ vẫn trùng, **không một lỗi nào**. Ô vá giờ neo tìm kiếm **trong lớp
+`UIVenus`** và `assert` hai chiều.
+
+⇒ **Mẫu hình chung:** cả hai lỗi đều là *phép thử chưa hề diễn ra mà báo cáo như đã diễn ra*.
+Cách chặn duy nhất hiệu quả: bắt tiến trình **in ra cấu hình nó thật sự đang dùng**
+(dòng `[UIVenus] xin … -> giu …`), rồi kiểm dòng đó, chứ không kiểm mã nguồn.
+⇒ Và: **kết quả trùng nhau tới nhiều chữ số giữa các cấu hình khác nhau là dấu hiệu hỏng**, không
+phải dấu hiệu bền vững. Đã suýt đọc thành *"cỡ ảnh không ảnh hưởng"*.
+
+#### (e) Còn phải làm
+
+1. chạy lại ô 2b (mã đã vá) → nếu ba cỡ vẫn ~1,57% thì **cỡ ảnh không phải nguyên nhân**, chốt
+   3.354 token;
+2. ô 4 — cổng A đủ 300 bước (~45 phút) → sai số ghép cặp đáng tin + **trần của UI-Venus** qua
+   `gate_a_ceiling.py --raw runs/venus/venus_gate_raw.jsonl`, **không tốn thêm giây GPU nào**;
+3. ô 5 — chấm Base · S1 · S2 trên lát đã chọn (ở 8,3 s/bước: lát 1.266 × 3 nhánh ≈ **8,8 giờ**,
+   vừa một phiên; lát 2.532 ≈ 17,5 giờ, cắt hai phiên);
+4. `python3 harness/phan_tich_venus.py`.
+
+⚠️ **Trước lượt ô 5 phải đưa `harness/score_run.py` bản mới lên dataset** — bản vá trong
+`/kaggle/working` chỉ sống trong phiên. Quên là lượt đó chạy mã cũ, im lặng suốt gần 9 tiếng.

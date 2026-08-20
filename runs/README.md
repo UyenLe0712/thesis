@@ -23,7 +23,7 @@ Ba nhánh chính nằm ngay ở `runs/`; mỗi phép kiểm phụ có thư mục
 | `runs/` | ba nhánh chính: `score_ceiling_human` · `score_s1_seed101` · `score_base` |
 | `runs/gate_a/` | vết cổng A (sai số bộ trỏ, trần đo trên mẫu con — đã rút) |
 | `runs/paraphrase/` | phép A: bốn biến thể diễn đạt lại, `preds_para_*` + `score_para_*` |
-| `runs/venus/` | phép B: bộ trỏ thứ hai UI-Venus (chưa chạy) |
+| `runs/venus/` | phép B: bộ trỏ thứ hai UI-Venus — **tệp preds ba cỡ lát đã dựng**, chưa có điểm |
 
 ⚠️ Tải từ Kaggle về thì đặt **thẳng vào thư mục của phép đó**, đừng để ở gốc kho hay
 `report/`. Ngày 17/8 bốn tệp lạc vào `report/papers/` (thư mục ghi chú tài liệu tham khảo),
@@ -97,7 +97,25 @@ chiếu với `gold_instruction` trong tệp thô của một lượt khác (kh�
 
 Dữ liệu huấn luyện: `s1.json` md5 **641953d75d61ab192b94a559362cce9b**, 64.567 mẫu.
 
-⚠️ **Tệp chưa tải về máy này:** `preds_base.jsonl` (6.958 câu của nhánh Base) còn nằm ở
-`Drive/thesis/preds/`. Tệp thô `score_base_raw.jsonl` đã có ở đây nên mọi lát cắt tính lại
-được, nhưng nếu cần chấm lại Base bằng bộ trỏ khác thì phải tải `preds_base.jsonl` về trước.
+⭐ **Không cần tải `preds_base.jsonl` về nữa.** Trường `sent` trong `score_base_raw.jsonl`
+chính là câu đã chấm, nên dựng lại tệp preds của Base **từ tệp thô** — đã làm cho phép B
+(`runs/venus/preds_venus_base_*.jsonl`). Cùng cách đó áp được cho mọi nhánh đã chấm.
 Tương tự, `preds_s1_seed202.jsonl` sẽ sinh ra sau khi lượt 202 xong.
+
+
+## `runs/venus/` — phép B, bộ trỏ thứ hai (dựng 20/8, chưa có điểm)
+
+Tệp `preds_venus_{base,s1,s2}_{2532,1266,633}.jsonl` — ba cỡ lát, dựng bằng hạt giống 20260805.
+
+⭐ **Vì sao chỉ 2.532 bước chứ không 4.463.** Bộ trỏ tất định ⇒ bước nào S1 và S2 viết **câu y
+hệt nhau** thì mọi bộ trỏ cho cùng kết quả, đóng góp **đúng 0** vào hiệu ghép cặp. 1.931/4.463
+bước (43,3%) giống hệt, và trên đúng các bước đó UGround cho **0 bất đồng**. Chấm 2.532 bước
+còn lại rồi nhân `2532/4463` **tái tạo đúng** hiệu của cả tập — tự kiểm trong
+`harness/phan_tich_venus.py` cho trùng tới 1e-9, `b/c` 340/254 y hệt.
+
+⚠️ **Phải chấm cả nhánh Base**, không chỉ S1 và S2. Nếu UI-Venus là dụng cụ tệ hơn thì
+Δ(S2−S1) tự co về 0 vì lý do cơ học, khớp luôn với giả thuyết "UGround thiên vị" — S1−Base là
+**chứng nhân** tách hai khả năng đó. Mốc UGround trên từng lát: **+10,35 / +11,69 / +11,06 pp**.
+`phan_tich_venus.py` từ chối kết luận nếu thiếu Base hoặc chứng nhân giữ dưới 60%.
+
+Runbook: `harness/kaggle_phepB_uivenus.md`. Chi tiết + hai lỗi câm đã cắn: `report/110` mục **4j-19**.
