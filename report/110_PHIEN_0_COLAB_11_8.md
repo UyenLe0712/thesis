@@ -1320,6 +1320,86 @@ ngưỡng sau khi thấy điểm (`report/112`).
 3. Điều còn đứng vững, **không bị lung lay bởi kết quả này**: S1 hơn Base **+11,5 pp** qua 5
    đòn phản biện · chương đo lường (sàn 12,0 · trần 75,7 · gọi-tên-vs-chỉ-chỗ · diễn đạt lại).
 
+### 4j-18. 🔬 CHẨN ĐOÁN S2 THUA Ở ĐÂU — lát cắt đăng ký trước đã trả lời (20/8, offline, 0 đồng)
+
+Mã: **`harness/phan_tich_s2.py`** (chạy lại y nguyên khi có hạt giống 202).
+⚠️ **Mọi số dưới đây là TẠM — mới một hạt giống S2.** Luật đọc Δ đòi trung bình hai hạt giống.
+
+#### ① Ghép cặp McNemar, bootstrap gom cụm theo app (cùng phương pháp, cùng hạt giống với `score_run`)
+
+| phép so | Δ | KTC95 | b / c | p |
+|---|---|---|---|---|
+| S2/101 − S1/101 | **−1,93** | [−3,06 · −0,75] | 340 / 254 | 4,8e-04 |
+| S2/101 − S1/202 | −2,44 | [−3,53 · −1,34] | 353 / 244 | 9,4e-06 |
+| **S2/101 − Base** | **+9,59** | [+8,16 · +11,06] | 324 / 752 | 9,1e-40 |
+| S1/101 − Base *(đối chiếu)* | +11,52 | [+10,02 · +13,07] | 284 / 798 | 5,1e-57 |
+| **S1/202 − S1/101 *(NHIỄU hạt giống)*** | +0,52 | [−0,22 · **+1,26**] | 132 / 155 | 0,19 |
+
+⇒ Nhiễu hạt giống có KTC **chứa 0**; hiệu S2−S1 có KTC **loại trừ 0**. Nhưng vẫn phải chờ hạt
+giống 202: chính con số nhiễu này nói rằng một lượt train lệch được ±1,3 pp.
+⇒ **S2 vẫn hơn Base +9,6 pp.** SFT chạy tốt; thứ không cộng thêm là **thành phần khai báo**.
+
+#### ② ⭐ LÁT CẮT ĐĂNG KÝ TRƯỚC 19/8 — hiệu tập trung vào 7,3% số bước
+
+| nhóm | n | S1 | S2 | Δ | p |
+|---|---|---|---|---|---|
+| **CÓ** kích hoạt (sinh `<desc>`) | 4.138 | 62,2% | 60,8% | **−1,38** [−2,54 · −0,19] | 0,017 |
+| **KHÔNG** kích hoạt | 325 | 19,7% | 10,8% | **−8,92** [−12,57 · −5,25] | 4,9e-06 |
+
+**7,3% số bước gánh 34% tổng chênh lệch.** (Kiểm số học: 0,927×(−1,38) + 0,073×(−8,92) = −1,93 ✓)
+
+#### ③ Nhóm 325 bước ấy là gì: **chỗ mô hình đoán SAI LOẠI THAO TÁC**
+
+| nhánh | câu mở đầu bằng động từ chạm | thao tác KHÁC | `action_ok` | exec |
+|---|---|---|---|---|
+| trần (câu người) | **86,8%** | 1,2% | 100% | **68,3%** |
+| Base (chưa huấn luyện) | 69,5% | 20,3% | 83,4% | 22,8% |
+| S1/101 | 29,5% | 64,0% | 55,1% | 19,7% |
+| **S2/101** | **6,8%** | **86,5%** | 38,8% | 10,8% |
+
+Ví dụ thật: câu chuẩn *"Click on the close icon"* → S1 *"Click on the close icon"* → S2
+*"Swipe up"*. Hoặc *"click on the tick icon…"* → S2 *"go back"*.
+
+**Ba điều đọc được, không cái nào đoán:**
+· **Trần 68,3% ⇒ những bước này GIẢI ĐƯỢC**, thước không mù ở đó. Đây là lỗi của mô hình.
+· **SFT làm hỏng chỗ này so với Base**: `action_ok` Base **83,4%** → S1 55,1% → S2 38,8%. Mô
+hình gốc gọi đúng loại thao tác hơn cả hai bản đã huấn luyện (dù nó tả phần tử kém nên exec
+vẫn thấp). ⇒ Đây là **cái giá của SFT**, không phải riêng của S2 — nhưng **S2 khuếch đại nó**.
+· **Giả thuyết cơ chế (chưa kiểm):** ở tập dạy, khai báo chỉ đi kèm bước **chạm**; mô hình có
+thể đã học tắt *"có khai báo ⇔ là chạm"*. Lúc phân vân, bỏ khai báo là tự khoá mình vào một câu
+không-chạm. Kiểm được bằng nhánh **`s2_nopoint`**, chưa chạy.
+
+⚠️ **Giới hạn phải khai:** nhóm 325 được định nghĩa bằng **hành vi của chính S2**, tức chọn mẫu
+trên một biến gắn với kết cục ⇒ *"S2 tệ ở đó"* mang phần định nghĩa. Cái **không** định nghĩa
+được: S1 cũng chỉ đạt 19,7% ở đó (nên vùng này khó thật), và trần đạt 68,3% (nên thước vẫn đo được).
+
+#### ④ Trong 92,7% còn lại, sa sút NHỎ và TRẢI ĐỀU, không có kiểu hỏng nào riêng
+
+· Δ −1,38 pp · sai số bộ trỏ trung vị **2,00% (S1) → 2,39% (S2)**, p90 82,1 → 86,8
+· Phân rã bước trượt: S2 sai thao tác **ít hơn** (229 vs 251); phần trượt thêm **toàn bộ** là
+*"đúng thao tác mà bộ trỏ không tìm ra nút"* (1.570 → 1.677). ⇒ câu của S2 **khó trỏ hơn một chút**.
+
+#### ⑤ Bốn lời giải thích thay thế ĐÃ BỊ LOẠI
+
+| đòn | số bác bỏ |
+|---|---|
+| "S2 thua vì câu ngắn hơn" | câu dài Δ −1,85 · câu ngắn Δ −2,00 ⇒ **âm ở cả hai**; phân bố độ dài hai nhánh như nhau (31 vs 31 toàn bộ · 34 vs 33 bước chạm) |
+| "do lát cắt app" | đã thấy −2,25 · chưa thấy −6,41 · không gán được −1,59 ⇒ âm ở cả ba |
+| "do lỗi `canon_action` (`go back` → tap)" | bật `strict_back`: Δ **−1,93 → −1,86** pp. Bốn nhánh đều tụt 0,20–0,31 pp, **thứ tự không đổi** |
+| "do khai báo rác (OCR)" | 26 bước có rác: Δ **+7,69** [−7,14 · +24,0], p=0,63 ⇒ **không** theo chiều đó |
+
+⚠️ Lỗi `canon_action` **che đúng kiểu hỏng này**: 64 câu S2 chứa *"go back"* trong nhóm 325 được
+quy về **tap** nên `action_ok` **đúng cả 64/64**, trong khi chỉ **21/64** thật sự executable.
+Bản vá `strict_back` đã ghi ở mục sửa đổi **(v)** ngày 16/8 — **trước** khi có điểm S2, nên đo
+độ nhạy ở đây là hợp lệ. Và nó làm số **xấu đi** ở mọi nhánh, không phải chọn theo hướng có lợi.
+
+#### ⑥ Việc kế
+1. Train s2 hạt giống **202** → chạy lại `phan_tich_s2.py` → **mới** đọc Δ theo luật khoá.
+2. Nếu Δ vẫn âm: câu chuyện đã có **cơ chế và số** — *thành phần khai báo khuếch đại xu hướng
+   đoán sai loại thao tác mà SFT vốn đã tạo ra*, và đó là **kết quả âm có kiểm soát**, đúng một
+   trong bốn kết cục `report/106` đăng ký trước.
+3. Nhánh **`s2_nopoint`** trở nên đáng chạy hơn hẳn: nó tách được *"có khai báo"* khỏi *"có toạ độ"*.
+
 ## 5. Bốn lỗi bắt được trong phiên này
 
 1. **Ô theo dõi OCR đếm DÒNG thay vì ẢNH KHÁC NHAU.** 957 dòng trùng làm nó báo 100,5% và
