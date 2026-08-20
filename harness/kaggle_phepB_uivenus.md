@@ -154,45 +154,70 @@ lượt Kaggle treo 7 giờ vì log ngập.
 
 ## Ô 2b — DÒ CỠ ẢNH (~15 phút, 3 lượt × 30 bước)
 
-**Vì sao cần.** Lượt thăm dò đầu (2,59 MP nguyên cỡ, ~3.300 token ảnh) cho trung vị **1,6%**
-và **p75 28,9%**, trong khi UGround trên **đúng 30 bước ấy** được 0,6% / 3,6%. Bộ trỏ mới đang
-**kém hơn** bộ trỏ cũ, và đuôi dày hơn hẳn. Nghi ngờ đầu tiên là cỡ ảnh: nếu UI-Venus quen cỡ
-nhỏ hơn thì nó trỏ tệ đi mà chẳng báo gì.
+**Chạy ô 2c TRƯỚC.** Lượt 2b đầu tiên (20/8) cho ba cỡ ra sai số trùng tới hai chữ số thập phân
+(1,57% / 28,87% cả ba) vì `min_pixels`/`max_pixels` bị `transformers` nuốt im lặng. Ô 2c đã xác
+nhận vá xong: ba grid khác nhau thật — **1.272 / 2.475 / 3.354** token.
 
 ⛔ **Luật chọn cỡ, khoá trước khi nhìn:** chọn theo sai số trên **câu chuẩn của người**
-(`--mode gate`). Câu chuẩn **giống hệt nhau ở mọi nhánh** nên cỡ chọn kiểu này **không thể**
-thiên vị S1 hay S2. **CẤM** dò cỡ bằng điểm của một nhánh — đó là chỉnh dụng cụ theo kết quả,
-đúng thứ phải tránh. Đây cũng là lý do phải dò **trước** ô 4, không phải sau.
+(`--mode gate`). Câu chuẩn giống hệt ở mọi nhánh nên cỡ chọn kiểu này **không thể** thiên vị S1
+hay S2. **CẤM** dò cỡ bằng điểm của một nhánh — đó là chỉnh dụng cụ theo kết quả.
+
+Ô dưới tự vá bản `score_run.py` trong `/kaggle/working` (chạy lại nhiều lần không sao), in dòng
+`[UIVenus]` làm bằng chứng cỡ đã đổi thật, và **tự chặn** nếu ba kết quả lại trùng nhau.
 
 ```python
-import subprocess, os, json, time
-WS = "/kaggle/working"
-CO = [(200704, 1003520, "mặc định Qwen2.5-VL  ~1.280 token"),
-      (200704, 2007040, "trung gian           ~2.560 token"),
-      (2000000, 4800000, "cỡ đang dùng         ~3.300 token")]
+import subprocess, os, json, time, re
+WS = "/kaggle/working"; SR = f"{WS}/harness/score_run.py"
+
+# ── vá bản đang nằm trong working (idempotent) ──────────────────────────────
+s = open(SR, encoding="utf-8").read()
+old = 'self.proc = AutoProcessor.from_pretrained(path, min_pixels=mn, max_pixels=mx)'
+if "ip.min_pixels" not in s:
+    assert old in s, "DỪNG: không khớp mã — bản score_run.py trên dataset khác bản đang có"
+    open(SR, "w", encoding="utf-8").write(s.replace(old, old + '''
+        ip = self.proc.image_processor
+        if isinstance(getattr(ip, "size", None), dict):
+            ip.size = {"shortest_edge": mn, "longest_edge": mx}
+        ip.min_pixels, ip.max_pixels = mn, mx
+        print(f"[UIVenus] giu min={getattr(ip,'min_pixels',None)} "
+              f"max={getattr(ip,'max_pixels',None)} size={getattr(ip,'size',None)}", flush=True)''', 1))
+    print("đã vá score_run.py ✅")
+else:
+    print("score_run.py đã vá từ trước ✅")
+
+CO = [(200704, 1003520, "1.272 token  (672×1484)"),
+      (200704, 2007040, "2.475 token  (924×2100)"),
+      (2000000, 4800000, "3.354 token  (1092×2408)")]
 kq = []
 for mn, mx, ten in CO:
     tag = f"do_{mx//1000}k"
-    env = {**os.environ, "VENUS_MIN_PIXELS": str(mn), "VENUS_MAX_PIXELS": str(mx)}
     for e in (f"{WS}/out/{tag}.json", f"{WS}/out/{tag}_raw.jsonl"):
-        if os.path.exists(e): os.remove(e)      # cấu hình khác ⇒ KHÔNG nối tiếp tệp cũ
+        if os.path.exists(e): os.remove(e)          # cấu hình khác ⇒ KHÔNG nối tiếp
+    env = {**os.environ, "VENUS_MIN_PIXELS": str(mn), "VENUS_MAX_PIXELS": str(mx)}
     t0 = time.time()
     with open(f"{WS}/out/{tag}.log", "w") as f:
-        subprocess.run(["python", "-u", f"{WS}/harness/score_run.py", "--mode", "gate",
-                        "--grounder", "uivenus", "--n", "30", "--out", f"{WS}/out/{tag}.json"],
+        subprocess.run(["python", "-u", SR, "--mode", "gate", "--grounder", "uivenus",
+                        "--n", "30", "--out", f"{WS}/out/{tag}.json"],
                        stdout=f, stderr=subprocess.STDOUT, cwd=WS, env=env)
+    lg = open(f"{WS}/out/{tag}.log", encoding="utf-8", errors="ignore").read()
+    bang = next((l for l in lg.splitlines() if "[UIVenus]" in l), "⛔ KHÔNG THẤY dòng [UIVenus]")
     j = json.load(open(f"{WS}/out/{tag}.json"))
-    gy = (time.time() - t0 - 90) / 30          # trừ ~90 s nạp mô hình
+    gy = (time.time() - t0 - 90) / 30
     kq.append((ten, j["median_err"], j["p75_err"], gy))
-    print(f"  {ten}  trung vị {j['median_err']:.2%}  p75 {j['p75_err']:.2%}  ~{gy:.1f} s/bước",
-          flush=True)
+    print(f"\n{ten}\n  {bang}\n  trung vị {j['median_err']:.3%} · p75 {j['p75_err']:.3%}"
+          f" · ~{gy:.1f} s/bước", flush=True)
 
-print(f"\n{'cấu hình':<38}{'trung vị':>10}{'p75':>9}{'s/bước':>9}")
+print(f"\n{'cấu hình':<28}{'trung vị':>10}{'p75':>10}{'s/bước':>9}")
 for ten, m, p75, gy in kq:
-    print(f"  {ten:<36}{m:>9.2%}{p75:>9.2%}{gy:>8.1f}")
-print("\nMốc UGround trên ĐÚNG 30 bước này: trung vị 0,60% · p75 3,60% · ≤3%: 73,3%")
+    print(f"  {ten:<26}{m:>9.3%}{p75:>10.3%}{gy:>8.1f}")
+print("\n  mốc UGround trên ĐÚNG 30 bước này: trung vị 0,600% · p75 3,600% · ≤3%: 73,3%")
+
+med = [round(r[1], 6) for r in kq]
+assert len(set(med)) > 1, ("⛔ BA CỠ VẪN RA TRÙNG NHAU ⇒ cỡ ảnh vẫn không đổi thật. "
+                           "Đừng đọc bảng này. Kiểm dòng [UIVenus] ở trên.")
 best = min(kq, key=lambda r: r[1])
-print(f"\n⇒ chọn: {best[0]}  (trung vị thấp nhất)")
+print(f"\n⇒ chọn: {best[0]} — trung vị {best[1]:.3%}, {best[3]:.1f} s/bước")
+print("   Ghi lại VENUS_MIN/MAX_PIXELS của cỡ này, dùng Y HỆT cho ô 4 và ô 5.")
 ```
 
 ### Đọc ô 2b
