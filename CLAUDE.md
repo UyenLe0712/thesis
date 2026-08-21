@@ -1,7 +1,8 @@
 # CLAUDE.md — Bối cảnh luận văn (auto-load mỗi phiên)
 
 > Dọn 18/8/2026. Bản đầy đủ trước khi dọn (1.263 dòng, có toàn bộ nhật ký chạy máy
-> tháng 7–8 và khung prompting cũ đã bị bác): `report/_archive/CLAUDE_MD_TRUOC_DON_18_8_2026.md`.
+> tháng 7–8 và khung prompting cũ đã bị bác): `report/_archive/CLAUDE_MD_TRUOC_DON_18_8_2026.md`
+> (thư mục `_archive/` **không có trong bản GitHub** — tệp vẫn nằm trên máy và trong lịch sử git).
 > Mở file đó khi cần tra *"vì sao hồi đó quyết định X"*, không phải để biết trạng thái hiện tại.
 
 **Trao đổi bằng tiếng Việt.** Văn phong: xem mục cuối file.

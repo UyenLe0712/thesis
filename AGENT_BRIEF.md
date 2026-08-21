@@ -119,6 +119,9 @@ DG1/DG2, nguồn dữ liệu MobileViews). Chúng vẫn nằm trong lịch sử 
 hồi đó quyết X*, nhưng nhiều tệp trong đó tự xưng là *"CHỐT"* hoặc *"THIẾT KẾ CUỐI"* nên rất
 dễ bị đọc nhầm thành bản hiện hành. Thiết kế đang chạy chỉ nằm ở `report/106` trở lên.
 
+Vài tài liệu còn trỏ tới `report/_archive/...` hoặc `.claude/skills/...`. Đó **không phải đường
+dẫn hỏng** — chúng cố ý ở lại để ghi lại quyết định, và tệp vẫn tra được trong lịch sử git.
+
 `report/57_related_work.md` giữ lại vì kho trích dẫn còn dùng được, nhưng **cách nó chia hai
 bài báo đã lỗi thời** — có nhãn cảnh báo ngay đầu file.
 

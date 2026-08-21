@@ -1,5 +1,11 @@
 # 📒 SỔ TRA DEEP-RESEARCH — "đã research gì rồi" (đọc TRƯỚC mọi đợt research mới)
 
+> ⚠️ **HÀNG R-13 GHI CÁCH CHIA HAI BÀI ĐÃ LỖI THỜI (rà 21/8/2026).** Nó chép lại khung 12/7
+> *FAIR = bài model · VCL = sinh hướng dẫn tiếng Việt*. Quyết định 18/8 đổi hẳn: **FAIR = bài
+> thước đo · VCL = nhãn mô tả phần tử**. Xem mục *Hai bài báo* trong `CLAUDE.md`.
+> Phần còn dùng được của file này là **danh mục đã-research-gì-rồi**, không phải các kết luận
+> về venue trong đó.
+
 > **Mục đích:** trước khi chạy bất kỳ deep-research/workflow nào, **đọc file này** để biết cái gì **ĐÃ làm** (skip, khỏi
 > tốn token) và cái gì **CHƯA** (chỉ chạy phần đó). Đây là *index mỏng* — không chứa nội dung chi tiết, chỉ trỏ tới file gốc.
 > Cập nhật: 2026-07-05. **Quy tắc: mỗi đợt research xong PHẢI thêm 1 dòng vào bảng §1 + cập nhật §2/§3.**
