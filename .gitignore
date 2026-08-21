@@ -79,3 +79,11 @@ harness/dg1_cache/emb_cache.json
 # Gói zip trong _bundles — cùng lý do với luật `_bundles/preds_upload/` bên trên:
 # dựng lại bằng harness/make_bundle.py và harness/make_code_zip.py trong vài giây.
 _bundles/*.zip
+
+# ── Khoá để trong .env — KHÔNG commit ──
+# Bài học 21/8: `harness/.openai_key` có luật ignore từ lâu mà vẫn lọt vào commit
+# `init`, vì luật được thêm SAU khi file đã bị track. Luật này đứng trước file.
+.env
+.env.*
+# ...trừ bản mẫu không chứa giá trị thật, để người clone biết cần đặt biến nào
+!.env.example
