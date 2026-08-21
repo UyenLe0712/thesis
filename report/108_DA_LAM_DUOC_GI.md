@@ -349,7 +349,7 @@ sai**, tìm ra nhờ đi kiểm chứ không nhờ báo lỗi.
 | Ngày | Quyết định | Nơi ghi |
 |---|---|---|
 | 1/8 | Thành phần đóng góp: "mô tả phân biệt trước, phát ngôn sau", hai mức | `report/103` |
-| 5/8 | **Niêm phong thiết kế** bằng bản đăng ký trước, thay vai trò buổi chốt với thầy | `report/106`, commit `51ddb35` |
+| 5/8 | **Niêm phong thiết kế** bằng bản đăng ký trước, thay vai trò buổi chốt với thầy | `report/106`, commit `b93e85c` (cũ `51ddb35`) |
 | 5/8 | **Bác** việc đảo nguồn tên sang OCR-trước; áp cổng lọc A′ thay vào đó | `report/106` mục sửa đổi + `report/107` |
 | 6/8 | Sửa mô tả tập kiểm, hạ mốc ngoài xuống tham khảo | `report/106` mục sửa đổi |
 

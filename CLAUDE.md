@@ -538,7 +538,7 @@ hình không thể trái mã.
 
 ---
 
-## 🔒 THIẾT KẾ ĐÃ NIÊM PHONG (5/8/2026, commit `51ddb35`)
+## 🔒 THIẾT KẾ ĐÃ NIÊM PHONG (5/8/2026, commit `b93e85c`)
 
 `report/106_DANG_KY_TRUOC.md` khoá: 6 nhánh · thước đo · **luật đọc kết quả cho cả 4 kết cục**
 (dương / dương yếu / trắng / âm) · 3 lát cắt · hạt giống 20260805.
@@ -546,6 +546,12 @@ hình không thể trái mã.
 trước điểm số đầu tiên**. Các mục đáng nhớ: (k) thêm nhánh mô hình gốc · (o) máy + cấu hình P9 +
 luật chọn điểm lưu · (p) vá `tag_app_seen` · (q) nhãn khai báo sang tiếng Anh · (r) MDE thật 2,2 pp
 ⇒ dải "4–9 pp không kết luận được" của luật cũ sẽ vứt bỏ một hiệu ứng thật · (v) `strict_back`.
+
+⚠️ **SHA của mọi commit đã đổi ngày 21/8** khi viết lại lịch sử để gỡ một khoá API và bốn gói
+zip (hai gói vượt trần 100 MB của GitHub) ra khỏi các commit cũ. **Số commit, thông điệp và
+mốc ngày giữ nguyên** ⇒ lập luận *"đăng ký trước kiểm được bằng `git log`"* vẫn đứng: bản
+niêm phong 5/8 nay là `b93e85c`, trước đó là `51ddb35`. Bảng ánh xạ cũ→mới đầy đủ nằm ở
+`.git/filter-repo/commit-map` — **giữ tệp đó**, nó là thứ nối hai cách đánh số với nhau.
 
 **Thành phần đóng góp đã chốt 1/8** (`report/103_CHOT_THANH_PHAN.md`): **"mô tả phân biệt trước,
 phát ngôn sau"** — đích sinh `[vai trò | tên | <point>x,y</point> | dấu hiệu phân biệt]` rồi mới
@@ -665,7 +671,7 @@ Chỗ lưu: thứ bắt buộc sống qua các phiên chỉ ~3 GB; 67 GB ảnh t
 · dựng dữ liệu — `build_train_data.py` · `build_branch_data.py` · `build_test_data.py` ·
 `descriptor_label_build.py` · `prep_ocr_train.py` · `tag_app_seen.py`
 · train/suy luận/chấm — `train_config.yaml` · `infer_branch.py` · `score_run.py` ·
-`metric_exec.py` (thư viện hàm chấm — **luật chấm mặc định không đổi từ commit `51ddb35`
+`metric_exec.py` (thư viện hàm chấm — **luật chấm mặc định không đổi từ commit `b93e85c`
 ngày 5/8**; bản vá `strict_back` là thêm cờ tuỳ chọn, mặc định tắt, và **hiện chưa commit**) ·
 `gate_a_ceiling.py`
 · phân tích — `phan_tich_bon_nhanh.py` · `phep_a_ghep_cap.py` · `phep_a_hieu_chinh.py` ·

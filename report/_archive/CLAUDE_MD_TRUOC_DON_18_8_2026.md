@@ -899,7 +899,7 @@
 > trước lượt hạt giống 202; (c) **A.7b** (nối tiếp khâu sinh câu) vẫn chưa chạy lần nào.
 
 > ## 🔒 CHỐT 5/8/2026 — ĐÃ ĐĂNG KÝ TRƯỚC VÀ COMMIT, ĐỌC `report/106_DANG_KY_TRUOC.md`
-> **Thầy không gặp được → chạy luôn, không đợi chốt miệng.** Vì mất bước đó, `report/106` gánh vai trò niêm phong thiết kế: khoá 6 nhánh, thước đo, **luật đọc kết quả cho cả 4 kết cục** (dương / dương yếu / trắng / âm), 3 lát cắt, hạt giống 20260805. Đã commit `51ddb35`. Mọi thay đổi về sau **ghi vào mục sửa đổi cuối file, KHÔNG sửa đè**.
+> **Thầy không gặp được → chạy luôn, không đợi chốt miệng.** Vì mất bước đó, `report/106` gánh vai trò niêm phong thiết kế: khoá 6 nhánh, thước đo, **luật đọc kết quả cho cả 4 kết cục** (dương / dương yếu / trắng / âm), 3 lát cắt, hạt giống 20260805. Đã commit `b93e85c` (SHA cũ `51ddb35`, đổi khi viết lại lịch sử 21/8). Mọi thay đổi về sau **ghi vào mục sửa đổi cuối file, KHÔNG sửa đè**.
 >
 > **Đã dựng xong, chạy được ngay khi có máy:**
 > · `harness/descriptor_label_build.py` — nhãn khai báo bản thật (`<point>` toạ độ, không còn lưới 3×3). Bắt 2 lỗi: cây trợ năng lồng nhau làm "trùng tên" thổi từ 30%→6,9%, và tên class Android lọt vào nhãn.
