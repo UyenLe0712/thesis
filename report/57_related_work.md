@@ -1,5 +1,13 @@
 # 57 — RELATED WORK (kho luận điểm chung + 2 bản thảo tách FAIR/VCL)
 
+> ⚠️ **CÁCH CHIA HAI BÀI TRONG FILE NÀY ĐÃ LỖI THỜI (rà 21/8/2026).** Bản này viết theo
+> khung *FAIR = bài model tiếng Anh · VCL = sinh hướng dẫn tiếng Việt* (chọn 12/7). Quyết định
+> 18/8 đổi hẳn: **FAIR = bài thước đo** (executability, sàn, gọi-tên-vs-chỉ-chỗ) · **VCL = nhãn
+> mô tả phần tử** đóng khung theo dòng REG. Xem mục *Hai bài báo* trong `CLAUDE.md`.
+>
+> **Phần còn dùng được: kho luận điểm và trụ trích dẫn** — đã qua một vòng phản biện vá 22 đòn.
+> **Phần đừng dùng: mọi câu gán luận điểm cho bài nào.**
+
 > **Mục đích:** viết sẵn phần Công-trình-liên-quan cho CẢ HAI bài (FAIR = model tiếng Anh · VCL = sinh-tiếng-Việt + đánh giá).
 > Soạn theo lựa chọn của user (2026-07-12): **viết chung một kho luận điểm → tách/viết-lại câu chữ cho từng bài** (chống trùng lặp).
 > **Mọi citation trong file này đã verify venue/năm** (nguồn: `report/50`, `report/_archive/51`, `report/papers/`, + web-verify 2026-07-12). Preprint được gắn nhãn rõ; **KHÔNG trích preprint như trụ bình-duyệt**.

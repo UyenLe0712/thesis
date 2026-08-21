@@ -87,3 +87,36 @@ _bundles/*.zip
 .env.*
 # ...trừ bản mẫu không chứa giá trị thật, để người clone biết cần đặt biến nào
 !.env.example
+
+# ══ 21/8/2026: bản đưa lên GitHub nhắm cho NGƯỜI/AGENT ĐỌC ĐỂ PHẢN BIỆN ══
+# Tiêu chí: thứ gì mô tả thiết kế ĐANG CHẠY thì giữ; thứ gì mô tả thiết kế đã bị
+# bác mà đọc vẫn thấy có lý thì bỏ. Nhóm hai nguy hiểm hơn nhóm "file thừa" —
+# nó không làm nặng kho, nó làm sai kết luận của người đọc.
+# Mọi thứ dưới đây VẪN NẰM TRÊN ĐĨA và vẫn tra được trong lịch sử git cũ.
+
+# Khung DG1/DG2 + prompting + MobileViews, đã bị bác 19/7. 176 tệp, nhiều tệp tự
+# xưng "CHỐT"/"THIẾT KẾ CUỐI" nên rất dễ bị đọc nhầm thành bản hiện hành.
+report/_archive/
+harness/_archive/
+
+# Khung cũ: VCL=sinh tiếng Việt, FAIR=model. Cách chia thật (quyết 18/8) là
+# FAIR=thước đo · VCL=nhãn mô tả phần tử — xem mục "Hai bài báo" trong CLAUDE.md.
+report/KE_HOACH_2_BAI_BAO.md
+
+# Skill và workflow của phiên làm việc riêng. Skill vcl-fair-paper còn tả khung
+# DG1/DG2 và TỰ NẠP nếu người clone cũng dùng Claude Code — nguy hơn tệp nằm im.
+.claude/
+
+# Cache OCR/box theo từng ảnh (316 tệp, dựng lại bằng prep_ocr_train.py)
+harness/dg1_cache/
+# ...trừ tập kiểm: 6.958 bước, 3,3MB, mở khoá doc_san.py và cho phép kiểm độc lập
+# các con số 4.463 bước chạm · 139 bước chưa-thấy-app · câu chuẩn của người.
+!harness/dg1_cache/test_ac/
+!harness/dg1_cache/test_ac/test.jsonl
+
+# Slide bản cũ + 11 script dựng slide đã thay: không giúp gì cho việc phản biện
+slides/_archive/
+slides/build/_archive/
+
+# MobileViews — đề tài đã rời khỏi nguồn này
+dataset_samples/mobileviews/

@@ -2,6 +2,9 @@
 
 Học viên: Lê Đoàn Phương Uyên · GVHD: TS. Nguyễn Hồng Bửu Long · Khoa CNTT, ĐH KHTN – ĐHQG-HCM
 
+> 👉 **Được mời đọc để phản biện? Mở `AGENT_BRIEF.md` trước** — nó nói rõ đọc gì theo thứ tự nào,
+> cách tự tính lại số từ tệp thô, những đòn đã bị bác bằng số đo, và chỗ nào còn thật sự hở.
+
 **Cần hiểu dự án thì đọc theo thứ tự:** `report/112_HIEU_TOAN_BO_KY_THUAT.md` (cơ chế) →
 `report/109_BAN_DO_HIEN_TAI.md` (đang ở đâu) → `CLAUDE.md` (nhật ký quyết định).
 
@@ -15,7 +18,7 @@ Học viên: Lê Đoàn Phương Uyên · GVHD: TS. Nguyễn Hồng Bửu Long �
 | `report/` | Báo cáo tiến độ, bản đăng ký trước, sổ kê khai, ghi chú tài liệu | Đánh số tăng dần; số lớn hơn = mới hơn |
 | `runs/` | Kết quả chấm điểm (`preds_*.jsonl`, `score_*.json`, `score_*_raw.jsonl`) | `runs/gate_a/` = kết quả cổng chặn bộ định vị |
 | `thesis/` | **Luận văn LaTeX** → `thesis/main.pdf` | `./build.sh` để biên dịch; xem `thesis/README.md` |
-| `paper/fair2026/` | Bài báo tiếng Anh 8 trang (IEEEtran) | Cùng nội dung phần đo lường với luận văn |
+| `paper/fair2026/` | Bài báo tiếng Anh (IEEEtran) | Đang **10 trang**, giới hạn hội nghị là 8 ⇒ còn phải cắt |
 | `slides/` | Slide bảo vệ | Xem bảng dưới |
 | `dataset_samples/` | Mẫu dữ liệu nhỏ để chạy thử tại máy | |
 | `_bundles/` | Gói zip chuyển sang Colab/Kaggle | **Tái tạo được** bằng `harness/make_bundle.py`; không commit |
@@ -27,9 +30,7 @@ Học viên: Lê Đoàn Phương Uyên · GVHD: TS. Nguyễn Hồng Bửu Long �
 | `slides/LUAN_VAN_SLIDE.pptx` | **Deck đang dùng** — chỉ một file, sửa tại chỗ rồi build đè, đừng đẻ bản v11/v12 |
 | `slides/build/build_slide.js` | Script dựng deck (`cd slides/build && node build_slide.js`) |
 | `slides/build/_preview/preview.html` | Xem nhanh deck trên trình duyệt |
-| `slides/build/_archive/` | Script build các bản cũ |
 | `slides/latex/` | Bản LaTeX/Beamer cùng nội dung |
-| `slides/_archive/` | File pptx bản cũ (v9, v10) |
 | `slides/_reference/` | Mẫu style tham khảo |
 
 ## Bên trong `report/`
@@ -39,7 +40,7 @@ Học viên: Lê Đoàn Phương Uyên · GVHD: TS. Nguyễn Hồng Bửu Long �
 | `report/1xx_*.md` | Báo cáo hiện hành |
 | `report/papers/` | Ghi chú đọc tài liệu (một file một bài) |
 | `report/paper_figures/` | Ảnh bảng cắt từ PDF gốc, dùng cho slide dự phòng |
-| `report/_archive/` | Báo cáo cũ đã bị thay |
+| `report/_archive/` | Báo cáo của khung thiết kế cũ — **không có trong bản GitHub**, xem `AGENT_BRIEF.md` §7 |
 
 **Khi hai file mâu thuẫn:** `report/106` thắng về *phải làm gì* · `report/108` thắng về
 *đã đo được gì* · `report/109` thắng về *đang ở đâu* · `report/112` thắng về *cơ chế hoạt động*.
@@ -53,7 +54,8 @@ Học viên: Lê Đoàn Phương Uyên · GVHD: TS. Nguyễn Hồng Bửu Long �
 cd thesis && ./build.sh                    # -> thesis/main.pdf
 
 # Bài báo
-cd paper/fair2026 && tectonic main.tex     # -> main.pdf
+cd paper/fair2026 && tectonic -X compile main.tex --outdir .   # -> main.pdf
+#   ⚠️ đúng lệnh này, và kiểm `ls -la main.pdf` xem mốc giờ trước khi tin số trang
 
 # Slide
 cd slides/build && node build_slide.js     # -> slides/LUAN_VAN_SLIDE.pptx
