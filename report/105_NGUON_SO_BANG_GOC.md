@@ -87,4 +87,4 @@ Còn hiệu ứng trên đề tài của em lớn bao nhiêu thì em phải tự
 
 ---
 
-*File PDF gốc của bốn bài lưu ở `report/_papers/`. Ảnh bảng cắt bằng `PyMuPDF`, không chỉnh sửa nội dung.*
+*File PDF gốc của bốn bài lưu ở `report/paper_figures/`. Ảnh bảng cắt bằng `PyMuPDF`, không chỉnh sửa nội dung.*

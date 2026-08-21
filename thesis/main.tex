@@ -1,0 +1,128 @@
+%% =====================================================================
+%%  LUẬN VĂN THẠC SĨ — Lê Đoàn Phương Uyên
+%%  "Sinh hướng dẫn sử dụng phần mềm từ ảnh màn hình"
+%%  Biên dịch:  tectonic main.tex        (hoặc  ./build.sh)
+%%
+%%  ⚠️ Ô CẦN ĐIỀN / KIỂM LẠI trước khi in — xem README.md mục 3.
+%% =====================================================================
+\documentclass[12pt,a4paper,oneside]{report}
+% Cỡ chữ 13pt (chuẩn luận văn tiếng Việt). Nếu môi trường không có gói `fontsize`,
+% xoá dòng \usepackage[...]{fontsize} bên dưới thì tài liệu về 12pt và vẫn biên dịch được.
+\usepackage[fontsize=13pt]{fontsize}
+
+% ---- thông tin thay đổi được, sửa ở đây thay vì sửa trong thân bài ----
+\newcommand{\TenDeTai}{Sinh hướng dẫn sử dụng phần mềm\\từ ảnh màn hình}
+\newcommand{\TenDeTaiMotDong}{Sinh hướng dẫn sử dụng phần mềm từ ảnh màn hình}
+\newcommand{\TenDeTaiEN}{Generating Software Usage Instructions from Screenshots}
+\newcommand{\HocVien}{Lê Đoàn Phương Uyên}
+\newcommand{\MSHV}{24C15039}                      % ⚠️ KIỂM LẠI
+\newcommand{\GVHD}{TS. Nguyễn Hồng Bửu Long}
+\newcommand{\GVHDen}{Dr. Nguyen Hong Buu Long}
+\newcommand{\Nganh}{Khoa học Máy tính}
+\newcommand{\MaNganh}{8480101}
+% ⚠️ CẦN ĐIỀN: khoá đào tạo. MSHV 24C15039 (nhập học 2024) gợi ý khoá 34, KHÔNG phải 33
+% (33 là khoá của luận văn mẫu). Điền số đúng rồi bỏ \CANDIEN đi.
+\newcommand{\Khoa}{\CANDIEN{khoá đào tạo}}
+\newcommand{\NamBaoVe}{2026}
+\newcommand{\NgayHoanThanh}{Tp. Hồ Chí Minh, tháng 8 năm 2026}
+
+% ---- font: dùng đúng bộ đã kiểm chạy được với tectonic trong repo này ----
+\usepackage{fontspec}
+\setmainfont{texgyretermes}[
+  Extension = .otf, UprightFont = *-regular, BoldFont = *-bold,
+  ItalicFont = *-italic, BoldItalicFont = *-bolditalic ]
+\setsansfont{texgyreheros}[
+  Extension = .otf, UprightFont = *-regular, BoldFont = *-bold,
+  ItalicFont = *-italic, BoldItalicFont = *-bolditalic ]
+\setmonofont{texgyrecursor}[
+  Extension = .otf, UprightFont = *-regular, BoldFont = *-bold,
+  ItalicFont = *-italic, BoldItalicFont = *-bolditalic, Scale = MatchLowercase ]
+
+\usepackage{amsmath,amssymb}
+\usepackage{unicode-math}
+\setmathfont{texgyretermes-math.otf}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage{setspace}
+\usepackage[table]{xcolor}
+\usepackage{caption}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage[left=3.5cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tabularx}
+
+\onehalfspacing
+\setlength{\parskip}{0.35em}
+% Tiếng Việt không có bộ luật ngắt âm tiết trong TeX nên các dòng dài dễ tràn lề.
+% emergencystretch cho phép giãn khoảng trắng ở dòng cuối cùng thay vì đẩy chữ ra lề.
+\emergencystretch=3.5em
+\captionsetup{font=small,labelfont=bf}
+
+% ---- Việt hoá tên mục tự sinh (không dùng gói ngôn ngữ để tránh phụ thuộc) ----
+\renewcommand{\contentsname}{Mục lục}
+\renewcommand{\listfigurename}{Danh mục các hình vẽ, đồ thị}
+\renewcommand{\listtablename}{Danh mục các bảng số liệu}
+\renewcommand{\bibname}{Tài liệu tham khảo}
+\renewcommand{\chaptername}{Chương}
+\renewcommand{\figurename}{Hình}
+\renewcommand{\tablename}{Bảng}
+\renewcommand{\appendixname}{Phụ lục}
+
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{18pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{0pt}{28pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+% ---- ký hiệu dùng nhiều lần ----
+\newcommand{\pp}{\,pp}                    % percentage point
+\newcommand{\ktc}[2]{[#1;\,#2]}
+\newcommand{\code}[1]{\texttt{\small #1}}
+\newcommand{\CANDIEN}[1]{\textcolor{red}{\textbf{[CẦN ĐIỀN: #1]}}}
+\newcommand{\CHOSO}[1]{\textcolor{red}{\textbf{[CHỜ SỐ: #1]}}}
+
+\begin{document}
+
+% Hai trang bìa KHÔNG được đánh số và không tính vào số trang La Mã.
+\input{chapters/00_bia}
+
+% Đánh số La Mã bắt đầu từ Lời cam đoan = i (đúng quy cách luận văn).
+\pagenumbering{roman}
+\input{chapters/01_camdoan_camon}
+
+\tableofcontents
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Danh mục các hình vẽ, đồ thị}
+\listoffigures
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Danh mục các bảng số liệu}
+\listoftables
+
+\input{chapters/02_vietat}
+\input{chapters/03_trangthongtin}
+
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\input{chapters/ch1_gioithieu}
+\input{chapters/ch2_tongquan}
+\input{chapters/ch3_dulieu}
+\input{chapters/ch4_phuongphap}
+\input{chapters/ch5_thuocdo}
+\input{chapters/ch6_thucnghiem}
+\input{chapters/ch7_ketluan}
+\input{chapters/ch8_congtrinh}
+
+\input{chapters/99_tailieu}
+
+\end{document}

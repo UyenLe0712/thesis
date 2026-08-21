@@ -691,7 +691,7 @@ cổng C mà không kịp làm, phải khai là **nhánh đã đăng ký nhưng 
 ## Sửa đổi 9/8/2026 — KẾT QUẢ CỔNG A, và trần của thước
 
 Cổng A đã chạy thật: UGround-V1-2B, 300 bước của tập kiểm lấy theo hạt giống 20260805, trên
-Tesla T4 của Kaggle (miễn phí). Vết thô lưu ở `ckpt/gate_A_raw.jsonl`.
+Tesla T4 của Kaggle (miễn phí). Vết thô lưu ở `runs/gate_a/gate_A_raw.jsonl`.
 
 ### (a) Cổng A ĐẠT
 
@@ -732,6 +732,10 @@ lệ. **Phải khai kèm mỗi lần trình cổng A.**
 
 ### (c) TRẦN CỦA THƯỚC = 70,0% — số phải in cạnh mọi kết quả S1/S2
 
+> ⛔ **SỐ TRONG MỤC NÀY ĐÃ ĐƯỢC THAY — xem mục sửa đổi (r) ngày 15/8 ở cuối file.**
+> Trần đo lại trên **đủ 4.462 bước** ra **75,7% [74,1–77,3]**, không phải 70,0%. Mục này giữ
+> nguyên làm bản ghi phép đo 9/8 trên mẫu con 300 bước, **không dùng số**.
+
 Cổng A đo khoảng cách, còn thước chính là ô-Voronoi. Đem chính 300 điểm trỏ đó chấm bằng
 `hit_voronoi` (mã: `harness/gate_a_ceiling.py`, chạy offline, không gọi lại bộ trỏ):
 
@@ -770,7 +774,7 @@ Cổng A đã chạy ở cấu hình mặc định (tắt), nên **kết quả t
 
 **Đã kiểm chứ không suy luận:** chạy lại 50 bước đầu của chính mẫu 300 đó với cache bật, so từng
 toạ độ với vết đã lưu — **trùng tuyệt đối 50/50**, sai khác đúng bằng 0 chứ không phải "trong
-dung sai" (`ckpt/cache_check.jsonl`, 201,5 s cho 50 bước = 4,03 s/bước). ⇒ bật `use_cache=True`
+dung sai" (`runs/gate_a/cache_check.jsonl`, 201,5 s cho 50 bước = 4,03 s/bước). ⇒ bật `use_cache=True`
 nói thẳng ở mọi chỗ gọi `generate` trong `score_run.py` và `infer_branch.py`, không để mặc định
 của mô hình quyết. Một lượt chấm đủ 4.463 bước rút từ ~48 giờ xuống **~5 giờ**.
 
@@ -923,3 +927,387 @@ thêm, không được dùng thay.
 ### (n) Nhánh tham chiếu mô hình gốc — đã có lệnh
 
 `run_on_rented.sh base` chạy `--no-adapter` rồi chấm. Chỉ tốn suy luận.
+
+### (o) Sửa đổi 11/8/2026 — máy, cấu hình chạy, và LUẬT CHỌN ĐIỂM LƯU
+
+Ghi **trước** khi lượt train đầu tiên chạy xong, tức trước khi nhìn thấy bất kỳ con số kết
+quả nào.
+
+**1. Máy và cấu hình chạy.** Google Colab, **A100-SXM4-40GB**, một card, bf16 thật. Cấu hình
+= `harness/train_config.yaml` giữ nguyên, **thêm đúng một khoá `enable_liger_kernel: true`**.
+
+Liger là kernel hợp nhất — cùng công thức, chỉ khác thứ tự cộng dồn dấu phẩy động. Đã kiểm
+chứ không tin lời thư viện: chạy có và không có liger trên **cùng 200 mẫu, cùng `seed 101`,
+cùng thứ tự**, loss trùng tới chữ số thứ tư (3.189/3.188 · 3.014/3.015 · 2.597/2.595 ·
+2.545/2.545). ⇒ **mọi siêu tham số QLoRA khoá ở mục 2 giữ nguyên**, đây không phải thay đổi
+thiết kế. Lý do dùng: nhanh hơn 3% và giảm bộ nhớ bảng logits.
+
+⛔ Đã thử và **loại**: bỏ lượng tử hoá 4-bit (chậm hơn 38% — trái với dự đoán, mô hình 3B đủ
+nhỏ để khâu giải nén không thành nút thắt); tắt gradient checkpointing (nhanh hơn 15% trên
+mẫu thường nhưng **tràn bộ nhớ ở chuỗi dài nhất của s2**, tức sẽ chết giữa lượt train 23
+giờ). Số đo đầy đủ: `report/110` mục 4h → 4h-6.
+
+**2. `cutoff_len` nâng 2048 → 2560** (11/8, trước lượt train đầu tiên — thời điểm duy nhất
+được phép đổi). Lý do đo được: chuỗi dài nhất của s2 là 2.017 token, dư đúng 31 token so với
+trần cũ, mỏng hơn sai số của phép đếm. Cắt cụt xảy ra ở **đuôi**, mà đuôi là đích sinh, và
+**s2 dài hơn s1 nên bị cắt nhiều hơn** — tức thiên vị đúng chiều làm hỏng con số headline.
+Nâng trần không tốn thêm gì vì đệm theo lô chứ không theo trần.
+
+**3. LUẬT CHỌN ĐIỂM LƯU — khoá từ bây giờ.** Bản gốc không nói chọn điểm lưu nào; đó là một
+bậc tự do chưa khoá và phải bịt trước khi có số.
+
+- **Dùng điểm lưu CUỐI CÙNG** (hết đủ 2 lượt duyệt) cho **mọi nhánh, mọi hạt giống**. Số
+  lượt duyệt đã khoá bằng 2 ở mục 2; chọn điểm lưu cuối là hệ quả trực tiếp.
+- Điểm lưu cuối lượt duyệt thứ nhất (bước 4.000) được **sao ra thư mục riêng làm bảo hiểm
+  kỹ thuật**, phòng khi lượt hai hỏng. **Không được dùng nó để chọn theo điểm trên tập
+  kiểm** — chọn như vậy là để tập kiểm lọt vào quyết định huấn luyện.
+- Chỉ được dùng bản một lượt duyệt khi lượt hai **hỏng rõ ràng và độc lập với điểm số**
+  (mất mát phân kỳ hoặc `nan`), và khi đó **phải khai trong luận văn**.
+- Không có tập thẩm định trong lúc huấn luyện (`val_size: 0.0`) — đây là lựa chọn có ý
+  thức: tách tập thẩm định từ dữ liệu dạy sẽ làm bốn nhánh lệch nhau, mà điều kiện sống còn
+  của phép so là bốn nhánh thấy đúng cùng một bộ dữ liệu.
+
+### (p) Sửa đổi 12/8/2026 — định nghĩa lại nhãn `app_seen_in_train` của lát cắt phụ
+
+**Ghi TRƯỚC khi có bất kỳ điểm số nào.** Lượt train s1 hạt giống 101 đang chạy, chưa có
+câu sinh, chưa chấm. Đây là điều kiện để việc sửa này không phải là chọn theo kết quả.
+
+**Đụng cái gì.** Chỉ lát cắt phụ đăng ký ở mục sửa đổi 6/8 ý 4 ("nhóm ứng dụng chưa thấy
+lúc dạy"). **Không** đụng phép so chính S1-vs-S2, không đụng thước đo, không đụng tập kiểm
+(vẫn 6.958 bước / 4.463 bước chạm / 1.432 tác vụ), không đụng dữ liệu dạy.
+
+**Vì sao phải sửa.** Nhãn cũ có hai khuyết tật đã đo được:
+
+1. Con số **67 bước chạm** ghi ở mục sửa đổi 6/8 do một lượt vá tay để lại, **không có mã
+   sinh ra** nên không tái lập được, và nó đối chiếu với split train ĐẦY ĐỦ của
+   AndroidControl chứ không phải 12.895 tác vụ thật sự đem dạy. Nhãn này phải là hàm của
+   tập dạy thật sự dùng.
+2. `harness/tag_app_seen.py` (viết 6/8 để thay lượt vá tay) suy tên ứng dụng của tập dạy
+   bằng **regex trên câu chữ**, trong khi tập kiểm đọc trường `app_name`. Nó quét `goal`
+   trước lịch sử rồi dừng, nên câu mục tiêu dài lọt vào thành tên ứng dụng và tên sạch
+   trong lịch sử không bao giờ được đọc tới. Đo trên lát 1.697 bước: **42/129 tên suy ra là
+   rác**, và **27 ứng dụng có thật trong tập dạy bị đếm nhầm thành chưa-thấy** (`maps`,
+   `nike`, `citymapper`, `skyscanner`, `tripadvisor`, `google play books`…).
+
+**Định nghĩa mới, khoá từ đây.** Một ứng dụng được coi là **đã thấy lúc dạy** khi tên của
+nó — sau chuẩn hoá — xuất hiện trong dữ liệu dạy thật sự dùng, theo một trong hai nguồn:
+
+- **nguồn chính:** trường `app_name` của thao tác `open_app` trong `train.jsonl`. Đây đúng
+  là trường mà `build_test_data.app_of` dùng cho tập kiểm, nên hai bên đọc cùng một nguồn.
+- **nguồn phụ:** câu chuẩn dạng "Open the X app" trong lịch sử, để bắt các tác vụ mở ứng
+  dụng bằng cách bấm thay vì bằng thao tác `open_app`.
+- **chuẩn hoá:** hạ chữ thường, gộp khoảng trắng, bỏ dấu chấm ở hai đầu, và bỏ ký tự vô
+  hình — tập kiểm có `audio­mack` (gạch nối mềm), `yandex maps` (khoảng trắng cứng),
+  `contacts﻿+` (BOM), đều là chỗ so chuỗi trượt mà mắt thường không thấy.
+
+**Chiều lỗi chọn có chủ ý, khai luôn:** giữ nguồn phụ làm cho nhãn nghiêng về "đã thấy".
+Gán nhầm thành *đã thấy* chỉ pha loãng nhóm lớn (~2.500 bước); gán nhầm thành *chưa thấy*
+bóp méo đúng nhóm nhỏ đang xét. Đã kiểm nguồn phụ không kéo theo rác: 2 chuỗi rác nó sinh
+ra không trùng tên ứng dụng nào của tập kiểm.
+
+**Ba giá trị giữ nguyên cách đọc:** `True` đã thấy · `False` gán được ứng dụng và không có
+trong tập dạy · `None` **không gán được ứng dụng = KHÔNG BIẾT**, cấm đọc thành "chưa thấy"
+(nhóm này 3.828 bước, lớn hơn cả hai nhóm kia cộng lại).
+
+**Cỡ mẫu mới chưa biết, và không được dùng để cứu.** Số thật chỉ có sau khi chạy ô A.1d
+trên Colab với `train.jsonl` đủ 64.567 bước. Dù ra bao nhiêu, lát này vẫn giữ nguyên tư
+cách đã đăng ký 6/8: **thiếu lực nghiêm trọng, chỉ đọc theo hướng, không kết luận, không
+dùng để cứu nếu kết quả chính không như ý.**
+
+**Mã:** `harness/tag_app_seen.py` (docstring ghi chi tiết) · chạy bằng ô A.1d của
+`harness/run_on_colab.md` · lý do đầy đủ ở `report/110` mục 4j-5.
+
+### (q) Sửa đổi 14/8/2026 — NHÃN KHAI BÁO ĐỔI SANG TIẾNG ANH
+
+**Ghi TRƯỚC khi có bất kỳ điểm số nào và TRƯỚC khi huấn luyện nhánh s2.** Lượt s1
+hạt giống 101 vừa chạy xong phần train, chưa sinh câu, chưa chấm. Đây là điều kiện
+để việc sửa này không phải là chọn theo kết quả.
+
+**Vì sao.** Đích của s2 là `<desc>…</desc>` rồi mới tới câu. Khai báo viết bằng
+**tiếng Việt** (`mục | CATEGORIES | <point>127,238</point> | bên trái chữ "MEN"`)
+còn câu đem chấm bằng **tiếng Anh**. Nghĩa là s2 khác s1 ở **hai** thứ cùng lúc: có
+thêm dòng khai báo, **và** có thêm một lần chuyển ngữ. Hiệu `s2 − s1` — con số
+headline khoá ở mục 6 — vì vậy lẫn cả phần do chuyển ngữ, và không có nhánh nào
+tách được phần đó ra. (`s2 − s2r` thì tách được, vì s2r cũng tiếng Việt, nhưng mục 6
+khoá headline là `s2 − s1`.)
+
+**Đã đổi.** `harness/descriptor_label_build.py`: bảng `ROLE`, vế lùi
+`("item" if cls in GENERIC else "element")`, bốn từ chỉ hướng của mỏ neo, năm chuỗi
+của ô thứ tư, và `(không tên)` → `(no name)`. **Chỉ đổi chuỗi xuất ra, không đổi một
+dòng logic nào.**
+
+**Chứng minh là thay đổi thuần từ vựng** — dựng lại trên lát 1.697 bước rồi đối
+chiếu từng trường với bản cũ:
+
+| | |
+|---|---|
+| Cùng tập khoá | có · n = 1.074 |
+| Trường ĐỔI | đúng 4: `desc` · `role` · `hint` · `desc_neg` |
+| Trường GIỮ NGUYÊN 100% | 17 trường, gồm `point_norm` · `point_abs` · `box` · `name` · `name_src` · `tier` · `dup_name` · `same_role` · `neighbor_dist_px` · `area_share` · `target_instruction` |
+| Ký tự tiếng Việt còn lại trong nhãn | **0** |
+| Phân bố nhãn | **trùng khít**: tên rõ 793 = 73,8% (trợ năng 224 · OCR 599) · ký hiệu 30 = 2,8% · không tên 251 = 23,4% · vai trò rõ 816 = 76,0% · trùng tên 75 = 7,0% · có hàng xóm 995 = 92,6% · hộp quá to 25 = 2,3% |
+
+Phân bố không xê dịch một ca nào ⇒ mọi con số đã công bố về chất lượng nhãn **vẫn
+đúng nguyên văn**, không phải đo lại.
+
+**KHÔNG đổi:** thước đo · tập kiểm · luật đọc kết quả · danh sách nhánh · siêu tham
+số · tập dạy. Lượt s1 đang có **không phải train lại**, vì đích của s1 là câu trơn,
+không chứa khai báo.
+
+**Việc bắt buộc trước khi train s2:** dựng lại `descriptors.jsonl` và bốn tệp nhánh ở
+**quy mô đủ** trên Colab (ô 0.10 → 0.11), rồi chạy lại 9 bất biến và phép ghép độ dài
+token của S2r. Lát 1.697 bước ở máy nhà chỉ đủ chứng minh thay đổi là thuần từ vựng,
+**không thay được bản dựng đủ**.
+
+**Một thứ CỐ Ý KHÔNG đổi, và phải khai.** Câu nhắc đưa vào mô hình
+(`build_branch_data.SYS` và `prompt_body`) cũng là tiếng Việt: nhãn trường
+*"Mục tiêu / Đã làm / Chữ đọc được trên màn"*, kèm lệnh viết câu trả lời bằng tiếng
+Anh. Giữ nguyên vì hai lý do: (a) câu nhắc **giống hệt nhau ở mọi nhánh và ở cả khâu
+chấm** (mọi nhánh gọi chung `prompt_of`), nên nó là hằng số của thí nghiệm và không
+thể giải thích chênh lệch giữa các nhánh; (b) đổi nó thì phải train lại s1 (~24 giờ,
+~126 đơn vị) mà không mua được tính hợp lệ nào. Đã khai thẳng trong bài FAIR mục V-A.
+
+---
+
+## Sửa đổi 15/8/2026 — (r) TRẦN CỦA THƯỚC ĐO LẠI: 70,0% → **75,7%**
+
+**Không sửa đè mục (c) ở trên.** Mục đó giữ nguyên làm bản ghi phép đo ngày 9/8; mục này ghi
+phép đo thay thế.
+
+**Vì sao đo lại.** Trần ở mục (c) tính offline từ **300 điểm trỏ** mà cổng A giữ lại
+(`gate_a_ceiling.py`). Ba nhánh đã chấm (Base · S1 · Human) đều chấm trên **4.462 bước**, nên
+trần nằm trên tập khác với thứ nó dùng để đọc — không ghép cặp được, và khoảng tin cậy rộng
+±5,4 điểm.
+
+**Cách đo mới, 0 đồng và không cần GPU sinh câu.** Dựng tệp dự đoán trong đó `pred` chính là
+`gold_instruction` của từng bước (`runs/preds_ceiling_human.jsonl`), rồi chấm bằng đúng
+`score_run.py --mode score` như mọi nhánh. Vì `sent == gold_instruction` nên `action_ok` và
+`toggle_ok` đúng theo định nghĩa và điểm rút gọn còn đúng phần định vị — cùng nguyên tắc với
+mục (c). Đã kiểm tệp trước khi chạy: **4.462/4.462 câu trùng khít** `gold_instruction` mà
+`score_run` tự ghi ra ở lượt S1.
+
+| | cỡ mẫu | ô-Voronoi | đĩa |
+|---|---|---|---|
+| mục (c), 9/8 | 300 | ~~70,0% [64,5–75,3]~~ | 81,3% |
+| **bản dùng, 15/8** | **4.462** | **75,7% [74,1–77,3]** | **84,3%** |
+
+Chênh **+5,7 điểm**, nằm **ngoài mép trên** khoảng tin cậy cũ; KTC hẹp từ ±5,4 xuống **±1,6**.
+⇒ **Mọi điểm S1/S2 đọc trên nền 75,7%, không phải 70,0%.**
+
+**Ba số kéo theo phải sửa:** room cho can thiệp **741 bước / 16,6 pp** (bản cũ: 485 / 10,9) ·
+S1 đạt **78,1% của trần** (bản cũ: 84,4%) · SFT lấy được **41%** khoảng Base→trần.
+
+**Không đụng tới thiết kế nào đã đăng ký:** không đổi thước, không đổi luật chấm
+(`metric_exec.py` không sửa dòng nào), không đổi nhánh, không đổi trình tự. Chỉ là **đo lại
+cùng đại lượng trên toàn tập thay vì mẫu con**.
+
+### (s) MDE phải tính theo thiết kế GHÉP CẶP, không phải hai mẫu độc lập
+
+Các nhánh chấm trên **cùng tập bước**, nên hiệu số giữa hai nhánh là đại lượng ghép cặp: chỉ
+đếm bước **bất đồng** (nhánh A đúng/B sai và ngược lại), kiểm định **McNemar**. Đo trên cặp
+Base-vs-S1: SE của hiệu **0,64–0,75 pp**, so với **0,94 pp** nếu coi là hai tỉ lệ độc lập
+⇒ **MDE ghép cặp 1,8–2,1 pp** chưa hiệu chỉnh cụm, **ước 2,7–4,5 pp có cụm** (so với MDE
+chiếu cũ 3,9–6,6 pp).
+
+Đây là thay đổi ở **cách đọc**, không ở dữ liệu, và nó **siết ngưỡng chứ không nới**. Ngưỡng
+chốt vẫn phải tính lại từ **cặp hạt giống S1 thật** (101 và 202) rồi mới khoá — mục 5 không
+đổi. Khi khoá, ghi **cả hai cách tính** vào mục sửa đổi để người đọc thấy đã chọn cách nào và
+vì sao.
+
+### (t) Sửa đổi 16/8/2026 — MDE ĐO ĐƯỢC LÀ 2,2 pp; DẢI "KHÔNG KẾT LUẬN ĐƯỢC" 4–9 pp BỊ RÚT
+
+Ghi **trước khi chấm bất kỳ nhánh xử lý nào** (S2 chưa train xong). Đây là thời điểm hợp lệ
+duy nhất để đụng vào luật đọc kết quả.
+
+**Chỗ sai của bản cũ.** Công thức MDE `2,8·σ̂/√G_eff` (mục 6) chia cho căn của **G hiệu dụng
+Kish**. Kish chỉ tính từ **kích thước cụm**, không đụng tương quan nội cụm — dùng nó làm mẫu số
+là ngầm đặt tương quan nội cụm **bằng 1**. Trên dữ liệu thật, hệ số nở do gom cụm đo được chỉ
+**1,10 lần**, nên công thức cũ **thổi MDE lên khoảng ba lần**.
+
+**Số đo, thay cho số đoán.** Bootstrap gom cụm 10.000 lượt trên hiệu ghép cặp, cụm theo đúng
+quy tắc đã đăng ký (app · mỗi tác vụ một cụm khi không gán được app):
+
+| cặp | SE của hiệu | MDE (lực 80%, mức 5%) |
+|---|---|---|
+| S1 − Base, **có cụm** | **0,785 pp** | **2,20 pp** |
+| Human − S1, có cụm | 0,759 pp | 2,12 pp |
+| S1 − Base, không cụm | 0,717 pp | 2,01 pp |
+
+⇒ Con số **2,7–4,5 pp** ở mục sửa đổi (s) là **ước chiếu, không phải phép đo — nay bị rút**.
+
+**Hệ quả với luật đọc kết quả.** Bản cũ (mục 6) khai: hiệu số rơi giữa hai MDE, **khoảng
+4–9 pp, đọc là "không kết luận được"**. Với MDE thật 2,2 pp, một hiệu ứng **+3 pp** sẽ có
+khoảng tin cậy **loại trừ 0 ở p<0,001** mà vẫn bị luật cũ vứt đi — bảo thủ **sai hướng**, và
+cái giá là lỗi loại II trên chính câu hỏi luận văn đặt ra.
+
+**Luật thay thế, khoá từ đây:** ngưỡng lấy từ **SE bootstrap gom cụm của hiệu ghép cặp**, đo
+trên các nhánh đã chấm. Hiệu số vượt 2,2 pp **và** vượt nhiễu giữa hai hạt giống S1 thì đọc là
+dương; dưới nhiễu hạt giống thì đọc là âm có kiểm soát. Vẫn **cấm chọn quy tắc gom cụm sau khi
+thấy điểm**, vẫn **báo cả hai cách tính** (độc lập và ghép cặp) trong mọi trường hợp.
+
+**Không đụng:** thước, luật chấm, danh sách nhánh, trình tự chạy, ba lát cắt đã đăng ký.
+
+### (u) Sửa đổi 16/8/2026 — BỘ TRỎ KHÔNG SẠCH ANDROIDCONTROL, VÀ CÙNG HỌ VỚI MÔ HÌNH ĐƯỢC CHẤM
+
+Hồ sơ 29/7 ghi *"UGround SẠCH (không AC trong recipe)"*. **Sai, đã tra tận nguồn:** Bảng 1 của
+arXiv 2410.05243 liệt kê **AndroidControl 47K phần tử, nhãn người**, cạnh Widget Caption 41K ·
+UIBert 16K · AITZ 8K. Và **UGround-V1-2B dựng trên Qwen2-VL**, cùng dòng với Qwen2.5-VL-3B đang
+bị chấm — nên câu "bộ trỏ khác họ mô hình" cũng sai.
+
+**Mức độ nghiêm trọng, đo được:** họ dùng **split train** (*"we use the human-annotated actions
+from the training set"*), tập kiểm của ta dựng từ **split test** ⇒ **không chồng lấn ở mức màn
+hình**, không phải rò rỉ nhãn. Nhưng bộ trỏ **đã thấy văn phong chú thích của kho này**, mà s1
+được dạy sinh đúng văn phong đó (đo được: **24,5% câu s1 lặp nguyên từ nội dung của câu chuẩn**)
+⇒ **một lời giải thích thay thế cho chênh lệch s1−base mà 6 đòn phản biện chưa loại được**.
+
+**Đã làm:** khai thẳng ở mục Limitations của bài FAIR; sửa chú thích sai trong `score_run.py`;
+rút câu trong `CLAUDE.md`. **Chưa làm được, và là việc duy nhất đóng được đòn này:** chấm lại
+lát ≥500 bước bằng bộ trỏ đã xác minh sạch AndroidControl (ứng viên tra 15/8:
+`inclusionAI/UI-Venus-Ground-7B`), báo lại cả trần lẫn thứ tự ba nhánh.
+
+**Không đụng thiết kế:** mọi nhánh vẫn chấm bằng **cùng một** bộ trỏ, nên phép so giữa các
+nhánh vẫn là phép so trong cùng dụng cụ. Thứ bị ảnh hưởng là **mức độ tin của số tuyệt đối** và
+**một đòn phản biện chưa khoá được**.
+
+### (v) Sửa đổi 16/8/2026 — LỖI `canon_action`: `go back` BỊ QUY THÀNH CHẠM
+
+**Lỗi.** `canon_action` quét câu từ trái sang phải, mà `go` và `navigate` (đều ánh xạ
+sang *chạm*) đứng trước `back` trong câu, nên `go back`, `navigate back`, `press the
+back button` đều ra **"tap"**. Lớp `navigate_back` mà mục 4 liệt kê là lớp riêng
+**gần như không thể đạt tới** bằng ba cách nói tự nhiên nhất của nó.
+
+**Ảnh hưởng, đo được trên quần thể chấm (toàn bước chạm):** 81 bước đổi phán quyết ở
+s1, 47 ở base, **0 ở nhánh trần**; điểm đổi **59,12 → 58,81** và **47,60 → 47,40**.
+Chênh lệch giữa hai nhánh gần như không đổi (11,52 → 11,41 pp).
+
+**Xử lý — KHÔNG chấm lại ba nhánh đã chấm.** Sửa thước sau khi đã thấy điểm đúng là
+thứ hồ sơ đăng ký sinh ra để chặn, **kể cả khi sửa làm số xấu đi**; và ở đây ảnh
+hưởng dưới 0,4 pp, không đụng kết luận nào. Bài FAIR khai thẳng lỗi này cùng con số
+ảnh hưởng, ngay tại chỗ định nghĩa điều kiện (i).
+
+**Nhưng bản vá là BẮT BUỘC cho phép kiểm không-gây-hại.** Phép kiểm đó chạy trên
+**35,9% bước không-chạm**, nơi thao tác `back` là thật và chiếm phần đáng kể — với
+hàm cũ nó **không đo được thứ nó tuyên bố đo**. Phép kiểm này **chưa chạy lần nào**
+(cần S2), nên vá bây giờ là hợp lệ tuyệt đối.
+
+**Cách vá:** `metric_exec.canon_action(text, strict_back=False)`. Mặc định giữ hành vi
+cũ để ba nhánh đã chấm còn tái lập được; **phải truyền `strict_back=True`** cho phép
+kiểm không-gây-hại và cho mọi nhánh chấm từ đây trở đi nếu quyết định chấm lại toàn
+bộ. Nếu về sau chấm lại tất cả bằng bản vá thì phải chấm lại **cả ba nhánh cũ** trong
+cùng một lượt, không được trộn hai phiên bản thước trong một bảng.
+
+---
+
+## Sửa đổi 17/8/2026 — (w) CẶP HẠT GIỐNG ĐÃ ĐỦ. NGƯỠNG CHO S2 KHOÁ Ở **2,8 pp**
+
+> Đây là mục **khoá ngưỡng** mà trình tự cứng ở mục 5 đòi phải hoàn tất **trước khi train
+> S2**. Từ đây trở đi, mọi con số của S2 đọc theo luật ghi trong mục này. Mã tái lập:
+> `harness/mde_that.py` (bootstrap cụm 10.000 lượt, hạt giống 20260805).
+
+### 1. Null thực nghiệm — hai hạt giống, không can thiệp gì
+
+Lượt `s1/seed202` xong 17/8, chấm trên **đúng 4.462 bước** như s1/101, Base và trần (cả hai
+hạt giống bỏ **cùng một** bước `(18710, 1)` vì câu rỗng ⇒ ghép cặp sạch, không trừ bù).
+
+| | |
+|---|---|
+| s1/101 → s1/202 | 59,12% → **59,64%** |
+| hiệu ghép cặp | **+0,52 pp**, KTC95 bootstrap cụm **[−0,21 · +1,28]** |
+| SE của hiệu | **0,38 pp** |
+| McNemar | 101 trúng/202 trượt **132** · ngược lại **155** · χ²=1,69 **p=0,194** |
+| bước bất đồng | **287 = 6,4%** |
+
+✔ **KTC chứa 0 và p không có ý nghĩa** — đúng thứ một null phải cho. Nếu nó *không* chứa 0
+thì đã có gì đó ngoài hạt giống thay đổi giữa hai lượt, và phải truy trước khi đi tiếp.
+
+⭐ **Tỉ lệ bất đồng mới là thứ phân biệt null với hiệu ứng thật**, không phải con số hiệu:
+
+| cặp | hiệu | bước bất đồng |
+|---|---|---|
+| 101 vs 202 (chỉ khác hạt giống) | +0,52 pp | **6,4%** |
+| S1/101 vs Base (can thiệp thật) | +11,52 pp | 24,2% |
+| S1/202 vs Base (can thiệp thật) | +12,03 pp | 24,0% |
+| Trần vs S1/101 | +16,61 pp | 21,2% |
+
+⭐ **Phát hiện chính đã TÁI LẬP bằng hạt giống độc lập:** S1−Base = **+11,52** và **+12,03 pp**,
+hai KTC chồng lấn gần trọn ([+10,08 · +12,98] và [+10,62 · +13,46]). Bài viết được "hai lượt
+train độc lập", không phải "một lượt".
+
+**Nhiễu giữa hạt giống đi TRỌN VẸN qua đường câu chữ:** trong 287 bước bất đồng, **0 bước** có
+hai câu giống nhau. Không có chút nhiễu nào đến từ thước. Và nhiễu tập trung vào **bước giải
+được nhưng sát ranh giới** — ở nhóm bất đồng, câu người trúng **88,5%** so với 74,9% ở nhóm
+đồng thuận; sai số trỏ trung vị 7,41%/4,11% so với 2,00% toàn tập.
+
+### 2. Ngưỡng — cộng CẢ HAI nguồn nhiễu
+
+So S2 với S1 có hai nguồn nhiễu, không phải một:
+
+| nguồn | cách đo | giá trị |
+|---|---|---|
+| (a) nhiễu **thước** trên một cặp nhánh | bootstrap cụm trên hiệu ghép cặp | SE **0,38 pp** |
+| (b) nhiễu **giữa hạt giống** | chính cặp 101/202 này | σ ≈ **0,46 pp** |
+
+σ suy từ `E|X−Y| = 1,128·σ`. ⚠️ **Ước từ MỘT quan sát, 1 bậc tự do** — sai số của chính ước
+lượng này rất lớn, σ thật có thể gấp đôi hoặc bằng nửa.
+
+| thiết kế | SE tổng | MDE (lực 80%, α=0,05) |
+|---|---|---|
+| 1 hạt giống mỗi nhánh | 0,75 | 2,11 pp |
+| **2 hạt giống mỗi nhánh** (đã đăng ký) | 0,60 | 1,67 pp |
+| **THẬN TRỌNG — σ hạt giống ×2** | 0,99 | **2,78 pp** |
+
+### 3. ⭐ LUẬT ĐỌC KẾT QUẢ S2 — khoá tại đây, không sửa sau
+
+**Ngưỡng chốt: 2,8 pp** (làm tròn từ dòng thận trọng). Chọn dòng thận trọng vì (b) chỉ có 1 bậc
+tự do; **khoá theo ước lỏng rồi tuyên bố dương là cách tự cho mình một kết quả dương giả**.
+
+| Δ = S2 − S1 (trung bình 2 hạt giống mỗi nhánh, ghép cặp) | Kết luận |
+|---|---|
+| **≥ +2,8 pp** và KTC95 loại trừ 0 | **DƯƠNG** — thành phần có tác dụng |
+| **+1,7 … +2,8 pp**, KTC95 loại trừ 0 | **DƯƠNG YẾU** — báo kèm nguyên văn cảnh báo rằng nó nằm dưới ngưỡng thận trọng và trên ngưỡng thiết kế; **không** đưa vào abstract |
+| **−2,8 … +1,7 pp** | **TRẮNG** — không kết luận được; báo là kết quả âm có kiểm soát |
+| **≤ −2,8 pp** | **ÂM** — thành phần làm hại; báo thẳng |
+
+⛔ **Dải "4–9 pp là không kết luận được" của bản đăng ký gốc CHÍNH THỨC BỊ RÚT** (đã báo trước
+ở mục sửa đổi (t) với số ước 2,2 pp; nay có số đo nên thay hẳn). Giữ nó sẽ **vứt bỏ một hiệu
+ứng thật** có KTC loại trừ 0 ở p<0,001.
+
+**Bắt buộc kèm khi báo Δ, không được bỏ:**
+1. **Cả bốn con số riêng lẻ** (S1×2 hạt giống, S2×2 hạt giống), không chỉ trung bình
+2. **Tỉ lệ bước bất đồng** — mốc so đã có: null 6,4% · can thiệp thật 24%
+3. **Phân tầng theo độ dài câu** — thiên vị câu dài đo được 5,4 pp ở S1 và −1,4 pp ở Base,
+   tức nó **không phải quy luật chung của thước**, phải đo riêng cho S2
+4. Nếu hai hạt giống S2 lệch nhau **> 1,5 pp** (gấp ~3 lần null này) thì **dừng lại truy
+   nguyên nhân** trước khi đọc Δ
+
+**Dư địa:** 16,6 pp tới trần ⇒ S2 phải lấy **17% dư địa** mới đọc được. Hiệu ứng kỳ vọng theo
+văn liệu trung vị ~+5 pp ⇒ **nằm trên ngưỡng**, nên thí nghiệm còn đáng chạy.
+
+---
+
+## Ghi nhận 18/8/2026 — điều kiện bắt buộc của mục sửa đổi (q) ĐÃ THỰC HIỆN
+
+Mục (q) ngày 14/8 đổi nhãn khai báo sang tiếng Anh và ghi: *"Việc bắt buộc trước khi train s2:
+dựng lại `descriptors.jsonl` và bốn tệp nhánh ở quy mô đủ trên Colab, rồi chạy lại 9 bất biến
+và phép ghép độ dài token của S2r."*
+
+**Thực hiện 18/8, TRƯỚC khi khởi động lượt train s2 đầu tiên.** Phát hiện dữ liệu trên Drive
+vẫn là bản tiếng Việt khi đọc trường `labels` của lượt thăm dò bộ nhớ — tức bắt được ở khâu
+kiểm, không phải sau khi đã train.
+
+| phép kiểm | kết quả |
+|---|---|
+| tiếng Việt ở **khuôn mẫu** (vai trò · dấu hiệu) | **0** |
+| dấu phụ ở **tên phần tử** | 1 (`Save Tôrres to lists`) — chữ thật trên màn, hợp lệ |
+| chín bất biến của bốn nhánh | **9/9 ĐẠT** |
+| s2r ghép độ dài token với s2 | **99,9%** trong 2 token (mốc 14/8: 99,3%) |
+| quy mô | **64.567** mẫu mỗi nhánh · **41.099** khai báo |
+
+**Bằng chứng độc lập rằng đây là thay đổi thuần từ vựng:** `total_flos` của lượt thăm dò 20
+bước trên 200 mẫu dài nhất — bản tiếng Anh **10.812.978 GF**, bản tiếng Việt **10.816.688 GF**,
+lệch **0,03%**. Đổi ngôn ngữ không làm chuỗi dài ra hay ngắn đi, đúng như (q) tuyên bố.
+
+Tệp: `MyDrive/thesis/derived_train_en.tar.gz`. Bản tiếng Việt giữ ở `branches_vi_0818/` để đối
+chiếu, **không xoá**.
+
+**Không đụng:** thước, luật chấm, danh sách nhánh, siêu tham số, tập kiểm, ngưỡng 2,8 pp.

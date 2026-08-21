@@ -131,18 +131,38 @@ Mọi danh sách "việc kế" cũ rải rác trong file đã bị danh sách n�
 2. **Cắt 2 trang bài FAIR** (đang 10, giới hạn 8) — xem mục Bài FAIR.
 3. **Nhánh `s2_nopoint`** — nay đáng chạy hơn hẳn: nó tách *"có khai báo"* khỏi *"có toạ độ"*,
    đúng chỗ chẩn đoán 4j-18 chỉ ra.
-4. **Phép B: bộ trỏ thứ hai `UI-Venus-Ground-7B`** — ĐÃ DỰNG XONG, đang chạy thăm dò (20/8).
-   Runbook `harness/kaggle_phepB_uivenus.md` · đọc kết quả `harness/phan_tich_venus.py` ·
-   chi tiết `report/110` mục **4j-19**. Ba điều phải nhớ:
-   · ⭐ **chỉ cần chấm 2.532/4.463 bước** — bước nào S1 và S2 viết câu y hệt thì mọi bộ trỏ cho
-     cùng kết quả (1.931 bước, UGround 0 bất đồng); nhân `2532/4463` tái tạo ĐÚNG hiệu cả tập,
-     tự kiểm trùng tới 1e-9. Cắt đôi giá GPU mà không xấp xỉ gì.
-   · ⭐ **BẪY PHA LOÃNG:** dụng cụ tệ hơn thì Δ(S2−S1) tự co về 0 vì lý do cơ học, khớp luôn với
-     giả thuyết "UGround thiên vị" ⇒ **phải chấm cả Base** làm chứng nhân (mốc UGround +10,35 /
-     +11,69 / +11,06 pp trên ba lát). Thiếu Base là lượt chạy vô nghĩa.
-   · ⚠️ **UI-Venus KÉM HƠN UGround trên ảnh này** (30 bước: trung vị 1,57% vs 0,60%, p75 28,87%
-     vs 3,60%) dù mạnh hơn trên ScreenSpot ⇒ điểm ScreenSpot không chuyển sang miền này.
-     Chạy được T4×2, ~8,3 s/bước, giải mã toạ độ đúng.
+4. ✅ **Phép B ĐÃ XONG 20/8 — đòn "UGround quen văn phong AC" ĐÃ ĐÓNG.**
+   Chấm lát 2.532 bằng `UI-Venus-Ground-7B` (sạch AndroidControl), cả ba nhánh, 8,15 giờ
+   Kaggle. Đọc bằng `python3 harness/phan_tich_venus.py`; runbook `harness/kaggle_phepB_uivenus.md`.
+
+   | phép so (lát 2.532) | UGround | UI-Venus |
+   |---|---|---|
+   | **S1 − Base** (chứng nhân) | **+10,35** [+8,39 · +12,40] | **+9,68** [+7,60 · +11,78] |
+   | **S2 − S1** (quy về 4.463) | **−1,93** [−3,08 · −0,78] p=0,0005 | **−1,21** [−2,30 · −0,12] p=0,026 |
+
+   · ⭐ **Chứng nhân giữ 94%** ⇒ thang đo **không bị nén**, Δ đọc được — bẫy pha loãng không
+     xảy ra. Trần cổng A: UI-Venus **69,3%** [63,8–74,8] vs UGround **70,0%** [64,5–75,3].
+   · ⭐ **S2 thua dưới CẢ HAI dụng cụ**, mép trên KTC đều dưới 0 ⇒ *kết quả âm, tái lập qua hai
+     bộ trỏ độc lập*. Đây là hàng 1 của bảng bốn kết cục đã khoá trước khi chạy.
+   · ⚠️ **VẪN CHƯA ĐƯỢC KẾT LUẬN** — luật `report/106` (w) đòi **trung bình hai hạt giống**, mà
+     S2 mới có hạt 101. Phép B đóng đòn *dụng cụ*, **không** thay được hạt giống thứ hai.
+     Train s2/202 vẫn phải chạy (việc kế số 1), đúng luật đã khoá trước khi nhìn điểm.
+   · ⭐ **Phép rút gọn lát tự kiểm ĐÚNG TUYỆT ĐỐI:** lát 2.532 quy về 4.463 cho −1,9270 pp,
+     tính thẳng trên 4.463 cũng −1,9270 pp, b/c trùng 340/254.
+   · ⭐ **Sai số khoảng cách KHÔNG dự đoán được trần:** UI-Venus thua rõ ở khoảng cách (trung vị
+     1,56% vs 0,73%, p75 16,35% vs 9,08%) nhưng trần chỉ kém 0,7 điểm — vì thước quyết định
+     bằng ngưỡng 14% rồi mới Voronoi. Dùng lại được cho mọi lần đổi dụng cụ.
+   · 🔬 **Thăm dò (hậu kiểm, KHÔNG đăng ký trước — phải gắn nhãn thăm dò nếu vào bài):**
+     hiệu-của-hiệu ghép cặp trên đúng 2.532 bước, Δ(S2−S1) dưới UI-Venus **+1,26 pp** so với
+     dưới UGround, KTC95 **[+0,04 · +2,51]** — mép dưới vừa chạm 0 ⇒ *có dấu hiệu* UGround
+     phạt S2 nặng hơn chút, bằng chứng **yếu**. ⛔ Không mở được cửa "UGround thiên vị nên S2
+     thua": nếu vậy Δ dưới UI-Venus phải về 0 hoặc dương, đằng này vẫn âm có ý nghĩa. Và một
+     phần chênh là **cơ học** — UI-Venus đo thấp hơn 2,8–4,1 pp ở mọi nhánh nên mọi hiệu đều
+     co (tỉ lệ: −6,4% vs −4,4%). ⛔ **UI-Venus KHÔNG "cho số đẹp hơn"** — nó cho điểm THẤP hơn
+     ở cả ba nhánh (base 39,06 vs 42,50 · s1 48,74 vs 52,84 · s2 46,60 vs 49,45).
+   · ⚠️ Cỡ ảnh **3.354 tok OOM trên T4×2**; chốt **1.272 tok** vì KTC hai trần chồng nhau ⇒
+     chọn cỡ **nhanh nhất** (4,0 s/bước), phải khai đúng vậy trong bài.
+
 5. ⛔ **Mìn chưa nổ:** `test_ac/descriptors.jsonl` **vẫn tiếng Việt** (dựng 9/8; mục (q) chỉ
    dựng lại tập dạy). `infer_branch.py:480` nhét nó vào câu nhắc cho `--ceiling gold|filler`.
    **Chạy `descriptor_label_build.py --split test` TRƯỚC** hai nhánh đó — không có ô 7b nào canh.
@@ -470,10 +490,13 @@ Widget Caption 41K · UIBert 16K · AITZ 8K.
 · Phần còn đứng: họ lấy từ **split train**, tập kiểm của ta từ **split test** ⇒ không chồng lấn ở
 mức màn hình, không phải rò rỉ nhãn. Nhưng bộ trỏ đã thấy **văn phong chú thích** của kho này, mà
 s1 được dạy viết đúng văn phong đó ⇒ **còn một lời giải thích thay thế cho chênh lệch S1−Base**.
-Cách duy nhất đóng: chấm lát ≥500 bước bằng **UI-Venus-Ground-7B** (việc kế số 3).
+✅ **ĐÃ ĐÓNG 20/8** bằng phép B: chấm 2.532 bước bằng UI-Venus-Ground-7B, chứng nhân S1−Base
+giữ 94% (+10,35 → +9,68 pp) ⇒ chênh lệch S1−Base không phải do bộ trỏ quen giọng.
 
-**Chưa thay dụng cụ lần nào** — bộ trỏ chính là thước. *(Phép B đang chạy, xem việc kế số 4.)* **Không có neo ngoài nào** (đã quyết không
-chấm người). Trong ba lỗ ghi ở `report/112` §11.3, hai đã đóng (sàn · gọi-tên-hay-chỉ-chỗ).
+**Đã thay dụng cụ một lần (phép B, 20/8)** — S1−Base và S2−S1 giữ nguyên dấu và gần nguyên độ
+lớn dưới bộ trỏ sạch AndroidControl ⇒ lời giải thích *"bộ trỏ quen văn phong AC"* **không còn
+đứng**. ⚠️ Vẫn **cùng họ Qwen2.5-VL** nên đòn *cùng họ* chưa đóng. **Không có neo ngoài nào**
+(đã quyết không chấm người). Trong ba lỗ ghi ở `report/112` §11.3, hai đã đóng (sàn · gọi-tên-hay-chỉ-chỗ).
 
 **Bộ trỏ thứ hai đã tra xong 15/8, đừng tra lại:** chọn `inclusionAI/UI-Venus-Ground-7B`
 (Apache-2.0, ScreenSpot-v2 mobile 99,0/90,0, mạnh hơn UGround 95,0/83,3, sạch AndroidControl).

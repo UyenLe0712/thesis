@@ -1,6 +1,6 @@
 # Node deps (tái tạo bằng npm install)
 node_modules/
-ppt_build/node_modules/
+slides/build/node_modules/
 
 # Python cache
 __pycache__/
@@ -8,7 +8,7 @@ __pycache__/
 
 # File sinh ra (tái tạo từ nguồn .md / build.js)
 *.pdf
-ppt_build/_preview*/
+slides/build/_preview*/
 
 # Dữ liệu tải về — KHÔNG commit (git giữ blob vĩnh viễn)
 # Pool train mở rộng: 498 màn/220 app, ~254MB — tái tạo bằng harness/fetch_mv_expand_train.py
@@ -34,11 +34,11 @@ harness/_archive/emb_cache*.json
 harness/dg1_cache/train_ac/ocr.jsonl
 # Bộ chấm tay: HTML nhúng ảnh base64, 10MB mỗi file — dựng lại bằng cv_build_items.py
 harness/cv_study/rate_*.html
-# Slide bản cũ đã archive (dựng lại bằng ppt_build/_archive/*.js)
+# Slide bản cũ đã archive (dựng lại bằng slides/build/_archive/*.js)
 report/_archive/slides_cu/*.pptx
 _archive/slides/*.pptx
-# PDF bài báo gốc tải từ arXiv (44MB) — ảnh bảng đã cắt sẵn ở report/_papers/*.png
-report/_papers/*.pdf
+# PDF bài báo gốc tải từ arXiv (44MB) — ảnh bảng đã cắt sẵn ở report/paper_figures/*.png
+report/paper_figures/*.pdf
 
 # Dữ liệu bốn nhánh (7MB, dựng lại bằng harness/build_branch_data.py)
 harness/dg1_cache/train_ac/branches/
@@ -52,3 +52,30 @@ harness/dg1_cache/test_ac/images/
 # Bốn gói này từng được git theo dõi, hai cái nặng 110 MB, và mỗi lần dựng lại là một
 # blob mới nằm vĩnh viễn trong lịch sử. .git phình lên 370 MB cho thứ dựng trong vài giây.
 thesis_*.zip
+# Thư mục dàn sẵn để kéo-thả lên Kaggle — BẢN SAO của runs/, tái tạo bằng
+# harness/kaggle_upload_dataset.md. Commit vào là nhân đôi 6 MB không lý do.
+_bundles/preds_upload/
+
+# ── thêm 21/8/2026: dọn trước khi đưa lên GitHub ──
+# Khoá API thật. Từng bị commit ở `1bf161b (init)` dù đã có luật ignore bên trên —
+# .gitignore KHÔNG áp cho file đã track, phải `git rm --cached` mới thoát.
+harness/.openai_key
+
+# Cấu hình Claude Code riêng của máy này (đường dẫn D:/, /home/uyenle, C:/Program Files).
+# Thuộc về máy, không thuộc về repo. Bản dùng chung là .claude/settings.json.
+.claude/settings.local.json
+
+# Mẫu MobileViews 46MB của nhánh faithfulness ĐÃ CHẾT (xem CLAUDE.md mục "Đã chết,
+# đừng hồi sinh"). Tải lại từ nguồn gốc nếu có ngày cần tới.
+dataset_samples/mv_multiapp/
+dataset_samples/mv.zip
+
+# Bộ chấm tay bản archive — cùng lý do với luật `harness/cv_study/rate_*.html` bên trên
+# (HTML nhúng ảnh base64, 9,9MB mỗi tệp), chỉ khác đường dẫn nên luật cũ không bắt được.
+harness/_archive/cv_study/rate_*.html
+
+# Cache embedding ở đường dẫn không-archive (dựng lại được)
+harness/dg1_cache/emb_cache.json
+# Gói zip trong _bundles — cùng lý do với luật `_bundles/preds_upload/` bên trên:
+# dựng lại bằng harness/make_bundle.py và harness/make_code_zip.py trong vài giây.
+_bundles/*.zip

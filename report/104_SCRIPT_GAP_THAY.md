@@ -1,3 +1,5 @@
+> ⚠️ LỖI THỜI 12/8 — thay bằng `report/111_SCRIPT_GAP_THAY_12_8.md` (slide v10). Giữ làm bản ghi.
+
 # Script trình bày với thầy — 15 phút (bản 3, sửa 5/8 sau vòng soát độ-dễ-hiểu; theo slide v9 + report/103)
 
 > Cách dùng: mỗi mục có [thời lượng] và [slide tương ứng]. Chữ nghiêng là ghi chú cho mình, không đọc.

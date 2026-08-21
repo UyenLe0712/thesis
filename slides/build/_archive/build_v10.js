@@ -1,7 +1,7 @@
 // Deck v9 - PPTX theo style bài giảng mẫu (Beamer cổ điển): khổ 4:3, thanh tiêu đề chàm 322164,
 // khối xám E9E8EC bo góc đổ bóng, chữ serif, footline 4 ô. Nội dung theo report/103 (bản 3/8).
 // Bản 2 (4/8): rút gọn chữ ~40%, chi tiết dồn xuống speaker notes, bỏ từ gượng.
-// Xuất: ../LUAN_VAN_SLIDE_v9.pptx + _preview_v9/preview.html
+// Xuất: ../LUAN_VAN_SLIDE_v10.pptx + _preview_v10/preview.html
 const pptxgen = require("pptxgenjs");
 const fs = require("fs");
 const pres = new pptxgen();
@@ -23,7 +23,7 @@ let htmlSlides = [], cur = "";
 function esc(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 function plain(c) { return typeof c === "string" ? c : c.map(r => r.text).join(""); }
 function hpush(html) { cur += html; }
-let s, PAGE = 0, TOTAL = 23;
+let s, PAGE = 0, TOTAL = 26;
 function slide() { if (cur) htmlSlides.push(cur + "</div>"); s = pres.addSlide(); s.background = { color: WHITE }; cur = `<div class="slide" style="background:#fff">`; }
 function done() { if (cur) { htmlSlides.push(cur + "</div>"); cur = ""; } }
 function text(content, o) {
@@ -96,7 +96,26 @@ toc.forEach((t, i) => {
 });
 foot(); done();
 
-// ═══════════════ 3 · BÀI TOÁN ═══════════════
+// ═══════════════ 3 · ĐÃ LÀM ĐƯỢC GÌ (mới ở v10) ═══════════════
+slide();
+bar("Tiến độ thực hiện");
+const moc = [
+  ["Cổng bộ trỏ", "ĐẠT", "sai số trung vị 0,7% bề ngang màn - ngưỡng đặt trước là 3%", true],
+  ["Dữ liệu dạy", "XONG", "64.567 bước · 12.895 tác vụ · đọc chữ phủ 100% · 9/9 bất biến", false],
+  ["Rò rỉ dạy-kiểm", "= 0", "lần đầu kiểm ở quy mô đủ: 0 tác vụ trùng giữa 12.895 và 1.432", false],
+  ["Huấn luyện", "ĐANG CHẠY", "bản thường, hạt giống 101, trên A100 - xong sáng mai", true]
+];
+moc.forEach((r, i) => {
+  const y = 1.25 + i * 1.22;
+  block(M, y, W - 2 * M, 0.98);
+  text(r[0], { x: M + 0.22, y, w: 2.35, h: 0.98, fontSize: 13.5, bold: true, color: NAVY, valign: "middle", margin: 0 });
+  text(r[1], { x: M + 2.6, y, w: 1.35, h: 0.98, fontSize: 14, bold: true, color: r[3] ? RED : TEAL, valign: "middle", margin: 0 });
+  text(r[2], { x: M + 4.05, y, w: W - 2 * M - 4.3, h: 0.98, fontSize: 12.5, valign: "middle", margin: 0, lh: 1.3 });
+});
+note(`Slide này đặt sớm là cố ý: thầy từng bác hướng chỉ ghép công cụ, nên phải cho thấy ngay là mô hình thật đang chạy, mỗi mắt xích có một con số. Cổng bộ trỏ là rủi ro số một của cả thiết kế, vì mọi thước chấm treo trên nó; nó đã đạt với biên rất rộng (0,7 so với ngưỡng 3). Rò rỉ dạy-kiểm là loại sai không chữa được sau khi train, nên đây là chốt chặn thật chứ không phải thủ tục. Nếu thầy hỏi vì sao giờ mới train: trình tự khoá từ đầu là kiểm cho chắc thước đo và dữ liệu trước, rồi mới huấn luyện - vì sai ở hai chỗ đó thì huấn luyện xong cũng bỏ.`);
+foot(); done();
+
+// ═══════════════ 4 · BÀI TOÁN ═══════════════
 slide();
 bar("1.1.  Bài toán");
 block(M, 1.1, W - 2 * M, 1.0);
@@ -192,8 +211,8 @@ st2.forEach((t, i) => {
 s.addShape(pres.shapes.LINE, { x: 8.52, y: 2.3, w: 0, h: 0.55, line: { color: FOOTC, width: 2, endArrowType: "triangle" } });
 hpush(`<div style="position:absolute;left:${8.52 * PX}px;top:${2.3 * PX}px;height:${0.55 * PX}px;border-left:2px solid #4F417A"></div>`);
 block(M, 4.5, W - 2 * M, 1.25);
-text("Khâu 1-4: chuẩn bị dữ liệu, chạy trên máy cá nhân, miễn phí\nKhâu 5: nơi Bản A và Bản B khác nhau đúng một chỗ", { x: M + 0.22, y: 4.5, w: W - 2 * M - 0.44, h: 1.25, fontSize: 14, valign: "middle", margin: 0, lh: 1.45 });
-note(`Bản đồ cả phần thực nghiệm. Rủi ro dồn về khâu rẻ: dựng dữ liệu kiểm được trước, miễn phí; tiền chỉ tiêu ở khâu 5. Đến khâu 6, trên máy người dùng chỉ còn bộ đọc chữ và mô hình.`);
+text("Khâu 1-4: chuẩn bị dữ liệu, tự động hoàn toàn, không dán nhãn tay\nKhâu 5: nơi Bản A và Bản B khác nhau đúng một chỗ", { x: M + 0.22, y: 4.5, w: W - 2 * M - 0.44, h: 1.25, fontSize: 14, valign: "middle", margin: 0, lh: 1.45 });
+note(`Bản đồ cả phần thực nghiệm. Ý cần nhấn: bốn khâu đầu kiểm được trước khi huấn luyện, nên sai sót lộ ra sớm. Đến khâu 6, trên máy người dùng chỉ còn bộ đọc chữ và mô hình - mọi thứ đắt đỏ chỉ tồn tại lúc dựng dữ liệu và lúc chấm.`);
 foot(); done();
 
 // ═══════════════ 9 · KHÂU 1-2 ═══════════════
@@ -298,7 +317,7 @@ foot(); done();
 slide();
 bar("3.8.  Khâu 5 và 6:  huấn luyện, rồi chạy thật");
 block(M, 1.1, W - 2 * M, 1.35);
-text([{ text: "Huấn luyện.  ", options: { bold: true, color: TEAL } }, { text: "Qwen2.5-VL-3B (mô hình mở, 3 tỉ tham số) + QLoRA trên card thuê - mỗi lượt 13-16 đô.", options: {} }], { x: M + 0.22, y: 1.1, w: W - 2 * M - 0.44, h: 1.35, fontSize: 14.5, valign: "middle", margin: 0, lh: 1.4 });
+text([{ text: "Huấn luyện.  ", options: { bold: true, color: TEAL } }, { text: "Qwen2.5-VL-3B, mô hình mở 3 tỉ tham số, tinh chỉnh bằng QLoRA.", options: {} }], { x: M + 0.22, y: 1.1, w: W - 2 * M - 0.44, h: 1.35, fontSize: 14.5, valign: "middle", margin: 0, lh: 1.4 });
 block(M, 2.85, W - 2 * M, 1.3);
 text("ảnh + câu hỏi  →  bộ đọc chữ  →  mô hình  →  [khai báo] + câu  →  cắt khai báo  →  người dùng", { x: M + 0.2, y: 2.85, w: W - 2 * M - 0.4, h: 1.3, fontSize: 13.5, bold: true, color: NAVY, align: "center", valign: "middle", margin: 0, lh: 1.4 });
 text([{ text: "Trên máy người dùng chỉ có bộ đọc chữ và mô hình.  ", options: { bold: true } }, { text: "Không cần mạng, không cần cây trợ năng.", options: {} }], { x: M, y: 4.5, w: W - 2 * M, h: 0.9, fontSize: 14.5, margin: 0, lh: 1.4 });
@@ -321,14 +340,27 @@ slide();
 bar("4.2.  Thước có đáng tin không?");
 block(M, 1.1, W - 2 * M, 2.35);
 text("Cấy lỗi biết trước vào câu, xem thước có bắt được không: đạt 8/10.\nHai tiêu chí chưa đạt:", { x: M + 0.22, y: 1.22, w: W - 2 * M - 0.44, h: 0.8, fontSize: 14, margin: 0, lh: 1.4 });
-text("-  Bộ trỏ lệch 3% thì kết oan 2,6% số câu đúng; lệch 8% thì oan tới 42%\n    Nên tuần đầu phải kiểm: bộ trỏ đạt sai số quanh 3% mới dùng", { x: M + 0.35, y: 2.1, w: W - 2 * M - 0.7, h: 0.9, fontSize: 13.5, margin: 0, lh: 1.45 });
+text("-  Bộ trỏ lệch 3% thì kết oan 2,6% số câu đúng; lệch 8% thì oan tới 42%\n    → đặt thành CỔNG bắt buộc, phải qua mới được chạy tiếp", { x: M + 0.35, y: 2.1, w: W - 2 * M - 0.7, h: 0.9, fontSize: 13.5, margin: 0, lh: 1.45 });
 text("-  Luật bắt từ ngược nghĩa chỉ bắt được cặp có sẵn trong bảng", { x: M + 0.35, y: 3.0, w: W - 2 * M - 0.7, h: 0.45, fontSize: 13.5, margin: 0 });
 block(M, 3.8, W - 2 * M, 1.35);
-text("Kiểm chéo: chấm tay 100 câu (hai người) · cắt theo độ dài câu · báo hai cách chấm", { x: M + 0.22, y: 3.8, w: W - 2 * M - 0.44, h: 1.35, fontSize: 14, valign: "middle", margin: 0, lh: 1.4 });
+text([{ text: "Cổng đã kiểm ngày 9/8:  ĐẠT.  ", options: { bold: true, color: RED } }, { text: "Sai số trung vị 0,7% - ngưỡng 3%.\nXác nhận thêm bằng dụng cụ thật: dưới 3% thì 100% số ca chấm đúng (n = 188).", options: {} }], { x: M + 0.22, y: 3.8, w: W - 2 * M - 0.44, h: 1.35, fontSize: 13.5, valign: "middle", margin: 0, lh: 1.4 });
+text("Kiểm chéo vẫn giữ: chấm tay 100 câu (hai người) · cắt theo độ dài câu · báo hai cách chấm", { x: M, y: 5.35, w: W - 2 * M, h: 0.5, fontSize: 13, margin: 0 });
 note(`Phương pháp bơm lỗi này lấy từ Sai và cộng sự, EMNLP 2021 - không phải mình tự nghĩ ra cách kiểm. Mười tiêu chí chia hai nhóm: ba tiêu chí "không được kết oan câu đúng" và bảy tiêu chí "phải bắt được lỗi" (trỏ nhầm nút gần, nút xa, nút rất xa, đảo nghĩa, sai loại thao tác, gõ sai nội dung, cuộn sai hướng). Ngưỡng đậu rớt khoá cứng trong mã trước khi chạy. Bài học từ vòng phản biện thử: bản cũ chỉ khoe 8/10 mà giấu 2 tiêu chí rớt, bị bắt ngay, nên giờ khai đủ. Nếu bộ trỏ không đạt cổng 3% thì có kế hoạch B ba bậc ghi sẵn, và báo thầy ngay tuần một.`);
 foot(); done();
 
-// ═══════════════ 18 · BỘ THÍ NGHIỆM ═══════════════
+// ═══════════════ 18 · TRẦN CỦA THƯỚC (mới ở v10) ═══════════════
+slide();
+bar("4.3.  Trần của thước đo:  cao nhất chỉ tới 70%");
+block(M, 1.05, W - 2 * M, 1.5);
+text("Câu chuẩn do người viết, đem chấm bằng chính bộ trỏ:  đúng 70,0%   [64,5 - 75,3]\nKhông câu nào do mô hình sinh mà vượt được câu chuẩn.", { x: M + 0.22, y: 1.05, w: W - 2 * M - 0.44, h: 1.5, fontSize: 14, valign: "middle", margin: 0, lh: 1.5 });
+block(M, 2.8, W - 2 * M, 1.55);
+text("-  Ví dụ 55% điểm  =  79% của trần\n-  30% còn lại: giới hạn của dụng cụ chấm, không phải của mô hình\n-  Đo trước khi có kết quả, ghi ngày trong bản đăng ký", { x: M + 0.35, y: 3.0, w: W - 2 * M - 0.7, h: 1.2, fontSize: 13.5, margin: 0, lh: 1.6 });
+block(M, 4.6, W - 2 * M, 1.35);
+text([{ text: "Con số công bố là HIỆU SỐ giữa hai bản, không phải điểm tuyệt đối.\n", options: { bold: true, color: TEAL } }, { text: "Hai bản chấm bằng cùng một dụng cụ, nên phần thiệt triệt tiêu trong hiệu.", options: {} }], { x: M + 0.22, y: 4.6, w: W - 2 * M - 0.44, h: 1.35, fontSize: 13.5, valign: "middle", margin: 0, lh: 1.4 });
+note(`Slide này là lá chắn cho câu hỏi chắc chắn sẽ bị hỏi: "sao điểm thấp thế". Trần 70 đo bằng cách đưa câu gold - câu do chính người thao tác viết - cho bộ trỏ; nó trượt 30% số ca là do bộ trỏ, do câu gold cộc, và do màn có nút na ná nhau. Điểm mạnh về phương pháp: trần này đo XONG TRƯỚC khi có kết quả nào của mô hình, có ghi ngày, nên không ai nói được là bịa ra để chữa cháy. Và vì phép so chính là hiệu S2 trừ S1 trên cùng dụng cụ, phần thiệt chung triệt tiêu - đó là lý do headline là hiệu số chứ không phải điểm tuyệt đối.`);
+foot(); done();
+
+// ═══════════════ 19 · BỘ THÍ NGHIỆM ═══════════════
 slide();
 bar("5.1.  Các phiên bản đem so với nhau");
 block(M, 1.1, W - 2 * M, 3.55);
@@ -347,14 +379,15 @@ exps.forEach((r, i) => {
   text(r[1], { x: M + 2.85, y, w: W - 2 * M - 3.2, h: 0.44, fontSize: 12.5, bold: r[2], margin: 0 });
 });
 text("Kèm ba lớp phân tích: cắt theo độ dài câu · theo độ dễ nhầm của màn · chấm tay 100 câu", { x: M, y: 4.85, w: W - 2 * M, h: 0.5, fontSize: 13, margin: 0 });
-note(`Còn một phép thử rẻ chạy trước khi tiêu tiền huấn luyện S2: lấy S1 đã huấn luyện, nhét khai báo chuẩn vào đầu vào so với một đoạn đệm vô nghĩa cùng độ dài. Nếu đưa tận tay khai báo đúng mà điểm đứng yên thì S2 khó có cửa - biết ở tuần hai với 2 đô thay vì tuần bốn với 30 đô.`);
+note(`Còn một phép thử rẻ chạy trước khi tiêu tiền huấn luyện S2: lấy S1 đã huấn luyện, nhét khai báo chuẩn vào đầu vào so với một đoạn đệm vô nghĩa cùng độ dài. Nếu đưa tận tay khai báo đúng mà điểm đứng yên thì S2 khó có cửa - biết sớm, bằng một phép thử rẻ, thay vì biết sau khi đã huấn luyện xong.`);
 foot(); done();
 
 // ═══════════════ 19 · VÌ SAO ĐỌC ĐƯỢC ═══════════════
 slide();
 bar("5.2.  Vì sao kết quả sẽ đọc được");
 block(M, 1.1, W - 2 * M, 1.55);
-text("Rủi ro: can thiệp có tác dụng thật mà phép đo không thấy\nMDE = mức chênh nhỏ nhất còn phân biệt được với may rủi\nTác dụng kỳ vọng 3-8 điểm, nên chấm đủ 2.000 bước để MDE về 4-7", { x: M + 0.22, y: 1.1, w: W - 2 * M - 0.44, h: 1.55, fontSize: 14, valign: "middle", margin: 0, lh: 1.45 });
+text("Lo nhất là can thiệp có tác dụng thật mà phép đo không thấy.\nMDE = mức chênh nhỏ nhất còn phân biệt được với may rủi.\nChấm đủ 4.463 bước chạm của tập kiểm, không lấy mẫu.", { x: M + 0.22, y: 1.1, w: W - 2 * M - 0.44, h: 1.55, fontSize: 14, valign: "middle", margin: 0, lh: 1.45 });
+text("Đã đo: 1.091 cụm, hiệu dụng 454 - MDE ước 3,9 đến 6,6 điểm, tác dụng kỳ vọng 3-8.", { x: M + 0.22, y: 2.6, w: W - 2 * M - 0.44, h: 0.4, fontSize: 13, bold: true, color: TEAL, margin: 0 });
 block(M, 3.0, W - 2 * M, 1.1);
 text("Trình tự cứng:  huấn luyện Bản thường (S1) trước → chấm đủ → đo MDE thật → khoá ngưỡng → mới huấn luyện Bản khai báo (S2).", { x: M + 0.22, y: 3.0, w: W - 2 * M - 0.44, h: 1.1, fontSize: 13.5, bold: true, color: NAVY, valign: "middle", margin: 0, lh: 1.4 });
 text("Hai lớp chống nhiễu: mỗi bản huấn luyện 2-3 lần với hạt giống khác nhau\nGom bước theo ứng dụng khi tính khoảng tin cậy", { x: M, y: 4.4, w: W - 2 * M, h: 0.9, fontSize: 13.5, margin: 0, lh: 1.4 });
@@ -363,21 +396,21 @@ foot(); done();
 
 // ═══════════════ 20 · KẾ HOẠCH ═══════════════
 slide();
-bar("6.1.  Kế hoạch và chi phí");
+bar("6.1.  Trình tự chạy thí nghiệm");
 block(M, 1.1, W - 2 * M, 1.75);
 text("Đăng ký trước  →  kiểm bộ trỏ  →  Bản thường, 2 hạt giống + đo MDE thật\n→  khoá ngưỡng  →  Bản khai báo  →  các nhánh đối chứng\n→  thử mức 2  →  chấm tay + demo tiếng Việt", { x: M + 0.22, y: 1.1, w: W - 2 * M - 0.44, h: 1.75, fontSize: 14, valign: "middle", margin: 0, lh: 1.6 });
-block(M, 3.2, W - 2 * M, 0.95);
-text([{ text: "Chi phí:  ", options: { bold: true, color: TEAL } }, { text: "85-112 đô phần chắc chắn, tối đa 123-162 đô - dưới ngân sách 200.", options: {} }], { x: M + 0.22, y: 3.2, w: W - 2 * M - 0.44, h: 0.95, fontSize: 14, valign: "middle", margin: 0 });
-text("Ba chốt chặn ghi sẵn tiêu chí:\nsau Bản thường - còn chỗ chứng minh không\nsau đối chứng - chênh rõ mới chạy tiếp\ntrước chương kết quả - đóng băng mọi con số", { x: M, y: 4.4, w: W - 2 * M, h: 1.0, fontSize: 13.5, margin: 0, lh: 1.5 });
-note(`Nếu thầy hỏi sao rẻ: QLoRA trên card A100 thuê 0,72 đô/giờ, mỗi lượt trọn dữ liệu 13-16 đô. Chỗ tốn nhất là nhân hạt giống - và ưu tiên nó hơn thêm nhánh mới, vì nó hạ rủi ro cho kết luận chính.`);
+block(M, 3.2, W - 2 * M, 1.15);
+text([{ text: "Đang ở bước 3.  ", options: { bold: true, color: RED } }, { text: "Bản thường, hạt giống thứ nhất, đang huấn luyện - xong sáng mai.\nMỗi lượt 8.072 bước, hai lượt duyệt qua toàn bộ 64.567 mẫu.", options: {} }], { x: M + 0.22, y: 3.2, w: W - 2 * M - 0.44, h: 1.15, fontSize: 13.5, valign: "middle", margin: 0, lh: 1.4 });
+text("Ba chốt chặn, tiêu chí ghi sẵn từ trước:\nsau Bản thường - còn chỗ chứng minh không\nsau đối chứng - chênh rõ mới chạy tiếp\ntrước chương kết quả - đóng băng mọi con số", { x: M, y: 4.55, w: W - 2 * M, h: 1.0, fontSize: 13.5, margin: 0, lh: 1.5 });
+note(`Ba chốt chặn là chỗ đáng nhấn về phương pháp: tiêu chí đậu rớt viết ra trước, không phải nhìn số rồi mới đặt. Nếu thầy hỏi về cấu hình huấn luyện: em chạy 16 lượt thăm dò ngắn để chọn, và đã kiểm rằng cấu hình chọn ra cho ra loss trùng tới chữ số thứ tư so với cấu hình gốc - tức là chỉ đổi tốc độ, không đổi phép tính. Đổi card cũng ra cùng loss, dùng được cho câu tái lập.`);
 foot(); done();
 
 // ═══════════════ 21 · RỦI RO ═══════════════
 slide();
 bar("6.2.  Rủi ro chính");
 const risks = [
-  ["Bộ trỏ không đạt cổng sai số 3%", "đo ngay tuần một; có kế hoạch B ba bậc ghi sẵn"],
-  ["Tác dụng thật quá nhỏ để đo thấy", "MDE ép hết cỡ; không thấy chênh thì phân tích sâu - vẫn là kết quả đọc được"],
+  ["Bộ trỏ không đủ chính xác để chấm", "đã kiểm: 0,7% so với ngưỡng 3% - rủi ro số một, nay loại được"],
+  ["Tác dụng thật quá nhỏ để đo thấy", "chấm đủ tập kiểm để ép MDE xuống hết mức; không thấy chênh thì vẫn là kết quả đọc được"],
   ["Nhãn khai báo nhiễu, kéo Bản khai báo xuống", "thiếu tên thì để trống chứ không đoán; tách phân tích theo nguồn tên"],
   ["Mô hình học vẹt cú pháp khai báo", "nhánh Khai báo giả sinh ra để bắt đúng chuyện này"]
 ];
@@ -390,18 +423,40 @@ text("Mỗi rủi ro đều có cách phát hiện sớm và đường xử lý 
 note(`Rủi ro số một là cổng bộ trỏ - cả thước chấm treo trên nó nên đo ngay tuần đầu, trước mọi khoản chi lớn. Kế hoạch B: nới cách chấm và khai tỉ lệ oan; tệ nữa thì gộp nhiều bộ trỏ; vẫn không xong thì so thứ hạng tương đối giữa các bản và nâng chấm tay lên 200 câu.`);
 foot(); done();
 
-// ═══════════════ 22 · TÓM TẮT ═══════════════
+// ═══════════════ 22 · GIỚI HẠN TỰ KHAI (mới ở v10) ═══════════════
+slide();
+bar("6.3.  Giới hạn của thiết kế");
+const yeu = [
+  ["Tập kiểm không phải\n\"ứng dụng chưa từng thấy\"",
+   "92% ứng dụng trong tập kiểm cũng có ở tập dạy - giữ riêng theo TÁC VỤ,\nkhông phải theo ứng dụng.\nPhép so chính S1 vs S2:  vẫn đúng, hai bản đối xứng, 0 tác vụ trùng.\nMốc gpt-4o-mini:  hạ xuống tham khảo - lợi thế sân nhà."],
+  ["Bộ trỏ chấm còn một\nkiểu hỏng riêng",
+   "15,3% số lần nó bỏ cuộc theo chiều ngang:  trả về giữa màn rồi đoán chiều dọc.\nCó sẵn bốn dấu hiệu để dò, in cạnh con số chính."],
+  ["Nhánh đưa sẵn lúc chạy\nbị thiệt ba mặt",
+   "Câu nhắc dài gấp 2,4 lần vùng đã học · cắt còn 40/72 phần tử · 14,1% có tên.\nNhánh này thua thì không kết luận được gì."]
+];
+yeu.forEach((r, i) => {
+  const y = 1.05 + i * 1.72;
+  block(M, y, W - 2 * M, 1.55);
+  text(r[0], { x: M + 0.22, y, w: 2.5, h: 1.55, fontSize: 12.5, bold: true, color: NAVY, valign: "middle", margin: 0, lh: 1.3 });
+  text(r[1], { x: M + 2.85, y, w: W - 2 * M - 3.15, h: 1.55, fontSize: 11.5, valign: "middle", margin: 0, lh: 1.35 });
+});
+text("Cả ba ghi trong bản đăng ký, trước khi có kết quả.", { x: M, y: 6.3, w: W - 2 * M, h: 0.45, fontSize: 13, italic: true, color: MAROON, margin: 0 });
+note(`Slide này cố ý đặt trước phần tóm tắt. Lý do: ba chỗ này thầy hoặc hội đồng sẽ tìm ra, tự khai trước thì mất ít điểm hơn nhiều so với bị vặn. Chỗ thứ nhất là nặng nhất, và đừng nhận lỗi dài dòng - chỉ cần nói đây là tập giữ riêng theo tác vụ chứ không theo ứng dụng, em kiểm ra và khai luôn. Điều quan trọng phải nói kèm: phép so chính không hỏng vì hai bản dùng chung dữ liệu dạy, chung mô hình gốc, chung tập kiểm - chỉ khác đúng đích sinh.`);
+foot(); done();
+
+// ═══════════════ 23 · TÓM TẮT ═══════════════
 slide();
 bar("Tóm tắt");
 const sums = [
   ["Sản phẩm", "Mô hình 3 tỉ tham số chạy trên máy: nhìn ảnh và câu hỏi, viết hướng dẫn cho người đọc"],
   ["Đóng góp", "Bắt mô hình xác định rõ mục tiêu trước khi viết: dòng khai báo trước câu, và khoản phạt câu mơ hồ"],
-  ["Vì sao tin", "Nhắm đúng lỗi đã đo được · có bằng chứng trên chính bộ dữ liệu · đối chứng khoá trước · thước tự kiểm"]
+  ["Đang ở đâu", "Thiết kế đã khoá, có mốc thời gian · thước đã kiểm và qua cổng · dữ liệu đã dựng đủ · bản thường đang huấn luyện, sáng mai có điểm đầu tiên"],
+  ["Xin thầy cho ý kiến", "Cách đọc kết quả cho cả ba kịch bản, chốt trước khi số về"]
 ];
 sums.forEach((r, i) => {
-  block(M, 1.15 + i * 1.55, W - 2 * M, 1.35);
-  text(r[0], { x: M + 0.22, y: 1.28 + i * 1.55, w: 2.2, h: 1.0, fontSize: 14.5, bold: true, color: NAVY, margin: 0 });
-  text(r[1], { x: M + 2.5, y: 1.15 + i * 1.55, w: W - 2 * M - 2.8, h: 1.35, fontSize: 13.5, valign: "middle", margin: 0, lh: 1.35 });
+  block(M, 1.1 + i * 1.32, W - 2 * M, 1.15);
+  text(r[0], { x: M + 0.22, y: 1.1 + i * 1.32, w: 2.3, h: 1.15, fontSize: 14, bold: true, color: i >= 2 ? RED : NAVY, valign: "middle", margin: 0 });
+  text(r[1], { x: M + 2.6, y: 1.1 + i * 1.32, w: W - 2 * M - 2.9, h: 1.15, fontSize: 12.5, valign: "middle", margin: 0, lh: 1.35 });
 });
 foot(); done();
 
@@ -432,24 +487,24 @@ function backup(title, img, caption, iw, noteTxt) {
   done();
 }
 
-backup("Nguồn số:  Aguvis (ICML 2025), Table 6", "../report/_papers/aguvis_table6.png",
+backup("Nguồn số:  Aguvis (ICML 2025), Table 6", "../../report/paper_figures/aguvis_table6.png",
   "Cột AndroidControl Low-Level:  80,5 → 69,1 khi bỏ tầng trung gian, tức tụt 11,4\nHai cột kia cho thấy hiệu ứng dồn đúng chỗ:  High-Level chỉ tụt 1,2 · ScreenSpot tụt 5,1", 9.0,
   `Số 11,4 là hiệu hai dòng, bài không in sẵn - khai luôn nếu bị vặn. Đây là bài duy nhất trong bảng chạy trên chính AndroidControl. Họ đo độ đúng thao tác, không đo chất lượng câu, nên chỉ mượn để nói chiều.`);
 
-backup("Nguồn số:  Shikra, Table 1", "../report/_papers/shikra_table1.png",
+backup("Nguồn số:  Shikra, Table 1", "../../report/paper_figures/shikra_table1.png",
   "Cùng mô hình, cùng bài kiểm, chỉ đổi dạng bước trung gian:\nkhông có bước trung gian 88,07  ·  văn xuôi 80,68 (−7,4)  ·  có toạ độ 93,97 (+5,9)", 6.4,
   `Cặp số quyết định thiết kế. Điểm yếu phải tự khai, ghi ngay trong chú thích bảng: "three toy models of Shikra-7B (without using additional datasets) on the CLEVR dataset" - mô hình thí nghiệm nhỏ, chưa tiền huấn luyện, ảnh hình khối nhân tạo. Bằng chứng yếu nhất trong bảng.`);
 
-backup("Nguồn số:  GCoT, Table 5", "../report/_papers/gcot_table5.png",
+backup("Nguồn số:  GCoT, Table 5", "../../report/paper_figures/gcot_table5.png",
   "Cột Average → A-Acc:  LLaVA-7B 70,0 → 74,5 (+4,5)  ·  LLaVA-13B 70,6 → 76,4 (+5,8)\nSố âm hay được trích nằm ở Table 3 và 4 - đó là chế độ ra lệnh cho mô hình chưa huấn luyện", 8.4,
   `Bài hay bị hiểu ngược. Huấn luyện hẳn theo thứ tự định-vị-trước thì tăng cả ba cột, không đánh đổi. Điểm yếu của họ, chủ động khai: họ thay bộ dữ liệu dạy bằng dữ liệu cùng phân bố với bộ đề rồi train lại từ đầu, nên +4,5/+5,8 trộn hai nguyên nhân mà bài không tách. Phép so của mình cùng một bộ dữ liệu, chỉ đổi đích sinh, nên tách được.`);
 
-backup("Nguồn số:  CogCoM (ICLR 2025), Table 4", "../report/_papers/cogcom_table4.png",
+backup("Nguồn số:  CogCoM (ICLR 2025), Table 4", "../../report/paper_figures/cogcom_table4.png",
   "Bỏ 70K dữ liệu chuỗi trung gian ra khỏi huấn luyện:\nTextVQA ↑6,6  ·  MMVet ↑0,2  ·  MathVista ↑0,9 - phải trích cả cụm ba số\nHiệu ứng chỉ nổi ở bài đòi đọc chữ trong ảnh", 8.6,
   `Số duy nhất trong bốn bài mà tác giả in thẳng mức tăng. Trích cả cụm để không mang tiếng chọn số đẹp.`);
 
 // ---- xuất ----
-fs.mkdirSync("_preview_v9", { recursive: true });
+fs.mkdirSync("_preview_v10", { recursive: true });
 const page = `<!doctype html><meta charset="utf-8"><style>@page{size:${W}in ${H}in;margin:0}*{margin:0;box-sizing:border-box}.slide{position:relative;width:${W}in;height:${H}in;overflow:hidden;page-break-after:always;border-bottom:1px solid #ccc}</style>` + htmlSlides.join("\n");
-fs.writeFileSync("_preview_v9/preview.html", page);
-pres.writeFile({ fileName: "../LUAN_VAN_SLIDE_v9.pptx" }).then(f => console.log("PPTX ->", f, "| slides:", htmlSlides.length)).catch(e => console.error("ERR", e));
+fs.writeFileSync("_preview_v10/preview.html", page);
+pres.writeFile({ fileName: "../LUAN_VAN_SLIDE_v10.pptx" }).then(f => console.log("PPTX ->", f, "| slides:", htmlSlides.length)).catch(e => console.error("ERR", e));

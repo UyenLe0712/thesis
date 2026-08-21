@@ -1,0 +1,52 @@
+\chapter*{Danh mục các từ viết tắt, khái niệm và thuật ngữ}
+\addcontentsline{toc}{chapter}{Danh mục các từ viết tắt, khái niệm và thuật ngữ}
+
+\renewcommand{\arraystretch}{1.35}
+\begin{longtable}{@{}p{2.6cm}p{5.4cm}p{6.2cm}@{}}
+\toprule
+\textbf{Viết tắt} & \textbf{Từ đầy đủ} & \textbf{Tiếng Việt / giải thích} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Viết tắt} & \textbf{Từ đầy đủ} & \textbf{Tiếng Việt / giải thích} \\
+\midrule
+\endhead
+
+GUI & Graphical User Interface & Giao diện đồ hoạ người dùng \\
+VLM & Vision--Language Model & Mô hình thị giác--ngôn ngữ \\
+LLM & Large Language Model & Mô hình ngôn ngữ lớn \\
+SFT & Supervised Fine-Tuning & Tinh chỉnh có giám sát \\
+LoRA & Low-Rank Adaptation & Tinh chỉnh hạng thấp \\
+QLoRA & Quantized LoRA & LoRA trên trọng số đã lượng tử hoá \\
+NF4 & 4-bit NormalFloat & Định dạng lượng tử hoá 4 bit \\
+AC & AndroidControl & Bộ dữ liệu điều khiển Android (NeurIPS 2024) \\
+AITW & AndroidInTheWild & Bộ dữ liệu Android quy mô lớn (NeurIPS 2023) \\
+OCR & Optical Character Recognition & Nhận dạng chữ trong ảnh \\
+VH & View Hierarchy & Cây phân cấp khung nhìn của màn hình Android \\
+a11y & Accessibility (tree) & Cây trợ năng; nguồn khai báo vai trò và tên phần tử \\
+REG & Referring Expression Generation & Sinh biểu thức quy chiếu (mô tả phân biệt một đối tượng) \\
+MDE & Minimum Detectable Effect & Mức chênh lệch nhỏ nhất còn phân biệt được với nhiễu \\
+KTC & (Confidence Interval) & Khoảng tin cậy \\
+dp & density-independent pixel & Đơn vị độ dài độc lập mật độ điểm ảnh trên Android \\
+pp & percentage point & Điểm phần trăm (chênh lệch tuyệt đối giữa hai tỉ lệ) \\
+\midrule
+\multicolumn{3}{@{}l@{}}{\textit{Thuật ngữ riêng của luận văn}} \\
+\midrule
+\multicolumn{2}{@{}p{8.2cm}}{\textit{executability} (tính thực thi được)}
+& Thước đo đề xuất: câu hướng dẫn được coi là đúng khi một mô hình định vị độc lập,
+không thấy đáp án, chỉ đúng phần tử người dùng đã chạm \\
+\multicolumn{2}{@{}p{8.2cm}}{Mô hình định vị phần tử (\textit{GUI grounding model})}
+& Mô hình nhận một câu mô tả và một ảnh màn hình, trả về toạ độ phần tử được mô tả.
+Trong luận văn giữ vai \textbf{dụng cụ đo}, không phải đối tượng so sánh \\
+\multicolumn{2}{@{}p{8.2cm}}{Bộ mô tả (\textit{descriptor})}
+& Dòng khai báo bốn ô \code{[vai trò | tên | toạ độ | dấu hiệu phân biệt]} mà mô hình
+phải sinh trước câu hướng dẫn ở nhánh S2 \\
+\multicolumn{2}{@{}p{8.2cm}}{Ô Voronoi}
+& Vùng trên màn gồm mọi điểm gần phần tử đích hơn mọi phần tử khác; dùng làm luật
+xác định ``trúng'' thay cho ngưỡng dung sai cố định \\
+\multicolumn{2}{@{}p{8.2cm}}{Bước chạm}
+& Bước thao tác có loại hành động là chạm/nhấn, tức có toạ độ đích; đây là quần thể
+được chấm điểm \\
+\bottomrule
+\end{longtable}
+\clearpage

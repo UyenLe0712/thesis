@@ -1,0 +1,427 @@
+\chapter{Thực nghiệm và kết quả}
+\label{ch:thucnghiem}
+
+\section{Thiết lập thực nghiệm}
+
+Ba nhánh được chấm trên toàn bộ quần thể bước chạm của tập kiểm: mô hình gốc chưa tinh
+chỉnh (\textbf{Base}), mô hình sau tinh chỉnh trên nhánh chỉ sinh câu, hạt giống $101$
+(\textbf{S1}), và câu do người viết (\textbf{Trần}). Trong $4.463$ bước, S1 trả về câu
+rỗng ở đúng một bước, tính là trượt. Mọi điểm tuyệt đối và khoảng tin cậy trong chương
+này đo trên đủ $4.463$ bước; riêng các phép so ghép cặp chạy trên $4.462$ bước được cả ba
+nhánh trả lời. Hai quần thể chênh nhau một bước nên không đại lượng nào đổi sau khi làm
+tròn tới một chữ số thập phân.
+
+Khâu sinh câu chạy trên card A100 ngay sau khi huấn luyện, khi trọng số còn nằm sẵn trong
+bộ nhớ. Khâu chấm chạy trên card T4 miễn phí, mất khoảng $5{,}6$ giờ cho mỗi nhánh, và
+không tốn chi phí.
+
+\subsection{Ghi nhận về lượt huấn luyện}
+
+Lượt S1 hạt giống $101$ chạy đủ $8.072$ bước tương ứng hai lượt duyệt toàn bộ $64.567$
+mẫu, tệp bộ chuyển đổi đầu ra nặng $59{,}9$ MB. Tổng số phép tính \code{total\_flos} là
+$4.142.257.957$ GF, tức $513.164$ GF cho mỗi bước.
+
+Con số đó là bằng chứng cho thấy toàn bộ $8.072$ bước đã thực sự chạy, dù lượt huấn luyện
+bị gián đoạn sáu lần do mất máy ảo, và cơ chế chạy tiếp từ điểm lưu không làm mất cũng
+không làm lặp bước nào. Cách lập luận ở đây đáng nói, vì bản trước của chương này dùng một
+lập luận \emph{vòng tròn}: nó so \code{total\_flos} với chính phép ngoại suy từ lượt thăm
+dò đã đẻ ra kỳ vọng ấy. Bằng chứng thay thế không có khuyết điểm đó là so hai lượt huấn
+luyện \emph{độc lập} có số lần gián đoạn khác hẳn nhau --- hạt giống $101$ đứt sáu lần,
+hạt giống $202$ đứt ba lần --- mà \code{total\_flos} trên mỗi bước khớp nhau trong
+$0{,}013\%$ ($513.164$ so với $513.229$). Nếu khâu kế toán sai sau mỗi lần chạy tiếp thì
+hai lượt phải lệch nhau theo số lần đứt.
+
+Cũng cần ghi nhận rằng ngoại suy từ lượt thăm dò lệch tới $7{,}7\%$ chứ không phải
+$0{,}32\%$, vì lượt thăm dò chạy với \code{max\_samples} nên chỉ lấy phần đầu của tập
+\emph{chưa trộn}, độ dài chuỗi không đại diện cho toàn tập.
+
+Đường mất mát gộp theo $200$ bước đi từ $1{,}103$ ở giai đoạn đầu, giai đoạn mô hình học
+định dạng đầu ra, xuống $0{,}611$ ở bước $2.000$, có một nhịp tụt đúng tại ranh giới lượt
+duyệt thứ hai ở bước $4.036$, và phẳng ở mức $0{,}455$ về cuối. Đuôi phẳng là do tốc độ
+học đã xuống $2{,}28 \times 10^{-7}$ theo đúng lịch cosine; đó là dấu hiệu kết thúc sạch
+chứ không phải dấu hiệu hỏng. Cần lưu ý hai điều: nhịp tụt ở lượt duyệt thứ hai \emph{không} phải bằng
+chứng khái quát tốt hơn, vì gặp lại dữ liệu lần hai thì mất mát huấn luyện giảm là đương
+nhiên; và không nên ngoại suy đường mất mát: một dự báo sàn từng được đưa ra rồi phải
+rút vì thực tế đi thấp hơn nhiều.
+
+Một ghi chú về tái lập: sau khi chạy tiếp từ điểm lưu, ba trường trong tệp kết quả tổng
+hợp của khung huấn luyện bị sai và không được trích dẫn. Trường mất mát huấn luyện báo
+$0{,}0151$ vì khung cộng mất mát chỉ từ lúc khởi động lại ($272$ bước) rồi chia cho toàn
+bộ $8.072$ bước; giá trị thật xấp xỉ $0{,}447$, kiểm được bằng phép nhân ngược. Mọi đại
+lượng mà khung chia cho thời gian trôi qua đều hỏng theo cùng cơ chế. Các số đúng lấy từ
+tệp trạng thái của bộ huấn luyện.
+
+\section{Kết quả chính}
+
+\begin{table}[t]
+\caption{Thước đo áp lên ba nhánh trên quần thể $4.463$ bước chạm, kèm hai thước dựa trên
+câu chuẩn. Executability đọc trên nền $75{,}7\%$.}
+\label{tab:chinh}
+\centering\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}lccrr@{}}
+\toprule
+Nhánh & Exec. & KTC 95\% & BLEU-4 & ROUGE-L \\
+\midrule
+Base (chưa tinh chỉnh) & $47{,}6$ & $[45{,}9; 49{,}3]$ & $9{,}7$ & $40{,}3$ \\
+S1 (hạt giống $101$) & $59{,}1$ & $[57{,}3; 60{,}8]$ & $38{,}7$ & $67{,}3$ \\
+S1 (hạt giống $202$) & $59{,}6$ & $[57{,}9; 61{,}3]$ & --- & --- \\
+S1 (trung bình hai hạt giống) & $\mathbf{59{,}4}$ & --- & --- & --- \\
+\midrule
+\emph{Câu do người viết (trần)} & $75{,}7$ & $[74{,}1; 77{,}3]$ & $96{,}1$ & $100{,}0$ \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.4em}
+\begin{minipage}{0.95\columnwidth}\footnotesize
+Ba nhánh còn lại (S2 hai hạt giống, S2r, S2-nopoint) cùng nhánh
+B-infer đã đăng ký và đã dựng xong dữ liệu nhưng chưa chạy xong tại thời điểm nộp;
+trạng thái từng nhánh ở Bảng~\ref{tab:trangthai}.
+\end{minipage}
+\end{table}
+
+Bảng~\ref{tab:chinh} cho kết quả chính. Bảng~\ref{tab:phanra} tách điểm thành các thành
+phần hợp thành để thấy phần nào đóng góp vào đâu.
+
+\begin{table}[t]
+\caption{Phân rã điểm số theo từng điều kiện của thước.}
+\label{tab:phanra}
+\centering\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Nhánh & Executable & Chỉ ô Voronoi & Khớp thao tác & Ngưỡng dung sai \\
+\midrule
+Trần (câu người viết) & $75{,}7$ & $75{,}8$ & $100{,}0$\textsuperscript{$*$} & $84{,}3$ \\
+S1 (hạt giống $101$) & $59{,}1$ & $60{,}2$ & $94{,}4$ & $69{,}2$ \\
+S1 (hạt giống $202$) & $59{,}6$ & $60{,}7$ & $94{,}6$ & $69{,}8$ \\
+Base & $47{,}6$ & $48{,}9$ & $96{,}5$ & $57{,}6$ \\
+\bottomrule
+\multicolumn{5}{@{}p{12.4cm}@{}}{\footnotesize \textsuperscript{$*$}Vì câu dự đoán chính
+là câu chuẩn nên điều kiện khớp thao tác đúng theo định nghĩa; điểm rút gọn về phần định
+vị. Đó chính là ý nghĩa của trần.}
+\end{tabular}
+\end{table}
+
+\paragraph{Một kết cục có thể chấm dứt nghiên cứu đã bị loại trừ.} Nếu nhánh nền đã sát
+mức câu người viết thì không còn chỗ cho bất kỳ can thiệp nào, và bản đăng ký trước yêu
+cầu dừng lại trong trường hợp đó. Điều đó không xảy ra: ba khoảng tin cậy rời nhau hoàn
+toàn. Thước cũng không suy biến về sàn.
+
+\section{So sánh ghép cặp}
+
+Vì cả ba nhánh được chấm trên cùng một tập bước, phép so đúng là phép so ghép cặp
+(McNemar). Bảng~\ref{tab:mcnemar} cho kết quả; cả ba đều có $p < 0{,}001$.
+
+\begin{table}[t]
+\caption{So sánh ghép cặp trên $4.462$ bước. $b$ là số bước nhánh dưới giải được mà nhánh
+trên không giải được, $c$ là chiều ngược lại.}
+\label{tab:mcnemar}
+\centering\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Phép so & $\Delta$ & $b$ & $c$ & $\chi^2$ \\
+\midrule
+S1 $-$ Base & $+11{,}5$ & $284$ & $798$ & $243{,}2$ \\
+Trần $-$ S1 & $+16{,}6$ & $102$ & $843$ & $579{,}5$ \\
+Trần $-$ Base & $+28{,}1$ & $102$ & $1.357$ & $1.077{,}8$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Dòng giữa là dòng đáng chú ý nhất về mặt thiết kế: có \textbf{$843$ bước mà câu do người
+viết định vị được còn S1 thì không}. Đó chính là vùng mà nhánh S2 có thể cải thiện, và nó
+là dạng ghép cặp của con số ``dư địa'' ở Mục~\ref{sec:dudia}.
+
+Sai số chuẩn của hiệu ghép cặp là $0{,}79$ điểm dưới bootstrap gom cụm, so với $1{,}05$
+điểm nếu tính như hai tỉ lệ độc lập.
+
+Với lượt huấn luyện này, tinh chỉnh trên tập giám sát dựng tự động đáng giá $11{,}5$ điểm
+và đóng được $41\%$ khoảng cách giữa mô hình chưa tinh chỉnh và mức câu người viết. Tỉ lệ
+đó \emph{cao hơn thực chất} do một phần tư số bước mà S1 chép lại câu chuẩn: trên $3.367$ bước
+mà mô hình tự viết ra câu của mình, ba nhánh đọc lần lượt $44{,}7$, $53{,}1$ và $75{,}0$,
+và phần đóng được chỉ là $28\%$.
+
+\paragraph{Mức câu người viết không phải chặn trên của cái đạt được.} Hợp của ba nhánh
+giải được $3.527$ bước, tức $79{,}1\%$, và trong số các bước mà câu người viết trượt có
+$148$ bước được một mô hình giải đúng. Cái mà $75{,}7\%$ đo là một lớp câu cụ thể đi được
+tới đâu với dụng cụ này.
+
+\section{Lặp lại lượt huấn luyện: nhiễu của cả đường ống}
+\label{sec:haihatgiong}
+
+Một chênh lệch chỉ đáng tin nếu nó lớn hơn mức mà \emph{dựng lại chính hệ thống đó} làm
+điểm xê dịch. Luận văn huấn luyện S1 lần thứ hai với hạt giống khác, mọi khoá cấu hình còn
+lại kiểm khớp $38/38$.
+
+\begin{table}[t]
+\caption{Hai lượt huấn luyện chỉ khác hạt giống, chấm trên cùng $4.462$ bước.}
+\label{tab:haihatgiong}
+\centering\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+& Điểm & $\Delta$ ghép cặp & Bước bất đồng \\
+\midrule
+S1 hạt giống $101$ & $59{,}12\%$ & \multirow{2}{*}{$+0{,}52$ pp} & \multirow{2}{*}{$287 = 6{,}4\%$} \\
+S1 hạt giống $202$ & $59{,}64\%$ & & \\
+\midrule
+\emph{đối chiếu}: S1 $-$ Base & & $+11{,}5$ pp & $1.082 = 24{,}2\%$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+KTC 95\% của chênh lệch giữa hai hạt giống là $[-0{,}21; +1{,}28]$ --- \emph{chứa số không},
+và McNemar không bác ($b = 132$, $c = 155$, $p = 0{,}194$). Đó đúng là thứ một giả thuyết
+không phải cho ra.
+
+\paragraph{Tỉ lệ bước bất đồng phân biệt tốt hơn con số chênh lệch.} Hai lượt chỉ khác hạt
+giống bất đồng ở $6{,}4\%$ số bước; một can thiệp thật làm bất đồng $24{,}2\%$. Chênh lệch
+$11{,}5$ điểm vì vậy lớn gấp \textbf{$22$ lần} nhiễu dựng lại về độ lớn, và gấp $3{,}8$ lần
+về tỉ lệ xáo trộn.
+
+\paragraph{Không một phần nào của nhiễu ấy đến từ thước.} Trên $2.810$ bước mà hai lượt
+viết ra câu \emph{trùng nhau từng byte}, mô hình định vị trả về toạ độ giống hệt và phán
+quyết giống hệt, $2.810/2.810$. Toàn bộ biến thiên quan sát được là biến thiên của
+\emph{hệ thống được đo}, không phải của \emph{dụng cụ đo}.
+
+\paragraph{Độ tin cậy lặp lại, và một con số dễ đọc nhầm.} Mức đồng thuận từng bước giữa
+hai lượt là $93{,}6\%$ ($\kappa = 0{,}867$). Nhưng $63\%$ số cặp là câu trùng từng byte,
+nơi một thước tất định \emph{buộc} phải đồng thuận. Trên $1.652$ bước hai lượt thật sự viết
+khác nhau, con số là $82{,}6\%$ ($\kappa = 0{,}650$), và \textbf{đó mới là số nên trích}.
+Điểm theo từng ứng dụng tương quan $r = 0{,}927$ trên $18$ ứng dụng có ít nhất $20$ bước.
+
+\paragraph{Mọi lát cắt chẩn đoán đều lặp lại.} Sáu lát ở Mục~\ref{sec:latcat} được tính
+lại trên hạt giống thứ hai: cả sáu cùng dấu, lệch nhau nhiều nhất $0{,}9$ điểm. Riêng lát
+``ứng dụng chưa thấy lúc dạy'' trùng khít, $+14{,}1$ và $+14{,}1$. Thắng--hoà--thua theo cụm
+cũng vậy: $395/565/131$ và $406/572/113$ trên $1.091$ cụm.
+
+\section{Kết luận này có đứng vững không?}
+\label{sec:phanbien}
+
+Chênh lệch $11{,}5$ điểm cho phép nhiều cách đọc khác nhau. Bảy cách đọc thay thế được
+xem xét trên bản ghi từng bước; năm cách bị bác, hai cách còn lại chưa bác được và được
+giữ nguyên trong bảng thay vì bỏ đi (Bảng~\ref{tab:phanbien}).
+
+\begin{table}[t]
+\caption{Bảy cách giải thích thay thế cho chênh lệch S1 trên Base, và kết quả kiểm.
+Năm cách bị bác; hai cách cuối chưa bác được.}
+\label{tab:phanbien}
+\centering\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}p{3.2cm}p{9.2cm}@{}}
+\toprule
+Cách đọc thay thế & Kết quả kiểm \\
+\midrule
+Do điều kiện khớp thao tác gánh &
+bỏ hẳn điều kiện đó, chấm riêng phần định vị, vẫn còn $+11{,}3$ điểm ($b=272$, $c=777$).
+Hơn nữa Base gọi \emph{đúng} loại thao tác nhiều hơn ($96{,}5\%$ so với $94{,}4\%$) \\[0.3em]
+
+Chỉ thắng ở một vị trí bước &
+bước mở đầu tác vụ $+15{,}0$ ($n=593$, $[+11{,}0; +19{,}1]$), các bước sau $+11{,}0$
+($[+9{,}4; +12{,}6]$); hai khoảng giao nhau nên không kết luận được thứ tự theo vị trí,
+nhưng cả hai đều dương \\[0.3em]
+
+Chỉ thắng ở màn dễ &
+chia ba theo số phần tử trên màn: $+12{,}6$, $+9{,}5$, $+12{,}4$; các khoảng giao nhau,
+không tầng nào đảo chiều \\[0.3em]
+
+Vài ứng dụng kéo cả bảng &
+trên $1.091$ cụm, S1 thắng $395$, hoà $565$, thua $131$ \\[0.3em]
+
+Chỉ là bắt chước văn phong &
+\textbf{không bác được theo cách này}: S1 mở đầu bằng động từ chạm nhiều hơn Base
+($91{,}0\%$ so với $86{,}1\%$; câu người viết $95{,}1\%$), tức nó thực sự nằm gần văn
+phong người chú thích hơn \\[0.3em]
+
+Do dụng cụ đo đã quen văn phong &
+\textbf{chưa kiểm được}: đòi hỏi một mô hình định vị thứ hai đã xác minh sạch
+AndroidControl. Đây là cách đọc thay thế mạnh nhất còn lại (Mục~\ref{sec:hanche}) \\[0.3em]
+
+Do chép lại câu chuẩn &
+$1.095$ trong $4.462$ câu của S1 lặp đúng các từ nội dung của câu chuẩn. Chấm riêng
+$3.367$ bước mà mô hình tự viết, S1 vẫn hơn $+8{,}4$ điểm ($b=264$, $c=547$,
+$\chi^2 = 98{,}1$, $p<0{,}001$) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Dòng cuối là dòng quan trọng nhất và là dòng mà một thước dựa trên câu chuẩn không thể tự
+kiểm giúp. Lợi thế của S1 lớn hơn hẳn trên nhóm bước chép lại ($+21{,}1$ điểm), nên một
+phần những gì tinh chỉnh mua được đúng là cách diễn đạt nguyên văn của người chú thích;
+nhưng thứ tự giữa hai nhánh không dựa vào phần đó.
+
+Riêng lập luận về \emph{độ dài câu} cần bàn tách ra. Thước có thiên vị câu dài: chia đôi ở độ
+dài trung vị $33$ ký tự cho $61{,}9\%$ so với $56{,}5\%$, và trên nhóm bước mà S1 tự viết
+thì chênh lệch là $9{,}6$ điểm. Tuy nhiên, thiên vị đó \emph{nghiêng về phía Base}: độ dài
+trung vị câu của Base là khoảng $70$ ký tự, của S1 là $33$, của người viết là $34$. S1
+thắng \emph{dù chịu bất lợi} về độ dài, nên kết luận vì vậy mạnh lên. Cần nói
+thêm rằng thiên vị này không phải quy luật chung của thước, vì trong nội bộ nhánh Base
+câu dài lại kém hơn $1{,}4$ điểm, nên nó phải được đo riêng cho từng nhánh.
+
+\section{Lỗi nằm ở đâu}
+\label{sec:latcat}
+
+Bốn quan sát từ bản ghi từng bước ràng buộc cách đọc nhánh xử lý về sau.
+
+\subsection{Không quan sát thấy lợi thế sân nhà}
+
+Đây là phản biện nặng nhất mà luận văn tự nêu ra: nếu $95{,}6\%$ số bước quy được tên của tập
+kiểm thuộc về ứng dụng cũng có ở tập dạy thì điểm số bị thổi lên. Bảng~\ref{tab:sannha} đo trực tiếp.
+
+\begin{table}[t]
+\caption{Điểm S1 theo tình trạng ứng dụng của bước.}
+\label{tab:sannha}
+\centering\small
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Nhóm & S1 & $n$ \\
+\midrule
+Ứng dụng đã thấy lúc dạy & $59{,}1\%$ & $1.737$ \\
+Ứng dụng \emph{chưa} thấy & $59{,}0\%$ & $78$ \\
+Không quy được về ứng dụng & $59{,}2\%$ & $2.647$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Ba con số gần như trùng nhau. Với $78$ bước thì khoảng tin cậy của nhóm chưa thấy rất
+rộng, nên phát biểu đúng là \emph{không phát hiện được ảnh hưởng}, chứ không phải \emph{đã
+chặn được ảnh hưởng}. Dù vậy, đây là một giới hạn được nêu kèm số đo bên cạnh:
+con số $95{,}6\%$ đọc rất nặng cho tới khi có bảng này đặt bên cạnh.
+
+\subsection{Lỗi còn lại là lỗi mô tả, không phải lỗi chọn thao tác}
+
+Mô hình gọi đúng loại thao tác ở $94{,}4\%$ số bước. Trong $1.824$ bước trượt, chỉ $251$
+bước sai loại thao tác; $1.573$ bước còn lại, tức $86\%$, có loại thao tác đúng và một
+cách diễn đạt mà mô hình định vị không lần ra được. Vài ví dụ thật:
+
+\begin{center}\footnotesize\ttfamily
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\rmfamily câu chuẩn & \rmfamily câu S1 sinh ra \\
+\midrule
+click on the OK option & select minutes 00 \\
+Click on the Sort filter & Click on the Air India flight option \\
+Click on the share icon & Open Recorder app \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Phần lỗi còn lại nằm đúng ở chỗ \emph{cách gọi tên và mô tả phần tử}, tức đúng chỗ mà một
+đích huấn luyện có tầng khai báo nhắm tới. Khác với phép thử tạo động lực ban đầu, quan
+sát này được đo trên mô hình đã huấn luyện thật và trên toàn bộ quần thể.
+
+\subsection{Tinh chỉnh thực sự dạy được gì}
+
+Lấy từ $798$ bước mà S1 đúng còn Base sai, hai kiểu hỏng của Base hiện ra rõ:
+
+\begin{center}\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{0.95\textwidth}{@{}lX@{}}
+\toprule
+chuẩn & \ttfamily Click on the profile icon at the top right of the screen \\
+S1 & \ttfamily Click on the profile icon at the top right corner of the screen \\
+Base & \ttfamily To set YouTube video downloads over Wi-Fi only, tap on your profile
+icon at the top right corner of the screen and select ``Settings.'' Then navigate to the
+``Downloads'' section and choose ``Wi-Fi Only.'' \\
+\midrule
+chuẩn & \ttfamily Click on Knoxville \\
+S1 & \ttfamily Click on Knoxville \\
+Base & \ttfamily Click on the three dots next to Knoxville to access more options and
+proceed with reading the local news. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Kiểu thứ nhất là trả lời cả kế hoạch thay vì một bước; kiểu thứ hai là lạc sang một bước
+khác. Cả hai đều không phải lỗi về khả năng viết tiếng Anh: Base viết câu trôi chảy,
+đúng khuôn, gọi tên nút cụ thể. Thứ tinh chỉnh dạy được là \textbf{bám đúng bước hiện
+tại}. Điều này làm cho Base trở thành một mốc so sạch, không lẫn với chuyện ``mô hình
+không theo khuôn định dạng''.
+
+\subsection{Dư địa nhỏ hơn số bước trượt gợi ý}
+\label{sec:dudia}
+
+Câu người viết cũng trượt ở $1.083$ trong số các bước này, và như Mục~\ref{sec:vungmu}
+cho thấy, phần lớn là giới hạn của dụng cụ. Dư địa quy được về cách diễn đạt chưa tốt vào
+khoảng $741$ bước, tức $16{,}6$ điểm; dạng ghép cặp của nó là $843$ bước mà câu người viết
+giải được còn S1 thì không.
+
+Đặt cạnh MDE ghép cặp đo được là $2{,}2$ điểm, một can thiệp chỉ cần sửa khoảng $13\%$ dư
+địa đó là đủ để phát hiện. Mức hiệu ứng trung vị mà văn liệu báo cáo cho các can thiệp
+tương đương nằm trên dải này, nhưng một kết quả không có tác dụng vẫn là kết cục còn sống
+và đã có luật đọc sẵn.
+
+\section{Vùng mù của thước}
+\label{sec:vungmu}
+
+Câu người viết trượt ở $1.083$ bước, và không phải tất cả đều do mô hình định vị.
+
+Ở $64{,}8\%$ số bước đó, điểm trả về nằm hẳn ngoài vùng dung sai, tức mô hình định vị
+\emph{bỏ cuộc} chứ không phải định vị lệch. Sai số của nó lưỡng cực rõ rệt: trung vị
+$0{,}4\%$ ở những bước thành công so với $26{,}2\%$ ở những bước thất bại, gần như không
+có vùng giữa.
+
+$381$ bước còn lại vượt qua ngưỡng dung sai nhưng bị chính luật ô Voronoi bác; ở $208$
+bước trong số đó, điểm nằm ngay bên trong hộp nhỏ nhất chứa điểm chạm; trên một phần tử
+lớn, một phần tử con cạnh tranh với chính phần tử cha của nó. Tính theo nhánh, luật ô
+Voronoi lật $10{,}1\%$ số bước đã qua ngưỡng dung sai của câu người viết, $13{,}0\%$ của S1
+và $15{,}2\%$ của Base.
+
+Theo chiều ngược lại, thước mù với các độ lệch dưới khoảng $63$ điểm ảnh
+(Mục~\ref{sec:bomloi}). Và $935$ bước, tức $21\%$ quần thể, đánh bại cả ba nhánh.
+
+Từ đó rút ra phát biểu quan trọng nhất về cách đọc mọi con số trong chương này:
+\textbf{trần $75{,}7\%$ là giới hạn của dụng cụ đo, không phải giới hạn của ngôn ngữ}.
+Nghi ngờ rằng trần thấp là do câu chuẩn quá cụt cũng đã được kiểm và bác: lọc riêng những
+bước có câu chuẩn từ ba từ trở xuống cho trần $77{,}0\%$, không khá hơn bao nhiêu.
+
+Một phép kiểm liên quan tới lo ngại ``mô hình có thể leo thước bằng cách viết cho dụng cụ
+đo thay vì viết cho người'': câu nêu tên một vùng trên màn đạt $89{,}5\%$ khi vùng đó
+đúng và $3{,}3\%$ khi vùng đó sai, so với $54{,}8\%$ cho câu không nêu vùng nào. Nghĩa là
+phần thưởng dành cho việc \emph{nói đúng} vị trí, không phải cho việc \emph{có nhắc tới}
+vị trí. S1 dùng từ chỉ vị trí ở $26{,}8\%$ số câu so với $26{,}4\%$ của người viết, và
+chuỗi toạ độ chỉ xuất hiện ở $0{,}04\%$ số câu, đúng bằng tỉ lệ của người viết. Điều S1
+làm nhiều hơn là dùng khuôn mẫu: hai mươi câu phổ biến nhất của nó phủ $10{,}4\%$ quần
+thể so với $6{,}5\%$ của người viết. Nhánh S2, vốn được huấn luyện để sinh toạ độ, cần
+được kiểm lại điểm này trước khi đọc điểm số của nó.
+
+\section{Các nhánh đã đăng ký nhưng chưa có kết quả}
+\label{sec:chuachay}
+
+Tại thời điểm hoàn thành bản này, các nhánh sau đã đăng ký và đã dựng xong dữ liệu nhưng
+chưa chạy xong. Các ô số tương ứng được để trống.
+
+\begin{table}[t]
+\caption{Trạng thái các nhánh còn lại và điều kiện phụ thuộc.}
+\label{tab:trangthai}
+\centering\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}p{2.9cm}p{3.4cm}p{5.9cm}@{}}
+\toprule
+Nhánh & Trạng thái & Phụ thuộc \\
+\midrule
+S1 hạt giống $202$ & \textbf{đã xong, đã chấm} & nhiễu hạt giống $+0{,}52$ điểm, Mục~\ref{sec:haihatgiong} \\
+S2 $\times 2$ hạt giống & chưa chạy & sau khi khoá ngưỡng từ cặp hạt giống S1 \\
+S2r & chưa chạy & cần để quy công cho tính phân biệt \\
+S2-nopoint & chưa chạy & cần để tách phần công của ô toạ độ \\
+B-infer & chưa chạy & không chặn nhánh nào \\
+S3 (khoản phạt mức hai) & \textbf{chưa có mã hàm mất mát} & sau cổng riêng \\
+Chấm tay $100$ câu, hai người & chưa chạy & cần câu do mô hình sinh \\
+Kiểm không-gây-hại & chưa chạy & chạy cùng lượt chấm S2 \\
+Kiểm chéo bằng mô hình định vị thứ hai & chưa chạy & xử lý giới hạn ở Mục~\ref{sec:hanche} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Đại lượng chính của luận văn, $\Delta = \text{S2} - \text{S1}$, vì vậy \textbf{chưa được
+báo cáo}, và luận văn không viết bất kỳ phát biểu nào về hiệu quả của thành phần ``mô tả
+phân biệt trước, phát ngôn sau''. Việc thay thế đại lượng đó bằng phép so S1 với Base,
+vốn đã có số, sẽ là đổi câu hỏi sau khi đã nhìn thấy dữ liệu, và bản đăng ký trước cấm
+điều đó.
+
+Khi các lượt chạy hoàn tất, các con số cần điền vào đúng ba chỗ: dòng tương ứng trong
+Bảng~\ref{tab:chinh}, một bảng ghép cặp theo mẫu Bảng~\ref{tab:mcnemar}, và ba lát cắt đã
+công bố trước ở Mục~\ref{sec:dangky}.

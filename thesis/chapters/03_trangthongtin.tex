@@ -1,0 +1,156 @@
+\chapter*{Trang thông tin luận văn}
+\addcontentsline{toc}{chapter}{Trang thông tin luận văn tiếng Việt}
+\begin{center}\textbf{\large TRANG THÔNG TIN LUẬN VĂN}\end{center}
+
+\renewcommand{\arraystretch}{1.25}
+\noindent\begin{tabularx}{\textwidth}{@{}lX@{}}
+Tên đề tài luận văn: & \TenDeTaiMotDong. \\
+Ngành: & \Nganh \\
+Mã số ngành: & \MaNganh \\
+Họ và tên HVCH: & \HocVien \\
+Khóa đào tạo: & \Khoa \\
+GVHD: & \GVHD \\
+Cơ sở đào tạo: & Trường ĐH Khoa học Tự nhiên, ĐHQG-HCM \\
+\end{tabularx}
+
+\subsection*{1. Tóm tắt nội dung luận văn}
+
+Các mô hình giao diện hiện nay sinh ra toạ độ để máy tự bấm. Luận văn nghiên cứu một
+đầu ra khác trên cùng dữ liệu vào: một câu tiếng Anh nói cho \emph{người đọc} biết phải
+chạm vào phần tử nào trên màn hình. Trở ngại chính không nằm ở khâu sinh câu mà ở khâu
+chấm: cùng một nút có nhiều cách gọi tên hợp lệ, nên không câu chuẩn đơn lẻ nào gánh
+được vai trò đáp án.
+
+Luận văn đề xuất thước đo \textbf{executability}: câu sinh ra được đưa cho một mô hình
+định vị phần tử độc lập, mô hình này không hề thấy toạ độ đáp án; bước được tính đúng
+khi điểm nó trả về rơi vào ô Voronoi của phần tử người dùng đã chạm và loại thao tác
+được gọi tên đúng. Thước được kiểm bằng bốn phép độc lập trước khi dùng để kết luận:
+một cổng chặn về sai số của dụng cụ đo (đạt: sai số trung vị $0{,}7\%$ bề ngang màn so
+với ngưỡng $3\%$ khoá trước), một phép chọn luật trúng dựa trên \emph{sàn} đo được (luật
+dung sai quy ước cho điểm $84{,}3\%$ số câu chỉ sai nút, luật ô Voronoi chỉ $2{,}8\%$),
+một phép đo trần ($75{,}7\%$, KTC 95\% $[74{,}1; 77{,}3]$ khi đưa chính câu người viết đi
+chấm), và một bộ bơm lỗi với ngưỡng đóng băng trước khi chạy.
+
+Về phía mô hình, luận văn xây dựng hoàn toàn tự động một tập giám sát $64.567$ bước từ
+bộ AndroidControl, không thuê người dán nhãn, đã kiểm rò rỉ dạy--kiểm ở quy mô đủ và
+không tìm thấy tác vụ nào trùng. Thành phần đề xuất là ``mô tả phân biệt trước, phát
+ngôn sau'': đích huấn luyện chứa một dòng khai báo có cấu trúc về phần tử đích trước khi
+tới câu, và dòng khai báo bị cắt bỏ trước khi chấm.
+
+Trên $4.463$ bước chạm của tập kiểm, mô hình Qwen2.5-VL-3B tinh chỉnh QLoRA đạt
+$59{,}1\%$ so với $47{,}6\%$ của chính mô hình đó khi chưa tinh chỉnh; chênh lệch ghép
+cặp $11{,}5$ điểm ($p<0{,}001$) đứng vững qua năm cách giải thích thay thế, còn cách thứ
+sáu (bắt chước văn phong) chưa loại trừ được.
+
+\subsection*{2. Những kết quả mới của luận văn}
+
+\begin{itemize}[leftmargin=1.4em]
+\item \textbf{Thước đo không cần đáp án tham chiếu cho bài toán sinh hướng dẫn giao
+diện.} Luật trúng được chọn dựa trên hành vi đo được với đầu vào sai nút, không dựa
+trên ngưỡng dung sai quy ước; thứ tự giữa các hệ thống giữ nguyên dưới năm luật chấm
+khác nhau.
+
+\item \textbf{Trần của thước được đo, không phải giả định.} Đưa chính câu do người viết
+đi chấm cho $75{,}7\%$; mọi điểm số của mô hình phải đọc trên nền này chứ không phải
+trên nền $100$. Ước lượng cũ $70{,}0\%$ dựa trên mẫu con $300$ bước lệch $5{,}7$ điểm và
+đã bị rút.
+
+\item \textbf{Đường ống dữ liệu tự động.} Chuyển AndroidControl thành tập giám sát cho
+tác vụ mới: ghép hai bản phân phối trên Hugging Face, kiểm phép ghép bằng đối chứng lệch
+một bước ($48\%$ so với $20\%$), dựng nhãn mô tả từ cây trợ năng kết hợp OCR, chín bất
+biến cấu trúc đều đạt ở quy mô đủ.
+
+\item \textbf{Bản đăng ký trước có luật đọc cho cả bốn kết cục}, đưa vào kho phiên bản
+trước lượt huấn luyện đầu tiên; mọi thay đổi về sau ghi thành mục sửa đổi có ngày.
+
+\item \textbf{Định vị bài toán.} Trong bộ AndroidControl gốc và trong các công trình
+dùng bộ này, câu hướng dẫn từng bước do người viết nằm ở \emph{đầu vào}; ở đây nó là
+\emph{đích sinh} và là đầu ra duy nhất đem chấm.
+\end{itemize}
+
+\vspace{1.5em}
+\noindent\begin{tabularx}{\textwidth}{@{}XX@{}}
+\centering CÁN BỘ HƯỚNG DẪN & \centering\arraybackslash HỌC VIÊN CAO HỌC \\
+\centering (Ký tên, họ tên) & \centering\arraybackslash (Ký tên, họ tên) \\
+\end{tabularx}
+
+\vspace{4em}
+\begin{center}
+XÁC NHẬN CỦA CƠ SỞ ĐÀO TẠO\\ HIỆU TRƯỞNG
+\end{center}
+\clearpage
+
+% ==================== BẢN TIẾNG ANH ====================
+\chapter*{Thesis information}
+\addcontentsline{toc}{chapter}{Trang thông tin luận văn tiếng Anh}
+\begin{center}\textbf{\large THESIS INFORMATION}\end{center}
+
+\noindent\begin{tabularx}{\textwidth}{@{}lX@{}}
+Thesis title: & \TenDeTaiEN. \\
+Speciality: & Computer Science \\
+Code: & \MaNganh \\
+Name: & Le Doan Phuong Uyen \\
+Academic year: & \Khoa \\
+Supervisor: & \GVHDen \\
+At: & VNUHCM -- University of Science \\
+\end{tabularx}
+
+\subsection*{1. Summary}
+
+GUI agents produce coordinates for a machine to click. This thesis studies a different
+output over the same input: a short instruction telling a \emph{person} which on-screen
+element to touch. The obstacle is not generation but evaluation, since many wordings
+identify the same button and no single reference can carry the judgement.
+
+We propose \textbf{executability}: the generated sentence is passed to a separate GUI
+grounding model that never sees the gold coordinate, and a step counts as correct when
+the returned point falls in the Voronoi cell of the element the user touched and the
+described action type matches. The instrument is characterised before it is trusted: an
+adequacy gate on grounder error (passed, median 0.7\% of screen width against a
+threshold of 3\% fixed in advance), a hit rule selected from its measured floor (the
+conventional tolerance test credits a sentence naming the wrong button in 84.3\% of
+cases, the cell rule in 2.8\%), a measured ceiling of 75.7\% (95\% CI
+$[74.1, 77.3]$) obtained by scoring the human-written references themselves, and a
+perturbation self-check with thresholds fixed before execution.
+
+On the model side we build 64,567 supervision steps from AndroidControl fully
+automatically, with zero task-level train--test leakage verified at full scale. The
+proposed component is descriptor-first generation: the training target carries a
+structured descriptor of the target element before the sentence, and the descriptor is
+removed before scoring.
+
+Over 4,463 held-out touch steps a QLoRA-tuned Qwen2.5-VL-3B reaches 59.1\% against
+47.6\% for the same model untuned; the paired gap of 11.5 points ($p<0.001$)
+survives five checks for alternative explanations; a sixth, imitation of the annotator
+register, is not ruled out.
+
+\subsection*{2. Novelty of thesis}
+
+\begin{itemize}[leftmargin=1.4em]
+\item A reference-free metric for element identification in generated GUI instructions,
+with the hit rule selected from measured behaviour on wrong-element inputs rather than
+from a tolerance convention, and shown to preserve system ordering under five different
+rules.
+\item A measured, not assumed, ceiling: human-written references score 75.7\%, the
+level every model score must be read against. An earlier 70.0\% estimate from a
+300-step subsample was five points low and has been retracted.
+\item A fully automatic pipeline converting AndroidControl into supervision for this
+task, with the cross-modal join validated against a deliberately shifted control
+(48\% against 20\%).
+\item A pre-registered ablation design fixing the reading of all four outcomes,
+committed to version control before the first training run.
+\item Positioning: in AndroidControl and in work built on it, the human-written
+per-step instruction is an \emph{input}; here it is the generation target and the only
+scored output.
+\end{itemize}
+
+\vspace{1.5em}
+\noindent\begin{tabularx}{\textwidth}{@{}XX@{}}
+\centering SUPERVISOR & \centering\arraybackslash MASTER STUDENT \\
+\end{tabularx}
+
+\vspace{4em}
+\begin{center}
+CERTIFICATION\\ UNIVERSITY OF SCIENCE\\ PRESIDENT
+\end{center}
+\clearpage

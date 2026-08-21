@@ -1,0 +1,276 @@
+\chapter{Phương pháp tiếp cận}
+\label{ch:phuongphap}
+
+Chương này trình bày thành phần mô hình được đề xuất, cấu hình huấn luyện, thiết kế so
+sánh giữa các nhánh, và bản đăng ký trước quy định cách đọc kết quả. Thước đo dùng để
+chấm được tách hẳn sang Chương~\ref{ch:thuocdo} vì nó là một đóng góp độc lập.
+
+\section{Toàn bộ quy trình}
+
+\begin{figure}[t]
+\centering
+\fbox{\begin{minipage}{0.9\textwidth}
+\centering\footnotesize\ttfamily
+\vspace{0.4em}
+ảnh màn hình + mục tiêu + lịch sử + chữ OCR\\[0.3em]
+$\downarrow$\\[0.3em]
+\fbox{\begin{minipage}{0.62\textwidth}\centering
+Qwen2.5-VL-3B + QLoRA\\
+(nhánh s1 / s2 / s2r / s2\_nopoint)\\
+\itshape\rmfamily thứ được huấn luyện
+\end{minipage}}\\[0.3em]
+$\downarrow$\quad câu tiếng Anh (đã cắt bỏ dòng khai báo)\\[0.3em]
+\fbox{\begin{minipage}{0.62\textwidth}\centering
+Mô hình định vị phần tử độc lập\\
+câu $\rightarrow$ toạ độ $(x,y)$\\
+\itshape\rmfamily dụng cụ đo, không huấn luyện
+\end{minipage}}\\[0.3em]
+$\downarrow$\quad điểm $(x,y)$\\[0.3em]
+\fbox{\begin{minipage}{0.62\textwidth}\centering
+Luật chấm: ô Voronoi $\wedge$ loại thao tác $\wedge$ không đảo nghĩa
+\end{minipage}}\\[0.3em]
+$\downarrow$\quad executable $\in \{0, 1\}$
+\vspace{0.4em}
+\end{minipage}}
+\caption{Bốn mắt xích của hệ thống. Hai khối trên thuộc phần mô hình
+(Chương~\ref{ch:phuongphap}), hai khối dưới thuộc phần đo lường
+(Chương~\ref{ch:thuocdo}).}
+\label{fig:pipeline}
+\end{figure}
+
+Hình~\ref{fig:pipeline} cho thấy một điểm về triển khai đáng lưu ý: lúc chạy thật chỉ cần
+bộ đọc chữ và mô hình đã tinh chỉnh. Cây trợ năng và mô hình định vị chỉ tồn tại ở khâu
+dựng dữ liệu và khâu chấm điểm, không có mặt trong đường chạy tới người dùng.
+
+\section{Đầu vào và câu nhắc}
+
+Câu nhắc được ghép từ bốn mảnh và \textbf{giống hệt nhau từng byte ở mọi nhánh cũng như
+lúc suy luận}. Đây là điều kiện để chênh lệch điểm quy được về can thiệp:
+
+\begin{quote}\ttfamily\footnotesize
+<image>\\
+Mục tiêu: Open Google maps app, Search for the nearest\\
+\hspace*{1em}park to 98103 \ldots\\
+Đã làm: Click on the title of this note Grocery to edit\\
+\hspace*{1em}the title\\
+Chữ đọc được trên màn: Search here $\cdot$ Coffee $\cdot$\\
+\hspace*{1em}Restaurants $\cdot$ Groceries $\cdot$ \ldots\\
+Viết câu hướng dẫn cho bước tiếp theo.
+\end{quote}
+
+Nhãn trường được viết bằng tiếng Việt kèm chỉ thị trả lời bằng tiếng Anh, là ngôn ngữ của
+bộ ngữ liệu nguồn và của mọi câu được chấm.
+
+Việc đưa danh sách chữ OCR vào đầu vào nhắm thẳng vào cơ chế hỏng đã đo được là gọi sai
+hoặc gọi mơ hồ tên nút. Cần nói rõ: \textbf{tầng này không được kể là đóng góp}. Chính
+nhóm tác giả AndroidControl đã tinh chỉnh với danh sách phần tử làm đầu
+vào~\cite{androidcontrol}, và Widget Captioning~\cite{widgetcap},
+Screen2Words~\cite{screen2words}, Mind2Web~\cite{mind2web} cũng vậy. Nó là một lựa chọn
+thiết kế, và có nhánh đối chứng đi kèm.
+
+Trường ``Đã làm'' chứa \emph{câu do người viết} ở các bước trước, không phải nhật ký thao
+tác của mô hình. Hệ quả này phải nêu kèm mọi con số tuyệt đối: khâu chấm là
+\emph{teacher-forced} trên ngữ cảnh. Trường này là hằng số của thí nghiệm nên không giải
+thích được chênh lệch giữa các nhánh, nhưng nó đặt văn phong của người chú thích vào đầu
+vào, và mọi điểm số tuyệt đối đều có điều kiện trên đó.
+
+\section{Thành phần đề xuất: mô tả phân biệt trước, phát ngôn sau}
+
+Thay vì dạy mô hình nhảy thẳng từ ảnh sang câu, luận văn dạy nó mô tả phần tử đích trước
+rồi mới viết câu. Đích sinh có hai tầng:
+
+\begin{center}\small
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{@{}r@{\ \ }l@{}}
+\textit{tầng khai báo} &
+\code{<desc>} vai trò \code{|} tên \code{|} \code{<point>}$x,y$\code{</point>}\\
+& \code{|} dấu hiệu phân biệt \code{</desc>} \\
+\textit{tầng phát ngôn} & câu hướng dẫn \\
+\end{tabular}
+\end{center}
+
+Lúc chấm, tầng khai báo bị \textbf{cắt bỏ}; chỉ câu hướng dẫn được đưa cho mô hình định
+vị. Điều này quan trọng về mặt phân loại đóng góp: nếu điểm số tăng thì không phải vì mô
+hình được cho thêm thông tin lúc chấm, mà vì \emph{hành vi nội tại lúc suy luận đã đổi}.
+Đó là điều kiện để gọi đây là đóng góp về mô hình chứ không phải đóng góp về dữ liệu.
+
+Ba căn cứ cho thiết kế này, theo thứ tự sức nặng:
+
+\begin{enumerate}[leftmargin=1.6em]
+\item \textbf{Cơ chế hỏng đã đo được là câu mơ hồ}, không phải bịa đặt
+(Mục 1.1). Một dòng khai báo bắt buộc có ô ``dấu hiệu phân biệt'' nhắm thẳng vào đó.
+
+\item \textbf{Bước trung gian phải có cấu trúc và có toạ độ.} Cặp Shikra trong
+Bảng~\ref{tab:tienle} là bằng chứng sạch nhất: cùng mô hình, cùng bài kiểm, chỉ đổi dạng
+bước trung gian: văn xuôi cho $-7{,}4$, có toạ độ cho $+5{,}9$. Vì vậy dòng khai báo
+được ràng buộc thành bốn ô cố định và bắt buộc có ô toạ độ.
+
+\item \textbf{Nhãn toạ độ sạch $100\%$ và chi phí dựng bằng không.} Toạ độ chạm của người
+thật có sẵn trong dữ liệu; đây là nguồn giám sát mà tinh chỉnh thông thường bỏ phí hoàn toàn.
+\end{enumerate}
+
+\paragraph{Không dùng chữ ``đầu tiên''.} Như đã nêu ở Mục 1.4.2, ý ``câu phải đủ để bên
+kia trỏ đúng'' đã thuộc về dòng sinh biểu thức quy chiếu từ $2016$~\cite{mao2016,luo2017,yu2017}.
+Phần được nhận ở đây hẹp hơn nhiều: đưa tính phân biệt vào đích huấn luyện \emph{trong
+miền giao diện}, nơi công trình có giám sát gần nhất vẫn dùng entropy chéo
+thuần~\cite{widgetcap}.
+
+\section{Cấu hình huấn luyện}
+\label{sec:cauhinh}
+
+Mọi nhánh tinh chỉnh Qwen2.5-VL-3B-Instruct~\cite{qwen25vl} bằng QLoRA~\cite{lora,qlora}
+dưới LLaMA-Factory~\cite{llamafactory}. Bảng~\ref{tab:cauhinh} liệt kê cấu hình đầy đủ.
+
+\begin{table}[t]
+\caption{Cấu hình huấn luyện. Một tệp cấu hình duy nhất phục vụ mọi nhánh và chỉ ba dòng
+thay đổi giữa các nhánh: tập dữ liệu, hạt giống, thư mục đầu ra.}
+\label{tab:cauhinh}
+\centering\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}p{5.6cm}p{7.2cm}@{}}
+\toprule
+Tham số & Giá trị \\
+\midrule
+Mô hình gốc & Qwen2.5-VL-3B-Instruct \\
+Lượng tử hoá & NF4, $4$ bit \\
+Hạng LoRA $r$ / $\alpha$ / dropout & $8$ / $16$ / $0{,}05$ \\
+Mô-đun gắn bộ chuyển đổi & \code{q,k,v,o,gate,up,down} \\
+Tháp thị giác, tầng chiếu đa phương thức & đóng băng \\
+Độ dài ngữ cảnh & $2560$ \\
+Cỡ lô mỗi thiết bị / tích luỹ gradient & $4$ / $4$ (hiệu dụng $16$) \\
+Tốc độ học / lịch / tỉ lệ khởi động & $1\times10^{-4}$ / cosine / $0{,}05$ \\
+Số lượt duyệt & $2$ ($=8.072$ bước) \\
+Độ chính xác & bf16, có gradient checkpointing \\
+Nhân hợp nhất & \code{enable\_liger\_kernel: true} \\
+Tiến trình tiền xử lý & $8$ \\
+Hạt giống & $101$ và $202$ \\
+Phần cứng & một card A100 \\
+\midrule
+\textbf{Tham số huấn luyện được} & \textbf{$14.966.784$} ($0{,}48\%$ phần ngôn ngữ) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Độ dài ngữ cảnh được nâng trước lượt chạy đầu.} Mẫu s2 dài nhất đạt $2.017$
+token, chỉ còn dư $31$ token so với giới hạn $2048$ ban đầu. Việc cắt bớt sẽ diễn ra
+\emph{im lặng} và lệch đúng theo hướng bất lợi nhất, vì khung huấn luyện cắt từ đuôi ---
+mà đuôi chính là đích sinh, và đích của s2 là đích dài hơn. Giới hạn được nâng lên
+$2560$; vì đệm tính theo từng lô, không theo trần, nên việc nâng này không tốn thêm gì.
+
+\paragraph{Hai phép kiểm cơ học chạy trước mỗi lượt.} Số tham số huấn luyện được phải
+đúng $14.966.784$; và tệp cấu hình của lượt hiện tại được đối chiếu từng khoá với lượt
+tham chiếu, chỉ bốn khoá được phép khác (hạt giống, thư mục đầu ra, tập dữ liệu, số tiến
+trình tiền xử lý), khoá thứ năm khác nhau là dừng hẳn. Ba khoá đầu là ba dòng nói ở
+caption Bảng~\ref{tab:cauhinh}; khoá thứ tư chỉ đổi tốc độ tiền xử lý, không đổi dữ liệu ra.
+
+\paragraph{Hai phép kiểm bảo vệ những phần người đọc buộc phải tin.} Thứ nhất, cùng hạt
+giống $101$, hàm mất mát $20$ bước đầu trên card L4 và trên card A100 khớp tới ba chữ số
+($2{,}036$ / $0{,}9686$ / $0{,}8635$ / $0{,}9553$ so với $2{,}040$ / $0{,}9679$ /
+$0{,}8635$ / $0{,}9547$) với \code{total\_flos} giống hệt, nghĩa là đổi phần cứng không
+đổi kết quả. Thứ hai, sinh câu ở cỡ lô $1$ và cỡ lô $8$ cho đầu ra trùng nhau từng byte,
+xác nhận việc đệm bên trái được cài đúng.
+
+\section{Các nhánh đăng ký và thiết kế so sánh}
+\label{sec:nhanh}
+
+Bảy nhánh được đăng ký, tất cả dùng chung dữ liệu, mô hình gốc, siêu tham số và tập
+kiểm. Bảng~\ref{tab:nhanh} liệt kê từng nhánh cùng câu hỏi mà nó trả lời.
+
+\begin{table}[t]
+\caption{Các nhánh đã đăng ký và vai trò của từng nhánh. Ba nhánh cuối không cần huấn
+luyện.}
+\label{tab:nhanh}
+\centering\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}p{2.7cm}p{4.4cm}p{5.9cm}@{}}
+\toprule
+Nhánh & Đích sinh / cách chạy & Trả lời câu hỏi \\
+\midrule
+\textbf{S1} & câu trơn ($2$ hạt giống) & nền so sánh nội bộ \\
+\textbf{S2} & khai báo thật $+$ câu ($2$ hạt giống) & \textbf{câu hỏi chính}: thành phần
+có tác dụng không \\
+\textbf{S2r} & khai báo giả khớp độ dài $+$ câu & điểm tăng có phải chỉ vì chuỗi đích dài
+thêm \\
+\textbf{S2-nopoint} & khai báo bỏ ô toạ độ $+$ câu & phần công thuộc về ô toạ độ là bao
+nhiêu \\
+\midrule
+\textbf{B-infer} & trọng số S1, danh sách phần tử nhét vào đầu vào lúc chạy & huấn luyện
+có hơn việc đưa thông tin lúc chạy không \\
+\textbf{Base} & mô hình gốc, không tinh chỉnh & bản thân tinh chỉnh mua được bao nhiêu \\
+\textbf{Trần} & câu do người viết đưa thẳng đi chấm & trần của thước đo \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Đại lượng quan tâm là $\Delta = \text{S2} - \text{S1}$. Cặp hạt giống của S1 cung cấp
+\textbf{null thực nghiệm}: chênh lệch giữa hai lượt chạy của cùng một thiết kế chính là
+sàn nhiễu mà $\Delta$ phải vượt qua. Không có con số đó thì không phân biệt được ``S2 hơn
+S1'' với ``hai lượt huấn luyện vốn đã khác nhau chừng đó''.
+
+Trình tự thực hiện được khoá cứng và không được đảo:
+\begin{center}
+S1 $\times 2$ hạt giống $\rightarrow$ chấm đủ $\rightarrow$ đo MDE thật $\rightarrow$
+khoá ngưỡng $\rightarrow$ \emph{mới} huấn luyện S2.
+\end{center}
+
+Bản đăng ký cam kết trước rằng một chiến thắng của riêng S2 \textbf{không} được quy cho tính
+phân biệt nếu chưa đi qua S2r và S2-nopoint.
+
+\paragraph{B-infer là đối thủ yếu hơn tên gọi của nó.} Cần nói trước để không đọc quá
+lời một kết quả thắng của nhánh huấn luyện: câu nhắc của B-infer dài trung vị $1.149$
+token so với $486$ của vùng đã huấn luyện; danh sách phần tử bị cắt còn $40$ trong khi
+màn hình có trung vị $72$ phần tử; và chỉ $14{,}1\%$ phần tử trong danh sách có tên. Nếu
+nhánh này thua thì không kết luận được gì.
+
+\section{Bản đăng ký trước và luật đọc kết quả}
+\label{sec:dangky}
+
+Toàn bộ thiết kế được đưa vào kho phiên bản \emph{trước} lượt huấn luyện đầu tiên, và
+quy định cách đọc cả bốn kết cục có thể xảy ra (Bảng~\ref{tab:luatdoc}). Mọi thay đổi về
+sau được ghi thành mục sửa đổi có ngày ở cuối văn bản, không sửa đè lên bản gốc; phần lớn
+các mục này ra đời trước khi tồn tại bất kỳ điểm số nào.
+
+\begin{table}[t]
+\caption{Luật đọc kết quả, viết trước khi thấy số.}
+\label{tab:luatdoc}
+\centering\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}p{5.4cm}p{7.4cm}@{}}
+\toprule
+Kết cục & Kết luận được phép viết \\
+\midrule
+$\Delta$ vượt MDE và cận dưới KTC $> 0$ & thành phần có tác dụng \\
+KTC chạm $0$ & xu hướng; \emph{không} được gọi là cải thiện \\
+KTC phủ $0$ và $|\Delta|$ dưới MDE & kết quả âm có kiểm soát, báo thẳng \\
+Cận trên KTC $< 0$ & thành phần gây hại, báo thẳng \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Ba lát cắt phân tích được cho phép báo cáo và đã công bố trước: theo độ dài câu, theo độ khó
+của màn hình, theo nguồn của tên phần tử. Bất cứ lát cắt nào tìm ra sau khi thấy số đều
+là thăm dò và phải ghi rõ như vậy.
+
+\paragraph{Một mục sửa đổi cần nói rõ.} Ngưỡng MDE ban đầu được \emph{chiếu} chứ không
+được đo, và công thức dùng để chiếu giả định tương quan trong cụm bằng một. Khi đo thật
+thì hệ số nở do gom cụm chỉ là $1{,}10$, nên công thức cũ thổi phồng ngưỡng lên khoảng
+ba lần và sẽ khiến một hiệu ứng thật $3$ điểm bị tuyên là ``không kết luận được'' trong
+khi khoảng tin cậy của nó loại trừ $0$ ở mức $p < 0{,}001$. Ngưỡng được sửa thành sai số
+chuẩn ghép cặp đo được, và mục sửa đổi này được ghi \emph{trước} khi chấm bất kỳ nhánh xử
+lý nào (Mục~\ref{sec:thongke}).
+
+\section{Mức hai: khoản phạt cho câu vẫn mơ hồ}
+
+Thiết kế còn một tầng nữa đã đăng ký nhưng \textbf{chưa cài đặt}, và trạng thái đó được ghi
+đúng như vậy.
+
+Ý tưởng: khi màn hình có hai phần tử giống hệt nhau, chẳng hạn hai biểu tượng kính lúp,
+thì câu ``Tap the search icon'' khớp với cả hai và vì vậy là câu mơ hồ. Trường
+\code{desc\_neg} trong nhãn đã dựng sẵn mô tả của phần tử hàng xóm gần nhất; hàm mất mát
+mức hai sẽ phạt khi mô hình gán cho khai báo thật một xác suất không cao hơn khai báo
+hàng xóm ít nhất một khoảng lề định trước. Đây chính là chỗ khe hở của Widget Captioning~\cite{widgetcap}: vấn đề
+được nêu nhưng hàm mất mát vẫn là entropy chéo thuần.
+
+Trạng thái: dữ liệu đã sẵn sàng, \emph{mã hàm mất mát chưa được viết}. Tầng này nằm sau
+một cổng riêng và chỉ được mở nếu tầng một cho tín hiệu. Nếu không kịp chạy thì trạng
+thái đúng của nó là \emph{đã đăng ký nhưng không thực hiện}.
