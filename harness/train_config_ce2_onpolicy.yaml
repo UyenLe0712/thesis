@@ -1,0 +1,96 @@
+# train_config_ce2.yaml — CE2-S2: SFT stage-2 tiếp tục từ checkpoint S2 (ĐỐI CHỨNG)
+# Đăng ký trước: report/106 mục sửa đổi (x). Quyết định: report/117.
+#
+# ⚠️ File này là BẢN SAO của train_config.yaml, chỉ khác đúng những dòng có dấu ★.
+#    Mọi dòng KHÔNG có ★ phải trùng train_config.yaml từng ký tự — đó là điều kiện để
+#    chênh lệch điểm quy được về mục tiêu huấn luyện chứ không về siêu tham số.
+#    Kiểm bằng ô S4 của harness/colab_smoke_orpo.md (so 38 khoá, chỉ 8 khoá được khác).
+#
+# BA DÒNG ĐỔI GIỮA CÁC LƯỢT, không đổi gì khác: dataset · seed · output_dir
+
+model_name_or_path: Qwen/Qwen2.5-VL-3B-Instruct
+trust_remote_code: true
+image_min_pixels: 200704
+image_max_pixels: 1003520
+
+### ── nhánh: BA DÒNG DUY NHẤT ĐƯỢC PHÉP ĐỔI ───────────────────────────────────
+dataset: gui_ce2_onpolicy                            # ★ SFT thuần trên đúng vế chosen
+seed: 101
+output_dir: /content/drive/MyDrive/thesis/ckpt/ce2_onpolicy_seed101     # ★ TRÊN DRIVE
+dataset_dir: /content/ws/thesis/harness/dg1_cache/train_ac/branches
+### ───────────────────────────────────────────────────────────────────────────
+
+### ── ★ nối tiếp từ S2, KHÔNG train lại từ mô hình gốc ─────────────────────────
+adapter_name_or_path: /content/drive/MyDrive/thesis/ckpt/s2_seed101   # ★ checkpoint S2
+create_new_adapter: false        # ★ học TIẾP adapter cũ. Để true là đẻ adapter mới,
+                                 #   tức vứt S2 đi và mọi lập luận "tiếp tục từ S2" sai.
+
+# ⚠️ output_dir PHẢI nằm trên Drive. Colab tài khoản này KHÔNG có background execution và
+#    đã mất máy ảo 8 lần trong 2 lượt S1. Trỏ vào /content là mất trắng cả lượt khi máy bị
+#    thu hồi: LLaMA-Factory ghi điểm lưu thẳng vào output_dir, nên để nó trên Drive là toàn
+#    bộ cơ chế sao lưu — không cần script đồng bộ riêng cho checkpoint.
+
+### ── ★ mục tiêu ưu tiên theo cặp ──────────────────────────────────────────────
+stage: sft                       # ★ CE thuần — đây là ĐỐI CHỨNG quy công
+do_train: true
+
+finetuning_type: lora
+lora_rank: 8
+lora_alpha: 16
+lora_dropout: 0.05
+lora_target: q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+freeze_vision_tower: true
+freeze_multi_modal_projector: true
+quantization_bit: 4
+quantization_method: bnb
+
+template: qwen2_vl
+cutoff_len: 2560
+train_on_prompt: false
+
+### ── ★ cỡ lô: ORPO forward CẢ chosen LẪN rejected nên bộ nhớ gấp đôi ──────────
+per_device_train_batch_size: 1   # ★ giữ BẰNG bản ORPO. SFT không cần nhỏ vậy, nhưng
+                                 #   nhất chạy ngọt ở 2 thì được nâng — nhưng phải nâng
+                                 #   TRƯỚC lượt đầu và giữ nguyên cho cả bốn lượt.
+gradient_accumulation_steps: 16  # ★ 1×16 = 16 hiệu dụng, đúng bằng train_config.yaml
+learning_rate: 2.0e-5            # ★ 1/5 của LR lượt SFT gốc (1e-4).
+                                 #   Đây là lượt NỐI TIẾP một adapter đã hội tụ, không phải
+                                 #   train mới. Khởi động lại ở 1e-4 với chu kỳ cosine mới là
+                                 #   re-train chứ không phải tinh chỉnh, và rủi ro là cả HAI
+                                 #   nhánh cùng trôi khỏi S2 rồi so nhau trong vùng đã hỏng.
+                                 #   ⚠️ Đây là phán đoán thiết kế, KHÔNG phải số đo — ghi ở
+                                 #   report/106 (x3b). Cổng cơ học sau lượt 1 đo trực tiếp
+                                 #   độ chính xác khai báo so với S2; tụt là LR quá cao.
+                                 #   MIN-DESC và CE2-S2 dùng CHUNG con số này, nên dù chọn sai
+                                 #   thì Δ_component vẫn là phép so công bằng.
+lr_scheduler_type: cosine
+warmup_ratio: 0.05
+bf16: true
+fp16: false
+gradient_checkpointing: true
+
+### ── ★ độ dài chặng: 800 update, KHÔNG tính theo epoch ────────────────────────
+max_steps: 800                   # ★ khoá ở (x3). 22.854 cặp / 16 = 1.428 update/epoch,
+                                 #   nên 800 ≈ 0,56 epoch. KHÔNG khai num_train_epochs
+                                 #   cùng lúc — hai trường này đá nhau.
+
+### ── ★ hai khoá vận hành, bê từ cấu hình P9 đã chốt ───────────────────────────
+enable_liger_kernel: true        # ★ P9 cho nhánh SFT. ⚠️ Smoke 23/8: log của stage `dpo`
+                                 #   KHÔNG in dòng nào về liger — nhiều khả năng khoá này bị
+                                 #   BỎ QUA ở đường pairwise. Giữ lại vì vô hại và vì nhánh SFT
+                                 #   cần nó, nhưng ⛔ KHÔNG được viết "chúng tôi dùng liger" cho
+                                 #   MIN-DESC khi chưa xác nhận. Smoke chạy ngọt mà không cần nó.
+                                 #   (Lý do cũ, vẫn đúng cho SFT: bảng logits 151.936 từ vựng
+                                 #   × ~1.500 token dựng ở fp32 và tràn bộ nhớ. ⚠️ Ô S5 phải
+                                 #   xác nhận liger tương thích đường pairwise của ORPO — nếu
+                                 #   NaN thì tắt khoá này TRƯỚC lượt đầu, ghi vào (x), rồi giữ
+                                 #   nguyên cho cả bốn lượt.
+preprocessing_num_workers: 8     # ★ P9. 42 phút mã hoá token thay vì 2,5 giờ.
+
+save_steps: 100                  # ★ 200 ở bản SFT là ~34 phút; ORPO ~25 s/bước nên 200 bước
+                                 #   thành ~83 phút mất trắng mỗi lần mất máy. Hạ còn 100.
+save_total_limit: 2
+logging_steps: 20
+report_to: none
+val_size: 0.0
+do_eval: false
