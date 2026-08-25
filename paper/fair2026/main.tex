@@ -35,9 +35,9 @@
 \newcommand{\pend}{\textemdash}
 
 % Tighter float spacing to keep the paper inside the 8-page limit.
-\setlength{\textfloatsep}{7pt plus 2pt minus 2pt}
-\setlength{\floatsep}{7pt plus 2pt minus 2pt}
-\setlength{\intextsep}{7pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{5pt plus 2pt minus 2pt}
+\setlength{\floatsep}{5pt plus 2pt minus 2pt}
+\setlength{\intextsep}{5pt plus 2pt minus 2pt}
 \setlength{\abovecaptionskip}{3pt}
 \setlength{\belowcaptionskip}{2pt}
 
@@ -63,9 +63,9 @@ nhblong@fit.hcmus.edu.vn}
 \maketitle
 
 \begin{abstract}
-A GUI agent outputs a coordinate for a machine to click. We train a model for a different
-consumer: a person who must be told, in one sentence, which on-screen element to touch.
-Two questions follow. Does supervision built automatically from recorded episodes teach a
+A GUI agent outputs a coordinate for a machine to click; we train a model for a different
+consumer, a person who must be told in one sentence which on-screen element to touch. Does
+supervision built automatically from recorded episodes teach a
 small vision-language model to write such sentences, and does it help to make the model
 \emph{name the target element in a structured slot before writing the sentence}? We
 fine-tune Qwen2.5-VL-3B with QLoRA on $64{,}567$ automatically labelled steps and score
@@ -78,17 +78,22 @@ being $22\times$ the seed-to-seed noise and keeping its sign under a second, ind
 trained grounder. The second cannot be completed: the descriptor-first branch scores
 $57.2\%$ at its single seed, $1.93$ points below the matched control, and the
 pre-registered two-seed estimand was abandoned for budget reasons, leaving the comparison
-inside the band declared inconclusive in advance. What we can report is a mechanism.
-Crossing the model's own descriptor against gold labels, the component adds $5.7$ points
-where it identifies the element correctly and subtracts $25.2$ where it does not, and the
-human references still reach $66.3\%$ in that failing cell, so difficulty alone does not
-account for the collapse. A slice registered before any treatment score
-localises a third of the difference in the $7.3\%$ of steps emitting no descriptor at all,
-and there the culprit is fine-tuning itself: the untuned model names the correct action
-class on $83.4\%$ of them against $55.1\%$ and $38.8\%$ for the two trained branches.
-Structured-prefix supervision, on this evidence, does not fail uniformly; its value is
-governed by identification accuracy, and it amplifies an error the fine-tuning stage
-introduces.
+inside the band declared inconclusive in advance. What we can report is a mechanism:
+crossing the model's own descriptor against gold labels, the component adds $5.7$ points
+where it identifies the element correctly and subtracts $25.2$ where it does not, while the
+references still reach $66.3\%$ in that failing cell, so difficulty alone does not account
+for the collapse. A slice registered before any treatment score localises a third
+of the difference in the $7.3\%$ of steps emitting no descriptor, where the culprit is
+fine-tuning itself: the untuned model names the correct action class on $83.4\%$ of them
+against $55.1\%$ and $38.8\%$ for the two trained branches. A second stage aimed at that
+mechanism was then run --- a preference objective over minimal descriptor pairs, against a
+supervised control matched update for update --- and adds $+0.63$ pp $[+0.16, +1.10]$,
+again inside the inconclusive band, with $78\%$ of the stage's total gain belonging to the
+control rather than to the preference term; a registered variant sourcing its negatives
+from the model's own errors died at its feasibility gate, those errors being bipolar rather
+than locally confusable. Structured-prefix supervision, on this evidence, does not fail
+uniformly; its value is governed by identification accuracy, and it amplifies an error the
+fine-tuning stage introduces.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -126,20 +131,19 @@ reproduces its reference verbatim.
 
 \emph{Does it help to name the element before speaking?} The referring-expression
 tradition says a description is good when a listener recovers the referent from
-it~\cite{mao2016,luo2017,yu2017}, and the residual errors of the fine-tuned model are
-overwhelmingly of that kind: of its $1{,}824$ failures, $86\%$ carry the correct action
-and a wording the grounder cannot resolve. So we registered a branch whose target is a
-structured descriptor --- role, name, coordinate, distinguishing cue --- followed by the
-same scored sentence, byte for byte, as the control branch. The registered estimand
-averages two seeds per branch and one of the four runs was cancelled for budget reasons,
-permanently; at the single seed available the treatment sits $1.93$ points below its
-control, inside the band the pre-registration declared inconclusive. The mechanism is
-nonetheless legible: the component works where the model identifies the element correctly
-and costs heavily where it does not, and the largest locus of that cost is a failure
-fine-tuning introduces before any descriptor is involved. A second registered stage, a
-minimal-pair preference objective aimed at identification itself, was then run against a
-matched supervised control; it moves executability by $+0.63$ pp, inside the inconclusive
-band again, with $78\%$ of the stage's gain belonging to the control.
+it~\cite{mao2016,luo2017,yu2017}, and the residual errors of the fine-tuned model are of
+that kind: of its $1{,}824$ failures, $86\%$ carry the correct action and a wording the
+grounder cannot resolve. So we registered a branch whose target is a structured descriptor
+--- role, name, coordinate, distinguishing cue --- followed by the same scored sentence,
+byte for byte, as the control. The registered estimand averages two seeds per branch and
+one of the four runs was cancelled for budget reasons, permanently; at the single seed
+available the treatment sits $1.93$ points below its control, inside the band declared
+inconclusive. The mechanism is nonetheless legible: the component works where the model
+identifies the element correctly and costs heavily where it does not, the largest locus of
+that cost being a failure fine-tuning introduces before any descriptor exists. A second
+registered stage, a minimal-pair preference objective aimed at identification itself, was
+then run against a matched supervised control: $+0.63$ pp, inside the inconclusive band
+again, $78\%$ of the stage's gain belonging to the control.
 
 Our contributions are: (i) a fully automatic supervision pipeline for GUI instruction
 generation, with the resulting fine-tuning gain measured at two seeds and replicated
@@ -170,11 +174,10 @@ novelty for that layer.
 \emph{Discriminative description.} Producing a description that identifies one object
 among distractors is referring-expression generation~\cite{mao2016}, and later work
 places a comprehension model inside the training loop to enforce
-discriminativeness~\cite{luo2017,yu2017}. The closest supervised work in the GUI domain
-is Widget Captioning~\cite{widgetcap}, which identifies the problem of visually identical
-widgets but trains with plain cross-entropy. Our claim is correspondingly narrow:
-discriminativeness placed in the \emph{training target} for GUI instructions, and
-measured. Outside the GUI domain, targets making a model emit grounding coordinates before
+discriminativeness~\cite{luo2017,yu2017}. The closest supervised work in the GUI domain is
+Widget Captioning~\cite{widgetcap}, which identifies the problem of visually identical
+widgets but trains with plain cross-entropy. Our claim is narrow: discriminativeness placed
+in the \emph{training target} for GUI instructions, and measured. Outside the GUI domain, targets making a model emit grounding coordinates before
 answering help when \emph{trained} rather than prompted~\cite{gcot}, the closest prior to
 our branch and the expectation our result should be read against. Inside the GUI domain,
 Aguvis reports that removing the inner monologue from its training targets costs $11.4$
@@ -202,10 +205,10 @@ perform, addressed to a human reader.
 \emph{Supervision.} No public redistribution of AndroidControl carries the
 human-written instruction, the screenshot and the accessibility tree together, so we
 join two mirrors on \texttt{(episode\_id, step\_id)} and take accessibility trees for
-$99{,}131$ screens from the same release. An off-by-one join would corrupt every
-downstream label while leaving the pipeline functional, so it is tested: OCR text at
-the gold touch point appears in the reference instruction on $48\%$ of $n=400$ sampled
-steps against $20\%$ under a deliberately shifted control. The corpus holds $64{,}567$
+$99{,}131$ screens from the same release. An off-by-one join would corrupt every downstream
+label while leaving the pipeline functional, so it is tested: OCR text at the gold touch
+point appears in the reference on $48\%$ of $n=400$ sampled steps against $20\%$ under a
+deliberately shifted control. The corpus holds $64{,}567$
 training and $6{,}958$ test steps over $12{,}895$ and $1{,}432$ tasks, about $64\%$ of
 each being touch steps and forming the scoring population; the split is held out by
 task with zero task overlap, verified at full scale. Only $12.6\%$ of accessibility
@@ -246,16 +249,15 @@ slots: \emph{role} (button, text field, list item), \emph{name} (the displayed s
 \emph{distinguishing cue} (the nearest OCR string outside the box with its relative
 direction).
 
-Two design choices need stating because they are not free. First, the coordinate slot
-is included: it is a perfectly clean label at zero construction cost, and the evidence
-available at design time indicated that intermediate steps carrying an explicit point
-help where free-form verbal reasoning hurts. Second, the descriptor is emitted, not
-consumed: the model must produce its own identification before it writes, which is what
-makes the branch an ablation of \emph{discriminative commitment} rather than of extra
-input. The mechanism a reader should have in mind, and the one Section~\ref{sec:diag}
-tests, is that this commitment cuts both ways --- a model that has just written the
-right name and the right point is well placed to write a sentence about that element,
-and a model that has written the wrong ones has bound itself to them.
+Two design choices are not free. The coordinate slot is included because it is a clean
+label at zero construction cost, and the evidence available at design time indicated that
+intermediate steps carrying an explicit point help where free-form verbal reasoning hurts.
+The descriptor is emitted, not consumed: the model must produce its own identification
+before it writes, which makes the branch an ablation of \emph{discriminative commitment}
+rather than of extra input. That commitment cuts both ways, as Section~\ref{sec:diag}
+tests: a model that has just written the right name and point is well placed to write a
+sentence about that element, and one that has written the wrong ones has bound itself to
+them.
 
 \section{The Instrument}
 \label{sec:metric}
@@ -362,7 +364,10 @@ Intervals are nonparametric cluster bootstraps with $10{,}000$ resamples cluster
 application ($G = 1{,}091$ clusters, $G_{\text{eff}} = 454.3$ under Kish's
 formula~\cite{kish1965}), the clustering rule fixed in advance because it determines the
 available power~\cite{cameron2008}. The measured design effect is $1.10$, giving a
-minimum detectable paired effect of $2.2$ points at $80\%$ power.
+minimum detectable paired effect of $2.2$ points at $80\%$ power. That figure prices
+instrument noise alone. A contrast read across two \emph{training runs} also carries the
+seed term of Section~\ref{sec:design}, so Section~\ref{sec:mindesc} reads its result
+against the corresponding single-seed design figure instead of against this one.
 
 \section{Experimental Design and Pre-Registration}
 \label{sec:design}
@@ -382,9 +387,9 @@ Inference is greedy in every arm, one sentence per step, the descriptor stripped
 regular expression before scoring so no arm is scored on text the others cannot produce;
 the untuned arm reads the same prompt template. The prompt supplies the goal, the
 human-written instructions of the previous three steps and the OCR strings, byte-identical
-across branches and between training and inference. Because the history field carries
+across branches and between training and inference. Because the history carries
 human-written sentences rather than an action log, scoring is teacher-forced on context:
-absolute scores are conditioned on that, differences between branches are not.
+absolute scores are conditioned on that, branch differences are not.
 
 The design was committed to version control before any training run and fixes the reading
 of all four outcomes in advance: a $\Delta$ whose interval excludes zero and exceeds the
@@ -394,18 +399,19 @@ bound is harm. The registered quantity is
 $\Delta = \mathrm{mean}(\mathrm{S2}) - \mathrm{mean}(\mathrm{S1})$ over \emph{two seeds
 per branch}, the operative threshold set at $2.8$ pp --- the bootstrap standard error of
 the paired difference, $0.38$ pp, with a seed term of $0.46$ pp doubled because it rests on
-one degree of freedom --- and the inconclusive band at $-2.8 \ldots +1.7$ pp. Amendments
-are appended with dates, never edited in place; twenty-seven are recorded, twenty-one
-before any executability score existed. We flag rather than hide the pattern in the six
-that came later: each moved the room upward and the threshold downward, and the first also
-moved against us, cutting the share of the ceiling reached by the control branch from
-$84.4\%$ to $78.4\%$.
+one degree of freedom --- and the inconclusive band at $-2.8 \ldots +1.7$ pp. That $2.8$ pp
+is the band rule for $\mathrm{S2} - \mathrm{S1}$ and is deliberately conservative; the
+$2.11$ pp figure Section~\ref{sec:mindesc} uses to read $\mathrm{MIN} - \mathrm{CE2}$
+combines the same two variance components without that doubling. Amendments are
+appended with dates, never edited in place; twenty-seven are recorded, twenty-one before
+any executability score existed. We flag rather than hide the pattern in the six that came
+later: each moved the room upward and the threshold downward, and the first also moved
+against us, cutting the control branch's share of the ceiling from $84.4\%$ to $78.4\%$.
 
-One departure from the plan is stated here rather than in a footnote. \textbf{The second
-seed of the treatment branch was never run}, a budget decision taken on 23 August 2026,
-and it will not be. The registered estimand is therefore permanently incomplete, and no
-later analysis upgrades the single-seed comparison into the conclusion the two-seed rule
-would have licensed.
+One departure is stated here rather than in a footnote. \textbf{The second seed of the
+treatment branch was never run}, a budget decision taken on 23 August 2026, and it will not
+be. The registered estimand is permanently incomplete, and no later analysis upgrades the
+single-seed comparison into the conclusion the two-seed rule would have licensed.
 
 \section{Results}
 \label{sec:results}
@@ -464,22 +470,20 @@ seed; and there is no home-field advantage, S1 scoring $59.1\%$ on applications 
 training, $59.0\%$ on unseen ones and $59.2\%$ where none can be attributed.
 
 \emph{Retraining noise.} A gap between systems is only meaningful against the movement
-caused by rebuilding one system. Retraining S1 under a second seed shifts the score by
-$+0.5$ points, a paired interval of $[-0.2, +1.3]$ containing zero, McNemar $p = 0.19$.
-The sharper contrast is churn: the two seeds disagree on $6.4\%$ of steps where the
-fine-tuning intervention moves $24.2\%$. Step-level agreement across seeds is $93.6\%$
-($\kappa = 0.867$), but $63\%$ of those pairs are byte-identical sentences on which a
-deterministic instrument must agree; on the $1{,}652$ steps where the two runs actually
-wrote something different it is $82.6\%$ ($\kappa = 0.650$), and that is the figure we
-quote.
+caused by rebuilding one. Retraining S1 under a second seed shifts the score by $+0.5$
+points, a paired interval of $[-0.2, +1.3]$ containing zero, McNemar $p = 0.19$. The
+sharper contrast is churn: the seeds disagree on $6.4\%$ of steps where the intervention
+moves $24.2\%$. Step-level agreement across seeds is $93.6\%$ ($\kappa = 0.867$), but
+$63\%$ of those pairs are byte-identical sentences a deterministic instrument must agree
+on; on the $1{,}652$ steps where the runs wrote something different it is $82.6\%$
+($\kappa = 0.650$), the figure we quote.
 
 \subsection{A second grounder}
 \label{sec:venus}
-Every number above is conditioned on one grounder, which was trained on $47$K elements
-from the AndroidControl training split and therefore knows the annotation register that
-S1 is trained to imitate. We re-scored three arms on a $2{,}532$-step slice with
-UI-Venus-Ground-7B~\cite{uivenus}, which is not trained on AndroidControl
-(Table~\ref{tab:venus}).
+Every number above is conditioned on one grounder, trained on $47$K elements from the
+AndroidControl training split and therefore familiar with the annotation register S1 is
+trained to imitate. We re-scored three arms on a $2{,}532$-step slice with
+UI-Venus-Ground-7B~\cite{uivenus}, not trained on AndroidControl (Table~\ref{tab:venus}).
 
 \begin{table}[!t]
 \caption{Two grounders on the same $2{,}532$-step slice. The witness contrast retains
@@ -513,22 +517,22 @@ points lower on every arm.
 
 \subsection{The descriptor branch}
 The registered comparison is $\mathrm{mean}(\mathrm{S2}) - \mathrm{mean}(\mathrm{S1})$
-over two seeds each. With the treatment branch at one seed, what can be stated is this:
+over two seeds each. With the treatment at one seed, what can be stated is this:
 \emph{with Qwen2.5-VL-3B under QLoRA and the present automatic labelling pipeline, the
 S2/101 checkpoint scores $1.93$ points below S1/101 ($b = 254$, $c = 340$, interval
 $[-3.06, -0.75]$) and $2.44$ points below S1/202 over the full $4{,}463$ steps, the sign
-holds under UI-Venus, and the registered estimand remains incomplete.} Against the
-declared bands, $-2.19$ pp relative to the two-seed control mean falls inside
-$-2.8 \ldots +1.7$: \emph{inconclusive}, not a negative result, and the missing run means
-it stays there. The seed noise measured on the control pair, $\pm1.3$ pp at the interval
-edge, is itself most of the reason: a single run can move by half the observed
-difference.
+holds under UI-Venus, and the registered estimand remains incomplete.} Against the declared
+bands, $-2.19$ pp relative to the two-seed control mean falls inside $-2.8 \ldots +1.7$:
+\emph{inconclusive}, not a negative result, and the missing run means it stays there. The
+seed noise on the control pair, $\pm1.3$ pp at the interval edge, is most of the reason: a
+single run can move by half the observed gap.
 
-What the missing run could have changed is fixed by the registered thresholds. To reach
-the weakly-positive band the two-seed mean would have needed $65.0\%$, $5.4$ points above
-the best checkpoint we have measured and above the second grounder's ceiling on its own
-slice; to reach the negative band, at or below $56.0\%$, well inside the range a seed
-change produces. The remaining outcome space was \emph{inconclusive or negative} and the
+What the missing run could have changed is fixed by the registered thresholds. For the
+two-seed mean to reach the weakly-positive band --- an edge at $\Delta = +1.7$ pp --- the
+cancelled run would have had to score $65.0\%$, $5.4$ points above the best checkpoint we
+have measured and above the second grounder's ceiling on its own slice; for the negative
+band it would have had to score at or below $56.0\%$, well inside the range a seed change
+produces. The remaining outcome space was \emph{inconclusive or negative} and the
 budget decision closed it at inconclusive; we report this rather than let a reader infer a
 suppressed positive.
 
@@ -557,10 +561,9 @@ $2.11$ pp, and $+0.63$ is $1.4\times$ that seed term. By the reading rule fixed
 before any score existed this is the \emph{inconclusive} band: separable from measurement
 noise, not from training noise.
 
-The decomposition is the part worth carrying forward. The preference arm is $+2.87$ pp
-above S2 $[+2.03, +3.76]$, but $+2.24$ $[+1.41, +3.11]$ of that is bought by the control
---- $800$ further supervised updates on touch steps, no preference term anywhere --- and
-only $+0.63$ sits on top: $78\%$ of the movement belongs to the control arm, and reporting
+The decomposition is the part worth carrying forward. The preference arm is $+2.87$ pp above
+S2 $[+2.03, +3.76]$, but $+2.24$ $[+1.41, +3.11]$ of that is bought by the control --- $800$
+further supervised updates, no preference term anywhere --- and only $+0.63$ sits on top: $78\%$ of the movement belongs to the control arm, and reporting
 $+2.87$ as the effect of the objective would overstate it fourfold. The same split appears
 one layer down, at the descriptor, where the control lifts joint name-and-point accuracy by
 $+5.90$ pp and the preference term by $+0.80$. Nor does the stage overtake plain sentence
@@ -568,9 +571,9 @@ supervision: MIN $-$ S1 is $+0.94$ $[-0.09, +2.05]$, $p = 0.11$, CE2 $-$ S1 is $
 $p = 0.61$. The stage repairs the damage the descriptor target did to itself, then rises a
 little above it.
 
-The pre-registration predicted $+0.35$ pp for this contrast from a
-descriptor-to-executability conversion factor of $0.43$ measured on our own data, and
-wrote that down before the run; the measurement returned $+0.63$, slightly conservative.
+The pre-registration predicted $+0.35$ pp for this contrast, from a
+descriptor-to-executability conversion factor of $0.43$ measured on our own data and
+written down before the run; the measurement returned $+0.63$.
 
 \emph{A registered variant the data refused.} The rejected side needs a source, and two
 were registered: the heuristic one used here, the nearest same-role element $80$--$350$ px
@@ -582,7 +585,7 @@ element named to the target has quartiles of $70$, $351$ and $748$ px, so the wi
 rejects $76.5\%$. These errors are bipolar --- the right element under another name, or a
 different region of the screen --- not the local confusion an on-policy negative presumes,
 and the heuristic source does not sample them so much as manufacture a neighbour-confusion
-regime the data barely contains. We report all three sources because the heuristic one is
+regime the data barely holds. We report all three sources because the heuristic one is
 what was left standing after the measurement, not a design preference.
 
 \section{Where the Descriptor Helps and Where It Breaks}
@@ -621,22 +624,20 @@ wrong   & outside & $738$     & 24.4 & 30.8 & \textbf{5.6} & $\mathbf{-25.2}$ & 
 
 The branch wins or ties in three cells of four. All the damage sits in one: with both the
 wrong name and a coordinate outside tolerance --- $738$ steps, $16.5\%$ of the population
---- executability falls to $5.6\%$. The mechanism does what it was designed to do, and its
-cost is commitment: having named the wrong element, the branch writes a sentence faithful
-to that element, while the control, committed to nothing, still retrieves the right one
-three times in ten.
+--- executability falls to $5.6\%$. Its cost is commitment: having named the wrong element,
+the branch writes a sentence faithful to it, while the control, committed to nothing, still
+retrieves the right one three times in ten.
 
 The objection is that this stratification conditions on a variable the treatment itself
 produces, so the failing cell may simply be the hard steps. The two rightmost columns test
-that and are not conditioned on the treatment: if the cell were merely hard the human
-references would fall with it, yet they reach $66.3\%$ there, $9$ points below their own
-average, where the treatment reaches $5.6$ and the untuned model $24.4$. The cell is
-somewhat harder than average and that does not account for the collapse. The comparison is
-not clean --- a correctly specified test would need a difficulty measure fixed before the
-treatment ran --- but the confound is bounded rather than merely acknowledged. One cell
-does behave as the objection predicts: \emph{name correct, point outside}, ceiling
-$31.0\%$, is a region the instrument largely cannot see, and the near-zero $\Delta$ there
-is absence of signal rather than absence of effect.
+that and are not conditioned on the treatment: if the cell were merely hard the references
+would fall with it, yet they reach $66.3\%$ there, $9$ points below their own average, where
+the treatment reaches $5.6$ and the untuned model $24.4$. The cell is somewhat harder than
+average and that does not account for the collapse; the comparison is not clean --- a
+correct test needs a difficulty measure fixed before the treatment ran --- but the confound
+is bounded rather than merely acknowledged. One cell does behave as the objection predicts:
+\emph{name correct, point outside}, ceiling $31.0\%$, is a region the instrument largely
+cannot see, and the near-zero $\Delta$ there is absence of signal, not of effect.
 
 The decomposition of the total is arithmetic and carries no such caveat: $-1.28$ pp from
 the $92.7\%$ of steps carrying a descriptor, $-0.63$ pp from the $7.3\%$ that do not.
@@ -662,19 +663,17 @@ No descriptor emitted & $325$     & 19.7 & 10.8 & $-8.92\,[-12.57, -5.25]$ \\
 \end{table}
 
 The $7.3\%$ of steps where the branch emits nothing carry $34\%$ of the total difference.
-Those steps are where the model misjudges the \emph{action class}: the reference says
-\emph{Click on the close icon} and the branch writes \emph{Swipe up}. The human references
-score $68.3\%$ there, so the steps are solvable and the instrument is not blind. The
-failure is not created by the descriptor: the untuned model names the correct action class
-on $83.4\%$ of them, against $55.1\%$ for the control and $38.8\%$ for the treatment, so
-fine-tuning is what damages the action prior and the descriptor target amplifies it. The
-mechanism we cannot yet test is that descriptors appear only on touch steps in training,
-so the model may have learnt the shortcut ``descriptor $\Leftrightarrow$ touch'' and, when
-unsure, drop the descriptor and commit to a non-touch sentence; the branch registered to
-test that, S2-nopoint, is among the runs the budget cancelled. One limitation travels with
-the slice: the $325$ steps are defined by the treatment's own behaviour, so ``the treatment
-does badly there'' is partly definitional. What is not definitional is that the control
-also scores only $19.7\%$ there.
+There the model misjudges the \emph{action class}: the reference says \emph{Click on the
+close icon} and the branch writes \emph{Swipe up}. The references score $68.3\%$ there, so the steps
+are solvable and the instrument is not blind. The failure is not created by the descriptor:
+the untuned model names the correct action class on $83.4\%$ of them, against $55.1\%$ for
+the control and $38.8\%$ for the treatment, so fine-tuning damages the action prior and the
+descriptor target amplifies it. The mechanism we cannot yet test is that descriptors
+appear only on touch steps in training, so the model may have learnt ``descriptor
+$\Leftrightarrow$ touch'' and, when unsure, drop the descriptor and commit to a non-touch
+sentence; the branch registered to test that, S2-nopoint, is among the cancelled runs. One limitation travels with the slice: the $325$ steps are defined by
+the treatment's own behaviour, so ``the treatment does badly there'' is partly
+definitional. What is not definitional is that the control also scores only $19.7\%$.
 
 \subsection{Four alternative explanations tested and set aside}
 \emph{Length.} Negative on long sentences ($-1.85$) and short ones ($-2.00$), the two
@@ -720,40 +719,37 @@ S2: ``Go back to the previous page.'' \hfill \emph{fails} \\
 \end{tabular}
 \end{table}
 
-In (b) the descriptor carries no name --- the element has none in the accessibility tree
-and none inside its box under OCR --- and the branch resolves the gap by describing a
-position in a list: fluent, faithful to its own descriptor, unusable. In (c) nothing is
-emitted and the sentence is not about a touch. Neither failure is a failure to write
-English.
+In (b) the descriptor carries no name --- the element has none in the accessibility tree and
+none inside its box under OCR --- and the branch describes a position in a list instead:
+fluent, faithful to its own descriptor, unusable. In (c) nothing is emitted and the
+sentence is not about a touch. Neither failure is a failure to write English.
 
 \subsection{Why this does not simply contradict the grounding-first prior}
 Results reporting gains for targets that ground before answering are not measured on this
 task, and three differences matter. Their supervision is a question--answer pair whose
 grounded object is what the question is \emph{about}, so a grounding error shows in the
-answer; ours is a free-form instruction in which a wrong descriptor still admits a fluent,
-wrong sentence. Their grounding target is verified against annotation at training time
-only, ours at inference against the model's own identification, where
-Table~\ref{tab:cross} finds the asymmetry. And their gains are measured on answer accuracy,
-whose floor is near chance, while executability has a measured floor of $12.0$ and ceiling
-of $75.7$, leaving $62.9$ points of range in which $2$ points is small. Ours is a boundary
-condition on that prior, not a contradiction: the prefix pays where the model can identify
-the referent, and identification with $22.0\%$ of target elements carrying no name is
-harder than for a photographed object.
+answer; ours admits a fluent, wrong sentence after a wrong descriptor. Their grounding
+target is verified against annotation at training time, ours at inference against the
+model's own identification, where Table~\ref{tab:cross} finds the asymmetry. And their
+gains are measured on answer accuracy, whose floor is near chance, while executability has
+a measured floor of $12.0$ and ceiling of $75.7$, leaving $62.9$ points of range in which
+$2$ points is small. Ours is a boundary condition on that prior, not a contradiction: the
+prefix pays where the model can identify the referent, and identification with $22.0\%$ of
+target elements carrying no name is harder than for a photographed object.
 
 \subsection{What this says about the intervention}
 Read together, the three tables say more than ``the ablation did not pay''. The supervision
 is not uniformly inert: it adds $5.7$ points where the model identifies the element
 correctly and subtracts $25$ where identification has failed, so its net effect is governed
-by identification accuracy, not by the presence of the prefix. The lever is therefore not
-``remove a slot'' --- the coordinate slot carries the weight, $+1.1$ points on its own where
-the name is wrong against $+0.5$ for the name alone --- but ``make identification
-reliable''. Lifting the failing cell to the control's own level on those $738$ steps would
-be worth $4.2$ points, the size of effect the study is looking for.
-Section~\ref{sec:mindesc} reports the objective registered for exactly that: $+0.63$ pp
-over its own supervised control, inside the inconclusive band, with $78\%$ of the stage's
-movement belonging to that control. Identification accuracy is both the lever and, so far,
-the thing that has not moved far enough. Choosing this objective \emph{after} seeing the S2
-result is a post-hoc decision and is recorded as one.
+by identification accuracy, not by the prefix. The lever is therefore not ``remove a slot''
+--- the coordinate slot carries the weight, $+1.1$ points on its own where the name is wrong
+against $+0.5$ for the name alone --- but ``make identification reliable''. Lifting the
+failing cell to the control's own level on those $738$ steps would be worth $4.2$ points,
+the size of effect the study seeks. Section~\ref{sec:mindesc} reports the objective
+registered for exactly that: $+0.63$ pp over its supervised control, inside the
+inconclusive band, $78\%$ of the stage's movement belonging to that control. Identification
+accuracy is both the lever and, so far, what has not moved far enough. Choosing this
+objective \emph{after} seeing the S2 result is a post-hoc decision and is recorded as one.
 
 \section{Limitations}
 \label{sec:limits}
@@ -768,33 +764,32 @@ variance is a component --- are not said here.
 intervention is narrower than a score read against $100$ suggests. The references fail on
 $1{,}083$ steps, $71\%$ of those because the grounder misses by more than the tolerance on a
 human sentence, and $935$ steps defeat all three arms. The metric also cannot see
-displacements below about $63$ px, the merge radius: it detects naming the wrong element,
-not pointing slightly off inside the right one.
+displacements below the $63$ px merge radius: it detects naming the wrong element, not
+pointing slightly off inside the right one.
 
 \emph{Grounder dependence.} Two grounders agree on the ordering, but both are built on
 Qwen-family backbones, so a same-family effect is not excluded, and no human evaluation
 anchors either. Our rewrites keep the element name verbatim, so we probed phrasing, not the
 referring expression that~\cite{groundersunderstand} perturbs; their $84\%$ is the yield of
-an adversarial search over Windows desktops, not a failure rate under paraphrase, and the
-mobile case they leave open is ours.
+an adversarial search over Windows desktops, not a paraphrase failure rate, and the mobile
+case they leave open is ours.
 
 \emph{Split composition.} The test split is held out by task, not by application: $95.6\%$
 of attributable applications also occur in training, and $55\%$ of test steps cannot be
-attributed at all --- \emph{unknown}, never read as \emph{unseen}. Comparisons against an
-external model would carry a home-field advantage and none is reported standalone. Task
-disjointness is not phrase disjointness either: $17.3\%$ of test references appear verbatim
-in a $2.6\%$ slice of the training data.
+attributed at all --- \emph{unknown}, never read as \emph{unseen}. No comparison against an external
+model is reported standalone, since it would carry a home-field advantage. Nor is task
+disjointness phrase disjointness: $17.3\%$ of test references appear verbatim in a
+$2.6\%$ slice of the training data.
 
 \emph{Scope of the construct.} Every claim is at the level of a system, never of a single
 sentence, and the one setting where this family of measure has been validated against
-people recommends a reference-based score for ranking systems even while its
-reference-free model correlates best per instruction~\cite{zhao2021}. The metric asks
-whether a grounding model reaches the right element, not whether a person would. A system
-could climb it by writing for the grounder --- bounded but not excluded: a sentence naming
-a screen region scores $89.5\%$ when the region is right and $3.3\%$ when wrong, so the
-reward is for being right about position, and the treatment branch uses coordinate strings
-at the references' own rate. \emph{Scope:} single screen, English interfaces, one dataset,
-one 3B base model, one training configuration.
+people recommends a reference-based score for ranking systems even while its reference-free
+model correlates best per instruction~\cite{zhao2021}. The metric asks whether a grounding
+model reaches the right element, not whether a person would, and a system could climb it by
+writing for the grounder --- bounded but not excluded: a sentence naming a screen region
+scores $89.5\%$ when the region is right and $3.3\%$ when wrong, so the reward is for being
+right about position, not for mentioning it. \emph{Scope:} single screen, English interfaces, one dataset, one 3B
+base model, one training configuration.
 
 \section{Conclusion}
 
@@ -802,20 +797,19 @@ We built supervision for GUI instruction generation without human annotation and
 what it buys: $47.6 \to 59.4$ points of executability at two seeds, against a
 human-reference level of $75.7$ and a contentless floor of $12.0$, the effect $22\times$
 the seed-to-seed noise and its sign preserved under a second grounder trained on different
-data. We then asked whether naming the element before writing the sentence adds anything.
-The pre-registered answer needs two seeds per branch and one run was cancelled; at the
+data. Whether naming the element before writing the sentence adds anything is a question
+the pre-registration answers over two seeds per branch, and one run was cancelled; at the
 single seed available the treatment sits $1.93$ points below its control, inside the band
 declared inconclusive in advance. The diagnosis is what we carry forward: the prefix is
 worth $+5.7$ points where the model identifies the element correctly and $-25$ where it
 does not, the largest locus of damage being an action-prior failure fine-tuning introduces
-before any descriptor exists. The objective this diagnosis specifies
-has since been run --- a minimal-pair preference stage at the descriptor layer against a
-supervised control matched update for update --- adding $+0.63$ pp $[+0.16, +1.10]$, inside
-the inconclusive band again, with $78\%$ of the stage's gain belonging to the control; a
-further variant that would have mined negatives from the model's own errors did not survive
-its feasibility gate, those errors being bipolar rather than local. The mechanism is not
-broken --- it pays where identification succeeds --- but it is bounded by identification
-accuracy, and that is where the next experiment has to act.
+before any descriptor exists. The objective this diagnosis specifies has since been run, a
+minimal-pair preference stage against a supervised control matched update for update, and
+adds $+0.63$ pp $[+0.16, +1.10]$ --- inside the inconclusive band again, with $78\%$ of the
+stage's gain belonging to the control; a variant sourcing negatives from the model's own
+errors died at its feasibility gate, those errors being bipolar rather than local. The
+mechanism is not broken --- it pays where identification succeeds --- but it is bounded by
+identification accuracy, which is where the next experiment must act.
 
 \begin{thebibliography}{00}
 
@@ -832,8 +826,7 @@ generalist GUI agents,'' in \emph{Proc. ICLR}, 2025.
 do: Universal visual grounding for GUI agents,'' in \emph{Proc. ICLR}, 2025.
 
 \bibitem{uivenus} inclusionAI, ``UI-Venus technical report: Building
-high-performance UI agents with RFT,'' arXiv:2508.10833, 2025 (preprint); model
-\texttt{UI-Venus-Ground-7B}, Apache-2.0.
+high-performance UI agents with RFT,'' arXiv:2508.10833, 2025 (preprint).
 
 \bibitem{aitw} C. Rawles, A. Li, D. Rodriguez, O. Riva, and T. P. Lillicrap,
 ``AndroidInTheWild: A large-scale dataset for Android device control,'' in
@@ -910,9 +903,8 @@ planning: Challenges and benchmark construction,'' in \emph{Proc. ACL}, 2024, pp
 E. Ie, ``On the evaluation of vision-and-language navigation instructions,'' in
 \emph{Proc. EACL}, 2021, pp. 1302--1316.
 
-\bibitem{guideme} K. Fang, J. Zhang, S.-T. Ni, P. Hui, and Y. Wang, ``GuideMe:
-A VLM-based system assisting independent smartphone learning for older adults,''
-in \emph{Proc. ACM CHI}, 2026.
+\bibitem{guideme} K. Fang \emph{et al.}, ``GuideMe: A VLM-based system assisting
+independent smartphone learning for older adults,'' in \emph{Proc. ACM CHI}, 2026.
 
 \bibitem{companionvcl} L. Đ. P. Uyên and N. H. B. Long, ``Sinh biểu thức quy chiếu cho
 phần tử giao diện,'' submitted to VCL, 2026.

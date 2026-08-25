@@ -2206,3 +2206,61 @@ SafeGround (arXiv 2602.02419) · UI-TARS (arXiv 2501.12326).
 · **`s2_nopoint` / `s2r`** — `report/117` Mục 3 đứng vững **không dựa vào giá**: toạ độ đúng một
   mình +1,12 pp vs tên đúng một mình +0,54 pp; tái lập ở ô C (411 bước đang được toạ độ cứu).
 · **rerank bằng bộ trỏ** — trọng tài trùng thước, vòng tròn.
+
+---
+
+## (x15) SỬA ĐỔI — NÂNG `cutoff_len` 2560 → 3072 CHO CẶP NHÁNH-ỨNG-VIÊN
+
+Ghi 25/8/2026, **trước khi train**, **trước khi có bất kỳ điểm nào** của nhánh ỨNG-VIÊN.
+Mục (x14g) điểm 4 xếp `cutoff_len` vào danh sách "không đụng"; mục này **sửa đúng một dòng đó**,
+chỉ cho cặp nhánh ỨNG-VIÊN, và nêu lý do đo được.
+
+### (x15a) Vì sao buộc phải đổi
+
+Khối ứng viên tốn token. Đo 25/8 bằng bộ tách token của chính mô hình nền:
+
+| trần ứng viên | phủ tên vàng (cổng G1 đòi ≥95%) | token khối, max |
+|---|---|---|
+| 16 | **76,2%** ⛔ | 492 |
+| 32 | 93,2% ⛔ | 656 (đã dùng cách viết gọn nhất trong bốn dạng thử) |
+| **40** | **96,7%** ✅ (đủ tập kiểm) | 1.012 |
+
+Ngân sách dưới `cutoff_len` 2560 chỉ còn **543 token**: cấu hình đã ghi **ảnh chiếm 1.272 token**
+và mẫu dài nhất của nhánh s2 là **2.017**. ⇒ Trần khả thi là 16, mà 16 **trượt cổng G1**.
+⇒ Hoặc bỏ nhánh, hoặc nâng trần chuỗi. Không có cửa thứ ba: đã thử nén cách viết (bốn dạng) và
+đã cân nhắc hạ `image_max_pixels` 1003520 → 602112 (giải phóng ~509 token) rồi **loại**, vì tác vụ
+là **đọc chữ nhỏ trên giao diện** — hạ độ phân giải đánh thẳng vào năng lực cần dùng.
+
+### (x15b) Vì sao đổi vẫn hợp lệ
+
+1. **Chưa có bất kỳ điểm nào của nhánh này.** Vi phạm là *nới ngưỡng sau khi thấy số*; đây là
+   ràng buộc kỹ thuật lộ ra lúc **dựng dữ liệu**, không phải lúc đọc kết quả.
+2. **Thước, luật chấm, tập kiểm, mẫu số 4.463, bảng dải (w)§3 — không đụng một chữ.** Cái đổi
+   nằm ở khâu **nạp dữ liệu**.
+3. **Đổi cho CẢ nhánh xử lý lẫn đối chứng cùng đầu vào** ⇒ hiệu số nội bộ không lệch.
+4. **Tiền lệ trong chính dự án:** 11/8 đã nâng 2048 → 2560, cùng đúng lý do (cắt cụt câm nuốt mất
+   đích sinh), ghi lại trước lượt train đầu tiên.
+5. **Nâng trần không tốn thêm gì** — đệm theo mẫu dài nhất trong từng lô, không đệm tới
+   `cutoff_len` (ghi sẵn ở `train_config.yaml`). ⚠️ Nhưng **bộ nhớ đỉnh** thì có đổi ⇒ cổng G5
+   (probe 200 mẫu dài nhất) thành **bắt buộc**, đúng bài học P10.
+
+### (x15c) Ba điều kiện ràng buộc — thiếu một là vi phạm
+
+1. Mục này phải đứng **trước** mọi lượt train của nhánh ỨNG-VIÊN trong `git log`.
+2. ⛔ **Cặp mới chỉ đọc nội bộ với nhau.** Cấm đặt điểm của nhánh ỨNG-VIÊN cạnh S1/S2/MIN/CE2 rồi
+   tính hiệu — khác `cutoff_len` **và** khác đầu vào. Đại lượng đọc bằng bảng dải là
+   `Δ = ỨNG-VIÊN − ĐỐI-CHỨNG-CÙNG-ĐẦU-VÀO`, cả hai ở `cutoff_len` 3072.
+3. Bài phải **nói thẳng** nhánh này được chuỗi vào dài hơn, vì sao, và đối chứng cũng y như vậy.
+
+### (x15d) Con số chốt
+
+`cutoff_len: 3072`. Suy ra từ 2.017 (mẫu dài nhất hiện tại, đã gồm ảnh 1.272) + 1.012 (khối ứng
+viên dài nhất ở trần 40) = 3.029, làm tròn lên bội của 256.
+Trần ứng viên **40**. Cách viết `tên <point>x,y</point>` ngăn bằng ` · ` — **giữ dạng `<point>`**
+để mô hình chép thẳng sang ô khai báo được, dù dạng nén tiết kiệm hơn ~30%.
+
+### (x15e) Không đụng
+
+Mọi thứ khác của cấu hình P9: `image_min_pixels` · `image_max_pixels` · `per_device_train_batch_size`
+· `gradient_accumulation_steps` · lịch `lr` · số bước · luật chọn điểm lưu · `enable_liger_kernel`.
+Và toàn bộ khâu chấm.
