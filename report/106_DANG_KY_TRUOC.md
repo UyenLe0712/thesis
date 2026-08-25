@@ -2064,3 +2064,145 @@ như một lựa chọn thiết kế thuần — nó là kết luận **sau khi*
 
 Thước, luật chấm, mẫu số 4.463, mọi số của (x10) và (x12). Nhánh MIN-DESC và CE2-S2 giữ nguyên
 tư cách kết quả chính; (x13) chỉ đóng hồ sơ biến thể.
+
+---
+
+## (x14) ĐĂNG KÝ TRƯỚC — BA NHÁNH CỦA GIAI ĐOẠN THÁNG 9 (khoá 25/8/2026)
+
+Viết **trước khi dựng bất kỳ tệp dữ liệu nào** của ba nhánh dưới đây và **trước khi có bất kỳ
+điểm nào**. Căn cứ: phân rã ô quyết định ở (x14a), đo hôm nay bằng 0 giờ GPU trên tệp `*_raw.jsonl`
+đã có.
+
+### (x14a) Phân rã ô — nền của mọi quyết định dưới đây
+
+Trên 4.463 bước, cắt theo việc khai báo của MIN-DESC đúng tên / đúng toạ độ:
+
+| ô | n | % | MIN | S1 | người | dư địa tới người |
+|---|---|---|---|---|---|---|
+| A tên✓ point✓ | 2.082 | 46,7% | **87,1** | 78,2 | 86,3 | **−0,36** |
+| B tên✓ point✗ | 220 | 4,9% | 26,4 | 27,7 | 32,3 | +0,29 |
+| C tên✗ point✓ | 411 | 9,2% | 57,2 | 53,0 | 73,0 | +1,46 |
+| D không sinh desc | 15 | 0,3% | 0,0 | 0,0 | 60,0 | +0,20 |
+| **D tên✗ point✗** | **745** | **16,7%** | **3,6** | **25,8** | 64,4 | **+10,15** |
+| ngoài lát (không tên vàng) | 990 | 22,2% | 55,3 | 54,4 | 73,0 | +3,94 |
+| **TỔNG** | 4.463 | | **60,05** | 59,11 | 75,73 | **+16,04** |
+
+Ba điều đọc ra, và cả ba đều ràng buộc thiết kế:
+1. ⭐ **Ô A đã hết chỗ — MIN vượt trần câu người** (87,1 vs 86,3) trên 46,7% số bước.
+2. ⭐ **63% dư địa nằm gọn ở ô D**, nơi **MIN 3,6% trong khi S1 25,8%** ⇒ khai báo sai không chỉ
+   vô ích, nó **phá câu nặng hơn là không khai báo**. Đây là bản sắc nét của chẩn đoán (x10b).
+3. **Trần của mọi can thiệp lúc suy luận rất thấp:** bộ định tuyến **hoàn hảo** (biết trước khai
+   báo đúng/sai, sai thì lùi về S1) cho **63,46%**; chỉ ở ô D cho **63,75%**. ⇒ Né không đủ,
+   phải **sửa việc nhắm**.
+
+### (x14b) ⚠️ SỬA MỘT CÁCH ĐỌC SAI CỦA CHÍNH DỰ ÁN — không phải sửa ngưỡng
+
+Bảng dải (w)§3 định trên **Δ so S1 tính bằng pp**, cho **trung bình hai hạt giống mỗi nhánh**.
+Trợ lý đã có lúc quy nhầm sang mức tuyệt đối và báo *"65% là ngưỡng dương yếu"*. Quy đúng, với
+S1 hai hạt giống = **59,36%** (59,11 và 59,62):
+
+| dải | Δ so S1 | mức tuyệt đối |
+|---|---|---|
+| TRẮNG | −2,8 … +1,7 | 56,56 – **61,06** |
+| **DƯƠNG YẾU** | +1,7 … +2,8 | **61,06 – 62,16** |
+| **DƯƠNG** | ≥ +2,8 | **≥ 62,16** |
+
+⛔ **Ngưỡng KHÔNG đổi một chữ** — vẫn là +1,7 / +2,8 pp khoá ngày 5/8. Chỉ sửa phép quy đổi.
+📌 Con số **65,0%** trong `paper/fair2026/main.tex` **đúng** nhưng trả lời câu khác: đó là điểm
+mà lượt **S2/202 đã huỷ** sẽ phải đạt để trung bình hai hạt của S2 chạm mép dương yếu
+(`2 × 61,06 − 57,18 = 64,95`). Đừng đọc nó thành ngưỡng của một nhánh.
+📌 MIN-DESC 60,05 ⇒ Δ = **+0,69 pp**, còn **2,11 pp** nữa là DƯƠNG.
+
+### (x14c) ⭐ MỞ RỘNG PHẠM VI BẢNG DẢI — khai báo minh bạch
+
+Bảng (w)§3 viết cho `Δ = S2 − S1`. Ba nhánh dưới đây **không phải S2**. Tại đây đăng ký việc
+**dùng nguyên bảng đó cho mọi nhánh mới**, không sửa ngưỡng, vì hai nguồn nhiễu dựng nên ngưỡng
+(SE thước 0,38 pp · σ giữa hạt giống 0,46 pp) là thuộc tính của **bố trí đo**, không của riêng S2.
+⛔ Cấm phát minh dải mới cho nhánh mới. ⛔ Cấm đọc bảng khi chỉ có một hạt giống — khi đó
+**mọi kết quả là TRẮNG theo định nghĩa**, đúng như (w)§3 phát biểu.
+
+### (x14d) Ba nhánh, và ĐÚNG MỘT lý do tồn tại cho mỗi nhánh
+
+**① NHÁNH-ỨNG-VIÊN** (đường tới ô D — *sửa việc nhắm*)
+Đưa vào **đầu vào** một khối ứng viên `tên <point>x,y</point>` dựng từ **OCR ∪ cây trợ năng
+offline**. Ô `<desc>` đổi từ **sinh tự do** thành **chọn trong danh sách của chính màn đó**.
+Ba số làm trụ, đo hôm nay: tên vàng có trong OCR ∪ a11y **99,7%** · tồn tại ứng viên vừa khớp tên
+vừa trong ±14% điểm vàng **80,2%** (so khai báo hiện tại **59,9%** ⇒ dư địa **+20,3 pp**) · câu
+nhắc hiện chỉ nhét **24 dòng OCR KHÔNG kèm toạ độ** (`build_branch_data.py:31`), mà **67,7%** số
+bước MIN gọi sai tên đã có tên vàng nằm sẵn trong 24 dòng đó ⇒ **thông tin có sẵn mà không dùng
+được vì thiếu neo vị trí**.
+⚠️ **Thêm đầu vào ⇒ KẾT QUẢ MỨC HỆ THỐNG.** Bắt buộc: (a) train **đối chứng cùng đầu vào** và
+luôn trình theo cặp; (b) giữ nguyên bảng cũ không đầu vào phụ, không thay thế; (c) không so trực
+tiếp với S1/Base như thể cùng điều kiện.
+
+**② NHÁNH-LÙI** (đường hạn chế thiệt hại ở ô D — *selective prediction học được*)
+Dựng đích SFT từ **14.000 rollout S2 đã có** (68,5% đúng tên): bước mô hình **từng sai** có đích
+`<desc>không chắc</desc>` + câu chung chung kiểu S1; bước **từng đúng** giữ khai báo vàng + câu
+đặc tả. Một mô hình duy nhất, **không thêm đầu vào** ⇒ so với S1 vẫn công bằng.
+⚠️ Thiên lệch biết trước, phải ghi Limitations: nhãn "từng sai" là hành vi của **S2 trên tập dạy**
+(68,5% đúng) trong khi tập kiểm chỉ 60,6% ⇒ mô hình sẽ **lùi ít hơn mức cần**.
+
+**③ MIX** (không nhắm điểm — *gỡ điều kiện claim đang trượt*)
+Trộn bước **không-chạm** dạng CE thuần vào stage-2. Lý do duy nhất: điều kiện (x5) mục 4 đang
+**TRƯỢT** (−19,75 pp, ngưỡng > −3 pp) theo (x3e). ⛔ **Cấm trình MIX như một cải tiến điểm số.**
+
+### (x14e) Cổng chặn — khoá số TRƯỚC khi thấy dữ liệu
+
+| cổng | khi nào | ĐẠT | TRƯỢT ⇒ |
+|---|---|---|---|
+| G1 phủ | dựng xong khối ứng viên, 0 GPU | tên vàng trong khối ≥ **95%** | bỏ nhánh ① |
+| G2 C3 | như trên | tồn tại ứng viên khớp tên ∧ trong ±14% ≥ **75%** | bỏ nhánh ① |
+| G3 rò rỉ | kiểm mù **300 mẫu** | khối ứng viên **không** chứa dấu hiệu nào chỉ ra phần tử đích | bỏ nhánh ① |
+| G4 độ dài | 200 mẫu **dài nhất** | token câu nhắc ≤ `cutoff_len` **2560** | sửa cách cắt danh sách, không sửa `cutoff_len` |
+| G5 smoke | 20 bước, ~40 phút | `train_runtime` ~200–500 s (không ~15 s) · loss đúng dải của stage | dừng |
+| G6 sớm | nhánh ① ở **600 bước**, ~2 h | `gate_desc_acc` ≥ **+3,0 pp** so mốc MIN **60,6%** | **dừng, cứu ~40 h** |
+| G7 dải lùi | nhánh ② trên tập kiểm | tỉ lệ lùi ∈ **[15%, 45%]** | ngoài dải ⇒ sập hoặc không học, dừng |
+
+### (x14f) Điểm quyết định — cũng khoá số tại đây
+
+· **D1** sau nhánh ②: exec ≥ **61,5%** thì giữ, dưới thì bỏ.
+· **D2** sau nhánh ①: exec ≥ **62,0%** **và** (① − đối chứng cùng đầu vào) ≥ **+2,0 pp**. Thiếu một
+  trong hai vế là bỏ — vế thứ hai chặn việc quy công cho khối ứng viên thứ mà bất kỳ đầu vào giàu
+  hơn nào cũng cho.
+· **D3**: chọn **ĐÚNG MỘT** nhánh để nhân hạt giống. Chọn theo D1/D2, không chọn sau khi ngó số.
+
+### (x14g) Cam kết trước khi thấy số
+
+1. Nhánh nào chạy hạt giống thứ hai thì **báo trung bình hai hạt bất kể ra sao** — (x8c) áp nguyên.
+2. Khi báo Δ, kèm đủ bốn thứ của (w)§3: bốn số riêng lẻ · tỉ lệ bước bất đồng (mốc null 6,4% ·
+   can thiệp thật 24%) · phân tầng độ dài câu · **hai hạt lệch > 1,5 pp thì dừng truy nguyên nhân
+   trước khi đọc Δ**.
+3. **Báo cả ba nhánh** kể cả nhánh trượt cổng — như (x11d) đã buộc và (x13) đã thi hành.
+4. Không đụng: thước · luật chấm · mẫu số 4.463 · luật cắt `<desc>` · luật chọn điểm lưu ·
+   `cutoff_len` · cấu hình P9.
+
+### (x14h) Chữ CẤM dùng
+
+⛔ **"đầu tiên" / "novel" / "cơ chế mới"** cho việc đưa danh sách ứng viên vào đầu vào — bài gốc
+AndroidControl (**NeurIPS 2024 D&B**) đã fine-tune với danh sách a11y làm INPUT; Mind2Web
+(**NeurIPS 2023 D&B**) và Zheng và cs. (**ICML 2024**) đã lọc ứng viên ở tầng hành động.
+⛔ **"đầu tiên"** cho ý *học cách từ chối* — ASPIRE (**Findings of EMNLP 2023, tr. 5190–5213**)
+đã chiếm từ 2023.
+⛔ Cấm trích Wang và cs. (**ICLR 2023**) *"+17,9%"* mà không kèm điều kiện **k=40 trên 137B–540B**.
+⛔ Cấm trình preprint như đã bình duyệt: RFT (arXiv 2308.01825) · PET-SQL (arXiv 2403.09732) ·
+SafeGround (arXiv 2602.02419) · UI-TARS (arXiv 2501.12326).
+
+### (x14i) Đã loại, kèm lý do ĐO ĐƯỢC (không phải lý do giá)
+
+· **định tuyến/abstention lúc suy luận** — trần **oracle 63,46%**; bảy bộ định tuyến thật cho
+  60,0–60,34%, tức nhiễu.
+· **ràng buộc giải mã ô tên** — dư địa vật lý **+1,46 pp**, và ở ô D **68,6%** tên mô hình sinh ra
+  **đã là chuỗi có thật trên màn** ⇒ ràng buộc **không kích hoạt** ở phần lớn khối lỗi. Mô hình
+  không bịa tên, nó chọn đúng chuỗi của **sai phần tử**.
+· **sửa tên chọn lọc** — tầng khai báo +3,85 pp (b=133, c=0, χ²=131) nhưng trần exec **60,01%**
+  vì 107/133 bước sửa được **đã trúng sẵn**. ⭐ Đây là ca hệ số chuyển đổi 0,43–0,79 **dự báo sai**:
+  nó ước trên can thiệp đổi **cả tên lẫn điểm**.
+· **self-consistency k=5** — số duy nhất trên đầu ra có cấu trúc là +0,4% (preprint).
+· **RFT/STaR trên 14.000 rollout** — mức tăng teo theo độ mạnh của nền: +4,8…+6,1 pp ở nền
+  35,9–50,0%, **−0,1 pp ở nền 54,6%**; nền của ta **68,5%**.
+· **copy/pointer từ OCR** — lấy mục OCR gần điểm vàng nhất cho tên đúng **64,9%**, **thấp hơn**
+  66,3% mô hình tự đạt.
+· **`--ceiling gold`** — oracle leak, câu người chứa nguyên văn tên phần tử 53,9%.
+· **`s2_nopoint` / `s2r`** — `report/117` Mục 3 đứng vững **không dựa vào giá**: toạ độ đúng một
+  mình +1,12 pp vs tên đúng một mình +0,54 pp; tái lập ở ô C (411 bước đang được toạ độ cứu).
+· **rerank bằng bộ trỏ** — trọng tài trùng thước, vòng tròn.

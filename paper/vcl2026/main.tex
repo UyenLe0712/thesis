@@ -552,6 +552,18 @@ Phần đánh giá câu sinh ra --- tức nhãn này nuôi mô hình tới đâu
 riêng~\cite{companionfair}; ở đó, mô hình huấn luyện trên chính bộ nhãn này được chấm
 bằng một mô hình định vị độc lập trên $4.463$ bước chạm của tập kiểm.
 
+\emph{Mô hình gọi sai tên theo kiểu nào.} Bài đó cũng trả lại cho phần nhãn một quan sát
+đáng ghi. Đem đúng khoảng $80$--$350$ px ở trên đo trên lỗi của mô hình đã học từ bộ nhãn
+này: trên $3.246$ bước mô hình gọi sai tên, khoảng cách từ phần tử nó gọi tới phần tử đích
+có tứ phân vị $70$, $351$ và $748$ px, tức khoảng đó loại mất $76{,}5\%$ số ca. Lỗi gọi
+tên vì vậy \emph{lưỡng cực}: hoặc mô hình trỏ đúng phần tử nhưng gọi bằng một cái tên
+khác, hoặc nó nói sang hẳn một vùng khác của màn hình --- gần như không có kiểu nhầm giữa
+hai phần tử cạnh nhau. Một biến thể huấn luyện lấy chính phần tử mô hình gọi nhầm làm vế
+âm do đó chỉ dựng được $459$ cặp trên $14.000$ màn ($3{,}3\%$) và đã dừng ở cổng khả thi
+đăng ký trước. Với bài toán quy chiếu, chỗ khó không nằm ở việc phân biệt hai phần tử
+giống nhau mà ở việc \emph{có gì để gọi tên} --- đúng hạn chế nêu ở Mục~\ref{sec:hanche}.
+Trên tập dạy, mô hình gọi đúng tên $68{,}5\%$ số bước ($7.067/10.319$).
+
 \section{Hạn chế}
 \label{sec:hanche}
 
