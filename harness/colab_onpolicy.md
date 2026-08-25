@@ -36,6 +36,103 @@ ghi luật này sau lần nhớ sai suýt dẫn tới thuê nhầm máy.
 
 ---
 
+## ⚡ O-L4 — KIỂM L4 TRƯỚC KHI TIÊU 3,5 GIỜ
+
+Chạy **trước O1**. Dùng `min_desc_long.json` (200 cặp nặng nhất của MIN-DESC) đã có sẵn trong
+gói — cặp on-policy cùng cấu trúc, cùng khuôn, cùng vế `chosen`, nên đây là phép thử thay thế
+hợp lệ. Tổng ~35 phút, phần lớn là bung ảnh mà O1 đằng nào cũng cần.
+
+### Bước 1 — chọn card
+
+`Runtime → Change runtime type → **L4 GPU** → Save`. Việc này **khởi động lại máy ảo và xoá sạch
+`/content`**, nên làm TRƯỚC mọi thứ khác.
+
+### Bước 2 — upload gói mới lên Drive
+
+`_bundles/thesis_rented.zip` (3,6 MB) → `MyDrive/thesis/`, **đè bản cũ**. Bản trên Drive chưa có
+`sinh_desc_train.py`, `build_min_desc_onpolicy.py`, hai cấu hình `*_onpolicy.yaml`.
+
+### Bước 3 — T1 → Restart → T2 → T3
+
+Y nguyên `harness/colab_train_min_desc.md`. Ba dòng phải đúng ở T2: ảnh dạy **64.567** · khai báo
+**41.099** · `ckpt S2 = True`. **Đừng bỏ T3.**
+
+### Bước 4 — ô probe (12 phút)
+
+```python
+import shutil, yaml, os, subprocess, time, torch, json
+
+cap = torch.cuda.get_device_capability()
+print("card:", torch.cuda.get_device_name(0),
+      f"· {torch.cuda.get_device_properties(0).total_memory/2**30:.1f} GiB",
+      f"· sm_{cap[0]}{cap[1]} · bf16 THẬT:", cap[0] >= 8)
+assert cap[0] >= 8, ("⛔ DỪNG — card không có bf16 chạy thật (T4/P100). Cấu hình khoá "
+                     "`bf16: true` ở (x3); đổi sang fp16 là sửa cấu hình đã khoá.")
+
+PROBE = "/content/probe_l4"
+shutil.rmtree(PROBE, ignore_errors=True)   # ⛔ không xoá thì LLaMA-Factory chạy TIẾP từ
+                                           #    checkpoint cũ, nhảy qua 20 bước, log vẫn
+                                           #    in "Training completed" — trông y như đạt
+c = yaml.safe_load(open(f"{REPO}/harness/train_config_orpo.yaml"))
+c.update({"dataset": "gui_min_desc_long", "max_steps": 20, "output_dir": PROBE,
+          "save_steps": 1000, "logging_steps": 1})
+yaml.safe_dump(c, open("/content/probe_l4.yaml", "w"))
+
+# lấy ĐỈNH bộ nhớ trong lúc chạy — đây là con số quyết định, không phải chữ trong log
+mon = subprocess.Popen(["bash","-lc",
+    "nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits -l 5 "
+    "> /content/vram.txt"])
+t0 = time.time()
+!cd {REPO} && llamafactory-cli train /content/probe_l4.yaml 2>&1 | tail -30
+mon.terminate()
+print(f"\n⏱ tổng ô: {(time.time()-t0)/60:.1f} phút")
+```
+
+### Bước 5 — đọc bằng BỐN con số
+
+```python
+import json, os
+st = json.load(open(f"{PROBE}/trainer_state.json"))
+r  = json.load(open(f"{PROBE}/all_results.json"))
+lg = st["log_history"]
+sb = r["train_runtime"] / max(st["global_step"], 1)
+vr = [int(x) for x in open("/content/vram.txt") if x.strip().isdigit()]
+tong = torch.cuda.get_device_properties(0).total_memory / 2**20
+
+print(f"① global_step   : {st['global_step']:>8}   ← phải 20")
+print(f"② train_runtime : {r['train_runtime']:>8.0f} s ← phải ~200–500, KHÔNG phải ~15")
+print(f"   s/bước       : {sb:>8.1f} s  ⇒ 800 bước ≈ {sb*800/3600:.1f} giờ")
+print(f"③ đỉnh VRAM     : {max(vr) if vr else -1:>8} / {tong:.0f} MiB"
+      f"  ({(max(vr)/tong*100) if vr else -1:.0f}%)")
+print(f"④ trường có trong log_history: {sorted(lg[-1].keys())}")
+for k in ("loss", "rewards/margins", "rewards/accuracies"):
+    v = [h[k] for h in lg if k in h]
+    if v: print(f"   {k:<20} đầu {v[0]:.4f} → cuối {v[-1]:.4f}")
+```
+
+### Bước 6 — phán quyết
+
+| | ĐẠT ⇒ train trên L4 | TRƯỢT ⇒ đổi A100 |
+|---|---|---|
+| ① `global_step` | **20** | khác 20 |
+| ② `train_runtime` | **200–500 s** | ~15 s = nó nhảy qua hết, probe **không diễn ra** |
+| ③ đỉnh VRAM | **< 90%** tổng | ≥ 90%, hoặc log có `CUDA out of memory` |
+| ④ loss | có số và **~2,4**, không phải ~0,1 | — |
+
+⛔ **Tràn bộ nhớ thì ĐỔI CARD, đừng hạ `cutoff_len` hay tắt `gradient_checkpointing`.** Cả hai
+là khoá cấu hình của (x3); sửa là biến ablation một-biến thành hai-biến, hỏng phép so với
+MIN-DESC.
+
+⚠️ ③ nằm trong dải **80–90%** là **rủi ro**, không phải đạt: probe chạy 200 mẫu nặng nhất của
+MIN-DESC, còn cặp on-policy có thể nặng hơn chút. Dải đó thì chạy lại O2b sau khi có dữ liệu
+thật trước khi train.
+
+⭐ Con số `s/bước` ở ② là thứ đáng giá thứ hai của ô này: nhân 800 ra **giờ thật của một nhánh**
+trên L4, rồi so với **20,6 s/bước của A100** để quyết rẻ hơn hay đắt hơn. Nhớ **đếm đơn vị trong
+phiên**, đừng tin giá ghi trong file.
+
+---
+
 ## O0 — chuẩn bị máy
 
 Chạy **y nguyên** ô **T1 → Restart → T2 → T3** của `harness/colab_train_min_desc.md`.
