@@ -1,11 +1,32 @@
 # 121 — ĐỀ XUẤT GIAI ĐOẠN THÁNG 9, BẢN ĐẦY ĐỦ ĐỂ PHẢN BIỆN
 
 > Viết 25/8/2026. **Mục đích: đưa cho một người/một hệ thống KHÁC đọc và đánh giá.**
-> Tự chứa — không cần mở file nào khác cũng hiểu được. Mọi con số trong đây đều đã đo,
-> nguồn ghi ngay cạnh. Chỗ nào là **ước lượng** hoặc **dự báo** đều nói rõ.
 >
-> ⚠️ **Người phản biện hãy tấn công thẳng vào Mục 9** — đó là danh sách những chỗ tôi
-> tự thấy yếu nhất. Nếu bạn lật được một trong số đó, chúng tôi tiết kiệm hàng chục giờ GPU.
+> ✅ **ĐỌC MỘT MÌNH FILE NÀY LÀ ĐỦ.** Nó tự chứa toàn bộ bối cảnh cần thiết: nền dữ liệu và mô
+> hình · thước đo và cách thước đã được kiểm · mọi số hiện có · mọi việc đã xảy ra từ **23/8/2026**
+> tới nay · tám hướng đã loại · ba nhánh đề xuất · lịch trình và ngân sách · và **mười chỗ chúng
+> tôi tự thấy yếu nhất**. Không cần mở file nào khác.
+>
+> **Bản đồ đọc:**
+> · **Mục 0** — tóm tắt một trang, đọc cái này trước.
+> · **Mục 1** — nền: dữ liệu, mô hình, các nhánh, **mô tả CHÍNH XÁC dụng cụ (1.3b)**, và
+>   **mười phép kiểm thước đo (1.3c)** — nếu bạn muốn nghi ngờ tính hợp lệ của phép đo thì vào đây.
+> · **Mục 2** — mọi con số hiện có, quy công, ngưỡng, và bối cảnh quyết định 23/8.
+> · **Mục 3** — ⭐ **phân rã ô**, thứ quyết định mọi đề xuất phía sau.
+> · **Mục 4** — ba nhánh đề xuất.
+> · **Mục 5** — tám hướng đã loại, kèm con số.
+> · **Mục 6–8** — cổng chặn, lịch trình, ràng buộc vận hành.
+> · **Mục 9–10** — ⚠️ **chỗ yếu và câu hỏi cho bạn. Đây là phần chúng tôi cần nhất.**
+> · **Mục 11–11c** — citation đã verify · số đã rút cấm trích lại · trạng thái hai bài báo.
+>
+> **Về nguồn số:** mọi con số trong file đều đã đo trong dự án và ghi trong sổ (`report/106`,
+> `CLAUDE.md`, `runs/`). Chỗ nào là **ước lượng** hay **dự báo** đều nói rõ ngay tại chỗ. Các phân
+> tích mới của ngày 25/8 (phân rã ô, phủ khối ứng viên, trần các bộ định tuyến) chạy trên tệp
+> `runs/*_raw.jsonl` đã có, **0 giờ GPU**, tái lập được.
+>
+> ⚠️ **Người phản biện hãy tấn công thẳng vào Mục 9** — đó là danh sách những chỗ chúng tôi tự thấy
+> yếu nhất. Nếu bạn lật được một trong số đó, chúng tôi tiết kiệm hàng chục giờ GPU và có thể tránh
+> được một kết luận sai trong luận văn.
 
 ---
 
@@ -72,6 +93,78 @@ Một lượt SFT đầy đủ = **8.072 bước ≈ 23 giờ**. Stage-2 = 800 u
 **Cặp của MIN-DESC:** `chosen = <desc>đúng</desc> + "\n" + câu`, `rejected = <desc>sai</desc> +
 "\n" + **CÂU Y HỆT**. Chỉ ô khai báo đổi ⇒ gradient rơi đúng vào việc **chọn phần tử**.
 (ORPO: Hong et al., **EMNLP 2024**.)
+
+### 1.3b ⚠️ MÔ TẢ CHÍNH XÁC DỤNG CỤ — đọc từ MÃ, không từ ý định
+
+Ba chỗ dự án từng tả sai và đã phải sửa. Người phản biện cần bản đúng:
+
+· **`hit_disk` là HÌNH CHỮ NHẬT**, không phải đĩa Euclid: `|dx| ≤ 0,14·W ∧ |dy| ≤ 0,14·H`.
+  Dung sai **dọc rộng gấp 2,2× ngang** (336 px vs 151 px trên màn 1080×2400).
+· **Hạt Voronoi là chính ĐIỂM CHẠM của người dùng**, không phải tâm phần tử.
+· **`hit_voronoi` BAO GỒM luật đĩa** (`if not hit_disk(...): return False`) ⇒ Voronoi là bản
+  **siết chặt** của luật quy ước. ⛔ Cấm trình như hai lựa chọn ngang hàng.
+· ⛔ **Đừng lấy ngưỡng ±14% để suy luận về việc thước có phân biệt được hai phần tử hay không.**
+  Trợ lý đã mắc lỗi này ngày 25/8 và suýt dựa vào đó để đổi thiết kế dữ liệu huấn luyện. Voronoi
+  phán bằng *nút nào GẦN NHẤT*; hàm gộp nút chỉ gộp các nút cách nhau dưới **63 px**, trong khi
+  phần tử âm bị ép cách **80–350 px** ⇒ **mọi phần tử âm đều phân biệt được**.
+· `canon_action` **cố tình không sửa** một lỗi: `go back` quy về *tap* (81 bước ở S1). Sửa thì
+  59,12 → 58,81. Giữ nguyên để ba nhánh đã chấm còn tái lập được; thêm cờ tuỳ chọn cho lượt mới.
+
+### 1.3c ⭐ THƯỚC ĐÃ ĐƯỢC KIỂM THẾ NÀO — người phản biện nên soi kỹ mục này
+
+Đây là phần đã chịu **bốn lượt phản biện độc lập** và không lượt nào lật được.
+
+**① Sàn của thước** (Kaggle, lát 800 bước, trần trên lát 74,9%):
+| nhánh giả | câu thành gì | điểm | KTC95 |
+|---|---|---|---|
+| `f1_trong` | `"Tap the button."` ở **mọi** bước | **12,0%** | [9,7 · 14,4] |
+| `f3_lechman` | câu **thật** của bước khác — **đúng văn phong, sai màn** | **6,1%** | [4,5 · 7,9] |
+| `f2_khongten` | giữ vị trí, **bỏ tên** | 68,0% toàn lát · **61,1%** phần bị đụng |
+
+⇒ **Dải dùng được 62,9 điểm.** ⭐ `f3` (6,1%) **THẤP HƠN** `f1` (12,0%), hai KTC không chồng lấn
+⇒ **câu văn phong hoàn hảo mà sai nội dung ăn thấp nhất trong mọi thứ đã đo** ⇒ đòn *"bộ trỏ chỉ
+phản ứng với văn phong"* **bị giết bằng số**. Bộ trỏ thật sự đọc nội dung câu.
+
+**② ⭐ GỌI TÊN ĐẮT GẤP 8 LẦN CHỈ CHỖ** — đòn bẩy lớn nhất từng đo trong dự án, và là **lý do
+nền của nhánh ỨNG-VIÊN**:
+· bỏ **TÊN** giữ vị trí: **−28,5 pp** (193 bước, b=58, c=3, χ²=47,8, p<0,001)
+· bỏ **VỊ TRÍ** giữ tên: **−3,5 pp** (198 bước, b=8, c=1, p=0,046)
+Hai quần thể gần bằng nhau nên so trực tiếp được.
+⚠️ Con số là **−28,5 pp trên PHẦN BỊ ĐỤNG**, không phải −6,9 pp toàn lát (pha loãng 4,15 lần).
+
+**③ Năm luật chấm khác nhau** (698 bước): trần trôi **56,6 → 82,2%** nhưng **thứ tự ba nhánh
+không đổi ở luật nào**, và chênh S1−Base nằm gọn **9,5–13,0 pp**. Lá chắn mạnh nhất của chương đo.
+
+**④ Thước tất định:** cùng chuỗi + cùng ảnh ⇒ cùng toạ độ, **0 bất đồng trên 1.625 phép so** qua
+bốn lượt độc lập khác thứ tự và khác cách gom lô.
+
+**⑤ κ = 0,867** toàn tập; **0,650 có điều kiện** trên 1.652 bước viết khác nhau (luôn trình kèm
+điều kiện).
+
+**⑥ Phép diễn đạt lại:** ba biến thể bảo toàn nghĩa (đổi động từ · đổi trật tự câu · cả hai) =
+**1.139 bước viết lại, 30 bước đổi chiều (2,6%)**, hiệu ròng **+0,35 pp** KTC95 [−0,59 · +1,29]
+⇒ mép dưới loại được mọi mức tụt > 0,6 pp.
+· Cơ chế: **hỏng tất-cả-hoặc-không** — bỏ mệnh đề vị trí không làm trung vị sai số nhích
+  (0,24% → 0,24%) mà làm **đuôi bung**: p90 6,88 → 31,16, p95 27,54 → 62,38.
+· ⚠️ Câu chữ bắt buộc: viết *"bền trước việc đổi động từ và đổi trật tự câu"*. **CẤM** viết
+  *"bền trước diễn đạt lại"* — Jandial et al. đổi *cách mô tả phần tử*, nặng hơn hẳn.
+
+**⑦ Đổi hẳn bộ trỏ** (2.532 bước, `UI-Venus-Ground-7B`, sạch AndroidControl, 8,15 giờ Kaggle):
+| phép so | UGround | UI-Venus |
+|---|---|---|
+| **S1 − Base** (chứng nhân) | +10,35 [+8,39 · +12,40] | **+9,68** [+7,60 · +11,78] |
+| S2 − S1 (quy về 4.463) | −1,93 [−3,08 · −0,78] p=0,0005 | −1,21 [−2,30 · −0,12] p=0,026 |
+⇒ **Chứng nhân giữ 94%** ⇒ thang đo không bị nén, và đòn *"bộ trỏ quen văn phong AndroidControl"*
+**đã đóng**. ⚠️ Nhưng UI-Venus **cũng thuộc họ Qwen** ⇒ đòn *cùng họ* **chưa đóng**.
+
+**⑧ Không lợi thế sân nhà:** app đã-thấy 59,1% (n=1.737) · chưa-thấy 59,0% (n=78) ·
+không-gán-được 59,2% (n=2.647).
+
+**⑨ Trần 75,7% là giới hạn DỤNG CỤ, không phải của ngôn ngữ:** 1.083 bước câu người cũng trượt,
+72% do bộ trỏ sai > 14% bề ngang; **935 bước (21%) cả ba nhánh cùng trượt**.
+
+**⑩ Thiên vị câu dài 5,4 pp** (câu > 33 ký tự 61,9% vs ≤ 33 là 56,5%). Base dài trung vị 71 ký tự,
+S1 chỉ 33 ⇒ thiên vị **nghiêng về Base** ⇒ **S1 > Base là kết luận mạnh**.
 
 ### 1.4 Kỷ luật đăng ký trước
 `report/106_DANG_KY_TRUOC.md` niêm phong 5/8/2026 (commit `b93e85c`), khoá: 6 nhánh · thước đo ·
@@ -141,6 +234,37 @@ Bảng dải khoá 5/8 định trên **Δ so S1 tính bằng pp**, cho **trung b
   do hai hạt giống là **điều kiện cần để có tuyên bố**, không phải thứ làm cho đẹp.
 
 ---
+
+### 2.6 Bối cảnh: quyết định 23/8 dừng nhánh S2
+
+Chủ luận văn quyết **KHÔNG chạy S2 hạt giống 202**, lý do ngân sách. Hệ quả **vĩnh viễn**, phải
+khai trong mọi bản báo cáo:
+· estimand đã đăng ký **không hoàn tất**;
+· `−2,19 pp` của S2 **ở nguyên dải TRẮNG**, không được nâng thành kết quả âm về sau;
+· **mọi phân tích S2 mang nhãn thăm dò, một hạt giống** — kể cả chẩn đoán ở 2.7 và phép đổi bộ trỏ.
+
+Đó cũng là lý do đóng góp mô hình chuyển từ S2 sang **MIN-DESC** (ORPO stage-2 từ chính checkpoint
+S2), và là lý do lịch trình tháng 9 **bắt buộc có hai hạt giống** cho nhánh thắng.
+
+### 2.7 Chẩn đoán ĐĂNG KÝ TRƯỚC (19/8, trước khi có bất kỳ điểm S2 nào)
+
+| nhóm | n | S1 | S2 | Δ |
+|---|---|---|---|---|
+| **CÓ** kích hoạt (sinh `<desc>`) | 4.138 | 62,2% | 60,8% | −1,38 |
+| **KHÔNG** kích hoạt | 325 | 19,7% | 10,8% | **−8,92** |
+
+**7,3% số bước gánh 34% chênh lệch.** Trần ở nhóm 325 là **68,3%** ⇒ bước giải được, thước không mù.
+⭐ **Base gọi đúng loại thao tác nhiều hơn CẢ HAI bản đã huấn luyện** (83,4% vs S1 55,1% vs S2
+38,8%) ⇒ đây là **cái giá của SFT**, S2 chỉ khuếch đại.
+**Bốn lời giải thích thay thế ĐÃ LOẠI:** độ dài câu (âm ở cả lát dài lẫn ngắn) · lát cắt app (âm cả
+ba) · lỗi `canon_action` go-back (Δ −1,93 → −1,86) · khai báo rác OCR (26 bước, Δ **+7,69**, p=0,63
+— ngược chiều).
+⚠️ Giới hạn phải khai: nhóm 325 định nghĩa bằng **hành vi của chính S2**.
+
+### 2.8 Chỗ hỏng nằm đúng chỗ thiết kế nhắm tới
+
+Trong **1.824 bước S1 trượt**, chỉ 251 do sai thao tác; **1.573 (86%) là thao tác ĐÚNG mà bộ trỏ
+không tìm ra nút** ⇒ lỗi nằm ở **cách gọi tên / tả phần tử**, đúng chỗ đóng góp mô hình nhắm vào.
 
 ## 3. ⭐ PHÂN RÃ Ô — nền của mọi quyết định
 
@@ -464,6 +588,44 @@ Andreas & Klein, **EMNLP 2016, tr. 1173–1182**.
 "+17,9%" mà không kèm điều kiện k=40/540B sẽ dẫn tới dự báo sai một bậc.
 
 ---
+
+## 11b. ⛔ SỐ ĐÃ RÚT — cấm trích lại, kể cả khi thấy trong file cũ
+
+Dự án tự kiểm và đã rút chín con số. Liệt kê để người phản biện không trích nhầm từ bản thảo cũ:
+
+| số cũ | thật ra | vì sao rút |
+|---|---|---|
+| trần **70,0%** | **75,73%** | đo trên mẫu con 300, đo lại đủ 4.462 bước 15/8 |
+| MDE **2,7–4,5 pp** | **2,2 pp** | hệ số nở do cụm 1,10× chứ không phải 1,5–2× |
+| bộ trỏ trượt **84%** khi đổi diễn đạt | 84% = **năng suất của một agent ĐỐI KHÁNG** trên **desktop Windows** | đọc nhầm abstract của Jandial et al., sống 20 ngày và đã vào bản thảo |
+| "UGround sạch, không có AndroidControl" | **SAI** — Bảng 1 có AC **47K nhãn người** | mở lại đúng Bảng 1 |
+| "bộ trỏ khác họ mô hình được chấm" | **SAI** — UGround-V1-2B dựng trên **Qwen2-VL** | như trên |
+| trung vị sai số trỏ **8% cạnh** | **15,0% / 29,3%** | hàm cũ chỉ lấy sai số của ca ĐÃ TRÚNG |
+| app chưa-thấy **604 bước** | **139 bước / 22 app** | chạy bằng bản mã có lỗi regex |
+| dư địa **485 bước (10,9 pp)** | **741 bước (16,6 pp)** | kéo theo trần 75,7 |
+| `total_flos` **3.857.778.344 GF** | **4.142.257.957 GF** | đọc sai; lập luận "khớp ngoại suy" còn **vòng tròn** |
+
+⭐ **Mẫu hình đáng chú ý:** bảy lỗi bắt được trong hai ngày, **KHÔNG lỗi nào ở khâu ĐO** — tất cả
+nằm ở **câu chữ mô tả nguồn**. Và cụ thể hơn: mọi lỗi sinh ra ở khâu **tóm tắt một nguồn thành câu
+ngắn cho tiện trích**, rồi câu ngắn sống nhiều tuần vì không ai mở lại nguồn.
+⇒ Nếu người phản biện muốn tìm lỗi, **soi văn bản trước, soi mã sau**.
+
+## 11c. TRẠNG THÁI HAI BÀI BÁO (để hiểu vì sao lịch trình chia hai mốc)
+
+| | **FAIR'2026** | **VCL2026** |
+|---|---|---|
+| ngôn ngữ | tiếng Anh | tiếng Việt |
+| hạn nộp | **31/8/2026**, qua EDAS, track NLP | **30/8/2026** |
+| vai | **bài MÔ HÌNH** | **bài NHÃN MÔ TẢ PHẦN TỬ** (hướng sinh biểu thức quy chiếu) |
+| trạng thái 25/8 | **8 trang, 0 overfull** | **9 trang, 0 overfull** |
+
+FAIR nay chứa: bảng sáu nhánh · mục riêng cho MIN-DESC với `Δ_component` +0,63 đọc là **ô trắng**
+· **quy công 78/22** · chẩn đoán 2×2 mức từng mẫu · biến thể on-policy chết ở cổng · sàn ·
+gọi-tên-vs-chỉ-chỗ · năm luật chấm · phép đổi bộ trỏ.
+
+⇒ **Hai bài chốt số hiện tại.** Nhánh tháng 9 nếu ra số tốt thì vào **luận văn** (hạn tháng 10),
+không kịp vào bài báo. Vì vậy lịch trình chia **mốc A (5 ngày, không tiêu GPU để tăng điểm)** và
+**mốc B (9 tuần, cho luận văn)**.
 
 ## 12. TRẢ LỜI VỀ CHO CHÚNG TÔI THẾ NÀO
 
