@@ -117,7 +117,7 @@ for k in ("loss", "rewards/margins", "rewards/accuracies"):
 | ① `global_step` | **20** | khác 20 |
 | ② `train_runtime` | **200–500 s** | ~15 s = nó nhảy qua hết, probe **không diễn ra** |
 | ③ đỉnh VRAM | **< 90%** tổng | ≥ 90%, hoặc log có `CUDA out of memory` |
-| ④ loss | có số và **~2,4**, không phải ~0,1 | — |
+| ④ loss | ORPO: **0,30–0,45** và `rewards/margins` **tăng dần** | loss ~0,1 hoặc margins phẳng/âm |
 
 ⛔ **Tràn bộ nhớ thì ĐỔI CARD, đừng hạ `cutoff_len` hay tắt `gradient_checkpointing`.** Cả hai
 là khoá cấu hình của (x3); sửa là biến ablation một-biến thành hai-biến, hỏng phép so với
@@ -126,6 +126,22 @@ MIN-DESC.
 ⚠️ ③ nằm trong dải **80–90%** là **rủi ro**, không phải đạt: probe chạy 200 mẫu nặng nhất của
 MIN-DESC, còn cặp on-policy có thể nặng hơn chút. Dải đó thì chạy lại O2b sau khi có dữ liệu
 thật trước khi train.
+
+### 📊 ĐÃ ĐO THẬT — L4 ngày 25/8, ghi lại để khỏi thử lại
+
+| | A100 40 GB (mục x3c) | **L4 22 GB (25/8)** |
+|---|---|---|
+| s/bước, **cùng** 200 cặp nặng nhất | ~21 | **59,0** — chậm **2,8×** |
+| 800 bước một nhánh | ~4,7 h | **13,1 h** |
+| đỉnh VRAM | ~21 GB / 40 = **53%** | **21,4 GB / 22,6 = 95%** |
+| loss / margins 20 bước | 0,0109 → 0,0190 | 0,35 · margins 0,0141 → 0,0166 |
+
+⛔ **L4 TRƯỢT cho khâu train.** VRAM 95% không còn biên: probe chạy trên cặp nặng nhất của
+MIN-DESC, cặp on-policy đúc lại có thể dài hơn chút ⇒ OOM sẽ nổ **giữa lượt 13 giờ**, không nổ ở
+probe. Cộng 2,8× chậm ⇒ hai nhánh 26 h thay vì 8 h, trong khi lịch sử dự án là 8 lần mất máy
+trong hai lượt train.
+✅ Lượt probe **chạy thật**: `train_runtime` 1.179 s, `rewards/margins` tăng dần cùng dáng với
+smoke A100. Không phải ca nhảy-qua-bước.
 
 ⭐ Con số `s/bước` ở ② là thứ đáng giá thứ hai của ô này: nhân 800 ra **giờ thật của một nhánh**
 trên L4, rồi so với **20,6 s/bước của A100** để quyết rẻ hơn hay đắt hơn. Nhớ **đếm đơn vị trong
@@ -220,7 +236,7 @@ yaml.safe_dump(c, open("/content/probe_onpolicy.yaml", "w"))
 
 **Đọc bằng HAI con số, không đọc chữ `Training completed`:**
 · `train_runtime` phải **~200–500 s** (không phải ~15 s — 15 s nghĩa là nó nhảy qua hết)
-· loss phải **~2,4** (không phải ~0,1)
+· loss ORPO phải **0,30–0,45** và `rewards/margins` tăng dần (mốc smoke A100: 0,0109 → 0,0190)
 
 ⛔ Thấy `CUDA out of memory` ⇒ card không đủ cho ORPO ở cấu hình đã khoá. **Đừng hạ
 `cutoff_len` hay tắt `gradient_checkpointing`** — cả hai đều là khoá cấu hình của (x3), sửa là
