@@ -18,7 +18,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 TEST = os.path.join(HERE, "dg1_cache", "test_ac")
 SEED = 20260805          # khoá ở report/106 mục 10
-REPORTS = ("106_DANG_KY_TRUOC", "108_DA_LAM_DUOC_GI", "109_BAN_DO_HIEN_TAI")
+REPORTS = ("106_DANG_KY_TRUOC", "108_DA_LAM_DUOC_GI", "109_BAN_DO_HIEN_TAI",
+           "117_QUYET_DINH_MIN_DESC")
 
 
 def load_test():

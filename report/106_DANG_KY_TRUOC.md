@@ -1311,3 +1311,491 @@ Tệp: `MyDrive/thesis/derived_train_en.tar.gz`. Bản tiếng Việt giữ ở 
 chiếu, **không xoá**.
 
 **Không đụng:** thước, luật chấm, danh sách nhánh, siêu tham số, tập kiểm, ngưỡng 2,8 pp.
+
+---
+
+## Sửa đổi 23/8/2026 — (x) NHÁNH S2 DỪNG Ở MỘT HẠT GIỐNG · ĐĂNG KÝ TRƯỚC **MIN-DESC**
+
+> **Mục này viết TRƯỚC khi có bất kỳ lượt huấn luyện MIN-DESC nào.** Không tồn tại checkpoint,
+> log hay điểm số nào của MIN-DESC vào lúc viết. Kiểm được bằng `git log`: commit chứa mục này
+> phải đứng trước mọi commit có kết quả MIN-DESC.
+
+### (x1) Nhánh S2 dừng — quyết định của chủ luận văn 23/8/2026
+
+Estimand đã khoá ở mục (w) là `Δ = mean(S2/101, S2/202) − mean(S1/101, S1/202)`. **Hạt giống
+S2/202 sẽ không được chạy.** Quyết định của chủ luận văn, lý do ngân sách. Hệ quả, ghi thẳng:
+
+- Estimand (w) **vĩnh viễn không hoàn tất**. `−2,19 pp` của S2/101 nằm trong dải **trắng**
+  (−2,8 … +1,7), và **ở nguyên đó** — không được nâng lên thành kết quả âm về sau.
+- Bốn câu cấm ở `report/116` Mục 2 chuyển từ *cấm tạm* thành **cấm vĩnh viễn**: không được viết
+  "giả thuyết chính đã bị bác bỏ", "S2 gây hại theo đại lượng đăng ký trước", "hiệu ứng gấp 3,7
+  lần nhiễu nên đã kết luận", "McNemar p<0,001 đã bao gồm biến thiên hạt giống".
+- Câu duy nhất được phép nói về S2 là câu ở `report/116` Mục 2, kèm chữ **thăm dò, một hạt giống**.
+- Mọi phân tích S2 trong luận văn (kể cả chẩn đoán 4j-18 và phép B UI-Venus) mang nhãn **thăm dò**.
+
+### (x2) MIN-DESC là estimand MỚI, và headline mới là lựa chọn HẬU KIỂM — khai thẳng
+
+MIN-DESC **không** nằm trong hồ sơ gốc 5/8. Việc chọn nó làm đóng góp mô hình diễn ra **sau khi**
+đã thấy S2/101 thấp hơn S1. Đó là lựa chọn hậu kiểm và **phải được trình bày đúng như vậy**;
+không được viết như thể nó đã được đăng ký từ đầu. Cái được khoá trước là **thiết kế, thước và
+ngưỡng của chính MIN-DESC** — mục này — chứ không phải việc chọn nó.
+
+### (x3) Thiết kế
+
+Tiếp tục huấn luyện từ **checkpoint S2** bằng ORPO trên cặp quy chiếu tối thiểu ở **tầng khai báo**:
+
+```
+chosen   = <desc>đúng</desc>       + "\n" + câu người
+rejected = <desc>desc_neg</desc>   + "\n" + câu người      ← câu Y HỆT, chỉ ô khai báo đổi
+```
+
+`desc_neg` do `descriptor_label_build.nearest_other()` dựng sẵn từ tháng 8, không dựng mới cho
+mục đích này. Cặp dựng bằng `harness/build_min_desc.py`, biến đổi thẳng từ `branches/s2.json`
+nên prompt và đường dẫn ảnh trùng byte-với-byte nhánh S2.
+
+**Sáu điều kiện nhận cặp:** có `desc` và `desc_neg` · hai chuỗi khác nhau · ô TÊN khác nhau sau
+chuẩn hoá · ô POINT khác nhau · khoảng cách tâm tới negative trong **80–350 px** · mẫu `s2.json`
+khớp đúng khai báo trong `descriptors.jsonl`.
+
+**Đối chứng quy công CE2-S2:** tiếp tục SFT từ **đúng cùng checkpoint S2**, trên **đúng cùng
+22.854 bước**, học **đúng vế chosen**, cùng số update, cùng LR schedule, cùng hạt giống.
+
+**Bốn lượt:** MIN-DESC/101 · MIN-DESC/202 · CE2-S2/101 · CE2-S2/202. Stage-2 tối đa **800
+optimizer updates**, `pref_loss: orpo`, `β = 0,1`, một rejected mỗi chosen, **final checkpoint**
+— không chọn best checkpoint bằng bất cứ thứ gì.
+
+### (x4) Số đã đo TRƯỚC khi train, ghi lại để sau này kiểm được
+
+| phép đo | kết quả |
+|---|---|
+| eligibility tầng khai báo, có lọc 80–350 px | **22.854 / 41.099 = 55,61%** |
+| eligibility tầng khai báo, không lọc khoảng cách | 31.358 = 76,30% |
+| eligibility tầng CÂU (thiết kế `report/116` Mục 12.2) | **26,40%** (chặt) · 27,53% (nới) |
+| bảy bất biến của tập cặp | **7/7 ĐẠT** |
+| mẫu `s2.json` lệch khai báo | **0** |
+| lệch độ dài chosen − rejected | trung vị **+0** ký tự · trung bình −1,10 |
+| luật shortcut "chọn vế dài hơn" đoán đúng | **43,2%** (ngưỡng 55%) |
+
+⭐ **Lý do chọn tầng khai báo thay vì tầng câu đã được ghi trong `report/116` Mục 12.2:** tầng câu
+chỉ đạt **26,40%**, sát cổng 25% và đó mới là **cận trên** (chưa trừ audit bằng chứng OCR/a11y,
+parent/child, action-compatible). Tầng khai báo đạt **55,61%** và không cần điều kiện ngặt nhất
+của tầng câu — *"tên phải xuất hiện literal trong câu người"*, chỗ làm rơi 78,0% → 42,3%.
+
+### (x5) Estimand và ngưỡng — KHOÁ
+
+```
+Δ_component = mean_2seed(MIN-DESC − CE2-S2)      ← primary, quy công cho mục tiêu huấn luyện
+Δ_system    = mean_2seed(MIN-DESC − S1)          ← secondary, model cuối so hệ mạnh nhất hiện có
+Δ_vs_S2     = mean_2seed(MIN-DESC − S2/101)      ← mô tả, KHÔNG dùng quy công (S2 chỉ một hạt giống)
+```
+
+Thước không đổi: `UGround Executability@Voronoi = action_ok AND toggle_ok AND hit_voronoi`, đủ
+**4.463** bước, câu rỗng tính `exec = 0`, `metric_exec.py` **không sửa**.
+
+Dải đọc **giữ nguyên** dải đã khoá ở mục (w), không phát minh dải mới:
+
+| Δ trung bình hai hạt giống | cách đọc |
+|---|---|
+| ≥ +2,8 pp và KTC95 loại 0 | Dương |
+| +1,7 … +2,8 pp và KTC95 loại 0 | Dương yếu |
+| −2,8 … +1,7 pp, hoặc KTC phủ 0 | **Trắng, không kết luận được** |
+| ≤ −2,8 pp và KTC95 loại 0 | Âm |
+
+**Được claim "thành phần huấn luyện này làm model tốt hơn" khi và chỉ khi CẢ BỐN:**
+1. `Δ_component ≥ +1,7 pp`, KTC95 bootstrap cụm loại 0;
+2. `Δ_system ≥ +1,7 pp`, KTC95 loại 0;
+3. hiệu của **cả hai** hạt giống, cho **cả hai** estimand, đều dương;
+4. không có no-harm failure trên bước **không-chạm**: cận dưới `> −3 pp`, chạy với `strict_back=True`.
+
+Chỉ đạt (1) mà không đạt (2) ⇒ mục tiêu có hiệu ứng so với CE nhưng chưa tạo model cuối tốt hơn S1.
+Chỉ đạt (2) mà không đạt (1) ⇒ **không được quy công cho MIN-DESC**, vì chặng train thêm có thể là
+nguyên nhân.
+
+### (x6) Cổng STOP — khoá trước, không nới sau khi thấy số
+
+- eligibility trên tập cặp cuối `< 25%`;
+- audit mù 300 cặp cho false-negative `≥ 5%`;
+- probe text-only hoặc shuffled-image đạt preference accuracy `> 55%` một cách rõ ràng;
+- wrong-referent counterfactual trên câu người **không** làm executability giảm ít nhất **10 pp**
+  trên lát đủ điều kiện với KTC ghép cặp loại 0 (đây là validity gate của thước, **không** dùng để
+  chọn model);
+- smoke ORPO trên 200 cặp dài nhất bị OOM/NaN, hoặc resume/save-load sai;
+- sau seed 101: MIN-DESC **không** học margin tốt hơn CE2-S2 trên held-out, hoặc action/toggle tụt
+  quá **3 pp** ⇒ dừng, không chạy seed 202.
+
+⛔ **Cấm dùng UGround hoặc UI-Venus** để chọn β, chọn checkpoint, chọn negative, rerank, sửa câu,
+hay làm điều kiện chạy hạt giống thứ hai. Cổng sau seed 101 chỉ được dùng tín hiệu **không cần bộ
+trỏ**: CE/log-odds loss, preference accuracy, độ chính xác ô `name`/`point` của khai báo so với
+nhãn vàng, parser action/toggle.
+
+### (x7) Ba chỗ lệch so với `report/116` Mục 12, khai trước
+
+1. **Cặp ở tầng khai báo, không phải tầng câu.** Lý do: số ở (x4).
+2. **Không trộn bước không-chạm vào stage-2** (Mục 12.5 của `report/116` yêu cầu trộn). Lý do:
+   stage `dpo`/`ranking` của LLaMA-Factory không nhận lẫn dữ liệu không-cặp một cách sạch sẽ.
+   Giảm nhẹ: **MIN-DESC và CE2-S2 bỏ y hệt nhau**, nên chênh lệch giữa hai nhánh không thể do khác
+   dữ liệu; và phép kiểm no-harm trên bước không-chạm ở điều kiện (4) của (x5) là **bắt buộc**,
+   chính nó bắt được trôi action prior nếu có.
+3. **Điều kiện độ dài ≤2 token không áp.** Lý do: đo ra cặp **tự nhiên cân độ dài** — trung vị
+   lệch 0, luật "chọn vế dài hơn" chỉ đoán đúng 43,2%. Nếu probe shortcut ở cổng STOP vẫn báo
+   vượt 55%, phương án dự phòng **đã khoá sẵn**: siết `|Δ ký tự| ≤ 8`, còn **15.421 cặp = 37,52%**,
+   vẫn trên cổng 25%. Không được chọn giữa hai bản sau khi nhìn điểm test.
+
+### (x8) Không đụng
+
+Thước, luật chấm, `metric_exec.py`, tập kiểm, mẫu số 4.463, dải quyết định, hạt giống 101/202,
+cấu hình QLoRA P9, và toàn bộ kết quả S1/base/trần/sàn/phép B đã công bố.
+
+### (x3b) Bổ sung 23/8, **vẫn trước mọi lượt train**: learning rate của stage-2 và cổng cơ học
+
+**LR hạ xuống `2.0e-5`** cho **cả hai** nhánh MIN-DESC và CE2-S2, thay vì thừa hưởng `1.0e-4`
+của lượt SFT gốc. Lý do: đây là lượt **nối tiếp một adapter đã hội tụ**; khởi động lại ở LR đầy
+đủ với một chu kỳ cosine mới là *re-train* chứ không phải *tinh chỉnh*, và rủi ro là **cả hai
+nhánh cùng trôi khỏi S2** rồi so nhau trong vùng đã hỏng.
+
+⚠️ **Đây là phán đoán thiết kế, không phải số đo.** Khai thẳng vì không có dữ liệu nào trong dự
+án nói LR nào đúng cho ORPO nối tiếp. Hai điều làm nó an toàn: (a) hai nhánh dùng **chung** con
+số, nên dù chọn sai thì `Δ_component` vẫn là phép so công bằng; (b) cổng cơ học dưới đây đo trực
+tiếp xem lượt train có làm hỏng khả năng nhận diện không.
+
+**Cổng cơ học, không gọi bộ trỏ** — `harness/gate_desc_acc.py`. Nó đối chiếu ô `<desc>` model tự
+sinh với nhãn vàng `test_ac/descriptors.jsonl`: ô TÊN khớp, ô POINT trong dung sai ±14% cạnh
+(cùng dung sai với `metric_exec.hit_disk`), và **cả hai cùng đúng**.
+
+**Mốc S2/101, đo 23/8 TRƯỚC khi train MIN-DESC**, trên 3.473 bước có tên vàng:
+
+| | sinh `<desc>` | tên đúng | point đúng | **cả hai đúng** |
+|---|---|---|---|---|
+| S2/101 | 93,4% | 59,2% | 66,9% | **53,9%** |
+
+**Luật đọc cổng, khoá trước:**
+- `Δ(cả hai đúng)` của MIN-DESC/101 so với S2/101 **dương** ⇒ được chạy hạt giống 202;
+- **âm** ⇒ lượt train làm hỏng khả năng nhận diện (nghi LR quá cao) ⇒ **dừng, không chạy 202**,
+  ghi lại và báo.
+
+⛔ Cổng này **không phải** executability và **không thay thế** nó. Chấm 4.463 vẫn làm **một lần**,
+sau khi cả bốn checkpoint đóng băng.
+
+### (x3c) Kết quả smoke 23/8 — ghi lại trước khi train
+
+| phép | kết quả |
+|---|---|
+| ORPO chạy thật | ✅ log có `rewards/accuracies`, `rewards/margins`, `sft_loss`, `odds_ratio_loss` |
+| adapter S2 nạp thật | ✅ `Loaded adapter(s): …/ckpt/s2_seed101` · `trainable params 14.966.784 (0,397%)` |
+| **không** tạo reference model | ✅ không có dòng nào về ref model — đúng đặc tính ORPO |
+| chạy tiếp sau khi mất máy | ✅ `Fast-forwarding the dataloader … to resume from the exact training state`; `global_step` 12 → **20**; điểm lưu có `optimizer.pt` · `scheduler.pt` · `rng_state.pth` |
+| OOM / NaN | ✅ không |
+| **cỡ lô GPU 2** (× tích luỹ 8, hiệu dụng vẫn 16) | chạy được nhưng chỉ **nhanh hơn 2%** (413,1 s vs 422,9 s) và tốn **thêm 2% FLOPs** vì đệm ⇒ **giữ cỡ lô 1** |
+| tốc độ trên **200 cặp nặng nhất** | **~21 s/bước** ⇒ 800 bước ≈ **4,7 giờ** (cận trên; tập thật nhẹ hơn) |
+| ⚠️ liger ở stage `dpo` | log **không in dòng nào** về liger ⇒ nhiều khả năng bị bỏ qua ở đường pairwise. Không cản trở gì, nhưng **cấm** viết "dùng liger" cho MIN-DESC |
+| ⭐ **phiên bản đã PIN** (yêu cầu của (x6)) | LLaMA-Factory `c4e09c7cbe18844816af9e18a97fe465515edbcd` · `transformers 5.8.0` · Python 3.13 · TRL `DPOTrainer` · card A100. **Cả bốn lượt phải dùng đúng SHA này** — LLaMA-Factory đổi hành vi giữa các bản (xem hàng dưới), nên lượt 1 và lượt 4 khác bản là hỏng phép so |
+| ⚠️ **trường của `trainer_log.jsonl`** | chỉ còn **sáu**: `current_steps` · `total_steps` · `epoch` · `percentage` · `elapsed_time` · `remaining_time`. **Mất `loss` và `lr`** so với stack tháng 8 ⇒ ô theo dõi phải đọc **hai nguồn** (tiến độ từ jsonl, số học từ stdout `.log`) |
+| ⚠️ LR lúc smoke | **1,0e-4** — máy ảo bung gói `thesis_rented.zip` **cũ**. Không ảnh hưởng kết luận cơ học của smoke, nhưng **phải upload gói mới trước lượt train thật** |
+
+Chồng chất `rewards/margins` trong smoke cỡ lô 2 (20 bước, 200 cặp): **0,0109 → 0,0162 → 0,0190 →
+0,0211**, `rewards/accuracies` **0,850 → 0,863 → 0,958 → 0,950**. Mục tiêu ưu tiên có tác dụng cơ
+học; ⚠️ đây là 1,56 epoch trên 200 mẫu nên phần lớn là **thuộc lòng**, không đọc thành hiệu quả.
+
+**Đo được ở smoke 23/8 — `rewards/accuracies` KHÔNG dùng làm cổng.** Nó đã ở **0,94–0,97 ngay từ
+bước log đầu tiên**, không phải sau khi học. Lý do có tính cấu tạo: `chosen` chính là chuỗi mà
+checkpoint S2 đã được dạy sinh ra suốt hai epoch, nên log-xác-suất của nó cao hơn `rejected` một
+cách tất yếu, trước khi ORPO kịp làm gì. ⇒ Ngưỡng *"acc > 0,6"* dự định lúc đầu là **rỗng nghĩa**,
+đã bỏ. Thay bằng: `rewards/margins` phải **tăng** so với mốc đầu (~0,019), và cổng chính vẫn là
+`gate_desc_acc.py` so với mốc S2 **53,9%**. `acc` chỉ còn dùng để phát hiện **hỏng** (tụt dưới 0,8).
+
+---
+
+## Sửa đổi 23/8/2026 — (y) VÁ `mde_that.py`: hai lệch so với hồ sơ đã khoá
+
+Phát hiện trong phiên debate 23/8, kiểm lại bằng mã và **đúng cả hai**. Cả hai đều lệch theo
+hướng **làm số đẹp lên**, nên phải sửa dù ảnh hưởng nhỏ.
+
+### (y1) Gom cụm theo BƯỚC thay vì theo TÁC VỤ
+
+Sửa đổi (e) khoá luật *"mỗi **tác vụ** không-rõ-app là một cụm"* và ghi **G = 1.091**. Bài FAIR
+đang trích đúng con số đó (`main.tex:411`: *"1,091 clusters (effective 454.3)"*). Nhưng
+`mde_that.cum()` trả `__don__{episode}_{step}` — mỗi **bước** một cụm, cho **2.906 cụm**, nhiều
+gấp 2,7 lần. Chia nhỏ cụm hơn hồ sơ cho phép làm SE nhỏ đi, tức **nới ngưỡng**.
+
+⇒ Đã đổi fallback về `__don__{episode}`. Kiểm lại: **1.091 cụm**, khớp hồ sơ và khớp bài báo.
+
+### (y2) Complete-case analysis trong `nap()`
+
+Bản cũ: `if "bo_qua" not in o` — loại khỏi **cả tử số lẫn mẫu số** đúng những bước mà chính model
+làm hỏng. Mục 1 của `report/116` và quy tắc mẫu số 4.463 đều cấm điều này.
+
+⇒ Đã đổi: giữ mọi dòng, `o.setdefault("executable", 0)`. Số bước ghép cặp **4.461 → 4.463**.
+
+### Ảnh hưởng thật — báo đúng, không thổi
+
+| | trước | sau |
+|---|---|---|
+| số bước ghép cặp | 4.461 | **4.463** |
+| số cụm | 2.906 | **1.091** |
+| SE bootstrap cụm | 0,386 pp | **0,375 pp** (~3%) |
+| MDE, 2 hạt giống | 1,67 pp | **1,66 pp** |
+| MDE, thận trọng (dòng đã khoá) | 2,78 pp | **2,77 pp** |
+
+⇒ Ngưỡng đổi **0,01 pp**. Dải quyết định đã khoá ở (w) là **+1,7 / +2,8** (số làm tròn), nên
+**không dải nào đổi** và **không kết luận nào đổi**. Sửa vì đây là lệch hồ sơ đăng ký và lệch so
+với chính bài báo, **không** vì nó cứu được con số nào.
+
+⚠️ Ba con số của bài FAIR **không bị ảnh hưởng**: trần 75,7% và G = 454,3 tính bằng
+`gate_a_ceiling.py` (vốn đã dùng luật tác vụ, nên bài báo luôn đúng); `mde_that.py` chỉ dùng để
+khoá ngưỡng.
+
+### (x3d) Đo 24/8 sau khi có hai checkpoint hạt giống 101 — trôi phân biệt chạm/không-chạm
+
+Lát 1.200 bước đầu tập kiểm (800 chạm · 400 không-chạm), ba nhánh trên **cùng** quần thể:
+
+| nhánh | sinh `<desc>` ở bước CHẠM | sinh `<desc>` ở bước KHÔNG-chạm |
+|---|---|---|
+| S2/101 | 724/800 = **90,5%** | 56/400 = **14,0%** |
+| CE2-S2/101 | 799/800 = **99,9%** | 279/400 = **69,8%** |
+| MIN-DESC/101 | 799/800 = **99,9%** | 273/400 = **68,2%** |
+
+**Hai kết luận, cả hai đều quan trọng:**
+
+1. ⭐ **Trôi không-chạm là do DỮ LIỆU, không do ORPO.** CE2 và MIN-DESC trùng nhau gần tuyệt đối
+   (69,8% vs 68,2%), tức việc bỏ bước không-chạm khỏi stage-2 — lệch chuẩn đã khai ở **(x7) điểm
+   2** — mới là nguyên nhân. ⇒ `Δ_component = MIN − CE2` **không bị ảnh hưởng**, hai nhánh trôi
+   y hệt nhau. Thiết kế quy công còn nguyên.
+2. ⭐ **Chặng stage-2 sửa gần hết lỗi 4j-18.** Nhóm "không sinh khai báo trên bước chạm" — nhóm
+   chỉ đạt 10,8% executability và gánh −0,63 pp của S2 — teo từ 76/800 xuống **1/800**. Nhưng
+   cũng là công của *train thêm trên dữ liệu chạm*, **không** của ORPO, vì cả hai nhánh bằng nhau.
+
+⚠️ **Cái giá:** điều kiện claim **(x5) mục 4** (*no-harm trên bước không-chạm, cận dưới > −3 pp*)
+nhiều khả năng **trượt ở cả hai nhánh**. Executability chỉ chấm trên 4.463 bước chạm nên điểm
+chính không bị đụng, nhưng điều kiện đã khoá thì vẫn là điều kiện. Cách sửa đã biết:
+trộn bước không-chạm dạng CE thuần vào stage-2, đúng như `report/116` Mục 12.5 yêu cầu ban đầu.
+Nay đã có số đo cái giá của việc bỏ nó, thay vì chỉ có phán đoán.
+
+### (x3e) 24/8 — ĐIỀU KIỆN (x5) MỤC 4 TRƯỢT: no-harm trên bước không-chạm mất ~20 pp
+
+Thước đúng theo mục (v): `action_ok` = lớp thao tác của câu model khớp lớp thao tác của **câu
+người**, chạy với **`strict_back=True`**. Lát 400 bước không-chạm trong 1.200 bước đầu tập kiểm
+(scroll 96 · wait 86 · input_text 82 · open_app 81 · navigate_back 55):
+
+| nhánh | action_ok | Δ so S2 |
+|---|---|---|
+| S2/101 | **83,5%** | — |
+| CE2-S2/101 | 63,0% | **−20,50 pp** |
+| MIN-DESC/101 | 63,8% | **−19,75 pp** |
+
+Ngưỡng ở (x5) mục 4 là **cận dưới > −3 pp** ⇒ **TRƯỢT, cách ngưỡng gần bảy lần.**
+
+**Phân rã MIN-DESC vs S2 theo loại thao tác:**
+
+| thao tác | S2 | MIN-DESC | Δ |
+|---|---|---|---|
+| scroll | 82,3% | 38,5% | **−43,8** |
+| navigate_back | 70,9% | 34,5% | **−36,4** |
+| input_text | 78,0% | 48,8% | **−29,2** |
+| wait | 88,4% | 94,2% | +5,8 |
+| open_app | 93,8% | 96,3% | +2,5 |
+
+**Cơ chế:** ba loại sụp là ba loại mà câu đúng **không nhắc tên phần tử nào**. Model nay gắn khai
+báo về một nút rồi viết câu kiểu chạm theo sau. Hai loại không sụp chỉ vì `ACTION_MAP` quy `open`
+về `tap`, nên câu kiểu chạm vô tình khớp — không phải vì model làm đúng.
+
+**Quy trách nhiệm:** CE2 −20,50 và MIN-DESC −19,75 ⇒ hỏng như nhau, MIN-DESC còn nhỉnh hơn.
+Nguyên nhân là **stage-2 chỉ có bước chạm** (lệch chuẩn đã khai ở **(x7) điểm 2**), **không phải
+mục tiêu ORPO**. Cách sửa đã biết: trộn bước không-chạm dạng CE thuần, đúng như `report/116`
+Mục 12.5 yêu cầu ban đầu.
+
+⛔ **Hệ quả cho câu chữ:** executability chỉ chấm trên 4.463 bước **chạm**, nên điểm chính không
+bị đụng. Nhưng **cấm** viết *"model cuối tốt hơn"* không kèm điều kiện. Câu được phép:
+*"trên quần thể đã đăng ký (bước chạm), … ; đồng thời chúng tôi đo được mức tụt 20 pp ở lớp
+thao tác trên bước không-chạm, do thiết kế dữ liệu stage-2, và báo cáo như một giới hạn."*
+
+⚠️ Con số **45,5% → 23%** ghi trong phiên chat theo thước *"trùng nguyên văn câu chuẩn"* là thước
+SAI và thổi phồng thiệt hại — nó phạt cả khi model nói đúng ý bằng chữ khác. Thước đúng của (v)
+là `action_ok`. Không dùng lại con số trùng-nguyên-văn.
+
+---
+
+## Sửa đổi 24/8/2026 — (x8) CHUYỂN MIN-DESC/CE2 SANG NHÁNH THĂM DÒ MỘT HẠT GIỐNG
+
+> **Viết TRƯỚC khi chấm 4.463.** Không có điểm executability nào của MIN-DESC hay CE2-S2 tồn tại
+> vào lúc viết mục này. Kiểm được bằng `git log`.
+
+### (x8a) Đổi cái gì
+
+Mục **(x6)** khoá: *"Không chấm 4.463 sau seed 101"* và *"cấm dùng bộ trỏ làm điều kiện chạy hạt
+giống thứ hai"*. Chủ luận văn quyết **chấm ngay hạt giống 101** để biết số thật trước khi cân nhắc
+chi thêm ~8 giờ GPU cho hạt giống 202.
+
+⇒ **MIN-DESC/101 và CE2-S2/101 chuyển sang nhãn THĂM DÒ, MỘT HẠT GIỐNG**, cùng hạng với S2/101.
+Estimand `Δ_component` và `Δ_system` ở (x5) **chưa hoàn tất**.
+
+### (x8b) Cái gì được phép nói sau khi có điểm
+
+- ✅ *"Ở hạt giống duy nhất, checkpoint MIN-DESC/101 đạt X% executability trên 4.463 bước, so với
+  S1 59,1/59,6% và S2/101 57,2%. Kết quả thăm dò, một hạt giống."*
+- ⛔ **Cấm** *"MIN-DESC làm model tốt hơn"* · *"mục tiêu ưu tiên có tác dụng"* · *"Δ_component =
+  …"* · mọi câu khẳng định về **phương pháp**, vì một hạt giống không tách được tác dụng khỏi
+  biến thiên huấn luyện (sàn nhiễu đo trên S1 là ±0,52 pp).
+- Cùng luật đã áp cho S2 ở **(x1)**. Không có ngoại lệ vì lần này số đẹp hơn.
+
+### (x8c) Cam kết giữ cho phép chọn-sau-khi-thấy không phá kết quả
+
+**Nếu sau khi thấy điểm hạt giống 101 mà quyết chạy hạt giống 202:**
+1. chạy **cả hai** nhánh MIN-DESC/202 và CE2-S2/202, không chạy một nhánh;
+2. **báo trung bình hai hạt giống bất kể nó ra sao** — kể cả khi hạt 202 kéo trung bình xuống dưới
+   ngưỡng, kể cả khi nó lật dấu;
+3. **khai thẳng trong bài** rằng hạt giống thứ hai được chạy **sau khi** đã thấy điểm hạt thứ nhất,
+   và vì vậy `Δ` hai hạt giống mang một mức chọn-lọc-theo-kết-quả không loại bỏ được.
+
+Cam kết (2) là thứ duy nhất giữ cho trung bình hai hạt giống còn đọc được. Vi phạm nó thì con số
+mất giá trị hoàn toàn — nặng hơn cả việc dừng ở một hạt giống.
+
+### (x8d) Không đụng
+
+Thước, luật chấm, `metric_exec.py`, mẫu số 4.463, dải quyết định ở (w), cấu hình đã khoá ở (x3),
+và mọi kết quả S1/base/trần/sàn/phép B đã công bố.
+
+---
+
+## Sửa đổi 25/8/2026 — (x9) CỔNG CƠ HỌC ĐÃ CHẠY: **ĐẠT** · và một lệch chuẩn phải khai
+
+> Viết **sau** khi có kết quả cổng, **trước** khi chấm 4.463. Chưa có điểm executability nào
+> của MIN-DESC hay CE2-S2 tồn tại vào lúc viết mục này.
+
+### (x9a) Kết quả cổng — phán quyết ĐẠT
+
+Cổng khoá ở **(x3b)**: `gate_desc_acc.py`, đo độ chính xác ô khai báo, **không gọi bộ trỏ**,
+mốc S2/101 = **53,9%**. Chạy ngày 25/8 trên máy nhà, 0 đồng, 0 giây GPU:
+
+```
+GIAO của 3 tệp preds: 3.473 bước có tên vàng · dung sai ô point ±14% cạnh
+
+tệp preds                        n   sinh desc   tên đúng   point đúng   CẢ HAI
+preds_s2_seed101              3473      93,4%      59,2%        66,9%     53,9%
+preds_ce2_s2_seed101          3473      99,6%      66,2%        71,2%     59,8%
+preds_min_desc_seed101        3473      99,6%      67,0%        71,8%     60,6%
+```
+
+**Δ 'cả hai đúng' (MIN-DESC − S2) = +6,77 pp ⇒ cổng ĐẠT.** Điều kiện ở (x3b) là Δ dương so mốc
+53,9%; không nới, không đổi thước, không đổi quần thể.
+
+⭐ **Mốc S2 tái lập tới chữ số thập phân:** 53,9% đo lại ngày 25/8 trùng đúng con số ghi ngày
+23/8 ở (x3b). Thước không trôi giữa hai lần chạy ⇒ phép so đọc được.
+
+⚠️ **Đọc đúng cách quy công, đừng đọc con số +6,77:**
+
+| phép so | Δ | thuộc về |
+|---|---|---|
+| CE2-S2 − S2 | **+5,90 pp** | *train thêm stage-2 trên bước chạm* — SFT thuần, không phải ORPO |
+| MIN-DESC − CE2-S2 | **+0,80 pp** | phần riêng của **mục tiêu ưu tiên** — đây mới là thứ bài báo đặt cược |
+| MIN-DESC − S2 | +6,77 pp | tổng hai phần trên, **không** được trình như công của ORPO |
+
+⇒ 87% mức tăng đến từ nhánh đối chứng. Đúng mẫu hình đã thấy ở **(x3d)**: hai nhánh dịch chuyển
+gần như song song, thứ tách chúng ra chỉ còn dưới một điểm phần trăm. Trên **một hạt giống**, và
+sàn nhiễu giữa hạt giống đo trên S1 là **±0,52 pp** — cùng bậc độ lớn với chính +0,80.
+
+⛔ **Cổng ĐẠT chỉ chứng minh lượt train KHÔNG làm hỏng khả năng nhận diện phần tử.** Nó không
+chứng minh mục tiêu ưu tiên có tác dụng, và **không thay thế** executability. Luật câu chữ ở
+**(x8b)** giữ nguyên, không có ngoại lệ vì lần này số dương.
+
+### (x9b) Lệch chuẩn phải khai: tệp preds CE2 sinh bằng **hai môi trường**
+
+Máy ảo Colab bị thu hồi lúc lượt suy luận CE2 chạy được **3.616/6.958 bước** (24/8, ~23:20).
+Dựng lại máy rồi chạy tiếp bằng cơ chế nối tiếp của `infer_branch.py`. Hệ quả: một tệp preds
+duy nhất được sinh bởi hai môi trường khác nhau.
+
+| | 3.616 bước đầu | 3.342 bước sau |
+|---|---|---|
+| card | A100-SXM4-40GB | A100-SXM4-40GB |
+| kiểu số (`pick_dtype`) | bf16 | bf16 |
+| `peft` | bản LLaMA-Factory ghim (cài kèm ô T1) | bản mới nhất trên PyPI |
+| `torchao` | có sẵn, không đụng | **đã gỡ** (peft mới `raise ImportError` với torchao < 0,16) |
+
+**Vì sao vẫn dùng được:** phép áp LoRA là phép cộng ma trận tất định, cùng card và cùng bf16 nên
+không có nguồn ngẫu nhiên nào; sinh câu chạy greedy. **Vì sao vẫn phải khai:** không ai đo lại
+hai môi trường trên cùng một lát để chứng minh chúng trùng, nên đây là *lập luận*, không phải
+*phép đo*. Nhánh MIN-DESC **không** dính — nó sinh trọn trong một môi trường.
+
+**Kiểm đã chạy trên tệp ghép** (`runs/preds_ce2_s2_seed101.jsonl`): 6.958 bản ghi · **0 khoá
+trùng** · phủ đủ 4.463 bước chạm · **một chữ ký duy nhất** `lora:ce2_s2_seed101` · 0 câu rỗng ·
+0 câu sót `<desc>` · ranh giới bước 3.616 liền mạch. So với nhánh MIN-DESC: `pred` trùng 82,4%,
+`raw` trùng 65,1% ⇒ hai tệp là hai lượt sinh khác nhau thật, không phải chép nhầm adapter.
+
+### (x9c) Không đụng
+
+Thước, luật chấm, `metric_exec.py`, mẫu số 4.463, mốc S2 53,9%, dải quyết định ở (w), luật câu
+chữ ở (x8b), cam kết hạt giống thứ hai ở (x8c).
+
+---
+
+## Sửa đổi 25/8/2026 — (x10) ĐIỂM EXECUTABILITY CỦA MIN-DESC/101 + chẩn đoán chỗ nghẽn
+
+### (x10a) Số chính
+
+`runs/score_min_desc_seed101.json`, UGround, 4.463 bước chạm, cùng mẫu số mọi nhánh:
+
+**MIN-DESC/101 = 60,05%**, KTC95 **[58,33 · 61,77]**, `exec_disk` 69,19%, `clusters` 1.091,
+`g_eff` 454,33.
+
+| phép so ghép cặp | Δ | KTC95 cụm | b | c | χ² | p |
+|---|---|---|---|---|---|---|
+| MIN − S2/101 | **+2,87** | [+2,03 · +3,76] | 258 | 130 | 41,6 | 1,1e-10 |
+| **MIN − S1/101** | **+0,94** | **[−0,09 · +2,05]** | 342 | 300 | 2,6 | **0,11** |
+| MIN − Base | +12,46 | [+11,03 · +14,00] | 827 | 271 | 280,5 | 5,7e-63 |
+| S1 − S2 *(tự kiểm)* | +1,93 | [+0,82 · +3,00] | 340 | 254 | 12,2 | 0,00049 |
+
+Hàng cuối tái lập **đúng** −1,93 pp của S2−S1 đã công bố, b/c trùng 340/254 ⇒ đường phân tích
+không trôi.
+
+**Đọc theo luật đã khoá:** Δ so S1 nằm **dưới MDE 2,2 pp** và KTC chứa 0 ⇒ theo bảng bốn kết cục
+ở mục (w), đây là ô **TRẮNG** đối với phép so MIN-vs-S1. Ô `hit_voronoi` thuần nói cùng một
+chuyện bằng cách trực tiếp hơn: **MIN 60,4 · S1 60,2** — khả năng trỏ đúng phần tử **ngang** SFT
+trơn. Cái tăng so với S2 nằm ở `action_ok` (98,9 vs 94,9) và ở việc dẹp nhóm không-sinh-khai-báo
+(324 bước → **17 bước**) — tức **sửa thiệt hại do chính S2 gây ra**, không phải năng lực mới.
+
+⚠️ `action_ok` 98,9% trên bước chạm **phải** đọc kèm **(x3e)**: cùng lúc đó `action_ok` trên bước
+KHÔNG-chạm tụt −19,75 pp. Hai con số là **một hiện tượng** — mô hình co về *"mọi thứ đều là chạm"*.
+Quần thể đăng ký trước chỉ có bước chạm nên thước không nhìn thấy phần thiệt. **Cấm** nêu 98,9%
+mà không kèm (x3e).
+
+⚠️ `Δ_component = MIN − CE2` **chưa tính được** — CE2 chưa có điểm (xem x10c).
+
+### (x10b) 🔬 THĂM DÒ, HẬU KIỂM, KHÔNG ĐĂNG KÝ TRƯỚC — chỗ nghẽn nằm ở đâu
+
+Chia 3.473 bước có tên vàng theo việc ô khai báo của **chính MIN-DESC** có đúng không
+(đúng = tên khớp **và** point trong ±14% cạnh, cùng luật với `gate_desc_acc.py`):
+
+| nhóm | n | MIN exec | S1 exec | Δ (ghép cặp) | trần nhóm |
+|---|---|---|---|---|---|
+| MIN tả **ĐÚNG** phần tử | 2.106 (60,6%) | **87,1%** | 78,3% | **+8,83** | 86,3% |
+| MIN tả **SAI** phần tử | 1.367 (39,4%) | **21,8%** | 32,9% | **−11,12** | 61,4% |
+
+⭐ **Cơ chế KHÔNG hỏng — nó bị chặn bởi độ chính xác ô khai báo.** Khi mô tả đúng phần tử,
+MIN-DESC hơn SFT trơn **+8,83 pp** trên cùng những bước ấy, và **vượt cả trần câu người của nhóm
+đó** (87,1 vs 86,3). Khi mô tả sai, nó **thua SFT trơn 11,12 pp**: mô hình chốt vào một phần tử
+sai rồi viết câu tự tin về phần tử đó, trong khi S1 viết câu chung chung nên còn cơ may.
+Hai chiều gần như triệt tiêu nhau ⇒ tổng +0,94 pp không ý nghĩa.
+
+**Số học của chỗ nghẽn:** chuyển một bước từ nhóm dưới lên nhóm trên đáng ~65 pp cho bước đó.
+Giữ nguyên +8,83 mà **triệt tiêu** được −11,12 thì Δ so S1 thành ~**+5,4 pp** — trên MDE 2,2 gấp
+2,4 lần. Nâng độ chính xác khai báo từ 60,6% lên 70% đáng thêm ~+6 pp.
+
+· Câu sinh ra có nhắc tên vàng: MIN **45,1%** vs S1 **44,6%** — gần như nhau. Nhưng **riêng** nhóm
+  tả đúng, MIN nhắc lại tên trong câu **64,0%** ⇒ còn 36% số ca *biết đúng mà không dùng*.
+
+⚠️ **Giới hạn phải khai:** biến chia nhóm là **hành vi của chính MIN-DESC**, không phải lát cắt
+ngẫu nhiên — hai nhóm khác hẳn nhau về độ khó (trần 86,3% vs 61,4%). Phép so **MIN vs S1 bên
+trong mỗi nhóm** vẫn hợp lệ vì ghép cặp trên **cùng bước**, nhưng **cấm** so nhóm trên với nhóm
+dưới. Cùng loại giới hạn đã khai cho nhóm 325 ở chẩn đoán 4j-18.
+
+### (x10c) Sự cố vận hành: 5,3 giờ quota chấm nhầm nhánh
+
+Hai commit Kaggle chạy song song ngày 25/8 **đều chấm `min_desc`**. Notebook thứ hai (dành cho
+CE2) còn dòng `TEN_COMMIT = ["min_desc_seed101"]` **bên trong ô 2**, gán đè giá trị mà Ô 1 đặt;
+ô 1b chạy trước nên in ra `ce2` — đúng — rồi bị đè. Không lỗi, không cảnh báo.
+Phát hiện lúc giải nén: hai tệp thô **trùng nhau từng byte**.
+Đã vá: ô 1b niêm phong `NHANH_CHOT`, ô 2 `assert` so với nó và in `▶ CHẤM NHÁNH:` ngay dòng đầu.
+
+⭐ **Lợi ngoài ý muốn — bằng chứng TẤT ĐỊNH mạnh hơn hẳn bản cũ:** hai lượt chấm độc lập, hai
+phiên Kaggle khác nhau, khác giờ, cho tệp thô **trùng từng byte** (`md5 7ab8197edebb…`) trên
+**toàn bộ 4.463 bước**. Bản công bố cũ chỉ có *0 bất đồng trên 1.625 phép so qua bốn lượt*.
+Con số mới dùng được cho chương đo lường.

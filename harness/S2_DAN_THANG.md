@@ -490,6 +490,11 @@ else:
     print("  chưa tới bước 1 — vẫn đang mã hoá token (~42 phút)")
 ```
 
+⛔ **CẢNH BÁO 23/8:** ô 10 và 10b ở dưới lọc dòng theo trường **`loss`** của
+`trainer_log.jsonl`. Trên stack mới (`transformers 5.8.0`) trường đó **không còn**, nên hai ô này
+sẽ vứt sạch mọi dòng rồi in *"chưa tới bước 1"* suốt cả lượt train mà không báo lỗi. Nếu dựng lại
+máy sau 23/8, dùng ô theo dõi của `harness/colab_train_min_desc.md` (đọc hai nguồn) làm khuôn.
+
 **Sáu dấu hiệu, đều học được bằng cách mắc lỗi:**
 
 · **Đọc DÒNG CUỐI.** Tệp ghi nối thêm, nên sau khi chạy tiếp, dòng mới đầu tiên có số bước

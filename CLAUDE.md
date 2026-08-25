@@ -33,10 +33,16 @@ Colab phụ thuộc cũng dùng tên `harness`).
 
 | cần biết | mở |
 |---|---|
+| **⭐ TRẠNG THÁI HIỆN TẠI — đọc một mình là hiểu, từ 23/8 trở đi** | **`report/119_TRANG_THAI_SAU_23_8.md`** |
+| **đi hướng nào tiếp — tranh luận + tiền lệ + phán quyết (25/8)** | **`report/120_TRANH_LUAN_HUONG_TIEP.md`** |
 | cơ chế kỹ thuật toàn dự án, từ đầu | `report/112_HIEU_TOAN_BO_KY_THUAT.md` |
-| đang ở đâu | `report/109_BAN_DO_HIEN_TAI.md` |
+| đang ở đâu (bản đồ CŨ, trước 23/8) | `report/109_BAN_DO_HIEN_TAI.md` |
 | phải làm gì (đăng ký trước, đã niêm phong) | `report/106_DANG_KY_TRUOC.md` |
 | đã đo được gì, số nào tin tới đâu, số nào đã rút | `report/108_DA_LAM_DUOC_GI.md` |
+| **quyết định đang có hiệu lực về train gì** | **`report/117_QUYET_DINH_MIN_DESC.md`** |
+| phiên debate đa-agent 23/8 (bản chép lại 27 ảnh) | `report/116_DEBATE_23_8_FINAL_SOLUTION.md` |
+| **hai bài báo: trạng thái, phân số, phản biện bốn giám khảo** | **`report/118_PHAN_BIEN_HAI_BAI_23_8.md`** |
+| **phản biện hai bài + phán quyết từng đòn (23/8)** | **`report/118_PHAN_BIEN_HAI_BAI_23_8.md`** |
 | phân tích bốn nhánh + sàn | `report/113_PHAN_TICH_BON_NHANH.md` |
 | tiền lệ đã tra (executability, Zhao, GCoT) | `report/114_TIEN_LE_CAN_XAC_MINH.md` |
 | nhật ký chạy máy Colab chi tiết | `report/110_PHIEN_0_COLAB_11_8.md` |
@@ -44,29 +50,61 @@ Colab phụ thuộc cũng dùng tên `harness`).
 | nguồn từng con số trong bảng trích từ bài khác | `report/105_NGUON_SO_BANG_GOC.md` |
 | cách chia hai bài báo | mục *Hai bài báo* trong file này — ⛔ **KHÔNG** dùng `report/KE_HOACH_2_BAI_BAO.md`, bản đó đã chết |
 
-Mâu thuẫn thì: `106` thắng về *phải làm gì* · `108` về *đã đo được gì* · `109` về *đang ở đâu* ·
-`112` về *cơ chế hoạt động*.
+Mâu thuẫn thì: **mã** thắng tất cả về *hệ thống đang thực sự làm gì* · `106` thắng về *estimand
+và ngưỡng đã khoá* · **`119` về *trạng thái hiện tại và số hiện hành*** · `117` về *vì sao chọn
+MIN-DESC* · `108` về *đã đo được gì trước 23/8* · `112` về *cơ chế hoạt động*.
+⚠️ `109` là bản đồ **trước 23/8**, số điểm trong đó đã bị `119` thay. `116` chỉ là bản chép lại phiên debate — phần *"sẽ train gì"*
+của nó **đã bị `117` thay**.
 
 ---
 
-## ⭐ TRẠNG THÁI 20/8/2026 — S2 HẠT GIỐNG 101 ĐÃ TRAIN + ĐÃ CHẤM: **57,2%, THẤP HƠN S1**
+## ⭐ TRẠNG THÁI 23/8/2026 — NHÁNH S2 **DỪNG** · ĐÓNG GÓP MÔ HÌNH NAY LÀ **MIN-DESC**
 
-| trần **75,7** | S1/202 **59,6** | S1/101 **59,1** | **S2/101 57,2** [55,4–58,9] | Base **47,6** |
+| trần **75,7** | **MIN-DESC/101 60,1** [58,3–61,8] | S1/202 **59,6** | S1/101 **59,1** | S2/101 **57,2** | Base **47,6** |
+
+⭐ **MIN-DESC/101 = 60,05% (25/8)** — cao nhất trong mọi nhánh đã train, nhưng **so S1/101 chỉ
++0,94 pp, p=0,11, KTC [−0,09 · +2,05], dưới MDE 2,2** ⇒ ô **TRẮNG**. `hit_voronoi` thuần **60,4
+vs S1 60,2** ⇒ khả năng trỏ **ngang** SFT trơn; cái hơn S2 là sửa thiệt hại của chính S2.
+🔬 **Chỗ nghẽn đã định vị (`report/106` mục x10b):** khi ô khai báo ĐÚNG (60,6% số bước) MIN hơn
+S1 **+8,83 pp** và vượt cả trần nhóm; khi SAI thì **−11,12 pp**. Cơ chế không hỏng — nó bị chặn
+bởi **độ chính xác khai báo**. Triệt tiêu được vế âm ⇒ Δ ≈ **+5,4 pp**.
 
 Mẫu số **4.463** cho mọi nhánh (`score_run.py:516` cho câu rỗng vào quần thể với `exec = 0`;
-câu *"cùng 4.462 bước"* ở các file cũ **không chính xác**). Ghép cặp **S2−S1/101 = −1,93 pp**
-[−3,06 · −0,75]; **S2 vẫn hơn Base +9,59 pp**. `action_ok` 94,9% ⇒ không hỏng cơ học.
+câu *"cùng 4.462 bước"* ở các file cũ **không chính xác**).
 
-⛔ **MỚI MỘT HẠT GIỐNG ⇒ CHƯA ĐỌC Δ.** Luật (`report/106` mục (w)) đòi **trung bình hai hạt
-giống**; nhiễu giữa hai hạt giống S1 đo được ±1,3 pp. Giữ nguyên thì Δ rơi dải **TRẮNG**
-(−2,8…+1,7) = *kết quả âm có kiểm soát*, một trong bốn kết cục đã đăng ký trước.
+⛔ **S2/202 SẼ KHÔNG CHẠY** — chủ luận văn quyết 23/8, lý do ngân sách (`report/106` mục **(x1)**).
+Hệ quả **vĩnh viễn**, không phải tạm thời: estimand (w) không hoàn tất · `−2,19 pp` **ở nguyên dải
+trắng**, không được nâng thành kết quả âm về sau · mọi phân tích S2 (kể cả chẩn đoán 4j-18 và phép
+B UI-Venus) mang nhãn **thăm dò, một hạt giống** · bốn câu cấm ở `report/116` Mục 2 thành **cấm
+vĩnh viễn**.
 
-**▶️ VIỆC ĐANG CHỜ: train s2 hạt giống 202** — ô 5 (`SEED = 202`) → ô 16 → ô 7b → ô 8 của
-`harness/S2_DAN_THANG.md` (nay có **ô 1–10b train · 11–16 sau train**). Luật đã khoá **trước**
-khi nhìn điểm: **202 vẫn chạy bất kể con số**, trừ hỏng cơ học (`exec < 12,0%` hoặc
-`action_ok < 85%`). Bỏ nhánh lúc này thì mọi Δ báo về sau đều **chọn lọc theo kết quả**.
-⛔ **Đừng** đổi thước · đổi luật cắt `<desc>` · chọn điểm lưu khác. Dự án đã tự khai **hai lần**
-nới ngưỡng sau khi thấy điểm — đừng có lần thứ ba, nhất là khi sửa sẽ làm số **đẹp lên**.
+✅ **Smoke ĐÃ QUA 23/8** (`report/106` mục **(x3c)**): ORPO chạy thật · adapter S2 nạp đúng ·
+không tạo reference model · chạy-tiếp-sau-mất-máy đạt · **~21 s/bước** ⇒ 800 bước ≈ 4,7 h ·
+cỡ lô GPU 2 chỉ nhanh 2% ⇒ **giữ cỡ lô 1** · **LLaMA-Factory pin ở `c4e09c7cbe18…`**.
+⚠️ liger **không** kích hoạt ở stage `dpo` — cấm viết "dùng liger" cho MIN-DESC.
+
+**▶️ VIỆC ĐANG CHỜ (25/8): upload hai tệp preds lên dataset Kaggle `thesis-preds` rồi chạy
+`harness/kaggle_cham_min_desc.md` — HAI COMMIT TÁCH RỜI, mỗi commit một nhánh** (5,4 h/nhánh, đo
+thật trên log 20/8: 0,23 bước/giây). Gộp hai nhánh vào một commit là 10,8 h, sát trần 12 h của
+Kaggle; vượt trần thì `/kaggle/working` **không được lưu**, mất luôn tệp thô đã ghi dần.
+
+✅ **Train xong · suy luận xong · cổng cơ học ĐẠT** — xem `report/106` mục **(x9)**.
+
+### MIN-DESC là gì — một đoạn
+
+ORPO stage-2 nối tiếp từ checkpoint **S2**, trên cặp quy chiếu tối thiểu ở **tầng khai báo**:
+`chosen = <desc>đúng</desc> + "\n" + câu`, `rejected = <desc>desc_neg</desc> + "\n" + câu` —
+**câu y hệt**, chỉ ô khai báo đổi, nên gradient rơi đúng vào việc chọn phần tử. Đối chứng quy công
+là **CE2-S2** (SFT thuần, cùng bước, cùng update). Primary `Δ_component = mean_2seed(MIN−CE2)`.
+Bốn lượt × 800 update ≈ **20 h A100, ~110 đơn vị**.
+
+⛔ **KHÔNG train `s2_nopoint`, KHÔNG train `s2r`.** Lý do đo được, không phải cảm tính — xem
+`report/117` Mục 1 và 3: ô toạ độ là ô **gánh** (+1,12 pp đứng một mình) chứ không phải ô gây hại,
+còn ô tên chỉ đáng +0,54; và `s2r` được thiết kế để chắc chắn thua. `s2_nopoint` lại là SFT đầy đủ
+nên **đắt gấp đôi** MIN-DESC (46 h vs 20 h).
+
+⛔ **Đừng** đổi thước · đổi luật cắt `<desc>` · chọn điểm lưu khác · nới cổng sau khi thấy số.
+Dự án đã tự khai **hai lần** nới ngưỡng sau khi thấy điểm — đừng có lần thứ ba.
 
 ### 🔬 Chẩn đoán: 7,3% số bước gánh 34% chênh lệch (`report/110` 4j-18 · `harness/phan_tich_s2.py`)
 
@@ -110,9 +148,19 @@ mạch từ bước 0 trong 0,2% ⇒ chưa hề đứt. Bằng chứng thật: P
 trên Drive có bản mới trong **~34 phút** (200 bước × 10,2 s). Theo dõi bằng Terminal Colab hoặc
 mở Google Drive từ điện thoại, không cần nhân Python.
 
-**④ Tên trường thật trong `trainer_log.jsonl`:** `current_steps` · `total_steps` · `loss` ·
-**`lr`** (KHÔNG phải `learning_rate`) · `epoch` · `percentage` · `elapsed_time` ·
-`remaining_time`. **Không có `grad_norm`** — trường đó chỉ ở dòng stdout.
+**④ Tên trường thật trong `trainer_log.jsonl` — ĐỔI THEO PHIÊN BẢN, phải kiểm lại mỗi lần dựng máy.**
+· Stack tháng 8 (lượt S1/S2): `current_steps` · `total_steps` · `loss` · **`lr`** · `epoch` ·
+  `percentage` · `elapsed_time` · `remaining_time`.
+· ⚠️ **Khác nhau theo STAGE, không theo phiên bản** — đo 24/8 trên cùng một máy:
+  · stage **`dpo`** (MIN-DESC): CHỈ SÁU trường — `current_steps` · `total_steps` · `epoch` ·
+    `percentage` · `elapsed_time` · `remaining_time`. **KHÔNG có `loss`, `lr`, `rewards/*`.**
+  · stage **`sft`** (CE2-S2): **CÓ** thêm `loss` và `lr`, đúng như stack tháng 8.
+  ⇒ Ô theo dõi nào lọc dòng theo `loss` sẽ **vứt sạch mọi dòng** ở nhánh `dpo` rồi in *"chưa có
+  bước nào"* suốt cả lượt train mà không hề báo lỗi — còn ở nhánh `sft` thì chạy bình thường,
+  nên lỗi này **chỉ lộ ra ở một nửa số lượt**.
+· ⇒ `loss` / `learning_rate` / `rewards/*` chỉ có ở **stdout**, tức tệp `.log`. Ô theo dõi của
+  `colab_train_min_desc.md` đọc **hai nguồn**: tiến độ từ `.jsonl`, số học từ `.log`.
+**Không có `grad_norm`** trong jsonl — trường đó chỉ ở dòng stdout.
 ⚠️ `elapsed_time`/`remaining_time` hỏng sau khi chạy tiếp; ô theo dõi tự tính bằng mốc neo.
 Đã kiểm `lr` chạy đúng lịch: bước 2.260, cosine tính 8,622e-05, trainer ghi 8,624e-05 (0,02%).
 
@@ -127,11 +175,28 @@ prefix thì chết SAU 42 phút mã hoá token) · đĩa ≥20 GB · ~8.072 bư�
 
 Mọi danh sách "việc kế" cũ rải rác trong file đã bị danh sách này thay.
 
-1. **Train s2 hạt giống 202** (~26 giờ, ~126 đơn vị) → chấm (~5,6 giờ Kaggle, 0 đồng) → chạy
-   lại `harness/phan_tich_s2.py` → **mới** đọc Δ theo luật khoá.
-2. **Cắt 2 trang bài FAIR** (đang 10, giới hạn 8) — xem mục Bài FAIR.
-3. **Nhánh `s2_nopoint`** — nay đáng chạy hơn hẳn: nó tách *"có khai báo"* khỏi *"có toạ độ"*,
-   đúng chỗ chẩn đoán 4j-18 chỉ ra.
+0. ✅ **XONG 24/8 — train cả hai nhánh hạt giống 101 + sinh câu đủ 6.958 bước.**
+   `runs/preds_min_desc_seed101.jsonl` · `runs/preds_ce2_s2_seed101.jsonl`, mỗi tệp 6.958 bản
+   ghi, một chữ ký, phủ đủ 4.463 bước chạm, 0 câu sót `<desc>`.
+1. ✅ **Cổng cơ học ĐẠT 25/8** (`report/106` mục **x9a**) — S2 **53,9** · CE2-S2 **59,8** ·
+   MIN-DESC **60,6** trên 3.473 bước có tên vàng. Mốc S2 tái lập trùng con số ghi 23/8.
+   ⚠️ **Quy công:** CE2−S2 **+5,90** (SFT thuần) · MIN−CE2 **+0,80** (phần riêng của ORPO) ⇒ 87%
+   mức tăng là của nhánh đối chứng. Cấm trình +6,77 như công của mục tiêu ưu tiên.
+2. **▶️ ĐANG LÀM: chấm UGround trên 4.463** cho hai checkpoint, `harness/kaggle_cham_min_desc.md`.
+   **Hai commit tách rời.** Trước khi bấm Commit: Internet ON · Accelerator GPU T4×2 ·
+   `thesis-preds` đã lên version mới · notebook chỉ còn **một** ô 2.
+3. **Sau khi có điểm** mới quyết chi ~8 h GPU cho hạt giống 202. Quyết chạy thì phải chạy **cả
+   hai** nhánh và **báo trung bình hai hạt giống bất kể nó ra sao** — cam kết **(x8c)**.
+4. **Chấm UGround một lần** trên 4.463 cho bốn checkpoint (22,4 h Kaggle, vừa quota một tuần)
+   → tính `Δ_component` và `Δ_system` theo `report/106` mục (x5).
+5. ✅ **Bài FAIR + VCL: phiên song song 23/8 đã viết xong** — FAIR **8 trang 0 overfull** (nay là
+   **bài mô hình**), VCL **9 trang** tiếng Việt. Phản biện bốn giám khảo ở `report/118`.
+   Việc còn lại là đọc soát + nộp, **không** phải cắt trang.
+
+✅ **Smoke ORPO ĐÃ QUA 23/8** — không phải chạy lại. Bằng chứng ở `report/106` mục **(x3c)**.
+
+⛔ **Đã bỏ khỏi danh sách, có lý do đo được:** train s2/202 (quyết 23/8) · `s2_nopoint` ·
+`s2r`. Xem `report/117` Mục 3.
 4. ✅ **Phép B ĐÃ XONG 20/8 — đòn "UGround quen văn phong AC" ĐÃ ĐÓNG.**
    Chấm lát 2.532 bằng `UI-Venus-Ground-7B` (sạch AndroidControl), cả ba nhánh, 8,15 giờ
    Kaggle. Đọc bằng `python3 harness/phan_tich_venus.py`; runbook `harness/kaggle_phepB_uivenus.md`.
@@ -147,7 +212,8 @@ Mọi danh sách "việc kế" cũ rải rác trong file đã bị danh sách n�
      bộ trỏ độc lập*. Đây là hàng 1 của bảng bốn kết cục đã khoá trước khi chạy.
    · ⚠️ **VẪN CHƯA ĐƯỢC KẾT LUẬN** — luật `report/106` (w) đòi **trung bình hai hạt giống**, mà
      S2 mới có hạt 101. Phép B đóng đòn *dụng cụ*, **không** thay được hạt giống thứ hai.
-     Train s2/202 vẫn phải chạy (việc kế số 1), đúng luật đã khoá trước khi nhìn điểm.
+     ⚠️ Câu *"train s2/202 vẫn phải chạy"* ở đây **đã hết hiệu lực** từ 23/8 — nhánh S2 dừng,
+     xem `report/106` mục (x1). Kết quả phép B giữ nguyên giá trị, chỉ đổi nhãn thành *thăm dò*.
    · ⭐ **Phép rút gọn lát tự kiểm ĐÚNG TUYỆT ĐỐI:** lát 2.532 quy về 4.463 cho −1,9270 pp,
      tính thẳng trên 4.463 cũng −1,9270 pp, b/c trùng 340/254.
    · ⭐ **Sai số khoảng cách KHÔNG dự đoán được trần:** UI-Venus thua rõ ở khoảng cách (trung vị
@@ -297,7 +363,14 @@ Danh sách đầy đủ + 24 lỗi đã bắt: `report/108`.
 
 ---
 
-## 📄 BÀI FAIR'2026 — ĐANG 10 TRANG, GIỚI HẠN 8
+## 📄 BÀI FAIR'2026 — ⚠️ MỤC NÀY LỖI THỜI, ĐỌC `report/118` VÀ MỤC *HAI BÀI BÁO* TRƯỚC
+
+⛔ **Tiêu đề cũ ghi "đang 10 trang, phải cắt 2" — SAI từ 23/8.** Bài đã được viết lại thành
+**bài mô hình**, hiện **8 trang, 0 overfull**. Bản thước-đo cũ ở `main_v1_metric_backup.tex`.
+Phần dưới đây giữ lại vì phần *lệnh dựng*, *hạn nộp* và *danh sách đã-vá-vào-bài* vẫn dùng được;
+mọi câu về số trang và về "cắt gì" thì **bỏ qua**.
+
+### (nội dung cũ)
 
 **Hạn 31/8, nộp qua EDAS** (`edas.info/index.php?c=35461`; EasyChair đã đóng). Track **Natural
 Language Processing**. Không phản biện ẩn danh ⇒ giữ tên tác giả. Mẫu IEEE, nộp PDF nên bản
@@ -354,13 +427,24 @@ tất định 2.810/2.810 · sáu lát cắt đều tái lập).
 thời**. Điều thứ ba quan trọng nhất vì hai bài dùng chung bộ dữ liệu và chung mô hình, nộp cách
 nhau một ngày. Hạn **30/8 là user nhớ**, CFP chưa xác minh.
 
-### FAIR = bài CHÍNH = **THƯỚC ĐO** (giữ nguyên bài đang có)
+### ⚠️ MỤC NÀY ĐÃ BỊ THAY 23/8 — ĐỌC `report/118` TRƯỚC
 
-Nhan đề hiện tại đã tự chọn phần của nó: *"Executability: A Reference-Free Metric for Element
-Identification in Generated GUI Instructions"*. S1/Base trong đó đóng vai **chứng minh dụng cụ đo
-được**, và abstract đã tiêu con số **59,4 vs 47,6**.
+⛔ **FAIR KHÔNG CÒN LÀ BÀI THƯỚC ĐO. FAIR NAY LÀ BÀI MÔ HÌNH.** Chủ luận văn quyết 23/8:
+FAIR là venue khó hơn nên đặt đóng góp mô hình ở đó. Thước đo **vẫn nằm trong bài** nhưng
+đổi vai — từ *đối tượng nghiên cứu* thành *dụng cụ đã hiệu chuẩn*, gói trong một mục rưỡi.
 
-**Bốn lý do đặt bài chính ở đây, không ở bài mô hình:**
+| | trạng thái 23/8 |
+|---|---|
+| `paper/fair2026/main.tex` | **8 trang, 0 overfull** — nhan đề mới *"Descriptor-First Supervision for GUI Instruction Generation: A Pre-Registered Ablation and a Diagnosis of Where It Breaks"*. Bản thước-đo cũ giữ ở `main_v1_metric_backup.tex` |
+| `paper/vcl2026/main.tex` | **9 trang một cột, 0 overfull** — tiếng Việt, bố cục LNCS + font/giãn theo hướng dẫn VCL (Times 13, giãn 1,5) |
+| phản biện bốn giám khảo + phán quyết từng đòn | **`report/118_PHAN_BIEN_HAI_BAI_23_8.md`** |
+| bảng 2×2 kèm cột Base và **cột TRẦN** (mới, chặn biên confound độ khó) | `harness/phan_tich_o_khai_bao.py` |
+
+**Bảng phân số bên dưới đã hết hiệu lực** — bản đang dùng nằm ở `report/118` Mục 0.
+
+<details><summary>Bốn lý do của bản 18/8, giữ lại để tra lịch sử</summary>
+
+**Bốn lý do đặt bài chính ở thước đo (bản 18/8, đã bị quyết định 23/8 thay):**
 1. Phần đo **đã chịu được bốn lượt phản biện độc lập**; bảy lỗi bắt được trong hai ngày không lỗi
    nào ở khâu đo. Phần mô hình chưa qua vòng phản biện nào.
 2. **Đã viết xong**, chỉ còn cắt 2 trang. Viết lại FAIR thành bài mô hình trong 12 ngày là tự sát.
@@ -370,7 +454,9 @@ Identification in Generated GUI Instructions"*. S1/Base trong đó đóng vai **
    chỉ chỗ — chưa ai đo. Còn "grounding trước, sinh sau" thì GCoT và Aguvis đã đi qua, S2 chỉ
    mạnh hơn ở chỗ ablation sạch hơn.
 
-### VCL = bài ĐƠN GIẢN = **NHÃN MÔ TẢ PHẦN TỬ**
+</details>
+
+### VCL = bài ĐƠN GIẢN = **NHÃN MÔ TẢ PHẦN TỬ** (phần này vẫn đúng)
 
 Rút từ **`thesis/chapters/ch3_dulieu.tex`** (291 dòng, **đã sẵn tiếng Việt**, không phải dịch):
 nguồn và phép ghép đa nguồn · kiểm phép ghép · quy mô, chia tập, rò rỉ · trích chữ trên màn ·
@@ -603,6 +689,20 @@ hoạt động đúng: mỗi lần mất chỉ tốn 80–180 bước + thời g
 bước TỤT XUỐNG**.
 · **`grep "Resuming training from"` trống ngay sau khi khởi động là báo động giả** — dòng đó in
 sau ~40 giây nạp thư viện. Hỏi ba thứ trước khi `pkill`: `getsize(log)` · `ps -p <PID>` · `tail`.
+· ⛔ **mtime của tệp trên `/content/drive` KHÔNG cập nhật khi ghi thêm** — FUSE chỉ đổi khi đóng
+  tệp. Tệp đang được `infer_branch.py` ghi dần có thể hiện mốc giờ cũ **cả tiếng** mà vẫn đang
+  chạy bình thường. Kiểm bằng **`wc -l` hai lần cách nhau 60 giây**, đừng đọc `ls -la`.
+· **Nhân Python đang chạy ô dài thì MỌI ô khác xếp hàng** ⇒ lúc cần cứu tệp phải dùng **Terminal
+  Colab** (tiến trình riêng, cùng máy ảo, cùng thấy `/content/drive`). Hỏi tiến trình đang dùng
+  đường dẫn nào bằng `tr '\0' ' ' < /proc/$(pgrep -f infer_branch|head -1)/cmdline`, không đọc
+  lại lệnh đã gõ. Ô **T10–T13** của `colab_train_min_desc.md` ghi sẵn toàn bộ.
+· ⛔ **`--out` trỏ thẳng vào Drive KHÔNG sống sót qua mất máy — đo thật 24/8.** Lượt CE2 ghi
+  thẳng vào `MyDrive/thesis/preds_ce2_s2_seed101.jsonl` suốt 2 giờ; mất máy xong tệp đó **biến
+  mất hoàn toàn** khỏi Drive, chỉ bản chụp định kỳ còn (3.616 dòng, cứu ~67 phút GPU). Tệp mở
+  chế độ `"a"` chưa đóng lần nào thì FUSE chưa đẩy lên cloud, và `ls` vẫn hiện tệp như thường
+  nên **không có dấu hiệu nào báo trước**. Chụp định kỳ sang **tên khác** bằng `cp` (tạo
+  rồi đóng tệp mới ⇒ buộc Drive tải lên trọn vẹn). Bản chụp luôn cũ hơn ≤5 phút ⇒ **so `wc -l`,
+  giữ bản DÀI HƠN**, đừng chép đè theo phản xạ.
 · **Nhân Python restart làm rớt gắn Drive** — ô theo dõi văng `FileNotFoundError` trong khi tệp
 vẫn nằm nguyên trên Drive. Thấy lỗi này thì chạy ô chẩn đoán, đừng chạy lại lệnh train.
 · **Ô kiểm vàng A.2b** (`harness/run_on_colab.md`): so cfg lượt này với cfg lượt tham chiếu, **chỉ
@@ -670,8 +770,12 @@ Chỗ lưu: thứ bắt buộc sống qua các phiên chỉ ~3 GB; 67 GB ảnh t
 
 **Mã chính trong `harness/`:**
 · dựng dữ liệu — `build_train_data.py` · `build_branch_data.py` · `build_test_data.py` ·
-`descriptor_label_build.py` · `prep_ocr_train.py` · `tag_app_seen.py`
-· train/suy luận/chấm — `train_config.yaml` · `infer_branch.py` · `score_run.py` ·
+`descriptor_label_build.py` · `prep_ocr_train.py` · `tag_app_seen.py` ·
+**`build_min_desc.py`** (dựng 22.854 cặp MIN-DESC + đối chứng CE2-S2, 7 bất biến) ·
+**`do_eligibility.py`** (đo cổng eligibility, in CẢ HAI thiết kế cặp, không có cờ tắt bớt) ·
+**`gate_desc_acc.py`** (cổng cơ học MIN-DESC — độ chính xác khai báo, KHÔNG gọi bộ trỏ; mốc S2 = **53,9%**)
+· train/suy luận/chấm — `train_config.yaml` · **`train_config_orpo.yaml`** (MIN-DESC) ·
+**`train_config_ce2.yaml`** (đối chứng) · `infer_branch.py` · `score_run.py` ·
 `metric_exec.py` (thư viện hàm chấm — **luật chấm mặc định không đổi từ commit `b93e85c`
 ngày 5/8**; bản vá `strict_back` là thêm cờ tuỳ chọn, mặc định tắt, và **hiện chưa commit**) ·
 `gate_a_ceiling.py`
@@ -679,7 +783,9 @@ ngày 5/8**; bản vá `strict_back` là thêm cờ tuỳ chọn, mặc định 
 `mde_that.py` · `rule_sensitivity.py` · `bien_the_khong_tham_chieu.py` · `make_floor.py` ·
 `doc_san.py` · `doc_diem_tam.py` · `kiem_preds.py` (8 phép kiểm tệp preds trước khi tiêu quota) ·
 `make_fig_voronoi.py`
-· runbook — `S2_DAN_THANG.md` · `colab_train_s2.md` · `run_on_colab.md` · `colab_cham_san.md` ·
+· runbook — **`colab_smoke_orpo.md`** (cổng kỹ thuật MIN-DESC — chạy TRƯỚC mọi thứ) ·
+**`colab_train_min_desc.md`** (bốn lượt train + đồng bộ Drive + ô theo dõi có thanh tiến độ) ·
+`S2_DAN_THANG.md` · `colab_train_s2.md` · `run_on_colab.md` · `colab_cham_san.md` ·
 `kaggle_cham_san.md` · `kaggle_upload_dataset.md` · `kaggle_pheA_CHAY_LAI.md` · `run_on_rented.sh`
 
 `infer_branch.py` và `score_run.py` đều **ghi dần + xả đệm + nối tiếp được**; `score_run` gộp số
@@ -693,9 +799,15 @@ nhau thì chọn chậm-mà-rẻ. Luôn trình bảng **tiền · thời gian ·
 
 ## ❓ CÒN TREO
 
-- **Cách chia hai bài báo đã quyết 18/8** (mục *Hai bài báo*) nhưng **user nói sẽ bàn lại** — chưa
-  phải chốt cuối. Ba thứ về CFP của VCL còn phải tự tra: giới hạn trang · mẫu định dạng · chính
-  sách trùng lặp.
+- ⛔ **Hai kho đang lệch.** Máy WSL **không có** `FINAL_SOLUTION.md` lẫn
+  `report/115_PHUONG_AN_TD_ROI_DA_RUT.md` — phiên debate 23/8 chạy trên một checkout khác (máy
+  Mac). Mọi tham chiếu tới hai file đó trong `report/116` hiện là **tham chiếu chết**. Lấy về khi
+  tiện; chưa có cũng không chặn việc gì, vì `report/117` đã tự chứa.
+
+- **CFP của VCL** vẫn còn ba thứ chưa xác minh: giới hạn trang · mẫu định dạng · **chính sách
+  trùng lặp / nộp đồng thời**. Cái thứ ba quan trọng nhất vì hai bài dùng chung dữ liệu và mô
+  hình, nộp cách nhau một ngày. Hạn 30/8 là user nhớ, CFP chưa kiểm.
+  *(Cách chia hai bài đã chốt lại 23/8: FAIR = bài mô hình, VCL = nhãn mô tả phần tử.)*
 
 **Đã chết, đừng hồi sinh:** nhánh **faithfulness trên MobileViews** (đóng góp phụ số 2 theo
 `report/103` ngày 1/8). Kiểm 18/8: **0 lần xuất hiện** trong `report/106 · 108 · 109 · 112 · 113 ·

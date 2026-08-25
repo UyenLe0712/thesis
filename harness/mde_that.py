@@ -31,18 +31,31 @@ Z = 2.8   # z(0,975) + z(0,80) — phát hiện được với lực 80% ở m�
 
 
 def nap(p):
+    """Nạp ĐỦ quần thể 4.463. Bước bị pipeline chấm bỏ qua (cờ `bo_qua`) tính là
+    `executable = 0`, KHÔNG loại khỏi mẫu số.
+
+    Sửa 23/8/2026: bản cũ `if "bo_qua" not in o` là **complete-case analysis** — nó xoá
+    khỏi cả tử số lẫn mẫu số đúng những bước mà chính model làm hỏng, tức làm đẹp số theo
+    hướng có lợi. report/106 khoá đối tượng chấm là toàn bộ 4.463 bước chạm."""
     d = {}
     for l in open(p, encoding="utf-8"):
         o = json.loads(l)
-        if "bo_qua" not in o:
-            d[(o["episode_id"], o["step_id"])] = o
+        o.setdefault("executable", 0)          # dòng `bo_qua` không có trường này
+        d[(o["episode_id"], o["step_id"])] = o
     return d
 
 
 def cum(o):
-    """Cụm = ứng dụng; bước không gán được app tự thành cụm riêng (luật đã đăng ký)."""
+    """Cụm = ứng dụng; **TÁC VỤ** không gán được app tự thành một cụm.
+
+    Sửa 23/8/2026: bản cũ trả `__don__{episode}_{step}`, tức mỗi BƯỚC một cụm — cho 2.906
+    cụm. report/106 sửa đổi (e) khoá luật *"mỗi TÁC VỤ không-rõ-app là một cụm"* và ghi
+    **G = 1.091**, đúng con số bài báo đang trích (`main.tex:411`). Chia nhỏ cụm hơn hồ sơ
+    cho phép làm SE nhỏ đi, tức nới ngưỡng theo hướng có lợi.
+    Đo được sau khi sửa: SE 0,386 → 0,375 pp (~3%), không đổi kết luận nào — vẫn phải sửa
+    vì đây là lệch hồ sơ đăng ký, không phải vì nó cứu được con số."""
     a = (o.get("app") or "").strip().lower()
-    return a if a else f"__don__{o['episode_id']}_{o['step_id']}"
+    return a if a else f"__don__{o['episode_id']}"
 
 
 def boot_hieu(K, A, Bn, b=B):
