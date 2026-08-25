@@ -1799,3 +1799,87 @@ Phát hiện lúc giải nén: hai tệp thô **trùng nhau từng byte**.
 phiên Kaggle khác nhau, khác giờ, cho tệp thô **trùng từng byte** (`md5 7ab8197edebb…`) trên
 **toàn bộ 4.463 bước**. Bản công bố cũ chỉ có *0 bất đồng trên 1.625 phép so qua bốn lượt*.
 Con số mới dùng được cho chương đo lường.
+
+---
+
+## Sửa đổi 25/8/2026 — (x11) ĐĂNG KÝ BIẾN THỂ **MIN-ONPOLICY**: đổi NGUỒN vế âm
+
+> **Viết TRƯỚC khi sinh một khai báo nào.** Chưa có checkpoint, chưa có dữ liệu, chưa có số.
+> Kiểm được bằng `git log`. Đây là biến thể **thứ tư**, chọn **hậu kiểm** sau khi thấy điểm
+> MIN-DESC ⇒ mang nhãn **thăm dò**, và luật câu chữ (x8b) áp nguyên.
+
+### (x11a) Đổi đúng MỘT thứ
+
+| | MIN-DESC (đã chạy) | **MIN-ONPOLICY** (đăng ký ở đây) |
+|---|---|---|
+| `chosen` | `<desc>` vàng + "\n" + câu | **y hệt** |
+| `rejected` | `<desc>` từ `nearest_other()` + "\n" + **câu y hệt** | `<desc>` **đúc lại từ phần tử mà S2 tự chọn nhầm** + "\n" + **câu y hệt** |
+| mọi thứ khác | `train_config_orpo.yaml` | **không đổi một khoá nào** — cùng 800 bước, cùng `pref_beta 0.1`, cùng LR, cùng adapter nền S2 |
+| đối chứng | CE2-S2 | **CE2-ONPOLICY** — SFT thuần trên đúng vế `chosen` của **đúng những bước ấy** |
+
+**Lý do đo được, không phải cảm tính:** trong số bước S2 sai tên, chỉ **7,4%** rơi đúng vào hàng
+xóm cùng vai trò gần nhất mà `nearest_other()` chọn (CE2 10,4% · MIN-DESC 9,8%). Heuristic bỏ sót
+~90% khối lỗi thật. Nói theo Song et al. (**NeurIPS 2024**): dữ liệu off-policy hiện tại **không
+phủ toàn cục** không gian lỗi, mà đó là điều kiện *cần* để một mục tiêu tương phản offline hội tụ
+về đúng đích.
+
+### (x11b) ⛔ BẢN NGÂY THƠ BỊ CẤM — đã có người đo và ra số ÂM
+
+**KHÔNG được lấy chuỗi thô S2 sinh ra làm `rejected`.** D'Oosterlinck et al., **TACL Vol. 13
+(2025)**, tr. 442–460, dựng bốn tập cặp trên cùng prompt/cùng mô hình, chỉ khác cách ghép. Tập
+**Stronger Preferred** (`rejected` = mô hình đích tự sinh, `chosen` = nguồn khác mạnh hơn) — **đúng
+cấu trúc ngây thơ của biến thể này** — là tập **duy nhất** cho số âm sâu: MaxΔ **−5,00**, MeanΔ
+**−6,94**, dù vế thắng khách quan là chất lượng cao nhất. Nguyên nhân họ nêu: hai vế khác nhau ở
+quá nhiều trục ngoài trục cần học ⇒ mô hình học **đặc trưng nguồn** thay vì nội dung.
+Cùng chiều: NAT (**NAACL 2025**) đổi nguồn negative sang một mô hình 7B đã fine-tune: **+8,74 → −3,16**.
+
+⇒ **Bắt buộc ĐÚC LẠI:** chỉ lấy ra *phần tử nào* S2 chọn nhầm, ánh xạ về node đó trong cây trợ
+năng, rồi dựng lại `<desc>` bằng **chính `descriptor_label_build.desc_str()`** đã dựng nhãn vàng.
+Negative thành **on-policy về nội dung lỗi, off-policy về hình thức** — giữ tương phản tối thiểu
+mà không để lọt chênh lệch định dạng/độ dài/kiểu viết toạ độ giữa hai vế.
+
+### (x11c) Ba cổng phải ĐẠT trước khi tiêu một giờ train
+
+| cổng | ngưỡng | vì sao |
+|---|---|---|
+| **① lối tắt văn phong** — mô hình chỉ-văn-bản có tách được `chosen`/`rejected` không | luật "vế ngắn hơn" đoán đúng **< 55%** (cùng ngưỡng x6) · **0%** cặp tách được bằng một chuỗi ký tự cố định | phép chẩn đoán của mDPO (**EMNLP 2024**). Cặp MIN-DESC tự động qua vì hai vế chỉ khác ô `<desc>`; cặp on-policy **KHÔNG** tự động qua vì khác nguồn |
+| **② false negative** | phần tử S2 chọn nhầm phải cách gold **80–350 px**, cùng dải `hop_le()` đang dùng | dưới ngưỡng gộp 63 px của `dedupe_buttons` thì Voronoi vẫn chấm **trúng** ⇒ giữ lại là dạy mô hình **ghét đáp án đúng**. Chuyển vị *denoised hard negatives* của RocketQA (**NAACL 2021**) |
+| **③ eligibility** | ≥ **25%**, cùng ngưỡng (x6) | `do_eligibility.py` |
+
+Trượt bất kỳ cổng nào ⇒ **dừng, không train**, ghi lại lý do. Không nới ngưỡng sau khi thấy số —
+dự án đã tự khai hai lần nới, không có lần thứ ba.
+
+### (x11d) Đại lượng báo cáo và cam kết trước khi thấy số
+
+- **Đại lượng chính của biến thể này là ở TẦNG KHAI BÁO**, không phải executability:
+  `Δ_desc = gate_desc_acc(MIN-ONPOLICY) − gate_desc_acc(CE2-ONPOLICY)`, đo bằng
+  `harness/gate_desc_acc.py`, **không gọi bộ trỏ** ⇒ (x6) cho phép.
+  Lý do chọn tầng khai báo: hệ số chuyển đổi khai-báo→exec đo được là **0,43** (x10), nên tín hiệu
+  ở tầng exec đã bị bóp hơn một nửa trước khi ta kịp nhìn.
+- **Chỉ chấm executability nếu `Δ_desc` ≥ +2,0 pp** so với MIN-DESC hiện tại ở cùng cổng. Ngưỡng
+  này khoá **ở đây, trước khi có số**.
+- **Cam kết báo cả hai chiều:** dù `Δ_desc` âm, dương hay trắng, kết quả vào bài dưới dạng một
+  **ablation về NGUỒN vế âm** với ba nhánh cạnh nhau (heuristic · on-policy · CE2). Không giấu
+  nhánh nào. Cùng tinh thần cam kết (x8c).
+
+### (x11e) Kỳ vọng — khai trước để sau này không tự lừa
+
+Ba nguồn độc lập cùng dự báo hiệu ứng **nhỏ**: Tajwar et al. (**ICML 2024**) — on-policy có lợi
+*khi đỉnh phần thưởng nằm xa* mô hình nền, mà `chosen` của ta là nhãn vàng và S2 đã được SFT trên
+đúng khuôn đó ⇒ đỉnh nằm **gần**; Chen et al. (**NeurIPS 2024**) — mục tiêu DPO *"ill-suited to
+fix even mild ranking errors in the reference model"*, mà S2 đã đúng ô khai báo 53,9%; và hệ số
+chuyển đổi **0,43**. ⇒ Xác suất vượt MDE 2,2 pp ở tầng executability, ước trước khi chạy: **thấp**.
+Biến thể này chạy vì nó là **ablation sạch về nguồn cặp**, không vì kỳ vọng thắng.
+
+### (x11f) Chữ CẤM dùng
+
+Đây là **hard-negative mining động**, có chủ từ **OHEM (CVPR 2016)** và **ANCE (ICLR 2021)**;
+trong miền GUI, **WEPO (AAAI 2025)** đã dùng DPO với vế rejected là một phần tử web khác trên cùng
+trang, và **LPO (Findings of ACL 2026, tr. 14617–14628)** đã dùng mẫu do chính mô hình sinh làm
+negative ở tầng toạ độ. ⛔ **Cấm "đầu tiên"/"mới"/"cơ chế mới".** Cách viết đúng: *"chúng tôi áp
+lại hard-negative mining động vào tầng khai báo phần tử"*, điểm phân định là **tầng đặt cặp**.
+
+### (x11g) Không đụng
+
+Thước, luật chấm, `metric_exec.py`, mẫu số 4.463, mốc S2 53,9%, cấu hình đã khoá ở (x3), luật câu
+chữ (x8b), cam kết (x8c). Mọi kết quả S1/base/trần/sàn/phép B/MIN-DESC đã công bố.

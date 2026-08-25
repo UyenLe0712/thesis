@@ -374,5 +374,78 @@ dư địa · ghép hai thay đổi trong một biến thể.
 *"k phần tử gần nhất làm negative"* trong miền GUI. Cấm *"đầu tiên"/"mới"* cho cả hai ý.
 
 ⚠️ **Preprint, chưa có venue — không được trình như đã bình duyệt:** Step-DPO (2406.18629) ·
-DPO-Positive/Smaug (2402.13228) · UI-TARS (2501.12326) · LPO (2506.09373, tác giả khai Findings
-ACL 2026 nhưng chưa xác minh độc lập được) · ROSCOE (2212.07919) · Lanham et al. (2307.13702).
+DPO-Positive/Smaug (2402.13228) · UI-TARS (2501.12326) · ROSCOE (2212.07919) · Lanham et al. (2307.13702).
+
+
+---
+
+## 8. Ⓓ NEGATIVE ON-POLICY — tra riêng 25/8, và nó đổi cả thiết kế lẫn kỳ vọng
+
+Đăng ký trước ở `report/106` mục **(x11)**. Đây là lượt tra thứ tư, hỏi riêng về on-policy.
+
+### 8.1 Nguyên lý có ba trụ đã bình duyệt
+
+· **Tajwar et al., ICML 2024** (PMLR 235:47441–47474) — *"Preference Fine-Tuning of LLMs Should
+  Leverage Suboptimal, On-Policy Data"*.
+· **Xu et al., ICML 2024 (oral)** (PMLR 235:54983–54998) — giữ nguyên thuật toán, chỉ đổi nguồn
+  cặp từ tĩnh sang tự sinh rồi gán nhãn lại: safety rate **55,4% → 99,9%**. Nguyên văn:
+  *"iterative DPO is better than training on static data"*.
+· ⭐ **Song et al., NeurIPS 2024** — chứng minh mục tiêu tương phản **offline** cần điều kiện
+  **phủ toàn cục** không gian lỗi mới hội tụ về đúng đích, trong khi online chỉ cần **phủ một
+  phần**. Đây là trụ khớp nhất với ta, vì ta **đo được** `nearest_other()` chỉ phủ **7,4–10,4%**
+  khối lỗi tên.
+
+### 8.2 ⛔ Bản ngây thơ đã được đo và ra số ÂM — đây là phát hiện quan trọng nhất
+
+**D'Oosterlinck et al., TACL 13 (2025)** dựng bốn tập cặp trên cùng prompt, cùng mô hình, chỉ
+khác cách ghép. Tập **Stronger Preferred** (`rejected` = mô hình đích tự sinh, `chosen` = nguồn
+khác mạnh hơn) là **đúng cấu trúc ngây thơ** của Ⓓ:
+
+| tập cặp | MaxΔ 06-01 | MeanΔ 06-01 | MaxΔ 08-11 |
+|---|---|---|---|
+| CLAIR (sửa tối thiểu chính output của mô hình) | **+7,65** | +2,93 | +5,95 |
+| on-policy judge (hai vế cùng tự sinh) | +4,00 | +0,56 | +5,20 |
+| off-policy judge | +1,10 | −0,74 | +4,30 |
+| **Stronger Preferred (vế thắng khác nguồn)** | **−5,00** | **−6,94** | **−3,10** |
+
+Tập duy nhất âm sâu, dù vế thắng khách quan là chất lượng cao nhất. Bảng 1 cùng bài giải thích:
+nó có Jaccard thấp nhất và Levenshtein cao nhất — hai vế khác nhau ở quá nhiều trục ngoài trục
+cần học. Cùng chiều: **NAT (NAACL 2025)** đổi nguồn negative sang một mô hình 7B đã fine-tune
+(đúng vai S2): **+8,74 → −3,16**.
+
+⇒ Bản vá bắt buộc: **đúc lại** khai báo âm bằng chính `descriptor_label_build.desc_str()` +
+`name_of()` + `distinguish()` — cùng chuỗi hàm đã dựng nhãn vàng. On-policy về **nội dung lỗi**,
+off-policy về **hình thức**. Đã cài trong `harness/build_min_desc_onpolicy.py`.
+
+### 8.3 Hai rủi ro còn lại, đã có cổng
+
+· **False negative** — khai báo S2 "sai" so với nhãn vàng vẫn có thể trỏ đúng nút (nhãn a11y rác
+  14,7%, phần tử chồng nhau). Chuyển vị *denoised hard negatives* của **RocketQA (NAACL 2021)**:
+  ép khoảng cách 80–350 px và loại node chồng lấn hộp gold.
+· **Dữ liệu on-policy "cũ đi"** — **Noukhovitch et al., ICLR 2025** đo mức tụt theo độ cũ là
+  **logarit**, N=1 và N=2 gần như nhau, và online DPO chịu dữ liệu cũ tốt hơn PPO/RLOO ⇒ sinh
+  `desc_neg` **một lần** rồi train 800 bước là đủ, không cần nhiều vòng. Đây là bài để trích nếu
+  giám khảo hỏi *"sao không sinh lại mỗi vòng"*.
+
+### 8.4 Không có tính mới — danh sách phải trích
+
+**Hard-negative mining động**: **OHEM (CVPR 2016)** · **FaceNet (CVPR 2015)** · **ANCE (ICLR
+2021)** · **RocketQA (NAACL 2021)**. Trong miền GUI: **WEPO (AAAI 2025)** đã dùng DPO với vế
+rejected là **một phần tử web khác trên cùng trang**; **LPO (Findings of ACL 2026, tr.
+14617–14628 — nay ĐÃ xác minh, không còn là preprint)** dùng mẫu do chính mô hình sinh làm
+negative ở **tầng toạ độ**. Trong NLP sinh ngôn ngữ: **Unlikelihood (ICLR 2020)** · **CRINGE
+(ACL 2023)** · **ANLI (ACL 2020)**.
+⛔ **Cấm "đầu tiên"/"mới".** Điểm phân định là **tầng đặt cặp** (tầng khai báo phần tử), không
+phải bản thân ý tưởng.
+
+### 8.5 Kỳ vọng — khai trước, không sửa sau
+
+**Ở tầng KHAI BÁO:** lập luận phủ (Song, NeurIPS 2024) khớp thẳng với con số 7–10% đo được ⇒
+**có cơ sở thật để tin nó nhúc nhích**.
+**Ở tầng EXECUTABILITY:** ba nguồn độc lập kéo ngược — Tajwar (on-policy ăn khi đỉnh phần thưởng
+xa π_ref, mà `chosen` của ta là nhãn vàng và S2 đã SFT trên đúng khuôn đó ⇒ đỉnh **gần**) · Chen
+et al. NeurIPS 2024 (*DPO không sửa nổi lỗi nhẹ của mô hình nền*, mà S2 đã đúng 53,9%) · hệ số
+chuyển đổi **0,43**. ⇒ **Xác suất vượt MDE 2,2 pp ở tầng exec: thấp.**
+
+⇒ Vì vậy (x11d) đặt **đại lượng chính ở tầng khai báo**, và chỉ chi quota chấm khi `Δ_desc` ≥
++2,0 pp. Biến thể này chạy vì nó là **ablation sạch về nguồn cặp**, không vì kỳ vọng thắng.

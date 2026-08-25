@@ -255,7 +255,7 @@ background execution** ⇒ phải sống chung với mất máy; đồng bộ Dr
 | Ⓑ siết hard negative | ⛔ **BÁC** | `nearest_other()` **đã** là hard negative (100% cùng vai trò); chỉ 7–10% lỗi tên rơi vào hàng xóm gần nhất; hard quá còn phản tác dụng (FaceNet CVPR 2015 · Robinson ICLR 2021) |
 | **Ⓑ′ vệ sinh cặp** | ✅ **CHỌN** | ba khuyết tật đo được, sửa bằng **0 giờ GPU** |
 | Ⓒ MIX | giữ nguyên | làm để đạt điều kiện no-harm, không để tăng điểm |
-| Ⓓ negative on-policy | để sau | nhắm đúng 90% khối lỗi mà heuristic bỏ sót, nhưng tốn thêm ~5 h suy luận |
+| **Ⓓ negative on-policy** | ✅ **ĐÃ ĐĂNG KÝ 25/8** — `report/106` mục **(x11)** | nhắm đúng 90% khối lỗi heuristic bỏ sót. Bản ngây thơ **bị cấm** (CLAIR/TACL 2025 đo được −5,00 pp); phải **đúc lại** khai báo âm bằng chính hàm đã dựng nhãn vàng. Đại lượng chính đặt ở **tầng khai báo**, 0 quota Kaggle |
 
 **Ⓑ′ — sau khi rút số, chỉ còn MỘT khuyết tật thật:**
 
