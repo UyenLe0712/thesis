@@ -244,7 +244,7 @@ mạnh hơn hẳn bản cũ (0 bất đồng trên 1.625 phép so qua bốn lư�
 |---|---|---|
 | 1 | Chấm **CE2-S2/101** trên 4.463 | ✅ **XONG 25/8 — 59,42%** |
 | 2 | Tính `Δ_component = MIN − CE2` | ✅ **+0,63 pp, ô TRẮNG** (`report/106` x12) |
-| 1b | ⏳ **ĐANG CHẠY: ô O1 của `harness/colab_onpolicy.md`** — S2 tự sinh khai báo trên 14.000 màn tập dạy, A100, **0,90 bước/giây ⇒ ~4,3 h**. Xong thì chạy O2 đọc ba cổng | |
+| 1b | **Biến thể MIN-ONPOLICY** — O1 sinh khai báo xong (14.000 màn, 4,5 h A100), O2 dựng được **459 cặp** | ⛔ **TRƯỢT CỔNG ③ 25/8 — DỪNG.** `report/106` mục **(x13)** |
 | 3 | Chọn hướng cải tiến tiếp, train trên **một hạt giống** | xem Mục 9 |
 | 4 | Nếu một hướng ra số tốt → mới nhân lên **hai hạt giống** | cam kết (x8c) áp dụng |
 | 5 | Đọc soát + nộp hai bài | 30–31/8 |
@@ -268,7 +268,29 @@ background execution** ⇒ phải sống chung với mất máy; đồng bộ Dr
 | Ⓑ siết hard negative | ⛔ **BÁC** | `nearest_other()` **đã** là hard negative (100% cùng vai trò); chỉ 7–10% lỗi tên rơi vào hàng xóm gần nhất; hard quá còn phản tác dụng (FaceNet CVPR 2015 · Robinson ICLR 2021) |
 | **Ⓑ′ vệ sinh cặp** | ✅ **CHỌN** | ba khuyết tật đo được, sửa bằng **0 giờ GPU** |
 | Ⓒ MIX | giữ nguyên | làm để đạt điều kiện no-harm, không để tăng điểm |
-| **Ⓓ negative on-policy** | ✅ **ĐÃ ĐĂNG KÝ 25/8** — `report/106` mục **(x11)** | nhắm đúng 90% khối lỗi heuristic bỏ sót. Bản ngây thơ **bị cấm** (CLAIR/TACL 2025 đo được −5,00 pp); phải **đúc lại** khai báo âm bằng chính hàm đã dựng nhãn vàng. Đại lượng chính đặt ở **tầng khai báo**, 0 quota Kaggle |
+| **Ⓓ negative on-policy** | ⛔ **ĐÃ CHẠY VÀ ĐÃ DỪNG 25/8** — `report/106` mục **(x13)** | đăng ký (x11), chạy O1+O2, **trượt cổng ③ eligibility**: chỉ **459 cặp** hợp lệ trên 14.000 màn (3,3%; ngưỡng 25%). Lý do đo được ở dưới. Giá của việc biết mình sai: **4,5 h A100, 0 h Kaggle** |
+
+### ⭐ Vì sao Ⓓ chết — và vì sao đây là kết quả đáng viết vào bài
+
+Phân bố khoảng cách giữa phần tử **S2 gọi nhầm** và phần tử **vàng**, đo trên 3.246 bước S2 sai
+tên: **p25 = 70 px · trung vị = 351 px · p75 = 748 px**. Cổng khoảng cách 80–350 px của (x11c)②
+loại **76,5%** trong số đó.
+
+⇒ Lỗi khai báo của S2 **không phải lẫn giữa hai nút cạnh nhau**. Nó lưỡng cực: hoặc **cùng một
+phần tử gọi khác tên** (đuôi dưới 80 px), hoặc **nhìn sang vùng khác hẳn của màn** (đuôi trên
+350 px). Tiền đề của Ⓓ — *"vế âm tốt nhất là chính cái mô hình hay nhầm"* — giả định một dạng
+lẫn **cục bộ** mà mô hình này không mắc.
+
+⇒ Giải thích ngược vì sao heuristic là cách duy nhất dựng được tương phản: nó **tạo ra** vùng
+nhầm-hàng-xóm mà dữ liệu thật gần như không có. Và nó nói rõ chỗ nghẽn ở Mục 5 (độ chính xác
+khai báo 60,6%) **không** phải bài toán phân biệt cục bộ ⇒ **hướng chữa bằng tương phản tinh vi
+hơn ở tầng khai báo đã hết chỗ đi.**
+
+⚠️ Cam kết (x11d) vẫn thi hành: bài **phải** báo cả ba nhánh — heuristic · on-policy (dừng ở
+cổng, kèm lý do) · CE2. Cấm viết *"chúng tôi chọn heuristic"* như lựa chọn thiết kế thuần.
+
+📌 Số phụ đáng giữ: **S2 gọi đúng tên 68,5% trên tập DẠY** (7.067/10.319) vs **60,6% trên tập
+kiểm** — hai phép đo độc lập, khớp bậc độ lớn, củng cố con số 60,6%.
 
 **Ⓑ′ — sau khi rút số, chỉ còn MỘT khuyết tật thật:**
 
@@ -292,17 +314,31 @@ vẫn dưới ngưỡng phát hiện.
 tử 53,9%** số bước ⇒ nạp `<desc>` vàng là mớm sẵn hơn nửa chữ khoá của câu đích, trần đo được sẽ
 là số ảo. Đúng cái bẫy làm ba bài oracle trong image captioning bị vô nghĩa.
 
-**Thứ tự việc — QUYẾT ĐỊNH LỚN ĐANG CHỜ SỐ CE2:**
-1. chờ điểm **CE2-S2/101** (đang chạy) → biến dự báo +0,35 pp thành **phép đo** `Δ_component`
-2. **rồi mới chọn giữa hai đường**, vì sau khi rút ② thì không còn cần gạt nào hứa hẹn vượt MDE
-   2,2 pp bằng cách vá dữ liệu:
-   · **đường mô hình** — negative **on-policy** (Ⓓ): dùng khai báo mà chính S2 đoán SAI trên màn
-     tập dạy làm `desc_neg`. Đây là cần gạt duy nhất nhắm vào **90% khối lỗi** mà heuristic hàng
-     xóm bỏ sót. Giá: ~5 h suy luận dựng dữ liệu + ~8 h train + 10,8 h chấm.
-   · **đường đo lường** — dừng tối ưu mô hình, lấy **chẩn đoán** làm đóng góp: bảng 2×2 mức-từng-mẫu
-     (không tiền lệ nào có), hệ số chuyển đổi 0,43 đo được, kết quả âm đăng ký trước của S2, và
-     giới hạn listener-metric có tiền lệ CVPR 2017. Giá: **0 GPU**.
-3. dù chọn đường nào, gộp sẵn bản vá `(no name)` vào lượt train kế — nó miễn phí.
+**Thứ tự việc — HAI CÂU HỎI ĐÃ CÓ TRẢ LỜI, quyết định nay bị ép:**
+
+Ngày 25/8 cả hai ẩn số đều đóng trong cùng một ngày:
+· `Δ_component` = **+0,63 pp**, ô TRẮNG — dự báo +0,35 pp thành phép đo (`report/106` x12);
+· biến thể on-policy **chết ở cổng eligibility** (`report/106` x13).
+
+⇒ Không còn cần gạt nào hứa hẹn vượt MDE 2,2 pp bằng cách vá dữ liệu ở tầng khai báo. **Đường
+còn lại là đường đo lường:** dừng tối ưu mô hình, lấy **chẩn đoán** làm đóng góp —
+
+1. bảng 2×2 mức-từng-mẫu (khi khai báo đúng MIN hơn S1 **+8,83 pp** và vượt trần nhóm; khi sai
+   **−11,12 pp**) — không tiền lệ nào có;
+2. **hệ số chuyển đổi 0,43** đo được trên chính dữ liệu này, biến "khai báo đúng hơn" thành một
+   dự báo kiểm được về executability — và dự báo đó **đã trúng** ở lượt MIN vs CE2;
+3. **quy công tách bạch** S2→CE2 +2,24 (SFT thuần) vs CE2→MIN +0,63 (riêng ORPO) — 78% thuộc
+   đối chứng, con số mà phần lớn bài ablation không trình;
+4. kết quả **âm đăng ký trước** của S2, tái lập qua hai bộ trỏ độc lập;
+5. ⭐ **chẩn đoán vì sao on-policy không dựng được:** lỗi khai báo lưỡng cực (p25 70 px · p75
+   748 px), không phải lẫn cục bộ ⇒ giới hạn có tính cấu trúc, không phải thiếu công sức;
+6. giới hạn listener-metric, có tiền lệ CVPR 2017.
+
+Giá: **0 GPU**. Việc còn lại của phiên là **đọc soát + nộp hai bài** (VCL 30/8 · FAIR 31/8).
+
+⛔ Bản vá `(no name)` (bỏ 17,4% cặp có lối tắt) **không còn lượt train nào để gộp vào**. Giữ
+trong `report/106` như khuyết tật đã phát hiện và ghi vào Limitations, đừng train riêng cho nó —
+một mình nó không đủ biện minh cho một lượt train.
 
 ⭐ **Thứ ta đang có mà tiền lệ KHÔNG có:** không bài nào trong cả ba lượt tra đo tương quan
 bước-trung-gian ↔ đầu-ra ở **mức từng mẫu**; tất cả đều ở mức hệ thống. Bảng 2×2 của Mục 4 mạnh

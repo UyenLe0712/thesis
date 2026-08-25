@@ -203,8 +203,11 @@ def main():
     dl.sort()
     print(f"① chênh độ dài ký tự hai vế: trung vị {dl[len(dl)//2]} · p90 {dl[int(.9*len(dl))]}")
     print(f"② false negative — mọi cặp đã ép khoảng cách ∈ [{LO:.0f}, {HI:.0f}] px  ✅ ĐẠT theo dựng")
-    el = len(cap) / 41099
-    print(f"③ eligibility: {len(cap)}/41.099 = {el:6.1%}"
+    # ⚠️ mẫu số phải là số bước ĐÃ THỬ THẬT, không phải toàn bộ nhãn vàng — bản cũ ghi cứng
+    #    41.099 nên lượt --limit 14000 in ra 1,1% thay vì 3,3% (report/106 mục x13b).
+    ms = len(s2) - bo["thieu_du_lieu"]
+    el = len(cap) / max(ms, 1)
+    print(f"③ eligibility: {len(cap)}/{ms} (số bước ĐÃ THỬ) = {el:6.1%}"
           f"   {'✅ ĐẠT (≥25%)' if el >= 0.25 else '⛔ TRƯỢT'}")
 
     # ══ BẤT BIẾN — cùng tinh thần bảy phép của build_min_desc.py ══

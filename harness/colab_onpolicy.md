@@ -1,5 +1,11 @@
 # MIN-ONPOLICY trên Colab — dán thẳng, tự đủ
 
+> # ⛔ NHÁNH NÀY ĐÃ ĐÓNG — 25/8/2026. ĐỪNG CHẠY LẠI.
+> O1 chạy xong (14.000 màn, 4,5 h A100). **O2 trượt cổng ③: 459 cặp = 3,3%, ngưỡng 25%.**
+> Phán quyết và lý do đầy đủ: `report/106` mục **(x13)**.
+> ⛔ Chạy lại O1 với `--limit` lớn hơn **không cứu được** — cổng ③ là cổng **tỉ lệ**.
+> Runbook giữ lại để tra cách làm, không phải để thực thi.
+
 Biến thể đăng ký trước ở `report/106` mục **(x11)**. Đổi đúng **một** thứ so với MIN-DESC:
 nguồn vế âm. Mọi khoá cấu hình khác giữ nguyên — đã `diff` xác nhận chỉ `dataset` và
 `output_dir` khác.

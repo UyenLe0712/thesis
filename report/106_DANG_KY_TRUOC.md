@@ -1969,3 +1969,98 @@ tế **+0,63** ⇒ mô hình dự báo đúng bậc độ lớn, hơi bảo th�
 
 Thước, luật chấm, mẫu số 4.463, MDE 2,11/1,67 của (w), luật câu chữ (x8b), cam kết (x8c), hồ sơ
 biến thể MIN-ONPOLICY ở (x11).
+
+---
+
+## (x13) KẾT QUẢ MIN-ONPOLICY — ⛔ TRƯỢT CỔNG ③, DỪNG THEO ĐÚNG HỒ SƠ (x11c)
+
+Ngày 25/8/2026. Hồ sơ đăng ký ở (x11) đóng lại tại đây bằng một **kết quả âm về tính khả thi**,
+không phải bằng một số điểm. Chi phí: **~4,5 giờ A100** (ô O1), **0 giờ Kaggle**.
+
+### (x13a) Số thô
+
+Ô O1 sinh khai báo của chính S2 trên **14.000** màn tập dạy. Ô O2 dựng cặp cho ra **459 cặp**.
+
+| lý do bỏ | n |
+|---|---|
+| `thieu_du_lieu` (ngoài lát 14.000 đã sinh) | 50.567 |
+| `s2_da_dung_ten` — S2 gọi ĐÚNG tên, không có vế âm | 7.067 |
+| `gold_khong_ten` | 2.889 |
+| **`ngoai_dai_80_350`** — cổng khoảng cách của (x11c)② | **2.482** |
+| `thieu_khai_bao` | 792 |
+| `node_chong_lan_gold` | 169 |
+| `node_khong_dat_ten_duoc` | 131 |
+| `thieu_point` · `duc_lai_trung_gold` | 6 · 5 |
+| **cặp dựng được** | **459** |
+
+Cộng dồn khớp tuyệt đối: 64.108 + 459 = 64.567.
+
+### (x13b) ⚠️ Mẫu số in ra SAI — và cổng vẫn trượt dưới mọi cách đếm
+
+`build_min_desc_onpolicy.py:207` ghi cứng mẫu số **41.099** (toàn bộ nhãn vàng), nhưng lượt này
+chỉ sinh khai báo cho **14.000** màn ⇒ dòng `1,1%` là mẫu số của một lượt chưa hề chạy.
+Đây là **lỗi của mã**, ghi lại để không ai đọc lại con số 1,1% như số thật.
+
+Bốn cách đếm, **không** cách nào đạt ngưỡng 25%:
+
+| mẫu số | nghĩa | eligibility |
+|---|---|---|
+| 41.099 | như mã in — sai | 1,1% |
+| **14.000** | **đã thử thật** | **3,3%** |
+| 10.319 | có khai báo hai bên **và** gold có tên | 4,4% |
+| 3.252 | chỉ những bước **S2 gọi SAI tên** — rộng lượng nhất có thể biện hộ | **14,1%** |
+
+⇒ **Trượt cổng ③ dưới mọi mẫu số.** Không có chỗ nào để nới, và cũng không cần nới để ra phán
+quyết — đó là ý nghĩa của việc khoá ngưỡng trước khi thấy số.
+
+⛔ **Chạy lại O1 với `--limit` lớn hơn KHÔNG cứu được.** Cổng ③ là cổng **tỉ lệ**, không phải
+cổng **số lượng**. `--limit 30000` cho ~980 cặp nhưng tỉ lệ giữ nguyên ~3,3%. Đã cân nhắc và
+loại, không tiêu thêm giờ GPU.
+
+### (x13c) ⭐ VÌ SAO trượt — đây mới là phần đi vào bài
+
+**76,5% số bước S2 gọi sai tên có `<point>` nằm NGOÀI dải 80–350 px** (2.482/3.246).
+Phân bố khoảng cách phần-tử-nhầm ↔ gold: **p25 = 70 px · trung vị = 351 px · p75 = 748 px**.
+
+Đọc phân bố đó:
+· **Đuôi dưới (< 80 px):** mô hình trỏ gần như trúng phần tử đúng, chỉ **gọi tên khác đi**. Đây
+  không phải chọn nhầm phần tử ⇒ dùng làm vế âm là dạy sai (false negative), cổng ② chặn đúng.
+· **Đuôi trên (> 350 px):** mô hình trỏ sang **một vùng khác hẳn của màn**. Cặp như vậy không
+  còn là *quy chiếu tối thiểu* — hai vế khác nhau ở quá nhiều thứ, gradient không rơi vào việc
+  phân biệt phần tử nữa.
+· **Khoảng giữa 80–350 px — vùng "nhầm sang nút hàng xóm" — chỉ chiếm 23,5%.**
+
+⭐ **Phát hiện:** lỗi khai báo của S2 **không phải lỗi lẫn giữa hai phần tử cạnh nhau.** Nó là
+lưỡng cực — hoặc cùng phần tử gọi khác tên, hoặc nhìn nhầm sang chỗ khác trên màn. Tiền đề của
+biến thể on-policy — *"vế âm tốt nhất là chính cái mô hình hay nhầm"* — **giả định một dạng lẫn
+cục bộ mà mô hình này không mắc**.
+
+⇒ Điều này **giải thích ngược** vì sao nguồn heuristic (ép 80–350 px) là cách duy nhất dựng được
+tương phản: nó **tạo ra** vùng nhầm-hàng-xóm mà dữ liệu thật gần như không có.
+⇒ Và nó nói rõ chỗ nghẽn ở (x10b) — độ chính xác khai báo 60,6% — **không** phải bài toán phân
+biệt cục bộ. Hướng chữa bằng tương phản tinh vi hơn ở tầng khai báo đã hết chỗ đi.
+
+### (x13d) Đòn thứ hai, độc lập: 459 cặp là quá ít về mặt số học
+
+Cấu hình đã khoá ở (x3) là 800 bước × tích luỹ 16 = **12.800 lượt mẫu** ⇒ **27,9 epoch** trên
+459 cặp. MIN-DESC chạy 22.854 cặp = 0,56 epoch. Ngay cả khi cổng ③ đạt, phép so *"chỉ đổi nguồn
+vế âm"* cũng đã hỏng: hai nhánh khác nhau **hai** thứ (nguồn vế âm **và** số epoch). Sửa số bước
+để bằng epoch là sửa cấu hình đã khoá ⇒ không làm.
+
+### (x13e) Số phụ đáng giữ
+
+**S2 gọi ĐÚNG tên trên tập DẠY: 68,5%** (7.067/10.319). So với **60,6%** đo trên tập kiểm ở
+(x10b) — chênh 7,9 pp đúng chiều kỳ vọng của khoảng cách dạy/kiểm. Hai phép đo độc lập nhau
+(một từ `sinh_desc_train.py` trên màn dạy, một từ `gate_desc_acc.py` trên màn kiểm) và khớp về
+bậc độ lớn ⇒ củng cố con số 60,6%.
+
+### (x13f) Cam kết (x11d) vẫn thi hành
+
+Bài **phải** báo cả ba nhánh: heuristic (MIN-DESC) · on-policy (**dừng ở cổng, kèm lý do đo
+được**) · CE2. Cấm im lặng bỏ nhánh on-policy khỏi bảng. Cấm viết *"chúng tôi chọn heuristic"*
+như một lựa chọn thiết kế thuần — nó là kết luận **sau khi** on-policy bị dữ liệu bác.
+
+### (x13g) Không đụng
+
+Thước, luật chấm, mẫu số 4.463, mọi số của (x10) và (x12). Nhánh MIN-DESC và CE2-S2 giữ nguyên
+tư cách kết quả chính; (x13) chỉ đóng hồ sơ biến thể.

@@ -85,10 +85,24 @@ không tạo reference model · chạy-tiếp-sau-mất-máy đạt · **~21 s/b
 cỡ lô GPU 2 chỉ nhanh 2% ⇒ **giữ cỡ lô 1** · **LLaMA-Factory pin ở `c4e09c7cbe18…`**.
 ⚠️ liger **không** kích hoạt ở stage `dpo` — cấm viết "dùng liger" cho MIN-DESC.
 
-**▶️ VIỆC ĐANG CHỜ (25/8): upload hai tệp preds lên dataset Kaggle `thesis-preds` rồi chạy
-`harness/kaggle_cham_min_desc.md` — HAI COMMIT TÁCH RỜI, mỗi commit một nhánh** (5,4 h/nhánh, đo
-thật trên log 20/8: 0,23 bước/giây). Gộp hai nhánh vào một commit là 10,8 h, sát trần 12 h của
-Kaggle; vượt trần thì `/kaggle/working` **không được lưu**, mất luôn tệp thô đã ghi dần.
+⛔ **BIẾN THỂ MIN-ONPOLICY ĐÃ CHẠY VÀ ĐÃ CHẾT 25/8** (`report/106` mục **(x13)**). O1 sinh khai
+báo của chính S2 trên 14.000 màn dạy (4,5 h A100), O2 dựng được **459 cặp** ⇒ eligibility **3,3%**,
+ngưỡng khoá trước là 25% ⇒ **DỪNG, không train.** Trượt dưới **mọi** mẫu số (1,1 / 3,3 / 4,4 /
+14,1%) nên không có chỗ nới. Chạy lại `--limit` lớn hơn **không cứu được** — cổng ③ là cổng **tỉ
+lệ**, không phải cổng số lượng.
+⭐ **Lý do đo được, đáng vào bài:** khoảng cách phần-tử-nhầm ↔ gold có **p25 70 px · trung vị 351
+· p75 748** ⇒ **76,5% bước S2 sai tên nằm ngoài dải 80–350**. Lỗi khai báo của S2 **lưỡng cực** —
+hoặc cùng phần tử gọi khác tên, hoặc nhìn sang vùng khác hẳn màn — **không phải lẫn giữa hai nút
+cạnh nhau**. Tiền đề của on-policy giả định một dạng lẫn cục bộ mà mô hình này không mắc.
+⇒ Hướng chữa bằng tương phản tinh vi hơn ở tầng khai báo **đã hết chỗ đi**.
+📌 Số phụ: **S2 gọi đúng tên 68,5% trên tập DẠY** vs 60,6% tập kiểm — hai phép đo độc lập, khớp.
+⚠️ Cam kết (x11d): bài **phải** báo cả ba nhánh, kể cả nhánh dừng ở cổng.
+⚠️ Mã có lỗi: `build_min_desc_onpolicy.py:207` ghi cứng mẫu số 41.099 ⇒ dòng in `1,1%` là mẫu số
+của một lượt chưa hề chạy. Con số thật là **3,3%**.
+
+**▶️ VIỆC ĐANG CHỜ (25/8): đọc soát + nộp hai bài — VCL 30/8 · FAIR 31/8.** Không còn lượt train
+nào trong kế hoạch; đóng góp mô hình chốt ở MIN-DESC (ô TRẮNG), đóng góp còn lại là **chẩn đoán**
+(bảng 2×2, hệ số chuyển đổi 0,43, quy công 78/22, và lý do on-policy không dựng được).
 
 ✅ **Train xong · suy luận xong · cổng cơ học ĐẠT** — xem `report/106` mục **(x9)**.
 
