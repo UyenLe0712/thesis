@@ -179,6 +179,16 @@ print("đã bật chụp Drive 5 phút/lần")
     --adapter {D}/ckpt/s2_seed101 --out {OUT} --limit 14000
 ```
 
+📊 **Đo thật 25/8 trên A100: 0,90 bước/giây ⇒ 14.000 bước = 4,3 giờ.** `--max-new 64` gần như
+không giúp vì thời gian bị **prefill** chi phối (mỗi màn hơn 1.000 token ảnh), sinh 64 hay 96
+token cũng vậy. Đừng ước tốc độ theo số token sinh ra.
+
+⚠️ **`--limit N` KHÔNG cho ra N cặp.** Phễu: ~78% bước có tên vàng dùng được × ~41% bước S2 sai
+tên × ~50% qua cổng khoảng cách 80–350 px × ~80% ánh xạ được về node ⇒ **~13–20%**. `--limit
+14000` ước còn **1.800–2.900 cặp**, tức 4–7 epoch ở cấu hình `16 × 800` — **rủi ro overfit**.
+⇒ Xem con số thật ở O2 rồi quyết. Thiếu thì chạy lại **y nguyên** lệnh O1 với `--limit 30000`:
+cơ chế nối tiếp bỏ qua phần đã xong, chỉ sinh phần thêm, không mất giây nào của lượt trước.
+
 · `--limit 14000` đủ cho ~12.800 mẫu mà 800 bước × tích luỹ 16 sẽ đi qua. Muốn phủ rộng hơn
   thì bỏ cờ này (41.099 bước ≈ 10 h) — nhưng **chất lượng cặp quan trọng hơn số lượng**, xem
   `report/120` Mục 1.4.
