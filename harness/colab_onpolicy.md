@@ -192,6 +192,20 @@ print("đã bật chụp Drive 5 phút/lần")
 
 ```python
 !cd {REPO} && python3 harness/build_min_desc_onpolicy.py {OUT}
+
+# ⚠️ BA TỆP VỪA GHI NẰM TRÊN ĐĨA MÁY ẢO — mất máy là mất. Chép sang Drive ngay.
+BRA = f"{REPO}/harness/dg1_cache/train_ac/branches"
+!mkdir -p {D}/onpolicy/branches
+!cp {BRA}/min_desc_onpolicy.json {BRA}/min_desc_onpolicy_long.json \
+    {BRA}/ce2_onpolicy.json {BRA}/dataset_info.json {D}/onpolicy/branches/
+!ls -la {D}/onpolicy/branches/
+```
+
+⚠️ **Dựng lại máy sau này thì chép NGƯỢC về trước khi train**, nếu không T3 sẽ ghi đè
+`dataset_info.json` bằng bản chỉ có bốn nhánh cũ và mất khoá `gui_min_desc_onpolicy`:
+
+```python
+!cp {D}/onpolicy/branches/*.json {REPO}/harness/dg1_cache/train_ac/branches/
 ```
 
 Lần đầu chạy sẽ tải `all_forest_dict.zip` từ HuggingFace (cây trợ năng 99.131 màn) — vài phút.
@@ -265,14 +279,47 @@ Cổng cơ học sau train: `global_step` = **800** ở cả hai.
 ## O5 — sinh câu trên lát tập kiểm
 
 ```python
+import subprocess
+# ⚠️ CHỤP ĐỊNH KỲ, đừng chỉ cp sau khi xong — mất máy giữa lượt là mất trắng phần đã sinh.
+subprocess.Popen(["bash","-lc",
+    f'while true; do cp -f /content/preds_*onpolicy*.jsonl {D}/onpolicy/ 2>/dev/null; '
+    f'sleep 300; done'])
+print("đã bật chụp Drive 5 phút/lần")
+
 for ten in ("min_onpolicy_seed101", "ce2_onpolicy_seed101"):
     !cd {REPO} && python3 harness/infer_branch.py --adapter {D}/ckpt/{ten} \
         --out /content/preds_{ten}.jsonl --limit 3000
-    !cp /content/preds_{ten}.jsonl {D}/onpolicy/
+    !cp -f /content/preds_{ten}.jsonl {D}/onpolicy/     # bản cuối, đã đóng tệp
+!ls -la {D}/onpolicy/
 ```
 
 ⚠️ Cần **ảnh tập kiểm**: `!tar xf {D}/test_images.tar -C {REPO}/harness/dg1_cache/test_ac`
 (3,2 GB, ~3 phút) nếu máy ảo chưa bung.
+
+---
+
+## 🛟 Ô BK — CỨU HỘ, chạy được bất cứ lúc nào
+
+Dán vào **Terminal Colab** (tiến trình riêng, chạy được cả khi nhân Python đang bận):
+
+```bash
+D=/content/drive/MyDrive/thesis; R=/content/ws/thesis
+mkdir -p $D/onpolicy/branches
+cp -f /content/desc_train_s2.jsonl        $D/onpolicy/            2>/dev/null
+cp -f /content/preds_*onpolicy*.jsonl     $D/onpolicy/            2>/dev/null
+cp -f $R/harness/dg1_cache/train_ac/branches/*onpolicy*.json \
+      $R/harness/dg1_cache/train_ac/branches/dataset_info.json \
+      $D/onpolicy/branches/                                       2>/dev/null
+ls -la $D/onpolicy $D/onpolicy/branches
+wc -l $D/onpolicy/*.jsonl 2>/dev/null
+```
+
+**Thứ nào KHÔNG cần cứu:** `ckpt/min_onpolicy_seed101` và `ckpt/ce2_onpolicy_seed101` — chúng
+đã nằm thẳng trên Drive và LLaMA-Factory ghi điểm lưu mỗi `save_steps: 100` bằng cách tạo rồi
+**đóng** tệp, nên FUSE đẩy lên trọn vẹn. Khác hẳn tệp mở chế độ `"a"` của khâu sinh câu.
+
+⚠️ Giá một lần mất máy, tính theo `save_steps: 100`: mất tối đa **100 bước × 21 s ≈ 35 phút**
+train, cộng ~25–35 phút dựng lại máy và ~15–30 phút mã hoá lại token. Không phải cả lượt.
 
 ---
 
