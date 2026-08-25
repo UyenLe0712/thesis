@@ -166,6 +166,46 @@ viết vào bài thì phải khai là suy luận từ dạng loss, không phải
 
 ---
 
+## 3b. ⛔ SỐ ĐÃ RÚT NGAY TRONG NGÀY: "77,1% cặp không mang tín hiệu toạ độ" — SAI
+
+Khẳng định ở Mục 1.2 — *"ở 77% số cặp, vế bị loại có toạ độ mà chính thước cũng chấm là TRÚNG"* —
+**sai**, và nó là trụ chính của bản nháp đầu cuộc tranh luận này. Rút trong cùng ngày, trước khi
+tiêu một giờ GPU nào.
+
+**Vì sao sai:** ngưỡng ±140 là luật **đĩa** (`metric_exec.hit_disk:101`), mà `hit_disk` là *"cách
+CŨ (dễ dãi)"* theo đúng chú thích trong mã. Thước chính là **Voronoi**
+(`metric_exec.hit_voronoi:167`), và nó chặt hơn hẳn: trúng chỉ khi nút gold là nút **gần nhất**
+với điểm bộ trỏ.
+
+**Chuỗi suy luận đầy đủ, đã kiểm tận mã:**
+1. `buttons_of()` (`score_run.py:277`) trả **tâm mọi phần tử hiển thị** của màn, lấy từ cây trợ năng.
+2. `nearest_other()` chọn `desc_neg` **từ chính danh sách phần tử đó** ⇒ phần tử âm luôn nằm trong
+   danh sách nút mà thước xét.
+3. `dedupe_buttons()` chỉ gộp nút cách gold dưới `min_sep_px` = **63 px** trên màn 1080 rộng.
+4. `hop_le()` đã lọc `neighbor_dist_px` ∈ **[80, 350] px** ⇒ phần tử âm **luôn xa hơn 63 px**,
+   nên **không bao giờ bị gộp** vào gold.
+5. ⇒ Trỏ vào tâm phần tử âm thì nút gần nhất là **chính nó**, không phải gold ⇒ `hit_voronoi`
+   trả **False**. **Luôn luôn.**
+
+⇒ **Dưới thước thật, mọi cặp đều phân biệt được.** Không có "77% cặp gradient rỗng". Bộ lọc ②
+(*ép toạ độ vế âm ra ngoài ±140*) **bị bỏ**: nó không sửa khuyết tật nào, và nếu áp thì còn đẩy
+negative ra xa hơn, tức làm negative **dễ hơn** — đúng thứ Mao CVPR 2016 đo được là kém hơn.
+
+**Cái gì còn đứng sau khi rút:**
+· Khoảng cách vế âm nhỏ thật (trung vị 42/53 đơn vị norm-1000 ≈ 4–5% bề màn) ⇒ mối lo *low-gap*
+  của **Razin et al., ICLR 2025** vẫn còn về mặt **định tính**, nhưng **không còn con số** nào
+  chống lưng. Không được trình 77,1% như bằng chứng cho nó nữa.
+· Khuyết tật ① (`(no name)` bất đối xứng, **17,4%**) **không đụng gì tới thước** — nó là lối tắt ở
+  tầng chuỗi ký tự, tách được mà không cần nhìn ảnh. **Vẫn đứng nguyên.**
+· Khuyết tật ③ (ô dấu hiệu trùng hệt, 13,1%) xét lại thì **không phải khuyết tật**: ô đó chỉ không
+  đóng góp vào việc phân biệt, còn tên và toạ độ vẫn khác. Bỏ khỏi danh sách.
+
+**Bài học, đúng mẫu hình dự án đã ghi:** tôi đọc `gate_desc_acc.py` (dùng ±140) rồi suy rằng thước
+cũng phán bằng ±140. Hai thứ khác nhau. *"Tài liệu tả thước phải đọc từ **mã**, không từ ý định"* —
+và lần này là đọc **nhầm hàm** trong chính mã.
+
+---
+
 ## 4. Hướng Ⓑ (siết hard negative) — BÁC, ba lý do đo được
 
 ### 4.1 Đã làm rồi (Mục 1.1)

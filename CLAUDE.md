@@ -616,6 +616,12 @@ nhiều tuần vì không ai mở lại nguồn.
 · Hạt Voronoi là **chính điểm chạm**, không phải tâm phần tử.
 · `hit_voronoi` **bao gồm** luật đĩa (`if not hit_disk(...): return False`) ⇒ Voronoi là bản
 **siết chặt** của luật quy ước, **cấm trình như hai lựa chọn ngang hàng**.
+· ⛔ **Đừng lấy ngưỡng ±14% của `hit_disk` để suy luận về việc thước có phân biệt được hai phần
+tử hay không** — đã mắc 25/8 và suýt dựa vào đó để đổi thiết kế dữ liệu huấn luyện. Voronoi phán
+bằng *nút nào GẦN NHẤT*, mà `dedupe_buttons` chỉ gộp nút cách gold dưới **63 px** (màn rộng 1080),
+trong khi `hop_le()` đã ép phần tử âm cách **80–350 px** ⇒ **mọi phần tử âm đều phân biệt được**.
+Ngưỡng ±140 trong `gate_desc_acc.py` là chuyện của **cổng khai báo**, không phải của thước.
+Chi tiết: `report/120` Mục 3b.
 · Bộ bơm lỗi **không gọi bộ trỏ lần nào** ⇒ hàng "paraphrase 0,0%" chỉ đo cổng chữ.
 · Hình trong bài dựng bằng `harness/make_fig_voronoi.py` có `assert` gọi thẳng hàm của thước nên
 hình không thể trái mã.

@@ -257,13 +257,17 @@ background execution** ⇒ phải sống chung với mất máy; đồng bộ Dr
 | Ⓒ MIX | giữ nguyên | làm để đạt điều kiện no-harm, không để tăng điểm |
 | Ⓓ negative on-policy | để sau | nhắm đúng 90% khối lỗi mà heuristic bỏ sót, nhưng tốn thêm ~5 h suy luận |
 
-**Ⓑ′ sửa ba khuyết tật đã đo trên đúng 22.854 cặp đang dùng:**
+**Ⓑ′ — sau khi rút số, chỉ còn MỘT khuyết tật thật:**
 
-| # | khuyết tật | tỉ lệ |
-|---|---|---|
-| ① | tách được **chỉ bằng chuỗi `(no name)`**, không cần nhìn màn hình | **17,4%** |
-| ② | vế âm có toạ độ **nằm trong** ô dung sai ±140 của chính thước | **77,1%** |
-| ③ | ô dấu hiệu phân biệt **trùng hệt** hai vế | **13,1%** |
+| # | khuyết tật | tỉ lệ | trạng thái |
+|---|---|---|---|
+| ① | tách được **chỉ bằng chuỗi `(no name)`**, không cần nhìn màn hình | **17,4%** | ✅ đứng |
+| ② | ~~vế âm nằm trong ô dung sai ±140~~ | ~~77,1%~~ | ⛔ **RÚT 25/8** — ±140 là luật **đĩa**, thước chính là **Voronoi**; dưới Voronoi mọi cặp đều phân biệt được. `report/120` Mục 3b |
+| ③ | ~~ô dấu hiệu trùng hệt hai vế~~ | ~~13,1%~~ | ⛔ bỏ — không phải khuyết tật, tên và toạ độ vẫn khác |
+
+⇒ **Ⓑ′ teo lại thành một thay đổi nhỏ:** bỏ 17,4% cặp có lối tắt `(no name)`, còn **18.872 cặp**.
+Đáng làm (miễn phí, và là **lần thứ hai** dự án mắc mẫu hình lối-tắt-ở-ô-phụ, xem `report/106` mục
+sửa đổi (l) ngày 9/8), nhưng **không đủ lớn để một mình biện minh cho một lượt train**.
 
 ⚠️ **SỐ HỌC PHẢI BIẾT TRƯỚC KHI CHI GPU:** hệ số chuyển đổi *khai báo → executability* đo được
 trên chính dữ liệu này là **0,43** (MIN−S2: +6,70 pp khai báo → +2,87 pp exec), rơi đúng dải văn
@@ -275,11 +279,17 @@ vẫn dưới ngưỡng phát hiện.
 tử 53,9%** số bước ⇒ nạp `<desc>` vàng là mớm sẵn hơn nửa chữ khoá của câu đích, trần đo được sẽ
 là số ảo. Đúng cái bẫy làm ba bài oracle trong image captioning bị vô nghĩa.
 
-**Thứ tự việc, không việc nào tiêu GPU trước việc 3:**
-1. chờ điểm **CE2-S2/101** (đang chạy) → biến dự báo +0,35 thành phép đo
-2. dựng **`build_min_desc_v2.py`** theo Ⓑ′ + chạy lại `do_eligibility.py` + phép chẩn đoán lối
-   tắt kiểu mDPO (**0 giờ GPU**)
-3. chỉ khi (2) cho tập cặp lành mạnh → train MIN-DESC-v2/101 + CE2-v2/101
+**Thứ tự việc — QUYẾT ĐỊNH LỚN ĐANG CHỜ SỐ CE2:**
+1. chờ điểm **CE2-S2/101** (đang chạy) → biến dự báo +0,35 pp thành **phép đo** `Δ_component`
+2. **rồi mới chọn giữa hai đường**, vì sau khi rút ② thì không còn cần gạt nào hứa hẹn vượt MDE
+   2,2 pp bằng cách vá dữ liệu:
+   · **đường mô hình** — negative **on-policy** (Ⓓ): dùng khai báo mà chính S2 đoán SAI trên màn
+     tập dạy làm `desc_neg`. Đây là cần gạt duy nhất nhắm vào **90% khối lỗi** mà heuristic hàng
+     xóm bỏ sót. Giá: ~5 h suy luận dựng dữ liệu + ~8 h train + 10,8 h chấm.
+   · **đường đo lường** — dừng tối ưu mô hình, lấy **chẩn đoán** làm đóng góp: bảng 2×2 mức-từng-mẫu
+     (không tiền lệ nào có), hệ số chuyển đổi 0,43 đo được, kết quả âm đăng ký trước của S2, và
+     giới hạn listener-metric có tiền lệ CVPR 2017. Giá: **0 GPU**.
+3. dù chọn đường nào, gộp sẵn bản vá `(no name)` vào lượt train kế — nó miễn phí.
 
 ⭐ **Thứ ta đang có mà tiền lệ KHÔNG có:** không bài nào trong cả ba lượt tra đo tương quan
 bước-trung-gian ↔ đầu-ra ở **mức từng mẫu**; tất cả đều ở mức hệ thống. Bảng 2×2 của Mục 4 mạnh
