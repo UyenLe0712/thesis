@@ -4,7 +4,7 @@
 > 23/8 tới nay, không cần mở file nào khác. Mọi số trong đây đã đối chiếu tệp kết quả thật.
 > Cần lịch sử trước 23/8 thì mở `report/109` (bản đồ) và `report/108` (sổ kê khai).
 >
-> **Cập nhật lần cuối: 25/8/2026.** Ngày viết ghi ở từng mục để biết cái nào mới.
+> **Cập nhật lần cuối: 25/8/2026 (chiều).** Ngày viết ghi ở từng mục để biết cái nào mới.
 
 ---
 
@@ -61,7 +61,7 @@ Tất cả chấm bằng UGround-V1-2B trên **cùng 4.463 bước chạm**, cù
 | S1/101 (SFT trơn) | 59,11% | [57,3 · 60,8] | 94,4 | 69,2 | 60,2 |
 | S2/101 (SFT có khai báo) | 57,18% | [55,4 · 58,9] | 94,9 | 67,5 | 58,1 |
 | Base (Qwen2.5-VL-3B gốc) | 47,59% | — | 96,5 | 57,6 | 48,9 |
-| **CE2-S2/101** (đối chứng) | ⏳ đang chấm | | | | |
+| **CE2-S2/101** (đối chứng) | **59,42%** | [57,69 · 61,14] | 98,9 | 68,9 | 59,8 |
 | sàn thước (`f1_trong`) | 12,0% | [9,7 · 14,4] | — | — | — |
 
 ### Phép so ghép cặp trên đúng 4.463 bước
@@ -71,7 +71,19 @@ Tất cả chấm bằng UGround-V1-2B trên **cùng 4.463 bước chạm**, cù
 | MIN − S2/101 | **+2,87** | [+2,03 · +3,76] | 258 | 130 | 41,6 | 1,1e-10 |
 | **MIN − S1/101** | **+0,94** | **[−0,09 · +2,05]** | 342 | 300 | 2,6 | **0,11** |
 | MIN − Base | +12,46 | [+11,03 · +14,00] | 827 | 271 | 280,5 | 5,7e-63 |
+| ⭐ **MIN − CE2 = `Δ_component`** | **+0,63** | **[+0,16 · +1,10]** | 70 | 42 | 6,5 | **0,011** |
+| CE2 − S2 | +2,24 | [+1,41 · +3,11] | 227 | 127 | 27,7 | 1,4e-07 |
+| CE2 − S1 | +0,31 | [−0,76 · +1,45] | 326 | 312 | 0,3 | 0,61 |
 | S1 − S2 *(tự kiểm)* | +1,93 | [+0,82 · +3,00] | 340 | 254 | 12,2 | 0,00049 |
+
+⭐ **QUY CÔNG ĐÃ HOÀN TẤT (25/8, `report/106` mục x12):** S2 → CE2 **+2,24** (train thêm SFT) ·
+CE2 → MIN **+0,63** (riêng ORPO) ⇒ **78% mức tăng thuộc nhánh đối chứng.** Cả ba nhánh cộng lại
+vẫn **không vượt SFT trơn**: MIN − S1 = +0,94 (p=0,11).
+
+⚠️ **`Δ_component` = +0,63 có p=0,011 nhưng vẫn là ô TRẮNG.** KTC đó chỉ tính nhiễu **thước**
+(SE 0,38); MDE **2,11 pp** của thiết kế một hạt giống tính cả nhiễu **giữa hạt giống**
+(σ ≈ 0,46). +0,63 chỉ bằng **1,4× σ** ⇒ phân biệt được với nhiễu ĐO, không phân biệt được với
+nhiễu HUẤN LUYỆN. Cấm trích p=0,011 mà không kèm hai con số này.
 
 Hàng cuối tái lập **đúng** con số −1,93 pp của S2−S1 đã công bố, b/c trùng 340/254 ⇒ đường phân
 tích không trôi giữa hai lần chạy.
@@ -230,8 +242,9 @@ mạnh hơn hẳn bản cũ (0 bất đồng trên 1.625 phép so qua bốn lư�
 
 | | việc | trạng thái |
 |---|---|---|
-| 1 | Chấm **CE2-S2/101** trên 4.463 (Kaggle, 5,4 h) | ⏳ đang chạy |
-| 2 | Tính `Δ_component = MIN − CE2` | chờ (1) |
+| 1 | Chấm **CE2-S2/101** trên 4.463 | ✅ **XONG 25/8 — 59,42%** |
+| 2 | Tính `Δ_component = MIN − CE2` | ✅ **+0,63 pp, ô TRẮNG** (`report/106` x12) |
+| 1b | ⏳ **ĐANG CHẠY: ô O1 của `harness/colab_onpolicy.md`** — S2 tự sinh khai báo trên 14.000 màn tập dạy, A100, **0,90 bước/giây ⇒ ~4,3 h**. Xong thì chạy O2 đọc ba cổng | |
 | 3 | Chọn hướng cải tiến tiếp, train trên **một hạt giống** | xem Mục 9 |
 | 4 | Nếu một hướng ra số tốt → mới nhân lên **hai hạt giống** | cam kết (x8c) áp dụng |
 | 5 | Đọc soát + nộp hai bài | 30–31/8 |

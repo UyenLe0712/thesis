@@ -1883,3 +1883,89 @@ lại hard-negative mining động vào tầng khai báo phần tử"*, điểm 
 
 Thước, luật chấm, `metric_exec.py`, mẫu số 4.463, mốc S2 53,9%, cấu hình đã khoá ở (x3), luật câu
 chữ (x8b), cam kết (x8c). Mọi kết quả S1/base/trần/sàn/phép B/MIN-DESC đã công bố.
+
+---
+
+## Sửa đổi 25/8/2026 — (x12) ĐIỂM CE2-S2/101 · **`Δ_component` = +0,63 pp**
+
+### (x12a) Số
+
+`runs/score_ce2_s2_seed101.json` — UGround, 4.463 bước chạm, cùng bản `metric_exec.py`
+(`9bf0b84145458fd5…`), trường `preds` xác nhận đúng `preds_ce2_s2_seed101.jsonl`.
+
+**CE2-S2/101 = 59,42%**, KTC95 **[57,69 · 61,14]**, `exec_disk` 68,92%.
+
+| nhánh | exec | action_ok | `hit_voronoi` thuần |
+|---|---|---|---|
+| Câu người (trần) | 75,73% | 100,0 | 75,8 |
+| **MIN-DESC/101** | **60,05%** | 98,9 | **60,4** |
+| **CE2-S2/101** | **59,42%** | 98,9 | 59,8 |
+| S1/101 | 59,11% | 94,4 | 60,2 |
+| S2/101 | 57,18% | 94,9 | 58,1 |
+| Base | 47,59% | 96,5 | 48,9 |
+
+### (x12b) Bảng ghép cặp trên đúng 4.463 bước — GIAO sáu nhánh
+
+| phép so | Δ pp | KTC95 cụm | b | c | χ² | p |
+|---|---|---|---|---|---|---|
+| ⭐ **MIN − CE2 = `Δ_component`** | **+0,63** | **[+0,16 · +1,10]** | 70 | 42 | 6,5 | **0,011** |
+| CE2 − S2 | +2,24 | [+1,41 · +3,11] | 227 | 127 | 27,7 | 1,4e-07 |
+| MIN − S2 | +2,87 | [+2,03 · +3,76] | 258 | 130 | 41,6 | 1,1e-10 |
+| CE2 − S1 | +0,31 | [−0,76 · +1,45] | 326 | 312 | 0,3 | 0,61 |
+| MIN − S1 | +0,94 | [−0,09 · +2,05] | 342 | 300 | 2,6 | 0,11 |
+
+### (x12c) ĐỌC — chỗ này dễ đọc sai theo cả hai chiều
+
+⚠️ **`Δ_component` = +0,63 pp có ý nghĩa thống kê (p=0,011, KTC không chứa 0) NHƯNG vẫn KHÔNG
+kết luận được về phương pháp.** Hai loại nhiễu khác nhau:
+
+| nhiễu | đo bằng | giá trị |
+|---|---|---|
+| (a) nhiễu **thước** trên một cặp checkpoint | bootstrap cụm ghép cặp — chính KTC ở trên | SE **0,38 pp** |
+| (b) nhiễu **giữa hạt giống huấn luyện** | cặp S1/101 vs S1/202, mục (w) | σ ≈ **0,46 pp** |
+
+KTC [+0,16 · +1,10] chỉ tính (a). MDE **2,11 pp** cho thiết kế **một hạt giống** (mục w) tính cả
+hai. **+0,63 pp chỉ bằng 1,4× σ giữa hạt giống** ⇒ *phân biệt được với nhiễu ĐO, không phân biệt
+được với nhiễu HUẤN LUYỆN*. Đây đúng là lý do (w) đòi hai hạt giống.
+
+⇒ **Phán quyết: dưới MDE ⇒ ô TRẮNG cho estimand `Δ_component`.** Luật câu chữ (x8b) áp nguyên.
+
+**✅ Được viết:** *"Ở hạt giống duy nhất, mục tiêu ưu tiên ở tầng khai báo đóng góp +0,63 pp
+executability so với đối chứng SFT cùng bước (KTC95 [+0,16 · +1,10] trên nhiễu đo), dưới MDE
+2,11 pp của thiết kế một hạt giống. Kết quả thăm dò."*
+
+**⛔ Cấm:** *"mục tiêu ưu tiên CÓ tác dụng"* · *"ORPO cải thiện mô hình"* · trích p=0,011 mà
+không kèm câu MDE 2,11 và σ giữa hạt giống 0,46.
+
+### (x12d) ⭐ Quy công đã hoàn tất — đây là kết quả đáng giá nhất của mục này
+
+Toàn bộ chặng stage-2 từ S2, tách được thành hai phần **đo được**:
+
+| chặng | Δ so bước trước | thuộc về |
+|---|---|---|
+| S2 → CE2-S2 | **+2,24 pp** (p=1,4e-07) | *train thêm 800 update SFT trên bước chạm* — **không** phải ORPO |
+| CE2-S2 → MIN-DESC | **+0,63 pp** (p=0,011) | **phần riêng của mục tiêu ưu tiên** |
+| **tổng S2 → MIN-DESC** | **+2,87 pp** | — |
+
+⇒ **78% mức tăng thuộc nhánh đối chứng, 22% thuộc ORPO.** Ở tầng khai báo tỉ lệ là 88/12
+(+5,90 vs +0,80). ⛔ **Cấm trình +2,87 pp như công của MIN-DESC.**
+
+⇒ Và cả ba nhánh cộng lại **vẫn không vượt SFT trơn**: CE2 − S1 = +0,31 (p=0,61) ·
+MIN − S1 = +0,94 (p=0,11). Chặng S2 đào hố −1,93; CE2 lấp lại; MIN nhô thêm 0,63.
+
+### (x12e) Hệ số chuyển đổi khai-báo → exec, đo trên hai cặp
+
+| cặp | Δ khai báo | Δ exec | hệ số |
+|---|---|---|---|
+| MIN − S2 | +6,70 | +2,87 | **0,43** |
+| MIN − CE2 | +0,80 | +0,63 | **0,79** |
+
+Hai điểm, hai giá trị khác nhau, đều nằm trong dải văn liệu 0,3–1,0 (Dong & Lapata **ACL 2018**
+27–62% · Wang et al. **ACL 2023** ~97%). ⚠️ Mỗi con số là **một quan sát**, không phải ước lượng
+có sai số — cấm trình như hằng số của pipeline. Dự báo viết trước ở (x11e) là **+0,35 pp**; thực
+tế **+0,63** ⇒ mô hình dự báo đúng bậc độ lớn, hơi bảo thủ.
+
+### (x12f) Không đụng
+
+Thước, luật chấm, mẫu số 4.463, MDE 2,11/1,67 của (w), luật câu chữ (x8b), cam kết (x8c), hồ sơ
+biến thể MIN-ONPOLICY ở (x11).

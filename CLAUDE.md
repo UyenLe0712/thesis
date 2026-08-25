@@ -60,7 +60,9 @@ của nó **đã bị `117` thay**.
 
 ## ⭐ TRẠNG THÁI 23/8/2026 — NHÁNH S2 **DỪNG** · ĐÓNG GÓP MÔ HÌNH NAY LÀ **MIN-DESC**
 
-| trần **75,7** | **MIN-DESC/101 60,1** [58,3–61,8] | S1/202 **59,6** | S1/101 **59,1** | S2/101 **57,2** | Base **47,6** |
+| trần **75,7** | **MIN-DESC 60,1** | **CE2-S2 59,4** | S1/202 **59,6** | S1/101 **59,1** | S2/101 **57,2** | Base **47,6** |
+
+⭐ **`Δ_component` = MIN − CE2 = +0,63 pp** (p=0,011, KTC [+0,16 · +1,10]) — **có ý nghĩa trên nhiễu THƯỚC nhưng dưới MDE 2,11 pp** của thiết kế một hạt giống, và chỉ bằng 1,4× σ giữa hạt giống (0,46) ⇒ ô **TRẮNG**. Quy công: S2→CE2 **+2,24** (SFT thuần) · CE2→MIN **+0,63** (riêng ORPO) ⇒ **78% mức tăng thuộc đối chứng**. Chi tiết `report/106` mục (x12).
 
 ⭐ **MIN-DESC/101 = 60,05% (25/8)** — cao nhất trong mọi nhánh đã train, nhưng **so S1/101 chỉ
 +0,94 pp, p=0,11, KTC [−0,09 · +2,05], dưới MDE 2,2** ⇒ ô **TRẮNG**. `hit_voronoi` thuần **60,4
