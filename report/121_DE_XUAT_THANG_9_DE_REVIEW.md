@@ -9,9 +9,12 @@
 >
 > **Bản đồ đọc:**
 > · **Mục 0** — tóm tắt một trang, đọc cái này trước.
-> · **Mục 1** — nền: dữ liệu, mô hình, các nhánh, **mô tả CHÍNH XÁC dụng cụ (1.3b)**, và
->   **mười phép kiểm thước đo (1.3c)** — nếu bạn muốn nghi ngờ tính hợp lệ của phép đo thì vào đây.
-> · **Mục 2** — mọi con số hiện có, quy công, ngưỡng, và bối cảnh quyết định 23/8.
+> · **Mục 1** — nền: dữ liệu, mô hình, các nhánh · **mô tả CHÍNH XÁC dụng cụ (1.3b)** · **mười
+>   phép kiểm thước đo (1.3c)** — vào đây nếu muốn nghi ngờ tính hợp lệ của phép đo · **định nghĩa
+>   các đại lượng (1.3d)** · **siêu tham số đầy đủ (1.3e)** · **cách tái lập từng con số (1.5)**.
+> · **Mục 2** — mọi số hiện có, quy công, ngưỡng · **chẩn đoán cốt lõi (2.9): cơ chế hoạt động
+>   nhưng bị chặn bởi độ chính xác khai báo** · **dòng thời gian 23/8 → 25/8 (2.10)**, gồm cả hai
+>   sự cố của phiên làm việc.
 > · **Mục 3** — ⭐ **phân rã ô**, thứ quyết định mọi đề xuất phía sau.
 > · **Mục 4** — ba nhánh đề xuất.
 > · **Mục 5** — tám hướng đã loại, kèm con số.
@@ -166,6 +169,48 @@ không-gán-được 59,2% (n=2.647).
 **⑩ Thiên vị câu dài 5,4 pp** (câu > 33 ký tự 61,9% vs ≤ 33 là 56,5%). Base dài trung vị 71 ký tự,
 S1 chỉ 33 ⇒ thiên vị **nghiêng về Base** ⇒ **S1 > Base là kết luận mạnh**.
 
+### 1.3d ĐỊNH NGHĨA CÁC ĐẠI LƯỢNG PHỤ — dùng khắp file, định nghĩa một lần ở đây
+
+· **`action_ok`** — loại thao tác mà câu sinh ra hàm ý có khớp loại thao tác của câu chuẩn không
+  (chạm / vuốt / quay lại / nhập chữ …). Là **điều kiện cần** của `executability`: sai loại thao
+  tác thì bước tính trượt bất kể toạ độ.
+· **`hit_voronoi` thuần** — tỉ lệ trúng ô Voronoi **không đòi** `action_ok`. Trình kèm để thấy
+  phần nào của chênh lệch đến từ *trỏ* và phần nào từ *chọn sai loại thao tác*.
+· **Độ chính xác khai báo** (`harness/gate_desc_acc.py`) — mô hình tự sinh ô `<desc>`, đối chiếu
+  **thẳng với nhãn vàng của tập kiểm**, **KHÔNG gọi bộ trỏ**, **không tiêu quota chấm**. Bảng bắt
+  chéo hai chiều: *tên đúng?* × *toạ độ trong ±14% hai cạnh?*. Cột theo dõi là **"cả hai đúng"**.
+  Mốc hiện hành: **S2 53,9% · CE2-S2 59,8% · MIN-DESC 60,6%** trên 3.473 bước có tên vàng.
+  ⇒ Đây là **cổng rẻ nhất của cả dự án**: nó đo đúng thứ đóng góp mô hình được thiết kế để sửa,
+  với 0 giây GPU, nên mọi nhánh phải qua nó trước khi được tiêu 5,4 giờ chấm.
+· **Mẫu số 4.463 vs 4.462** — file cũ ghi *"cùng 4.462 bước"* là **không chính xác**. Khâu chấm
+  cho câu rỗng vào quần thể với `exec = 0`, nên mẫu số đúng là **4.463** cho mọi nhánh. Một bước
+  duy nhất bị bỏ ở phép ghép cặp hai hạt giống (cùng một bước ở cả hai) để McNemar sạch.
+· **Hệ số chuyển đổi 0,43 / 0,79** — tỉ số *(chênh executability) / (chênh độ chính xác khai báo)*
+  đo trên chính dữ liệu này: MIN−S2 cho **0,43**, MIN−CE2 cho **0,79**. Dùng để **viết dự báo ra
+  trước** khi chi GPU. ⚠️ Đã có một ca nó dự báo **sai** — xem Mục 5 hướng #3 và Mục 9 điểm 7.
+
+### 1.3e SIÊU THAM SỐ — để đánh giá được tính chặt của thí nghiệm
+
+**SFT (cấu hình P9, dùng cho S1 · S2 và mọi lượt train đầy đủ):** QLoRA 4-bit (bitsandbytes),
+`lora_rank 8` · `lora_alpha 16` · `lora_dropout 0.05` · target `q,k,v,o,gate,up,down_proj` ·
+**đóng băng vision tower và multimodal projector** · `lr 1e-4` cosine · `warmup_ratio 0.05` ·
+cỡ lô 4 × tích luỹ 4 = **16 hiệu dụng** · `cutoff_len 2560` · gradient checkpointing · bf16 ·
+`image_min/max_pixels 200704 / 1003520` · **8.072 bước ≈ 23 giờ A100**.
+
+**ORPO stage-2 (MIN-DESC):** nối tiếp adapter S2 (`create_new_adapter: false`) · `stage: dpo`,
+`pref_loss: orpo`, **`pref_beta: 0.1` khoá trước, KHÔNG quét** · `lr 2e-5` = **1/5 của lượt SFT
+gốc** · cỡ lô **1** × tích luỹ **16** = 16 hiệu dụng, **đúng bằng** lượt SFT · **`max_steps: 800`
+khoá trước** · 22.854 cặp / 16 = 1.428 update mỗi epoch ⇒ 800 bước ≈ **0,56 epoch** ·
+`save_steps 100`. ORPO **không cần reference model** nên bộ nhớ vừa một GPU.
+⚠️ `enable_liger_kernel` **không kích hoạt ở stage `dpo`** — cấm viết "dùng liger" cho MIN-DESC.
+
+**Đối chứng CE2-S2:** y hệt trên, đổi đúng hai thứ — `stage: sft` và tập dữ liệu chỉ còn vế
+`chosen`. **Cùng số bước, cùng số update, cùng lịch `lr`.**
+
+⭐ **Đã kiểm hai thứ hay bị nghi:** liger **không đổi phép tính** (cùng 200 mẫu cùng hạt giống,
+loss trùng tới chữ số thứ tư); **đổi card không đổi kết quả** (L4 vs A100 cùng `seed 101`, loss
+20 bước trùng ba chữ số, `total_flos` y hệt).
+
 ### 1.4 Kỷ luật đăng ký trước
 `report/106_DANG_KY_TRUOC.md` niêm phong 5/8/2026 (commit `b93e85c`), khoá: 6 nhánh · thước đo ·
 **luật đọc kết quả cho cả bốn kết cục** · 3 lát cắt · hạt giống. Mọi thay đổi về sau ghi vào
@@ -175,6 +220,29 @@ Kiểm được bằng `git log`.
 ngưỡng ở đây được khoá kèm ngày và commit.
 
 ---
+
+### 1.5 TÁI LẬP — kiểm được gì và bằng lệnh nào
+
+| muốn kiểm | chạy gì | tốn gì |
+|---|---|---|
+| **hồ sơ đăng ký trước có thật là viết TRƯỚC không** | `git log --follow report/106_DANG_KY_TRUOC.md` — bản niêm phong 5/8 là commit `b93e85c`; mỗi mục sửa đổi là một commit riêng có mốc ngày | 0 |
+| điểm của một nhánh | `runs/score_<nhánh>.json` (`exec_voronoi`, `ci_voronoi`, `n`) | 0 |
+| **tính lại điểm theo luật chấm KHÁC** | `runs/score_<nhánh>_raw.jsonl` giữ toạ độ bộ trỏ trả về ⇒ đổi luật vẫn tính lại được **không gọi lại bộ trỏ** | 0 |
+| luật chấm thật sự là gì | đọc `harness/metric_exec.py` — **không đọc ghi chú**, dự án đã tả sai ba lần | 0 |
+| độ chính xác khai báo | `python3 harness/gate_desc_acc.py runs/preds_*.jsonl` | vài giây CPU |
+| khối ứng viên + ba cổng G1/G2/G3 | `python3 harness/build_candidates.py --split test --max 40` | vài phút CPU |
+| sàn của thước | `python3 harness/doc_san.py` | 0 |
+| phép diễn đạt lại | `python3 harness/phep_a_ghep_cap.py` — ⚠️ **đừng** đọc `score_para_*.json` trần, số tổng bị pha loãng 3,8 lần | 0 |
+| năm luật chấm | `python3 harness/rule_sensitivity.py` | 0 |
+| phép đổi bộ trỏ | `python3 harness/phan_tich_venus.py` | 0 |
+
+⚠️ **Một cảnh báo về phương pháp kiểm, đã trả giá:** *phép kiểm dùng chính phép biến đổi mà nó cần
+phát hiện thì mù* — một `assert` hỏi "bộ trỏ có tất định không" tự `.strip()` chuỗi, che mất đúng
+thứ nó cần thấy (72/589 câu chuẩn có dấu cách cuối, và **một bước đổi hẳn kết luận** vì lệch một
+ký tự).
+⚠️ Và: **kết quả trùng nhau tới nhiều chữ số giữa các cấu hình KHÁC nhau là dấu hiệu HỎNG**, không
+phải dấu hiệu bền vững — dự án suýt đọc thành *"cỡ ảnh không ảnh hưởng"*, hoá ra là dataset giữ
+bản mã cũ nên phép thử **chưa hề diễn ra**.
 
 ## 2. SỐ HIỆN CÓ
 
@@ -265,6 +333,44 @@ ba) · lỗi `canon_action` go-back (Δ −1,93 → −1,86) · khai báo rác O
 
 Trong **1.824 bước S1 trượt**, chỉ 251 do sai thao tác; **1.573 (86%) là thao tác ĐÚNG mà bộ trỏ
 không tìm ra nút** ⇒ lỗi nằm ở **cách gọi tên / tả phần tử**, đúng chỗ đóng góp mô hình nhắm vào.
+
+### 2.9 ⭐ CHẨN ĐOÁN CỐT LÕI — cơ chế hoạt động, nhưng bị chặn
+
+Cắt 3.473 bước có tên vàng theo việc **khai báo của chính MIN-DESC** đúng hay sai:
+
+| khi ô khai báo | tỉ lệ bước | MIN so với S1 |
+|---|---|---|
+| **ĐÚNG** | 60,6% | **+8,83 pp** — và **vượt cả trần câu người của nhóm đó** |
+| **SAI** | 39,4% | **−11,12 pp** |
+
+⇒ **Cơ chế không hỏng.** Nó trả tiền rất đậm ở chỗ nhận diện đúng phần tử, và phá câu ở chỗ nhận
+diện sai. Ràng buộc duy nhất là **độ chính xác khai báo 60,6%**.
+⇒ Số học: **triệt tiêu được vế âm ⇒ Δ ≈ +5,4 pp** — đúng cỡ để đi từ 60,05% lên vùng 65%.
+⇒ **Đây là lý do tồn tại của cả hai nhánh đề xuất:** nhánh ỨNG-VIÊN nâng vế dương (nâng 60,6%),
+nhánh LÙI cắt vế âm (không khai báo khi không chắc).
+⚠️ Giới hạn: lát cắt định nghĩa bằng **hành vi của chính mô hình**, một hạt giống ⇒ **thăm dò**.
+
+### 2.10 DÒNG THỜI GIAN 23/8 → 25/8 — mọi việc đã xảy ra
+
+| ngày | việc | kết quả |
+|---|---|---|
+| **23/8** | quyết **dừng nhánh S2**, không chạy hạt giống 202 (ngân sách) | estimand không hoàn tất **vĩnh viễn**; đóng góp mô hình chuyển sang MIN-DESC |
+| 23/8 | smoke ORPO | ĐẠT — ORPO chạy thật, không tạo reference model, ~21 s/bước |
+| 23/8 | viết lại hai bài báo trong một phiên song song | FAIR thành **bài mô hình** 8 trang · VCL 9 trang tiếng Việt |
+| **24/8** | train **MIN-DESC/101** và **CE2-S2/101**, sinh câu đủ 6.958 bước mỗi nhánh | mất máy Colab một lần giữa lượt CE2, cứu được từ bản chụp 3.616 dòng |
+| **25/8** | cổng khai báo (0 GPU) | S2 **53,9** → CE2 **59,8** → MIN **60,6** |
+| 25/8 | chấm Kaggle hai nhánh, **hai commit tách rời** | MIN **60,05%** · CE2 **59,42%** ⇒ `Δ_component` **+0,63 pp**, **ô TRẮNG** |
+| 25/8 | ⚠️ **sự cố:** hai commit đầu **cùng chấm một nhánh** | mất **5,3 giờ quota**; phát hiện vì hai tệp thô **trùng từng byte**; đã vá bằng niêm phong tên nhánh + in tên nhánh ngay đầu lượt |
+| 25/8 | đăng ký trước biến thể **on-policy negative**, rồi chạy | 14.000 màn / 4,5 h A100 ⇒ **459 cặp = 3,3%**, ngưỡng 25% ⇒ **DỪNG ở cổng** |
+| 25/8 | phân tích ô + trần các bộ định tuyến (0 GPU, trên `*_raw.jsonl`) | phân rã ô ở Mục 3; oracle định tuyến **63,46%** |
+| 25/8 | ⚠️ **trợ lý tự phát hiện đọc sai bảng dải** | *"65% là ngưỡng dương yếu"* là **SAI**; ngưỡng đúng là **62,16%** — xem 2.5 |
+| 25/8 | dựng khối ứng viên + ba cổng, trên **đủ tập kiểm** | G1 **96,7%** · G2 **91,2%** · G3 không rò rỉ vị trí ⇒ **cả ba ĐẠT** |
+| 25/8 | đưa MIN-DESC vào bài FAIR, vá hai câu đã hết đúng | FAIR vẫn **8 trang, 0 overfull** |
+
+⚠️ **Hai sự cố ở trên (chấm nhầm nhánh · đọc sai bảng dải) được ghi lại có chủ ý.** Dự án đã tự
+khai **hai lần nới ngưỡng sau khi thấy điểm** trong bài; việc ghi cả sai sót của phiên làm việc là
+cùng một kỷ luật. Người phản biện nên coi đây là tín hiệu về **tần suất sai sót thật**, và soi kỹ
+hơn chứ không phải bớt soi.
 
 ## 3. ⭐ PHÂN RÃ Ô — nền của mọi quyết định
 
