@@ -6,6 +6,25 @@ nguồn vế âm. Mọi khoá cấu hình khác giữ nguyên — đã `diff` x�
 
 **Tổng: ~13,5 giờ GPU Colab · 0 giờ quota Kaggle** cho tới khi qua cổng khai báo.
 
+### Card nào
+
+| card | O1 (sinh khai báo) | O3/O4 (train ORPO) |
+|---|---|---|
+| **A100 40 GB** | ✅ | ✅ đã chạy thật cho MIN-DESC, 20,6 s/bước |
+| **L4 24 GB** | ✅ | ⚠️ **phải chạy O2b probe trước** — rẻ hơn nhiều nhưng bộ nhớ hẹp hơn 40% |
+| **T4 16 GB** | ⚠️ chậm, và `pick_dtype()` tự rơi về fp16 | ⛔ **KHÔNG** — xem dưới |
+
+⛔ **T4 không dùng cho O3/O4.** Cấu hình khoá `bf16: true`, mà T4 là kiến trúc Turing —
+**không có bf16 chạy thật**. Đổi sang fp16 là sửa một khoá của cấu hình đã khoá ở (x3), làm
+hỏng phép so với MIN-DESC. Cộng 16 GB quá hẹp cho ORPO không-liger.
+
+✅ **L4 có bằng chứng đổi card không đổi kết quả:** `CLAUDE.md` ghi L4 vs A100 cùng `seed 101`
+cho loss 20 bước **trùng ba chữ số** và `total_flos` **y hệt**. L4 là Ada (sm_89) nên bf16 chạy
+thật, giữ nguyên `bf16: true`. Rủi ro duy nhất là **bộ nhớ**, và O2b đo được rủi ro đó trong 12 phút.
+
+⚠️ Giá đơn vị Colab **phải đếm trong phiên**, đừng tin con số ghi trong file — `CLAUDE.md` đã
+ghi luật này sau lần nhớ sai suýt dẫn tới thuê nhầm máy.
+
 | ô | việc | giá | dừng được không |
 |---|---|---|---|
 | **O1** | S2 tự sinh khai báo trên màn tập dạy | ~3,5 h | ✅ nối tiếp được |
@@ -78,6 +97,37 @@ không chồng lấn hộp gold.
 
 ⛔ **Trượt thì dừng thật, đừng nới ngưỡng.** Dự án đã tự khai hai lần nới ngưỡng sau khi thấy
 số; hồ sơ (x11c) khoá con số này trước khi có dữ liệu. Trượt là một kết quả, ghi lại rồi báo.
+
+---
+
+## O2b — ⚠️ PROBE BỘ NHỚ, BẮT BUỘC nếu card KHÔNG phải A100 40 GB
+
+12 phút cứu một lượt train 5 giờ. Bài học P10 (`CLAUDE.md`): cấu hình chạy ngọt trên mẫu thường
+vẫn **tràn bộ nhớ trên 200 mẫu dài nhất**. Và ORPO ở stage `dpo` **không kích hoạt liger**, mà
+chỗ ngốn bộ nhớ là **bảng logits** — ORPO còn tính logits cho **cả hai vế**, tức gấp đôi.
+
+```python
+import shutil, yaml, os, torch
+print("card:", torch.cuda.get_device_name(0),
+      "·", torch.cuda.get_device_properties(0).total_memory/2**30, "GiB")
+PROBE = "/content/probe_onpolicy"
+shutil.rmtree(PROBE, ignore_errors=True)   # ⛔ KHÔNG xoá thì LLaMA-Factory chạy TIẾP từ
+                                           #    checkpoint cũ, nhảy qua 20 bước rồi chạy đúng
+                                           #    một bước — log vẫn in "Training completed"
+c = yaml.safe_load(open(f"{REPO}/harness/train_config_orpo_onpolicy.yaml"))
+c.update({"dataset": "gui_min_desc_onpolicy_long", "max_steps": 20, "output_dir": PROBE,
+          "save_steps": 1000, "logging_steps": 1})
+yaml.safe_dump(c, open("/content/probe_onpolicy.yaml", "w"))
+!cd {REPO} && llamafactory-cli train /content/probe_onpolicy.yaml 2>&1 | tail -25
+```
+
+**Đọc bằng HAI con số, không đọc chữ `Training completed`:**
+· `train_runtime` phải **~200–500 s** (không phải ~15 s — 15 s nghĩa là nó nhảy qua hết)
+· loss phải **~2,4** (không phải ~0,1)
+
+⛔ Thấy `CUDA out of memory` ⇒ card không đủ cho ORPO ở cấu hình đã khoá. **Đừng hạ
+`cutoff_len` hay tắt `gradient_checkpointing`** — cả hai đều là khoá cấu hình của (x3), sửa là
+làm hỏng phép so với MIN-DESC. Đổi card.
 
 ---
 

@@ -228,7 +228,16 @@ def main():
     if not all(o for _, o in kt):
         sys.exit("⛔ trượt bất biến — không ghi tệp.")
 
-    for ten, dat in (("min_desc_onpolicy.json", cap), ("ce2_onpolicy.json", ce2)):
+    # 200 cặp NẶNG NHẤT — dùng cho ô probe bộ nhớ. Bài học P10: cấu hình chạy ngọt trên
+    # mẫu thường vẫn tràn trên 200 mẫu dài nhất. 12 phút probe cứu một lượt train 5 giờ.
+    nang = sorted(cap, key=lambda c: -(len(c["chosen"]["content"])
+                                       + len(c["rejected"]["content"])))[:200]
+    print(f"\n200 cặp nặng nhất: tổng ký tự hai vế "
+          f"{len(nang[0]['chosen']['content'])+len(nang[0]['rejected']['content'])} … "
+          f"{len(nang[-1]['chosen']['content'])+len(nang[-1]['rejected']['content'])}")
+
+    for ten, dat in (("min_desc_onpolicy.json", cap), ("ce2_onpolicy.json", ce2),
+                     ("min_desc_onpolicy_long.json", nang)):
         with open(os.path.join(BR, ten), "w", encoding="utf-8") as f:
             json.dump(dat, f, ensure_ascii=False)
         print(f"ghi {ten}: {len(dat)} mẫu")
@@ -241,13 +250,16 @@ def main():
                     "images": "images"},
         "tags": {"role_tag": "role", "content_tag": "content",
                  "user_tag": "user", "assistant_tag": "assistant", "system_tag": "system"}}
+    info["gui_min_desc_onpolicy_long"] = dict(info["gui_min_desc_onpolicy"],
+                                             file_name="min_desc_onpolicy_long.json")
     info["gui_ce2_onpolicy"] = {
         "file_name": "ce2_onpolicy.json", "formatting": "sharegpt",
         "columns": {"messages": "messages", "images": "images"},
         "tags": {"role_tag": "role", "content_tag": "content",
                  "user_tag": "user", "assistant_tag": "assistant", "system_tag": "system"}}
     json.dump(info, open(ip, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    print("cập nhật dataset_info.json → gui_min_desc_onpolicy · gui_ce2_onpolicy")
+    print("cập nhật dataset_info.json → gui_min_desc_onpolicy · gui_min_desc_onpolicy_long"
+          " · gui_ce2_onpolicy")
 
 
 if __name__ == "__main__":
