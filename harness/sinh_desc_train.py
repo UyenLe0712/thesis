@@ -56,6 +56,30 @@ def khoa_anh(p):
         return None
 
 
+def dung_text(msgs, proc):
+    """Dựng chuỗi cho processor của Qwen từ messages kiểu LLaMA-Factory.
+
+    ⛔ ĐÃ NỔ 25/8: đưa thẳng `messages` của s2.json vào `apply_chat_template` cho
+    `ValueError: Image features and image tokens do not match, tokens: 0`. Lý do: lúc DẠY,
+    LLaMA-Factory nhận chuỗi "<image>" rồi tự thay bằng token ảnh; còn chat template của Qwen
+    **in nguyên văn** chuỗi đó. Phải tách làm hai phần đúng như `infer_branch.py:481-484`.
+
+    Phần chữ lấy NGUYÊN VĂN từ s2.json (bỏ đúng sáu ký tự "<image>", giữ cả "\n" đứng đầu),
+    nên chuỗi render ra trùng đúng bản lúc dạy — đó là lý do script này đọc s2.json thay vì
+    dựng lại câu nhắc.
+    """
+    sysm = msgs[0]["content"]
+    user = msgs[1]["content"]
+    if not user.startswith("<image>"):
+        raise ValueError(f"câu nhắc không mở đầu bằng <image>: {user[:60]!r}")
+    body = user[len("<image>"):]
+    return proc.apply_chat_template(
+        [{"role": "system", "content": sysm},
+         {"role": "user", "content": [{"type": "image"},
+                                      {"type": "text", "text": body}]}],
+        tokenize=False, add_generation_prompt=True)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--adapter", required=True, help="thư mục LoRA của S2")
@@ -118,6 +142,15 @@ def main():
     proc = AutoProcessor.from_pretrained(a.base, min_pixels=200704, max_pixels=1003520)
     proc.tokenizer.padding_side = "left"
 
+    # ⚡ TIỀN BAY 5 giây: dựng thử một chuỗi và ĐẾM token ảnh. Sai thì chết ở đây,
+    #    không phải sau khi đã nạp 7,5 GB trọng số và mã hoá cả lô.
+    thu = dung_text(recs[0]["msgs"], proc)
+    n_vis = thu.count("<|image_pad|>") + thu.count("<|vision_start|>")
+    print(f"tiền bay · token ảnh trong chuỗi: {n_vis} (phải > 0)", flush=True)
+    print(f"          80 ký tự đầu: {thu[:80]!r}", flush=True)
+    assert n_vis > 0, ("⛔ chuỗi KHÔNG có token ảnh — processor sẽ báo "
+                       "'tokens: 0, features: N'. Kiểm lại dung_text().")
+
     out = open(a.out, "a", encoding="utf-8")
     t0, done = time.time(), 0
     for i in range(0, len(recs), a.batch):
@@ -128,12 +161,13 @@ def main():
             if a.img_root:
                 p = os.path.join(a.img_root, os.path.basename(p))
             imgs.append(Image.open(p).convert("RGB"))
-            texts.append(proc.apply_chat_template(r["msgs"], tokenize=False,
-                                                  add_generation_prompt=True))
+            texts.append(dung_text(r["msgs"], proc))
         enc = proc(text=texts, images=imgs, return_tensors="pt",
                    padding=True).to(model.device)
         with torch.no_grad():
-            gen = model.generate(**enc, max_new_tokens=a.max_new, do_sample=False)
+            # cùng cờ với infer_branch.py — use_cache đã kiểm 50/50 trùng tuyệt đối
+            gen = model.generate(**enc, max_new_tokens=a.max_new, use_cache=True,
+                                 do_sample=False, temperature=None, top_p=None)
         for r, g, n in zip(chunk, gen, enc["input_ids"]):
             s = proc.tokenizer.decode(g[len(n):], skip_special_tokens=True)
             d = ""
