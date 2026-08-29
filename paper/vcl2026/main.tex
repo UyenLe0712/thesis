@@ -463,24 +463,23 @@ trước đó, nhỏ hơn $38$ lần. Phép đối chiếu này trả lời mộ
 \hline
 Tên rõ ràng & $73{,}6\%$ & $73{,}8\%$ \\
 \hline
-Chỉ có ký hiệu, không có chữ & $4{,}4\%$ & - \\
+Chỉ có ký hiệu, không có chữ & $4{,}4\%$ & $2{,}8\%$ \\
 \hline
 Không có tên & $22{,}0\%$ & $23{,}4\%$ \\
 \hline
-Vai trò rõ ràng & $75{,}8\%$ & - \\
+Vai trò rõ ràng & $75{,}8\%$ & $76{,}0\%$ \\
 \hline
 Trùng tên trên cùng màn & $7{,}6\%$ & $7{,}0\%$ \\
 \hline
 Có phần tử cùng vai trò để so & $91{,}6\%$ & - \\
 \hline
 \end{tabular}
-\caption{Chất lượng nhãn ở quy mô đủ so với lát thử. Cả năm chỉ số so được lệch dưới một
-điểm phần trăm.}
+\caption{Chất lượng nhãn ở quy mô đủ so với lát thử ($n = 1.074$). Năm chỉ số so được lệch không quá $1{,}6$ điểm phần trăm.}
 \label{tab:chatluong}
 
 \end{table}
 
-Trong $32.061$ tên lấy được, $8.581$ đến từ cây trợ năng và $23.480$ đến từ OCR. Tỉ lệ
+Trong $32.061$ tên lấy được, tức tổng của hai tầng \emph{tên rõ ràng} và \emph{chỉ có ký hiệu}, có $8.581$ đến từ cây trợ năng và $23.480$ đến từ OCR. Tỉ lệ
 gần $1{:}3$ này là hệ quả trực tiếp của con số $12{,}6\%$ ở Mục~\ref{sec:ocr}, và nó cũng cho thấy một quy trình chỉ dựa vào cây trợ năng sẽ mất khoảng ba phần tư số tên.
 
 Hai lỗi bắt được trong quá trình dựng đáng ghi lại vì cùng thuộc một loại: chương trình chạy xong, kết quả trông hợp lý, chỉ có giá trị là sai. Thứ nhất, cây trợ năng lồng nhau khiến chỉ số ``trùng tên'' bị đẩy lên $30\%$ trong khi giá trị thật là $6{,}9\%$: cùng một nút
@@ -599,7 +598,7 @@ Chúng tôi có năm phép kiểm như vậy, và trình bày cả những kết
 
 \emph{Đối chiếu ô tên với câu do người viết.} Đây là phép kiểm duy nhất dùng tới một nguồn nằm hẳn ngoài quy trình: câu chỉ dẫn do người viết. Quy trình không đọc câu đó ở bất kỳ khâu nào (vai trò, tên, toạ độ và dấu hiệu đều tính từ cây trợ năng, hộp bao và kết quả OCR), nên việc ô tên trùng với chữ người viết dùng là một phép so ngoại sinh chứ không
 phải phép tự kiểm. Trên $3.505$ nhãn có tên của tập kiểm, $53{,}5\%$ mang ô tên xuất hiện
-nguyên văn trong câu của người (khoảng tin cậy Wilson $95\%$: $[51{,}9 \cdot 55{,}2]$); đem đúng những
+nguyên văn trong câu của người ($1.875/3.505$; khoảng tin cậy Wilson $95\%$: $[51{,}8 \cdot 55{,}1]$); đem đúng những
 cái tên ấy ghép với câu của bước liền sau thì chỉ còn $5{,}1\%$ $[4{,}4 \cdot 5{,}9]$. Tỉ số
 hơn mười lần, và đây là phép đo trên toàn tập chứ không phải trên một lát mẫu.
 
@@ -611,10 +610,14 @@ tỉ lệ nhãn thực sự gọi đúng phần tử chỉ có thể cao hơn co
 cách xác định nó cao hơn bao nhiêu. Ở chiều ngược lại, phép so cũng chỉ nói được về
 \emph{ô tên}; ô dấu hiệu phân biệt không có nguồn ngoại sinh nào để đối chiếu, và đó vẫn
 là một lỗ hổng của phần đánh giá nhãn. Chia theo tầng tên thì
-kết quả đi đúng hướng đã thấy ở Mục~\ref{sec:phanbo}: tầng có tên rõ ràng đạt $55{,}4\%$,
+kết quả đi đúng hướng đã thấy ở Mục~\ref{sec:phanbo}: tầng có tên rõ ràng đạt $55{,}3\%$,
 còn tầng chỉ có ký hiệu đạt $24{,}5\%$: chỗ quy trình đọc được ít nhất cũng là chỗ nó lệch khỏi cách người gọi tên nhiều nhất.
 
-\emph{Đối chiếu với lát thử.} Năm chỉ số so được ở Bảng~\ref{tab:chatluong} lệch dưới một điểm phần trăm giữa quy mô đủ và lát thử nhỏ hơn $38$ lần. Quy trình không suy giảm khi tăng quy mô.
+\emph{Đối chiếu với lát thử.} Năm chỉ số so được ở Bảng~\ref{tab:chatluong} lệch không quá
+$1{,}6$ điểm phần trăm giữa quy mô đủ và lát thử nhỏ hơn $38$ lần. Chỗ lệch nhiều nhất là
+tầng chỉ có ký hiệu ($4{,}4\%$ so với $2{,}8\%$), cũng là tầng nhỏ nhất trong ba tầng nên
+nhạy nhất với cỡ mẫu; bốn chỉ số còn lại lệch từ $0{,}2$ tới $1{,}4$ điểm. Quy trình không
+suy giảm khi tăng quy mô.
 
 \emph{Kiểm tra tính phân biệt thực tế của nhãn.} Một cặp quy chiếu chỉ dùng được khi khai báo của
 phần tử đích và khai báo của phần tử cạnh tranh gần nhất \emph{khác nhau ở ô tên và ô toạ
