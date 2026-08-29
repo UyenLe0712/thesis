@@ -117,8 +117,7 @@ This paper is a model study and needs an instrument before it can be one. We use
 model~\cite{uground} that never sees the gold coordinate, and the step counts as correct
 when that model lands in the cell of the element the user touched and the action class
 agrees. Section~\ref{sec:metric} gives the calibration that licenses it --- adequacy gate,
-measured ceiling, measured floor, sensitivity over five hit rules --- in compressed form;
-the instrument is characterised at length elsewhere.
+measured ceiling, measured floor, sensitivity over five hit rules --- in compressed form.
 
 Two model questions are then asked in the order they should be asked.
 
@@ -132,7 +131,7 @@ reproduces its reference verbatim.
 \emph{Does it help to name the element before speaking?} The referring-expression
 tradition says a description is good when a listener recovers the referent from
 it~\cite{mao2016,luo2017,yu2017}, and the residual errors of the fine-tuned model are of
-that kind: of its $1{,}824$ failures, $86\%$ carry the correct action and a wording the
+that kind: of its $1{,}825$ failures, $86\%$ carry the correct action and a wording the
 grounder cannot resolve. So we registered a branch whose target is a structured descriptor
 --- role, name, coordinate, distinguishing cue --- followed by the same scored sentence,
 byte for byte, as the control. The registered estimand averages two seeds per branch and
@@ -212,7 +211,9 @@ deliberately shifted control. The corpus holds $64{,}567$
 training and $6{,}958$ test steps over $12{,}895$ and $1{,}432$ tasks, about $64\%$ of
 each being touch steps and forming the scoring population; the split is held out by
 task with zero task overlap, verified at full scale. Only $12.6\%$ of accessibility
-elements carry any name~\cite{chen2020}, so every screenshot is passed through OCR,
+elements carry any name on a random sample of $120$ screens drawn from the
+$99{,}131$ available, a shortfall reported elsewhere too~\cite{chen2020}, so every
+screenshot is passed through OCR,
 used both as an input feature and as a name source. The descriptor label at each touch
 step is built by rule from the smallest accessibility box containing the gold point:
 role from the tree, name from the tree when it passes a validity gate and from OCR
@@ -265,7 +266,7 @@ them.
 \subsection{Definition}
 Let $s$ be the generated sentence with any descriptor removed, $I$ the screenshot, $g$
 the gold touch coordinate, and $E$ the set of accessibility elements on the screen after
-merging elements whose centres lie within $24$\,dp. Let $G$ be a grounding model,
+merging elements whose centres lie within $24$\,dp of one another or of $g$. Let $G$ be a grounding model,
 independent of the model under test and without access to $g$, returning $p = G(I,s)$.
 The step is correct when all three hold: \emph{(i) action}, the canonicalised action
 types of $s$ and of the reference agree, twelve surface verbs mapping to one touch class
@@ -338,7 +339,7 @@ the locative clause and keeping the name on a near-identical population of $198$
 where it is. Meaning-preserving rewrites of the references --- verb substitution,
 fronting the locative clause, both at once --- move executability by $+0.35$ pp
 ($[-0.59, +1.29]$) over the $1{,}139$ steps they alter, with $2.6\%$ of steps changing
-verdict, so the instrument is insensitive to phrasing while being sensitive to content.
+verdict, so the instrument is insensitive to these rewrites while being sensitive to content.
 
 \emph{Why not a reference-based score.} Scored with a content-word F1 against the single
 reference, $52.8\%$ of the sentences the metric accepts from the untuned model fall below
@@ -406,7 +407,7 @@ combines the same two variance components without that doubling. Amendments are
 appended with dates, never edited in place; twenty-seven are recorded, twenty-one before
 any executability score existed. We flag rather than hide the pattern in the six that came
 later: each moved the room upward and the threshold downward, and the first also moved
-against us, cutting the control branch's share of the ceiling from $84.4\%$ to $78.4\%$.
+against us, cutting the control branch's share of the ceiling from $84.4\%$ to $78.0\%$.
 
 One departure is stated here rather than in a footnote. \textbf{The second seed of the
 treatment branch was never run}, a budget decision taken on 23 August 2026, and it will not
@@ -431,7 +432,7 @@ Branch & Exec. & 95\% CI & Tolerance test \\
 Base (not fine-tuned)      & 47.6 & $[45.9, 49.3]$ & 57.6 \\
 S2 (descriptor, seed 101)  & 57.2 & $[55.4, 58.9]$ & 67.4 \\
 S1 (sentence, seed 101)    & 59.1 & $[57.3, 60.8]$ & 69.2 \\
-S1 (sentence, seed 202)    & 59.6 & $[57.9, 61.3]$ & \pend{} \\
+S1 (sentence, seed 202)    & 59.6 & $[57.9, 61.3]$ & 69.8 \\
 S1 (mean of two seeds)     & \textbf{59.4} & --- & --- \\
 CE2 (stage 2, control)     & 59.4 & $[57.7, 61.1]$ & 68.9 \\
 MIN (stage 2, preference)  & \textbf{60.1} & $[58.3, 61.8]$ & 69.2 \\
@@ -452,8 +453,8 @@ $+11.5$ points at seed 101 ($b = 284$, $c = 798$, $\chi^2 = 243.2$) and $+12.0$ 
 202, both $p<0.001$, where $b$ counts steps the lower arm resolves and the higher one
 does not.
 
-All rates are over the same denominator of $4{,}463$ touch steps. Two runs each emitted
-one empty sentence, S1 on one step and S2 on another; both are scored zero rather than
+All rates are over the same denominator of $4{,}463$ touch steps. Three runs emitted an
+empty sentence, the two S1 seeds on one step and S2 on another; all score zero rather than
 dropped, since a model's refusal to answer is exactly what the metric exists to catch.
 
 That number is flattered by the quarter of steps on which S1 reproduces the reference's
@@ -524,13 +525,12 @@ $[-3.06, -0.75]$) and $2.44$ points below S1/202 over the full $4{,}463$ steps, 
 holds under UI-Venus, and the registered estimand remains incomplete.} Against the declared
 bands, $-2.19$ pp relative to the two-seed control mean falls inside $-2.8 \ldots +1.7$:
 \emph{inconclusive}, not a negative result, and the missing run means it stays there. The
-seed noise on the control pair, $\pm1.3$ pp at the interval edge, is most of the reason: a
-single run can move by half the observed gap.
+seed noise on the control pair, $\pm1.3$ pp at the interval edge, is most of the reason.
 
 What the missing run could have changed is fixed by the registered thresholds. For the
 two-seed mean to reach the weakly-positive band --- an edge at $\Delta = +1.7$ pp --- the
-cancelled run would have had to score $65.0\%$, $5.4$ points above the best checkpoint we
-have measured and above the second grounder's ceiling on its own slice; for the negative
+cancelled run would have had to score $65.0\%$, $4.9$ points above the best checkpoint we
+have measured, MIN at $60.1$; for the negative
 band it would have had to score at or below $56.0\%$, well inside the range a seed change
 produces. The remaining outcome space was \emph{inconclusive or negative} and the
 budget decision closed it at inconclusive; we report this rather than let a reader infer a
@@ -597,9 +597,9 @@ components were registered before any treatment score existed.
 
 \subsection{The component works when identification succeeds}
 The branch emits its own descriptor, so its identification can be scored directly
-against the gold labels, independently of the sentence. Crossing name correctness against
-coordinate correctness on the $3{,}240$ steps carrying a gold name gives
-Table~\ref{tab:cross}.
+against the gold labels, independently of the sentence. Table~\ref{tab:cross} crosses name
+against coordinate correctness on the $3{,}245$ steps that carry a gold name and receive a
+parsable descriptor; the other $228$ such steps emit none (Section~\ref{sec:noslice}).
 
 \begin{table}[!t]
 \caption{Executability by whether the branch's own descriptor got the name and the
@@ -640,9 +640,10 @@ is bounded rather than merely acknowledged. One cell does behave as the objectio
 cannot see, and the near-zero $\Delta$ there is absence of signal, not of effect.
 
 The decomposition of the total is arithmetic and carries no such caveat: $-1.28$ pp from
-the $92.7\%$ of steps carrying a descriptor, $-0.63$ pp from the $7.3\%$ that do not.
+the $92.7\%$ of steps carrying a descriptor, $-0.65$ pp from the $7.3\%$ that do not.
 
 \subsection{A third of the difference sits in $7.3\%$ of steps}
+\label{sec:noslice}
 The slice separating steps where the branch emits a descriptor from steps where it does
 not was registered on 19 August, before any S2 score existed.
 
@@ -677,10 +678,10 @@ definitional. What is not definitional is that the control also scores only $19.
 
 \subsection{Four alternative explanations tested and set aside}
 \emph{Length.} Negative on long sentences ($-1.85$) and short ones ($-2.00$), the two
-branches' length distributions coinciding (median $31$ characters each).
+branches' length distributions all but coinciding (median $33$ and $34$ characters).
 \emph{Application slice.} Negative on seen ($-2.25$), unseen ($-6.41$) and unattributable
 ($-1.59$) steps alike. \emph{Canonicalisation.} The \emph{go back} $\to$ touch collapse in
-condition (i) hides exactly this failure mode --- $64$ treatment sentences containing
+condition (i) hides exactly this failure mode --- $65$ treatment sentences containing
 \emph{go back} pass the action gate where only $21$ are executable --- so we re-ran with
 the strict variant, registered on 16 August before any treatment score: the difference
 moves from $-1.93$ to $-1.86$, all four arms dropping $0.20$--$0.31$ points with the
@@ -762,8 +763,8 @@ variance is a component --- are not said here.
 
 \emph{Ceiling and blind region.} The human-reference level is $75.7\%$, so the room for any
 intervention is narrower than a score read against $100$ suggests. The references fail on
-$1{,}083$ steps, $71\%$ of those because the grounder misses by more than the tolerance on a
-human sentence, and $935$ steps defeat all three arms. The metric also cannot see
+$1{,}083$ steps, $72\%$ of those because the grounder lands more than $14\%$ of screen width
+away on a human sentence, and $935$ steps defeat all three arms. The metric also cannot see
 displacements below the $63$ px merge radius: it detects naming the wrong element, not
 pointing slightly off inside the right one.
 
@@ -889,7 +890,7 @@ language models,'' in \emph{Proc. ICLR}, 2022.
 \emph{Proc. ACL System Demonstrations}, 2024.
 
 \bibitem{qwen25vl} S. Bai \emph{et al.}, ``Qwen2.5-VL technical report,''
-arXiv:2502.13923, 2025.
+arXiv:2502.13923, 2025 (preprint).
 
 \bibitem{groundersunderstand} S. Jandial, Y. Li, J. Wagle, and K. Koishida,
 ``Do GUI grounders truly understand UI elements?,'' in \emph{Findings of the ACL:
@@ -906,8 +907,8 @@ E. Ie, ``On the evaluation of vision-and-language navigation instructions,'' in
 \bibitem{guideme} K. Fang \emph{et al.}, ``GuideMe: A VLM-based system assisting
 independent smartphone learning for older adults,'' in \emph{Proc. ACM CHI}, 2026.
 
-\bibitem{companionvcl} L. Đ. P. Uyên and N. H. B. Long, ``Sinh biểu thức quy chiếu cho
-phần tử giao diện,'' submitted to VCL, 2026.
+\bibitem{companionvcl} L. Đ. P. Uyên and N. H. B. Long, ``Sinh hướng dẫn sử dụng phần
+mềm từ ảnh chụp màn hình và mục tiêu người dùng,'' submitted to VCL, 2026.
 
 \end{thebibliography}
 

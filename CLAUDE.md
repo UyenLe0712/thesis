@@ -372,6 +372,7 @@ AndroidControl gốc = Li et al., Google DeepMind, **NeurIPS 2024 D&B** (arXiv 2
 | "bộ trỏ khác họ mô hình được chấm" | **SAI**, UGround-V1-2B dựng trên Qwen2-VL | như trên |
 | trung vị sai số trỏ **8% cạnh** | **15,0%** (`ground_pilot`) / **29,3%** (công thức cổng A) | hàm cũ chỉ lấy sai số của ca ĐÃ TRÚNG |
 | app_seen: **604 bước** chưa-thấy | **139 bước / 22 app** | chạy bằng bản mã có lỗi regex |
+| "12,6% phần tử có tên, **đo trên 99.131 màn**" | đo trên **120 màn ngẫu nhiên** trong kho 99.131 màn (22/120 màn không có phần tử nào có tên) | `report/100:200` + `harness/a11y_inventory.py:11`. Đã vá ở VCL 29/8; ✅ FAIR cũng đã vá 29/8 (câu *"across the 99,131 trees"* từng bị **thêm lại** vào bản nháp rồi gỡ) |
 | room **485 bước (10,9 pp)** | **741 bước (16,6 pp)** | kéo theo trần 75,7 |
 | dự báo sàn loss 0,548 | — | ngoại suy hàm mũ không mô hình hoá được nhịp epoch 2 |
 
@@ -826,9 +827,23 @@ nhau thì chọn chậm-mà-rẻ. Luôn trình bảng **tiền · thời gian ·
   Mac). Mọi tham chiếu tới hai file đó trong `report/116` hiện là **tham chiếu chết**. Lấy về khi
   tiện; chưa có cũng không chặn việc gì, vì `report/117` đã tự chứa.
 
-- **CFP của VCL** vẫn còn ba thứ chưa xác minh: giới hạn trang · mẫu định dạng · **chính sách
-  trùng lặp / nộp đồng thời**. Cái thứ ba quan trọng nhất vì hai bài dùng chung dữ liệu và mô
-  hình, nộp cách nhau một ngày. Hạn 30/8 là user nhớ, CFP chưa kiểm.
+- **CFP của VCL — hai trong ba thứ đã chốt 29/8, còn một.**
+  · ✅ **giới hạn trang: KHÔNG có** (user xác nhận 29/8) — bài VCL hiện **13 trang**.
+  · ✅ **mẫu định dạng: đã đo trực tiếp từ kỷ yếu VCL 2025** (`vcl.huflit.edu.vn` →
+    *Ky yeu HT VCL2025.pdf*, 736 trang; bài của chính chủ luận văn ở trang in 325–336 =
+    trang PDF 336–347). Quy cách thật: **A4 · Times New Roman 12** · lề 2,54/2,43/2,54 cm ·
+    giãn dòng **≈1,145** thân bài và **đơn** ở tóm tắt/bảng/tài liệu · thụt đầu dòng 36pt ·
+    cách đoạn 6pt · nhan đề **IN HOA đậm 14 canh giữa** · tác giả **nghiêng 10**, đơn vị công
+    tác đặt ở **cước chú** · `Tóm tắt:` đậm chạy dòng, `Từ khóa:` đậm-nghiêng · mục cấp 1
+    **số La Mã, canh giữa**, cấp 2 **đậm-nghiêng "1.1."** (số cấp 1 dùng số Ả Rập) · bảng
+    **kẻ khung đầy đủ**, chú thích **nghiêng canh giữa đặt DƯỚI** bảng/hình · tài liệu tham
+    khảo tiêu đề **TÀI LIỆU THAM KHẢO** đậm canh trái, mục `[n]` chạy dòng **không thụt treo**
+    · trích dẫn **đánh số** `[n]`. Đã áp trọn vào `paper/vcl2026/main.tex` ngày 29/8.
+    ⚠️ Câu *"hướng dẫn VCL: Times 13, giãn 1,5"* ở các ghi chú cũ **không khớp kỷ yếu** —
+    chưa bao giờ xác minh được từ nguồn, đừng dùng lại.
+  · ⛔ **chính sách trùng lặp / nộp đồng thời vẫn CHƯA kiểm** — đây là rủi ro lớn nhất còn
+    lại, vì hai bài dùng chung dữ liệu và mô hình, trích chéo nhau dạng *"đang bình duyệt"*,
+    nộp cách nhau một ngày. Hạn 30/8 là user nhớ, CFP chưa kiểm.
   *(Cách chia hai bài đã chốt lại 23/8: FAIR = bài mô hình, VCL = nhãn mô tả phần tử.)*
 
 **Đã chết, đừng hồi sinh:** nhánh **faithfulness trên MobileViews** (đóng góp phụ số 2 theo

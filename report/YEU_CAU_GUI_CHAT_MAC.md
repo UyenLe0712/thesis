@@ -1,0 +1,74 @@
+# Yêu cầu gửi chat trên máy Mac — bổ sung phần thiếu của `123`
+
+> Copy nguyên khối dưới đây gửi sang chat kia.
+
+---
+
+**Bối cảnh:** máy WSL đã nhận 13 ảnh chụp `123_CHOT_CUOI_PIPELINE.md` và chép lại thành
+`report/123_CHOT_CUOI_PIPELINE_CHEP_TU_ANH.md`. Ảnh **chỉ phủ tới §3.4**. Kho WSL **không có**
+`122`, `123`, `124` (bản gốc).
+
+**Cách rẻ nhất — làm cái này trước, nếu được thì khỏi cần chụp ảnh:**
+
+```bash
+git add report/122*.md report/123*.md report/124*.md
+git commit -m "report/122-123-124: đồng bộ từ máy Mac sang WSL"
+git push
+```
+
+Nếu vì lý do nào đó không push được, thì **paste nguyên văn dưới dạng text** (đừng chụp ảnh — chữ
+nhỏ dễ đọc nhầm số) các mục sau, theo thứ tự ưu tiên:
+
+---
+
+## Ưu tiên 1 — BẮT BUỘC (không có thì không đánh giá được pipeline)
+
+| mục | vì sao cần |
+|---|---|
+| **§7.5** và **§7.5b** | Chính `123` §1 tuyên bố *"§7.5 — QUYẾT ĐỊNH CUỐI. Mục này thắng mọi mục khác nếu có xung đột."* Ảnh 03 và 08 đều trỏ tới §7.5 cho phương án `gui_orpo_hard` (*"tách đúng một biến, đủ hai hạt giống trong ~40 h"*) — **đây là chỗ giải quyết rủi ro Δ rơi vào TRẮNG**, mà không đọc được. |
+| **§12** | Mẫu **(x16)** phải dán vào `106` **TRƯỚC khi dựng dữ liệu**. §3.2 cảnh báo luật khớp tên đổi thì đổi cả tỉ lệ `none` lẫn `sel_acc` ⇒ phải chốt trước. |
+| **§16** | Bảng kiểm toán số + **chỗ yếu tự khai** + những gì đã sửa qua 5 vòng. |
+
+## Ưu tiên 2 — cần để viết mã
+
+| mục | vì sao cần |
+|---|---|
+| **§5 và §5.1** | §5.1 = định nghĩa **khối ứng viên** (node trợ năng có tên) — §3.0 trỏ thẳng vào. §5 còn có **4 thước đồng-báo**. |
+| **§7.2** | Nguồn của con số **~704 bước chuyển được** — con số chặn mục tiêu 70%. |
+| **§7**, phần định nghĩa cổng | **G3** (300 mẫu mù, chống rò rỉ) · **G5b** (đo h/epoch, quyết hy sinh backbone hay không) · **G6** (`sel_acc`) · **G10** (thay cho ý ép tên đã chết ở §2.3). |
+
+## Ưu tiên 3 — chưa biết có gì
+
+**§4 · §6 · §8 · §9 · §10 · §11 · §13 · §14 · §15** — ảnh nhảy từ §3.4 sang trống. Chụp/paste
+**mục lục** là đủ để biết có cần hay không.
+
+---
+
+## Kiểm chéo đã làm ở WSL (để chat kia khỏi làm lại)
+
+Đã verify **từ mã và JSON thật**, khớp 100% với ảnh:
+
+- `harness/descriptor_build_stats_test.json`: n=4.448 · `ten_ro` 3.297 · `ky_hieu` 208 ·
+  `khong_ten` 943 · `co_trung_ten` 336 ⇒ `n_gold` = 3.505 ✅
+- `harness/descriptor_build_stats.json`: n=41.099 · `ten_ro` 30.252 · `ky_hieu` 1.809 ·
+  `khong_ten` 9.038 · `co_trung_ten` 3.124 ✅
+- `build_candidates.py:138–148` — đúng là **chỉ đo phủ bằng `any(...)`**, không trả về ứng viên
+  vàng nào, không có luật phá hoà ⇒ khẳng định của §3.2 *"phải viết mới `gold_candidate()` trong
+  `build_sel_data.py`"* là **đúng**. C3 dùng ±140 hình chữ nhật trên lưới 1000. ✅
+- `build_branch_data.py:39` — chữ ký hiện tại `prompt_body(r, ocr_rec)`. Mở rộng thành
+  `prompt_body(r, ocr_rec, *, cands=None)` **tương thích ngược hoàn toàn**; ba chỗ gọi trong
+  `infer_branch.py` (dòng 239, 316, 476) đều truyền 2 tham số nên không vỡ. ✅
+
+**Chưa có trên WSL:** `harness/build_sel_data.py` (đúng như §3.2 nói phải viết mới) ·
+`harness/calibrate_tau.py` (§3.4 đã bỏ nên **không cần nữa**).
+
+---
+
+## Một câu hỏi nhờ chat kia trả lời luôn
+
+§2.7 (ảnh 08) tự khai: *"khối ứng viên có mặt ở **cả hai** nhánh, nên phần đóng góp lớn nhất
+**không hiện ra trong `Δ_component`** … điểm tuyệt đối đẹp nhưng Δ rơi vào Dương yếu / TRẮNG"*.
+
+Đây **đúng y kết cục của MIN-DESC** (60,05% cao nhất mọi nhánh, nhưng Δ so S1/101 chỉ +0,94 pp,
+p=0,11 ⇒ ô TRẮNG). Câu hỏi: **§7.5 / `gui_orpo_hard` giải quyết chuyện này bằng cách nào?** Cụ thể
+là tách biến nào ra khỏi nhánh đối chứng để Δ bắt được phần đóng góp của khối ứng viên?

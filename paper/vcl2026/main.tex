@@ -1,11 +1,18 @@
 %% VCL2026 -- Hội thảo Quốc gia lần 4 về Ngôn ngữ học Tính toán
-%% Bố cục: một cột kiểu LNCS; font/giãn dòng theo hướng dẫn VCL (Times New Roman 13, giãn 1,5).
+%% Bố cục dựng theo ĐÚNG quy cách kỷ yếu VCL 2025 (đo trực tiếp từ bản PDF kỷ yếu):
+%%   khổ A4 · Times New Roman 12 · lề trái 2,54cm / phải 2,43cm / trên 2,54cm
+%%   giãn dòng 1,145 (≈16,6pt) ở thân bài, đơn ở tóm tắt/bảng/tài liệu tham khảo
+%%   thụt đầu dòng 36pt · cách đoạn 6pt
+%%   nhan đề IN HOA đậm 14 · tác giả nghiêng 10 · đơn vị công tác đặt ở CƯỚC CHÚ
+%%   mục cấp 1 canh giữa, số La Mã "I." · mục cấp 2 đậm-nghiêng "1.1."
+%%   bảng kẻ khung đầy đủ · chú thích bảng/hình nghiêng, canh giữa, đặt DƯỚI
+%%   tài liệu tham khảo: tiêu đề IN HOA đậm canh trái, mục [1] không thụt treo
 %% DỰNG: tectonic -X compile main.tex --outdir .     (máy này KHÔNG có xelatex)
-%% Nếu CFP 2026 công bố mẫu khác, chỉ cần đổi khối FORMAT bên dưới.
-\documentclass[13pt,a4paper,onecolumn]{article}
+\documentclass[12pt,a4paper,onecolumn]{article}
 
 %% ---------------- FORMAT (đổi ở đây nếu CFP đổi) ----------------
-\usepackage[a4paper,top=2.5cm,bottom=2.5cm,left=3cm,right=2.5cm]{geometry}
+\usepackage[a4paper,left=2.54cm,right=2.43cm,top=2.54cm,bottom=2.5cm,
+            headheight=15pt,headsep=13pt,footskip=1.15cm]{geometry}
 \usepackage{fontspec}
 \setmainfont{texgyretermes}[
   Extension = .otf, UprightFont = *-regular, BoldFont = *-bold,
@@ -17,7 +24,20 @@
   Extension = .otf, UprightFont = *-regular, BoldFont = *-bold,
   ItalicFont = *-italic, BoldItalicFont = *-bolditalic, Scale = MatchLowercase ]
 \usepackage{setspace}
-\onehalfspacing
+\setstretch{1.145}
+\setlength{\parindent}{36pt}
+\setlength{\parskip}{6pt plus 1pt minus 1pt}
+\emergencystretch=1.2em  % tránh tràn lề ở các chuỗi mã dài
+
+%% -- tiêu đề chạy và số trang, theo mẫu kỷ yếu --------------------
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{\fontsize{10}{12}\selectfont\bfseries VCL 2026 - NGÔN NGỮ HỌC TÍNH TOÁN:
+  \textit{AI TẠO SINH, NGÔN NGỮ VÀ TRÁCH NHIỆM XÃ HỘI}}
+\fancyfoot[R]{\fontsize{12}{14}\selectfont\thepage}
+\renewcommand{\headrulewidth}{0.8pt}
+\renewcommand{\footrulewidth}{0.8pt}
 %% ---------------------------------------------------------------
 
 \usepackage{polyglossia}
@@ -25,43 +45,90 @@
 \setotherlanguage{english}
 \usepackage{amsmath}
 \usepackage{graphicx}
-\usepackage{booktabs}
 \usepackage{array}
 \usepackage{enumitem}
+\usepackage{indentfirst}  % kỷ yếu thụt cả đoạn đầu sau tiêu đề mục
 \usepackage{url}
 \usepackage[hidelinks]{hyperref}
+
+%% -- đánh số mục: cấp 1 số La Mã, cấp 2 dùng số Ả Rập của cấp 1 --
+\renewcommand{\thesection}{\Roman{section}}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
 \usepackage{titlesec}
-\titleformat{\section}{\normalsize\bfseries}{\thesection.}{0.6em}{}
-\titleformat{\subsection}{\normalsize\bfseries\itshape}{\thesubsection.}{0.6em}{}
+\titleformat{\section}[block]
+  {\normalsize\bfseries\centering}{\thesection.}{0.6em}{}
+\titlespacing{\section}{0pt}{12pt plus 2pt}{6pt}
+\titleformat{\subsection}[block]
+  {\normalsize\bfseries\itshape}{\thesubsection.}{0.5em}{}
+\titlespacing{\subsection}{0pt}{10pt plus 2pt}{4pt}
+\titleformat{\subsubsection}[block]
+  {\normalsize\itshape}{\thesubsubsection.}{0.5em}{}
+\titlespacing{\subsubsection}{0pt}{8pt plus 2pt}{4pt}
+
+%% -- chú thích bảng/hình: nghiêng, canh giữa, nhãn tiếng Việt ----
+\usepackage{caption}
+\captionsetup{labelsep=colon, labelfont=it, textfont=it,
+              justification=centering, singlelinecheck=true,
+              font={stretch=1.0}, skip=6pt}
+\renewcommand{\tablename}{Bảng}
+\renewcommand{\figurename}{Hình}
+
+%% -- tài liệu tham khảo theo mẫu kỷ yếu -------------------------
+%% Kỷ yếu xếp mỗi mục là MỘT ĐOẠN thường: "[n] " chạy dòng, dòng tiếp theo
+%% thẳng lề trái, không thụt treo. Tiêu đề IN HOA đậm canh trái.
+\makeatletter
+\renewenvironment{thebibliography}[1]{%
+  \section*{TÀI LIỆU THAM KHẢO}%
+  \setstretch{1.0}%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{4pt plus 1pt}%
+  \c@enumiv\z@
+  \def\bibitem{\@ifnextchar[\vcl@lbibitem\vcl@bibitem}%
+  \def\vcl@bibitem##1{\par\advance\c@enumiv\@ne
+    \immediate\write\@auxout{\string\bibcite{##1}{\the\c@enumiv}}%
+    \noindent[\the\c@enumiv]\ \ignorespaces}%
+  \def\vcl@lbibitem[##1]##2{\par\advance\c@enumiv\@ne
+    \immediate\write\@auxout{\string\bibcite{##2}{##1}}%
+    \noindent[##1]\ \ignorespaces}%
+}{\par}
+\makeatother
 
 \newcommand{\code}[1]{{\small\texttt{#1}}}
 
-\title{\vspace{-1.2cm}\large\bfseries Sinh biểu thức quy chiếu cho phần tử giao diện:\\
-xây dựng nhãn mô tả tự động ở quy mô lớn từ AndroidControl}
-
-\author{\normalsize Lê Đoàn Phương Uyên \and \normalsize Nguyễn Hồng Bửu Long\\[0.2em]
-\small Khoa Công nghệ Thông tin, Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM\\
-\small \texttt{24C15039@student.hcmus.edu.vn} \quad \texttt{nhblong@fit.hcmus.edu.vn}}
-\date{}
-
 \begin{document}
-\maketitle
-\thispagestyle{empty}
 
-\begin{abstract}
-\noindent
-Muốn nói cho một người biết phải chạm vào đâu trên màn hình điện thoại, câu nói phải
-\emph{quy chiếu} được đúng một phần tử giữa hàng chục phần tử trông na ná nhau. Đó là bài
+%% ================= KHỐI NHAN ĐỀ =================
+\begin{center}
+{\setstretch{1.1}\fontsize{14}{17}\selectfont\bfseries
+SINH HƯỚNG DẪN SỬ DỤNG PHẦN MỀM TỪ ẢNH CHỤP MÀN HÌNH\\
+VÀ MỤC TIÊU NGƯỜI DÙNG: XÂY DỰNG NHÃN QUY CHIẾU\\
+TỰ ĐỘNG KHI PHẦN TỬ GIAO DIỆN KHÔNG CÓ TÊN ĐỂ GỌI\par}
+\vspace{10pt}
+{\fontsize{10}{12}\selectfont\itshape
+Lê Đoàn Phương Uyên\footnotemark[1], Nguyễn Hồng Bửu Long\footnotemark[2]\par}
+\end{center}
+\footnotetext[1]{Học viên Cao học, Trường Đại học Khoa học Tự nhiên, ĐHQG TPHCM,
+\textit{email: 24C15039@student.hcmus.edu.vn}}
+\footnotetext[2]{TS, đang giảng dạy tại Trường Đại học Khoa học Tự nhiên, ĐHQG TPHCM,
+\textit{email: nhblong@fit.hcmus.edu.vn}}
+\vspace{6pt}
+
+{\setstretch{1.0}\noindent\textbf{Tóm tắt}: Sinh hướng dẫn sử dụng phần mềm từ ảnh chụp màn hình và mục tiêu của người dùng là bài
+toán đa phương thức còn ít được khai thác, và nó mang sẵn một rủi ro đặc trưng: câu
+sinh ra dễ nhắc tới phần tử không hề có trên màn hình. Muốn nói cho một người biết phải
+chạm vào đâu, câu nói phải \emph{quy chiếu} được đúng một phần tử giữa hàng chục phần tử
+trông na ná nhau. Đó là bài
 toán sinh biểu thức quy chiếu, đặt vào miền giao diện đồ hoạ, và nó vấp ngay vào một
 đặc thù ngôn ngữ của miền này: phần tử giao diện thường \emph{không có tên để gọi}. Đo
-trên $99.131$ màn hình Android, chỉ $12{,}6\%$ phần tử trong cây trợ năng mang bất kỳ
-nhãn văn bản nào; ở $41.191$ bước chạm đã dựng nhãn, $22{,}0\%$ phần tử đích không có
-tên và $7{,}6\%$ trùng tên với một phần tử khác trên cùng màn. Bài báo trình bày một
+trên $120$ màn hình Android lấy ngẫu nhiên từ kho $99.131$ màn, chỉ $12{,}6\%$ phần tử trong
+cây trợ năng mang bất kỳ nhãn văn bản nào; ở $41.099$ nhãn dựng được trên $41.191$ bước
+chạm, $22{,}0\%$ phần tử đích không có tên và $7{,}6\%$ trùng tên với một phần tử khác trên
+cùng màn. Bài báo trình bày một
 đường ống \emph{tự động hoàn toàn} biến bộ dữ liệu AndroidControl thành tập giám sát cho
-tác vụ sinh câu hướng dẫn: ghép ba nguồn không cùng bản phân phối, trích chữ trên màn
-bằng OCR, và dựng nhãn mô tả bốn ô --- vai trò, tên, toạ độ, dấu hiệu phân biệt --- cho
-$41.099$ bước, không thuê người dán nhãn và không dùng nhãn do một mô hình ngôn ngữ khác
-sinh ra. Chúng tôi báo cáo cả những chỗ đường ống suýt hỏng mà không báo lỗi: phép ghép
+tác vụ sinh câu hướng dẫn: ghép hai bản phân phối để mỗi bước có đủ ba thành phần cần
+thiết, trích chữ trên màn bằng OCR, và dựng nhãn mô tả bốn ô --- vai trò, tên, toạ độ,
+dấu hiệu phân biệt --- cho $41.099$ bước, không thuê người dán nhãn và không dùng nhãn do
+một mô hình ngôn ngữ khác sinh ra. Chúng tôi báo cáo cả những chỗ đường ống suýt hỏng mà không báo lỗi: phép ghép
 lệch một bước được bắt bằng một đối chứng chủ ý ($48\%$ so với $20\%$, $n=400$); chỉ số
 ``trùng tên'' ban đầu bị thổi từ $6{,}9\%$ lên $30\%$ vì cây trợ năng lồng nhau; ô dấu
 hiệu phân biệt ở bản đầu chỉ phân giải được $7{,}3\%$ số ca và phải làm lại từ đầu để đạt
@@ -69,12 +136,15 @@ $75{,}3\%$; và một quyết định đổi thứ tự ưu tiên nguồn tên �
 khi truy tới cùng. Phân tích phân bố dấu hiệu phân biệt trên toàn bộ nhãn cho thấy một
 hạn chế mà con số gộp che mất: mỏ neo theo chữ phủ $72{,}2\%$ số phần tử \emph{có} tên rõ
 ràng nhưng chỉ $57{,}5\%$ số phần tử \emph{không} có tên --- đúng nhóm cần quy chiếu bằng
-dấu hiệu nhất lại là nhóm được phục vụ kém nhất. Toàn bộ dữ liệu ra được kiểm bằng chín
-bất biến cấu trúc ở quy mô đủ và không có tác vụ nào rò rỉ giữa tập dạy và tập kiểm.
-\end{abstract}
+dấu hiệu nhất lại là nhóm được phục vụ kém nhất. Để chất lượng nhãn không chỉ được đo
+bằng chỉ số nội tại, ô tên còn được đối chiếu với chính câu do người viết --- nguồn mà
+đường ống không hề đọc lúc dựng nhãn: $53{,}5\%$ số nhãn có tên khớp nguyên văn với câu
+của người, so với $5{,}1\%$ của đối chứng lệch một bước ($n = 3.505$). Toàn bộ dữ liệu ra được kiểm bằng chín
+bất biến cấu trúc ở quy mô đủ và không có tác vụ nào rò rỉ giữa tập dạy và tập kiểm.\par}
 
-\noindent\textbf{Từ khoá:} sinh biểu thức quy chiếu, giao diện đồ hoạ, xây dựng ngữ liệu
-tự động, tiếng Anh trên giao diện di động, nhãn trợ năng.
+
+{\setstretch{1.0}\textbf{\textit{Từ khóa}}: sinh biểu thức quy chiếu, giao diện đồ hoạ,
+xây dựng ngữ liệu tự động, tiếng Anh trên giao diện di động, nhãn trợ năng.\par}
 
 \section{Đặt vấn đề}
 
@@ -92,16 +162,23 @@ nằm ở chỗ khác: khi mang bài toán vào miền giao diện đồ hoạ, 
 không có sẵn.
 
 Ba con số nói lên đặc thù ấy, tất cả đều do chúng tôi đo trên chính ngữ liệu dùng trong
-bài. Trên $99.131$ màn hình, chỉ $12{,}6\%$ phần tử trong cây trợ năng
-(\emph{accessibility tree}, kết xuất từ view hierarchy của ứng dụng) mang bất kỳ nhãn văn
-bản nào, khớp với các khảo sát cho thấy phần lớn ứng
-dụng Android xuất xưởng với nhãn trợ năng không đầy đủ~\cite{chen2020}. Trên $41.191$
-bước chạm đã dựng nhãn, $22{,}0\%$ phần tử đích không có tên nào để gọi, và $7{,}6\%$
+bài. Trên $120$ màn hình lấy ngẫu nhiên từ kho $99.131$ màn, chỉ $12{,}6\%$ phần tử trong
+cây trợ năng (\emph{accessibility tree}, kết xuất từ view hierarchy của ứng dụng) mang bất
+kỳ nhãn văn bản nào --- và $22$ màn trong số đó không có lấy một phần tử nào có tên. Con số
+này khớp với các khảo sát cho thấy phần lớn ứng
+dụng Android xuất xưởng với nhãn trợ năng không đầy đủ~\cite{chen2020}. Trên $41.099$
+nhãn dựng được, $22{,}0\%$ phần tử đích không có tên nào để gọi, và $7{,}6\%$
 trùng tên với ít nhất một phần tử khác trên cùng màn hình. Nói cách khác, ở khoảng một
 phần tư số ca, người viết câu buộc phải quy chiếu bằng \emph{vị trí} hoặc bằng \emph{quan
 hệ với chữ lân cận} chứ không thể gọi tên --- đúng loại hiện tượng mà lý thuyết biểu thức
 quy chiếu quan tâm, nhưng ở đây bị ép bởi bản chất của giao diện chứ không phải bởi lựa
 chọn của người nói.
+
+Hệ quả rơi thẳng sang phía mô hình. Không có tên để gọi thì câu sinh ra rất dễ mượn một
+cái tên nghe hợp lý nhưng không hề có trên màn, và người đọc hướng dẫn không có cách nào
+biết mình đang bị chỉ sai. Vì vậy nền dữ liệu phải ghi được cả những ca \emph{không} gọi
+tên được và nói rõ khi đó lấy gì thay thế, thay vì lặng lẽ bỏ chúng đi cho bảng số đẹp
+lên.
 
 Muốn huấn luyện được mô hình cho tác vụ này thì phải có giám sát, mà không bộ dữ liệu
 công khai nào được dựng sẵn cho nó. Bài báo này trình bày cách chúng tôi dựng giám sát
@@ -111,24 +188,33 @@ lượng câu sinh ra và các kết quả huấn luyện nằm ở một bài r
 duyệt~\cite{companionfair}; ở đây chúng tôi chỉ nêu quy mô chung để người đọc định vị
 được ngữ liệu.
 
+Chữ \emph{tự động hoàn toàn} cần một phân định ngay, vì các mục sau có nhắc tới mấy lát
+đọc tay: người có tham gia, nhưng chỉ ở khâu \emph{kiểm}, không ở khâu dán nhãn. Không nhãn
+nào trong $41.099$ nhãn được người viết, sửa hay chọn; các lát đọc tay chỉ dùng để phát hiện
+luật nào đang hỏng, và mỗi lần phát hiện thì thứ được sửa là luật, rồi toàn bộ nhãn dựng lại
+từ đầu.
+
 Đóng góp của bài gồm ba phần. Thứ nhất, một đường ống tự động biến ngữ liệu điều khiển
 giao diện thành nhãn mô tả có cấu trúc cho $41.099$ bước, kèm hai cổng lọc được thêm vào
 \emph{sau khi đo} và lý do đo được của từng cổng. Thứ hai, một bộ phép kiểm dựng dữ liệu
 mà chúng tôi cho là phần đáng dùng lại nhất: phép đối chứng lệch chủ ý để bắt ghép sai,
-chín bất biến cấu trúc chạy sau mỗi lần dựng lại, và phép kiểm rò rỉ ở quy mô đủ. Thứ ba,
+chín bất biến cấu trúc chạy sau mỗi lần dựng lại, phép kiểm rò rỉ ở quy mô đủ, và một phép
+so ngoại sinh giữa ô tên của nhãn với chính câu do người viết. Thứ ba,
 bản ghi trung thực về bốn chỗ đường ống đã sai mà không hề báo lỗi, kể cả một quyết định
 thiết kế đã được tranh luận rồi bị chính số liệu bác bỏ.
 
 \section{Công trình liên quan}
 
-\paragraph{Sinh biểu thức quy chiếu.} Mao và cộng sự~\cite{mao2016} đặt bài toán sinh mô
+\subsection{Sinh biểu thức quy chiếu}
+ Mao và cộng sự~\cite{mao2016} đặt bài toán sinh mô
 tả không mơ hồ cho một đối tượng trong ảnh và đề xuất huấn luyện theo tiêu chí phân biệt;
 Luo và Shakhnarovich~\cite{luo2017} cùng Yu và cộng sự~\cite{yu2017} đưa một mô hình
 ``người nghe'' vào vòng huấn luyện để ép tính phân biệt. Toàn bộ dòng này làm việc trên
 ảnh tự nhiên, nơi đối tượng luôn có một danh từ để gọi. Chúng tôi giữ nguyên khung khái
 niệm đó và chuyển sang miền giao diện.
 
-\paragraph{Mô tả phần tử giao diện.} Widget Captioning~\cite{widgetcap} là công trình gần
+\subsection{Mô tả phần tử giao diện}
+ Widget Captioning~\cite{widgetcap} là công trình gần
 nhất trong miền này: sinh mô tả ngôn ngữ cho phần tử giao diện di động, có nêu vấn đề các
 widget trông giống hệt nhau, nhưng huấn luyện bằng cross-entropy thuần. Ba điểm phân định
 với công trình đó, và chúng tôi nêu cả điểm bất lợi cho mình. Thứ nhất, nhãn của họ do
@@ -146,7 +232,8 @@ chính hiện tượng ``phần tử không có tên'' mà chúng tôi đo lại
 liệu khác. Hướng của họ là \emph{bù} nhãn thiếu bằng mô hình; hướng của chúng tôi là chấp
 nhận nhãn thiếu và chuyển gánh nặng quy chiếu sang quan hệ với chữ lân cận.
 
-\paragraph{Ngữ liệu điều khiển giao diện.} AndroidControl~\cite{androidcontrol} cung cấp
+\subsection{Ngữ liệu điều khiển giao diện}
+ AndroidControl~\cite{androidcontrol} cung cấp
 $15.283$ chuỗi thao tác do người thật ghi lại, mỗi bước có một câu hướng dẫn do người
 viết và một toạ độ chạm. Trong bài gốc, câu hướng dẫn theo bước là \emph{đầu vào} để dự
 đoán thao tác. Ở đây nó là \emph{đích sinh}. AndroidInTheWild~\cite{aitw} là nguồn của
@@ -161,26 +248,32 @@ năng. Không bản phân phối công khai nào của AndroidControl mang đủ
 (Bảng~\ref{tab:nguon}), nên phải ghép.
 
 \begin{table}[t]
-\centering\small
-\caption{Hai bản phân phối trên Hugging Face và phần thiếu của mỗi bản.}
-\label{tab:nguon}
+\centering\setstretch{1.0}\small
+
 \renewcommand{\arraystretch}{1.25}
-\begin{tabular}{@{}p{4.6cm}p{4.6cm}p{4.6cm}@{}}
-\toprule
-Kho & Có & Thiếu \\
-\midrule
+\begin{tabular}{|p{5.3cm}|p{4.3cm}|p{4.6cm}|}
+\hline
+\textbf{Kho} & \textbf{Có} & \textbf{Thiếu} \\
+\hline
 \code{HarrytheOrange/}\newline\code{\ \ parsed\_AndroidControl}
  & câu hướng dẫn đủ $15.283$ chuỗi; cây trợ năng $99.131$ màn & không có ảnh \\
+\hline
 \code{ckg/AndroidControl}\newline\code{\ \ ParsedWithImages-20k}
  & ảnh màn hình & đã chuyển sang định dạng tác tử nên mất câu hướng dẫn theo bước \\
-\bottomrule
+\hline
 \end{tabular}
+\caption{Hai bản phân phối trên Hugging Face và phần thiếu của mỗi bản.}
+\label{tab:nguon}
+
 \end{table}
 
 Hai kho được ghép theo khoá \code{(episode\_id, step\_id)}. Một tính chất của bản phân
 phối phải nêu vì nó ảnh hưởng tới cách đọc mọi kết quả về sau: chuỗi mục tiêu bị cắt ngay
-từ nguồn, $99{,}0\%$ kết thúc giữa chừng một cụm từ, chẳng hạn \code{...look for Calvin
-Kle}. Mọi nhánh dữ liệu đều đọc cùng chuỗi bị cắt đó nên nó không giải thích được chênh
+từ nguồn, chẳng hạn \code{...look for Calvin Kle} hay \code{...from the Recorder ap}. Đo
+trên $1.424$ mục tiêu khác nhau của tập kiểm, $99{,}4\%$ không kết thúc bằng một dấu câu, và
+ít nhất $71{,}3\%$ kết thúc giữa chừng một từ --- ``ít nhất'' vì luật đếm ở đây chỉ nhận
+những từ cuối không hề xuất hiện ở vị trí nào khác trong ngữ liệu, nên nó bỏ sót mọi ca mà
+phần bị cắt tình cờ trùng một từ có thật. Mọi nhánh dữ liệu đều đọc cùng chuỗi bị cắt đó nên nó không giải thích được chênh
 lệch \emph{giữa} các nhánh, nhưng nó có thật và không sửa được từ phía chúng tôi.
 
 \subsection{Phép kiểm ghép: bắt lỗi lệch một bước bằng một đối chứng chủ ý}
@@ -192,7 +285,8 @@ bước $A$ với câu của bước $B$, và không khâu nào báo lỗi.
 Phép kiểm được thiết kế để lỗi đó phải lộ ra: chạy OCR tại điểm chạm đáp án rồi xem chuỗi
 chữ đọc được có xuất hiện trong câu hướng dẫn hay không. Nếu ghép đúng, tỉ lệ khớp phải
 cao hơn hẳn so với một \emph{đối chứng lệch chủ ý một bước}. Trên $n = 400$ bước lấy mẫu:
-ghép đúng $48\%$, đối chứng $20\%$, tỉ số $2{,}4$ lần, hai khoảng tin cậy không giao nhau.
+ghép đúng $48\%$ (KTC Wilson $95\%$: $[43{,}1 \cdot 52{,}9]$), đối chứng $20\%$
+($[16{,}4 \cdot 24{,}2]$), tỉ số $2{,}4$ lần, hai khoảng cách nhau hơn $18$ điểm.
 
 Điểm phương pháp đáng giữ lại ở đây không phải con số $48\%$ --- bản thân nó không nói
 được gì, vì OCR sai và vì người viết câu không nhất thiết nhắc lại chữ trên nút. Nó chỉ
@@ -207,10 +301,11 @@ lần dựng, và vì loại lỗi nó nhắm --- lệch đều một bước --
 \emph{toàn bộ} tập giám sát mà không làm chương trình nào báo lỗi.
 
 \section{Trích chữ trên màn hình}
+\label{sec:ocr}
 
-Cây trợ năng lẽ ra là nguồn tên phần tử tự nhiên. Nhưng đo trên $99.131$ màn thì chỉ
+Cây trợ năng lẽ ra là nguồn tên phần tử tự nhiên. Nhưng trên lát $120$ màn đã nêu thì chỉ
 $12{,}6\%$ phần tử mang bất kỳ tên nào~\cite{chen2020}, và bản dump hiện có còn chứa
-\code{content\_description} viết cho lập trình viên thay vì chữ thật hiển thị trên màn.
+\code{content\_\allowbreak description} viết cho lập trình viên thay vì chữ thật hiển thị trên màn.
 Trung vị $86$ phần tử mỗi màn, nhưng phần lớn là phần tử câm.
 
 Vì vậy toàn bộ ảnh màn hình được đưa qua OCR (RapidOCR, ONNX, chỉ dùng CPU), kết quả vừa
@@ -237,26 +332,31 @@ như sau:
 
 \begin{center}\small\ttfamily
 <desc>tappable text | Search here | <point>440,91</point> | just above the text
-``Coffee''</desc>
+“Coffee”</desc>
 \end{center}
 
 \begin{table}[t]
-\centering\small
-\caption{Bốn ô của dòng khai báo và lý do tồn tại của từng ô.}
-\label{tab:bono}
+\centering\setstretch{1.0}\small
+
 \renewcommand{\arraystretch}{1.25}
-\begin{tabular}{@{}p{2.6cm}p{4.4cm}p{6.8cm}@{}}
-\toprule
-Ô & Ví dụ & Vì sao cần \\
-\midrule
+\begin{tabular}{|p{2.6cm}|p{4.4cm}|p{6.8cm}|}
+\hline
+\textbf{Ô} & \textbf{Ví dụ} & \textbf{Vì sao cần} \\
+\hline
 Vai trò & \code{tappable text} & phân biệt nút, ô nhập, mục danh sách \\
+\hline
 Tên & \code{Search here} & chữ hiển thị; nguồn là cây trợ năng hoặc OCR \\
+\hline
 Toạ độ & \code{<point>440,\allowbreak 91</point>} & nhãn sạch $100\%$, chi phí dựng bằng
 không \\
-Dấu hiệu phân biệt & \code{just above the text ``Coffee''} & thứ tách phần tử này khỏi
+\hline
+Dấu hiệu phân biệt & \code{just above the text “Coffee”} & thứ tách phần tử này khỏi
 các phần tử giống nó; nhắm thẳng vào ca $7{,}6\%$ trùng tên và $22{,}0\%$ không tên \\
-\bottomrule
+\hline
 \end{tabular}
+\caption{Bốn ô của dòng khai báo và lý do tồn tại của từng ô.}
+\label{tab:bono}
+
 \end{table}
 
 Ô thứ tư là ô mang nội dung ngôn ngữ học thật sự của nhãn. Ba ô đầu chỉ định danh; ô thứ
@@ -264,26 +364,30 @@ tư là chỗ duy nhất trả lời câu hỏi ``giữa mấy phần tử giố
 cái nào'', tức đúng phần mà lý thuyết biểu thức quy chiếu gọi là thuộc tính phân biệt.
 
 \begin{table}[t]
-\centering\small
+\centering\setstretch{1.0}\small
+
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{8.4cm}|p{5.6cm}|}
+\hline
+\textbf{Nhãn tự động} & \textbf{Câu do người viết} \\
+\hline
+\code{tappable text | Search here | <point>440,91</point> | just above the text
+``Coffee''} & \emph{Click on the search bar} \\
+\hline
+\code{icon | (no name) | <point>256,524</point> | just above the text “Leaf”}
+ & \emph{Choose the leaf option} \\
+\hline
+\code{icon | Q | <point>920,899</point> | shares a name with 1 other elements on screen}
+ & \emph{click on the search icon} \\
+\hline
+\code{icon | (no name) | <point>920,904</point> | many elements of the same kind on
+screen} & \emph{Click on the Right arrow key} \\
+\hline
+\end{tabular}
 \caption{Bốn nhãn thật lấy nguyên văn từ tập dạy, kèm câu do người viết cho cùng bước.
 Hai ca đầu là ca nhãn làm được việc; hai ca sau là ca nhãn bó tay.}
 \label{tab:vidu}
-\renewcommand{\arraystretch}{1.3}
-\begin{tabular}{@{}p{7.6cm}p{6.2cm}@{}}
-\toprule
-Nhãn tự động & Câu do người viết \\
-\midrule
-\code{tappable text | Search here | <point>440,91</point> | just above the text
-``Coffee''} & \emph{Click on the search bar} \\
-\code{icon | (no name) | <point>256,524</point> | just above the text ``Leaf''}
- & \emph{Choose the leaf option} \\
-\midrule
-\code{icon | Q | <point>920,899</point> | shares a name with 1 other elements on screen}
- & \emph{click on the search icon} \\
-\code{icon | (no name) | <point>920,904</point> | many elements of the same kind on
-screen} & \emph{Click on the Right arrow key} \\
-\bottomrule
-\end{tabular}
+
 \end{table}
 
 Bảng~\ref{tab:vidu} cho thấy khoảng cách giữa hai bên rõ hơn mọi con số tổng hợp. Ở ca
@@ -301,28 +405,34 @@ một mô hình thị giác về sau phải tự bù.
 Cả hai cổng dưới đây đều không có trong thiết kế ban đầu; chúng được thêm sau khi đo thấy
 nhãn bị nhiễu, và chúng tôi nêu đúng như vậy thay vì trình bày như thể đã nghĩ ra từ đầu.
 
-\textbf{Cổng lọc nhãn trợ năng} loại $14{,}7\%$ nhãn tại các nút đích: định danh lấy
+\textbf{Cổng lọc nhãn trợ năng} loại $14{,}7\%$ nhãn tại các nút đích (đo trên $285$ nhãn
+ở lát thử; ở quy mô đủ cổng loại $347/8.928 = 3{,}9\%$ ứng viên lấy từ cây trợ năng): định danh lấy
 thẳng từ mã nguồn, chuỗi số dài, hậu tố dành cho trình đọc màn hình, và các cách diễn đạt
 rỗng. Đây là những chuỗi hợp lệ về mặt cú pháp nhưng vô dụng về mặt quy chiếu --- người
 đọc không thể dùng chúng để tìm ra nút.
 
 \textbf{Cổng hình học} chỉ cho phép lấy tên từ OCR khi hộp chiếm dưới $25\%$ diện tích
-màn. Căn cứ: trong $25$ ca hộp lớn gần bằng cả màn hình, không ca nào khớp với câu chuẩn
-do người viết. Hộp quá lớn thì chữ đọc được bên trong nó không còn quy chiếu về phần tử
-đích nữa.
+màn. Căn cứ: trong $25$ ca hộp lớn gần bằng cả màn hình ở lát thử, không ca nào khớp với
+câu chuẩn do người viết --- hộp quá lớn thì chữ đọc được bên trong nó không còn quy chiếu
+về phần tử đích nữa, chẳng hạn một hộp phủ $95\%$ màn cho
+chuỗi \code{THEFELLOWSHIPOF THE RING}. Ở quy mô đủ cổng này bắn vào $912/41.099 = 2{,}2\%$ số
+bước. Chúng tôi nêu cả cỡ mẫu của căn cứ ($n = 25$) lẫn phạm vi nó áp lên, vì một cổng
+dựng từ $25$ ca mà chạy trên toàn ngữ liệu là chỗ người đọc có quyền nghi ngờ.
 
 \subsection{Ô dấu hiệu phân biệt: bản đầu hỏng và phải làm lại}
 
 Bản đầu của ô thứ tư gần như vô dụng, và điều đó chỉ lộ ra khi đem đọc thủ công một lát
-mẫu. Chỉ $7{,}3\%$ dấu hiệu thực sự phân giải được điều gì; $85{,}8\%$ chỉ là đếm số
+mẫu. Đếm trên $1.074$ nhãn, chỉ $7{,}3\%$ dấu hiệu thực sự phân giải được điều gì; $85{,}8\%$ chỉ là đếm số
 lượng, kiểu ``một trong bảy phần tử cùng loại''. Một mệnh đề như vậy đúng về mặt sự kiện
 nhưng không giúp người đọc lẫn mô hình chọn ra phần tử nào, tức là nó nêu \emph{sự tồn
 tại} của mơ hồ thay vì \emph{giải} nó.
 
 Bản sửa làm hai việc: sắp lại thứ tự luật theo tiêu chí ``mệnh đề này có phân giải được
 mơ hồ không'' thay vì theo thứ tự dễ tính trước, và bổ sung một mỏ neo theo chữ --- chuỗi
-OCR gần nhất nằm ngoài hộp, kèm hướng tương đối (\emph{just above}, \emph{to the left
-of}).
+OCR gần nhất nằm ngoài hộp và cách tâm phần tử không quá $350$ px, kèm hướng tương đối
+(\emph{just above}, \emph{to the left of}). Hướng được tính thẳng từ hai toạ độ nên nó
+\emph{đúng} theo cấu tạo; thứ cấu tạo không bảo đảm là nó \emph{hữu ích}, và đó chính là
+thứ Mục~\ref{sec:phanbo} đem đo.
 
 Mỏ neo theo chữ hoạt động được chính vì đặc thù đã nêu ở phần mở đầu: khi phần tử đích
 không có tên, thứ gần nó nhất mà \emph{có} chữ thường lại là một phần tử khác. Câu quy
@@ -335,32 +445,37 @@ của miền.
 
 Bảng~\ref{tab:hint} phân loại toàn bộ $41.099$ dấu hiệu đã dựng thành bốn nhóm theo
 \emph{việc mệnh đề đó làm được gì}, chứ không theo luật nào sinh ra nó. Phân loại chạy
-lại trực tiếp trên tệp nhãn bằng khớp mẫu trên bốn khuôn: mỏ neo chữ (\emph{just
+lại trực tiếp trên tệp nhãn bằng khớp mẫu trên bốn khuôn --- khuôn do chính luật sinh nhãn
+đẻ ra nên phép phân loại là tất định, không có bước suy đoán nào: mỏ neo chữ (\emph{just
 above/below}, \emph{to the left/right of}), khẳng định duy nhất (\emph{the only \ldots\
 on screen}), nêu trùng tên (\emph{shares a name with \ldots}), và đếm số lượng
 (\emph{$k$ of $n$ elements of the same kind}).
 
 \begin{table}[t]
-\centering\small
+\centering\setstretch{1.0}\small
+
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|l|r|r|r|r|r|}
+\hline
+\textbf{Tầng tên} & \textbf{$n$} & \textbf{Mỏ neo chữ} & \textbf{Duy nhất} & \textbf{Nêu trùng tên} & \textbf{Chỉ đếm} \\
+\hline
+Tên rõ ràng   & $30.252$ & $72{,}2\%$ & $7{,}9\%$ & $1{,}7\%$ & $18{,}2\%$ \\
+\hline
+Chỉ có ký hiệu & $1.809$ & $32{,}7\%$ & $4{,}8\%$ & $31{,}3\%$ & $31{,}2\%$ \\
+\hline
+Không có tên   & $9.038$ & $57{,}5\%$ & $9{,}2\%$ & --- & $33{,}3\%$ \\
+\hline
+\textbf{Toàn bộ} & $41.099$ & $67{,}2\%$ & $8{,}1\%$ & $2{,}6\%$ & $22{,}1\%$ \\
+\hline
+\end{tabular}
 \caption{Loại dấu hiệu phân biệt, theo tầng tên của phần tử đích ($41.099$ nhãn). Hai
 nhóm đầu phân giải được mơ hồ; hai nhóm sau chỉ nêu sự tồn tại của nó.}
 \label{tab:hint}
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}lrrrrr@{}}
-\toprule
-Tầng tên & $n$ & Mỏ neo chữ & Duy nhất & Nêu trùng tên & Chỉ đếm \\
-\midrule
-Tên rõ ràng   & $30.252$ & $72{,}2\%$ & $7{,}9\%$ & $1{,}7\%$ & $18{,}2\%$ \\
-Chỉ có ký hiệu & $1.809$ & $32{,}7\%$ & $4{,}8\%$ & $31{,}3\%$ & $31{,}2\%$ \\
-Không có tên   & $9.038$ & $57{,}5\%$ & $9{,}2\%$ & --- & $33{,}3\%$ \\
-\midrule
-\textbf{Toàn bộ} & $41.099$ & $67{,}2\%$ & $8{,}1\%$ & $2{,}6\%$ & $22{,}1\%$ \\
-\bottomrule
-\end{tabular}
+
 \end{table}
 
 Tổng hai nhóm phân giải được là $75{,}3\%$, so với $7{,}3\%$ của bản đầu. Nhưng con số
-gộp che mất điều đáng nói nhất, và nó đi ngược hướng chúng tôi mong muốn:
+gộp che mất chỗ hỏng nặng nhất, và nó đi ngược hướng chúng tôi mong muốn:
 \textbf{đúng những phần tử cần dấu hiệu phân biệt nhất lại là những phần tử được phục vụ
 kém nhất}. Ở nhóm có tên rõ ràng --- nhóm mà bản thân cái tên đã đủ quy chiếu --- mỏ neo
 chữ phủ $72{,}2\%$. Ở nhóm không có tên, nơi dấu hiệu là phương tiện quy chiếu
@@ -374,12 +489,11 @@ vùng thưa chữ. Trong $3.124$ ca trùng tên, $65{,}7\%$ nhận được mỏ
 lại chỉ được nêu là trùng tên --- tức ở một phần ba số ca mơ hồ nhất, nhãn thừa nhận có
 mơ hồ nhưng không giải.
 
-Hướng của mỏ neo cũng không cân, và đó là tính chất của bố cục giao diện chứ không phải
-của luật: trong $27.628$ mỏ neo, \emph{just above} chiếm $8.686$ và \emph{to the right
-of} chiếm $7.768$, trong khi \emph{to the left of} chỉ có $1.894$. Danh sách trên Android
-xếp dọc và nhãn văn bản thường nằm bên trái phần tử thao tác, nên chữ để neo hầu như luôn
-ở phía trên hoặc bên trái của \emph{chữ}, tức phần tử đích nằm ở phía dưới hoặc bên phải
-của nó.
+Hướng của mỏ neo không cân theo trục ngang, và đó là tính chất của bố cục giao diện chứ
+không phải của luật: trong $27.628$ mỏ neo, \emph{to the right of} chiếm $8.382$ còn
+\emph{to the left of} chỉ có $2.033$. Nhãn văn bản trên Android thường nằm bên trái phần
+tử thao tác, nên chữ dùng để neo hầu như luôn ở bên trái phần tử đích. Theo trục dọc thì
+hai hướng gần cân nhau, nên ở trục đó không có bất đối xứng nào để giải thích.
 
 Để so sánh, chúng tôi đo tần suất quy chiếu bằng vị trí trong chính câu do người viết:
 $32{,}5\%$ trong $41.084$ câu chuẩn của tập dạy chứa ít nhất một từ chỉ vị trí hoặc thứ
@@ -391,32 +505,39 @@ sự cần dùng.
 
 \subsection{Chất lượng nhãn ở quy mô đủ}
 
-Bảng~\ref{tab:chatluong} đối chiếu nhãn dựng ở quy mô đủ ($41.191$ bước chạm) với lát thử
-trước đó, nhỏ hơn $24$ lần. Phép đối chiếu này trả lời một câu hỏi cụ thể: đường ống có
+Bảng~\ref{tab:chatluong} đối chiếu nhãn dựng ở quy mô đủ ($41.099$ nhãn) với lát thử
+trước đó, nhỏ hơn $38$ lần. Phép đối chiếu này trả lời một câu hỏi cụ thể: đường ống có
 suy giảm khi nhân quy mô lên không.
 
 \begin{table}[t]
-\centering\small
+\centering\setstretch{1.0}\small
+
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|l|r|r|}
+\hline
+\textbf{Chỉ số} & \textbf{Quy mô đủ} & \textbf{Lát thử} \\
+\hline
+Tên rõ ràng & $73{,}6\%$ & $73{,}8\%$ \\
+\hline
+Chỉ có ký hiệu, không có chữ & $4{,}4\%$ & --- \\
+\hline
+Không có tên & $22{,}0\%$ & $23{,}4\%$ \\
+\hline
+Vai trò rõ ràng & $75{,}8\%$ & --- \\
+\hline
+Trùng tên trên cùng màn & $7{,}6\%$ & $7{,}0\%$ \\
+\hline
+Có phần tử cùng vai trò để so & $91{,}6\%$ & --- \\
+\hline
+\end{tabular}
 \caption{Chất lượng nhãn ở quy mô đủ so với lát thử. Cả năm chỉ số so được lệch dưới một
 điểm phần trăm.}
 \label{tab:chatluong}
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}lrr@{}}
-\toprule
-Chỉ số & Quy mô đủ & Lát thử \\
-\midrule
-Tên rõ ràng & $73{,}6\%$ & $73{,}8\%$ \\
-Chỉ có ký hiệu, không có chữ & $4{,}4\%$ & --- \\
-Không có tên & $22{,}0\%$ & $23{,}4\%$ \\
-Vai trò rõ ràng & $75{,}8\%$ & --- \\
-Trùng tên trên cùng màn & $7{,}6\%$ & $6{,}9\%$ \\
-Có phần tử cùng vai trò để so & $91{,}6\%$ & --- \\
-\bottomrule
-\end{tabular}
+
 \end{table}
 
 Trong $32.061$ tên lấy được, $8.581$ đến từ cây trợ năng và $23.480$ đến từ OCR. Tỉ lệ
-gần $1{:}3$ này là hệ quả trực tiếp của con số $12{,}6\%$ ở Mục 4, và nó cũng nói rằng
+gần $1{:}3$ này là hệ quả trực tiếp của con số $12{,}6\%$ ở Mục~\ref{sec:ocr}, và nó cũng nói rằng
 một đường ống chỉ dựa vào cây trợ năng sẽ mất khoảng ba phần tư số tên.
 
 Hai lỗi bắt được trong quá trình dựng đáng ghi lại vì cùng một loại --- chương trình chạy
@@ -454,7 +575,7 @@ là s2 bỏ ô toạ độ. Nhánh s2r tồn tại để chặn một cách gi�
 bản ghép đầu tiên khớp theo \emph{ký tự} cho trung vị lệch $0$, trông như đã đạt; đo lại
 theo \emph{token} thì chỉ $54\%$ số cặp nằm trong hai token, biên độ tới $\pm17$. Hàm mất
 mát tính trên token chứ không tính trên ký tự, nên phép khớp phải làm lại theo token, đạt
-$99{,}3\%$ số cặp trong hai token.
+$99{,}9\%$ số cặp trong hai token ở quy mô đủ ($99{,}3\%$ tại mốc đo đầu).
 
 Sau mỗi lần dựng lại dữ liệu, chín bất biến cấu trúc được kiểm và cả chín đều đạt ở quy
 mô đủ:
@@ -479,21 +600,27 @@ không-gây-hại trên $36{,}2\%$ số bước không phải bước chạm.
 \section{Quy mô, cách chia tập và những gì phép chia không bảo đảm}
 
 \begin{table}[t]
-\centering\small
+\centering\setstretch{1.0}\small
+
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|l|r|r|}
+\hline
+ & \textbf{Tập dạy} & \textbf{Tập kiểm} \\
+\hline
+Số bước & $64.567$ & $6.958$ \\
+\hline
+Bước chạm & $41.191$ ($63{,}8\%$) & $4.463$ ($64{,}1\%$) \\
+\hline
+Số tác vụ & $12.895$ & $1.432$ \\
+\hline
+Độ phủ OCR & $100\%$ & $100\%$ \\
+\hline
+Độ phủ nhãn mô tả trên bước chạm & $99{,}8\%$ & $99{,}7\%$ \\
+\hline
+\end{tabular}
 \caption{Quy mô hai tập sau khi dựng.}
 \label{tab:quymo}
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}lrr@{}}
-\toprule
- & Tập dạy & Tập kiểm \\
-\midrule
-Số bước & $64.567$ & $6.958$ \\
-Bước chạm & $41.191$ ($63{,}8\%$) & $4.463$ ($64{,}1\%$) \\
-Số tác vụ & $12.895$ & $1.432$ \\
-Độ phủ OCR & $100\%$ & $100\%$ \\
-Độ phủ nhãn mô tả trên bước chạm & --- & $99{,}7\%$ \\
-\bottomrule
-\end{tabular}
+
 \end{table}
 
 Tập được chia \textbf{theo tác vụ}, không chia ngẫu nhiên theo dòng: các màn hình trong
@@ -523,15 +650,38 @@ tuyên bố tổng quát hoá không có căn cứ.
 \section{Nhãn dựng ra dùng được tới đâu}
 
 Một bộ nhãn tự động chỉ đáng tin khi có phép kiểm không dựa vào chính luật đã dựng ra nó.
-Chúng tôi có bốn phép như vậy, và nêu cả kết quả xấu.
+Chúng tôi có năm phép như vậy, và nêu cả kết quả xấu.
+
+\emph{Ô tên có khớp với cách người thật gọi phần tử không.} Đây là phép kiểm duy nhất dùng
+tới một nguồn nằm hẳn ngoài đường ống: câu chỉ dẫn do người viết. Đường ống không đọc câu đó
+ở bất kỳ khâu nào --- vai trò, tên, toạ độ và dấu hiệu đều tính từ cây trợ năng, hộp bao và
+OCR --- nên việc ô tên trùng với chữ người viết dùng là một phép so ngoại sinh chứ không
+phải phép tự kiểm. Trên $3.505$ nhãn có tên của tập kiểm, $53{,}5\%$ mang ô tên xuất hiện
+nguyên văn trong câu của người (KTC Wilson $95\%$: $[51{,}9 \cdot 55{,}2]$); đem đúng những
+cái tên ấy ghép với câu của bước liền sau thì chỉ còn $5{,}1\%$ $[4{,}4 \cdot 5{,}9]$. Tỉ số
+hơn mười lần, và đây là phép đo trên toàn tập chứ không phải trên một lát mẫu.
+
+Phải đọc con số này cho đúng theo cả hai chiều. Nó \emph{không} có nghĩa gần một nửa số
+nhãn sai tên: người viết thường gọi phần tử bằng danh từ chủng loại --- \emph{the search
+bar} cho một ô mang chữ \emph{Search here} --- nên phép so nguyên văn là chặn dưới chứ
+không phải ước lượng đúng. Nhưng nó cũng chỉ nói được về \emph{ô tên}; ô dấu hiệu phân biệt
+không có nguồn ngoại sinh nào để đối chiếu, và đó vẫn là lỗ hổng. Chia theo tầng tên thì
+kết quả đi đúng hướng đã thấy ở Mục~\ref{sec:phanbo}: tầng có tên rõ ràng đạt $55{,}4\%$,
+còn tầng chỉ có ký hiệu chỉ $24{,}5\%$ --- chỗ đường ống đọc được ít nhất cũng là chỗ nó
+lệch khỏi cách người gọi tên nhiều nhất.
 
 \emph{Đối chiếu với lát thử.} Năm chỉ số so được ở Bảng~\ref{tab:chatluong} lệch dưới một
-điểm phần trăm giữa quy mô đủ và lát thử nhỏ hơn $24$ lần. Đường ống không suy giảm khi
+điểm phần trăm giữa quy mô đủ và lát thử nhỏ hơn $38$ lần. Đường ống không suy giảm khi
 nhân quy mô.
 
 \emph{Nhãn có phân biệt được thật không.} Một cặp quy chiếu chỉ dùng được khi khai báo của
 phần tử đích và khai báo của phần tử cạnh tranh gần nhất \emph{khác nhau ở ô tên và ô toạ
-độ} sau chuẩn hoá, và khoảng cách giữa hai phần tử nằm trong khoảng $80$--$350$ px. Đo
+độ} sau chuẩn hoá, và khoảng cách giữa hai phần tử nằm trong khoảng $80$--$350$ px. Hai mốc
+này không phải chọn cho đẹp. Mốc dưới đến từ khâu chấm ở bài đồng hành: thước gộp hai phần
+tử cách nhau dưới $63$ px trên màn rộng $1080$ px thành một, nên cặp gần hơn thế không còn
+là bài toán phân biệt có thật, và $80$ px là mốc đó cộng biên. Mốc trên là bán kính tối đa
+của mỏ neo chữ ở Mục~\ref{sec:nhan}: xa hơn $350$ px thì phần tử kia không còn đáng gọi là
+hàng xóm. Đo
 trên toàn bộ $41.099$ nhãn, $55{,}61\%$ số bước thoả điều kiện đó. Con số này đọc theo hai
 chiều: nó cho thấy hơn một nửa số bước có sẵn một đối tượng cạnh tranh đủ gần để việc
 ``phân biệt'' là bài toán thật, và nó cũng cho thấy gần một nửa số bước thì không --- ở đó
@@ -554,15 +704,16 @@ bằng một mô hình định vị độc lập trên $4.463$ bước chạm c�
 
 \emph{Mô hình gọi sai tên theo kiểu nào.} Bài đó cũng trả lại cho phần nhãn một quan sát
 đáng ghi. Đem đúng khoảng $80$--$350$ px ở trên đo trên lỗi của mô hình đã học từ bộ nhãn
-này: trên $3.246$ bước mô hình gọi sai tên, khoảng cách từ phần tử nó gọi tới phần tử đích
-có tứ phân vị $70$, $351$ và $748$ px, tức khoảng đó loại mất $76{,}5\%$ số ca. Lỗi gọi
-tên vì vậy \emph{lưỡng cực}: hoặc mô hình trỏ đúng phần tử nhưng gọi bằng một cái tên
-khác, hoặc nó nói sang hẳn một vùng khác của màn hình --- gần như không có kiểu nhầm giữa
-hai phần tử cạnh nhau. Một biến thể huấn luyện lấy chính phần tử mô hình gọi nhầm làm vế
-âm do đó chỉ dựng được $459$ cặp trên $14.000$ màn ($3{,}3\%$) và đã dừng ở cổng khả thi
-đăng ký trước. Với bài toán quy chiếu, chỗ khó không nằm ở việc phân biệt hai phần tử
-giống nhau mà ở việc \emph{có gì để gọi tên} --- đúng hạn chế nêu ở Mục~\ref{sec:hanche}.
-Trên tập dạy, mô hình gọi đúng tên $68{,}5\%$ số bước ($7.067/10.319$).
+này thì khoảng đó loại mất phần lớn số ca: lỗi gọi tên \emph{lưỡng cực}, hoặc mô hình trỏ
+đúng phần tử nhưng gọi bằng một cái tên khác, hoặc nó nói sang hẳn một vùng khác của màn
+hình --- gần như không có kiểu nhầm giữa hai phần tử cạnh nhau. Phân bố khoảng cách và
+hệ quả của nó lên một biến thể huấn luyện được báo đầy đủ ở~\cite{companionfair}. Điều
+đáng giữ lại cho phần nhãn là hướng kết luận: với bài toán quy chiếu trên ngữ liệu này,
+chỗ khó không nằm ở việc phân biệt hai phần tử giống nhau mà ở việc \emph{có gì để gọi
+tên} --- đúng hạn chế nêu ở Mục~\ref{sec:hanche}.
+Cùng chiều đó, khi đem chính mô hình ấy sinh lại dòng khai báo cho các bước của tập dạy,
+nó gọi trúng tên vàng ở $68{,}5\%$ số bước có đủ điều kiện so sánh --- $7.067$ trên $10.319$
+bước mà cả nhãn vàng lẫn khai báo sinh ra đều có ô tên không rỗng.
 
 \section{Hạn chế}
 \label{sec:hanche}
@@ -580,12 +731,16 @@ cùng vai trò ($91{,}6\%$ số màn có ít nhất một phần tử như vậy
 cho OCR, nên chúng tôi không tuyên bố độ chính xác OCR mà chỉ báo cáo độ ổn định giữa hai
 lần chạy và hai kiểu hỏng đã quan sát.
 
-\emph{Chất lượng nhãn được đo bằng chỉ số nội tại.} Các con số $73{,}6\%$, $22{,}0\%$,
-$7{,}6\%$ là thuộc tính của nhãn, không phải phán quyết của người đọc về việc nhãn có
-giúp quy chiếu hay không. Chúng tôi chưa làm đánh giá bằng người trên chính bộ nhãn này.
+\emph{Phần lớn chỉ số chất lượng nhãn vẫn là chỉ số nội tại.} Các con số $73{,}6\%$,
+$22{,}0\%$, $7{,}6\%$ là thuộc tính của nhãn, không phải phán quyết của người đọc về việc
+nhãn có giúp quy chiếu hay không. Phép so ngoại sinh duy nhất chúng tôi có là đối chiếu ô
+tên với câu do người viết, và nó chỉ chạm được một trong bốn ô. Chúng tôi chưa làm đánh giá
+bằng người trên chính bộ nhãn này --- hỏi người đọc xem một nhãn có đủ để họ tìm ra phần tử
+trên ảnh hay không là phép kiểm đúng nhất cho ô dấu hiệu phân biệt, và nó vẫn còn thiếu.
 
-\emph{Chuỗi mục tiêu bị cắt từ nguồn.} $99{,}0\%$ chuỗi mục tiêu kết thúc giữa chừng, và
-đó là tính chất của bản phân phối chứ không sửa được từ phía chúng tôi.
+\emph{Chuỗi mục tiêu bị cắt từ nguồn.} Gần như mọi chuỗi mục tiêu đều kết thúc dở dang
+($99{,}4\%$ không có dấu câu cuối, ít nhất $71{,}3\%$ đứt giữa một từ), và đó là tính chất
+của bản phân phối chứ không sửa được từ phía chúng tôi.
 
 \emph{Nguồn và giấy phép.} AndroidControl được phát hành theo CC0 và bản thân chúng tôi
 không thu thập màn hình mới, nên không phát sinh vấn đề riêng tư ngoài những gì bản phát
@@ -615,6 +770,10 @@ phép kiểm rò rỉ ở quy mô đủ, và thói quen truy một tỉ số b�
 nó trước khi đổi thiết kế. Bốn lỗi nêu trong bài đều thuộc loại không làm chương trình
 dừng --- kết quả vẫn ra, vẫn hợp lý, chỉ có giá trị là sai --- và đó là loại lỗi mà chỉ
 phép kiểm dựng sẵn mới bắt được.
+
+%% tiêu đề mục tài liệu tham khảo canh trái, khác mục cấp 1 (canh giữa)
+\titleformat{\section}[block]{\normalsize\bfseries}{}{0pt}{}
+\titlespacing{\section}{0pt}{14pt plus 2pt}{8pt}
 
 \begin{thebibliography}{99}
 \small
