@@ -190,8 +190,7 @@ chúng tôi không có đánh giá bằng người để định lượng khoả
 khác nhau: họ chú thích \emph{một widget} tách khỏi ngữ cảnh, còn ở đây phần tử đích luôn
 được đặt trong một màn hình cụ thể với các phần tử cạnh tranh cụ thể, nên tính phân biệt
 là thuộc tính của cặp (phần tử, màn hình) chứ không phải của riêng phần tử. Thứ ba, nhãn
-của chúng tôi phục vụ một bước sau: nó là \emph{đích sinh trung gian} đứng trước câu chỉ
-dẫn, chứ không phải sản phẩm cuối.
+của chúng tôi phục vụ một bước sau: nó là một \emph{đích trung gian} mà mô hình phải sinh ra trước câu chỉ dẫn, chứ không phải sản phẩm cuối.
 
 Chen và cộng sự~\cite{chen2020} dự đoán nhãn trợ năng còn thiếu cho phần tử Android, tức chính hiện tượng ``phần tử không có tên'' mà chúng tôi đo lại được ở đây trên một ngữ liệu khác. Hướng của họ là \emph{bù} nhãn thiếu bằng mô hình; hướng của chúng tôi là chấp
 nhận nhãn thiếu và chuyển gánh nặng quy chiếu sang quan hệ với chữ lân cận.
@@ -199,8 +198,7 @@ nhận nhãn thiếu và chuyển gánh nặng quy chiếu sang quan hệ với 
 \subsection{Ngữ liệu điều khiển giao diện}
  AndroidControl~\cite{androidcontrol} cung cấp
 $15.283$ chuỗi thao tác do người thật ghi lại, mỗi bước có một câu hướng dẫn do người
-viết và một toạ độ chạm. Trong bài gốc, câu hướng dẫn theo bước là \emph{đầu vào} để dự
-đoán thao tác. Ở đây nó là \emph{đích sinh}. AndroidInTheWild~\cite{aitw} là nguồn của
+viết và một toạ độ chạm. Trong bài gốc, câu hướng dẫn theo bước là \emph{đầu vào} để dự đoán thao tác. Ở đây nó là \emph{chuỗi đích} mà mô hình phải sinh ra. AndroidInTheWild~\cite{aitw} là nguồn của
 quy ước dung sai $14\%$ được dùng rộng rãi khi chấm toạ độ. Việc đưa danh sách phần tử
 màn hình vào đầu vào cũng đã phổ biến~\cite{androidcontrol,mind2web,widgetcap}, nên chúng
 tôi không nhận đóng góp nào ở lớp đó.
@@ -286,8 +284,7 @@ tên thật; khi không có nhãn chuẩn cho chữ trên màn thì tần suất
 \section{Nhãn mô tả bốn ô}
 \label{sec:nhan}
 
-Đích huấn luyện của nhánh đề xuất chứa một dòng khai báo có cấu trúc về phần tử đích,
-dựng hoàn toàn bằng luật. Các bước dựng nhãn như sau: từ toạ độ chạm đáp án, chọn hộp trợ năng
+Chuỗi đích của nhánh đề xuất chứa một dòng khai báo có cấu trúc về phần tử đích, dựng hoàn toàn bằng luật. Các bước dựng nhãn như sau: từ toạ độ chạm đáp án, chọn hộp trợ năng
 \emph{nhỏ nhất} chứa điểm đó; vai trò lấy từ cây; tên lấy từ cây nếu vượt cổng lọc hợp
 lệ, ngược lại lấy từ OCR bên trong hộp; ô toạ độ giữ chính điểm chạm quy về thang
 $[0,1000]$; ô thứ tư giữ một dấu hiệu phân biệt tính bằng luật. Một nhãn hoàn chỉnh trông
@@ -509,15 +506,13 @@ Bài học phương pháp: một tỉ số $3{,}2$ lần đo trên toàn bộ d�
 
 \section{Bốn nhánh dữ liệu và chín bất biến}
 
-Từ cùng một đầu vào, chúng tôi dựng bốn tập dữ liệu chỉ khác nhau ở \emph{đích sinh}, tức
-ở chuỗi mà mô hình phải học để sinh ra. Bốn tập mang ký hiệu s1, s2, s2r và
+Từ cùng một đầu vào, chúng tôi dựng bốn tập dữ liệu chỉ khác nhau ở \emph{chuỗi đích}, tức phần văn bản mà mô hình phải học để sinh ra. Bốn tập mang ký hiệu s1, s2, s2r và
 s2\_nopoint, dùng thống nhất với bài đồng hành~\cite{companionfair}:
 
 \begin{itemize}[leftmargin=1.8em,itemsep=0.2em]
-\item \textbf{s1} - đích sinh chỉ gồm câu chỉ dẫn, không có dòng khai báo. Đây là nhánh
+\item \textbf{s1} - chuỗi đích chỉ gồm câu chỉ dẫn, không có dòng khai báo. Đây là nhánh
 đối chứng, ứng với cách huấn luyện thông thường.
-\item \textbf{s2} - đích sinh gồm dòng khai báo bốn ô của phần tử đích, rồi mới tới câu
-chỉ dẫn. Đây là nhánh đề xuất, tức nhánh mà bộ nhãn dựng ở Mục~\ref{sec:nhan} phục vụ.
+\item \textbf{s2} - chuỗi đích gồm dòng khai báo bốn ô của phần tử đích, rồi mới tới câu chỉ dẫn. Đây là nhánh đề xuất, tức nhánh mà bộ nhãn dựng ở Mục~\ref{sec:nhan} phục vụ.
 \item \textbf{s2r} - giống s2, nhưng dòng khai báo thật bị thay bằng một khai báo
 \emph{giả}: lấy từ một màn hình khác và gắn toạ độ ngẫu nhiên, chỉ giữ lại độ dài xấp xỉ
 bằng khai báo thật. Độ dài ở đây tính theo token, tức theo đơn vị mã hoá văn bản mà mô
@@ -540,17 +535,16 @@ mô đủ:
 \item ba nhánh có khai báo mang cùng $41.099$ nhãn;
 \item s2 khác s2r đúng ở các nhãn đó và không khác ở chỗ nào khác;
 \item khai báo giả không bao giờ tái sử dụng toạ độ đích thật;
-\item các bước không phải bước chạm mang đích y hệt nhau ở cả bốn nhánh;
+\item các bước không phải bước chạm mang chuỗi đích y hệt nhau ở cả bốn nhánh;
 \item khoá ghép và số dòng khớp nhau giữa các nhánh;
 \item độ dài token của khai báo thật và khai báo giả khớp theo ngưỡng đã nêu.
 \end{enumerate}
 
 Bất biến thứ nhất là bất biến quan trọng nhất về mặt thiết kế thí nghiệm: vì câu được
 chấm giống hệt nhau ở bốn nhánh, mọi chênh lệch quan sát được về sau chỉ có thể quy về
-phần \emph{đứng trước} câu. Bất biến thứ bảy là điều kiện tiên quyết cho một phép kiểm khác: kiểm xem việc thêm dòng khai báo vào đích sinh có làm giảm chất lượng ở những bước \emph{không phải} bước chạm hay không. Nhóm
+phần \emph{đứng trước} câu. Bất biến thứ bảy là điều kiện tiên quyết cho một phép kiểm khác: kiểm xem việc thêm dòng khai báo vào chuỗi đích có làm giảm chất lượng ở những bước \emph{không phải} bước chạm hay không. Nhóm
 này chiếm $36{,}2\%$ số bước, gồm cuộn màn, gõ chữ, quay lại màn trước và các thao tác
-tương tự; đích sinh của chúng giống hệt nhau ở cả bốn nhánh. Vì cả đầu vào lẫn đích sinh
-của nhóm này không đổi giữa các nhánh, mọi chênh lệch quan sát được ở đó chỉ có thể là
+tương tự; chuỗi đích của chúng giống hệt nhau ở cả bốn nhánh. Vì cả đầu vào lẫn chuỗi đích của nhóm này không đổi giữa các nhánh, mọi chênh lệch quan sát được ở đó chỉ có thể là
 ảnh hưởng lan sang từ phần đã thay đổi, chứ không thể do dữ liệu của chính nhóm đó khác
 nhau.
 
