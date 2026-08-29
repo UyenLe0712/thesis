@@ -294,7 +294,9 @@ def main():
             print(f"  token (chưa kể token ẢNH): trung vị {dai[len(dai)//2]} · max {dai[-1]}")
             print(f"  vượt cutoff {args.cutoff}: {vuot}/200   "
                   f"{'✅ ĐẠT' if vuot == 0 else '⛔ TRƯỢT — sửa cách cắt khối, KHÔNG nới cutoff'}")
-            print("  ⚠️ token ảnh cộng thêm ~1.300 (cỡ ảnh đang dùng) — cộng vào trước khi kết luận")
+            print("  ⚠️ CHƯA kể token ẢNH. Số token ảnh phụ thuộc cỡ ảnh của bộ xử lý và"
+                  "\n     PHẢI đo bằng chính processor sẽ train, không suy từ lượt khác"
+                  "\n     (lượt S1/S2 chạy cutoff_len 2560 — con số đó không tự chuyển sang đây).")
         except Exception as e:
             print(f"  ⚠️ không nạp được bộ tách token ({e}) — chạy lại cổng G4 khi có mạng")
 
