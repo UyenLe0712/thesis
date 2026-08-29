@@ -86,14 +86,12 @@ for the collapse. A slice registered before any treatment score localises a thir
 of the difference in the $7.3\%$ of steps emitting no descriptor, where the culprit is
 fine-tuning itself: the untuned model names the correct action class on $83.4\%$ of them
 against $55.1\%$ and $38.8\%$ for the two trained branches. A second stage aimed at that
-mechanism was then run --- a preference objective over minimal descriptor pairs, against a
-supervised control matched update for update --- and adds $+0.63$ pp $[+0.16, +1.10]$,
-again inside the inconclusive band, with $78\%$ of the stage's total gain belonging to the
-control rather than to the preference term; a registered variant sourcing its negatives
-from the model's own errors died at its feasibility gate, those errors being bipolar rather
-than locally confusable. Structured-prefix supervision, on this evidence, does not fail
-uniformly; its value is governed by identification accuracy, and it amplifies an error the
-fine-tuning stage introduces.
+mechanism --- a preference objective over minimal descriptor pairs against a supervised
+control matched update for update --- adds $+0.63$ pp $[+0.16, +1.10]$, inside the
+inconclusive band again, $78\%$ of its gain belonging to the control; a registered variant
+drawing negatives from the model's own errors died at its feasibility gate.
+Structured-prefix supervision, on this evidence, does not fail uniformly: its value is
+governed by identification accuracy, and it amplifies an error fine-tuning introduces.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -151,7 +149,11 @@ supervision, reported against its own registered reading rules including the cas
 where those rules refuse a conclusion; and (iii) a diagnosis, exploratory and at one
 seed, that separates what the structured prefix does from what fine-tuning does, names
 the failure a follow-up objective must repair, and reports what happened when we ran
-that objective.
+that objective. Underwriting all three is a calibration we report as a result rather than
+an appendix: beside the usual ceiling, a \emph{measured floor}. A contentless sentence
+scores $12.0\%$; a fluent, correctly-styled sentence describing a \emph{different} screen
+scores $6.1\%$, below it with disjoint intervals --- the grounder is reading content, not
+register.
 
 \section{Related Work}
 
@@ -747,10 +749,9 @@ by identification accuracy, not by the prefix. The lever is therefore not ``remo
 against $+0.5$ for the name alone --- but ``make identification reliable''. Lifting the
 failing cell to the control's own level on those $738$ steps would be worth $4.2$ points,
 the size of effect the study seeks. Section~\ref{sec:mindesc} reports the objective
-registered for exactly that: $+0.63$ pp over its supervised control, inside the
-inconclusive band, $78\%$ of the stage's movement belonging to that control. Identification
-accuracy is both the lever and, so far, what has not moved far enough. Choosing this
-objective \emph{after} seeing the S2 result is a post-hoc decision and is recorded as one.
+registered for exactly that, and what it returned. Identification accuracy is both the
+lever and, so far, what has not moved far enough; choosing this objective \emph{after}
+seeing the S2 result is post-hoc and recorded as one.
 
 \section{Limitations}
 \label{sec:limits}
