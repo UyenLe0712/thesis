@@ -380,53 +380,30 @@ Danh sách đầy đủ + 24 lỗi đã bắt: `report/108`.
 
 ---
 
-## 📄 BÀI FAIR'2026 — ⚠️ MỤC NÀY LỖI THỜI, ĐỌC `report/118` VÀ MỤC *HAI BÀI BÁO* TRƯỚC
+## 📰 HAI BÀI BÁO — trạng thái 29/8/2026
 
-⛔ **Tiêu đề cũ ghi "đang 10 trang, phải cắt 2" — SAI từ 23/8.** Bài đã được viết lại thành
-**bài mô hình**, hiện **8 trang, 0 overfull**. Bản thước-đo cũ ở `main_v1_metric_backup.tex`.
-Phần dưới đây giữ lại vì phần *lệnh dựng*, *hạn nộp* và *danh sách đã-vá-vào-bài* vẫn dùng được;
-mọi câu về số trang và về "cắt gì" thì **bỏ qua**.
+**Nộp cả hai, cách nhau một ngày: VCL 30/8 · FAIR 31/8.**
 
-### (nội dung cũ)
+### Cách chia — chốt 23/8, đang có hiệu lực
 
-**Hạn 31/8, nộp qua EDAS** (`edas.info/index.php?c=35461`; EasyChair đã đóng). Track **Natural
-Language Processing**. Không phản biện ẩn danh ⇒ giữ tên tác giả. Mẫu IEEE, nộp PDF nên bản
-`IEEEtran` dùng được. Tác giả: Lê Đoàn Phương Uyên · Nguyễn Hồng Bửu Long · Faculty of
-Information Technology, University of Science, VNU-HCM.
+⛔ **Không còn bài nào lấy THƯỚC ĐO làm đóng góp chính.** FAIR từng là bài thước đo cho tới
+23/8; chủ luận văn quyết viết lại thành **bài mô hình** vì FAIR là venue khó hơn. Bản
+thước-đo cũ giữ nguyên ở `paper/fair2026/main_v1_metric_backup.tex`.
 
-⛔ **Lệnh dựng đúng: `tectonic -X compile main.tex --outdir .`** (ghi sẵn ở
-`paper/fair2026/README.md:76` và `thesis/build.sh`). Máy **không có `xelatex`**; trợ lý từng tự
-chế `xelatex … >/dev/null 2>&1`, `command not found` bị nuốt, nên mọi lần báo *"8 trang, 0
-overfull"* đều là đọc PDF cũ. Lặp hơn mười lần trong một ngày.
-⇒ **Luật: KHÔNG `>/dev/null 2>&1` trên lệnh dựng; kiểm `ls -la main.pdf` xem mốc giờ trước khi
-tin số trang.** Mọi câu *"vẫn 8 trang"* rải trong ghi chú cũ đều sai và đã bị xoá khi dọn file này.
+| | **FAIR'2026** | **VCL2026** |
+|---|---|---|
+| đóng góp chính | **MÔ HÌNH** | **NHÃN QUY CHIẾU + đường ống dựng dữ liệu** |
+| nhan đề | *Descriptor-First Supervision for GUI Instruction Generation: A Pre-Registered Ablation and a Diagnosis of Where It Breaks* | *Sinh hướng dẫn sử dụng phần mềm từ ảnh chụp màn hình và mục tiêu người dùng: xây dựng nhãn quy chiếu tự động khi phần tử giao diện không có tên để gọi* |
+| trạng thái bản dựng | **8 trang, 0 overfull** (29/8) | **13 trang, 0 overfull** (29/8) |
+| ngôn ngữ | tiếng Anh | tiếng Việt |
 
-**Số thật:** bài **10 trang** (đếm lại 18/8 từ `main.pdf`) · luận văn **77 trang**.
-**⇒ PHẢI CẮT 2 TRANG.** Ứng viên cắt, theo thứ tự: **① §III Task Definition and Dataset
-Construction** (dòng 199–306, ~1,5–2 trang) — cắt còn nửa trang và trích bài VCL, vì VCL nhận đúng
-phần này (xem mục *Hai bài báo*); ② mục **bơm lỗi** (bài tự khai 5/10 hàng là hằng đẳng thức và
-**0/10 hàng gọi tới bộ trỏ**); ③ mục **so với thước có tham chiếu** (luận cứ đồng thuận BLEU/ROUGE
-đã tự hạ).
-**Đừng cắt phần mới** — đó đúng là thứ bốn giám khảo nói đang thiếu.
+⚠️ **Thước đo nay nằm BÊN TRONG FAIR, ở §V *The Instrument*** — đổi vai từ *đối tượng nghiên
+cứu* thành *dụng cụ đã hiệu chuẩn*, nén còn một mục rưỡi. **§V không phải phần đóng góp**;
+phần đóng góp là §IV, §VI, §VIII. Đã có lần đọc lướt mục cũ của file này rồi tưởng nhầm
+"một bài model, một bài thước đo" — chính vì vậy mục cũ đã bị xoá thay vì để lại kèm nhãn.
 
-**Đã vá vào bài:** sàn 12,0 · `f3` 6,1 · cặp 28,5-vs-3,5 · §VII thay đoạn *"floor we have not
-measured"* bằng phép đo · §VIII đoạn gọi-tên-vs-chỉ-chỗ · bản không-tham-chiếu (lệch ≤0,20 pp) ·
-κ có điều kiện · sai số bộ trỏ theo nhánh · điều kiện đảo nghĩa · đếm mục sửa đổi **27, 21 trước
-điểm đầu tiên** · lát cắt ngoài ba lát đăng ký **gắn nhãn thăm dò** · hạ luận cứ đồng thuận
-BLEU/ROUGE · tách mức câu vs mức hệ thống · tự khai hai lần nới ngưỡng sau khi thấy điểm kèm
-phản chứng.
-
-**Luận văn (77 trang):** `thesis/chapters/ch5_thuocdo.tex` thêm mục **Sàn của thước** ·
-`ch6_thucnghiem.tex` thêm mục **Lặp lại lượt huấn luyện** (bảng hai hạt giống · κ có điều kiện ·
-tất định 2.810/2.810 · sáu lát cắt đều tái lập).
-⛔ **Quét toàn kho sau mỗi lần rút số** — `total_flos` sai đã sống trong `.tex` nhiều ngày sau khi
-đã rút ở `CLAUDE.md` và `report/108`.
-
----
-
-## 📰 HAI BÀI BÁO — CÁCH CHIA (quyết 18/8; user giao trợ lý quyết, sẽ bàn lại sau)
-
-**Nộp cả hai, cách nhau một ngày: VCL 30/8 · FAIR 31/8.** 12 ngày kể từ 18/8.
+Phản biện bốn giám khảo + phán quyết từng đòn: **`report/118_PHAN_BIEN_HAI_BAI_23_8.md`**
+(Mục 0 giữ bảng phân số đang dùng). Bảng 2×2 kèm cột Base và cột TRẦN: `harness/phan_tich_o_khai_bao.py`.
 
 ### Venue
 
@@ -435,93 +412,73 @@ tất định 2.810/2.810 · sáu lát cắt đều tái lập).
 | tên đầy đủ | — | **Hội thảo Quốc gia lần 4 về Ngôn ngữ học Tính toán** |
 | ngày họp | — | HUFLIT, **27/11/2026** |
 | chủ đề | track **Natural Language Processing** | **"AI tạo sinh, Ngôn ngữ và Trách nhiệm xã hội"** |
-| ngôn ngữ bài | tiếng Anh | **tiếng Việt** |
-| hạn nộp | **31/8**, qua EDAS | **30/8** |
-| trang | `edas.info/index.php?c=35461` | `https://vcl.huflit.edu.vn/` |
+| hạn nộp | **31/8**, qua EDAS (`edas.info/index.php?c=35461`; EasyChair đã đóng) | **30/8** (`https://vcl.huflit.edu.vn/`) |
+| ẩn danh | **không** phản biện ẩn danh ⇒ giữ tên tác giả | — |
+| mẫu | IEEE, nộp PDF ⇒ `IEEEtran` dùng được | quy cách đo từ kỷ yếu VCL 2025 — xem mục *CÒN TREO* |
 
-⚠️ **Ba thứ chưa lấy được, phải tự mở phần hướng dẫn gửi bài của VCL** (trang chủ VCL2026 không
-đăng, đã tra 18/8): **giới hạn số trang** · **mẫu định dạng** · **chính sách trùng lặp / nộp đồng
-thời**. Điều thứ ba quan trọng nhất vì hai bài dùng chung bộ dữ liệu và chung mô hình, nộp cách
-nhau một ngày. Hạn **30/8 là user nhớ**, CFP chưa xác minh.
+Tác giả: Lê Đoàn Phương Uyên · Nguyễn Hồng Bửu Long · Faculty of Information Technology,
+University of Science, VNU-HCM.
 
-### ⚠️ MỤC NÀY ĐÃ BỊ THAY 23/8 — ĐỌC `report/118` TRƯỚC
+⛔ **Rủi ro lớn nhất còn mở: chính sách trùng lặp / nộp đồng thời của VCL vẫn CHƯA kiểm.**
+Chi tiết ở mục *CÒN TREO* cuối file.
 
-⛔ **FAIR KHÔNG CÒN LÀ BÀI THƯỚC ĐO. FAIR NAY LÀ BÀI MÔ HÌNH.** Chủ luận văn quyết 23/8:
-FAIR là venue khó hơn nên đặt đóng góp mô hình ở đó. Thước đo **vẫn nằm trong bài** nhưng
-đổi vai — từ *đối tượng nghiên cứu* thành *dụng cụ đã hiệu chuẩn*, gói trong một mục rưỡi.
+### ⛔ Lệnh dựng — bài học đắt nhất của hai bài
 
-| | trạng thái 23/8 |
-|---|---|
-| `paper/fair2026/main.tex` | **8 trang, 0 overfull** — nhan đề mới *"Descriptor-First Supervision for GUI Instruction Generation: A Pre-Registered Ablation and a Diagnosis of Where It Breaks"*. Bản thước-đo cũ giữ ở `main_v1_metric_backup.tex` |
-| `paper/vcl2026/main.tex` | **9 trang một cột, 0 overfull** — tiếng Việt, bố cục LNCS + font/giãn theo hướng dẫn VCL (Times 13, giãn 1,5) |
-| phản biện bốn giám khảo + phán quyết từng đòn | **`report/118_PHAN_BIEN_HAI_BAI_23_8.md`** |
-| bảng 2×2 kèm cột Base và **cột TRẦN** (mới, chặn biên confound độ khó) | `harness/phan_tich_o_khai_bao.py` |
+**`tectonic -X compile main.tex --outdir .`** (ghi sẵn ở `paper/fair2026/README.md:76` và
+`thesis/build.sh`). Máy **không có `xelatex`**; trợ lý từng tự chế `xelatex … >/dev/null 2>&1`,
+`command not found` bị nuốt, nên mọi lần báo *"8 trang, 0 overfull"* đều là đọc PDF cũ. Lặp
+hơn mười lần trong một ngày.
+⇒ **Luật: KHÔNG `>/dev/null 2>&1` trên lệnh dựng; kiểm `ls -la main.pdf` mốc giờ trước khi tin
+số trang.** Số trang đọc từ `main.log`: `grep "Output written" main.log`.
+⚠️ Sửa toàn chuỗi cùng độ dài (đổi chữ số) thì **PDF ra đúng bằng byte cũ** — đừng đọc kích
+thước tệp không đổi thành "dựng hụt".
 
-**Bảng phân số bên dưới đã hết hiệu lực** — bản đang dùng nằm ở `report/118` Mục 0.
+### VCL — đóng khung thế nào
 
-<details><summary>Bốn lý do của bản 18/8, giữ lại để tra lịch sử</summary>
-
-**Bốn lý do đặt bài chính ở thước đo (bản 18/8, đã bị quyết định 23/8 thay):**
-1. Phần đo **đã chịu được bốn lượt phản biện độc lập**; bảy lỗi bắt được trong hai ngày không lỗi
-   nào ở khâu đo. Phần mô hình chưa qua vòng phản biện nào.
-2. **Đã viết xong**, chỉ còn cắt 2 trang. Viết lại FAIR thành bài mô hình trong 12 ngày là tự sát.
-3. **Không phụ thuộc S2** — lượt train đang chạy, đăng ký trước ước P(vượt MDE) ≈ 50%. Đặt cửa
-   chính vào một con số chưa biết là sai.
-4. **Là phần khó thật:** sàn 12,0 · câu sai màn 6,1 thấp hơn cả câu rỗng · gọi tên đắt gấp 8 lần
-   chỉ chỗ — chưa ai đo. Còn "grounding trước, sinh sau" thì GCoT và Aguvis đã đi qua, S2 chỉ
-   mạnh hơn ở chỗ ablation sạch hơn.
-
-</details>
-
-### VCL = bài ĐƠN GIẢN = **NHÃN MÔ TẢ PHẦN TỬ** (phần này vẫn đúng)
-
-Rút từ **`thesis/chapters/ch3_dulieu.tex`** (291 dòng, **đã sẵn tiếng Việt**, không phải dịch):
-nguồn và phép ghép đa nguồn · kiểm phép ghép · quy mô, chia tập, rò rỉ · trích chữ trên màn ·
-**nhãn mô tả tự động** (hai cổng lọc thêm sau khi đo · ô dấu hiệu phân biệt phải làm lại · chất
-lượng nhãn ở quy mô đủ · một quyết định đã tranh luận rồi bác) · bốn nhánh và bất biến cấu trúc.
+Rút từ **`thesis/chapters/ch3_dulieu.tex`** (đã sẵn tiếng Việt, không phải dịch): nguồn và phép
+ghép đa nguồn · kiểm phép ghép · quy mô, chia tập, rò rỉ · trích chữ trên màn · nhãn mô tả tự
+động · bốn nhánh và bất biến cấu trúc.
 
 ⚠️ **Đóng khung theo hướng NGÔN NGỮ, đừng đóng khung "chúng tôi dựng bộ dữ liệu"** — VCL là hội
 thảo ngôn ngữ học tính toán. Câu chuyện đúng là **sinh biểu thức quy chiếu cho phần tử giao diện**:
 gọi tên thế nào để bên kia trỏ đúng, khi **22% phần tử không có tên** và **7,6% trùng tên**. Đó là
-dòng REG (Mao CVPR16 · Yu CVPR17 · Luo CVPR17) đặt vào miền GUI, hợp chủ đề "AI tạo sinh và ngôn
-ngữ" của họ. Nhắc lại luật cũ: **cấm chữ "đầu tiên"/"mới"** cho ý này, dòng REG chiếm từ 2016.
-
-**Không đợi S2 · không phải dịch · không phải chạy thêm phép đo nào.**
-
-### Vì sao cách chia này ăn nhau
-
-Phần VCL lấy **đúng là phần FAIR đang phải cắt**: `paper/fair2026/main.tex` **§III Task Definition
-and Dataset Construction (dòng 199–306, ~1,5–2 trang)** trùng gần hết với ch3. Cắt §III xuống nửa
-trang + trích VCL ⇒ FAIR về 8 trang. Một nhát dao giải hai việc.
+dòng REG (Mao CVPR16 · Yu CVPR17 · Luo CVPR17) đặt vào miền GUI. **Cấm chữ "đầu tiên"/"mới"** cho
+ý này — dòng REG chiếm từ 2016.
 
 ### Bảng phân số — chống trùng lặp
 
 | số | thuộc bài nào |
 |---|---|
-| trần 75,7 · sàn 12,0 / 6,1 · cổng A · 5 luật chấm · diễn đạt lại · gọi-tên-vs-chỉ-chỗ · tất định · κ | **FAIR, độc quyền** |
-| Base 47,6 · S1 59,1 (hạt 101) và 59,4 (trung bình hai hạt, số trong abstract) · S2 (khi có) | **FAIR, độc quyền** |
-| ghép hai kho 2,4× · rò rỉ 0 · OCR phủ 100% · chất lượng nhãn (73,6 / 22,0 / 7,6) · hai cổng lọc · quyết định A′ bị bác · 9 bất biến | **VCL, độc quyền** |
+| trần 75,7 · sàn 12,0 / 6,1 · cổng A · 5 luật chấm · diễn đạt lại · gọi-tên-vs-chỉ-chỗ · tất định · κ | **FAIR, độc quyền** (dụng cụ, không phải đóng góp) |
+| Base 47,6 · S1 59,1/59,6 · S2 57,2 · CE2 59,4 · MIN 60,1 · bảng 2×2 · lát 7,3% | **FAIR, độc quyền** |
+| ghép hai kho 2,4× · rò rỉ 0 · OCR phủ 100% · chất lượng nhãn (73,6 / 22,0 / 7,6) · hai cổng lọc · quyết định A′ bị bác · 9 bất biến · bảng dấu hiệu phân biệt · phép so ô tên với câu người (53,5 vs 5,1) | **VCL, độc quyền** |
 | quy mô 64.567 / 6.958 / 4.463 | cả hai nêu — **VCL tả đủ, FAIR một câu + trích VCL** |
 
 **Trích chéo dạng *"đang bình duyệt"*** — nộp cách nhau một ngày nên không bài nào có ID/DOI.
 Phần dùng chung phải **viết lại câu chữ**, không bê nguyên (khác ngôn ngữ nên rủi ro thấp).
 
-### S2 nằm ở đâu
+### Đã vá vào FAIR (giữ để khỏi vá lại)
 
-**S2 là một hàng thêm vào bảng kết quả của FAIR, KHÔNG phải headline của bài nào.** Kịp (22–23/8)
-thì thêm, không kịp thì bỏ — không bài nào chết theo. Nhờ vậy câu hỏi *"S2 trắng thì VCL làm gì"*
-tự tan; user chọn "quyết sau khi có số" và nay không còn phải quyết.
-Headline của luận văn vẫn là S2 vs S1 (`thesis/ch6`), không đổi.
+sàn 12,0 · `f3` 6,1 · cặp 28,5-vs-3,5 · §VII thay đoạn *"floor we have not measured"* bằng phép
+đo · §VIII đoạn gọi-tên-vs-chỉ-chỗ · bản không-tham-chiếu (lệch ≤0,20 pp) · κ có điều kiện · sai
+số bộ trỏ theo nhánh · điều kiện đảo nghĩa · đếm mục sửa đổi **27, 21 trước điểm đầu tiên** · lát
+cắt ngoài ba lát đăng ký **gắn nhãn thăm dò** · hạ luận cứ đồng thuận BLEU/ROUGE · tách mức câu vs
+mức hệ thống · tự khai hai lần nới ngưỡng sau khi thấy điểm kèm phản chứng.
 
-### Lịch 12 ngày
+**Soát số 29/8 (commit `01355e4`) — tám chỗ, đã vá:** FAIR gỡ lại câu *"across the 99,131 trees"*
+(bản nháp **thêm lại** một số đã rút) · tỉ lệ S1 trên trần 78,1 → **78,0** (84,4 tính bằng S1/101
+nên vế sau phải cùng gốc; **78% ở mục quy công là đại lượng khác**, vẫn đúng) · trung vị độ dài câu
+31 → **33 và 34** · điền ô dung sai S1/202 = **69,8**. VCL: *"lát thử nhỏ hơn 24 lần"* → **38 lần**
+(lát thử đúng **1.074** nhãn) · đếm hướng mỏ neo 7.768/1.894 → **8.382/2.033** (bốn hướng nay cộng
+đúng 27.628) · trùng tên lát thử 6,9 → **7,0%**.
 
-| ngày | việc |
-|---|---|
-| 19–21/8 | viết nháp VCL từ ch3 · song song cắt §III của FAIR |
-| 22–23/8 | S2 có số → thêm hàng vào bảng FAIR |
-| 24–27/8 | hoàn thiện hai bài · rà trùng theo bảng phân số · kiểm citation |
-| 28–29/8 | đọc soát · dựng PDF bằng `tectonic` (**kiểm `ls -la main.pdf` mốc giờ trước khi tin số trang**) |
-| 30/8 · 31/8 | nộp VCL · nộp FAIR |
+### Luận văn (77 trang)
+
+`thesis/chapters/ch5_thuocdo.tex` thêm mục **Sàn của thước** · `ch6_thucnghiem.tex` thêm mục
+**Lặp lại lượt huấn luyện** (bảng hai hạt giống · κ có điều kiện · tất định 2.810/2.810 · sáu lát
+cắt đều tái lập). Headline của luận văn vẫn là S2 vs S1, không đổi.
+⛔ **Quét toàn kho sau mỗi lần rút số** — `total_flos` sai đã sống trong `.tex` nhiều ngày sau khi
+đã rút ở `CLAUDE.md` và `report/108`.
 
 ### Phương án đã cân nhắc và gác lại
 
@@ -530,7 +487,7 @@ executability, xem thước có sống qua đổi ngôn ngữ không. Hợp venu
 chấm Kaggle 5,6 giờ + dựng bản dịch. **Gác vì user muốn VCL đơn giản.** Nếu sau này còn thời gian
 thì đây là mục thêm đáng giá nhất cho VCL.
 
-### ⛔ Hai thứ đã chết, đừng theo
+### ⛔ Ba thứ đã chết, đừng theo
 
 · **`report/KE_HOACH_2_BAI_BAO.md` (bản 3, 12/7)** định VCL = *sinh hướng dẫn tiếng Việt trên màn
 MobileViews*. Chết cả hai vế: MobileViews đã rời khỏi đề tài, và không có thí nghiệm tiếng Việt nào.
@@ -539,6 +496,9 @@ File vẫn giữ để tra lịch sử.
 Copeland, MobileViews, ScreenSpot, "không fine-tune", GPT-4o E2E) — khung prompting **đã bị bác
 19/7**. Bảng chia bài trong skill đó (VCL=DG1, FAIR=DG2) **sai hoàn toàn với hiện trạng**. Cần
 viết lại hoặc gỡ; trước khi làm việc đó thì **đừng theo skill, theo mục này**.
+· **Bản 18/8 đặt bài chính ở thước đo** cùng kế hoạch *"FAIR 10 trang, phải cắt 2 trang, cắt §III
+rồi trích VCL"* — quyết định 23/8 thay toàn bộ. Lý do của bản 18/8 còn tra được ở lịch sử git của
+file này.
 
 ---
 
