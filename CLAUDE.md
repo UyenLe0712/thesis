@@ -35,6 +35,8 @@ Colab phụ thuộc cũng dùng tên `harness`).
 |---|---|
 | **⭐ TRẠNG THÁI HIỆN TẠI — đọc một mình là hiểu, từ 23/8 trở đi** | **`report/119_TRANG_THAI_SAU_23_8.md`** |
 | **đi hướng nào tiếp — tranh luận + tiền lệ + phán quyết (25/8)** | **`report/120_TRANH_LUAN_HUONG_TIEP.md`** |
+| **kế hoạch tháng 9 (bản chép từ ảnh — THIẾU §7.5, xem `report/YEU_CAU_GUI_CHAT_MAC.md`)** | **`report/123_CHOT_CUOI_PIPELINE_CHEP_TU_ANH.md`** |
+| **tuần 1 tháng 9: đã chạy tới đâu, chặn ở đâu** | **`report/125_TUAN_1_THANG_9.md`** |
 | cơ chế kỹ thuật toàn dự án, từ đầu | `report/112_HIEU_TOAN_BO_KY_THUAT.md` |
 | đang ở đâu (bản đồ CŨ, trước 23/8) | `report/109_BAN_DO_HIEN_TAI.md` |
 | phải làm gì (đăng ký trước, đã niêm phong) | `report/106_DANG_KY_TRUOC.md` |
@@ -246,9 +248,10 @@ Mọi danh sách "việc kế" cũ rải rác trong file đã bị danh sách n�
    · ⚠️ Cỡ ảnh **3.354 tok OOM trên T4×2**; chốt **1.272 tok** vì KTC hai trần chồng nhau ⇒
      chọn cỡ **nhanh nhất** (4,0 s/bước), phải khai đúng vậy trong bài.
 
-5. ⛔ **Mìn chưa nổ:** `test_ac/descriptors.jsonl` **vẫn tiếng Việt** (dựng 9/8; mục (q) chỉ
-   dựng lại tập dạy). `infer_branch.py:480` nhét nó vào câu nhắc cho `--ceiling gold|filler`.
-   **Chạy `descriptor_label_build.py --split test` TRƯỚC** hai nhánh đó — không có ô 7b nào canh.
+5. ✅ **MÌN ĐÃ GỠ 29/8** — `test_ac/descriptors.jsonl` nay là bản tiếng Anh (bản Việt giữ ở
+   `descriptors_VI_0809.bak.jsonl`). So từng bước bản cũ↔mới trên 4.448 bước: `name` ·
+   `point_norm` · `tier` · `name_src` · `box` · `dup_name` · `same_role` **lệch 0**, chỉ `role`
+   và `hint` đổi ngôn ngữ ⇒ **không con số nào đã công bố phải sửa**. Chi tiết `report/125` mục 1.
 
 **Ràng buộc tài nguyên:** Kaggle **30 giờ GPU/tuần** (mỗi lượt chấm 5,6 giờ ⇒ tối đa 5
 lượt/tuần, đừng dồn). Đơn vị Colab: **đếm lại trong phiên**, con số ghi trong file lỗi thời rất
@@ -767,7 +770,11 @@ Chỗ lưu: thứ bắt buộc sống qua các phiên chỉ ~3 GB; 67 GB ảnh t
 `descriptor_label_build.py` · `prep_ocr_train.py` · `tag_app_seen.py` ·
 **`build_min_desc.py`** (dựng 22.854 cặp MIN-DESC + đối chứng CE2-S2, 7 bất biến) ·
 **`do_eligibility.py`** (đo cổng eligibility, in CẢ HAI thiết kế cặp, không có cờ tắt bớt) ·
-**`gate_desc_acc.py`** (cổng cơ học MIN-DESC — độ chính xác khai báo, KHÔNG gọi bộ trỏ; mốc S2 = **53,9%**)
+**`gate_desc_acc.py`** (cổng cơ học MIN-DESC — độ chính xác khai báo, KHÔNG gọi bộ trỏ; mốc S2 = **53,9%**) ·
+**`build_candidates.py`** (khối ≤40 ứng viên/màn + cổng G1 96,7% · G2 91,2% trên tập kiểm) ·
+**`build_sel_data.py`** (dựng hai nhánh `gui_sel` / `gui_sft_match` của `report/123` §3.2–3.3 —
+7 bất biến + cổng G3 rò rỉ + G4 độ dài; `gold_candidate()` ở đây là **bản duy nhất**, lúc chấm
+`sel_acc` phải import lại chứ đừng viết bản thứ hai)
 · train/suy luận/chấm — `train_config.yaml` · **`train_config_orpo.yaml`** (MIN-DESC) ·
 **`train_config_ce2.yaml`** (đối chứng) · `infer_branch.py` · `score_run.py` ·
 `metric_exec.py` (thư viện hàm chấm — **luật chấm mặc định không đổi từ commit `b93e85c`
