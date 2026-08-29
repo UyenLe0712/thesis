@@ -127,8 +127,7 @@ lệch mà không phát sinh lỗi chương trình: phép ghép lệch một bư
 đối chứng chủ ý ($48\%$ so với $20\%$, $n = 400$), và ô dấu hiệu phân biệt ở bản đầu chỉ
 phân giải được $7{,}3\%$ số ca, phải làm lại từ đầu để đạt $75{,}3\%$. Phân bố của ô này cho
 thấy một hạn chế mà con số gộp che mất: dấu hiệu neo theo một chuỗi chữ lân cận chỉ dựng được cho $57{,}5\%$ số phần tử \emph{không} có tên, so với $72{,}2\%$ ở nhóm \emph{có} tên rõ ràng, tức nhóm cần quy chiếu bằng dấu hiệu nhất lại được phục vụ kém nhất. Đối chiếu với một nguồn nằm ngoài quy trình,
-$53{,}5\%$ số nhãn có tên khớp nguyên văn với câu do người viết, so với $5{,}1\%$ của đối
-chứng lệch một bước ($n = 3.505$). Dữ liệu ra được kiểm bằng chín bất biến cấu trúc và
+$53{,}5\%$ số nhãn có tên khớp nguyên văn với câu do người viết, so với $5{,}4\%$ của đối chứng lệch một bước ($n = 3.505$), và $7{,}6\%$ khi siết đối chứng vào bước liền sau trong cùng chuỗi thao tác. Dữ liệu ra được kiểm bằng chín bất biến cấu trúc và
 không có tác vụ nào rò rỉ giữa tập dạy và tập kiểm.\par}
 
 
@@ -598,9 +597,16 @@ Chúng tôi có năm phép kiểm như vậy, và trình bày cả những kết
 
 \emph{Đối chiếu ô tên với câu do người viết.} Đây là phép kiểm duy nhất dùng tới một nguồn nằm hẳn ngoài quy trình: câu chỉ dẫn do người viết. Quy trình không đọc câu đó ở bất kỳ khâu nào (vai trò, tên, toạ độ và dấu hiệu đều tính từ cây trợ năng, hộp bao và kết quả OCR), nên việc ô tên trùng với chữ người viết dùng là một phép so ngoại sinh chứ không
 phải phép tự kiểm. Trên $3.505$ nhãn có tên của tập kiểm, $53{,}5\%$ mang ô tên xuất hiện
-nguyên văn trong câu của người ($1.875/3.505$; khoảng tin cậy Wilson $95\%$: $[51{,}8 \cdot 55{,}1]$); đem đúng những
-cái tên ấy ghép với câu của bước liền sau thì chỉ còn $5{,}1\%$ $[4{,}4 \cdot 5{,}9]$. Tỉ số
-hơn mười lần, và đây là phép đo trên toàn tập chứ không phải trên một lát mẫu.
+nguyên văn trong câu của người ($1.875/3.505$; khoảng tin cậy Wilson $95\%$:
+$[51{,}8 \cdot 55{,}1]$). Đem đúng những cái tên ấy ghép với câu của bước liền sau thì chỉ
+còn $5{,}4\%$ $[4{,}7 \cdot 6{,}2]$.
+
+Đối chứng đó có thể bị chê là quá dễ, vì hai bước liền nhau trong tệp không nhất thiết
+thuộc cùng một chuỗi thao tác. Siết lại, chỉ ghép với bước liền sau \emph{trong cùng
+chuỗi} --- tức cùng ứng dụng, và màn hình thường rất giống nhau --- thì tỉ lệ khớp nhầm
+lên $7{,}6\%$ $[6{,}5 \cdot 8{,}9]$ trên $1.848$ bước có bước kế. Ngay ở đối chứng chặt
+hơn này, khoảng cách với $53{,}5\%$ vẫn là bảy lần, và cả hai phép đo đều chạy trên toàn
+tập chứ không phải trên một lát mẫu.
 
 Phải đọc con số này cho đúng theo cả hai chiều. Nó \emph{không} có nghĩa gần một nửa số
 nhãn sai tên: người viết thường gọi phần tử bằng tên chủng loại của nó thay vì bằng chuỗi chữ in trên
