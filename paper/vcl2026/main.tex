@@ -126,9 +126,7 @@ ngữ khác sinh ra. Đi kèm là bộ phép kiểm dựng dữ liệu và bản
 lệch mà không phát sinh lỗi chương trình: phép ghép lệch một bước được phát hiện bằng một
 đối chứng chủ ý ($48\%$ so với $20\%$, $n = 400$), và ô dấu hiệu phân biệt ở bản đầu chỉ
 phân giải được $7{,}3\%$ số ca, phải làm lại từ đầu để đạt $75{,}3\%$. Phân bố của ô này cho
-thấy một hạn chế mà con số gộp che mất: mỏ neo theo chữ phủ $72{,}2\%$ số phần tử \emph{có}
-tên rõ ràng nhưng chỉ $57{,}5\%$ số phần tử \emph{không} có tên, tức nhóm cần quy chiếu bằng
-dấu hiệu nhất lại được phục vụ kém nhất. Đối chiếu với một nguồn nằm ngoài quy trình,
+thấy một hạn chế mà con số gộp che mất: dấu hiệu neo theo một chuỗi chữ lân cận chỉ dựng được cho $57{,}5\%$ số phần tử \emph{không} có tên, so với $72{,}2\%$ ở nhóm \emph{có} tên rõ ràng, tức nhóm cần quy chiếu bằng dấu hiệu nhất lại được phục vụ kém nhất. Đối chiếu với một nguồn nằm ngoài quy trình,
 $53{,}5\%$ số nhãn có tên khớp nguyên văn với câu do người viết, so với $5{,}1\%$ của đối
 chứng lệch một bước ($n = 3.505$). Dữ liệu ra được kiểm bằng chín bất biến cấu trúc và
 không có tác vụ nào rò rỉ giữa tập dạy và tập kiểm.\par}
@@ -284,9 +282,7 @@ tên thật; khi không có nhãn chuẩn cho chữ trên màn thì tần suất
 \section{Nhãn mô tả bốn ô}
 \label{sec:nhan}
 
-Đầu ra mong đợi của nhánh đề xuất chứa một dòng khai báo có cấu trúc về phần tử đích, dựng hoàn toàn bằng luật. Các bước dựng nhãn như sau: từ toạ độ chạm đáp án, chọn hộp trợ năng
-\emph{nhỏ nhất} chứa điểm đó; vai trò lấy từ cây; tên lấy từ cây nếu vượt cổng lọc hợp
-lệ, ngược lại lấy từ OCR bên trong hộp; ô toạ độ giữ chính điểm chạm quy về thang
+Đầu ra mong đợi của nhánh đề xuất chứa một dòng khai báo có cấu trúc về phần tử đích, dựng hoàn toàn bằng luật. Các bước dựng nhãn như sau: từ toạ độ chạm đáp án, chọn \emph{hộp bao} nhỏ nhất chứa điểm đó, trong đó hộp bao là hình chữ nhật mà cây trợ năng ghi cho mỗi phần tử để cho biết phần tử ấy chiếm vùng nào trên màn; vai trò lấy từ cây; tên lấy từ cây nếu vượt cổng lọc hợp lệ, ngược lại lấy từ chuỗi OCR nằm bên trong hộp; ô toạ độ giữ chính điểm chạm quy về thang
 $[0,1000]$; ô thứ tư giữ một dấu hiệu phân biệt tính bằng luật. Một nhãn hoàn chỉnh trông
 như sau:
 
@@ -502,7 +498,7 @@ vốn đã là rác. Nghĩa là ưu thế của OCR là ưu thế của \emph{vi
 \emph{thứ tự ưu tiên}. Kết luận: giữ nguyên thứ tự, thêm cổng lọc - chính là cổng lọc
 nhãn trợ năng ở mục trước.
 
-Bài học phương pháp: một tỉ số $3{,}2$ lần đo trên toàn bộ dữ liệu chưa diễn giải được chừng nào chưa xác định được nó áp lên bao nhiêu phần trăm số ca và cơ chế nào sinh ra nó.
+Ca này cho thấy một tỉ số như $3{,}2$ lần, dù đo trên toàn bộ dữ liệu, vẫn chưa diễn giải được chừng nào chưa xác định được nó áp lên bao nhiêu phần trăm số ca và cơ chế nào sinh ra nó.
 
 \section{Bốn nhánh dữ liệu và chín bất biến}
 
@@ -660,14 +656,12 @@ nó gọi đúng tên trong nhãn chuẩn ở $68{,}5\%$ số bước có đủ 
 \section{Hạn chế}
 \label{sec:hanche}
 
-\emph{Một phần tư dấu hiệu phân biệt vẫn không phân giải được gì.} $24{,}7\%$ ô thứ tư
-chỉ đếm số lượng hoặc chỉ nêu rằng có trùng tên; với những bước đó, nhãn thực chất còn
+\emph{Một phần tư dấu hiệu phân biệt vẫn không phân giải được gì.} Phần bù của con số $75{,}3\%$ ở Mục~\ref{sec:phanbo} là $24{,}7\%$: chừng ấy ô thứ tư chỉ đếm số lượng hoặc chỉ nêu rằng có trùng tên; với những bước đó, nhãn thực chất còn
 ba ô định danh. Nghiêm trọng hơn con số gộp là phân bố của nó
 (Mục~\ref{sec:phanbo}): tỉ lệ này xấu nhất đúng ở nhóm phần tử không có tên và nhóm chỉ
 có ký hiệu, tức đúng nơi dấu hiệu phân biệt là phương tiện quy chiếu duy nhất còn lại.
 Đây là hạn chế lớn nhất của bộ nhãn hiện tại và là việc phải sửa trước tiên nếu dựng lại:
-nguồn neo phải mở rộng ra ngoài chuỗi OCR gần nhất, chẳng hạn dùng quan hệ với phần tử
-cùng vai trò ($91{,}6\%$ số màn có ít nhất một phần tử như vậy, trung vị $8$).
+nguồn neo phải mở rộng ra ngoài chuỗi OCR gần nhất, chẳng hạn dùng quan hệ với các phần tử cùng vai trò trên màn: $91{,}6\%$ số màn có ít nhất một phần tử như vậy, và trung vị số phần tử cùng vai trò trên một màn là $8$.
 
 \emph{Không có nhãn chuẩn cho chữ trên màn.} AndroidControl không cung cấp ground truth
 cho OCR, nên chúng tôi không tuyên bố độ chính xác OCR mà chỉ báo cáo độ ổn định giữa hai lần chạy và hai dạng sai sót đã quan sát.
@@ -700,10 +694,11 @@ Bài báo trình bày một quy trình tự động hoàn toàn, chuyển Androi
 diện. Đặc thù ngôn ngữ của miền này ($12{,}6\%$ phần tử có tên trong cây trợ năng, $22{,}0\%$ phần tử đích không có tên, $7{,}6\%$ trùng tên) buộc nhãn phải mang một ô dấu hiệu phân biệt dựa trên quan hệ với chữ lân cận, và chính ô đó là phần phải làm lại
 từ đầu sau khi đo thấy bản đầu chỉ phân giải được $7{,}3\%$ số ca.
 
-Phần chúng tôi cho là dùng lại được nhiều nhất không phải bộ nhãn mà là cách kiểm: một
-đối chứng lệch chủ ý để bắt lỗi ghép, chín bất biến cấu trúc chạy sau mỗi lần dựng lại,
-phép kiểm rò rỉ ở quy mô đủ, và thói quen truy một tỉ số bất thường về tận cơ chế sinh ra
-nó trước khi đổi thiết kế. Bốn lỗi nêu trong bài đều thuộc loại không làm chương trình dừng: kết quả vẫn ra, vẫn hợp lý, chỉ có giá trị là sai. Đó là loại lỗi mà chỉ phép kiểm dựng sẵn mới bắt được.
+Phần chúng tôi cho là dùng lại được nhiều nhất không phải bộ nhãn mà là bộ phép kiểm đi
+kèm nó, cùng một thói quen: truy một tỉ số bất thường về tận cơ chế sinh ra nó trước khi
+đổi thiết kế. Không lỗi nào trong bốn lỗi nêu ở trên làm chương trình dừng, nên nếu thiếu
+những phép kiểm ấy thì bộ nhãn vẫn được dựng xong đúng số dòng và vẫn qua được mọi phép
+đọc thông thường; sai lệch chỉ nằm lại trong giá trị của từng ô.
 
 %% tiêu đề mục tài liệu tham khảo canh trái, khác mục cấp 1 (canh giữa)
 \titleformat{\section}[block]{\normalsize\bfseries}{}{0pt}{}
