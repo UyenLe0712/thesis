@@ -429,7 +429,18 @@ Chi tiết ở mục *CÒN TREO* cuối file.
 `command not found` bị nuốt, nên mọi lần báo *"8 trang, 0 overfull"* đều là đọc PDF cũ. Lặp
 hơn mười lần trong một ngày.
 ⇒ **Luật: KHÔNG `>/dev/null 2>&1` trên lệnh dựng; kiểm `ls -la main.pdf` mốc giờ trước khi tin
-số trang.** Số trang đọc từ `main.log`: `grep "Output written" main.log`.
+số trang.**
+⛔ **`main.log` trong kho là BẢN CŨ — tectonic KHÔNG ghi log trừ khi có `--keep-logs`.** Ngày
+29/8 log FAIR còn là bản 25/8, báo *"8 trang"* trong khi bài đã **9 trang**, vượt trần. Suýt nộp
+bài quá trang.
+⇒ **Cách đúng, dùng cho cả hai bài:**
+```
+rm -f main.log && tectonic -X compile main.tex --outdir . --keep-logs
+grep -oE "Output written on main\.xdv \([0-9]+ page" main.log   # số trang
+grep -c Overfull main.log                                        # phải là 0
+```
+⚠️ **Trần trang: FAIR ≤ 8 (cứng) · VCL không giới hạn.** Bài FAIR luôn kín đúng 8 trang ⇒ **thêm
+chữ là phải cắt chữ**, cắt xong dựng lại kiểm ngay chứ đừng ước lượng.
 ⚠️ Sửa toàn chuỗi cùng độ dài (đổi chữ số) thì **PDF ra đúng bằng byte cũ** — đừng đọc kích
 thước tệp không đổi thành "dựng hụt".
 
