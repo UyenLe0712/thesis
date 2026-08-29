@@ -72,3 +72,44 @@ nhỏ dễ đọc nhầm số) các mục sau, theo thứ tự ưu tiên:
 Đây **đúng y kết cục của MIN-DESC** (60,05% cao nhất mọi nhánh, nhưng Δ so S1/101 chỉ +0,94 pp,
 p=0,11 ⇒ ô TRẮNG). Câu hỏi: **§7.5 / `gui_orpo_hard` giải quyết chuyện này bằng cách nào?** Cụ thể
 là tách biến nào ra khỏi nhánh đối chứng để Δ bắt được phần đóng góp của khối ứng viên?
+
+---
+
+## Cập nhật 29/8 — cái gì đang chặn, cái gì KHÔNG
+
+Rà lại sau khi lên kế hoạch tháng 9. Bên WSL **không ngồi chờ** — phần dưới đây chạy được ngay
+mà không cần file gốc, chat kia khỏi lo phải trả lời gấp mọi mục:
+
+| việc tuần 1 | có chặn không | lấy định nghĩa ở đâu |
+|---|---|---|
+| Cổng **G1 · G2 · G3 · G4** | ❌ không chặn | `report/121` §6 đã khoá đủ ngưỡng + luật trượt |
+| `harness/build_sel_data.py` | ❌ không chặn | `123` §3.2 (ảnh có phủ) đã chép nguyên văn `gold_candidate` |
+| `prompt_body(..., cands=None)` + `--selftest` | ❌ không chặn | `123` §3.1 |
+| Gỡ mìn `descriptor_label_build.py --split test` | ❌ không chặn | chuyện riêng của kho WSL |
+| Verify model card Qwen3-VL-4B | ❌ không chặn | tra ngoài |
+| Cảnh báo lát nội sinh · risk–coverage · luận văn | ❌ không chặn | số đã nằm sẵn trên kho |
+| **Bấm train (72–88 h A100)** | ⛔ **CHẶN** | cần **§7.5** để biết train cặp nhánh nào |
+
+⇒ Thứ duy nhất thật sự chặn là **§7.5**, và nó chặn ở **cuối tuần 1**, không phải hôm nay.
+Ưu tiên 1 trong bảng trên vẫn giữ nguyên, chỉ là biết rõ hạn thực tế.
+
+---
+
+## Ba câu hỏi nữa, nhờ trả lời luôn khi mở file
+
+**(2) §7.5 có lịch trình và điểm quyết định riêng không, hay vẫn dùng `121` §7?**
+`121` §7 có lịch 9 tuần + cổng **G1–G7** + ba điểm quyết định **D1/D2/D3**. Nhưng vòng 5 của `123`
+đã **bỏ G7** (dải lùi) và hạ cơ chế từ chối ⇒ **D1 không còn đối tượng để quyết**, và bảng ngân
+sách của `121` (~140 h cho kịch bản đầy đủ) khác hẳn con số **72–88 h** ở §0 của `123`.
+Nếu §7.5 có bảng lịch + ngân sách riêng thì paste **cả bảng**, đừng tóm tắt.
+
+**(3) `123` có mục nào xếp thứ tự việc tháng 9 KHÔNG tốn GPU không?**
+Cụ thể ba thứ đứng độc lập kể cả khi train ra ô TRẮNG: đường **risk–coverage** (§2.6 nói báo như
+kết quả mô tả thứ cấp) · **cảnh báo lát nội sinh** (độ thổi −11,50 pp, KTC95 [−13,37 · −9,40]) ·
+cập nhật **luận văn**. `123` có ấn định thứ tự / mức ưu tiên cho chúng không, hay để tự quyết?
+
+**(4) Con số chi phí backbone ở §0 là ĐO hay ƯỚC LƯỢNG?**
+Ảnh 03 ghi *"16–20 h/epoch lạc quan · 26–35 h/epoch bi quan, đo bằng G5b"* và luật
+*"G5b > 27 h/epoch thì hy sinh backbone, ⛔ không hy sinh hạt"*. Nhưng G5b là phép đo **sẽ chạy**,
+nên hai dải kia hẳn là ước lượng thiết kế. Xin xác nhận: **đã có lượt đo thật nào trên Qwen3-VL-4B
+chưa**, hay ngưỡng 27 h/epoch được đặt thuần bằng lập luận ngân sách?
