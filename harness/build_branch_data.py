@@ -36,7 +36,7 @@ SYS = ("Bạn nhìn ảnh màn hình điện thoại và viết MỘT câu hư�
        "cho người dùng, chỉ rõ cần chạm vào đâu để đi tiếp.")
 
 
-def prompt_body(r, ocr_rec):
+def prompt_body(r, ocr_rec, *, cands=None):
     """Phần CHỮ của đầu vào, KHÔNG kèm chỗ dành cho ảnh.
 
     Tách ra vì hai nơi cần chỗ-dành-cho-ảnh ở hai dạng khác nhau:
@@ -46,18 +46,38 @@ def prompt_body(r, ocr_rec):
         KHÔNG thay — đưa chuỗi vào là mô hình chạy mù, không có token ảnh nào.
     Tách hàm để hai đường dùng chung đúng một nguồn chữ, kiểm được bằng cách render
     cả hai rồi so chuỗi (xem infer_branch.py --selftest).
+
+    `cands` (thêm 29/8, report/123 §3.1 — nhánh SEL):
+      · None  → giữ NGUYÊN 24 dòng OCR. Đây là đường của S1/S2/S2r/MIN-DESC; đổi một
+        ký tự ở đây là bảng lịch sử sáu nhánh hết đọc được, nên đừng sửa tại chỗ.
+      · có    → THAY khối OCR bằng khối ứng viên (không chồng cả hai: trùng tên, nổ token).
+    Cả hai nhánh SEL và đối chứng dùng CÙNG lời gọi này ⇒ đầu vào giống nhau từng byte,
+    đó là điều kiện để `Δ_component` chỉ mang một biến.
     """
     parts = [f"Mục tiêu: {r['goal'].strip()}"]
     hist = r.get("history") or []
     if hist:
         parts.append("Đã làm: " + " → ".join(h.strip() for h in hist[-3:]))
-    if ocr_rec:
+    if cands is not None:
+        blk = block_of(cands)
+        if blk:
+            parts.append(f"Ứng viên trên màn: {blk}")
+    elif ocr_rec:
         items = ocr_rec["items"][:MAX_OCR]
         txt = " · ".join(f"{it['text']}" for it in items if it.get("text", "").strip())
         if txt:
             parts.append(f"Chữ đọc được trên màn: {txt}")
     parts.append("Viết câu hướng dẫn cho bước tiếp theo.")
     return "\n".join(parts)
+
+
+def block_of(cands):
+    """Chuỗi khối ứng viên. Gọi thẳng `build_candidates.block_str` chứ KHÔNG chép lại
+    cách nối chuỗi — hai bản chép rời nhau là cách chắc chắn nhất để dạy và chấm lệch
+    nhau mà không ai thấy. Nhận cả dạng dict (đọc từ candidates.jsonl) lẫn tuple."""
+    import build_candidates as BC
+    tuples = [(c["name"], c["x"], c["y"]) if isinstance(c, dict) else c for c in cands]
+    return BC.block_str(tuples)
 
 
 def prompt_of(r, ocr_rec):
