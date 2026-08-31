@@ -70,21 +70,25 @@ nhblong@fit.hcmus.edu.vn}
 \maketitle
 
 \begin{abstract}
-A GUI agent outputs a coordinate for a machine to click. We train a small vision-language model for a different consumer, a person who must be told in one sentence which on-screen
-element to touch. We fine-tune Qwen2.5-VL-3B with QLoRA on $64{,}567$ steps assembled without new annotation, and score $4{,}463$ held-out touch steps by \emph{executability}.
-The sentence goes to an independent grounding model that never sees the gold coordinate,
-and the step is correct when the returned point falls in the screen region nearest the
-element the user touched. We calibrate that instrument at both ends. Human references reach
-$75.7\%$, a contentless sentence scores $12.0\%$, and a fluent, correctly-styled sentence
-written for a \emph{different} screen scores $6.1\%$, below the contentless floor on
-disjoint intervals, so the grounder reads content and not register. On that scale, automatic supervision works and the gain replicates. Executability rises from $47.6\%$ to
-$59.4\%$ over two seeds, over $22$ times the $0.52$ pp seed-to-seed difference, and the sign
-holds under a second, independently trained grounder. Whether it also helps to name the element in a structured slot before writing is a pre-registered ablation we
-could not complete. That branch scores $57.2\%$ at its single seed, $1.93$ points below its
-matched control, but its second seed was never run, and the registered thresholds leave the
-rest of the outcome space at inconclusive or negative, so no positive result is withheld.
-Exploratorily, at one seed, the prefix adds $5.7$ points where the model identifies the element correctly and subtracts $25.2$ where it does not, while human references still reach $66.3\%$ there. A third of the difference sits in the $7.3\%$ of steps emitting no descriptor, where fine-tuning has already damaged the action prior, since the untuned model names the correct action class on $83.4\%$ against $55.1\%$ and $38.8\%$ for the trained branches. A preference stage aimed at identification adds $+0.63$ pp over a matched control, inconclusive again, and of the $+2.87$ pp that stage gains in total, $78\%$ belongs to the control. Descriptor-first supervision is not uniformly inert.
-What it is worth is conditional on identification accuracy.
+A GUI agent outputs a coordinate for a machine to click. We train a small vision-language
+model for a different consumer, a person who must be told in one sentence which element to
+touch, and we contribute three things. First, an instrument calibrated at \emph{both} ends,
+where a sentence is scored by \emph{executability}, going to an independent grounding model
+that never sees the gold coordinate. Human references reach $75.7\%$, a contentless
+sentence scores $12.0\%$, and a fluent sentence written for a \emph{different} screen scores
+$6.1\%$ on disjoint intervals, so the grounder reads content and not register, and every
+score is read against $75.7$ rather than $100$. Second, supervision assembled from an
+existing corpus without new annotation, which lifts a Qwen2.5-VL-3B from $47.6\%$ to
+$59.4\%$, closing $42\%$ of the distance to the human level and reaching $78.4\%$ of it at
+two seeds, over $22$ times the seed-to-seed difference, with the sign preserved under a
+second, independently trained grounder. Third, a pre-registered ablation of naming the
+element before writing, reported against its own reading rules including the case where
+they refuse a conclusion. That branch scores $57.2\%$ at its single seed, $2.19$ points
+below the two-seed control mean and inside the band declared inconclusive in advance, and
+its second run will never exist. Exploratorily, at one seed, the prefix gains $5.7$ points
+where the model identifies the element correctly and loses $25.2$ where it does not, so
+what descriptor-first supervision is worth depends on identification accuracy rather than
+on the prefix.
 \end{abstract}
 
 \begin{IEEEkeywords}
