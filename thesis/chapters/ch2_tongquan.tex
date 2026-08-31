@@ -1,12 +1,12 @@
 \chapter{Tổng quan}
 \label{ch:tongquan}
 
-Chương này dựng nền khái niệm cho phần còn lại của luận văn: kiến trúc mô hình được dùng,
-kỹ thuật tinh chỉnh trong điều kiện tài nguyên hạn chế, bài toán định vị phần tử giao
-diện, bộ dữ liệu nguồn, và sau cùng là vì sao các thước đo có
+Chương này dựng nền khái niệm cho phần còn lại của luận văn. Các mục lần lượt trình bày
+kiến trúc mô hình được dùng, kỹ thuật tinh chỉnh trong điều kiện tài nguyên hạn chế, bài
+toán định vị phần tử giao diện, bộ dữ liệu nguồn, và sau cùng là lý do các thước đo có
 sẵn không dùng được cho bài toán này, kèm số đo cho từng cách.
 
-\section{Từ học sâu tới mô hình thị giác--ngôn ngữ}
+\section{Từ học sâu tới mô hình thị giác và ngôn ngữ}
 
 Học sâu là nhánh học máy dùng mạng nơ-ron nhiều tầng để tự học biểu diễn từ dữ liệu thô.
 Bước ngoặt gần nhất với luận văn là kiến trúc Transformer với cơ chế tự chú
@@ -14,7 +14,7 @@ Bước ngoặt gần nhất với luận văn là kiến trúc Transformer vớ
 không phụ thuộc khoảng cách vị trí, đồng thời tận dụng được tính toán song song để mở
 rộng quy mô tham số.
 
-Mô hình thị giác--ngôn ngữ (\emph{vision--language model}, VLM) ghép một bộ mã hoá ảnh
+Mô hình thị giác và ngôn ngữ (\emph{vision-language model}, VLM) ghép một bộ mã hoá ảnh
 vào một mô hình ngôn ngữ, thường qua một tầng chiếu (\emph{projector}) đưa đặc trưng ảnh
 về cùng không gian với nhúng từ. Ảnh được cắt thành các mảnh, mã hoá thành một dãy
 \emph{token thị giác}, rồi nối vào chuỗi văn bản; từ đó mô hình sinh văn bản có điều kiện
@@ -27,7 +27,7 @@ máy người dùng, phù hợp với động lực ứng dụng đã nêu ở M
 lý ảnh ở độ phân giải động, không ép ảnh về một kích thước cố định, điều có ý nghĩa
 với ảnh màn hình điện thoại vốn có tỉ lệ rất dài, ví dụ $1080 \times 2400$.
 
-\section{Tinh chỉnh hiệu quả tham số: LoRA và QLoRA}
+\section{Tinh chỉnh hiệu quả tham số bằng LoRA và QLoRA}
 
 Tinh chỉnh toàn bộ ba tỉ tham số đòi hỏi bộ nhớ vượt xa một card đồ hoạ đơn, vì ngoài
 trọng số còn phải giữ gradient và trạng thái của bộ tối ưu. LoRA~\cite{lora} giải bằng
@@ -41,14 +41,14 @@ B \in \mathbb{R}^{d \times r},\; A \in \mathbb{R}^{r \times k},\; r \ll \min(d,k
 trong đó $r$ là hạng và $\alpha$ là hệ số tỉ lệ. Số tham số phải học giảm từ $dk$ xuống
 $r(d+k)$.
 
-QLoRA~\cite{qlora} đi thêm một bước: lượng tử hoá trọng số đóng băng xuống $4$ bit theo
-định dạng NormalFloat (NF4) rồi mới gắn các bộ chuyển đổi LoRA lên trên. Trọng số gốc chỉ
+QLoRA~\cite{qlora} đi thêm một bước nữa. Kỹ thuật này lượng tử hoá trọng số đóng băng
+xuống $4$ bit theo định dạng NormalFloat (NF4) rồi mới gắn các bộ chuyển đổi LoRA lên trên. Trọng số gốc chỉ
 được giải nén khi cần cho phép nhân, còn gradient chỉ chảy qua phần $A$, $B$ ở độ chính
 xác cao.
 
 Trong luận văn, cấu hình cụ thể (Mục~\ref{sec:cauhinh}) cho $14.966.784$ tham số học
 được, tức $0{,}48\%$ số tham số của phần mô hình ngôn ngữ. Con số này được tính lại bằng tay từ bảy mô-đun
-trên $36$ tầng và dùng làm phép kiểm cơ học trước mỗi lượt huấn luyện: nếu số tham số
+trên $36$ tầng và dùng làm phép kiểm cơ học trước mỗi lượt huấn luyện. Nếu số tham số
 không khớp thì cấu hình đã trượt ở đâu đó, chẳng hạn tháp thị giác không thực sự bị đóng
 băng.
 
@@ -60,17 +60,16 @@ khung bao. Các mô hình tiêu biểu gồm SeeClick~\cite{seeclick},
 OS-Atlas~\cite{osatlas} và UGround~\cite{uground}.
 
 Quy ước chấm phổ biến, kế thừa từ AndroidInTheWild~\cite{aitw}, là ngưỡng dung sai
-$\tau = 0{,}14$ tính theo từng trục: dự đoán được coi là trúng khi
+$\tau = 0{,}14$ tính theo từng trục. Một dự đoán được coi là trúng khi
 $|p_x - g_x| \le \tau W$ và $|p_y - g_y| \le \tau H$, với $g$ là toạ độ đáp án và $W$,
-$H$ là bề ngang và chiều cao màn hình. Cần chú ý vùng chấp nhận ở đây là một
-\emph{hình chữ nhật} tính theo từng trục chứ không phải một đĩa tròn: trên màn
-$1080 \times 2400$ nó tương ứng $\pm151$ điểm ảnh theo chiều ngang nhưng tới $\pm336$
-điểm ảnh theo chiều dọc. Mục~\ref{sec:luattrung} cho thấy quy ước này quá lỏng khi
+$H$ là bề ngang và chiều cao màn hình. Vùng chấp nhận ở đây là một \emph{hình chữ nhật} tính theo từng trục, không phải một
+đĩa tròn. Trên màn hình
+$1080 \times 2400$, vùng đó tương ứng $\pm151$ điểm ảnh theo chiều ngang nhưng tới
+$\pm336$ điểm ảnh theo chiều dọc. Mục~\ref{sec:luattrung} cho thấy quy ước này quá lỏng khi
 đối tượng được chấm là câu chữ, bởi nó vốn được đặt ra để chấm một bộ định vị.
 
-Trong luận văn, một mô hình thuộc nhóm này giữ vai trò khác hẳn: nó giữ vai \textbf{dụng cụ
-đo} chứ bản thân nó không được đem đo. Ba điều kiện được đặt ra cho nó ở
-Mục~\ref{sec:botro}, và mọi điểm số trong luận văn đều là điểm số \emph{có điều kiện}
+Trong luận văn, một mô hình thuộc nhóm này giữ vai trò khác hẳn. Mô hình ấy đóng vai \textbf{dụng cụ đo}, còn bản thân nó thì không được đem đo. Ba điều
+kiện được đặt ra cho dụng cụ này ở Mục~\ref{sec:botro}, và mọi điểm số trong luận văn đều là điểm số \emph{có điều kiện}
 trên dụng cụ này.
 
 \section{Bộ dữ liệu AndroidControl}
@@ -85,16 +84,15 @@ chính người thao tác viết cho bước đó.
 \textbf{Chỗ định vị của luận văn.} Trong bài gốc AndroidControl cũng như trong các công
 trình dùng bộ này mà chúng tôi khảo sát (Aguvis~\cite{aguvis}, SeeClick~\cite{seeclick}), câu hướng dẫn từng
 bước nằm ở \textbf{đầu vào}, dùng để gợi ý cho tác tử suy ra thao tác cần thực hiện. Ở
-luận văn này, chính câu đó là \textbf{đích sinh} và là đầu ra duy nhất đem chấm. Hướng
-sử dụng dữ liệu bị đảo ngược.
+luận văn này, chính câu đó là \textbf{đầu ra mà mô hình phải sinh ra}, và cũng là thứ duy
+nhất đem chấm. Hướng sử dụng dữ liệu vì vậy bị đảo ngược.
 \end{quote}
 
-Một tính chất của bộ dữ liệu cần nêu ngay vì nó chi phối trần của mọi kết quả: câu do
-người viết rất cụt, trung vị chỉ khoảng sáu từ, dạng ``click on OK'' hay ``Select the
+Một tính chất của bộ dữ liệu chi phối trần của mọi kết quả. Câu do người viết rất cụt, trung vị chỉ khoảng sáu từ, dạng ``click on OK'' hay ``Select the
 search result''. Câu càng cụt thì càng khó lần ra phần tử, và Mục~\ref{sec:tran} cho
 thấy điều này kéo trần đo được xuống còn $75{,}7\%$.
 
-\section{Vì sao các thước đo có sẵn không dùng được}
+\section{Giới hạn của các thước đo có sẵn}
 \label{sec:thuoc-gay}
 
 Bài toán có sẵn câu chuẩn do người viết, nên phản xạ tự nhiên là so câu sinh ra với câu
@@ -112,23 +110,23 @@ bài toán.}
 Cách chấm & Kết quả đo & Nguyên nhân thất bại \\
 \midrule
 So chuỗi &
-bác nhầm $97{,}5\%$ số câu diễn đạt khác &
+loại nhầm $97{,}5\%$ số câu diễn đạt khác &
 ``search bar'' và ``magnifying glass'' không chung từ nào \\[0.4em]
 
 So vector ngữ nghĩa &
 AUC $0{,}336$ trên $51$ ca viết tay &
-đo độ gần \emph{chủ đề}: cặp \code{inbox}--\code{outbox} được $0{,}76$, cao hơn cặp
-\code{search}--\code{magnifying glass} chỉ $0{,}55$ \\[0.4em]
+đo độ gần \emph{chủ đề}, nên cặp \code{inbox} và \code{outbox} được $0{,}76$, cao hơn cặp
+\code{search} và \code{magnifying glass} chỉ $0{,}55$ \\[0.4em]
 
 Bơm lỗi bản đầu &
 AUC $1{,}000$ &
-\textbf{hằng đẳng thức, không phải phép đo}: bộ bơm lỗi gọi chính hàm khớp của thước rồi
-dán lại đầu ra, nên hai phân phối tách nhau theo định nghĩa \\
+\textbf{hằng đẳng thức, không phải phép đo}, vì bộ bơm lỗi gọi chính hàm khớp của thước
+rồi dán lại đầu ra, nên hai phân phối tách nhau theo định nghĩa \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Dòng thứ hai đáng phân tích kỹ vì nó phá vỡ một trực giác phổ biến. Nhúng ngữ nghĩa
+Dòng thứ hai đi ngược một trực giác phổ biến. Nhúng ngữ nghĩa
 được huấn luyện để đặt gần nhau những đoạn văn nói về cùng chủ đề. ``Hộp thư đến'' và
 ``hộp thư đi'' cùng nói về thư từ nên nằm gần nhau, dù chúng là \emph{hai nút khác nhau}
 trên màn hình. Ngược lại, ``thanh tìm kiếm'' và ``kính lúp'' nói về hai chuyện khác nhau
@@ -142,10 +140,10 @@ nhánh sinh câu ``diễn đạt khác'' được dựng bằng cách gọi chí
 rồi ghép lại đầu ra, còn nhánh ``sai đích'' bị ép giao rỗng ở mức từ. Hai phân phối vì
 vậy tách nhau theo định nghĩa, phương sai bằng không, và cổng chặn ``AUC dưới $0{,}80$
 thì dừng'' không có đường nào để kích hoạt. Đo lại bằng các cặp diễn đạt thật cho AUC
-$0{,}35$. Phép kiểm vì vậy được dựng lại với một ràng buộc bổ sung: bộ sinh dữ liệu kiểm không
-được gọi hàm khớp của chính thước.
+$0{,}35$. Phép kiểm vì vậy được dựng lại với một ràng buộc bổ sung. Bộ sinh dữ liệu kiểm không được
+phép gọi hàm khớp của chính thước.
 
-Kết luận của chương: câu hỏi ``câu sinh ra có giống câu chuẩn không'' không trả lời được
-một cách đáng tin. Chương~\ref{ch:thuocdo} thay nó bằng một câu hỏi khác, ``câu sinh
+Câu hỏi ``câu sinh ra có giống câu chuẩn không'' vì vậy không trả lời được một cách
+đáng tin. Chương~\ref{ch:thuocdo} thay nó bằng một câu hỏi khác, ``câu sinh
 ra có dẫn được tới đúng phần tử không'', và câu hỏi đó có barem khách quan là toạ độ
 mà người dùng thật đã chạm.

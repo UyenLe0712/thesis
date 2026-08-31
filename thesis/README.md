@@ -62,7 +62,7 @@ thể bỏ sót.
 | `\MSHV` | 24C15039 | suy từ email trong `paper/fair2026/main.tex`, **cần xác nhận** |
 | `\Khoa` | 33 | **CẦN ĐIỀN khóa đào tạo thật** |
 | `\NamBaoVe` | 2026 | |
-| `\MaNganh` | 8480101 | mã ngành Khoa học Máy tính |
+| `\MaNganh` | 8480107 | mã ngành Trí tuệ nhân tạo |
 
 ### 3b. Nội dung chờ số
 

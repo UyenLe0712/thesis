@@ -31,7 +31,6 @@
 \usepackage{array}
 \usepackage{url}
 \usepackage[hidelinks]{hyperref}
-\usepackage{tikz}
 
 % Tighter float spacing to keep the paper inside the 8-page limit.
 \setlength{\textfloatsep}{5pt plus 2pt minus 2pt}
@@ -40,19 +39,10 @@
 \setlength{\abovecaptionskip}{3pt}
 \setlength{\belowcaptionskip}{2pt}
 
-%% thanh nhỏ trong bảng: #1 = phần đã lấp trên thang sàn->trần, #2 = % so trần
-\newlength{\sbarw}\setlength{\sbarw}{9mm}
-\newcommand{\sbar}[2]{%
-  \raisebox{-0.15ex}{\begin{tikzpicture}[baseline]
-    \fill[black!12] (0,0) rectangle (\sbarw,1.6mm);
-    \fill[black!62] (0,0) rectangle (#1\sbarw,1.6mm);
-    \draw[black!45,line width=0.3pt] (0,0) rectangle (\sbarw,1.6mm);
-  \end{tikzpicture}}\;#2\%}
 \begin{document}
 
-\title{Descriptor-First Supervision for GUI Instruction\\
-Generation: A Pre-Registered Ablation and the\\
-Condition Under Which It Pays}
+\title{Descriptor-First Supervision for GUI\\
+Instruction Generation}
 
 \author{\IEEEauthorblockN{Lê Đoàn Phương Uyên}
 \IEEEauthorblockA{\textit{Faculty of Information Technology} \\
@@ -70,25 +60,22 @@ nhblong@fit.hcmus.edu.vn}
 \maketitle
 
 \begin{abstract}
-A GUI agent outputs a coordinate for a machine to click. We train a small vision-language
-model for a different consumer, a person who must be told in one sentence which element to
-touch, and we contribute three things. First, an instrument calibrated at \emph{both} ends,
-where a sentence is scored by \emph{executability}, going to an independent grounding model
-that never sees the gold coordinate. Human references reach $75.7\%$, a contentless
-sentence scores $12.0\%$, and a fluent sentence written for a \emph{different} screen scores
-$6.1\%$ on disjoint intervals, so the grounder reads content and not register, and every
-score is read against $75.7$ rather than $100$. Second, supervision assembled from an
-existing corpus without new annotation, which lifts a Qwen2.5-VL-3B from $47.6\%$ to
-$59.4\%$, closing $42\%$ of the distance to the human level and reaching $78.4\%$ of it at
-two seeds, over $22$ times the seed-to-seed difference, with the sign preserved under a
-second, independently trained grounder. Third, a pre-registered ablation of naming the
-element before writing, reported against its own reading rules including the case where
-they refuse a conclusion. That branch scores $57.2\%$ at its single seed, $2.19$ points
-below the two-seed control mean and inside the band declared inconclusive in advance, and
-its second run will never exist. Exploratorily, at one seed, the prefix gains $5.7$ points
-where the model identifies the element correctly and loses $25.2$ where it does not, so
-what descriptor-first supervision is worth depends on identification accuracy rather than
-on the prefix.
+GUI agents emit click coordinates. We generate the English sentence a person would need
+instead, fine-tuning Qwen2.5-VL-3B on AndroidControl with no new annotation. A sentence is
+scored by \emph{executability}: a separate grounding model, which never sees the gold
+coordinate, reads the sentence, and the step counts as correct when it lands within the
+conventional tolerance of the element the user touched \emph{and} closer to it than to any
+other element, and the action class agrees. Human-written references score $75.7\%$ on
+$4{,}463$ touch steps, a contentless sentence $12.0\%$, and a fluent sentence written for a
+different screen $6.1\%$. Fine-tuning lifts the model from $47.6\%$ to $59.4\%$ averaged
+over two seeds, and the gain survives a second grounder that was not trained on
+AndroidControl. We then ask whether naming the element before writing the same sentence
+helps. On the one seed we ran of the two we registered, the
+descriptor branch scores $57.2\%$, $2.19$ points below the two-seed control mean. Splitting
+that seed's steps post-hoc by the branch's own descriptor reveals a sharp split: it beats the
+control by $5.7$ points on the $1{,}871$ where the descriptor gets both the name and the point
+right, and loses $13.1$ on the other $1{,}374$. On this seed the split follows identification
+accuracy, not the presence of a descriptor slot.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -99,274 +86,317 @@ reference-free evaluation, pre-registration
 \section{Introduction}
 
 Given a mobile screenshot and a user goal, a GUI agent predicts an action such as
-\texttt{click(872,141)}. A different consumer of the same input is a person who needs to
-be told what to do, for example \emph{tap the pencil icon at the top right of the note}. Systems
-serving that consumer are appearing in accessibility and user-support
-settings~\cite{guideme}, but the generation problem has had little quantitative treatment.
-A recorded touch coordinate can be checked against a predicted one, while a sentence cannot be checked against a single reference, since many wordings identify the same button and no
-dataset enumerates them.
+\texttt{click(872,141)}. The same inputs can instead be turned into a sentence for a person
+who needs to be told what to do, for example \emph{tap the pencil icon at the top right of the
+note}. Systems serving that consumer are appearing in accessibility and user-support
+settings~\cite{guideme}, but the generation problem has had little quantitative treatment. A
+recorded coordinate can be checked against a predicted one, but no single reference sentence
+suffices, since many wordings identify the same button and no dataset enumerates them.
 
-This is a model study, and it needs a calibrated instrument first. We use \emph{executability}. The generated sentence goes to a separate grounding
+The study is about the model, so it needs a calibrated instrument first. We use
+\emph{executability}. The generated sentence goes to a separate grounding
 model~\cite{uground} that never sees the gold coordinate, and the step counts as correct
-when that model lands in the \emph{cell} of the element the user touched, the screen region
-nearest it, and the action class agrees. Section~\ref{sec:metric} gives the calibration that justifies it in compressed form: an adequacy check, a measured ceiling, a measured floor, and sensitivity over five hit rules.
+when that model lands within the conventional tolerance of the element the user touched
+\emph{and} closer to it than to any other element, and the action class agrees. The term names
+a symbolic notion in open grounded planning~\cite{ogp}; ours is behavioural and visual.
+Section~\ref{sec:metric} gives the calibration in compressed form, an adequacy check, a
+measured ceiling, a measured floor, what the metric weighs, and sensitivity over five hit rules.
 
-We then ask two model questions.
 
 \emph{The first is whether automatically constructed supervision works at all.}
-We build the training data from AndroidControl~\cite{androidcontrol} without collecting new annotation and without labels generated by another language model, since the scored target is the per-step instruction the dataset already records, and the descriptor slots are derived by rule. We fine-tune Qwen2.5-VL-3B~\cite{qwen25vl}
-with QLoRA~\cite{lora,qlora}. Supervision built this way does work. Executability rises from $47.6$ to $59.4$ points at two seeds, and the gap survives six alternative explanations, one of which discards every
-sentence that reproduces its reference verbatim.
+We build the training data from AndroidControl~\cite{androidcontrol} with no new annotation. The scored target is the per-step instruction the dataset already records, and the descriptor slots are derived by rule, not written by another language model. We fine-tune Qwen2.5-VL-3B~\cite{qwen25vl}
+with QLoRA~\cite{lora,qlora}. Executability rises from $47.6\%$ to $59.4\%$, averaged over two seeds on the fine-tuned side. Restricted to the steps on
+which the model does not reuse the reference's content words, the gain over the untuned
+model is still $+8.4$ points.
 
-\emph{The second is whether it helps to name the element before speaking.}
+\emph{The second is whether it helps to name the element before writing the sentence.}
 The referring-expression
 tradition says a description is good when a listener recovers the referent from
 it~\cite{mao2016,luo2017,yu2017}, and the residual errors of the fine-tuned model are of
-that kind. Of its $1{,}825$ failures, $86\%$ carry the correct action together with a
-wording the grounder cannot resolve. So we registered a branch whose target is a structured descriptor (role, name, coordinate, distinguishing cue) followed by the same scored sentence,
-byte for byte, as the control. The registered estimand averages two seeds per branch, and one of the four runs was not executed and will not be, so it is permanently incomplete. At the
-single seed available the treatment sits $1.93$ points below its control, inside the band
-declared inconclusive. The mechanism is nonetheless legible. The component works where the model
-identifies the element correctly and costs heavily where it does not, and the largest locus
-of that cost is a failure fine-tuning introduces before any descriptor exists. A second
-registered stage, a minimal-pair preference objective aimed at identification itself, was
-then run against a matched supervised control. It adds $+0.63$ pp, inside the inconclusive band again, and the control accounts for $78\%$ of the stage's total gain.
+that kind. Of the $1{,}825$ failures at seed $101$, $86\%$ carry the correct action with a
+wording the grounder does not resolve; some of those steps defeat the references too
+(Section~\ref{sec:limits}), and the remainder is an identification problem. So we registered a branch whose target is a structured descriptor (role, name, coordinate, distinguishing cue) followed by the same scored sentence,
+byte for byte, as the control.
 
-Our contributions are: (i) an instrument for this task calibrated at both ends, with a
-measured ceiling of $75.7\%$ and, unusually, a \emph{measured floor}, a contentless
-sentence scoring $12.0\%$ and a wrong-screen one $6.1\%$ on disjoint intervals; (ii) a supervision pipeline for GUI instruction generation that adds no annotation of its own, its gain measured at two seeds and preserved under a second, independently trained grounder; (iii) a
-pre-registered ablation of descriptor-first supervision, reported against its own
-registered reading rules including the case where those rules refuse a conclusion, together
-with the outcome space that remained; and (iv) a diagnosis, exploratory and at one seed, of
-the condition that governs what the prefix is worth, of the failure fine-tuning itself
-introduces before any descriptor exists, and of what the follow-up objective returned.
+The registered estimand averages two seeds per branch, and we ran three of the four runs.
+At its seed the branch sits $1.93$ points below the control at that same seed, and $2.19$
+below the two-seed control mean. The band filed before that branch was trained calls this
+inconclusive, while the interval clause of the original registration calls it harm, and
+Section~\ref{sec:s2} gives both. The component gains where the descriptor gets both the name
+and the point right and loses heavily where it gets both wrong. A second registered stage, a
+minimal-pair preference objective aimed at identification itself and chosen after the S2
+result, adds $+0.63$ pp at one seed each: inconclusive by the same band, and we decline the
+\emph{positive} that the same interval clause would license.
+
+We contribute (i) an instrument for this task calibrated at both ends, with a measured
+ceiling of $75.7\%$ and a measured floor, a contentless sentence scoring $12.0\%$ and a
+wrong-screen one $6.1\%$ on disjoint intervals; (ii) a supervision pipeline for GUI
+instruction generation that adds no annotation of its own, with a gain measured at two seeds
+that survives a second grounder not trained on this corpus; and (iii) a
+pre-registered ablation of descriptor-first supervision, run at one of its two planned seeds
+and read against the registration rather than around it, with a single-seed diagnosis that
+locates the prefix's value in identification accuracy, and a follow-up preference objective
+at that layer returning $+0.63$ points over a matched control.
 
 \section{Related Work}
+\label{sec:related}
 
 \emph{GUI grounding and agents.} AndroidControl~\cite{androidcontrol} provides
-$15{,}283$ human-recorded episodes with per-step instructions and gold touch coordinates. AndroidInTheWild~\cite{aitw} is the source of the $14\%$ tolerance
-convention. Grounding models such as SeeClick~\cite{seeclick}, OS-Atlas~\cite{osatlas},
-UGround~\cite{uground} and UI-Venus~\cite{uivenus} map a text expression to a screen point, and we use two as instruments, not baselines. In Aguvis~\cite{aguvis} a model emits a low-level instruction, but only as an intermediate representation en route to an action, and its quality is never scored. In AndroidControl the human-written per-step instruction
+$15{,}283$ human-recorded episodes with per-step instructions and gold touch coordinates.
+Grounding models map a text expression to a screen point~\cite{seeclick,osatlas}. We use two
+of them as instruments rather than baselines, UGround~\cite{uground}, which is trained on this
+corpus, and UI-Venus~\cite{uivenus}, which is not. In AndroidControl the human-written per-step instruction
 is an \emph{input} conditioning action prediction, while here it is the generation target and
-the only scored output. Supplying a structured element list is likewise established. The AndroidControl authors fine-tune with an accessibility-derived list as input, Mind2Web~\cite{mind2web} trains over noisy candidates and Widget Captioning~\cite{widgetcap} puts the view hierarchy at the input, so we claim no novelty for that layer.
+the only scored output. We claim no novelty for supplying a structured element list, since the AndroidControl authors fine-tune with an accessibility-derived list as input, Mind2Web~\cite{mind2web} ranks noisy candidates before generation, and Widget Captioning~\cite{widgetcap} conditions on the view hierarchy.
 
 \emph{Discriminative description.} Producing a description that identifies one object
-among distractors is referring-expression generation~\cite{mao2016}, and later work
-places a comprehension model inside the training loop to enforce
-discriminativeness~\cite{luo2017,yu2017}. The closest supervised work in the GUI domain is
+among distractors is referring-expression generation, and its discriminative objective has
+been comprehension-in-the-loop from the start, from maximum mutual information~\cite{mao2016}
+to explicit listener rewards~\cite{luo2017,yu2017}. The closest supervised precedent is
 Widget Captioning~\cite{widgetcap}, which identifies the problem of visually identical
-widgets but trains with plain cross-entropy. Our claim is narrow. We place
-discriminativeness in the \emph{training target} for GUI instructions and measure it. Outside the GUI domain, making a model emit grounding coordinates before it answers helps
-when \emph{trained} rather than prompted~\cite{gcot}, the closest prior to our branch and
-the expectation our result should be read against. Inside the GUI domain,
+widgets but trains with plain cross-entropy. What we add is narrower: we place
+discriminativeness in the \emph{training target} for GUI instructions and then measure whether
+it pays. Outside the GUI domain, making a model emit grounding coordinates before it
+answers helps when \emph{trained} rather than prompted~\cite{gcot}. That preprint is the
+nearest precedent for our branch, and our result should be read against it. Nearer home,
 removing the inner monologue from the Aguvis training targets costs $11.4$ points on
-AndroidControl-Low, our subtraction from their ablation table~\cite{aguvis}. That target is consumed by an action head, not handed to a person, so it sets an expectation without settling it.
+AndroidControl-Low, our subtraction from their ablation table~\cite{aguvis}. That target is consumed by an action head, not read by a person, so it does not settle the question for our setting.
 
-\emph{Reference-free evaluation.} Verifying generated text against an external source rather than the generator's own beliefs is the principle behind ALOHa~\cite{aloha}, which uses an object detector alongside the references. Perturbation checklists are an established way of validating a metric~\cite{sai2021}. Two cautions apply. Human judgement is itself an unreliable anchor, untrained evaluators separating machine from human text at chance~\cite{clark2021}, and grounder accuracy measured on one ``best'' instruction per element overstates what these models can do~\cite{groundersunderstand}. The term \emph{executability} is used differently in open
-grounded planning~\cite{ogp}, as the share of plans whose every action appears in a given action library, a symbolic lookup over text, where ours is behavioural and visual.
+\emph{Anchoring a metric outside the generator.} Verifying generated text against an external
+source instead of the generator's own beliefs is the principle behind ALOHa~\cite{aloha}, which
+uses an object detector alongside the references, and perturbation checklists are an
+established way of validating a metric~\cite{sai2021}. Closest to our setting is
+navigation-instruction evaluation, where a reference-free model correlates best per sentence
+while its authors still recommend a reference-based score for ranking systems~\cite{zhao2021},
+a split we respect by claiming only at system level. Neither obvious anchor is safe: untrained
+panels separate machine from human text at chance~\cite{clark2021}, and grounder
+accuracy measured on one ``best'' instruction per element overstates what these models can
+do~\cite{groundersunderstand}.
+The term \emph{executability} is used differently in open grounded planning~\cite{ogp}, as
+the share of plans whose every action appears in a given action library. That is a symbolic
+lookup over text, while ours is behavioural and visual.
 
 \section{Task, Supervision, and Branches}
 \label{sec:data}
 
 From a screenshot $I$ and a goal $q$ we produce one instruction $s$ naming the element to touch and the action to perform, addressed to a human reader.
 
-\emph{Supervision.} No public redistribution of AndroidControl carries the human-written
-instruction, the screenshot and the accessibility tree together, so we join two mirrors on
-\texttt{(episode\_id, step\_id)} and take trees for $99{,}131$ screens from the same
-release. An off-by-one join would corrupt every downstream label while leaving the pipeline
-functional, so we test the alignment. OCR text at the gold touch point appears in the reference on $48\%$ of $n=400$ sampled steps, against $20\%$ under a shifted control. The corpus holds $64{,}567$ training and $6{,}958$ test steps over $12{,}895$ and $1{,}432$
-tasks, about $64\%$ of each being touch steps and forming the scoring population. The split is held out by task with zero overlap, verified at full scale. On a random sample of $120$ of those screens only
-$12.6\%$ of elements carry any name, a shortfall reported elsewhere too~\cite{chen2020}, so we pass every screenshot through OCR, used as an input feature and as a name source. The descriptor label at each touch
-step is built by rule from the smallest accessibility box containing the gold point:
-role from the tree, name from the tree when it passes a validity check and from OCR inside the box otherwise, the gold point on a $[0,1000]$ grid, and a distinguishing cue.
-At full scale $73.6\%$ of labels carry a clear name, $22.0\%$ none, and $7.6\%$ of
-target elements share their name with another element on the same screen. The construction, its two filters and its label-quality audit are reported in full
-elsewhere, and we use their output here.
+\emph{Supervision.} No public redistribution of AndroidControl carries the instruction, the
+screenshot and the accessibility tree together, so we join two mirrors on
+\texttt{(episode\_id, step\_id)} and take trees for $99{,}131$ screens from the same release. An off-by-one join would corrupt every label while leaving the pipeline functional, so we test the alignment. OCR text at the gold touch point appears in the reference on $48\%$ of $n=400$ sampled steps, against $20\%$ under a shifted control. The corpus holds $64{,}567$ training and $6{,}958$ test steps over $12{,}895$ and $1{,}432$
+tasks; $4{,}463$ of the test steps are touch steps and form the scoring population used throughout. The split is held out by task with zero overlap, verified at full scale. On $120$ of the $99{,}131$ screens, sampled at random, only
+$12.6\%$ of elements carry any name, a shortfall reported elsewhere too~\cite{chen2020}, so we pass every screenshot through OCR, used both as an input feature and as a name source. Each descriptor label is built by rule from the smallest accessibility box containing the gold
+point: role from the tree, name from the tree when it passes a validity check and from OCR
+inside the box otherwise, the point on a $[0,1000]$ grid, and a distinguishing cue, the nearest
+OCR string outside the box with its relative direction.
+Across the $41{,}099$ training descriptor labels, $73.6\%$ of labels carry a clear name, $4.4\%$ only a symbol and $22.0\%$
+none, while $7.6\%$ of target elements share their name with another element on the same
+screen. The construction, its two filters and its label-quality audit are reported in full in
+a companion paper~\cite{companion}, whose output we use here.
 
-\emph{Branches.} We build four datasets from identical inputs, differing only in the generation target: \textbf{S1}, the sentence alone; \textbf{S2}, descriptor then
-sentence; \textbf{S2r}, a false descriptor taken from a different screen with
-randomised coordinates, token-length matched per example; and \textbf{S2-nopoint}, S2
-without the coordinate slot. An S2 target reads
+\emph{Branches.} Four datasets share identical inputs and differ only in the generation
+target: \textbf{S1}, the sentence alone; \textbf{S2}, descriptor then sentence; \textbf{S2r},
+a false descriptor from a different screen with randomised coordinates, token-length matched;
+and \textbf{S2-nopoint}, S2 without the coordinate slot. An S2 target reads
 \texttt{<desc>tappable text | Search here | <point>440,91</point> | just above the text
-"Coffee"</desc>} followed by the same scored sentence as S1. We check nine structural invariants after every rebuild and all nine hold at full scale. The one that matters most here is that
-the scored sentence is byte-identical across branches on all $64{,}567$ examples, so a
-difference between branches is a difference in what precedes the sentence and nothing
-else. S2r and S2-nopoint were registered as
-attribution controls and, for the same reason as the second treatment seed
-(Section~\ref{sec:design}), were not run. We mark them registered but not run.
+"Coffee"</desc>} followed by the same scored sentence as S1. Nine structural invariants are checked after every rebuild and all nine hold at full scale.
+The one that matters here is that the scored sentence is byte-identical across branches on all
+$64{,}567$ examples, so a difference between branches is a difference in what precedes it. We registered S2r and S2-nopoint as attribution controls but did not run them, for the
+same reason as the second treatment seed (Section~\ref{sec:design}).
 
 \section{Descriptor-First Supervision}
 \label{sec:method}
 
-The intervention is a change of target, not of architecture, input or inference cost.
-Both branches read the same prompt, made of the goal, the reference instructions of the previous three steps and the OCR strings, and both are scored on the sentence alone, with any
-descriptor stripped before scoring. S2 differs only in that the target begins with four
-slots: \emph{role} (button, text field, list item), \emph{name} (the displayed string),
-\emph{coordinate} (the gold touch point rescaled to $[0,1000]$), and a
-\emph{distinguishing cue} (the nearest OCR string outside the box with its relative
-direction).
+The intervention is a change of target, not of architecture or input. S2's only added cost is
+the descriptor tokens it decodes before each sentence. S1 and S2 read the same prompt, made of the goal, the reference instructions of the previous three steps and the OCR strings, and both are scored on the sentence alone, with any
+descriptor stripped before scoring. S2 differs only in that the target begins with the four
+descriptor slots of Section~\ref{sec:data}, the sentence following unchanged.
 
-Two design choices are not free. The coordinate slot is included because it is a clean
-label at zero construction cost, and the evidence at design time indicated that
-intermediate steps carrying an explicit point help where free-form verbal reasoning hurts.
-The descriptor is also emitted rather than consumed, so the model must produce its own
+The coordinate slot is included because it is a clean label at zero construction cost, and
+because prior ablations show that intermediate steps carrying an explicit point help, while
+free-form verbal chains do not~\cite{aguvis,gcot}.
+The descriptor is emitted rather than consumed, so the model must produce its own
 identification before writing, which makes the branch an ablation of \emph{discriminative
-commitment} rather than of extra input. That commitment can help or hurt, and Section~\ref{sec:diag} measures which. A correct name and point support the sentence that follows, while a wrong pair is inherited by it.
+commitment} and not of extra input. The consequence is that a wrong name and point are
+inherited by the sentence that follows them. Section~\ref{sec:diag} measures how often that
+happens and what it costs.
 
 \section{The Instrument}
 \label{sec:metric}
 
 \subsection{Definition}
 Let $s$ be the generated sentence with any descriptor removed, $I$ the screenshot, $g$
-the gold touch coordinate, and $E$ the set of accessibility elements on the screen after
-merging elements whose centres lie within $24$\,dp ($63$ px at the modal density) of one
-another or of $g$. Let $G$ be a grounding model,
-independent of the model under test and without access to $g$, returning $p = G(I,s)$.
+the gold touch coordinate, and $E$ the set of accessibility elements marked visible to the
+user and at least $8$ px on each side, after merging those whose centres lie within
+$24$\,dp ($63$ px at the modal density) of one another or of $g$. Let $G$ be a separate
+grounding model, not the model under test and without access to $g$, returning $p = G(I,s)$.
 The step is correct when all three hold: \emph{(i) action}, the canonicalised action
 types of $s$ and of the reference agree, twelve surface verbs mapping to a single touch
-class, with touch, type, scroll, long-press and back kept distinct (with one leak,
-quantified in Section~\ref{sec:alt}); \emph{(ii) polarity},
+class, with type, scroll and long-press kept distinct from touch, while \emph{back} collapses
+into touch whenever the sentence also carries a motion verb, which
+Section~\ref{sec:alt} quantifies; \emph{(ii) polarity},
 $s$ and the reference do not name opposite states of the same control, checked against
-nine toggle pairs; \emph{(iii) localisation}, $p$ lies within the conventional $14\%$ tolerance of~\cite{aitw}, which we implement per axis as $|p_x - g_x| \le 0.14W$, $|p_y - g_y| \le 0.14H$ and without their same-bounding-box disjunct, \emph{and} no competing element centre is closer to $p$ than $g$ itself. The tolerance region is a
-per-axis rectangle, not a disc ($\pm151$ px horizontally against $\pm336$ px vertically
-on a $1080\times2400$ screen), and the point that defines the cell is the recorded touch
-coordinate, not the centre of the box containing it. Condition (iii) refines the tolerance
+nine toggle pairs; \emph{(iii) localisation}, $p$ lies within the conventional $14\%$ tolerance of~\cite{aitw}, which we implement per axis as $|p_x - g_x| \le 0.14W$, $|p_y - g_y| \le 0.14H$ ($\pm151$ px horizontally against $\pm336$ px vertically on a
+$1080\times2400$ screen, a rectangle and not a disc) and without their same-bounding-box
+disjunct, \emph{and} no competing element centre is closer to $p$ than $g$ itself. The point
+that defines the cell is the recorded touch coordinate, not the centre of the box containing it. Condition (iii) refines the tolerance
 test and never accepts a step that test rejects, so the two are not alternatives.
 Executability is the proportion of touch steps satisfying all three.
 
-The rubric is a recorded human touch coordinate, not a model's opinion, so this is not LLM-as-judge. $G$ only localises, geometry against $g$ decides, and the same $G$ scores every branch.
+The rubric is a recorded human touch coordinate, so this is not LLM-as-judge: $G$ supplies only a location, the comparison against $g$ supplies the verdict, and the same $G$ scores every branch.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.78\columnwidth]{fig_voronoi.png}
-\caption{A step on which the tolerance test alone cannot carry the judgement. The user
-touched the \emph{Birthday} row, and the fine-tuned model's sentence sends the grounder
-inside that row's cell. The untuned model wrote ``Click on the `Gender' section\ldots'',
-and the grounder followed it to the row above, $128$ px away but still inside the
-$\pm336$ px vertical tolerance, which the conventional rule scores correct and the cell
-rule does not.}
+\caption{A step on which the tolerance test alone cannot carry the judgement. The user touched
+the \emph{Birthday} row, and the fine-tuned model's sentence sends the grounder inside that
+row's cell. The untuned model wrote ``Click on the `Gender' section\ldots'', and the grounder
+followed it to the row above, $128$ px away but inside the $\pm336$ px vertical tolerance,
+which the conventional rule scores correct and the cell rule does not.}
 \label{fig:cell}
 \end{figure}
 
-Fig.~\ref{fig:cell} shows a step on which the two rules disagree, and the choice between them is not cosmetic. With the grounder's answer displaced to the centre of the nearest competing
-element, the tolerance test still awards credit in $84.3\%$ of cases (injection study,
-$250$ steps), a dynamic range of about $16$ points, where the cell rule awards $2.8\%$
-while holding a ceiling of $99.7\%$ under a $3\%$ injected offset. We report the tolerance
+Fig.~\ref{fig:cell} shows a step on which the two rules disagree. With the grounder's answer
+displaced to the centre of the nearest competing element, the tolerance test still awards
+credit on $843$ of the $1{,}000$ injected draws ($250$ steps with four injected angles each),
+while the cell rule awards $2.8\%$ and still holds a ceiling of $99.7\%$ under a $3\%$
+injected offset, $97$ points of range against the tolerance test's $16$. We report the tolerance
 score alongside the headline throughout, never as the headline.
 
 \subsection{Calibration}
-Four measurements support the readings in this paper.
+Five measurements support the readings in this paper, the first three fixing the scale and the
+last two testing what it responds to.
 
-\emph{Adequacy.} A pass condition of median localisation error at most $3\%$ of screen
-width was fixed before any compute was spent, derived from screen geometry. The tolerance
+\emph{Adequacy.} Before spending any compute we fixed a pass condition derived from screen
+geometry, median localisation error at most $3\%$ of screen width. The tolerance
 margin, half the distance from the element to be touched to the nearest other element after
-merging, has median $6.2\%$ of width and 10th percentile $3.6\%$. UGround-V1-2B
-attains $0.7\%$ on $300$ test steps. The condition is met, but the error distribution is bimodal (the grounder either lands near the centre or elsewhere entirely), so a percentile
-condition would have been the better choice, and one declared check for a broken
-installation fired. On $30.7\%$ of steps the horizontal answer is exactly screen centre,
-partly a property of the data and partly the grounder abandoning the axis when it cannot identify an element. Both depress scores rather than inflate them.
+merging, has median $6.2\%$ of width and 10th percentile $3.6\%$. UGround-V1-2B attains
+$0.7\%$ on $300$ reference-branch steps, the only branch this check certifies; on the branches
+under test the same median is $2.00\%$ and $7.82\%$. The condition is met there, but the error
+distribution is bimodal, the grounder landing either close to the element's centre or nowhere
+near it, so a percentile condition would have been the better choice, and one declared check
+for a broken installation fired. On $30.7\%$ of steps the horizontal answer is exactly screen
+centre, partly a property of the data and partly the grounder abandoning the axis. Both causes
+lower every branch, the references included.
 
 \emph{Ceiling.} Passing every human-written reference through the same pipeline scores
 $\mathbf{75.7\%}$ $[74.1, 77.3]$ over all $4{,}463$ touch steps. Every score below is read
 against $75.7$, not against $100$. An earlier $300$-step estimate of $70.0\%$ was nearly six points low and is withdrawn as a ceiling.
 
-\emph{Floor.} Replacing every sentence with the contentless \emph{tap the button} scores
+\emph{Floor.} The contentless \emph{tap the button}, substituted for every sentence, scores
 $12.0\%$ $[9.7, 14.4]$ on a random $800$-step slice whose ceiling is $74.9\%$, so the
 usable range is $62.9$ points and the metric is not carried by what the grounder can guess
-from the screenshot alone. A
-genuine reference sentence written for a \emph{different} step, with correct register, matched length and wrong content, scores lower still, $6.1\%$ $[4.5, 7.9]$, on disjoint
-intervals. A wrong sentence actively misleads the instrument, where an empty one leaves it
-to a weak prior. This also disposes of the reading that the metric rewards annotator style, which is exactly
-what that control preserves.
+from the screenshot alone. A genuine reference sentence written for a \emph{different} step,
+with correct register, matched length and wrong content, scores lower still, $6.1\%$
+$[4.5, 7.9]$, on disjoint intervals: a wrong sentence sends the grounder somewhere definite
+and wrong, while an empty one leaves it to a weak prior. That control holds annotator style
+fixed, so this also rules out the reading that the metric rewards register.
 
-\emph{What the metric weighs.} On the same slice, keeping the locative clause and
-replacing the element name with the generic \emph{the item} costs $28.5$ points on the
-$193$ steps it touches ($b{=}3$ steps the shortened sentence resolves and the reference
-does not, $c{=}58$ the reverse, $p<0.001$), against $3.5$ points for deleting
-the locative clause and keeping the name on a near-identical population of $198$
-($b{=}1$, $c{=}8$, $p{=}0.046$). Naming the element is worth roughly eight times saying
-where it is. Meaning-preserving rewrites of the references, namely verb substitution, fronting the locative clause and both at once, move executability by $+0.35$ pp
-($[-0.59, +1.29]$) over the $1{,}139$ steps they alter, with $2.6\%$ of steps changing
-verdict, so the instrument is insensitive to these rewrites while sensitive to content.
-
-\emph{The case against a reference-based score.} Scored with a content-word F1 against the single
-reference, $52.8\%$ of the sentences the metric accepts from the untuned model fall below
-$0.5$, against $13.9\%$ for the fine-tuned one. A reference-based score therefore charges
-the two branches unequally for register, a property unrelated to identification. BLEU-4 and
-ROUGE-L rank the branches in the same order, but we draw nothing from that and neither can
-locate the remaining headroom, scoring the references $100$ by construction where
-executability puts them at $75.7$.
+\emph{What the metric weighs.} On the same slice, keeping the locative clause and replacing
+the element name with the generic \emph{the item} costs $28.5$ points on the $193$ steps it
+touches ($b{=}3$, $c{=}58$, $p<0.001$), against $3.5$ points for deleting the locative clause
+and keeping the name on a near-identical population of $198$ ($b{=}1$, $c{=}8$, $p{=}0.046$).
+Naming the element is worth roughly eight times saying where it is. Meaning-preserving
+rewrites, verb substitution and fronting the locative clause, move executability by $+0.35$ pp
+($[-0.59, +1.29]$) over the $1{,}139$ steps they alter, so the instrument is insensitive to
+these rewrites while sensitive to content.
 
 \subsection{Robustness of the instrument}
-Choosing a hit rule is a researcher degree of freedom, so we measured how much the choice changes the result.
 Rescoring three branches on $698$ steps under five rules (Euclidean disc, per-axis
 rectangle, the cell rule as implemented, a cell rule seeded at the box centre, and a
 nearest-box rule) gives ceilings of $80.2$, $82.2$, $74.2$, $56.6$ and $82.2$, and a
-fine-tuning gain of $+12.6$, $+13.0$, $+11.7$, $+9.5$ and $+13.0$ points. The absolute level
-moves by up to $26$ points, the ordering never does, and the gain stays between $9.5$ and $13.0$. On the $2{,}811$ steps where two training runs emitted byte-identical sentences, the grounder returned identical coordinates and identical verdicts on all $2{,}811$.
+fine-tuning gain of $+12.6$, $+13.0$, $+11.7$, $+9.5$ and $+13.0$ points (the implemented
+rule reads $74.2$ on this slice against $75.7$ on the full population). The absolute level
+moves by up to $26$ points, the ordering never does, and the gain stays between $9.5$ and
+$13.0$. The instrument is also deterministic. On the $2{,}811$ steps where two training runs
+emitted byte-identical sentences, the grounder returned the same coordinates and the same
+verdict on all $2{,}811$.
 
 Intervals are nonparametric cluster bootstraps with $10{,}000$ resamples, clustered by
-application where one can be attributed and by task otherwise ($G = 1{,}091$, of which
-$259$ are application clusters and $832$ single-task clusters covering $59\%$ of steps;
-$G_{\text{eff}} = 454.3$ under Kish's formula~\cite{kish1965}). The rule was fixed in
-advance because it determines the available power~\cite{cameron2008}. The measured design effect is $1.10$, and standard errors are contrast-specific, $0.785$ pp for $\mathrm{S1} - \mathrm{Base}$, giving a minimum detectable paired effect of $2.2$ points at $80\%$ power. That figure covers instrument noise alone. A contrast across two \emph{training runs} also carries the seed term of Section~\ref{sec:design}.
+application where one can be attributed and by task otherwise ($G = 1{,}091$, of which $259$
+are application clusters and $832$ single-task clusters covering $59\%$ of steps;
+$G_{\text{eff}} = 454.3$ under Kish's formula~\cite{kish1965}). We fixed the clustering rule
+in advance because it determines the available power~\cite{cameron2008}. The design effect is
+$1.10$ and standard errors are contrast-specific, $0.785$ pp for $\mathrm{S1} - \mathrm{Base}$,
+giving a minimum detectable paired effect of $2.2$ points at $80\%$ power. That covers
+instrument noise alone; a contrast across two \emph{training runs} also carries the seed term
+of Section~\ref{sec:design}.
 
 \section{Experimental Design and Pre-Registration}
 \label{sec:design}
 
-All branches fine-tune Qwen2.5-VL-3B-Instruct~\cite{qwen25vl} with
-QLoRA~\cite{lora,qlora} under LlamaFactory~\cite{llamafactory}: 4-bit NF4, LoRA rank $8$,
-$\alpha = 16$, dropout $0.05$, adapters on \texttt{q,k,v,o,gate,up,down}, vision tower and
-projector frozen, context $2560$, effective batch $16$, learning rate $1\times10^{-4}$,
-cosine schedule, two epochs, on a single A100 ($8{,}072$ steps, $\approx 23$ h). One configuration file serves every branch, four keys changing (dataset, seed, output directory, workers). The trainable parameter count is $14{,}966{,}784$, confirming the vision tower stayed frozen, and losses on an L4 and an A100 agree to three digits with identical \texttt{total\_flos}.
+All branches fine-tune Qwen2.5-VL-3B-Instruct~\cite{qwen25vl} with QLoRA~\cite{lora,qlora}
+under LlamaFactory~\cite{llamafactory}: 4-bit NF4, LoRA rank $8$, $\alpha = 16$, dropout
+$0.05$, adapters on \texttt{q,k,v,o,gate,up,down}, vision tower and projector frozen, context
+$2560$, effective batch $16$, learning rate $1\times10^{-4}$, cosine schedule, two epochs, on a
+single A100 ($8{,}072$ steps, $\approx 23$ h). One configuration file serves every branch, four
+keys changing. The trainable parameter count is $14{,}966{,}784$, confirming the vision tower
+stayed frozen, and losses on an L4 and an A100 agree to three digits with identical
+\texttt{total\_flos}.
 
-Inference is greedy, one sentence per step, with the descriptor stripped by a fixed regular expression so no branch is scored on text the others cannot produce. The untuned model reads the same prompt template, byte-identical across branches and between training and inference. Because the history carries human-written sentences rather than an action log, scoring is teacher-forced on context, which conditions absolute scores but not branch differences.
+Inference is greedy, one sentence per step, the descriptor stripped by a fixed pattern so no branch is scored on text the others cannot produce. The prompt template is byte-identical across branches and between training and inference, the untuned model included. Because the history carries human-written sentences rather than an action log, scoring is teacher-forced on context, which conditions absolute scores; branch differences are read under the same history for every branch.
 
-The design was committed to version control before any training run and fixes the reading
-of all four outcomes in advance: a $\Delta$ whose interval excludes zero and exceeds the
-seed noise floor is positive; one whose interval touches zero is a trend; an interval
-covering zero with $|\Delta|$ below the detectable effect is inconclusive; a negative upper
-bound is harm. The registered quantity is
+We committed the design to version control on 5 August 2026, before any training run, and we
+append amendments with dates, never editing in place. It states the four outcomes as
+interval conditions: a $\Delta$ whose interval lies wholly above zero is positive when its
+magnitude clears the seed term and a trend when it does not; one whose interval covers zero
+with $|\Delta|$ below the detectable effect is inconclusive; one whose interval lies wholly
+below zero is harm. The registered quantity is
 $\Delta = \mathrm{mean}(\mathrm{S2}) - \mathrm{mean}(\mathrm{S1})$ over \emph{two seeds
-per branch}, the operative threshold set at $2.8$ pp, which is the bootstrap standard error of the seed pair, $0.38$ pp, with a seed term of $0.46$ pp doubled because it rests on one degree of freedom, and the inconclusive band at $-2.8 \ldots +1.7$ pp, both edges fixed before any score existed. That $2.8$ pp
-is the band rule for $\mathrm{S2} - \mathrm{S1}$ and is deliberately conservative. To read
-the stage-2 pair $\mathrm{MIN} - \mathrm{CE2}$, Section~\ref{sec:mindesc} uses the
+per branch}. A dated amendment of 17 August, filed after the control branch was scored and
+before the treatment branch was trained, restates the same four outcomes as a band on the
+magnitude of $\Delta$: the inconclusive row spans $-2.8 \ldots +1.7$ pp, and only the
+positive and negative rows keep an interval condition. The negative edge is the doubled
+threshold and the positive edge the two-seed one, so the band is wider against harm than
+against benefit. The operative threshold of $2.8$ pp combines the bootstrap standard error of
+the seed pair, $0.38$ pp, with a seed term of $0.46$ pp, doubled because it rests on one
+degree of freedom; both are variance estimates read off the already-scored control pair and
+neither comes from a treatment score.
+Section~\ref{sec:mindesc} reads the stage-2 pair $\mathrm{MIN} - \mathrm{CE2}$ against the
 undoubled counterpart of $2.11$ pp, which fits a design carrying \emph{one} seed per branch
-where the seed term enters as $\sqrt{2}\,\sigma$. The registered two-seed figure is $1.67$ pp, and the verdict is the same under all three. Amendments are appended with dates and never edited in place. Twenty-seven are recorded, twenty-one before
-any executability score existed. We flag rather than hide the pattern in the six that came later, where each moved the headroom upward and the threshold downward, though the first also moved against us, cutting the control branch's share of the ceiling from $84.4\%$ to
-$78.0\%$.
+and lets the seed term enter as $\sqrt{2}\,\sigma$. The registered two-seed figure is
+$1.67$ pp. The band and the interval clause disagree twice, calling the treatment branch harm
+and the stage-2 pair positive where the band reads inconclusive in both;
+Sections~\ref{sec:s2} and~\ref{sec:mindesc} take the band in each, once in our favour and once
+against it. Twenty-seven amendments are recorded, twenty-one before any executability score
+existed. The six later ones do not all run one way. Most raised the headroom or lowered a
+threshold, but the amendment of 17 August replaced a clause under which any negative upper
+bound was harm with a band requiring $-2.8$ pp, which makes harm \emph{harder} to declare
+here; and the first of the six cut the control branch's share of the withdrawn $70.0$
+estimate, $84.4\%$, to $78.0\%$ of $75.7$.
 
-\textbf{The second seed of the treatment branch was never run}, a budget decision taken on
-23 August 2026, and it will not be. The registered estimand is permanently incomplete, and no later analysis upgrades the
-single-seed comparison into the conclusion the two-seed rule would have licensed.
+We ran three of the four registered runs. On 23 August 2026 we chose, on budget grounds, not
+to train the second treatment seed, and that choice is final. Every statement we make about
+that branch is single-seed and exploratory, and no substitute for the registered test.
 
 \section{Results}
 \label{sec:results}
 
 \begin{table}[!t]
-\caption{Executability over the $4{,}463$-step touch population. The last column reads
-each score against the human-reference level of $75.7$ rather than against $100$, and the
-bar shows the same share. S2 and the two stage-2 branches have
-one seed each, so those comparisons are exploratory. CE2 and MIN continue from S2/101 and
-are paired against S1 at seed $101$.}
+\caption{Executability over the $4{,}463$-step touch population. \emph{Tol.}\ is the same run under
+the conventional $14\%$ rule alone, without the nearest-centre condition; under that rule MIN
+and S1/101 are level at $69.2$. The last column, computed from unrounded scores, reads each
+score against the human-reference $75.7$, itself a pipeline score and not a human ceiling. S2
+and the two stage-2 branches have one seed each, so those comparisons are exploratory; CE2 and
+MIN continue from S2/101 and are paired against S1 at seed $101$.}
 \label{tab:main}
 \centering
 \footnotesize
 \setlength{\tabcolsep}{2.6pt}
 \begin{tabular}{lccr@{\hspace{4pt}}l}
 \toprule
-Branch & Exec. & 95\% CI & Tol. & \multicolumn{1}{c}{vs.\ human level} \\
+Branch & Exec. & 95\% CI & Tol. & \multicolumn{1}{c}{\% of $75.7$} \\
 \midrule
-Base (not fine-tuned)      & 47.6 & $[45.9, 49.3]$ & 57.6 & \sbar{0.628}{62.8} \\
-S2 (descriptor, seed 101)  & 57.2 & $[55.4, 58.9]$ & 67.4 & \sbar{0.755}{75.5} \\
-S1 (sentence, seed 101)    & 59.1 & $[57.3, 60.8]$ & 69.2 & \sbar{0.780}{78.0} \\
-S1 (sentence, seed 202)    & 59.6 & $[57.9, 61.3]$ & 69.8 & \sbar{0.787}{78.7} \\
-S1 (mean of two seeds)     & \textbf{59.4} & - & - & \sbar{0.784}{78.4} \\
-CE2 (stage 2, control)     & 59.4 & $[57.7, 61.1]$ & 68.9 & \sbar{0.785}{78.5} \\
-MIN (stage 2, preference)  & \textbf{60.0} & $[58.3, 61.8]$ & 69.2 & \sbar{0.793}{79.3} \\
+Base (not fine-tuned)      & 47.6 & $[45.9, 49.3]$ & 57.6 & 62.8 \\
+S1 (sentence, seed 101)    & 59.1 & $[57.3, 60.8]$ & 69.2 & 78.0 \\
+S1 (sentence, seed 202)    & 59.6 & $[57.9, 61.3]$ & 69.8 & 78.7 \\
+S1 (mean of two seeds)     & \textbf{59.4} & - & - & 78.4 \\
+S2 (descriptor, seed 101)  & 57.2 & $[55.4, 58.9]$ & 67.4 & 75.5 \\
+CE2 (stage 2, control)     & 59.4 & $[57.7, 61.1]$ & 68.9 & 78.5 \\
+MIN (stage 2, preference)  & 60.0 & $[58.3, 61.8]$ & 69.2 & 79.3 \\
 \midrule
-\emph{Human references}    & 75.7 & $[74.1, 77.3]$ & 84.3 & \sbar{1.0}{100} \\
-\emph{Contentless sentence}$^{*}$ & 12.0 & $[9.7, 14.4]$ & - & \sbar{0.160}{16.0} \\
+\emph{Human references}    & 75.7 & $[74.1, 77.3]$ & 84.3 & 100 \\
+\emph{Contentless sentence}$^{*}$ & 12.0 & $[9.7, 14.4]$ & - & 16.0$^{*}$ \\
 \multicolumn{5}{@{}l}{\footnotesize $^{*}$ on an $800$-step slice whose ceiling is $74.9$, its share read against that.}\\
 \multicolumn{5}{@{}l}{\footnotesize \emph{Registered, not run}: S2 seed 202; S2r; S2-nopoint.}\\
 \bottomrule
@@ -380,30 +410,42 @@ $+11.5$ points at seed 101 ($b = 284$, $c = 798$, $\chi^2 = 243.2$) and $+12.0$ 
 202, both $p<0.001$, where $b$ counts steps the lower-scoring branch resolves and the
 higher-scoring one does not.
 
-All rates use the same denominator of $4{,}463$ touch steps, and the three empty sentences (one per S1 seed, one from S2) are scored zero, since refusing to answer is what the metric must penalise.
+All rates use the same denominator of $4{,}463$ touch steps, and the three empty sentences are scored zero, since refusing to answer is what the metric must penalise.
 
 The $59.4$ is inflated by the quarter of steps on which S1 reproduces the reference's
 content words. Restricted to the $3{,}367$ steps where the model writes its own sentence,
-the branches read $44.7$, $53.1$ and $75.0$, the fraction closed is $28\%$, and the gap is
-still $+8.4$ points ($b=264$, $c=547$, $p<0.001$). Further readings leave the ordering intact. Localisation alone leaves $+11.3$ points, and the untuned model names the correct action class \emph{more} often ($96.5\%$ against $94.4\%$). The gain is $+15.0$ points on a task's opening step against $+11.0$ afterwards, and $+12.6$, $+9.5$ and $+12.4$ across thirds of element count. Per-cluster, S1 is higher on $395$, level on $565$ and lower on $131$, reproduced at seed $202$. Application overlap brings no advantage either, S1 scoring $59.1\%$ on applications seen in training, $59.0\%$ on unseen ones and $59.1\%$ where none can be attributed.
+Base, S1 and the human references read $44.7$, $53.1$ and $75.0$, the fraction closed is $28\%$, and the gap is
+still $+8.4$ points ($b=264$, $c=547$, $p<0.001$). The ordering survives three further readings, all
+post-hoc. Dropping the action-class condition and scoring localisation alone leaves
+$+11.3$ points, and the untuned model names the correct action class \emph{more} often
+($96.5\%$ against $94.4\%$). Across the $1{,}091$ clusters, S1 is higher on $395$, level on
+$565$ and lower on $131$, with the same ordering at seed $202$. Application overlap brings no
+advantage either, S1 scoring $59.1\%$ on applications seen in training ($n{=}1{,}737$),
+$59.0\%$ on unseen ones ($n{=}78$) and $59.1\%$ where none can be attributed
+($n{=}2{,}648$).
 
 \emph{Retraining noise.} A gap between systems must be read against the movement from rebuilding one. Retraining S1 under a second seed shifts the score by $+0.52$ points, interval $[-0.2, +1.3]$, McNemar $p = 0.19$. The sharper contrast is in the verdict counts. The seeds disagree on $6.4\%$
-of steps, where the intervention moves $24.2\%$. Step-level agreement across seeds is $93.6\%$ ($\kappa = 0.867$), but
-$63\%$ of those pairs are byte-identical sentences a deterministic instrument must agree on. On the $1{,}652$ steps where the runs wrote something different it is $82.6\%$
+of steps, against the $24.2\%$ that fine-tuning moves in either direction ($b+c$ above).
+Step-level agreement across seeds is $93.6\%$ ($\kappa = 0.867$), but $63\%$ of all pairs are
+byte-identical sentences a deterministic instrument must agree on. On the $1{,}652$ steps where the runs wrote something different it is $82.6\%$
 ($\kappa = 0.650$), the figure we quote.
 
 \subsection{A second grounder}
 \label{sec:venus}
 Every number above is conditioned on one grounder, trained on $47$K elements from the
 AndroidControl training split and so familiar with the register S1 is trained to imitate.
-We re-scored three branches on a $2{,}532$-step slice with
-UI-Venus-Ground-7B~\cite{uivenus}, not trained on AndroidControl (Table~\ref{tab:venus}).
+We re-scored three branches on a $2{,}532$-step slice, the largest a week of free GPU quota
+allows, with UI-Venus-Ground-7B~\cite{uivenus}, not trained on AndroidControl, at a
+$1{,}272$-token image budget we chose for speed once the two adequacy intervals overlapped
+(Table~\ref{tab:venus}).
 
 \begin{table}[!t]
-\caption{Two grounders on the same $2{,}532$-step slice. The positive control
-$\mathrm{S1}-\mathrm{Base}$, an effect already established under the first grounder,
-retains $94\%$ of its size, so the scale is not compressed. That row is raw on the slice, while the $\mathrm{S2}-\mathrm{S1}$ row is rescaled to the $4{,}463$-step denominator used
-elsewhere. The last row is the $300$-step adequacy sample scored by each grounder, for comparing the instruments only, and the full-scale reference ceiling is $75.7$.}
+\caption{Two grounders on the same $2{,}532$-step slice, except the last row. The positive
+control $\mathrm{S1}-\mathrm{Base}$ is raw on the slice, while the $\mathrm{S2}-\mathrm{S1}$
+row is rescaled to the $4{,}463$-step denominator used elsewhere. The full-scale reference of
+$75.7$ lies above the last row's interval, since $300$ steps were too few to place the
+reference, which is why that estimate was withdrawn as a ceiling
+(Section~\ref{sec:metric}).}
 \label{tab:venus}
 \centering
 \scriptsize
@@ -415,7 +457,7 @@ Contrast & UGround & UI-Venus \\
 S1 $-$ Base (pos.\ control) & $+10.35\,[+8.39, +12.40]$ & $+9.68\,[+7.60, +11.78]$ \\
 S2 $-$ S1 (single seed) & $-1.93\,[-3.08, -0.78]$   & $-1.21\,[-2.30, -0.12]$ \\
 \midrule
-Adequacy ceiling ($n{=}300$) & $70.0\,[64.5, 75.3]$      & $69.3\,[63.8, 74.8]$ \\
+Human refs.\ ($n{=}300$) & $70.0\,[64.5, 75.3]$      & $69.3\,[63.8, 74.8]$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -424,83 +466,86 @@ The positive control keeps $94\%$ of its magnitude and the two adequacy ceilings
 $0.7$ points, so the explanation that fine-tuning merely teaches the annotator's register,
 a register the first grounder was trained on, does not survive. The sign of the S2 contrast
 holds too, though the two scorings share checkpoints and so do not substitute for the
-missing seed. A paired difference-in-differences puts that contrast $+1.26$ pp less negative under UI-Venus, $[+0.04, +2.51]$, on the slice's own denominator rather than the rescaled one used in the table. That evidence is weak and exploratory, and it
-cannot carry the reading that the first grounder is what makes S2 lose, which would require
-the contrast to reach zero. Part of the shrinkage is mechanical, since UI-Venus scores $2.8$--$4.1$ points lower on every branch.
+missing seed. A paired difference-in-differences puts that contrast $+1.26$ pp less negative under UI-Venus, $[+0.04, +2.51]$, weak and exploratory evidence that cannot carry the reading that the first grounder is what makes S2 lose, which would require the contrast to reach zero. Part of the shrinkage is mechanical, since UI-Venus scores $2.8$--$4.1$ points lower on every branch.
 
 \subsection{The descriptor branch}
+\label{sec:s2}
 The registered comparison is $\mathrm{mean}(\mathrm{S2}) - \mathrm{mean}(\mathrm{S1})$
-over two seeds each. With the treatment at one seed, only a narrower statement is available.
+over two seeds each, so what follows is narrower.
 \emph{With Qwen2.5-VL-3B under QLoRA and the present automatic labelling pipeline, the
 S2/101 checkpoint scores $1.93$ points below S1/101 ($b = 254$, $c = 340$, interval
-$[-3.06, -0.75]$) and $2.44$ points below S1/202 over the full $4{,}463$ steps, the sign
-holds under UI-Venus, and the registered estimand remains incomplete.} Against the declared
-bands, $-2.19$ pp relative to the two-seed control mean falls inside $-2.8 \ldots +1.7$, which is \emph{inconclusive} rather than a negative result, and the missing run means it stays there. The
-seed noise on the control pair, $\pm1.3$ pp at the interval edge, is most of the reason.
+$[-3.06, -0.75]$ on the full population, against the $[-3.08, -0.78]$ Table~\ref{tab:venus}
+obtains by rescaling from the slice) and $2.44$ points below S1/202 over the full $4{,}463$ steps, the sign
+holds under UI-Venus, and the registered estimand remains incomplete.} The two clauses of
+the registration disagree here, so we give both. Against the band of 17 August, $-2.19$ pp
+relative to the two-seed control mean falls inside $-2.8 \ldots +1.7$ and reads as
+\emph{inconclusive}. Against the interval clause of
+the original document the paired interval above has a negative upper bound, which that
+clause calls \emph{harm}. The band is the later and more specific of the two, and we filed it
+before this branch was trained, so we take it as operative, a tie-break that on this branch
+runs in our favour. The magnitude also sits inside the $2.8$ pp band and outside the $2.11$
+and $1.67$ pp thresholds of Section~\ref{sec:design}. The $2.2$ pp figure of Section~\ref{sec:metric} covers instrument noise only and is not the threshold here.
 
-What the missing run could have changed is fixed by the registered thresholds. To bring the
-two-seed mean to the weakly-positive edge of $\Delta = +1.7$ pp it would have had to score
-$65.0\%$, which is $4.9$ points above the best checkpoint we have measured, MIN at $60.0$,
-and $16.9$ seed-to-seed standard deviations away. For the negative band it would have had to
-score at or below $56.0\%$, $2.7$ such deviations away. The remaining outcome space was
-\emph{inconclusive or negative}, and the decision closed it at inconclusive. We report this rather than let a reader infer a suppressed positive.
+What the missing run would have had to produce is fixed by the registered thresholds. To bring the two-seed mean to the weakly-positive edge of $\Delta = +1.7$ pp, S2/202 would have had to score $65.0\%$, roughly five points above the best checkpoint we have measured, MIN at $60.0$; for the negative band it would have had to score at or below $56.0\%$.
 
-Two things do not depend on the missing seed. The branch is far above the untuned model, $+9.6$ points $[+8.2, +11.1]$, so the descriptor target does not break fine-tuning. It also emits its coordinate slot well, with $71.0\%$ of the points it generates on steps with a parsable descriptor landing inside the $14\%$ window at a median horizontal error of $0.81\%$ of screen width. Whatever the descriptor target costs, it does not cost the ability to point.
+Independent of the missing seed, the branch is far above the untuned model, $+9.6$ points $[+8.2, +11.1]$, so the descriptor target does not break fine-tuning. It also emits its coordinate slot well, with $71.0\%$ of the points it generates on steps with a parsable descriptor landing inside the $14\%$ window at a median horizontal error of $0.81\%$ of screen width, so the ability to point is intact too.
 
 \subsection{A preference objective at the descriptor layer}
 \label{sec:mindesc}
-Section~\ref{sec:diag} points at identification accuracy rather than at the prefix, so we
+Section~\ref{sec:diag} points at identification accuracy, not at the prefix, so we
 ran the objective registered for it, MIN. From the S2 checkpoint it applies $800$ further updates on minimal pairs whose accepted side is the gold descriptor followed by the
 sentence and whose rejected side is a wrong descriptor followed by the \emph{same sentence,
 verbatim}, so the preference term can be reduced only by choosing the right element. Its
 attribution control, CE2, is plain supervised training on the accepted side alone, with the
 same checkpoint, the same $800$ updates, the same schedule and no preference term.
 
-Both branches are in Table~\ref{tab:main}. The primary registered quantity is the paired
-difference between them, which is $+0.63$ pp, $[+0.16, +1.10]$, with $b = 42$, $c = 70$,
-$\chi^2 = 6.5$ and $p = 0.011$. That interval carries instrument noise only, its own cluster-bootstrap standard error being $0.24$ pp. The minimum detectable effect for a design carrying one
-seed per branch, computed in advance from the $0.38$ pp measured on the seed pair together
-with the $0.46$ pp seed term of Section~\ref{sec:design}, is $2.11$ pp, and $+0.63$ is
-$1.4\times$ that seed term. By the reading rule fixed
-before any score existed, this is the \emph{inconclusive} band. Measurement noise is
-separable here and training noise is not.
+Both branches are in Table~\ref{tab:main}. The registered primary averages this pair over two
+seeds; at the one seed we have, the paired difference is $+0.63$ pp,
+$[+0.16, +1.10]$, with $b = 42$, $c = 70$, $\chi^2 = 6.5$ and $p = 0.011$. That interval carries instrument noise only, its own cluster-bootstrap standard error being $0.24$ pp. The minimum detectable effect for one seed per branch, $2.11$ pp by Section~\ref{sec:design}, is above it, and $+0.63$ is $1.4\times$ the seed term. By the band, fixed before this branch was trained, this is
+\emph{inconclusive}. The divergence of Section~\ref{sec:s2} applies here too, and in this
+direction it runs against us: the interval excludes zero, so the interval clause would
+license \emph{positive}. We do not claim it.
 
 The preference branch is $+2.87$ pp above
 S2 $[+2.03, +3.76]$, but $+2.24$ $[+1.41, +3.11]$ of that is attributable to the control ($800$ further supervised updates, no preference term anywhere), and only $+0.63$ sits on top of it.
-In this pair $78\%$ of the movement belongs to the control branch, and reporting $+2.87$ as
-the effect of the objective would overstate it more than fourfold. A steeper
-split appears
-one layer down, at the descriptor, where the control lifts joint name-and-point accuracy by
-$+5.9$ pp against $+0.8$ pp for the preference term, a split of $88/12$. The stage does not overtake plain sentence supervision either, since MIN $-$ S1 is $+0.94$ $[-0.09, +2.05]$, $p = 0.11$, and CE2 $-$ S1 is $+0.31$,
-$p = 0.61$. The stage repairs the damage the descriptor target did to itself and adds little beyond that.
+In this pair roughly four fifths of the movement belongs to the control branch, $+2.24$ of $+2.87$, so the total is not the effect of the objective. A steeper split appears one layer down, at the descriptor, where the control lifts joint name-and-point accuracy by
+$+5.9$ pp against $+0.8$ pp for the preference term, a split of $88/12$, measured on the $3{,}473$ steps carrying a gold name without calling the grounder. The stage does not overtake plain sentence supervision either, since MIN $-$ S1 is $+0.94$ $[-0.09, +2.05]$, $p = 0.11$, and CE2 $-$ S1 is $+0.31$, $p = 0.61$.
 
 
 
-\emph{A registered variant stopped by its feasibility check.} The rejected side needs a source, and two
+\emph{A registered variant stopped by its feasibility check.} Two sources for the rejected side
 were registered: the heuristic one used here, the nearest same-role element $80$--$350$ px
 away, and an on-policy one taking the element the checkpoint itself names when it names the
-wrong one. The second was stopped by that check before any training, $14{,}000$
-training screens giving $459$ usable pairs, $3.3\%$ against a threshold of $25\%$, and the
-reason is measurable. Over the $3{,}246$ steps carrying a wrong name, the distance from the
-element named to the element to be touched has quartiles of $70$, $351$ and $748$ px, so
-the window rejects $76.5\%$ of them. These errors are of two kinds, the right element under another name or a different region entirely, and neither is the local confusion an on-policy negative presumes. The heuristic source therefore constructs a neighbour-confusion setting the data rarely contains rather than sampling these errors. Both sources appear here because the measurement, not a preference, left the heuristic one standing.
+wrong one. We stopped the second before any training: $14{,}000$ screens gave $459$ usable
+pairs, $3.3\%$ against a threshold of $25\%$ and $14.1\%$ on the most generous denominator we
+can defend. The reason is measurable: over the $3{,}246$ wrong-name steps, the distance from
+the element named to the element to be touched has quartiles of $70$, $351$ and $748$ px, so
+the window rejects $76.5\%$ of them. The errors are the right element under another name or a
+different region entirely, neither of them the local confusion an on-policy negative presumes.
+The surviving source therefore trains on a neighbour confusion the data rarely contains, which
+is a candidate reason why $+0.63$ is as small as it is.
 
 \section{Conditions Under Which the Descriptor Pays}
 \label{sec:diag}
 
-This section is exploratory and rests on one treatment seed. It is included because the mechanism it exposes is what a follow-up objective must act on, and because two of its
-components were registered before any treatment score existed.
+This section is exploratory and rests on one treatment seed. The mechanism it exposes is what a follow-up objective must act on, and two of its components, the activation slice of Section~\ref{sec:noslice} and the strict canonicalisation of Section~\ref{sec:alt}, were registered before any treatment score existed.
 
 \subsection{The component works when identification succeeds}
 The branch emits its own descriptor, so its identification can be scored against the gold
 labels independently of the sentence. Table~\ref{tab:cross} crosses name against coordinate
-correctness on the $3{,}245$ steps that carry a gold name and receive a parsable descriptor, while the other $228$ emit none (Section~\ref{sec:noslice}).
+correctness on the $3{,}245$ steps that carry a gold name and receive a parsable descriptor. A
+further $228$ steps carry a gold name but emit no descriptor, the gold-name subset of the
+$325$ of Section~\ref{sec:noslice}, and $881$ carry a descriptor but no gold name to check it
+against, so the table cannot include either group. The remaining $109$ steps carry neither,
+and all of them enter the totals. There the branch is $+1.48$ pp
+\emph{above} its control, interval $[-1.16, +4.10]$, which covers zero.
 
 \begin{table}[!t]
 \caption{Executability by whether the branch's own descriptor got the name and the
-coordinate right. Base and the human references are scored on the same steps without being
-conditioned on the treatment, so they indicate how hard each row is. The stratification is
-post-hoc, bounded by the Ceil. column rather than a causal claim. Cluster-bootstrap
+coordinate right. Entries are executability in \%, $\Delta = \mathrm{S2} - \mathrm{S1}$ in
+points computed before rounding, and Ceil.\ the human references on the same steps; one
+treatment seed. Base and Ceil.\ are not conditioned on the treatment, so they indicate how
+hard each row is. The stratification is post-hoc and is not a causal claim. Cluster-bootstrap
 intervals on $\Delta$ clear zero in the first and last rows only, $[+4.5, +7.0]$ and
 $[-28.5, -21.9]$.}
 \label{tab:cross}
@@ -519,44 +564,31 @@ wrong   & outside & $738$     & 24.4 & 30.8 & \textbf{5.6} & $\mathbf{-25.2}$ & 
 \end{tabular}
 \end{table}
 
-The branch clears the control in the first row, is indistinguishable in the two middle ones, and all the damage sits in the fourth. With both the name wrong and the coordinate outside tolerance, on $738$ steps or $16.5\%$ of the
-$4{,}463$, executability falls to $5.6\%$. What the design costs here is commitment, because having named the wrong element the branch writes a sentence faithful to it, while the control branch, committed to nothing, still retrieves the right element on $30.8\%$ of them.
+The branch clears the control in the first row and falls behind across its complement, by
+$-13.1$ pp on the remaining $1{,}374$ steps, interval $[-15.4, -10.8]$; the two middle rows
+are indistinguishable and the whole of that deficit sits in the fourth. With both the name
+wrong and the coordinate outside tolerance, on $738$ steps or $16.5\%$ of the $4{,}463$,
+executability falls to $5.6\%$. The cost here comes from commitment: having named the wrong element, the branch writes a sentence faithful to it, while the control branch, which names no element, still retrieves the right one on $30.8\%$ of them.
 
 The objection is that this stratification conditions on a variable the treatment itself
-produces, so the failing row may simply be the hard steps. The two rightmost columns test
-that and are not conditioned on the treatment. If the row were merely hard, the references
-would fall with it, yet they reach $66.3\%$ there, $9$ points below their $75.7$, where
-the treatment reaches $5.6$ and the untuned model $24.4$. The row is harder than average and that does not account for the collapse. A clean test would need a difficulty measure fixed before the treatment ran, so the confound is bounded rather than removed. One row does behave as the objection predicts.
+produces, so the failing row may simply be the hard steps. The Base and Ceil.\ columns test
+that; neither is conditioned on the treatment. If the row were merely hard, the references
+would fall with it, yet they reach $66.3\%$ there, $9.4$ points below their $75.7$, while the treatment reaches $5.6$ and the untuned model $24.4$. The row is harder than average and that does not account for a fall of that size. A clean test would need a difficulty measure fixed before the treatment ran, so the confound is narrowed without being removed. One row does behave as the objection predicts.
 The row \emph{name correct, point outside}, with a ceiling of $31.0\%$, is a region the
-instrument largely cannot see, and the near-zero $\Delta$ there is an absence of signal
-rather than of effect.
+instrument largely cannot see, and the near-zero $\Delta$ there is an absence of signal and not evidence of an absent effect.
 
-The decomposition of the total is arithmetic and carries no such caveat. The $92.7\%$ of
-steps carrying a descriptor contribute $-1.28$ pp and the $7.3\%$ that do not contribute
-$-0.65$ pp.
+The decomposition of the total is arithmetic. The grouping carries the same caveat, but the
+two parts sum to the whole whatever it means: the $92.7\%$ of steps carrying a descriptor
+contribute $-1.28$ pp and the $7.3\%$ that do not contribute $-0.65$ pp.
 
-\subsection{A third of the difference sits in $7.3\%$ of steps}
+\subsection{A third of the difference sits in \texorpdfstring{$7.3\%$}{7.3\%} of steps}
 \label{sec:noslice}
 The slice separating steps where the branch emits a descriptor from those where it does not was registered on 19 August, before any S2 score existed.
 
-\begin{table}[!t]
-\caption{Pre-registered activation slice (19 August, before any treatment score).}
-\label{tab:activation}
-\centering
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{lrrrr}
-\toprule
-Group & $n$ & S1 & S2 & $\Delta$ \\
-\midrule
-Descriptor emitted    & $4{,}138$ & 62.2 & 60.8 & $-1.38\,[-2.54, -0.19]$ \\
-No descriptor emitted & $325$     & 19.7 & 10.8 & $-8.92\,[-12.57, -5.25]$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The $7.3\%$ of steps where the branch emits nothing carry $34\%$ of the total difference (Table~\ref{tab:activation}), and there the model misjudges the \emph{action class}, the reference saying \emph{Click on the close icon} where the branch writes \emph{Swipe up}. References score $68.3\%$ there, so the steps are solvable and the instrument is not blind. The failure is not created by the descriptor either, since the untuned model names the correct action class on $83.4\%$ of them, against
-$55.1\%$ for the control and $38.8\%$ for the treatment, consistent with fine-tuning damaging the action prior and the descriptor target amplifying it. One mechanism we cannot yet test is that descriptors appear only on touch steps in training, so the model may have learnt ``descriptor $\Leftrightarrow$ touch'' and dropped it when unsure. S2-nopoint, the branch registered to test that, is among the cancelled runs.
+On the $4{,}138$ steps where a descriptor is emitted, S1 and S2 read $62.2$ and $60.8$
+($\Delta = -1.38$, $[-2.54, -0.19]$); on the $325$ where none is, they read $19.7$ and $10.8$
+($\Delta = -8.92$, $[-12.57, -5.25]$).
+The $7.3\%$ of steps where the branch emits nothing carry $34\%$ of the total difference, and there the model misjudges the \emph{action class}, the reference saying \emph{Click on the close icon} where the branch writes \emph{Swipe up}. References score $68.3\%$ there, so the steps are solvable and the instrument is not blind. The descriptor is not the origin of the failure, since the untuned model names the correct action class on $83.4\%$ of these steps against $55.1\%$ for the control, which carries no descriptor at all; the treatment's $38.8\%$ is consistent with fine-tuning damaging the action prior and the descriptor target deepening the damage.
 One limitation attaches to this slice. The $325$ steps are defined by the treatment's own
 behaviour, so ``it does badly there'' is partly definitional. What is not definitional is that the control also scores only $19.7\%$.
 
@@ -565,104 +597,76 @@ behaviour, so ``it does badly there'' is partly definitional. What is not defini
 \emph{Length.} The difference is negative on long sentences ($-1.85$) and on short ones
 ($-2.00$), and the two branches' length distributions all but coincide (median $33$ and
 $34$ characters). \emph{Application slice.} It is negative on seen ($-2.25$), unseen
-($-6.41$) and unattributable ($-1.59$) steps alike. \emph{Canonicalisation.} The \emph{go back} $\to$ touch collapse in
-condition (i) hides exactly this failure mode, $65$ treatment sentences containing
-\emph{go back} passing the action check where only $21$ are executable, so we re-ran with
+($-6.41$, $n = 78$ and uninformative) and unattributable ($-1.59$) steps alike. \emph{Canonicalisation.} The \emph{go back} $\to$ touch collapse in the action check,
+condition (i) of Section~\ref{sec:metric}, hides exactly this failure mode, $65$ treatment sentences containing
+\emph{go back} passing the action check while only $21$ are executable, so we re-ran with
 the strict variant registered on 16 August before any treatment score. The difference moves
 from $-1.93$ to $-1.86$, all four branches dropping $0.20$--$0.31$ points with the ordering
 unchanged. \emph{Label noise.} On the $26$ steps whose descriptor label is OCR
 garbage the difference is $+7.69$ ($p = 0.63$), the opposite direction.
 
-\subsection{One example from each regime}
-
-\begin{table}[t]
-\caption{One held-out step from each regime, verbatim. The descriptor is stripped before
-scoring, so only the final sentence is measured.}
-\label{tab:qual}
-\centering
-\scriptsize
-\renewcommand{\arraystretch}{1.0}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.955\columnwidth}@{}}
-\toprule
-\emph{(a) Identification succeeds, and the prefix pays.} \\
-Reference: ``Click on the search icon.'' \\
-S1: ``Click on the text 3.'' \hfill \emph{fails} \\
-S2: \texttt{<desc>icon button | SEARCH | <point>893,396</point> | the only icon button on
-screen</desc>} ``Click on the search icon.'' \hfill \emph{succeeds} \\
-\midrule
-\emph{(b) Identification fails, and the prefix binds the sentence to the error.} \\
-Reference: ``Click on BMW option on the screen.'' \\
-S1: ``Click on BMW option on the screen.'' \hfill \emph{succeeds} \\
-S2: \texttt{<desc>item | (no name) | <point>100,294</point> | just below the text
-``Acura''</desc>} ``Click on the first car brand on the screen.'' \hfill \emph{fails} \\
-\midrule
-\emph{(c) No descriptor emitted, and the action class is wrong.} \\
-Reference: ``click on the Three lines at the top left corner.'' \\
-S1: ``Click on the three lines at the top left corner of the screen.'' \hfill
-\emph{succeeds} \\
-S2: ``Go back to the previous page.'' \hfill \emph{fails} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-In (b) of Table~\ref{tab:qual} the descriptor carries no name, the element having none in the tree and none inside its box under OCR, so the branch describes a position in a list.
-That sentence is fluent, faithful to its own descriptor, and unusable. In (c) nothing is
-emitted and the sentence is not about a touch. Neither failure is a failure of fluency.
-
 \subsection{Relation to the grounding-first prior}
-The reported gains for targets that ground before answering were not measured on this
-task, and three differences matter. Their supervision is a question--answer pair whose grounded object is what the question is \emph{about}, so a grounding error shows in the answer, while ours admits a fluent wrong sentence after a wrong descriptor. Their
-grounding target is checked against annotation at training time, ours at inference against
-the model's own identification, the asymmetry Table~\ref{tab:cross} finds. And their gains
-are read on answer accuracy, whose floor is near chance, while executability runs from a measured floor of $12.0$ to a measured ceiling of $75.7$, leaving $63.7$ points in which $2$ points is small. Ours is a boundary condition on that prior rather than a contradiction. The prefix
-pays where the model can identify the referent, and identification is harder here, with
-$22.0\%$ of the elements to be touched carrying no name in tree or OCR.
+The reported gains for targets that ground before answering~\cite{gcot} were not measured on
+this task, and three differences matter. Their supervision is a question--answer pair whose
+grounded object is what the question is \emph{about}, so a grounding error shows in the
+answer, while ours admits a fluent wrong sentence after a wrong descriptor. Their grounding
+target is checked against annotation during training, ours at inference against the model's
+own identification. Table~\ref{tab:cross} measures what that costs. Gains for that prior are read on
+answer accuracy, whose floor is near chance, while executability runs from a measured $12.0$
+to a measured $75.7$; the two scales do not convert, so their gains and ours cannot be
+compared in size. Our result neither confirms nor contradicts that prior. In our data the prefix gains only
+where the branch's own identification was correct, on a split conditioned post-hoc on the
+treatment's output, and
+where identification is hard, $22.0\%$ of touch targets carrying no name in tree or
+OCR.
 
 \subsection{Implications for the intervention}
-The three tables say more than that the ablation failed to pay. The supervision is not uniformly inert, since it adds $5.7$ points where the model identifies the element correctly and subtracts $25$ where identification has failed, so its value is conditional on identification accuracy rather than on the prefix. The presence of a slot is not the actionable variable either. The two middle rows, $+1.1$ $[-2.5, +4.7]$ where only the point is right
-and $+0.5$ $[-2.8, +4.3]$ where only the name is, separate neither from zero nor from each other, so they license no verdict on either slot. The actionable variable is the reliability of identification. Lifting the failing row to the control's level on those $738$ steps, its membership held fixed, would be worth $4.2$ points arithmetically. Section~\ref{sec:mindesc} reports the objective
-registered for exactly that, and what it returned. Identification accuracy is therefore both the target of the next intervention and, so far, the quantity that has not moved enough. Choosing this objective \emph{after} seeing the S2 result is post-hoc and recorded as such.
+The supervision is not uniformly inert, since it adds $5.7$ points on the $1{,}871$ steps where the descriptor gets the name and the point right and subtracts $13.1$ on the other $1{,}374$. The presence of a slot does not explain that split. The two middle rows, $+1.1$ $[-2.5, +4.7]$ where only the point is right and $+0.5$ $[-2.8, +4.3]$ where only the name is, separate neither from zero nor from each other, so neither slot can be given a verdict. The rows are defined by identification correctness, so this describes the split without explaining it; what it does rule out is that either slot alone accounts for it. Lifting the fourth row, where both name and point are wrong, to the control's level on its $738$ steps, membership held fixed, is worth $4.2$ points arithmetically over the full $4{,}463$-step population rather than the $3{,}245$ crossed here. Section~\ref{sec:mindesc} reports the objective
+registered for exactly that, and what it returned. Choosing this objective \emph{after} seeing the S2 result is post-hoc and recorded as such.
 
 \section{Limitations}
 \label{sec:limits}
 
-\emph{The registered estimand is incomplete, permanently.} The treatment branch has one seed, and so do both stage-2 branches, so their contrasts are exploratory even where the slice was registered. We do
-not say what the pre-registration forbids: that the hypothesis was refuted, that the
-treatment is harmful by the registered quantity, or that a McNemar $p$ settles a question in
-which seed variance is a component.
+\emph{The registered estimand is incomplete.} The treatment branch has one seed, and so do both stage-2 branches, so their contrasts are exploratory even where the slice was registered. Three readings are not available from these numbers: that the hypothesis was refuted, or that the treatment is harmful by the registered \emph{two-seed} quantity, whose second seed does not exist, or that a McNemar $p$ settles a question in which seed variance is a component.
 
-\emph{Ceiling and blind region.} The human-reference level is $75.7\%$, so the headroom for
-any intervention is narrower than a score read against $100$ suggests. The references fail
-on $1{,}083$ steps, $72\%$ of those because the grounder lands more than $14\%$ of screen width away, and $935$ steps defeat all three branches. Below the merge radius the
-metric is blind, detecting a wrong element named but not a point slightly off inside the
-right one.
+\emph{Ceiling and blind region.} The human-reference level is $75.7\%$. The references fail on
+$1{,}083$ steps, $72\%$ of those because the grounder lands more than $14\%$ of screen width
+away, and $935$ steps defeat Base, S1 and the references alike. The instrument catches a sentence that
+names the wrong element, but not a point that lands slightly off inside the right one, so it
+is blind below the radius at which neighbouring elements are merged.
 
-\emph{Grounder dependence.} Two grounders agree on the ordering, but both are built on
-Qwen-family backbones, so a same-family effect is not excluded and no human evaluation
-anchors either. Our rewrites keep the element name verbatim, so we probed phrasing, not the referring expression that~\cite{groundersunderstand} perturbs. Their $84\%$ is the yield of
+\emph{Grounder dependence.} Our headline grounder is trained on the AndroidControl split, and
+both grounders are built on Qwen-family backbones, so both a register effect and a
+same-family effect remain possible, and no human evaluation anchors either. Our rewrites keep the element name verbatim, so we probed phrasing, not the referring expression that~\cite{groundersunderstand} perturbs. Their $84\%$ is the yield of
 an adversarial search over Windows desktops rather than a paraphrase failure rate, and the
 mobile case they leave open is ours.
 
 \emph{Split composition.} The split is held out by task, not by application. Of the
-attributable applications $95.6\%$ also occur in training, and $59\%$ of scored steps cannot be attributed at all, \emph{unknown} and never read as \emph{unseen}. We report no
-standalone comparison against an external model, which that overlap would favour. Nor is
-task disjointness the same as phrase disjointness, since $17.3\%$ of test references appear
-verbatim in a $2.6\%$ slice of training data.
+attributable applications $95.6\%$ also occur in training, and $59\%$ of scored steps cannot be attributed at all, \emph{unknown} and never read as \emph{unseen}. Because that overlap would favour us, we report no standalone comparison against an external
+model. Nor is task disjointness the same as phrase disjointness, since $17.3\%$ of test references recur verbatim in training, concentrated in a training subset of $2.6\%$ of steps.
 
 \emph{Scope of the construct.} Every claim is at the level of a system, never of a single
 sentence, and the one setting where this family of measures has been validated against
 people recommends a reference-based score for ranking systems even while its reference-free
 model correlates best per instruction~\cite{zhao2021}. The metric asks whether a grounding
-model reaches the right element, not whether a person would, so a system could climb it by writing for the grounder. We bound that rather than exclude it, a sentence naming a screen
-region scoring $89.5\%$ when right and $3.3\%$ when wrong. \emph{External validity.} Every result here is confined to a single
-screen, English interfaces, one dataset, one 3B base model and one training configuration.
+model reaches the right element, not whether a person would, so a system could climb it by writing for the grounder. We bound that without excluding it, since the floor controls of
+Section~\ref{sec:metric} show a fluent sentence with wrong content scoring below the
+contentless one.
+
+\emph{External validity.} Every result here is confined to a single screen, English
+interfaces, one dataset, one 3B base model and one training configuration. Scoring is also
+teacher-forced on human-written history, so absolute levels do not transfer to a system
+running its own trajectory.
 
 \section{Conclusion}
 
-We built supervision for GUI instruction generation without collecting new annotation and measured what it achieves on a scale calibrated at both ends. Executability moves from $47.6$ to $59.4$
-points at two seeds, against a human-reference level of $75.7$ and a measured floor of
-$12.0$, and the sign is preserved under a second grounder trained on different data. Whether naming the element first adds anything is answered over two seeds per branch, and one run was never executed. At its single seed the treatment sits $2.19$ below the two-seed control mean, inside the band declared inconclusive in advance, and the registered thresholds put the rest of the outcome space at inconclusive or negative. In exploratory single-seed analysis the prefix gains $+5.7$ points where the model identifies the element correctly and loses $25$ where it does not, most of that cost falling on an action-prior failure that fine-tuning introduces before any descriptor exists. The preference stage this diagnosis specifies adds $+0.63$ pp over a control matched update for update, inside that band again. The mechanism pays where identification succeeds, so what it is worth is conditional on identification accuracy, and that is where the next experiment must act.
+We built supervision for GUI instruction generation without collecting new annotation. Executability moves from $47.6$ to $59.4$ points at two seeds, against a human-reference score of $75.7$ and a measured floor of $12.0$, and the sign is preserved under a second grounder not trained on AndroidControl.
 
+Whether naming the element first adds anything was to be answered over two seeds per branch; we ran three of the four, and the two registered attribution controls went with it. At that seed the treatment sits $2.19$ below the two-seed control mean. The band filed before that branch was trained calls this inconclusive, while the interval clause of the same registration calls it harm, and Section~\ref{sec:s2} gives both.
+
+Splitting by the branch's own descriptor, post-hoc and at that same seed, the prefix gains $+5.7$ points on the $1{,}871$ steps where it gets the name and the point right and loses $13.1$ on the other $1{,}374$, the loss concentrated on the $738$ where both are wrong. A separate failure of the action prior, which fine-tuning introduces before any descriptor exists, carries $34\%$ of the total difference on $7.3\%$ of steps. A further $881$ steps, which carry no gold name and cannot enter that table, run the other way at $+1.48$ pp with an interval covering zero. The preference stage adds $+0.63$ pp over a matched control, below the $2.11$ pp detectable at one seed, and most of the stage-2 rise belongs to that control. Identification accuracy must improve.
+
+\setlength{\IEEEbibitemsep}{0pt plus .5pt}
 \begin{thebibliography}{00}
 \bibitem{guideme} K. Fang \emph{et al.}, ``GuideMe: A VLM-based system assisting independent smartphone learning for older adults,'' in \emph{Proc. CHI}, 2026.
 \bibitem{uground} B. Gou \emph{et al.}, ``Navigating the digital world as humans do: Universal visual grounding for GUI agents,'' in \emph{Proc. ICLR}, 2025.
@@ -717,6 +721,7 @@ Stat.}, vol. 90, no. 3, pp. 414--427, 2008.
 ``LlamaFactory: Unified efficient fine-tuning of 100+ language models,'' in
 \emph{Proc. ACL System Demonstrations}, 2024.
 \bibitem{zhao2021} M. Zhao \emph{et al.}, ``On the evaluation of vision-and-language navigation instructions,'' in \emph{Proc. EACL}, 2021.
+\bibitem{companion} L. D. P. Uyen and N. H. B. Long, ``Generating software instructions from screenshots and user goals: automatic referring labels for unnamed interface elements,'' 2026, under review.
 
 \end{thebibliography}
 

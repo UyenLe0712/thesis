@@ -13,7 +13,7 @@
 \endhead
 
 GUI & Graphical User Interface & Giao diện đồ hoạ người dùng \\
-VLM & Vision--Language Model & Mô hình thị giác--ngôn ngữ \\
+VLM & Vision-Language Model & Mô hình thị giác và ngôn ngữ \\
 LLM & Large Language Model & Mô hình ngôn ngữ lớn \\
 SFT & Supervised Fine-Tuning & Tinh chỉnh có giám sát \\
 LoRA & Low-Rank Adaptation & Tinh chỉnh hạng thấp \\
@@ -29,24 +29,57 @@ MDE & Minimum Detectable Effect & Mức chênh lệch nhỏ nhất còn phân bi
 KTC & (Confidence Interval) & Khoảng tin cậy \\
 dp & density-independent pixel & Đơn vị độ dài độc lập mật độ điểm ảnh trên Android \\
 pp & percentage point & Điểm phần trăm (chênh lệch tuyệt đối giữa hai tỉ lệ) \\
+ORPO & Odds Ratio Preference Optimization & Mục tiêu ưu tiên gắn thẳng vào hàm mất mát có
+giám sát, không cần mô hình tham chiếu \\
 \midrule
 \multicolumn{3}{@{}l@{}}{\textit{Thuật ngữ riêng của luận văn}} \\
 \midrule
 \multicolumn{2}{@{}p{8.2cm}}{\textit{executability} (tính thực thi được)}
-& Thước đo đề xuất: câu hướng dẫn được coi là đúng khi một mô hình định vị độc lập,
-không thấy đáp án, chỉ đúng phần tử người dùng đã chạm \\
+& Thước đo mà luận văn đề xuất. Một câu hướng dẫn được tính là đúng nếu đưa câu đó cho
+một mô hình định vị độc lập thì nó chỉ trúng phần tử mà người dùng đã chạm \\
 \multicolumn{2}{@{}p{8.2cm}}{Mô hình định vị phần tử (\textit{GUI grounding model})}
-& Mô hình nhận một câu mô tả và một ảnh màn hình, trả về toạ độ phần tử được mô tả.
-Trong luận văn giữ vai \textbf{dụng cụ đo}, không phải đối tượng so sánh \\
-\multicolumn{2}{@{}p{8.2cm}}{Bộ mô tả (\textit{descriptor})}
-& Dòng khai báo bốn ô \code{[vai trò | tên | toạ độ | dấu hiệu phân biệt]} mà mô hình
-phải sinh trước câu hướng dẫn ở nhánh S2 \\
+& Mô hình nhận một câu mô tả cùng một ảnh màn hình và trả về toạ độ của phần tử được mô
+tả. Ở đây nó đóng vai \textbf{dụng cụ đo}, không phải một hệ thống đem ra so sánh \\
+\multicolumn{2}{@{}p{8.2cm}}{Dòng khai báo (\textit{descriptor})}
+& Một dòng có cấu trúc gồm bốn ô, \code{[vai trò | tên | toạ độ | dấu hiệu phân biệt]},
+mà mô hình phải viết ra trước khi viết câu hướng dẫn. Dòng này bị cắt bỏ trước khi chấm \\
 \multicolumn{2}{@{}p{8.2cm}}{Ô Voronoi}
-& Vùng trên màn gồm mọi điểm gần phần tử đích hơn mọi phần tử khác; dùng làm luật
-xác định ``trúng'' thay cho ngưỡng dung sai cố định \\
+& Vùng trên màn hình gồm những điểm nằm gần phần tử cần chạm hơn bất kỳ phần tử nào khác.
+Luận văn dùng vùng này để xác định thế nào là trỏ trúng, thay cho một ngưỡng sai số cố
+định \\
 \multicolumn{2}{@{}p{8.2cm}}{Bước chạm}
-& Bước thao tác có loại hành động là chạm/nhấn, tức có toạ độ đích; đây là quần thể
-được chấm điểm \\
+& Bước thao tác mà người dùng chạm vào màn hình, tức bước có toạ độ đích. Toàn bộ điểm số
+của luận văn tính trên nhóm bước này \\
+\multicolumn{2}{@{}p{8.2cm}}{Phần tử cần chạm}
+& Nút, ô nhập hoặc mục danh sách mà người dùng đã chạm ở bước đang xét, tức thứ mà câu
+hướng dẫn phải chỉ ra được \\
+\multicolumn{2}{@{}p{8.2cm}}{Quần thể chấm}
+& Tập $4.463$ bước chạm của tập kiểm, dùng chung cho mọi nhánh, nên hai nhánh bất kỳ luôn
+so được với nhau trên cùng những bước \\
+\multicolumn{2}{@{}p{8.2cm}}{Trần và sàn của thước}
+& Trần là điểm mà câu do người viết đạt được, tức mức cao nhất mà thước còn cho. Sàn là
+điểm mà một câu không mang thông tin gì vẫn đạt được. Mọi điểm số đọc trong dải giữa hai
+mức đó \\
+\multicolumn{2}{@{}p{8.2cm}}{Nhánh nền và nhánh xử lý}
+& Nhánh nền là nhánh không có thành phần đề xuất, dùng làm mốc so. Nhánh xử lý là nhánh
+có thành phần đó. Chênh lệch giữa hai nhánh chính là đại lượng cần đo \\
+\multicolumn{2}{@{}p{8.2cm}}{Hạt giống}
+& Số dùng để khởi tạo phần ngẫu nhiên của một lượt huấn luyện. Hai lượt chỉ khác hạt
+giống là hai lần dựng lại cùng một hệ thống, nên chênh lệch giữa chúng là nhiễu \\
+\multicolumn{2}{@{}p{8.2cm}}{Điểm lưu (\textit{checkpoint})}
+& Bản trọng số mô hình được ghi ra đĩa tại một thời điểm của lượt huấn luyện \\
+\multicolumn{2}{@{}p{8.2cm}}{Lát cắt}
+& Một cách chia quần thể chấm thành các nhóm nhỏ để đọc kết quả riêng trên từng nhóm, ví
+dụ chia theo độ dài câu hoặc theo số phần tử trên màn hình \\
+\multicolumn{2}{@{}p{8.2cm}}{Phép so đối chiếu}
+& Một chênh lệch đã biết chắc dấu và đủ lớn, dùng để kiểm xem một cách đo mới có còn nhìn
+thấy những khác biệt thật hay không \\
+\multicolumn{2}{@{}p{8.2cm}}{MIN-DESC}
+& Chặng huấn luyện thứ hai, nối tiếp nhánh S2. Mô hình học từ những cặp câu chỉ khác nhau
+ở dòng khai báo, còn phần câu hướng dẫn thì giống hệt nhau (Mục~\ref{sec:mindescthietke}) \\
+\multicolumn{2}{@{}p{8.2cm}}{CE2-S2}
+& Nhánh đối chứng của MIN-DESC, dùng để tách xem phần cải thiện nào là của mục tiêu huấn
+luyện mới và phần nào chỉ do được học thêm \\
 \bottomrule
 \end{longtable}
 \clearpage

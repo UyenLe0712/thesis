@@ -15,57 +15,84 @@ Cơ sở đào tạo: & Trường ĐH Khoa học Tự nhiên, ĐHQG-HCM \\
 
 \subsection*{1. Tóm tắt nội dung luận văn}
 
-Các mô hình giao diện hiện nay sinh ra toạ độ để máy tự bấm. Luận văn nghiên cứu một
-đầu ra khác trên cùng dữ liệu vào: một câu tiếng Anh nói cho \emph{người đọc} biết phải
-chạm vào phần tử nào trên màn hình. Trở ngại chính không nằm ở khâu sinh câu mà ở khâu
-chấm: cùng một nút có nhiều cách gọi tên hợp lệ, nên không câu chuẩn đơn lẻ nào gánh
-được vai trò đáp án.
+Các hệ thống tác tử giao diện hiện nay nhìn ảnh màn hình rồi sinh ra toạ độ để máy tự
+bấm. Luận văn giữ nguyên đầu vào đó nhưng đổi đầu ra. Thay vì một toạ độ cho máy, mô hình
+viết một câu tiếng Anh cho người đọc, nói rõ cần chạm vào phần tử nào trên màn hình.
 
-Luận văn đề xuất thước đo \textbf{executability}: câu sinh ra được đưa cho một mô hình
-định vị phần tử độc lập, mô hình này không hề thấy toạ độ đáp án; bước được tính đúng
-khi điểm nó trả về rơi vào ô Voronoi của phần tử người dùng đã chạm và loại thao tác
-được gọi tên đúng. Thước được kiểm bằng bốn phép độc lập trước khi dùng để kết luận:
-một cổng chặn về sai số của dụng cụ đo (đạt: sai số trung vị $0{,}7\%$ bề ngang màn so
-với ngưỡng $3\%$ khoá trước), một phép chọn luật trúng dựa trên \emph{sàn} đo được (luật
-dung sai quy ước cho điểm $84{,}3\%$ số câu chỉ sai nút, luật ô Voronoi chỉ $2{,}8\%$),
-một phép đo trần ($75{,}7\%$, KTC 95\% $[74{,}1; 77{,}3]$ khi đưa chính câu người viết đi
-chấm), và một bộ bơm lỗi với ngưỡng đóng băng trước khi chạy.
+Khó khăn lớn nhất không nằm ở việc sinh câu mà ở việc chấm câu. Cùng một nút có nhiều
+cách gọi tên đều đúng, chẳng hạn ``thanh tìm kiếm'' và ``biểu tượng kính lúp'', nên không
+thể lấy một câu chuẩn duy nhất làm đáp án. Vì vậy phần lớn công sức của luận văn dành cho
+việc xây dựng và kiểm chứng một thước đo dùng được.
 
-Về phía mô hình, luận văn xây dựng hoàn toàn tự động một tập giám sát $64.567$ bước từ
-bộ AndroidControl, không thuê người dán nhãn, đã kiểm rò rỉ dạy--kiểm ở quy mô đủ và
-không tìm thấy tác vụ nào trùng. Thành phần đề xuất là ``mô tả phân biệt trước, phát
-ngôn sau'': đích huấn luyện chứa một dòng khai báo có cấu trúc về phần tử đích trước khi
-tới câu, và dòng khai báo bị cắt bỏ trước khi chấm.
+Thước đo được đề xuất có tên \textbf{executability}. Câu do mô hình sinh ra được đưa cho
+một mô hình định vị phần tử độc lập, và mô hình này không hề nhìn thấy đáp án. Bước được
+tính là đúng khi mô hình định vị chỉ trúng phần tử mà người dùng đã chạm, đồng thời câu
+gọi đúng loại thao tác. Trước khi dùng thước để kết luận bất cứ điều gì, luận văn đo chính
+thước đó. Sai số của dụng cụ đo là $0{,}7\%$ bề ngang màn hình, thấp hơn nhiều so với
+ngưỡng $3\%$ đặt ra từ trước. Đưa chính câu do người viết đi chấm thì được $75{,}7\%$, và
+đây là mức trần mà mọi điểm số khác phải đọc trên nền đó. Ở đầu còn lại, nếu thay câu bằng
+một câu chung chung không nói phần tử nào thì điểm chỉ còn $12{,}0\%$, và nếu thay bằng
+câu thật của một màn hình khác thì còn $6{,}1\%$. Hai con số này cho thấy thước đo phản
+ứng theo nội dung của câu chứ không theo cách hành văn. Cuối cùng, chấm lại toàn bộ bằng
+một mô hình định vị thứ hai, không dùng bộ dữ liệu của đề tài khi huấn luyện, cho kết quả
+gần như không đổi.
 
-Trên $4.463$ bước chạm của tập kiểm, mô hình Qwen2.5-VL-3B tinh chỉnh QLoRA đạt
-$59{,}1\%$ so với $47{,}6\%$ của chính mô hình đó khi chưa tinh chỉnh; chênh lệch ghép
-cặp $11{,}5$ điểm ($p<0{,}001$) đứng vững qua năm cách giải thích thay thế, còn cách thứ
-sáu (bắt chước văn phong) chưa loại trừ được.
+Về phía mô hình, luận văn chuyển bộ dữ liệu AndroidControl thành một tập huấn luyện
+$64.567$ bước, hoàn toàn tự động, không thuê người gán nhãn. Thành phần được đề xuất là
+``mô tả phân biệt trước, phát ngôn sau'': trước khi viết câu, mô hình phải viết ra một
+dòng khai báo về phần tử cần chạm gồm vai trò, tên, toạ độ và một dấu hiệu để phân biệt phần tử ấy với các phần tử giống nó. Dòng khai báo này bị cắt bỏ trước khi chấm, nên nếu điểm có tăng thì
+đó là do hành vi của mô hình thay đổi, không phải do nó được cho thêm thông tin.
+
+Trên $4.463$ bước chạm của tập kiểm, mô hình Qwen2.5-VL-3B sau khi tinh chỉnh đạt
+$59{,}1\%$, so với $47{,}6\%$ của chính mô hình đó khi chưa tinh chỉnh. Khoảng cách
+$11{,}5$ điểm này vẫn giữ nguyên sau khi kiểm sáu cách giải thích khác. Nhánh mang thành
+phần được đề xuất đạt $57{,}2\%$, tức thấp hơn nhánh nền $1{,}93$ điểm. Mức chênh đó nằm
+trong dải mà luật đọc kết quả, khoá từ trước khi có số, gọi là \emph{không kết luận được};
+hạt giống thứ hai của nhánh này bị huỷ vì hết ngân sách máy, nên kết quả dừng lại ở đó.
+Một chặng huấn luyện tiếp theo đạt $60{,}0\%$, cao nhất trong các mô hình đã đo, nhưng khi
+tách riêng phần công thì $78\%$ mức tăng thuộc về nhánh đối chứng chứ không thuộc về mục
+tiêu huấn luyện mới.
+
+Phần đóng góp cuối là một chẩn đoán ở mức từng bước. Khi mô hình khai báo đúng phần tử,
+điều xảy ra ở $60{,}6\%$ số bước, nó viết câu tốt hơn nhánh nền $8{,}83$ điểm và vượt cả
+mức của câu do người viết trên nhóm bước đó. Khi khai báo sai, nó thấp hơn $11{,}12$ điểm.
+Hai chiều gần như triệt tiêu nhau, và đó là lý do khoảng cách tổng cộng không đáng kể. Cách làm này không sai về nguyên tắc; cái chặn nó lại là độ chính xác của chính
+dòng khai báo.
 
 \subsection*{2. Những kết quả mới của luận văn}
 
 \begin{itemize}[leftmargin=1.4em]
-\item \textbf{Thước đo không cần đáp án tham chiếu cho bài toán sinh hướng dẫn giao
-diện.} Luật trúng được chọn dựa trên hành vi đo được với đầu vào sai nút, không dựa
-trên ngưỡng dung sai quy ước; thứ tự giữa các hệ thống giữ nguyên dưới năm luật chấm
-khác nhau.
+\item \textbf{Một thước đo không cần câu chuẩn làm đáp án.} Luật xác định thế nào là trỏ
+trúng không lấy theo một ngưỡng sai số quy ước, mà được chọn dựa trên hành vi đo được, cụ
+thể là luật nào để lọt nhiều câu chỉ sai nút thì bị loại. Thứ tự giữa các hệ thống không đổi khi
+chấm lại bằng năm luật khác nhau.
 
-\item \textbf{Trần của thước được đo, không phải giả định.} Đưa chính câu do người viết
-đi chấm cho $75{,}7\%$; mọi điểm số của mô hình phải đọc trên nền này chứ không phải
-trên nền $100$. Ước lượng cũ $70{,}0\%$ dựa trên mẫu con $300$ bước lệch $5{,}7$ điểm và
-đã bị rút.
+\item \textbf{Trần và sàn của thước đều được đo, không phải giả định.} Đưa chính câu do
+người viết đi chấm được $75{,}7\%$, nên mọi điểm số của mô hình phải đọc trên nền đó chứ
+không phải trên nền $100$. Ở đầu kia của thang đo, câu chung chung không nói phần tử nào
+chỉ được $12{,}0\%$, còn câu thật nhưng của một màn hình khác chỉ được $6{,}1\%$, thấp
+nhất trong mọi phép đo. Một ước lượng trần cũ, $70{,}0\%$ tính trên mẫu con $300$ bước,
+lệch $5{,}7$ điểm và đã bị rút.
 
-\item \textbf{Đường ống dữ liệu tự động.} Chuyển AndroidControl thành tập giám sát cho
-tác vụ mới: ghép hai bản phân phối trên Hugging Face, kiểm phép ghép bằng đối chứng lệch
-một bước ($48\%$ so với $20\%$), dựng nhãn mô tả từ cây trợ năng kết hợp OCR, chín bất
-biến cấu trúc đều đạt ở quy mô đủ.
+\item \textbf{Một đường ống dựng dữ liệu chạy hoàn toàn tự động.} Đường ống này chuyển
+AndroidControl thành tập huấn luyện cho tác vụ mới. Đường ống ghép hai bản phân phối dữ
+liệu, kiểm phép ghép bằng một đối chứng lệch chủ ý một bước ($48\%$ so với $20\%$), rồi
+dựng nhãn mô tả phần tử từ cây trợ năng kết hợp với chữ đọc được trên màn hình.
 
-\item \textbf{Bản đăng ký trước có luật đọc cho cả bốn kết cục}, đưa vào kho phiên bản
-trước lượt huấn luyện đầu tiên; mọi thay đổi về sau ghi thành mục sửa đổi có ngày.
+\item \textbf{Một bản đăng ký trước có luật đọc cho cả bốn kết cục.} Bản này được đưa vào
+kho phiên bản trước lượt huấn luyện đầu tiên, nên cách đọc kết quả không phụ thuộc vào
+việc nhìn thấy số trước hay sau. Mọi thay đổi về sau đều ghi thành mục sửa đổi có ngày.
 
-\item \textbf{Định vị bài toán.} Trong bộ AndroidControl gốc và trong các công trình
-dùng bộ này, câu hướng dẫn từng bước do người viết nằm ở \emph{đầu vào}; ở đây nó là
-\emph{đích sinh} và là đầu ra duy nhất đem chấm.
+\item \textbf{Một chẩn đoán ở mức từng bước cho thành phần được đề xuất.} Chia số bước
+theo việc dòng khai báo do mô hình tự viết có trỏ đúng phần tử hay không cho thấy cơ chế
+vẫn hoạt động đúng như giả thuyết, nhưng bị chặn bởi độ chính xác của chính dòng khai báo.
+Mô hình hơn nhánh nền $8{,}83$ điểm khi khai báo đúng, và thấp hơn $11{,}12$ điểm khi khai báo sai. Đi
+kèm là một hệ số quy đổi bằng $0{,}43$, cho phép ước lượng trước một cải thiện ở dòng khai
+báo sẽ đổi thành bao nhiêu điểm ở đầu ra.
+
+\item \textbf{Cách đặt lại bài toán.} Trong bộ AndroidControl gốc và trong các công trình
+dùng bộ này, câu hướng dẫn từng bước do người viết là \emph{đầu vào} của mô hình. Ở đây nó
+là thứ mô hình phải sinh ra, và cũng là đầu ra duy nhất được đem chấm.
 \end{itemize}
 
 \vspace{1.5em}
@@ -87,42 +114,61 @@ XÁC NHẬN CỦA CƠ SỞ ĐÀO TẠO\\ HIỆU TRƯỞNG
 
 \noindent\begin{tabularx}{\textwidth}{@{}lX@{}}
 Thesis title: & \TenDeTaiEN. \\
-Speciality: & Computer Science \\
+Speciality: & Artificial Intelligence \\
 Code: & \MaNganh \\
 Name: & Le Doan Phuong Uyen \\
 Academic year: & \Khoa \\
 Supervisor: & \GVHDen \\
-At: & VNUHCM -- University of Science \\
+At: & VNUHCM - University of Science \\
 \end{tabularx}
 
 \subsection*{1. Summary}
 
-GUI agents produce coordinates for a machine to click. This thesis studies a different
-output over the same input: a short instruction telling a \emph{person} which on-screen
-element to touch. The obstacle is not generation but evaluation, since many wordings
-identify the same button and no single reference can carry the judgement.
+GUI agent systems look at a screenshot and produce a coordinate for the software to click.
+This thesis keeps that input but changes the output: instead of a coordinate for a machine,
+the model writes a short English sentence for a person, telling them which element on the
+screen to touch.
 
-We propose \textbf{executability}: the generated sentence is passed to a separate GUI
-grounding model that never sees the gold coordinate, and a step counts as correct when
-the returned point falls in the Voronoi cell of the element the user touched and the
-described action type matches. The instrument is characterised before it is trusted: an
-adequacy gate on grounder error (passed, median 0.7\% of screen width against a
-threshold of 3\% fixed in advance), a hit rule selected from its measured floor (the
-conventional tolerance test credits a sentence naming the wrong button in 84.3\% of
-cases, the cell rule in 2.8\%), a measured ceiling of 75.7\% (95\% CI
-$[74.1, 77.3]$) obtained by scoring the human-written references themselves, and a
-perturbation self-check with thresholds fixed before execution.
+The hard part is not generating the sentence but scoring it. The same button can be named
+correctly in several ways, for instance ``the search bar'' and ``the magnifying glass'', so
+no single reference sentence can serve as the answer key. Most of the work in this thesis
+therefore goes into building an instrument that can score such sentences, and into
+measuring that instrument before trusting it.
 
-On the model side we build 64,567 supervision steps from AndroidControl fully
-automatically, with zero task-level train--test leakage verified at full scale. The
-proposed component is descriptor-first generation: the training target carries a
-structured descriptor of the target element before the sentence, and the descriptor is
-removed before scoring.
+The proposed measure is called \textbf{executability}. The generated sentence is handed to
+a separate GUI grounding model that never sees the gold coordinate, and the step counts as
+correct when that model points at the element the user actually touched and the sentence
+names the right action type. The instrument itself is then characterised. Its own pointing
+error is 0.7\% of screen width, well below the 3\% threshold fixed in advance. Scoring the
+human-written references gives 75.7\%, the ceiling against which every other score must be
+read. At the other end of the scale, replacing every sentence with one generic sentence
+that names no element leaves only 12.0\%, and replacing them with real sentences describing
+a different screen leaves 6.1\% --- so the instrument responds to what a sentence says, not
+to how it is phrased. Re-scoring everything with a second grounding model, one not trained
+on this corpus, leaves the results essentially unchanged.
 
-Over 4,463 held-out touch steps a QLoRA-tuned Qwen2.5-VL-3B reaches 59.1\% against
-47.6\% for the same model untuned; the paired gap of 11.5 points ($p<0.001$)
-survives five checks for alternative explanations; a sixth, imitation of the annotator
-register, is not ruled out.
+On the model side, an automatic pipeline turns AndroidControl into 64,567 training steps
+with no human annotation and no task overlap between the training and test splits. The
+proposed component is descriptor-first generation: before writing the sentence, the model
+must write a structured descriptor of the target element, giving its role, its name, its
+coordinate and one cue that distinguishes it from similar elements. The descriptor is
+stripped before scoring, so any gain reflects a change in the model's behaviour rather than
+extra information at scoring time.
+
+Over 4,463 held-out touch steps, a QLoRA-tuned Qwen2.5-VL-3B reaches 59.1\% against 47.6\%
+for the same model untuned, and that gap of 11.5 points survives six checks for alternative
+explanations. The descriptor branch reaches 57.2\%, 1.93 points below the control, which
+falls inside the inconclusive band fixed before any score existed; its second seed was
+cancelled for budget reasons, so the registered quantity was never completed. A further
+training stage reaches 60.0\%, the highest of any checkpoint measured, but attributing the
+movement shows that 78\% of it belongs to the control arm rather than to the new objective.
+
+The final contribution is a step-level diagnosis. Where the model's own descriptor
+identifies the right element, which happens on 60.6\% of steps, it beats the control by
+8.83 points and exceeds even the human ceiling of that group; where the descriptor is
+wrong, it loses 11.12 points. The two directions nearly cancel, which is why the overall
+gap is small. The mechanism is therefore not unsound; what limits it is the accuracy of the
+descriptor itself.
 
 \subsection*{2. Novelty of thesis}
 
@@ -139,6 +185,12 @@ task, with the cross-modal join validated against a deliberately shifted control
 (48\% against 20\%).
 \item A pre-registered ablation design fixing the reading of all four outcomes,
 committed to version control before the first training run.
+\item A measured floor as well: 12.0\% for a meaningless sentence, and 6.1\% for a real
+sentence describing the wrong screen, the lowest of anything measured, which rules out
+the register-contamination reading of the metric.
+\item A step-level diagnosis of the proposed component, together with a
+descriptor-to-executability conversion factor of 0.43 measured on our own data and used to
+issue a prediction before the run.
 \item Positioning: in AndroidControl and in work built on it, the human-written
 per-step instruction is an \emph{input}; here it is the generation target and the only
 scored output.
