@@ -12,6 +12,11 @@
 >
 > ⇒ **Lấy file gốc về trước khi thi hành bất cứ thứ gì.** Đặc biệt §7.5 — chính file tự tuyên
 > bố §7.5 *"thắng mọi mục khác nếu có xung đột"*, mà §7.5 **không nằm trong ảnh**.
+>
+> ✅ **CẬP NHẬT 30/8 — §7.5 · §7.2 · §5.1 · §7.3 · §8 · §12 · §16 + MỤC LỤC §4–§16 ĐÃ CÓ:**
+> máy Mac mở file gốc và trả lời trọn vẹn ⇒ **`report/126_TRA_LOI_MAC_30_8.md`**.
+> ⛔ **Mâu thuẫn thì `126` thắng file này** — `126` đọc từ bản gốc vòng 5, file này chép từ ảnh
+> và ảnh chỉ phủ tới §3.4.
 
 ---
 
@@ -453,6 +458,13 @@ nhưng Δ rơi vào Dương yếu / TRẮNG**, tức vẫn bị GVHD hỏi đún
 ⇒ Xem **§7.5** cho phương án được khuyến nghị giải đúng chỗ này (`gui_orpo_hard`: tách đúng một
 biến, đủ hai hạt giống trong ~40 h). ⚠️ *(§7.5 KHÔNG có trong ảnh — phải lấy file gốc.)*
 
+> ⛔ **CÂU TRÊN ĐÃ CHẾT — vá 30/8, xem `report/126_TRA_LOI_MAC_30_8.md` mục 2.1.** Máy Mac đã mở
+> file gốc: đây là **leftover** ở cuối §2.7 mà chính §7.5 vòng 5 đã bác. `gui_orpo_hard`
+> **không tách** khối ứng viên ra khỏi đối chứng (hai nhánh ORPO **cùng có** khối), và toàn bộ
+> công của ORPO-khó chồng SFT **đã đo rồi = +0,63 pp exec** — muốn chạm ngưỡng Dương +2,8 phải
+> gấp **4,4 lần**. Quyết định thi hành: **`gui_sel` vs `gui_sft_match`, 1 epoch × 2 hạt, không
+> ORPO.**
+
 ---
 
 ## 5. §3 — KIẾN TRÚC CHỐT: SEL + GEN (ảnh 10–13)
@@ -592,7 +604,7 @@ không có biến thể một-lượt phải báo song song. Giữ mục này **
 
 | mục | vì sao cần |
 |---|---|
-| **§7.5** | file tự tuyên bố mục này **thắng mọi mục khác**; chứa `gui_orpo_hard` — phương án được khuyến nghị để Δ không rơi vào TRẮNG |
+| ~~**§7.5**~~ ✅ | **ĐÃ LẤY 30/8** → `report/126` mục 1–2. ⛔ Không chứa `gui_orpo_hard` như đoán ở đây — §7.5 chính là chỗ **bác** phương án đó |
 | **§7.2** | nguồn của con số ~704 bước chuyển được |
 | **§5 / §5.1** | định nghĩa khối ứng viên; 4 thước đồng-báo |
 | **§12** | mẫu (x16) phải dán vào `106` **trước khi** dựng dữ liệu |

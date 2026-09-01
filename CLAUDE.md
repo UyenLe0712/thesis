@@ -47,7 +47,9 @@ Colab phụ thuộc cũng dùng tên `harness`).
 | phiên debate đa-agent 23/8 (bản chép lại 27 ảnh) | `report/116_DEBATE_23_8_FINAL_SOLUTION.md` |
 | **hai bài báo: trạng thái, phân số, phản biện bốn giám khảo** | **`report/118_PHAN_BIEN_HAI_BAI_23_8.md`** |
 | FAIR vòng giám khảo 30/8, ba đòn CHẶN đã vá (⛔ **`129` thắng file này**) | `report/127_CHOT_FAIR_30_8.md` |
-| **⭐ FAIR BẢN NỘP: phản biện 7 agent 31/8 + toàn bộ lượt vá đã áp** | **`report/129_PHAN_BIEN_FAIR_31_8_OCR.md`** |
+| FAIR vòng phản biện 7 agent 31/8 (⛔ **`130`+`131` thắng file này**) | `report/129_PHAN_BIEN_FAIR_31_8_OCR.md` |
+| **⭐ CHỈ ĐẠO VIẾT LẠI FAIR — bản FINAL 31/8, thắng mọi tài liệu khác về bài FAIR** | **`report/130_CHI_DAO_VIET_LAI_FAIR_31_8.md`** |
+| **⭐ FAIR ĐÃ VIẾT LẠI + TÌNH TRẠNG NỘP (chưa xác nhận được nhận)** | **`report/131_FAIR_VIET_LAI_VA_NOP_31_8.md`** |
 | **phản biện hai bài + phán quyết từng đòn (23/8)** | **`report/118_PHAN_BIEN_HAI_BAI_23_8.md`** |
 | phân tích bốn nhánh + sàn | `report/113_PHAN_TICH_BON_NHANH.md` |
 | tiền lệ đã tra (executability, Zhao, GCoT) | `report/114_TIEN_LE_CAN_XAC_MINH.md` |
@@ -153,6 +155,49 @@ thức (~46 h). **G5b vẫn chạy** để lấy giờ/epoch thật, chỉ khôn
 (`report/125` mục 5) ⇒ phải kéo từ Drive trước. **G4 đo lại bằng tokenizer Qwen2.5-VL, cutoff
 3072** (không còn là Qwen3-VL).
 
+### ⭐⭐ 31/8 TỐI — FAIR VIẾT LẠI TOÀN BÀI VÀ ĐÃ GỬI, NHƯNG **UPLOAD KHÔNG KỊP** (`report/131`)
+
+⛔ **EDAS #276 (ID 1571349424), track NLP, trạng thái `Pending (no manuscript)`.** Đăng ký kịp
+trước 23:59 31/8, nhưng bấm upload lúc **00:02 1/9** thì cửa đã đóng. Đã ghi link Drive vào
+*Personal notes* và **gửi email kèm PDF** cho **PGS.TS. Trần Văn Lăng (`langtv@vast.vn`,
+0903 938 036 — người phụ trách nhận bài)** xin mở lại upload. ⚠️ **Chưa có xác nhận bài được
+nhận** — việc kế là theo dõi hồi âm.
+File đã gửi: `paper/fair2026/FAIR2026_1571349424.pdf` — **106.258 byte · 7 trang · md5
+`ab60520318a8aa34e0f58bcb08f3f035`**. Mốc còn lại: **báo kết quả 15/9**, hội nghị **8–9/10** tại
+ĐH Công Thương TP.HCM, kỷ yếu **IEEE Proceedings**.
+
+⛔⛔ **ĐỒNG HỒ MÁY WSL CHẠY GIỜ UTC, LỆCH 7 GIỜ SO VỚI GIỜ VIỆT NAM.** Lúc `date` báo 16:53 thì
+ở VN đã là 23:53. Cả phiên tưởng còn 7 tiếng trong khi còn 7 phút, và đó là lý do trực tiếp làm
+lỡ giờ upload. ⇒ **Luật: mọi mốc hạn phải đọc bằng `TZ='Asia/Ho_Chi_Minh' date`, không đọc
+`date` trần.**
+
+**Bài sau khi viết lại (chỉ đạo `report/130`):** nhan đề **`Descriptor and Preference Targets for
+GUI Instruction Generation`** · **7 trang, 0 overfull, 0 tham chiếu hỏng** · Method (`Targets and
+a Stage-2 Objective`, có **công thức ORPO + `\bibitem{orpo}`**) **đứng trước** Instrument · hình
+**target 3 hàng** thay sơ đồ Voronoi · Table 1 **bỏ cột `% of 75.7`**, thêm nhãn khối *Stage 2* ·
+hai bảng mới ở §V (**phép bơm lỗi 1.000 lượt** và **năm luật chấm**) · keywords bỏ
+`reference-free`, thêm `preference tuning`/`executability`.
+
+⭐ **Số mới đo, chưa từng có ở đâu** (tokenizer Qwen2.5-VL trên đủ 22.854 cặp, kiểm chéo hai lượt):
+độ dài token accepted **44** vs rejected **45** (p5–p95 đều 37–58) · `|Δ|≤2` token **62,8%** ·
+đuôi câu trùng token **22.854/22.854** · chuỗi dài nhất **2.002** token ⇒ **0 cặp bị cắt** ở cutoff
+2.560. Và từ mã đã pin: **trainer ghép cặp zero mọi dropout lúc dựng model**, gồm LoRA dropout
+0,05 mà trainer SFT vẫn giữ ⇒ **MIN và CE2 lệch một biến không kiểm soát**, đã khai vào bài.
+
+⛔ **Bốn yêu cầu văn phong mới của chủ luận văn** (áp cho mọi bài sau): không câu hỏi tu từ **kể cả
+khi không có dấu `?`** (mệnh đề nghi vấn gián tiếp làm tiêu đề cũng cấm) · bỏ mẫu *"where…"* kiểu
+"nơi mà" · **không kể lể chi phí máy** (gỡ sạch giờ A100, tên card, hạn mức, ngày huỷ lượt chạy) ·
+**không nhắc bài đang bình duyệt ở hội nghị khác** (đã gỡ hết `\cite{companion}`).
+⚠️ Hệ quả: thống kê nhãn ở §III FAIR nay **không còn nguồn để trỏ**.
+
+⛔ **Lỗi in ấn kiểu mới, phải nhớ:** xuống dòng ngay sau gạch nối trong nguồn TeX làm bản in ra
+**`byte- identical`** (thừa dấu cách). Đã lọt vào một bản PDF. **Không xuống dòng sau gạch nối.**
+
+⚠️ **Cân bằng trọng tâm chưa đạt:** §IV 522 từ vs §V 840 từ; tính rộng, phần dụng cụ ≈ 1.270 từ
+so với 522 của phương pháp (**2,4 : 1**). Nếu vào camera-ready thì **cắt §V ~180 từ**.
+
+---
+
 ### ⭐ 31/8 — VÒNG PHẢN BIỆN 7 AGENT VÀ LƯỢT VÁ CUỐI CỦA FAIR (`report/129`)
 
 Hội đồng chấm clone `598e4ff`; phán **weak reject / reject-as-Registered-Report**, còn cửa nếu
@@ -226,7 +271,10 @@ của câu do người viết, trên cùng một phép đo"*. Chống lưng: tr�
 (tính từ tệp thô), khai kèm điều kiện *dưới luật lỏng đó Δ co gần 0* ⇒ chỉ để định vị so với
 literature, **không** để đọc đóng góp. Headline vẫn `exec`/`hit_voronoi`.
 
-**▶️ VIỆC ĐANG CHỜ (25/8): đọc soát + nộp hai bài — VCL 30/8 · FAIR 31/8.** Không còn lượt train
+**▶️ VIỆC ĐANG CHỜ (1/9): theo dõi hồi âm của PGS.TS. Trần Văn Lăng về việc mở lại upload cho
+FAIR #276 — bài đã gửi qua email nhưng EDAS vẫn `Pending (no manuscript)`, xem `report/131`.
+Kèm theo: sửa last name của thầy trên EDAS (`Nguyen` → `Long`) và thống nhất affiliation.**
+*(Việc cũ đã xong: đọc soát + nộp hai bài — VCL 30/8 · FAIR 31/8.)* Không còn lượt train
 nào trong kế hoạch; đóng góp mô hình chốt ở MIN-DESC (ô TRẮNG), đóng góp còn lại là **chẩn đoán**
 (bảng 2×2, hệ số chuyển đổi 0,43, quy công 78/22, và lý do on-policy không dựng được).
 
@@ -502,6 +550,10 @@ AndroidControl gốc = Li et al., Google DeepMind, **NeurIPS 2024 D&B** (arXiv 2
 | "12,6% phần tử có tên, **đo trên 99.131 màn**" | đo trên **120 màn ngẫu nhiên** trong kho 99.131 màn (22/120 màn không có phần tử nào có tên) | `report/100:200` + `harness/a11y_inventory.py:11`. Đã vá ở VCL 29/8; ✅ FAIR cũng đã vá 29/8 (câu *"across the 99,131 trees"* từng bị **thêm lại** vào bản nháp rồi gỡ) |
 | room **485 bước (10,9 pp)** | **741 bước (16,6 pp)** | kéo theo trần 75,7 |
 | dự báo sàn loss 0,548 | — | ngoại suy hàm mũ không mô hình hoá được nhịp epoch 2 |
+| **89,6%** là mức nền của **ba** lát diễn đạt lại | **chỉ của lát `p2_order` (211 bước)**; lát `p1_verb` (725 bước) chỉ **76,8** ⇒ dải đúng là **76,8–90,1** | sửa 31/8, đối chiếu bảng phép diễn đạt lại ở mục dưới |
+| **71,0%** ô point S2 trúng cửa sổ 14% | **bỏ khỏi bài** — không truy được mẫu số | `report/117:38` ghi "cùng nguồn" nhưng nguồn là bảng n=3.240, còn bài dùng phân hoạch 3.245/4.126 ⇒ gắn n nào cũng là suy ngược |
+| phrase trùng tập trung ở **2,6%** số bước train | **bỏ khỏi bài** (17,3% thì giữ) | chỉ truy được tới ghi chú khẳng định, không script, không tệp đo; `train_ac/train.jsonl` không có trên WSL |
+| `hit_disk` của S2 = **67,5** (`report/119:62`) | **67,44** | số thật trong `score_s2_seed101.json`; **bài in đúng, ghi chú sai** |
 
 Danh sách đầy đủ + 24 lỗi đã bắt: `report/108`.
 
@@ -520,8 +572,8 @@ thước-đo cũ giữ nguyên ở `paper/fair2026/main_v1_metric_backup.tex`.
 | | **FAIR'2026** | **VCL2026** |
 |---|---|---|
 | đóng góp chính | **MÔ HÌNH** | **NHÃN QUY CHIẾU + đường ống dựng dữ liệu** |
-| nhan đề | *Descriptor-First Supervision for GUI Instruction Generation: A Pre-Registered Ablation and **the Condition Under Which It Pays*** (đổi 30/8, `report/127`) | *Sinh hướng dẫn sử dụng phần mềm từ ảnh chụp màn hình và mục tiêu người dùng: xây dựng nhãn quy chiếu tự động khi phần tử giao diện không có tên để gọi* |
-| trạng thái bản dựng | **8 trang, 0 overfull** (30/8, sau vòng giám khảo — `report/127`) | **19 trang, 0 overfull** (29/8, sau khi áp template chính thức) |
+| nhan đề | ***Descriptor and Preference Targets for GUI Instruction Generation*** (đổi 31/8, `report/130` mục 2) | *Sinh hướng dẫn sử dụng phần mềm từ ảnh chụp màn hình và mục tiêu người dùng: xây dựng nhãn quy chiếu tự động khi phần tử giao diện không có tên để gọi* |
+| trạng thái bản dựng | **7 trang, 0 overfull** (31/8, sau lượt viết lại theo `report/130` — chi tiết `report/131`) | **19 trang, 0 overfull** (29/8, sau khi áp template chính thức) |
 | ngôn ngữ | tiếng Anh | tiếng Việt |
 
 ⚠️ **Thước đo nay nằm BÊN TRONG FAIR, ở §V *The Instrument*** — đổi vai từ *đối tượng nghiên

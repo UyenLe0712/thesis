@@ -153,10 +153,14 @@ Tên ứng viên đi qua `name_of()` mà `name_of()` đọc OCR ⇒ đổi lư�
 | chờ | chặn cái gì |
 |---|---|
 | `train.jsonl` + `ocr.jsonl` đầy đủ (Drive) | dựng dữ liệu SEL thật · G1/G2 trên tập dạy · G4 trên đúng 200 mẫu dài nhất thật |
-| **§7.5** của `123` (máy Mac) | **quyết train cặp nhánh nào** — 72–88 h A100. Xem `report/YEU_CAU_GUI_CHAT_MAC.md` |
-| **§12** của `123` | mẫu **(x16)** dán vào `report/106` trước khi dựng dữ liệu |
+| ~~**§7.5** của `123`~~ ✅ **ĐÃ CÓ 30/8** | quyết rồi: **`gui_sel` vs `gui_sft_match`, 1 epoch × 2 hạt, KHÔNG ORPO** → `report/126_TRA_LOI_MAC_30_8.md` |
+| ~~**§12** của `123`~~ ✅ **ĐÃ CÓ 30/8** | nội dung khoá của mẫu (x16) ở `report/126` mục 8 — nhưng **chỉ dán sau khi có số G1/G2 TRAIN**, không dán khống |
 | đọc mù 300 mẫu G3 | phần người, tệp đã xuất sẵn |
 | sửa `infer_branch.py` nhận `cands` | chỉ cần khi chạy suy luận — sau khi có checkpoint |
+
+⚠️ **Cập nhật 30/8:** backbone theo bản Mac là **Qwen3-VL-4B-Instruct**, không phải Qwen2.5-VL-3B
+⇒ **G4 ở mục 4 phải đo lại bằng tokenizer/processor của Qwen3-VL**, kể cả token ảnh; cutoff mới là
+**3072**. Xem `report/126` mục 13 hàng #6, và mục 12.2 (chỗ tôi không đồng ý với việc đổi backbone).
 
 ⛔ **Chưa đụng tới:** `infer_branch.py` (đường suy luận cho nhánh SEL) và `sel_acc` lúc chấm — cả
 hai phải dùng **đúng** `gold_candidate()` trong `build_sel_data.py`, đừng viết bản thứ hai.
