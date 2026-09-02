@@ -981,6 +981,27 @@ trên **nhánh nặng nhất với mẫu dài nhất**.
 · **Mỗi biến thể chỉ đổi MỘT thứ** — bản đo đầu ghép hai thay đổi nên tràn trước khi trả lời được
 câu nào.
 
+⛔⛔ **BA LUẬT COLAB — VI PHẠM LÀ MẤT TIỀN THẬT. Đã trả giá 2/9/2026: mất 16 compute unit.**
+
+**① `subprocess.Popen` phải có `start_new_session=True`.** Thiếu nó thì tiến trình train nằm
+**cùng process group** với kernel notebook, và **mọi lần bấm Stop một ô bất kỳ** — kể cả ô theo
+dõi — đều gửi SIGINT sang train. Lượt `gui_sel`/101 chết ở bước **747/4036** vì đúng chuyện này;
+log ghi `KeyboardInterrupt`.
+
+**② KHÔNG bấm Stop ô nào khi train đang chạy.** Cần chạy ô khác thì mở **notebook thứ hai**
+hoặc dùng **Terminal Colab**. Ô vòng lặp vô hạn (theo dõi) làm mọi ô khác **xếp hàng**, nên
+phản xạ tự nhiên là bấm Stop — và đó là cái bẫy.
+
+**③ Ô theo dõi phải đọc log LOCAL `/content/train_*.log`, KHÔNG đọc `trainer_log.jsonl` trên
+Drive.** FUSE không cập nhật nội dung khi ghi thêm, nên số bước **đứng yên hàng giờ** dù train
+vẫn chạy. Đọc nhầm chỗ ⇒ tưởng treo ⇒ bấm Stop ⇒ mất lượt. Ba lỗi này nối nhau đúng theo thứ tự
+đó ngày 2/9.
+
+⚠️ **Và luật chung, đắt hơn cả ba:** ⛔ **KHÔNG khẳng định chắc chắn một điều chưa kiểm.**
+Câu *"bấm Stop không ảnh hưởng gì tới train"* được nói ra mà không kiểm, và chính nó giết lượt
+chạy. Chưa kiểm thì nói *"tôi không chắc, để kiểm đã"* — đúng nguyên tắc dự án đã ghi ở mục
+*"'Đã xác minh' không phải bằng chứng"*.
+
 **Colab:** tài khoản dùng **đơn vị trả trước, KHÔNG có `background execution`** ⇒ phải sống chung
 với mất máy ảo. **Tám lần mất máy trong hai lượt S1, ~18 giờ, ~85 đơn vị.** Thiết kế cất Drive
 hoạt động đúng: mỗi lần mất chỉ tốn 80–180 bước + thời gian dựng lại.

@@ -264,7 +264,12 @@ assert not any("llamafactory-cli" in p for p in
 os.makedirs(OUT, exist_ok=True)
 LOG = f"/content/train_{NHANH}_{SEED}.log"
 f = open(LOG, "a")
-P = subprocess.Popen(["llamafactory-cli","train",CFG], stdout=f, stderr=subprocess.STDOUT)
+# ⛔ start_new_session=True là BẮT BUỘC, không phải tuỳ chọn.
+#    Thiếu nó thì tiến trình train nằm CÙNG process group với kernel notebook, và mọi
+#    lần bấm Stop một ô bất kỳ (kể cả ô theo dõi) đều gửi SIGINT sang train.
+#    Đo 2/9: mất một lượt ở bước 747 vì đúng chuyện này — log ghi KeyboardInterrupt.
+P = subprocess.Popen(["llamafactory-cli","train",CFG], stdout=f, stderr=subprocess.STDOUT,
+                     start_new_session=True)
 print("PID", P.pid, "· log", LOG)
 ```
 
