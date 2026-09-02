@@ -805,10 +805,16 @@ thì đây là mục thêm đáng giá nhất cho VCL.
 · **`report/KE_HOACH_2_BAI_BAO.md` (bản 3, 12/7)** định VCL = *sinh hướng dẫn tiếng Việt trên màn
 MobileViews*. Chết cả hai vế: MobileViews đã rời khỏi đề tài, và không có thí nghiệm tiếng Việt nào.
 File vẫn giữ để tra lịch sử.
-· **Skill `.claude/skills/vcl-fair-paper/SKILL.md`** vẫn tả khung **DG1/DG2** (ReOrder-Tutor,
-Copeland, MobileViews, ScreenSpot, "không fine-tune", GPT-4o E2E) — khung prompting **đã bị bác
-19/7**. Bảng chia bài trong skill đó (VCL=DG1, FAIR=DG2) **sai hoàn toàn với hiện trạng**. Cần
-viết lại hoặc gỡ; trước khi làm việc đó thì **đừng theo skill, theo mục này**.
+· ✅ **Skill `.claude/skills/vcl-fair-paper/SKILL.md` ĐÃ VIẾT LẠI 1/9/2026** — bản cũ tả khung
+**DG1/DG2** (ReOrder-Tutor, Copeland, MobileViews, ScreenSpot, "không fine-tune", GPT-4o E2E) tức
+khung prompting **đã bị bác 19/7**, và đã sống trong skill hơn hai tháng. Bản mới bao **ba** bài
+(FAIR = mô hình · VCL = ngữ liệu quy chiếu · **SOICT = sprint `gui_sel`**, `report/132`), kèm bảng
+phân số, luật dựng tectonic, luật văn phong, bảng số đã rút và checklist nộp. Bản cũ cất ở
+**`report/_archive/SKILL_vcl-fair-paper_DG1_DG2_TRUOC_VIET_LAI_1_9_2026.md`** — ⚠️ **`.claude/`
+nằm trong `.gitignore` từ `b755cc7` nên skill KHÔNG có lịch sử git**, sửa lớn phải tự sao lưu
+trước. Sprint `gui_sel` tách ra skill riêng **`soict-paper`** (thiết
+kế ba nhánh, cổng G1–G11, cấu hình train, luật đọc Δ_sel, lịch, phương án lùi).
+⚠️ **`CLAUDE.md` vẫn thắng cả hai skill khi mâu thuẫn.**
 · **Bản 18/8 đặt bài chính ở thước đo** cùng kế hoạch *"FAIR 10 trang, phải cắt 2 trang, cắt §III
 rồi trích VCL"* — quyết định 23/8 thay toàn bộ. Lý do của bản 18/8 còn tra được ở lịch sử git của
 file này.

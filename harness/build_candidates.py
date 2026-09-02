@@ -84,6 +84,10 @@ def main():
     ap.add_argument("--split", choices=["train", "test"], default="train")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--max", type=int, default=MAX_CAND)
+    ap.add_argument("--all-steps", action="store_true",
+                    help="ghi MỌI bước, không chỉ bước chạm. Nhánh gui_sel cần thế vì câu nhắc "
+                         "phải có khối ứng viên ở mọi bước; bước không chạm nhận khối như thường "
+                         "và nhãn <sel>none</sel>. Cổng G1/G2 vẫn chỉ đo trên bước có tên vàng.")
     args = ap.parse_args()
     D.set_split(args.split)
     ROOT = D.ROOT
@@ -111,12 +115,18 @@ def main():
             if "w" not in r:
                 with Image.open(os.path.join(ROOT, r["image"])) as im:
                     r["w"], r["h"] = im.size
-    taps = [r for r in recs if r["action"].get("action_type") in ("click", "long_press")
-            and "x" in r["action"]]
+    if args.all_steps:
+        taps = recs
+    else:
+        taps = [r for r in recs if r["action"].get("action_type") in ("click", "long_press")
+                and "x" in r["action"]]
     if args.limit:
         taps = taps[:args.limit]
 
-    outp = os.path.join(ROOT, "candidates.jsonl")
+    # ⛔ --limit là chế độ THỬ: ghi ra tệp riêng, không đè tệp thật.
+    # (2/9: một lượt thử --limit 30 đã đè mất bản 4.463 màn của tập kiểm.)
+    outp = os.path.join(ROOT, f"candidates_thu_{args.limit}.jsonl" if args.limit
+                        else "candidates.jsonl")
     st = collections.Counter()
     n_cand, phu, c3, do_dai = [], 0, 0, []
     n_gold = 0
@@ -151,7 +161,8 @@ def main():
 
     n_cand.sort(); do_dai.sort()
     print("=" * 66)
-    print(f"ghi {outp}: {len(n_cand)} màn")
+    print(f"ghi {outp}: {len(n_cand)} màn"
+          f"{'  (MỌI bước — --all-steps)' if args.all_steps else '  (chỉ bước chạm)'}")
     for k, v in st.most_common():
         print(f"  {k}: {v}")
     print(f"số ứng viên/màn : trung vị {n_cand[len(n_cand)//2]} · p90 {n_cand[int(.9*len(n_cand))]}"

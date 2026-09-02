@@ -1,0 +1,85 @@
+# train_config_sel.yaml — LLaMA-Factory · Qwen2.5-VL-3B QLoRA
+# Sprint `gui_sel` cho SOICT 2026. Viết 2/9/2026 theo report/132 §5 và report/128 §4.
+#
+# ⛔ KHÁC train_config.yaml (nhánh cũ S1/S2/MIN) ở ĐÚNG HAI KHOÁ, cả hai đã chốt:
+#       cutoff_len          2560 -> 3072
+#       num_train_epochs     2.0 -> 1.0
+#    Mọi khoá còn lại giữ nguyên để bảng lịch sử vẫn đọc được.
+#
+# MỘT FILE DÙNG CHO CẢ SÁU LƯỢT — chỉ đổi BA dòng trong khối được đánh dấu:
+#       dataset      gui_sel · gui_sft_match · gui_s1_match
+#       seed         101 · 202          (chạy VÔ ĐIỀU KIỆN cả hai, report/128 §4)
+#       output_dir   .../<nhánh>_seed<seed>
+#
+# ⚠️ Ô kiểm vàng trước khi bấm train (nếp A.2b của report/125): so cfg lượt này với
+#    cfg lượt trước, CHỈ BA khoá trên được phép khác. Khoá thứ tư khác là DỪNG HẲN.
+#
+# Ba nhánh và ý nghĩa của chúng (report/132 §3):
+#       gui_s1_match   câu nhắc có 24 dòng OCR, KHÔNG menu   -> mốc dưới
+#       gui_sft_match  câu nhắc có KHỐI ỨNG VIÊN, đích = câu -> +[menu]
+#       gui_sel        như trên, đích = <sel>k</sel> + câu   -> +[đầu chọn]
+#    Δ_menu = sft_match − s1_match     Δ_sel = sel − sft_match  (đại lượng CHÍNH)
+
+model_name_or_path: Qwen/Qwen2.5-VL-3B-Instruct
+trust_remote_code: true
+image_min_pixels: 200704          # 256 * 28^2
+image_max_pixels: 1003520         # 1280 * 28^2 — hạ xuống 602112 nếu thiếu bộ nhớ
+
+### ── BA DÒNG DUY NHẤT ĐƯỢC PHÉP ĐỔI ──────────────────────────────────────────
+dataset: gui_sel
+seed: 101
+output_dir: /workspace/ckpt/gui_sel_seed101
+dataset_dir: /workspace/data/branches   # nơi đặt dataset_info.json + 3 tệp nhánh mới
+### ───────────────────────────────────────────────────────────────────────────
+
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_rank: 8
+lora_alpha: 16
+lora_dropout: 0.05
+lora_target: q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+freeze_vision_tower: true         # hành vi cần dạy là "nói gì", không phải "nhìn thấy gì"
+freeze_multi_modal_projector: true
+quantization_bit: 4               # QLoRA 4-bit NF4
+quantization_method: bnb
+
+template: qwen2_vl
+cutoff_len: 3072                  # NÂNG từ 2560 của nhánh cũ — khối ứng viên tốn thêm chữ.
+# Đo 2/9 trên đủ 64.567 mẫu, 200 mẫu DÀI NHẤT của nhánh gui_sel (cổng G4):
+# trung vị 1.003 token · max 1.482 token, CHƯA kể token ảnh.
+# Ảnh chiếm 1.272 token ở cỡ đã chốt ⇒ tổng dài nhất ≈ 2.754, dư 318 so với 3.072.
+# ⚠️ Con số 1.272 lấy từ lượt MIN-DESC. PHẢI đo lại bằng chính processor sẽ train
+#    trước lượt đầu, đừng suy từ lượt khác.
+#
+# Cắt cụt ở đây là loại hỏng không có tiếng động: LLaMA-Factory cắt từ ĐUÔI, mà đuôi là
+# đích sinh — mất thẻ <sel> hoặc mất luôn câu. Mẫu vẫn vào huấn luyện, loss vẫn tính,
+# log không báo gì. Tệ hơn: đích của gui_sel dài hơn gui_sft_match (thêm thẻ) nên nó bị
+# cắt nhiều hơn, tức Δ_sel thiên vị đúng chiều làm gui_sel trông kém đi.
+train_on_prompt: false            # chỉ tính mất mát trên lượt trợ lý
+
+per_device_train_batch_size: 4    # ⚠ ĐỔI SỐ NÀY LÀ ĐỔI CHO CẢ SÁU LƯỢT, KHÔNG ĐỔI
+                                  # GIỮA CHỪNG — cỡ lô hiệu dụng khác nhau giữa hai
+                                  # nhánh thì Δ lẫn cả phần do cỡ lô, nhìn bảng không
+                                  # tách ra được.
+gradient_accumulation_steps: 4    # cỡ lô hiệu dụng = 16, giữ nguyên cho mọi nhánh
+learning_rate: 1.0e-4
+num_train_epochs: 1.0             # MỘT lượt duyệt — chốt ở report/128 §4.
+                                  # ⛔ Không hạ nữa (đã 1) và không nâng lên 2.
+lr_scheduler_type: cosine
+warmup_ratio: 0.05
+bf16: true
+fp16: false
+gradient_checkpointing: true
+
+save_steps: 200                   # Colab có thể mất máy giữa chừng
+save_total_limit: 2
+# KHÔNG khai resume_from_checkpoint. Bẫy ngược: LLaMA-Factory chỉ tự dò checkpoint
+# gần nhất trong output_dir KHI trường này còn bỏ trống. Điền bất cứ giá trị nào,
+# kể cả "auto", sẽ TẮT đúng cái nó định bật. Bỏ trống = tự chạy tiếp.
+# Cũng vì vậy không được bật overwrite_output_dir.
+logging_steps: 20
+report_to: none
+
+val_size: 0.0
+do_eval: false

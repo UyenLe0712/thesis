@@ -80,7 +80,10 @@ def main():
     args = ap.parse_args()
     D.set_split(args.split)
     ROOT = D.ROOT
-    out_dir = args.out or os.path.join(ROOT, "branches")
+    # ⛔ --limit là chế độ THỬ: ghi ra thư mục riêng, không đè nhánh thật.
+    # (2/9: một lượt thử --limit 30 của build_candidates.py đã đè mất bản 4.463 màn.)
+    out_dir = args.out or os.path.join(
+        ROOT, f"branches_thu_{args.limit}" if args.limit else "branches")
     rnd = random.Random(SEED)
 
     fn = "test.jsonl" if args.split == "test" else "train.jsonl"
@@ -108,7 +111,7 @@ def main():
                 cache[(c["episode_id"], c["step_id"])] = c["cands"]
     print(f"nạp: {len(recs)} bước · {len(desc)} khai báo vàng · {len(cache)} khối có sẵn")
 
-    sel_rows, ctl_rows = [], []
+    sel_rows, ctl_rows, s1m_rows = [], [], []
     st = collections.Counter()
     tinh_moi = 0
     for i, r in enumerate(recs):
@@ -159,6 +162,17 @@ def main():
         ctl_rows.append({"messages": goc["messages"] + [{"role": "assistant",
                                                          "content": cau}],
                          "images": goc["images"]})
+
+        # S1-match (report/132 §3): mốc dưới của bảng phân rã ba tầng.
+        # Giống `gui_sft_match` ở MỌI thứ trừ đúng một biến — không có khối ứng viên.
+        # ⛔ Phải gọi `cands=None`, KHÔNG phải `cands=[]`: None giữ nguyên 24 dòng OCR
+        # (đúng đường của S1 cũ), còn [] sẽ bỏ luôn cả OCR, tức lệch HAI biến và làm
+        # Δ_menu hết nghĩa. Dựng trong cùng lượt này để loại nốt rủi ro lệch lượt OCR.
+        p_nomenu = "<image>\n" + BB.prompt_body(r, ocr.get(r["image"]), cands=None)
+        s1m_rows.append({"messages": [{"role": "system", "content": BB.SYS},
+                                      {"role": "user", "content": p_nomenu},
+                                      {"role": "assistant", "content": cau}],
+                         "images": goc["images"]})
         if (i + 1) % 5000 == 0:
             print(f"  {i+1}/{len(recs)}", flush=True)
 
@@ -198,6 +212,30 @@ def main():
                == n_rong_nguon
                and sum(1 for b in ctl_rows if not b["messages"][2]["content"].strip())
                == n_rong_nguon))
+    # ── bất biến riêng của S1-match (mốc dưới, report/132 §3) ─────────────────
+    LB_MENU, LB_OCR = "Ứng viên trên màn:", "Chữ đọc được trên màn:"
+    kt.append(("⑧ S1-match cùng số dòng với hai nhánh kia",
+               len(s1m_rows) == len(sel_rows)))
+    kt.append(("⑨ S1-match và đối chứng có CÙNG đích và CÙNG ảnh (chỉ khác câu nhắc)",
+               all(m["messages"][2] == b["messages"][2] and m["images"] == b["images"]
+                   for m, b in zip(s1m_rows, ctl_rows))))
+    kt.append(("⑩ S1-match KHÔNG chứa khối ứng viên ở bất kỳ mẫu nào",
+               all(LB_MENU not in m["messages"][1]["content"] for m in s1m_rows)))
+    kt.append(("⑪ S1-match KHÔNG chứa thẻ <sel>",
+               all("<sel>" not in m["messages"][2]["content"] for m in s1m_rows)))
+    # ⑫ Đúng một biến: ở mẫu nào đối chứng CÓ khối ứng viên thì câu nhắc phải khác
+    # S1-match, và khác đó phải nằm trọn ở khối chữ — S1-match dùng OCR, đối chứng
+    # dùng menu. Mẫu nào khối rỗng thì hai câu nhắc trùng nhau, đó là hợp lệ.
+    co_menu = [(m, b) for m, b in zip(s1m_rows, ctl_rows)
+               if LB_MENU in b["messages"][1]["content"]]
+    khac = sum(1 for m, b in co_menu
+               if m["messages"][1]["content"] != b["messages"][1]["content"])
+    kt.append((f"⑫ mọi mẫu có khối ứng viên đều đổi câu nhắc so với S1-match "
+               f"({khac}/{len(co_menu)})", khac == len(co_menu)))
+    n_ocr = sum(1 for m in s1m_rows if LB_OCR in m["messages"][1]["content"])
+    print(f"  ⓘ S1-match: {n_ocr}/{len(s1m_rows)} mẫu có khối OCR · "
+          f"{len(co_menu)}/{len(ctl_rows)} mẫu đối chứng có khối ứng viên")
+
     for nhan, ok in kt:
         print(f"  {'✅' if ok else '⛔'} {nhan}")
     if not all(ok for _, ok in kt):
@@ -206,7 +244,8 @@ def main():
     os.makedirs(out_dir, exist_ok=True)
     info_path = os.path.join(out_dir, "dataset_info.json")
     info = json.load(open(info_path, encoding="utf-8")) if os.path.exists(info_path) else {}
-    for name, rows in (("gui_sel", sel_rows), ("gui_sft_match", ctl_rows)):
+    for name, rows in (("gui_sel", sel_rows), ("gui_sft_match", ctl_rows),
+                       ("gui_s1_match", s1m_rows)):
         f = f"{name}.json"
         json.dump(rows, open(os.path.join(out_dir, f), "w", encoding="utf-8"),
                   ensure_ascii=False)
@@ -305,7 +344,8 @@ def main():
     vd = next(a for a in sel_rows if "<sel>none</sel>" not in a["messages"][2]["content"])
     print("--- đầu vào ---"); print(vd["messages"][1]["content"][:700])
     print("--- đích sinh ---"); print(vd["messages"][2]["content"])
-    print(f"\nĐã lưu {out_dir}/gui_sel.json · gui_sft_match.json · dataset_info.json")
+    print(f"\nĐã lưu {out_dir}/gui_sel.json · gui_sft_match.json · gui_s1_match.json"
+          f" · dataset_info.json")
 
 
 if __name__ == "__main__":
