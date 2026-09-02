@@ -46,11 +46,15 @@ quantization_method: bnb
 
 template: qwen2_vl
 cutoff_len: 3072                  # NÂNG từ 2560 của nhánh cũ — khối ứng viên tốn thêm chữ.
-# Đo 2/9 trên đủ 64.567 mẫu, 200 mẫu DÀI NHẤT của nhánh gui_sel (cổng G4):
-# trung vị 1.003 token · max 1.482 token, CHƯA kể token ảnh.
-# Ảnh chiếm 1.272 token ở cỡ đã chốt ⇒ tổng dài nhất ≈ 2.754, dư 318 so với 3.072.
-# ⚠️ Con số 1.272 lấy từ lượt MIN-DESC. PHẢI đo lại bằng chính processor sẽ train
-#    trước lượt đầu, đừng suy từ lượt khác.
+# Đo 2/9 trên ĐỦ 64.567 mẫu của cả ba nhánh (không phải mẫu con):
+#   gui_sel  p50 541 · p99 1.002 · max 1.482 token chữ  ⇒ TRÀN 0/64.567
+# Token ảnh = 1.272, ĐO BẰNG CHÍNH processor sẽ train (AutoProcessor Qwen2.5-VL,
+# min_pixels 200704 / max_pixels 1003520, ảnh 1080×2400) — không phải số suy ra.
+#   ⇒ tổng dài nhất 1.482 + 1.272 = 2.754, biên còn 318 so với 3.072.
+# ⚠️ Biên 318 là MỎNG. Nếu sau này nới khối ứng viên quá 40 dòng, hoặc đổi cỡ ảnh,
+#    PHẢI đo lại cả hai vế trước khi train.
+# ⛔ Sai lầm đã mắc 2/9: tính token ảnh bằng cách chia patch cho 4 (merge 2×2) ra 318 —
+#    SAI gấp bốn lần. Processor không merge ở mức token đầu vào. Đo, đừng tính.
 #
 # Cắt cụt ở đây là loại hỏng không có tiếng động: LLaMA-Factory cắt từ ĐUÔI, mà đuôi là
 # đích sinh — mất thẻ <sel> hoặc mất luôn câu. Mẫu vẫn vào huấn luyện, loss vẫn tính,

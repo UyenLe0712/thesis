@@ -42,6 +42,18 @@ print("card:", torch.cuda.get_device_name(0))
 #    KHÔNG dùng --depth 1: clone nông không checkout được commit chỉ định.
 !git checkout c4e09c7cbe18
 !pip -q install -e ".[torch,metrics,bitsandbytes,qwen]"
+# ⛔ extras [bitsandbytes] KHÔNG phải lúc nào cũng kéo được gói về — đo 2/9: cài xong mà
+#    `import bitsandbytes` vẫn thiếu metadata, và lỗi chỉ nổ ở CUỐI lượt train đầu:
+#    PackageNotFoundError: No package metadata was found for bitsandbytes>=0.39.0
+#    (LLaMA-Factory chỉ kiểm nó ở bước configure_quantization, tức sau khi đã nạp dữ liệu).
+!pip -q install bitsandbytes
+```
+
+Kiểm ngay, đừng đợi tới lúc train:
+
+```python
+import importlib.metadata as md
+print("bitsandbytes:", md.version("bitsandbytes"))   # phải ra số, không được ném lỗi
 ```
 
 ▸ **Restart runtime** rồi mới chạy ô sau.
@@ -107,6 +119,82 @@ tar czf /tmp/branches_sel.tar.gz \
     harness/dg1_cache/train_ac/branches/dataset_info.json
 ls -lh /tmp/branches_sel.tar.gz     # rồi tải lên MyDrive/thesis/
 ```
+
+---
+
+## Ô S2b — ⚠️ CHỈ KHI `train_config_sel.yaml` KHÔNG CÓ TRONG GÓI
+
+`thesis_rented.zip` trên Drive là ảnh chụp kho tại thời điểm đóng gói. Config của sprint này
+viết ngày **2/9**, nên gói cũ hơn ngày đó sẽ **thiếu nó** và ô S3 chết với
+`FileNotFoundError: .../harness/train_config_sel.yaml`.
+
+Hai đường xử:
+
+- **Nhanh:** chạy ô dưới để ghi thẳng config ra kho trên máy ảo.
+- **Sạch:** dựng lại `thesis_rented.zip` từ WSL rồi tải lên Drive, lần sau khỏi vấp.
+
+```python
+import os, yaml
+CFG_SRC = f"{REPO}/harness/train_config_sel.yaml"
+if os.path.exists(CFG_SRC):
+    print("đã có sẵn trong gói — bỏ qua ô này")
+else:
+    os.makedirs(os.path.dirname(CFG_SRC), exist_ok=True)
+    open(CFG_SRC, "w", encoding="utf-8").write('''model_name_or_path: Qwen/Qwen2.5-VL-3B-Instruct
+trust_remote_code: true
+image_min_pixels: 200704
+image_max_pixels: 1003520
+
+dataset: gui_sel
+seed: 101
+output_dir: /workspace/ckpt/gui_sel_seed101
+dataset_dir: /workspace/data/branches
+
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_rank: 8
+lora_alpha: 16
+lora_dropout: 0.05
+lora_target: q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+freeze_vision_tower: true
+freeze_multi_modal_projector: true
+quantization_bit: 4
+quantization_method: bnb
+
+template: qwen2_vl
+cutoff_len: 3072
+train_on_prompt: false
+
+per_device_train_batch_size: 4
+gradient_accumulation_steps: 4
+learning_rate: 1.0e-4
+num_train_epochs: 1.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.05
+bf16: true
+fp16: false
+gradient_checkpointing: true
+
+save_steps: 200
+save_total_limit: 2
+logging_steps: 20
+report_to: none
+
+val_size: 0.0
+do_eval: false
+''')
+    print("đã ghi", CFG_SRC)
+
+c = yaml.safe_load(open(CFG_SRC))
+print("cutoff_len       =", c["cutoff_len"], "← cần 3072")
+print("num_train_epochs =", c["num_train_epochs"], "← cần 1.0")
+print("stage / 4-bit    =", c["stage"], "/", c["quantization_bit"])
+```
+
+⚠️ Bản dán trên bỏ phần chú thích cho gọn nhưng **giá trị từng khoá y hệt**
+`harness/train_config_sel.yaml`. Nếu sau này sửa file gốc thì phải sửa cả đây, hoặc tốt hơn là
+dựng lại gói.
 
 ---
 
