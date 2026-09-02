@@ -268,8 +268,13 @@ f = open(LOG, "a")
 #    Thiếu nó thì tiến trình train nằm CÙNG process group với kernel notebook, và mọi
 #    lần bấm Stop một ô bất kỳ (kể cả ô theo dõi) đều gửi SIGINT sang train.
 #    Đo 2/9: mất một lượt ở bước 747 vì đúng chuyện này — log ghi KeyboardInterrupt.
+# PYTHONUNBUFFERED: dòng {'loss': ...} do transformers in ra STDOUT, mặc định đệm 8 KB.
+# Mỗi dòng ~100 byte nên phải tích ~80 dòng (≈1.600 bước) mới xả xuống file — nhìn log
+# tưởng loss đứng yên hàng giờ trong khi thanh tiến độ (tqdm, stderr) vẫn chạy.
+# Đo 2/9: loss kẹt ở giá trị cũ suốt từ bước 674 tới 801.
+env = {**os.environ, "PYTHONUNBUFFERED": "1"}
 P = subprocess.Popen(["llamafactory-cli","train",CFG], stdout=f, stderr=subprocess.STDOUT,
-                     start_new_session=True)
+                     start_new_session=True, env=env)
 print("PID", P.pid, "· log", LOG)
 ```
 
