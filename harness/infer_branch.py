@@ -36,11 +36,18 @@ def strip_desc(s):
     Ba dạng phải xử: khai báo đóng thẻ đủ; khai báo bị cắt cụt do chạm trần độ dài
     (thẻ mở mà không có thẻ đóng — khi đó coi như mô hình chưa kịp viết câu);
     và mô hình không sinh khai báo nào.
+
+    Xử CẢ HAI loại thẻ tiền tố của dự án:
+      · `<desc>…</desc>` — nhánh S2 / MIN-DESC / CE2 (khai báo bốn ô)
+      · `<sel>…</sel>`   — nhánh gui_sel (đầu chọn, thêm 2/9/2026)
+    ⛔ Thiếu nhánh `<sel>` thì `pred` của gui_sel sẽ là chính cái thẻ, còn câu thật bị
+    vứt — bộ trỏ đọc toạ độ trong thẻ và chấm ra điểm vô nghĩa, log không báo gì.
     """
-    if "</desc>" in s:
-        s = s.split("</desc>", 1)[1]
-    elif "<desc>" in s:
-        s = re.sub(r"<desc>.*", "", s, flags=re.S)
+    for mo, dong in (("<desc>", "</desc>"), ("<sel>", "</sel>")):
+        if dong in s:
+            s = s.split(dong, 1)[1]
+        elif mo in s:
+            s = re.sub(re.escape(mo) + r".*", "", s, flags=re.S)
     return s.strip().split("\n")[0].strip()
 
 
