@@ -271,7 +271,13 @@ của câu do người viết, trên cùng một phép đo"*. Chống lưng: tr�
 (tính từ tệp thô), khai kèm điều kiện *dưới luật lỏng đó Δ co gần 0* ⇒ chỉ để định vị so với
 literature, **không** để đọc đóng góp. Headline vẫn `exec`/`hit_voronoi`.
 
-**▶️ VIỆC ĐANG CHỜ (1/9): theo dõi hồi âm của PGS.TS. Trần Văn Lăng về việc mở lại upload cho
+**▶️ VIỆC ĐANG CHẠY (2/9): sprint `gui_sel` cho SOICT 2026** — lượt 1/6 (`gui_sel`/101) đang
+train trên Colab, ~771/4036 bước, xong ~4–5 h sáng 3/9. Dữ liệu ba nhánh đã dựng, **bốn cổng
+G1–G4 đều ĐẠT**. Kế hoạch + nhật ký thi hành + sáu bẫy đã vá: **`report/132`**; điều hành hằng
+ngày: skill **`soict-paper`**. Sau lượt 1 phải chạy **cổng G6** (`gate_sel_acc.py`, ngưỡng
+63,6%) trước khi tiêu năm lượt còn lại. Mốc SOICT: abstract **9/9**, full paper **16/9**.
+
+**▶️ VIỆC CÒN CHỜ (1/9): theo dõi hồi âm của PGS.TS. Trần Văn Lăng về việc mở lại upload cho
 FAIR #276 — bài đã gửi qua email nhưng EDAS vẫn `Pending (no manuscript)`, xem `report/131`.
 Kèm theo: sửa last name của thầy trên EDAS (`Nguyen` → `Long`) và thống nhất affiliation.**
 *(Việc cũ đã xong: đọc soát + nộp hai bài — VCL 30/8 · FAIR 31/8.)* Không còn lượt train

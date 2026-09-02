@@ -11,6 +11,54 @@
 
 ---
 
+## 0a. NHẬT KÝ THI HÀNH — cập nhật 2/9/2026
+
+### ✅ Đã xong (0 GPU)
+
+| việc | kết quả |
+|---|---|
+| Kéo `train.jsonl` + `ocr.jsonl` đầy đủ | 64.567 dòng; ocr md5 **`a7ddf93d18c060e995afa841f039e343`** |
+| Dựng khối ứng viên tập dạy | 64.567 màn; khối rỗng **906 = 1,4%** (ngưỡng Limitations 15%) |
+| **G1** phủ | **96,4%** (30.912/32.061) ✅ · tập kiểm 96,7% |
+| **G2** khớp tên ∧ ±140 | **91,1%** (29.198/32.061) ✅ · tập kiểm 91,2% |
+| **G3** rò rỉ | GOLD **0** · hạng **0,481** · P(idx=0) **5,0%** · Spearman **0,047** ✅ |
+| **G4** độ dài, đo TOÀN BỘ | `gui_sel` max **1.482** chữ + **1.272** ảnh = **2.754**/3.072 · **tràn 0/64.567** ✅ |
+| Ba nhánh dữ liệu | 64.567 mẫu mỗi nhánh · **12 bất biến** đạt |
+| Probe 200 mẫu dài nhất | **không OOM** · 13,6 s/bước · loss 2,43 → 0,34 |
+| Mã mới | `gate_sel_acc.py` (cổng G6) · `train_config_sel.yaml` · `colab_train_sel.md` |
+
+⭐ **`gui_s1_match` trùng khít `s1.json` từng byte trên cả 64.567 mẫu.** Hai hệ quả: bộ OCR dùng
+lần này **đúng là bộ đã dựng S1/S2** (bẫy lệch lượt OCR ở `report/125` §5 không xảy ra), và
+`Δ_menu` đo đúng một biến vì S1-match chính là S1 cũ, chỉ khác config train.
+
+### ⏳ Đang chạy
+
+**Lượt 1/6 `gui_sel`/101** — ~771/4036 bước, **12,7 s/bước**, xong khoảng 4–5 h sáng 3/9 giờ VN.
+Đã resume từ `checkpoint-600` sau một lần chết ở bước 747.
+Tốc độ thật khớp ước lượng: sáu lượt ≈ **79 h**, đúng dự tính 69 h của `report/128`.
+
+### ⛔ Sáu bẫy đã trả giá, đã vá — đừng lặp
+
+1. **Mất 16 compute unit.** `subprocess.Popen` thiếu `start_new_session=True` ⇒ train cùng
+   process group với kernel ⇒ bấm Stop một ô bất kỳ là gửi SIGINT sang train.
+2. **Ô theo dõi đọc `trainer_log.jsonl` trên Drive** — FUSE không cập nhật khi ghi thêm ⇒ số bước
+   đứng yên hàng giờ ⇒ tưởng treo ⇒ bấm Stop. Phải đọc **log local**.
+3. **Khẳng định điều chưa kiểm** (*"bấm Stop không ảnh hưởng train"*) — chính câu đó giết lượt.
+4. **`--limit` ghi đè tệp thật** — một lượt thử `--limit 30` xoá mất bản 4.463 màn của tập kiểm.
+   Đã vá: ghi ra `candidates_thu_<n>.jsonl` / `branches_thu_<n>/`.
+5. **Đường dẫn ảnh tương đối** trong khi nhánh cũ dùng tuyệt đối ⇒ chết sau 15–25 phút mã hoá
+   token. Bắt buộc `--img-prefix /content/ws/thesis/harness/dg1_cache/train_ac/`.
+6. **`infer_branch.py` không truyền `cands`** ⇒ chấm `gui_sel` mà thiếu menu: **499/500 mẫu dựng
+   sai câu nhắc**, log không báo gì. Đã thêm cờ `--cands`; sau khi vá, câu nhắc dạy vs chấm trùng
+   khít 3.000/3.000 ở cả ba nhánh.
+7. **`strip_desc()` chỉ bóc `<desc>`, không bóc `<sel>`** ⇒ `pred` của gui_sel sẽ là chính cái thẻ.
+   Đã vá, kiểm 6 ca.
+
+⚠️ **Token ảnh = 1.272**, đo bằng chính `AutoProcessor`. Cách tính chia patch cho 4 (merge 2×2)
+ra 318 là **sai gấp bốn lần** — processor không merge ở mức token đầu vào. **Đo, đừng tính.**
+
+---
+
 ## 0. TÓM TẮT ĐIỀU HÀNH
 
 | | |
