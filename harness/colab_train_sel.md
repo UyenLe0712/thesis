@@ -219,7 +219,17 @@ P = subprocess.Popen(["llamafactory-cli","train",CFG], stdout=f, stderr=subproce
 print("PID", P.pid, "· log", LOG)
 ```
 
-⛔ **15–25 phút đầu là mã hoá token, trông y hệt treo. Đừng dán lại ô này.**
+⛔ **~45 phút đầu KHÔNG có thanh tiến độ nào, trông y hệt treo. Đừng dán lại ô này.**
+Đo 2/9: mã hoá token **41 phút** (11:58 → 12:39), rồi nạp trọng số 4-bit thêm vài phút.
+Thứ tự log, chờ đúng dòng cuối:
+
+```
+Loading dataset → Converting format → Running tokenizer (41 ph) → in một mẫu
+→ Quantizing model to 4 bit → loading weights file
+→ ***** Running training *****
+→ Resuming training from checkpoint with epoch 0 and global step <N>   ← dòng cần thấy
+→ thanh tiến độ
+```
 
 Sau ~4 phút, nếu là lượt chạy tiếp thì kiểm:
 
@@ -263,17 +273,22 @@ mới buộc Drive tải lên trọn vẹn.
 ```python
 import threading, time, os, re, urllib.request
 
-PING  = "https://hc-ping.com/ĐIỀN-UUID"      # healthchecks.io, Period 5' Grace 10'
-TOPIC = "https://ntfy.sh/ĐIỀN-TOPIC"         # đặt tên khó đoán, app bật Override DND
+PING  = "https://hc-ping.com/639a0628-dc09-49d8-8d33-560edb2e497d"   # healthchecks, Period 5' Grace 10'
+TOPIC = "https://ntfy.sh/soict-uyen-7k3m9x"                          # ⚠️ phải TRÙNG topic đã
+                                                                     # subscribe trong app ntfy
 LOG   = f"/content/train_{NHANH}_{SEED}.log"
 JS    = os.path.join(OUT, "trainer_log.jsonl")
 LAP, NHIP = 40, 45                            # réo tối đa 40 lần × 45 giây
 
 def bao(tieu_de, noi_dung, uu_tien="max", tag="rotating_light"):
+    # ⛔ Header HTTP chỉ nhận latin-1: emoji VÀ dấu tiếng Việt trong Title đều ném
+    #    UnicodeEncodeError ⇒ cảnh báo im lặng đúng lúc cần nhất. Tiêu đề để ASCII
+    #    thuần, emoji do ntfy tự render từ Tags. Body thì encode utf-8 nên thoải mái.
     try:
         urllib.request.urlopen(urllib.request.Request(
-            TOPIC, data=noi_dung.encode(),
-            headers={"Title": tieu_de, "Priority": uu_tien, "Tags": tag}), timeout=10)
+            TOPIC, data=noi_dung.encode("utf-8"),
+            headers={"Title": tieu_de.encode("ascii", "ignore").decode(),
+                     "Priority": uu_tien, "Tags": tag}), timeout=10)
     except Exception as e: print("ntfy:", e, flush=True)
 
 def ping(duoi="", than=b""):
@@ -305,14 +320,14 @@ def canh():
                 ping(than=f"buoc {buoc}/4036 loss {loss}".encode())
                 time.sleep(60); continue
             if xong or buoc >= 4036:
-                bao(f"✅ XONG {NHANH}/{SEED}", f"Đủ {buoc}/4036 bước.", "high", "white_check_mark")
+                bao(f"XONG {NHANH}/{SEED}", f"Đủ {buoc}/4036 bước.", "high", "white_check_mark")
                 ping("/fail", f"HOAN TAT {buoc}/4036".encode()); return
             ping("/fail", f"CHET o buoc {buoc}".encode())
             for i in range(1, LAP + 1):
                 if dang_chay():
-                    bao("🟢 Đã chạy lại", f"Tiếp từ bước {doc()[0]}", "default", "green_circle")
+                    bao("Da chay lai", f"Tiếp từ bước {doc()[0]}", "default", "green_circle")
                     return
-                bao(f"⛔ CHẾT {NHANH}/{SEED} ({i}/{LAP})",
+                bao(f"CHET {NHANH}/{SEED} ({i}/{LAP})",
                     f"Dừng ở {buoc}/4036, loss {loss}. Vào Colab chạy lại.")
                 time.sleep(NHIP)
             return
@@ -320,7 +335,7 @@ def canh():
             print("canh:", e, flush=True); time.sleep(60)
 
 threading.Thread(target=canh, daemon=True).start()
-bao("🔔 Đã bật canh", f"{NHANH}/{SEED} đang chạy", "low", "bell")
+bao("Da bat canh", f"{NHANH}/{SEED} đang chạy", "low", "bell")
 print("đã bật cảnh báo")
 ```
 
