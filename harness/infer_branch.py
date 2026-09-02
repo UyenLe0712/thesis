@@ -360,6 +360,11 @@ def main():
     ap.add_argument("--base", default=BASE)
     ap.add_argument("--max-new", type=int, default=96)
     ap.add_argument("--batch", type=int, default=8)
+    ap.add_argument("--cands", default="",
+                    help="đường dẫn candidates.jsonl. BẮT BUỘC cho nhánh gui_sel và "
+                         "gui_sft_match — hai nhánh đó được DẠY với khối ứng viên trong câu "
+                         "nhắc, chấm mà thiếu là lệch dạy-chấm và không có gì báo lỗi. "
+                         "BỎ TRỐNG cho S1/S2/MIN-DESC/CE2/gui_s1_match (giữ 24 dòng OCR).")
     ap.add_argument("--selftest", action="store_true",
                     help="kiểm câu nhắc khớp lúc dạy (CPU, không cần mô hình)")
     ap.add_argument("--b-infer", action="store_true",
@@ -399,6 +404,22 @@ def main():
     else:
         print("CẢNH BÁO: chưa có ocr.jsonl của tập kiểm — đầu vào sẽ THIẾU phần chữ đọc "
               "được, khác lúc dạy. Chạy prep_ocr_train.py --split test trước.")
+
+    # ── KHỐI ỨNG VIÊN (thêm 2/9/2026, nhánh gui_sel · gui_sft_match) ──────────────
+    # Hai nhánh đó được DẠY với khối ứng viên thay cho 24 dòng OCR. Chấm mà không
+    # truyền `cands` là dựng câu nhắc KHÁC lúc dạy, và không có gì báo lỗi: mô hình
+    # vẫn sinh ra chữ, thước vẫn chấm, chỉ là chấm một hệ thống chưa từng tồn tại.
+    cands = {}
+    if a.cands:
+        with open(a.cands, encoding="utf-8") as f:
+            for line in f:
+                c = json.loads(line)
+                cands[c["image"]] = c["cands"]
+        print(f"khối ứng viên: {len(cands)} màn ← nhánh CÓ menu (gui_sel / gui_sft_match)")
+    else:
+        print("khối ứng viên: KHÔNG dùng ← nhánh giữ 24 dòng OCR "
+              "(S1 · S2 · MIN-DESC · CE2 · gui_s1_match)")
+
     if a.limit:
         recs = recs[:a.limit]
 
@@ -480,7 +501,8 @@ def main():
             # content dạng DANH SÁCH, không phải chuỗi: chat template của Qwen in
             # nguyên văn chuỗi "<image>" chứ không thay bằng token ảnh. "\n" đứng đầu
             # phần chữ để chuỗi render ra trùng đúng bản LLaMA-Factory dựng lúc dạy.
-            body = prompt_body(rr, ocr.get(r["image"]))
+            body = prompt_body(rr, ocr.get(r["image"]),
+                               cands=cands.get(r["image"]) if a.cands else None)
             if a.b_infer:
                 body = with_elements(body, r)
             if a.ceiling:

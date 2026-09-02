@@ -333,6 +333,35 @@ nhau 60 giây, **đừng đọc `ls -la`** — mtime trên `/content/drive` khô
    `all_results.json`: ba trường `train_loss`, `train_runtime`, `*_per_second` **sai sau khi chạy
    tiếp**. `total_flos` thì không hỏng.
 
+## ⛔ LUẬT CHẤM — đọc trước khi chạy `infer_branch.py`
+
+Hai nhánh có menu **bắt buộc** truyền `--cands`, nhánh không menu **bắt buộc** bỏ trống:
+
+| nhánh | cờ | vì sao |
+|---|---|---|
+| `gui_sel` · `gui_sft_match` | `--cands .../test_ac/candidates.jsonl` | được DẠY với khối ứng viên |
+| `gui_s1_match` · S1 · S2 · MIN-DESC · CE2 | *(bỏ trống)* | giữ 24 dòng OCR |
+
+```bash
+# hai nhánh CÓ menu
+python harness/infer_branch.py --adapter <ckpt> --out preds_gui_sel_seed101.jsonl \
+    --cands harness/dg1_cache/test_ac/candidates.jsonl
+# nhánh KHÔNG menu
+python harness/infer_branch.py --adapter <ckpt> --out preds_gui_s1_match_seed101.jsonl
+```
+
+⛔ **Quên cờ là hỏng câm.** Đo 2/9: chấm `gui_sel` mà thiếu `--cands` thì **499/500 mẫu dựng
+sai câu nhắc** — mô hình được dạy chọn từ menu, lúc chấm không thấy menu nào. Nó vẫn sinh chữ,
+thước vẫn ra điểm, log không báo gì; chỉ là chấm một hệ thống chưa từng tồn tại.
+
+⚠️ Tập kiểm cũng cần `candidates.jsonl` — dựng bằng
+`build_candidates.py --split test --all-steps --max 40` (0 GPU). Bản hiện có trên WSL là
+4.463 màn dựng **không** kèm `--all-steps`; nếu chấm cả bước không chạm thì phải dựng lại.
+
+Dòng đầu ra của `infer_branch.py` in rõ đang ở chế độ nào — **đọc dòng đó**, đừng tin lệnh mình vừa gõ.
+
+---
+
 ## Sau lượt 1 — cổng G6, trước khi chạy tiếp năm lượt còn lại
 
 `sel_acc` trên **600 bước DEV** có ứng viên vàng, khớp tên ∧ point ±14%, `<sel>none</sel>` tính

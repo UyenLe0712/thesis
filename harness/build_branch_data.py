@@ -80,9 +80,11 @@ def block_of(cands):
     return BC.block_str(tuples)
 
 
-def prompt_of(r, ocr_rec):
-    """Đầu vào lúc DẠY — giống hệt nhau ở mọi nhánh."""
-    return "<image>\n" + prompt_body(r, ocr_rec)
+def prompt_of(r, ocr_rec, *, cands=None):
+    """Đầu vào lúc DẠY. `cands` chuyển tiếp nguyên vẹn sang `prompt_body`:
+    None = giữ 24 dòng OCR (S1/S2/MIN-DESC/S1-match), có = thay bằng khối ứng viên
+    (gui_sel / gui_sft_match)."""
+    return "<image>\n" + prompt_body(r, ocr_rec, cands=cands)
 
 
 def strip_point(desc):
