@@ -34,6 +34,7 @@ Colab phụ thuộc cũng dùng tên `harness`).
 | cần biết | mở |
 |---|---|
 | **⭐ TRẠNG THÁI HIỆN TẠI — đọc một mình là hiểu, từ 23/8 trở đi** | **`report/119_TRANG_THAI_SAU_23_8.md`** |
+| **⭐⭐ SPRINT `gui_sel`: cổng G6 TRƯỢT, phán quyết hướng đi + context debate (3/9)** | **`report/133_CONTEXT_DEBATE_SAU_G6.md`** (đọc một mình là đủ) · nhật ký thi hành ở `report/132` mục 16–19 |
 | **đi hướng nào tiếp — tranh luận + tiền lệ + phán quyết (25/8)** | **`report/120_TRANH_LUAN_HUONG_TIEP.md`** |
 | kế hoạch tháng 9 (bản chép từ ảnh, phủ tới §3.4 — ⛔ **`126` thắng file này khi mâu thuẫn**) | `report/123_CHOT_CUOI_PIPELINE_CHEP_TU_ANH.md` |
 | **tuần 1 tháng 9: đã chạy tới đâu, chặn ở đâu** | **`report/125_TUAN_1_THANG_9.md`** |
@@ -271,11 +272,30 @@ của câu do người viết, trên cùng một phép đo"*. Chống lưng: tr�
 (tính từ tệp thô), khai kèm điều kiện *dưới luật lỏng đó Δ co gần 0* ⇒ chỉ để định vị so với
 literature, **không** để đọc đóng góp. Headline vẫn `exec`/`hit_voronoi`.
 
-**▶️ VIỆC ĐANG CHẠY (2/9): sprint `gui_sel` cho SOICT 2026** — lượt 1/6 (`gui_sel`/101) đang
-train trên Colab, ~771/4036 bước, xong ~4–5 h sáng 3/9. Dữ liệu ba nhánh đã dựng, **bốn cổng
-G1–G4 đều ĐẠT**. Kế hoạch + nhật ký thi hành + sáu bẫy đã vá: **`report/132`**; điều hành hằng
-ngày: skill **`soict-paper`**. Sau lượt 1 phải chạy **cổng G6** (`gate_sel_acc.py`, ngưỡng
-63,6%) trước khi tiêu năm lượt còn lại. Mốc SOICT: abstract **9/9**, full paper **16/9**.
+**▶️ TRẠNG THÁI SPRINT `gui_sel` (3/9): lượt 1 XONG · ⛔ CỔNG G6 TRƯỢT · sprint sáu lượt DỪNG.**
+`sel_acc` **57,5%** (580/1008) so với ngưỡng khoá trước **63,6%** — kém 6,1 điểm, không phải sát
+ngưỡng. Đã xác minh ba lượt: 100% có thẻ `<sel>` · 99,6% tên nằm trong khối ứng viên · n=1008.
+⇒ Năm lượt còn lại **không chạy** (tiết kiệm ~55 h Kaggle + ~46 h A100).
+
+⭐ **Hai phát hiện đáng giá hơn con số cổng, cả hai đều tái lập hiện tượng đã biết:**
+· **Điểm nghẽn là NHẬN DIỆN, không phải ĐỊNH VỊ — tỉ số 34:1** (điểm-đúng-tên-sai 34 vs
+  tên-đúng-điểm-sai 1). Khi sai, mô hình nhìn sang **vùng khác hẳn màn** (khoảng cách trung vị
+  398/1000, chỉ 25,8% trong hai lần dung sai) ⇒ tái lập dạng lỗi lưỡng cực của MIN-DESC (x13c).
+· **Lẫn loại thao tác là dấu hiệu mạnh nhất của bỏ cuộc**: 39,6% ca bỏ cuộc có câu mang động từ
+  không-chạm (swipe/back/type) so với **2,0%** ở ca dám chọn — gấp 20 lần ⇒ tái lập chẩn đoán
+  4j-18 (Base đoán đúng loại thao tác nhiều hơn CẢ HAI bản đã huấn luyện).
+
+⛔ **Cái bẫy của thước, và nay là trục đóng góp mới:** `sel_acc` chỉ đếm nhóm có ứng viên vàng
+(đúng cột *HasAns* của SQuAD 2.0 báo một mình) nên **bỏ abstain hoàn toàn kéo nó 57,5 → 69,5
+trong khi độ đúng trên cả 1.400 bước TỤT 63,3 → 50,0**. Thước do chính dự án đăng ký đã dẫn
+dự án sai.
+
+**Phán quyết + context đầy đủ để debate: `report/133_CONTEXT_DEBATE_SAU_G6.md`** (đọc một mình
+là đủ, có cả năm hướng research đã tra). Nhật ký đo: `report/132` mục 16–19.
+**Việc kế:** ① ngưỡng τ kiểu Devlin NAACL 2019 trên `p(none)`, quét trên lát dev 1.400, áp MỘT
+lần lên hold-out 3.063 bước — **0 giờ A100** · ② chấm `exec` cho `gui_sel`/101 trên 4.463 bước
+(5,6 h Kaggle) · ③ hai lượt A100 cuối dành cho `gui_sft_match`/101 và `gui_sel`/202.
+Mốc SOICT: abstract **9/9**, full paper **16/9** — nhắm bản **short 8–11 trang**.
 
 **▶️ VIỆC CÒN CHỜ (1/9): theo dõi hồi âm của PGS.TS. Trần Văn Lăng về việc mở lại upload cho
 FAIR #276 — bài đã gửi qua email nhưng EDAS vẫn `Pending (no manuscript)`, xem `report/131`.
@@ -987,12 +1007,19 @@ trên **nhánh nặng nhất với mẫu dài nhất**.
 · **Mỗi biến thể chỉ đổi MỘT thứ** — bản đo đầu ghép hai thay đổi nên tràn trước khi trả lời được
 câu nào.
 
-⛔⛔ **BA LUẬT COLAB — VI PHẠM LÀ MẤT TIỀN THẬT. Đã trả giá 2/9/2026: mất 16 compute unit.**
+⛔⛔ **BỐN LUẬT COLAB — VI PHẠM LÀ MẤT TIỀN THẬT. Đã trả giá 2–3/9/2026: mất 16 compute
+unit, rồi mất máy thêm hai lần trong một đêm.**
 
 **① `subprocess.Popen` phải có `start_new_session=True`.** Thiếu nó thì tiến trình train nằm
 **cùng process group** với kernel notebook, và **mọi lần bấm Stop một ô bất kỳ** — kể cả ô theo
 dõi — đều gửi SIGINT sang train. Lượt `gui_sel`/101 chết ở bước **747/4036** vì đúng chuyện này;
 log ghi `KeyboardInterrupt`.
+
+✅ **ĐÃ KIỂM CHỨNG 3/9, 03:5x — luật ① chạy đúng như thiết kế.** Bấm Stop ô S7 rồi đo ngay:
+tiến trình `llamafactory-cli` vẫn còn, `grep -c KeyboardInterrupt` = **0**, log tăng **+107
+byte/phút**. ⇒ Với `start_new_session=True`, Stop một ô KHÔNG giết train. Đổi lại bằng 60
+giây kiểm, không phải bằng một lượt train. ⚠️ Đo trong khâu mã hoá token; SIGINT lan theo
+process group nên kết luận không phụ thuộc giai đoạn, nhưng vẫn nên hạn chế bấm Stop.
 
 **② KHÔNG bấm Stop ô nào khi train đang chạy.** Cần chạy ô khác thì mở **notebook thứ hai**
 hoặc dùng **Terminal Colab**. Ô vòng lặp vô hạn (theo dõi) làm mọi ô khác **xếp hàng**, nên
@@ -1003,7 +1030,18 @@ Drive.** FUSE không cập nhật nội dung khi ghi thêm, nên số bước **
 vẫn chạy. Đọc nhầm chỗ ⇒ tưởng treo ⇒ bấm Stop ⇒ mất lượt. Ba lỗi này nối nhau đúng theo thứ tự
 đó ngày 2/9.
 
-⚠️ **Và luật chung, đắt hơn cả ba:** ⛔ **KHÔNG khẳng định chắc chắn một điều chưa kiểm.**
+**④ PHẢI có MỘT ô notebook chạy foreground suốt lượt train (ô S7 của runbook).** Ô S5 (đồng
+bộ Drive) và S6 (cảnh báo) đều dùng `daemon=True` nên **ô kết thúc ngay**; nếu lại theo dõi
+bằng Terminal thì trình duyệt cũng không có tương tác nào ⇒ notebook rỗi ⇒ Colab ngắt máy vì
+**inactivity sau ~90 phút**. Đêm 2–3/9 mất máy **hai lần** đúng kiểu này: dựng lại ~02:00,
+chết trước 03:28 — chừng 88 phút, khớp ngưỡng. Lượt chiều 2/9 sống nhiều giờ chỉ vì lúc đó
+liên tục có người bấm ô. ⚠️ Đây là suy luận từ mốc giờ khớp, chưa phải bằng chứng trực tiếp;
+phép kiểm là lượt kế có sống qua 90 phút với S7 chạy hay không.
+⇒ Kèm theo: `save_steps` hạ **200 → 100** ngày 3/9 (thiệt hại mỗi lần mất máy còn tối đa
+~21 phút). Đây là **hằng số cho cả sáu lượt**, không phải khoá đổi giữa lượt, nên phép kiểm ②
+của ô S3 vẫn xanh.
+
+⚠️ **Và luật chung, đắt hơn cả bốn:** ⛔ **KHÔNG khẳng định chắc chắn một điều chưa kiểm.**
 Câu *"bấm Stop không ảnh hưởng gì tới train"* được nói ra mà không kiểm, và chính nó giết lượt
 chạy. Chưa kiểm thì nói *"tôi không chắc, để kiểm đã"* — đúng nguyên tắc dự án đã ghi ở mục
 *"'Đã xác minh' không phải bằng chứng"*.

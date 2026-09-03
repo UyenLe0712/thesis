@@ -423,3 +423,302 @@ huống vừa gặp ở FAIR khi gỡ `\cite{companion}` (`report/131` mục 6).
    cho kỹ?
 7. **Thứ tự ưu tiên khi vỡ lịch**: hy sinh hạt giống thứ hai, hy sinh `S1-match`, hay lùi venue?
    (Tiền lệ FAIR cho thấy hy sinh hạt giống thứ hai là đắt nhất.)
+
+---
+
+## 15. Cache token — cắt 41 phút mỗi lần dựng lại máy (soạn 3/9, CHƯA ÁP)
+
+**Vấn đề đo được.** Mỗi lần mất máy, khâu đắt nhất không phải số bước train mất đi mà là
+**mã hoá token lại từ đầu: 41 phút** cho 64.567 mẫu (đo 2/9, 11:58 → 12:39, `num_proc=8`).
+Với `save_steps: 100` thì bước mất chỉ ~21 phút ⇒ **khâu mã hoá đắt gấp đôi phần train mất**.
+Đêm 2–3/9 trả giá này hai lần.
+
+**Cách chữa.** LLaMA-Factory có `tokenized_path`: chưa có thì mã hoá rồi lưu, đã có thì nạp
+thẳng. Đặt trên Drive để sống qua mất máy:
+
+```yaml
+tokenized_path: /content/drive/MyDrive/thesis/tokcache/<nhánh>_cut3072_qwen25vl
+```
+
+**⛔ Ba rủi ro phải chặn trước khi bật — đây là đúng loại lỗi câm dự án đã trả giá nhiều lần
+(dataset Kaggle giữ bản mã cũ, ô vá sửa nhầm lớp):**
+
+1. **LLaMA-Factory KHÔNG kiểm cache có khớp cfg hay không.** Đổi `cutoff_len`, đổi `dataset`,
+   đổi `template` mà giữ nguyên path ⇒ nó nạp cache cũ, train trên dữ liệu khác, **log không
+   báo gì**. Chặn bằng cách nhét cả ba thứ vào tên thư mục, và **một nhánh một thư mục**.
+2. **Cache của nhánh này không được dùng cho nhánh kia.** Ba nhánh khác nhau ở câu nhắc và
+   đích sinh, tức khác từ token đầu tiên. Trộn cache là hỏng toàn bộ Δ.
+3. **Dung lượng.** Ước ~0,5–1 GB một nhánh (64.567 mẫu × ~1.800 token). Ba nhánh ⇒ tối đa
+   ~3 GB trên Drive. Phải kiểm chỗ trống trước, và ghi lần đầu qua FUSE mất thêm ~5–10 phút.
+
+**Phép kiểm bắt buộc trước khi tin cache** (một lượt sạch, không tiêu GPU train):
+· lần chạy đầu phải in `Saving tokenized dataset to ...` và thư mục phải có tệp Arrow;
+· lần chạy sau phải in `Loading tokenized dataset from ...` và **bỏ qua** thanh
+  `Running tokenizer`;
+· mẫu in ra ở đầu log (LLaMA-Factory in một mẫu đã token hoá) phải **trùng** giữa hai lần —
+  so bằng mắt đúng dòng `input_ids` đầu.
+
+**Khi nào áp:** từ **lượt 2** (`gui_sft_match`/101) trở đi. ⛔ Không áp giữa chừng cho lượt 1
+đang chạy — đổi cfg của một lượt dở là thêm một biến không kiểm soát, đúng thứ mục §9.1 cấm.
+
+**Khoá cfg:** `tokenized_path` phải vào danh sách khoá được phép đổi giữa lượt của ô S3
+(cùng nhóm với `dataset` / `seed` / `output_dir`), vì nó đổi theo nhánh.
+
+---
+
+## 16. ⛔ CỔNG G6 TRƯỢT — kết quả đo 3/9/2026, sprint DỪNG theo luật §5
+
+**`sel_acc` = 580/1008 = 57,5%**, ngưỡng khoá trước là **63,6%** ⇒ **TRƯỢT, kém 6,1 điểm.**
+Không phải trường hợp sát ngưỡng mà mục 14 câu 5 để ngỏ. ⛔ Không nới.
+
+Tệp: `runs/sel/preds_gui_sel_seed101_dev1400.jsonl` (1.400 bước chạm, chữ ký
+`lora:gui-sel-adapter`). Chấm bằng `SEL_SPLIT=test python3 harness/gate_sel_acc.py`.
+
+### Ba phép xác minh trước khi tin con số
+
+| phép | kết quả |
+|---|---|
+| `raw` có thẻ `<sel>` | **1400/1400 = 100%** — định dạng đúng như dạy |
+| tên chọn nằm trong khối ứng viên | **814/817 = 99,6%** — câu nhắc CÓ menu, mô hình thật sự chọn từ danh sách |
+| cỡ mẫu trong phạm vi cổng | **1.008** bước, lớn hơn 600 mà §5 yêu cầu |
+
+⚠️ `--limit 1400` cho **1.400 bước CHẠM** rải trong 2.221 bước đầu, không phải 1.400 bước
+đầu — nên n=1008 chứ không phải 694 như ước lượng trước lúc chạy.
+
+### ⭐ Cơ chế CÓ học được — đây là phần đáng viết nhất
+
+| nhóm | n | mô hình trả `none` | nhãn đúng |
+|---|---|---|---|
+| chạm · **không** có tên vàng | 288 | **80,2%** | `none` ✓ |
+| chạm · có tên, không khớp ứng viên nào | 104 | **74,0%** | `none` ✓ |
+| chạm · **có** ứng viên vàng | 1.008 | **27,1%** | CHỌN ✓ |
+
+Khoảng cách **80,2% so với 27,1%** loại bỏ giả thuyết *"mô hình tái tạo prior"* — prior của
+bước chạm trong tập dạy là 29,1% `none`, mà mô hình cho ra hai tỉ lệ khác hẳn nhau tuỳ nhóm.
+Đọc như bộ phân loại nhị phân *"có nên chọn không"*: recall **72,9%** · specificity **78,6%**
+· đúng **74,5%** trên 1.400 bước.
+
+### Phân rã điểm mất
+
+```
+sel_acc 57,5%  =  72,9% (dám chọn)  ×  78,9% (chọn đúng khi đã dám)
+```
+
+Trong 735 lần dám chọn: **580 đúng cả tên lẫn điểm** · 46 điểm đúng tên sai · **4 tên đúng
+điểm sai** · 103 sai cả hai. Con số 4 đáng chú ý: khi đã nhận ra phần tử thì lấy toạ độ gần
+như luôn chuẩn ⇒ điểm nghẽn nằm ở **nhận diện**, không ở định vị.
+
+Để chạm 63,6% cần một trong hai: giữ 78,9% đúng thì phải dám chọn **≥80,6%**; hoặc giữ 72,9%
+dám chọn thì phải đúng **≥87,2%**. Cả hai cách hiện tại 8 điểm.
+
+### Điều gì phân biệt bước bỏ cuộc với bước dám chọn
+
+| trục | bỏ cuộc (n=273) | dám chọn (n=735) | chênh |
+|---|---|---|---|
+| số ứng viên trong khối | 26,5 | 22,2 | **+4,3** |
+| thứ tự ứng viên vàng trong khối | 11,2 | 8,5 | **+2,6** |
+| tên vàng **có chữ số** | 24,2% | 13,6% | **+10,6 pp** |
+| tầng `ky_hieu` (n=34) | — | — | bỏ cuộc **52,9%** |
+| độ dài tên · trùng tên · cùng vai · nguồn tên (OCR/a11y) | — | — | **không khác** |
+
+Nguồn tên **không** phân biệt (OCR 27,1% · a11y 27,0%) ⇒ không phải lỗi của khâu lấy tên.
+Ba trục có tín hiệu đều chỉ về một hướng: **khối càng đông và tên càng khó đọc thì càng bỏ cuộc**.
+
+### Dữ liệu dạy KHÔNG tự mâu thuẫn
+
+`build_sel_data.py:139` gán `none` **chỉ khi** `gold_candidate()` trả None ⇒ mọi bước có ứng
+viên vàng đều mang nhãn chọn. Đo trên tập dạy: 41.191 bước chạm · 77,8% có tên vàng · 70,9%
+có ứng viên vàng ⇒ **8,9% số bước có tên vàng vẫn mang nhãn `none`** vì tên không khớp ứng
+viên nào. Đó là nhiễu có thật nhưng nhỏ, không đủ giải thích 27,1%.
+
+Cấu tạo 54,8% nhãn `none` của tập dạy: 36,2% bước không chạm · 14,1% chạm không tên vàng ·
+4,4% chạm có tên mà không khớp.
+
+### Hệ quả
+
+⛔ **Năm lượt còn lại KHÔNG chạy** (~55 giờ Kaggle + ~46 giờ A100 không phải tiêu). Cổng làm
+đúng việc nó sinh ra để làm.
+⛔ **Không có `Δ_sel`** — `gui_sft_match` chưa train nên không có đối chứng. Mọi con số ở đây
+là **mô tả một nhánh**, không phải hiệu số. Cấm so `gui_sel` với S1 cũ: lệch ba biến
+(2 epoch vs 1 · cutoff 2560 vs 3072 · không menu), đúng loại so bắc cầu mà §9.1 cấm.
+⚠️ Một hạt giống, một lượt. Mọi số mang nhãn **thăm dò**.
+
+---
+
+## 17. Phép thử ÉP CHỌN và điều nó phát hiện (3/9/2026)
+
+**Câu hỏi:** 273 ca bỏ cuộc là *dè dặt quá mức* hay *thật sự không biết*?
+**Cách làm:** cờ `--force-sel` của `infer_branch.py` cấm mọi cách viết `none` lúc sinh, chạy
+lại đúng 273 khoá đó (`runs/sel/bo_cuoc_273.jsonl`), ~12 phút Kaggle T4, 0 đồng.
+**Kết quả:** `sel_acc` **116/273 = 42,5%**. Nằm giữa hai thái cực ⇒ bỏ cuộc là **tín hiệu
+thật** (42,5% thấp hơn hẳn 78,9% của nhóm tự nguyện chọn) nhưng **quá tay** (42,5% vẫn hơn
+0% mà `none` mang lại). Tệp: `runs/sel/preds_gui_sel_forcesel_273.jsonl`, chữ ký
+`lora:gui-sel-adapter+forcesel`.
+
+### ⛔ Ép chọn LỖ ở mọi ngưỡng — hướng này đã chết
+
+| chỉ ép khi khối ≥ | số ca bị ép | lãi nhóm A | lỗ nhóm B+C | so nền |
+|---|---|---|---|---|
+| 0 (ép tất) | 581 | +116,0 | −308 | **−13,7 pp** |
+| 15 | 440 | +90,0 | −226 | −9,7 pp |
+| 25 | 312 | +70,0 | −162 | −6,6 pp |
+| 35 | 223 | +50,0 | −122 | −5,1 pp |
+| **không ép** | 0 | 0 | 0 | **0,0 pp ← tốt nhất** |
+
+Nền: **888/1400 = 63,4%** đúng trên bước chạm. Lý do lỗ: trong 581 ca abstain chỉ **47%**
+thuộc nhóm A, mà điều kiện hoà vốn đòi **69,4%** (mỗi ca chuyển được thêm 0,44 điểm kỳ vọng,
+mỗi ca abstain đúng bị phá mất 1,00). ⇒ Quy tắc cứng dựa trên đặc trưng bề mặt không cứu
+được; phải có **điểm tin cậy liên tục**.
+
+### ⭐ Điểm nghẽn là NHẬN DIỆN, không phải ĐỊNH VỊ — tỉ số 34:1
+
+Phân rã 273 ca ép chọn: đúng cả hai **116** · **điểm đúng tên sai 34** · **tên đúng điểm sai
+1** · sai cả hai 122. Ở nhóm tự nguyện chọn cũng vậy: 580 đúng · 46 điểm-đúng-tên-sai · **4**
+tên-đúng-điểm-sai. Hai lát độc lập cùng cho tỉ số ~34:1 và ~11:1 nghiêng về lỗi tên.
+⇒ Khi mô hình nhận ra phần tử thì toạ độ gần như luôn chuẩn. Cấm viết *"điểm nghẽn ở định vị
+thị giác"* — số liệu bác thẳng.
+
+### ⭐⭐ TÁI LẬP ĐỘC LẬP dạng lỗi lưỡng cực của MIN-DESC
+
+122 ca sai cả hai: khoảng cách tới ứng viên vàng **p25 268 · trung vị 398 · p75 570** trên
+lưới 1000 (dung sai 140). Chỉ **25,8%** nằm trong hai lần dung sai ⇒ khi sai, mô hình
+**không lẫn sang nút bên cạnh mà nhìn sang vùng khác hẳn màn hình**.
+
+Đối chiếu `report/106` mục (x13c) đo trên nhánh MIN-DESC ngày 25/8: khoảng cách phần-tử-nhầm
+↔ gold có **p25 70 px · trung vị 351 · p75 748**, và **76,5%** nằm ngoài dải 80–350.
+⇒ **Hai can thiệp khác nhau, hai cơ chế khác nhau, hai lượt train khác nhau, cùng một dạng
+lỗi.** Đây là bằng chứng mạnh hơn bất kỳ con số âm nào, và nó giải thích luôn vì sao
+MIN-ONPOLICY chết ở cổng eligibility 3,3%: tiền đề "vế âm khó là nút cạnh bên" sai ở cả hai
+nhánh.
+
+⚠️ 98,2% tên mô hình chọn nằm trong khối ứng viên ⇒ nó thật sự đọc danh sách, không bịa.
+
+### Đặc trưng nào dự báo bỏ cuộc
+
+| trục | bỏ cuộc | dám chọn | phán |
+|---|---|---|---|
+| **cỡ khối** | 18,8% → 25,0% → 32,9% → **34,9%** theo bốn tầng | — | **biến thật, đơn điệu, chênh 16 pp** |
+| vị trí tương đối trong danh sách | 0,478 | 0,471 | **vô can** (chênh 0,006) |
+| tên có chữ số | 24,2% | 13,6% | tín hiệu yếu |
+| độ dài tên · trùng tên · cùng vai · nguồn tên | — | — | không khác |
+
+⚠️ Hiệu ứng vị trí thô (11,2 vs 8,5) **hoàn toàn do cỡ khối** — khối đông thì vị trí trung
+bình tự động sâu hơn. Phải phân tầng trước khi đọc. Dấu vết *lost in the middle* còn lại rất
+nhẹ: bỏ cuộc theo ngũ phân vị vị trí là 25,7 / 24,4 / 31,7 / 34,8 / 24,2%.
+
+**Nghịch lý dùng được:** khối lớn khiến bỏ cuộc nhiều nhất (34,9%) nhưng khi ép chọn trên
+khối lớn lại đúng nhiều nhất (**49,5%** so với 31,2% ở khối 15–24) ⇒ ở đúng chỗ khó nhất,
+mô hình dè dặt quá tay.
+
+---
+
+## 18. ⭐ VÌ SAO MÔ HÌNH BỎ CUỘC — hai nguồn, nguồn lớn nhất tái lập chẩn đoán 4j-18
+
+Phép kiểm 0 GPU, đọc chính câu hướng dẫn mà mô hình sinh kèm mỗi ca `<sel>none</sel>` sai.
+
+| | 273 ca **bỏ cuộc** | 735 ca **dám chọn** | chênh |
+|---|---|---|---|
+| câu mang động từ **không chạm** (swipe · back · type · scroll) | **108 = 39,6%** | 15 = **2,0%** | **+37,5 pp, gấp 20 lần** |
+| câu mang động từ chạm (tap · click · select) | 142 = 52,0% | — | — |
+| không rõ | 23 = 8,4% | — | — |
+
+Ví dụ thật ở nhóm bỏ cuộc: *"Swipe up to view the Symphony of the Seas Cruise."* ·
+*"Type 9877655532 in the phone number section."* · *"Go back to the previous page"* — trong
+khi thao tác vàng của cả ba bước ấy là một cú **chạm**.
+
+⭐ **Tái lập chẩn đoán 4j-18** (`report/110`, đo tháng 8 trên nhánh S2): nhóm 325 bước không
+kích hoạt khai báo cũng đúng kiểu này, và **Base đoán đúng loại thao tác nhiều hơn CẢ HAI bản
+đã huấn luyện** (83,4% vs S1 55,1% vs S2 38,8%) ⇒ đây là **cái giá của SFT**, nay thấy lại
+trên một nhánh khác, một cơ chế khác, một lượt train khác.
+
+### Nhưng đó KHÔNG phải nguyên nhân duy nhất
+
+Ép chọn, tách theo việc lượt gốc có lẫn loại thao tác hay không:
+
+| nhóm | ép chọn đúng |
+|---|---|
+| có lẫn loại thao tác (n=108) | **37,0%** |
+| không lẫn (n=165) | **46,1%** |
+| *(mốc so: nhóm tự nguyện chọn)* | *78,9%* |
+
+Chênh chỉ **9 pp**, và nhóm không lẫn vẫn xa 78,9% ⇒ bỏ cuộc thừa có **ít nhất hai nguồn
+chồng lên nhau**: lẫn loại thao tác (dấu hiệu mạnh, chiếm 39,6% số ca) và không nhận ra phần
+tử (phần còn lại). Cấm viết *"bỏ cuộc là do lẫn loại thao tác"* — số liệu chỉ cho phép nói
+*"lẫn loại thao tác là dấu hiệu mạnh nhất đo được của việc bỏ cuộc"*.
+
+### Hệ quả thiết kế, dành cho bài sau
+
+Nhãn `<sel>none</sel>` hiện **gộp hai tình huống khác bản chất**: bước không chạm (36,2% tập
+dạy) và bước chạm nhưng không có tên vàng (18,5%). Mô hình không được cho biết loại thao tác,
+mà chính SFT lại làm hỏng khả năng đoán loại thao tác. Tách `none` thành hai đích là hướng
+chữa có căn cứ, nhưng đòi dựng lại dữ liệu và train lại cả hai nhánh ⇒ **ngoài ngân sách hiện
+tại**, ghi vào hướng phát triển.
+
+## 19. PHÁN QUYẾT HƯỚNG ĐI (chốt 3/9, sau năm hướng research và một vòng phản biện)
+
+### Việc phải làm, theo thứ tự
+
+| # | việc | giờ GPU | cơ sở |
+|---|---|---|---|
+| 1 | **Ngưỡng τ kiểu Devlin** trên `log p(none) − log p(ứng viên tốt nhất)` tại bước quyết định. Quét τ trên lát 1.400 (dev), chọn theo **đúng toàn bộ** chứ không theo `sel_acc`, áp **một lần** lên 3.063 bước hold-out | 0 A100 · ~2 h T4 | Devlin et al. NAACL 2019 (SQuAD 2.0, `ŝ_null + τ` chọn trên dev) · Kamath ACL 2020 (+8 pp coverage) |
+| 2 | **Đếm tên ngoài khối** ở 149 ca chọn sai | 0 | ✅ đã đo trên lát ép chọn: **98,2% nằm trong khối** ⇒ trie gần như vô giá trị |
+| 3 | **Chấm executability** cho `gui_sel`/101 trên 4.463 bước | 5,6 h Kaggle | G6 chỉ là cổng proxy; `exec` mới là estimand thật |
+| 4 | ✅ **Kiểm giả thuyết lẫn loại thao tác** | 0 | xong, mục 18 |
+
+### ⛔ Không làm, mỗi thứ một lý do đo được
+
+· **focal loss** — Li et al. ACL 2020 đo ở tỉ lệ 82:1 chỉ được +0,30 F1, dưới σ hạt giống 0,46
+· **loại bớt mẫu lớp đa số** — Tayyar Madabushi NLP4IF 2019: −1,1 pp khi train/test cùng phân bố; Henning EACL 2023: ROS thắng RUS
+· **đánh số ứng viên rồi sinh số** — lệch train-test, và Robinson & Wingate ICLR 2023 báo mô hình cỡ nhỏ nằm sát mức đoán ngẫu nhiên ở năng lực này
+· **tách hai giai đoạn** — không có bằng chứng bình duyệt so trực tiếp, tốn 1–2 lượt
+· **trie** — 98,2% tên đã nằm trong khối, không còn gì để cấm
+· **self-consistency** — thừa khi đã có xác suất trực tiếp từ logits
+· **ép chọn** — lỗ ở cả bốn ngưỡng (mục 17)
+
+### Phân bổ hai lượt train còn lại
+
+⚠️ Luật khoá nói trượt G6 thì **dừng sprint sáu lượt**, và điều đó giữ nguyên. Nhưng luật dừng
+*sprint*, không cấm dùng ngân sách cho câu hỏi khác — **với điều kiện ghi thành mục sửa đổi và
+commit TRƯỚC khi bấm train**.
+
+| lượt | nhánh | giờ | vì sao |
+|---|---|---|---|
+| 1 | **`gui_sft_match`/101** | ~23 h | không có nó thì báo cáo âm chỉ nói được "trượt một ngưỡng", không nói được đầu chọn có làm `exec` tệ đi hay không |
+| 2 | **`gui_sel`/202** | ~23 h | σ giữa hạt giống trên `sel_acc` **chưa ai đo**; con số trung tâm của bài (57,5% và bỏ cuộc thừa) cần hạt thứ hai |
+| 3 | **không chạy** | — | giữ làm đệm mất máy; 46 giờ trước 16/9 đã hết chỗ trượt |
+
+⛔ Bỏ `S1-match` và `gui_sft_match`/202. Δ_sel một hạt giống nằm dưới MDE 2,11 **theo thiết
+kế**, phải khai là trắng ngay từ đầu.
+
+### Trục đóng góp SOICT — nộp bản SHORT 8–11 trang
+
+*(i)* Kiểm định theo thiết kế đăng ký trước một đầu chọn tường minh trên khối ứng viên cho
+Qwen2.5-VL-3B ở miền di động; nó **trượt cổng đã khoá** (57,5% so với 63,6%).
+*(ii)* Dạng lỗi là **bỏ cuộc thừa**: 27,1% `none` trên bước có đáp án, tỉ lệ `none` phát ra
+vượt tỉ lệ thật **13,5 điểm**; và thước `sel_acc` chỉ đếm cột HasAns nên **cộng 11,9 điểm cho
+việc bỏ hẳn abstain trong khi độ đúng toàn bộ tụt 13,3 điểm**.
+*(iii)* Thay bằng bộ thước kiểu **SQuAD 2.0** (toàn bộ · HasAns · NoAns) cộng risk–coverage,
+và một ngưỡng τ chỉnh trên dev, đo **một lần** trên hold-out.
+
+**Đóng góp là (ii) và (iii).** (i), Δ_sel, `exec` và hạt 202 là **bằng chứng**.
+⚠️ Câu (ii) phải viết là *thước do chính chúng tôi đăng ký đã dẫn chúng tôi sai*, **không**
+viết như phát hiện về thước của người khác.
+Tiền lệ tổ chức bài: Kaushik & Lipton (EMNLP 2018) · Michel, Levy, Neubig (NeurIPS 2019) —
+đóng góp phát biểu là **phát hiện về cơ chế**, số âm chỉ là bằng chứng.
+
+### Ranh giới trung thực — phải khai
+
+lát 1.400 đã chạm **hai lần** (G6, ép chọn) ⇒ mọi số trên đó là dev · G6 trượt và **giữ
+nguyên trượt**, τ là luật đọc hậu kiểm chứ không thay cổng · τ chỉnh trên dev, hold-out 3.063
+bước chạm **một lần**, in kết quả **kể cả khi τ = ∞** (không nên dời ngưỡng cũng là kết quả
+hợp lệ) · train **không chừa val** · 42,5% ép chọn, cỡ khối, vị trí đều là **hậu kiểm một hạt
+giống** · Δ_sel một hạt giống, dưới MDE · kế hoạch sáu lượt bị thay ở đâu, ngày nào, commit
+nào · `sel_acc` là thước **do chính dự án đăng ký**.
+
+### ⛔ Câu không được viết
+
+*"điểm nghẽn ở định vị thị giác"* (tỉ số 34:1 bác thẳng) · *"focal loss gây hại cho sinh văn
+bản"* (không có nguồn bình duyệt) · *"đầu tiên"* cho khối ứng viên ở miền di động · so số với
+Chi et al. hay Pezeshkpour (họ đo trên mô hình prompting, ta đã fine-tune) · *"mô hình học
+prior 54,8%"* (bằng chứng ngược: 80,2% vs 27,1%) · *"τ cải thiện hệ thống"* trước khi có số
+hold-out · trong abstract 9/9 **không hứa số chưa đo**.

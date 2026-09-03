@@ -85,7 +85,11 @@ def main():
             if gc is None:                      # không có ứng viên vàng ⇒ ngoài phạm vi cổng
                 bo_qua += 1; continue
             n += 1
-            ten, x, y = tach_sel(r.get("pred") or r.get("prediction") or "")
+            # ⛔ PHẢI đọc `raw`, KHÔNG đọc `pred`. `infer_branch.strip_desc()` bóc cả
+            #    <desc> lẫn <sel> khỏi `pred` (câu đem chấm không được chứa đáp án), nên
+            #    tìm thẻ trong `pred` luôn ra rỗng: cổng in 0,0% ở MỌI cột và trông y như
+            #    mô hình không học được gì. Đã mắc đúng vậy 3/9, lượt chấm đầu tiên.
+            ten, x, y = tach_sel(r.get("raw") or r.get("pred") or r.get("prediction") or "")
             if ten is None:
                 continue
             if ten == "none":
@@ -105,6 +109,9 @@ def main():
         print(f"  n trong phạm vi cổng                : {n}")
         if not n:
             print("  ⛔ không có bước nào chấm được"); continue
+        if co_the == 0 and ra_none == 0:
+            print("  ⛔ KHÔNG THẤY THẺ <sel> NÀO — nghi đọc nhầm trường, không phải mô hình hỏng.")
+            print("     Cổng đọc `raw` (nguyên văn); `pred` đã bị strip_desc() bóc thẻ.")
         print(f"  có phát thẻ <sel> khác none         : {co_the} = {co_the/n:.1%}")
         print(f"  trả <sel>none</sel> (tính SAI)      : {ra_none} = {ra_none/n:.1%}")
         print(f"  khớp TÊN                            : {ten_ok} = {ten_ok/n:.1%}")

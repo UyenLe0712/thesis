@@ -76,7 +76,12 @@ bf16: true
 fp16: false
 gradient_checkpointing: true
 
-save_steps: 200                   # Colab có thể mất máy giữa chừng
+save_steps: 100                   # HẠ từ 200 ngày 3/9 sau hai lần mất máy trong một đêm.
+                                  # Thiệt hại mỗi lần mất máy giảm còn tối đa 100 bước
+                                  # (~21 phút) thay vì 200 (~42 phút). Giá phải trả là
+                                  # ~20 lần ghi Drive nữa, mỗi lần vài giây.
+                                  # ⚠️ Đây là HẰNG SỐ cho cả sáu lượt, không phải khoá
+                                  # được đổi giữa lượt ⇒ phép kiểm ② của ô S3 vẫn xanh.
 save_total_limit: 2
 # KHÔNG khai resume_from_checkpoint. Bẫy ngược: LLaMA-Factory chỉ tự dò checkpoint
 # gần nhất trong output_dir KHI trường này còn bỏ trống. Điền bất cứ giá trị nào,

@@ -19,10 +19,16 @@ Thứ tự hy sinh nếu vỡ lịch: cắt `gui_s1_match` trước, hạt 202 c
 
 ---
 
-## ⛔⛔ BA LUẬT — vi phạm là mất tiền thật (đã mất 16 compute unit ngày 2/9)
+## ⛔⛔ BỐN LUẬT — vi phạm là mất tiền thật (đã mất 16 compute unit + 2 lần mất máy)
 
 1. **`Popen` phải có `start_new_session=True`.** Thiếu ⇒ train cùng process group với kernel ⇒
    bấm Stop **ô bất kỳ** là gửi SIGINT sang train. Lượt 1 chết ở bước 747 vì đúng chuyện này.
+✅ **ĐÃ KIỂM CHỨNG 3/9, 03:5x — luật ① chạy đúng như thiết kế.** Bấm Stop ô S7 rồi đo ngay:
+tiến trình `llamafactory-cli` vẫn còn, `grep -c KeyboardInterrupt` = **0**, log tăng **+107
+byte/phút**. ⇒ Với `start_new_session=True`, Stop một ô KHÔNG giết train. Đổi lại bằng 60
+giây kiểm, không phải bằng một lượt train. ⚠️ Đo trong khâu mã hoá token; SIGINT lan theo
+process group nên kết luận không phụ thuộc giai đoạn, nhưng vẫn nên hạn chế bấm Stop.
+
 2. **KHÔNG bấm Stop ô nào khi train chạy.** Cần chạy ô khác thì mở **notebook thứ hai** hoặc
    **Terminal Colab**. Ô vòng lặp làm mọi ô khác xếp hàng — phản xạ bấm Stop chính là cái bẫy.
 3. **Theo dõi bằng Terminal, không bằng ô notebook.** Và đọc đúng nguồn:
@@ -32,6 +38,14 @@ Thứ tự hy sinh nếu vỡ lịch: cắt `gui_s1_match` trước, hạt 202 c
 | bước · tốc độ · giờ còn lại | `.log` local (tqdm → stderr) | ✅ |
 | loss · lr | `trainer_log.jsonl` | ✅ |
 | `remaining_time` · `elapsed_time` | `trainer_log.jsonl` | ⛔ **sai sau resume** — trainer chia elapsed cho `current_steps` thay vì số bước thật của phiên |
+
+---
+
+**④ PHẢI có một ô notebook đang chạy suốt lượt — đó là ô S7.** S5/S6 dùng daemon thread nên
+ô kết thúc ngay; theo dõi bằng Terminal thì trình duyệt không có tương tác nào. Notebook rỗi
+⇒ Colab ngắt vì *inactivity* sau ~90 phút. Đêm 2–3/9 mất máy **hai lần** đúng kiểu này: máy
+dựng lại ~02:00, chết trước 03:28 — chừng 88 phút. Lượt chiều 2/9 sống lâu chỉ nhờ liên tục
+có người bấm ô.
 
 ---
 
@@ -142,7 +156,7 @@ warmup_ratio: 0.05
 bf16: true
 fp16: false
 gradient_checkpointing: true
-save_steps: 200
+save_steps: 100
 save_total_limit: 2
 logging_steps: 20
 report_to: none
@@ -344,26 +358,213 @@ Mỗi lượt tốn ~840 ping và tối đa 42 tin. ⛔ Phone Call / SMS / Whats
 
 ---
 
+## Ô S7 — GIỮ NHỊP + theo dõi ⚠️ BẮT BUỘC, để nguyên chạy tới hết lượt
+
+⛔ **Đây là ô đã thiếu trong đêm 2–3/9 và làm mất máy hai lần.** S5 và S6 đều dùng
+`daemon=True` nên ô **kết thúc ngay**; theo dõi thì lại làm bên Terminal. Kết quả: notebook
+**không còn ô nào đang chạy**, trình duyệt cũng không có tương tác nào, và Colab ngắt máy vì
+*inactivity* sau khoảng 90 phút. Lượt chiều 2/9 sống lâu chỉ vì lúc đó liên tục có người bấm ô.
+
+Ô này chạy **foreground** nên kernel luôn bận. Chạy nó SAU S6 và **để nguyên**, đừng bấm gì.
+
+```python
+import time, os, re, json, glob, subprocess
+
+LOGF = f"/content/train_{NHANH}_{SEED}.log"
+TRUOC, IM, LAN = 0, 0, 0
+
+def gio(cong=0):                               # đồng hồ máy chạy UTC, +7 ra giờ VN
+    return time.strftime("%H:%M:%S", time.gmtime(time.time() + 7*3600 + cong))
+
+def gpu():
+    try:
+        r = subprocess.run(["nvidia-smi", "--query-gpu=memory.used,memory.total,"
+                            "utilization.gpu,temperature.gpu,power.draw",
+                            "--format=csv,noheader,nounits"],
+                           capture_output=True, text=True, timeout=10).stdout.strip()
+        u, t, g, c, w = [x.strip() for x in r.split(",")]
+        return f"VRAM {int(u)/1024:.1f}/{int(t)/1024:.0f} GB · GPU {g}% · {c}°C · {float(w):.0f} W"
+    except Exception as e:
+        return f"nvidia-smi lỗi: {e}"
+
+def lay(txt, mau):
+    m = re.findall(mau, txt)
+    return m[-1] if m else None
+
+def so_hoc():
+    """loss · lr · grad_norm · epoch — lấy từ `trainer_state.json` của checkpoint MỚI NHẤT.
+
+    ⛔ KHÔNG lấy từ tệp `.log`. Đo 24/8 trên lượt thật: S4 phóng bằng `Popen(stdout=file)`
+    nên stdout không phải terminal; HF chỉ in dict {'loss': …} QUA tqdm, mà ở chế độ đó
+    tqdm không ghi dòng ấy ⇒ log **không có** số học nào, dù vẫn có thanh tiến độ.
+    ⛔ Cũng KHÔNG lấy từ `trainer_log.jsonl` trên Drive: FUSE không cập nhật nội dung khi
+    ghi thêm, số ở đó đứng yên hàng giờ (luật ③).
+    ⚠️ Đánh đổi: checkpoint chỉ ghi mỗi `save_steps` (100 bước ≈ 21 phút) nên số học TRỄ
+    hơn cột bước — vì vậy in kèm `@N` là bước mà số đó thuộc về."""
+    try:
+        ck = sorted(glob.glob(OUT + "/checkpoint-*"), key=lambda q: int(q.rsplit("-", 1)[1]))
+        if not ck:
+            return {}
+        st = json.load(open(ck[-1] + "/trainer_state.json", encoding="utf-8"))
+        h = [l for l in st["log_history"] if l.get("loss") is not None]
+        return h[-1] if h else {}
+    except Exception:
+        return {}
+
+while True:
+    try:
+        with open(LOGF, encoding="utf-8", errors="ignore") as f:
+            f.seek(max(0, os.path.getsize(LOGF) - 300_000)); txt = f.read()
+    except OSError:
+        print(gio(), "chưa có log", flush=True); time.sleep(60); continue
+
+    b = re.findall(r"(\d+)/4036", txt)
+    if not b:
+        cuoi = txt.replace("\r", "\n").strip().split("\n")[-1][-90:]
+        print(gio(), "[khởi động]", cuoi, flush=True)
+    else:
+        buoc = int(b[-1])
+        sit  = float(lay(txt, r"([0-9.]+)s/it") or 12.5)
+        d    = so_hoc()
+        f4   = lambda k, n=4: f"{d[k]:.{n}f}" if isinstance(d.get(k), (int, float)) else "?"
+        lr   = f"{d['learning_rate']:.3e}" if isinstance(d.get("learning_rate"), float) else "?"
+        con  = int((4036 - buoc) * sit)
+        # ~16 mẫu/bước; mỗi mẫu 1.272 token ảnh + ~541 token chữ (p50 đo 2/9)
+        tok  = 16 * 1813 / sit
+        tien = "   —" if TRUOC == 0 else f"{buoc-TRUOC:+4d}"    # lượt đầu chưa có mốc để trừ
+        print(f"{gio()}  bước {buoc:>5}/4036 ({buoc*100//4036:>2}%) {tien}  "
+              f"loss {f4('loss'):<7}|g| {f4('grad_norm',3):<6}lr {lr:<10}ep {f4('epoch',3):<6}"
+              f"@{int(d.get('step', 0)):<5} {sit:.1f}s/b ≈{tok:.0f}tok/s  "
+              f"còn {con//3600}h{con%3600//60:02d}m  xong ~{gio(con)[:5]}", flush=True)
+        if LAN % 10 == 0:                        # 10 phút một lần cho đỡ rối
+            print(f"{' '*10}└ {gpu()}", flush=True)
+        IM = IM + 1 if buoc == TRUOC else 0
+        TRUOC = buoc; LAN += 1
+        if IM >= 3:
+            print("⚠️ ba lượt liền không tiến bước — mở Terminal: ps -eo args | grep llamafactory",
+                  flush=True)
+        if buoc >= 4036 or "train_runtime" in txt:
+            print("✅ XONG — bắt đầu thủ tục đóng lượt", flush=True); break
+    time.sleep(300)
+
+# ── THỦ TỤC ĐÓNG LƯỢT — chạy không cần người ngồi canh ────────────────────────
+import json
+time.sleep(90)                                    # cho trainer ghi nốt adapter cuối
+
+ad  = os.path.join(OUT, "adapter_model.safetensors")
+ok  = os.path.exists(ad) and os.path.getsize(ad) > 1_000_000
+tt  = os.path.join(OUT, "trainer_state.json")
+st  = json.load(open(tt)) if os.path.exists(tt) else {}
+tin = (f"buoc {st.get('global_step','?')} · flos {st.get('total_flos','?')} · "
+       f"adapter {os.path.getsize(ad)/1e6:.1f} MB" if ok else "⛔ THIEU ADAPTER")
+print("adapter:", ok, "·", tin, flush=True)
+
+try:
+    bao(f"XONG {NHANH}/{SEED}" if ok else f"LOI {NHANH}/{SEED}", tin,
+        "high", "white_check_mark" if ok else "rotating_light")
+except Exception as e:
+    print("ntfy:", e, flush=True)
+
+if ok:
+    try:
+        from google.colab import drive
+        drive.flush_and_unmount()                 # ⛔ BẮT BUỘC: FUSE giữ tệp trong đệm,
+        print("đã đẩy Drive lên cloud", flush=True)  # `ls` vẫn hiện tệp như thường
+        time.sleep(60)
+    except Exception as e:
+        print("flush lỗi:", e, "— KHÔNG trả máy, vào kiểm bằng tay", flush=True)
+    else:
+        try:
+            from google.colab import runtime
+            runtime.unassign()                    # trả máy ⇒ ngừng tính compute unit
+        except Exception as e:
+            print("unassign lỗi:", e, "— tắt máy bằng tay ở Runtime ▸ Disconnect", flush=True)
+else:
+    print("⛔ KHÔNG trả máy — adapter thiếu, vào kiểm bằng tay", flush=True)
+```
+
+**Đọc sáu cột này:**
+
+| cột | nghĩa | ngưỡng đáng ngờ |
+|---|---|---|
+| `+N` | bước tiến trong 60 giây | `+0` **ba lần liền** (một lần thì không) |
+| `loss` | trung bình 20 bước gần nhất | tăng đều nhiều khối · nhảy hàng đơn vị · `nan` |
+| `|g|` | `grad_norm`, độ lớn gradient | vọt lên hàng chục · về đúng `0` · `nan` |
+| `lr` | lịch cosine đang ở đâu | không giảm dần theo bước |
+| `ep` | phần epoch đã duyệt | phải bò từ 0 tới **1.0**, không hơn |
+| `≈tok/s` | thông lượng **ước tính** | tụt quá nửa so với lúc đầu |
+
+⚠️ `tok/s` là **ước tính**, không phải số trainer báo: lấy 16 mẫu/bước × (1.272 token ảnh +
+541 token chữ ở p50) chia cho `s/it`. Dùng để so tương đối giữa hai thời điểm, đừng trích vào
+bài. Dòng `└ VRAM …` in 10 phút một lần, lấy thẳng từ `nvidia-smi`.
+
+⚠️ Ô này in thẳng ra notebook nên **mọi ô khác sẽ xếp hàng sau nó**. Cần chạy lệnh gì thì mở
+**Terminal Colab**, đừng bấm Stop. Về lý thuyết Stop bây giờ không giết train nữa vì S4 đã có
+`start_new_session=True`, nhưng điều đó **chưa được kiểm chứng lần nào** — đừng lấy lượt train
+đang chạy ra làm phép thử.
+
+---
+
 ## Theo dõi — Terminal Colab, KHÔNG dùng ô notebook
 
+Mở **Terminal** (biểu tượng `>_` góc dưới trái Colab), dán nguyên khối:
+
 ```bash
-L=/content/train_gui_sel_101.log
-J=/content/drive/MyDrive/thesis/ckpt/gui_sel_seed101/trainer_log.jsonl
+L=/content/train_gui_sel_101.log; P=0
 while true; do
-  B=$(grep -oE '[0-9]+/4036' $L | tail -1 | cut -d/ -f1)
-  S=$(grep -oE '[0-9.]+s/it' $L | tail -1 | tr -d 's/it')
-  LO=$(tail -1 $J 2>/dev/null | grep -oE '"loss": [0-9.]+' | cut -d' ' -f2)
-  SEC=$(python3 -c "print(int((4036-$B)*$S))" 2>/dev/null)
-  printf "%s  bước %5s/4036  loss %-8s  %ss/b  còn %sh%02dm\n" \
-    "$(TZ=Asia/Ho_Chi_Minh date +%H:%M)" "$B" "${LO:-?}" "$S" $((SEC/3600)) $(((SEC%3600)/60))
-  sleep 180
+  T=$(TZ=Asia/Ho_Chi_Minh date +%H:%M:%S)
+  B=$(tail -c 300000 $L | grep -oE '[0-9]+/4036' | tail -1 | cut -d/ -f1)
+  if [ -z "$B" ]; then
+    printf "%s  [khởi động] %s\n" "$T" "$(tail -c 120 $L | tr '\r' '\n' | tail -1)"
+  else
+    S=$(tail -c 300000 $L | grep -oE '[0-9.]+s/it' | tail -1 | tr -d 's/it')
+    LO=$(tail -c 300000 $L | grep -oE "'loss': [0-9.]+" | tail -1 | cut -d' ' -f2)
+    SEC=$(python3 -c "print(int((4036-$B)*${S:-12.5}))")
+    printf "%s  bước %5s/4036 (%2d%%)  +%-3s  loss %-7s  %ss/b  còn %dh%02dm  xong ~%s\n" \
+      "$T" "$B" $((B*100/4036)) "$((B-P))" "${LO:-?}" "${S:-?}" \
+      $((SEC/3600)) $(((SEC%3600)/60)) "$(TZ=Asia/Ho_Chi_Minh date -d "+$SEC seconds" +%H:%M)"
+    P=$B
+  fi
+  sleep 60
 done
 ```
 
-Thoát bằng Ctrl+C — an toàn, train nằm ở process group riêng.
+Đọc bằng **cột `+N`** — số bước tiến được trong 60 giây vừa qua. Ở 12,5 s/bước thì `+4` hoặc
+`+5` là bình thường. **`+0` hai lần liên tiếp mới là dấu hiệu đáng nghi**, một lần thì không.
 
-⚠️ Con số `s/it` ngay sau resume **không tin được**: tqdm tính trung bình từ lúc khởi động, mà
-lúc đó nó tua nhanh qua các batch đã học. Đợi ~200 bước sau resume mới đúng.
+⚠️ Ba điều đã trả giá:
+· Loss lấy từ **log local**, KHÔNG từ `trainer_log.jsonl` trên Drive — FUSE không cập nhật nội
+  dung khi ghi thêm, số ở đó đứng yên hàng giờ dù train vẫn chạy (luật ③).
+· Con số `s/it` ngay sau resume **không tin được**: tqdm tính trung bình từ lúc khởi động, mà
+  lúc đó nó tua nhanh qua các batch đã học. Đợi ~200 bước sau resume mới đúng.
+· Thoát vòng lặp bằng **Ctrl+C** — an toàn, vì train nằm ở process group riêng
+  (`start_new_session=True`). Nhưng **Ctrl+C trong Terminal thì được, bấm Stop ô notebook thì
+  KHÔNG** — đó là chuyện đã mất 16 compute unit ngày 2/9.
+
+### Xem curve loss từ đầu tới giờ
+
+```bash
+python3 - <<'EOF'
+import json, glob
+CK = "/content/drive/MyDrive/thesis/ckpt/gui_sel_seed101"
+ds = sorted(glob.glob(CK + "/checkpoint-*"), key=lambda d: int(d.split("-")[-1]))
+if not ds: raise SystemExit("chưa có checkpoint nào")
+st = json.load(open(ds[-1] + "/trainer_state.json"))
+h = [(r["step"], r["loss"]) for r in st["log_history"] if "loss" in r]
+print(f"nguồn {ds[-1].split('/')[-1]} · {len(h)} mốc · bước {h[0][0]}-{h[-1][0]}\n")
+G, gom = 100, {}
+for s, l in h: gom.setdefault((s - 1) // G, []).append(l)
+xs = [(k * G + G, sum(v) / len(v)) for k, v in sorted(gom.items())]
+lo, hi = min(v for _, v in xs), max(v for _, v in xs)
+for s, v in xs:
+    print(f"{s:>5} {v:6.4f} {'#' * (int(38 * (v - lo) / (hi - lo + 1e-9)) + 1)}")
+print(f"\ncao nhat {hi:.4f} · thap nhat {lo:.4f} · 200 buoc cuoi {sum(l for _, l in h[-10:]) / 10:.4f}")
+EOF
+```
+
+Mỗi dòng là trung bình 100 bước. ⚠️ Nguồn là **điểm lưu**, nên nó dừng ở bội số của 200 —
+phần sau điểm lưu cuối chưa có ở đây, phải đợi lần lưu kế. Đổi lại nó **đầy đủ từ bước 20**
+và sống qua mọi lần mất máy, khác hẳn log local vốn mất theo máy ảo.
 
 ---
 
@@ -379,6 +580,21 @@ print("kho        :", os.path.isdir(REPO))
 print("ảnh dạy    :", dem(f"{TR}/images"), "← cần 64.567")
 print("config     :", os.path.exists(f"{REPO}/harness/train_config_sel.yaml"))
 print("checkpoint :", sorted(d for d in os.listdir(CK) if d.startswith("checkpoint")) if os.path.isdir(CK) else "⛔")
+
+# mốc giờ điểm lưu cuối = lúc train thật sự dừng; log local cho biết bước cuối đã chạy
+import time, glob, re
+ds = sorted(glob.glob(f"{CK}/checkpoint-*"), key=lambda d: int(d.split("-")[-1]))
+if ds:
+    t = os.path.getmtime(ds[-1])
+    print("lưu cuối   :", os.path.basename(ds[-1]), "lúc",
+          time.strftime("%H:%M", time.localtime(t + 7*3600)), "(giờ VN)")
+lg = "/content/train_gui_sel_101.log"
+if os.path.exists(lg):
+    b = re.findall(r"(\d+)/4036", open(lg, encoding="utf-8", errors="ignore").read())
+    print("log local  :", f"bước cuối {b[-1]}" if b else "chưa có dòng bước",
+          "⇒ mất", (int(b[-1]) - int(ds[-1].split("-")[-1])) if (b and ds) else "?", "bước")
+else:
+    print("log local  : ⛔ không còn (máy ảo mới)")
 ```
 
 | kết quả | làm gì |
@@ -406,8 +622,13 @@ python harness/infer_branch.py --adapter <ckpt> --out runs/preds_gui_sel_seed101
 menu, lúc chấm không thấy menu nào. Nó vẫn sinh chữ, thước vẫn ra điểm, log không báo gì.
 Dòng đầu ra in rõ chế độ đang dùng — **đọc dòng đó**, đừng tin lệnh mình vừa gõ.
 
-⚠️ Tập kiểm cần `candidates.jsonl`; bản hiện có dựng **không** kèm `--all-steps`. Chấm cả bước
-không chạm thì dựng lại: `build_candidates.py --split test --all-steps --max 40` (0 GPU).
+✅ **ĐÃ SỬA 3/9.** Tập kiểm từng chỉ có `candidates.jsonl` cho **4.463 bước chạm**, trong khi
+tập dạy có cho **cả 64.567 bước** ⇒ 2.495 bước không chạm sẽ dựng câu nhắc **thiếu khối ứng
+viên**, phá đúng điều kiện *"đầu vào lúc chấm phải giống hệt lúc dạy"*. Đã dựng lại bằng
+`build_candidates.py --split test --all-steps --max 40` (0 GPU, ~8 phút).
+⭐ Phép kiểm đã chạy: 4.463 bước chạm của bản mới **trùng khít bản cũ** — 0 bước thiếu, 0 khối
+khác — nên dữ liệu đã train không bị ảnh hưởng; bản mới chỉ thêm 2.495 bước. Hai cổng tái lập
+đúng số cũ: G1 **96,7%** · G2 **91,2%**. Bản cũ giữ ở `candidates_CHIBUOCCHAM_0902.bak.jsonl`.
 
 ## Cổng G6 — sau lượt 1, TRƯỚC khi tiêu năm lượt còn lại
 

@@ -365,6 +365,18 @@ def main():
                          "gui_sft_match — hai nhánh đó được DẠY với khối ứng viên trong câu "
                          "nhắc, chấm mà thiếu là lệch dạy-chấm và không có gì báo lỗi. "
                          "BỎ TRỐNG cho S1/S2/MIN-DESC/CE2/gui_s1_match (giữ 24 dòng OCR).")
+    ap.add_argument("--save-conf", action="store_true",
+                    help="lưu xác suất tại BƯỚC QUYẾT ĐỊNH (token đầu ngay sau thẻ <sel>): "
+                         "p_none · p_top · token top. Không có nó thì mô hình chỉ cho ra một "
+                         "quyết định cứng, không dựng được đường risk-coverage và không hiệu "
+                         "chỉnh được ngưỡng abstain. Tốn thêm ~0,5 GB VRAM cho bảng logits.")
+    ap.add_argument("--force-sel", action="store_true",
+                    help="CẤM mô hình trả <sel>none</sel> — phép thử chẩn đoán 3/9: khi bị ép "
+                         "chọn thì nó chọn đúng bao nhiêu? Phân biệt 'dè dặt quá mức' với "
+                         "'thật sự không biết'. ⛔ Không dùng cho lượt chấm chính.")
+    ap.add_argument("--only", default="",
+                    help="tệp jsonl chỉ chứa các bước cần sinh (đọc episode_id/step_id). "
+                         "Dùng để sinh lại đúng một lát thay vì cả tập.")
     ap.add_argument("--selftest", action="store_true",
                     help="kiểm câu nhắc khớp lúc dạy (CPU, không cần mô hình)")
     ap.add_argument("--b-infer", action="store_true",
@@ -420,6 +432,17 @@ def main():
         print("khối ứng viên: KHÔNG dùng ← nhánh giữ 24 dòng OCR "
               "(S1 · S2 · MIN-DESC · CE2 · gui_s1_match)")
 
+    if a.only:
+        gi = set()
+        for line in open(a.only, encoding="utf-8"):
+            o = json.loads(line)
+            gi.add((str(o["episode_id"]), str(o["step_id"])))
+        truoc = len(recs)
+        recs = [r for r in recs
+                if (str(r["episode_id"]), str(r["step_id"])) in gi]
+        print(f"--only: {truoc} -> {len(recs)} bước (danh sách có {len(gi)} khoá)")
+        assert recs, "DỪNG: --only lọc sạch mọi bước — nghi lệch kiểu khoá int/str"
+
     if a.limit:
         recs = recs[:a.limit]
 
@@ -441,6 +464,10 @@ def main():
         sig += "+binfer"
     if a.ceiling:
         sig += f"+ceiling_{a.ceiling}"
+    if a.force_sel:
+        sig += "+forcesel"
+    if a.save_conf:
+        sig += "+conf"        # tệp ép chọn KHÔNG được nối tiếp vào tệp thường
 
     xong, sach = set(), []
     if os.path.exists(a.out):
@@ -487,6 +514,22 @@ def main():
         print(f"Phép thử TRẦN ({a.ceiling}): có khai báo chuẩn cho "
               f"{len(recs)-thieu}/{len(recs)} bước; {thieu} bước giữ nguyên đầu vào.")
 
+    # ── ÉP CHỌN (phép thử chẩn đoán) ─────────────────────────────────────────────
+    # Cấm mọi cách viết "none" ⇒ mô hình buộc phải nêu tên một ứng viên. Câu hướng dẫn
+    # có chứa chữ "none" sẽ bị chặn theo, nhưng đó là ca hiếm và phép thử này chỉ để
+    # chẩn đoán, không phải để báo cáo điểm chính.
+    NONE_IDS = []
+    for w in ("none", " none", "None", " None", "NONE", " NONE"):
+        ids = proc.tokenizer(w, add_special_tokens=False).input_ids
+        if ids and ids not in NONE_IDS:
+            NONE_IDS.append(ids)
+
+    bad = None
+    if a.force_sel:
+        bad = []
+        bad = list(NONE_IDS)
+        print(f"ÉP CHỌN: cấm {len(bad)} chuỗi token của 'none'")
+
     out = open(a.out, "a", encoding="utf-8")
     t0, done = time.time(), 0
     for i in range(0, len(recs), a.batch):
@@ -517,9 +560,39 @@ def main():
                       padding=True).to(model.device)
         with torch.no_grad():
             # xem chú thích use_cache ở score_run.py — kiểm bằng 50/50 trùng tuyệt đối
-            gen = model.generate(**inputs, max_new_tokens=a.max_new, use_cache=True,
-                                 do_sample=False, temperature=None, top_p=None)
-        for r, g, inp in zip(chunk, gen, inputs["input_ids"]):
+            g_out = model.generate(**inputs, max_new_tokens=a.max_new, use_cache=True,
+                                   do_sample=False, temperature=None, top_p=None,
+                                   bad_words_ids=bad,
+                                   output_scores=a.save_conf,
+                                   return_dict_in_generate=a.save_conf)
+            gen = g_out.sequences if a.save_conf else g_out
+
+        # ── ĐIỂM TIN CẬY TẠI BƯỚC QUYẾT ĐỊNH ─────────────────────────────────
+        # Bước quyết định = token đầu tiên sinh ra NGAY SAU khi chuỗi đã có "<sel>".
+        # Đó là chỗ mô hình chọn giữa "none" và tên một ứng viên, nên p(none) ở đúng
+        # bước ấy là điểm tin cậy cần cho đường risk-coverage.
+        conf = [None] * len(chunk)
+        if a.save_conf:
+            for bi in range(len(chunk)):
+                sinh = gen[bi][len(inputs["input_ids"][bi]):]
+                buoc = None
+                for t in range(min(len(sinh), len(g_out.scores))):
+                    if "<sel>" in proc.decode(sinh[:t + 1], skip_special_tokens=True):
+                        buoc = t + 1
+                        break
+                if buoc is None or buoc >= len(g_out.scores):
+                    continue
+                pr = torch.softmax(g_out.scores[buoc][bi].float(), dim=-1)
+                # ⛔ KHỬ TRÙNG token đầu: "none" và "None" có thể cùng một token id, cộng
+                #    thẳng theo danh sách chuỗi sẽ đếm hai lần và p_none vọt quá 1.
+                #    Chỉ lấy token ĐẦU của mỗi cách viết vì bước quyết định chỉ có một token.
+                pn = float(sum(pr[i] for i in {q[0] for q in NONE_IDS} if i < len(pr)))
+                top = int(torch.argmax(pr))
+                conf[bi] = {"p_none": round(pn, 5),
+                            "p_top": round(float(pr[top]), 5),
+                            "tok_top": proc.tokenizer.decode([top]),
+                            "buoc_qd": buoc}
+        for bi, (r, g, inp) in enumerate(zip(chunk, gen, inputs["input_ids"])):
             txt = proc.decode(g[len(inp):], skip_special_tokens=True)
             out.write(json.dumps({
                 "episode_id": r["episode_id"], "step_id": r["step_id"],
@@ -527,6 +600,7 @@ def main():
                 "gold_instruction": r["gold_instruction"], "action": r["action"],
                 "raw": txt.strip(),            # nguyên văn, giữ để soi lỗi
                 "pred": strip_desc(txt),       # câu đem chấm
+                "conf": conf[bi],              # None nếu không bật --save-conf
                 "run": sig,                    # chữ ký lượt chạy — xem khối nối tiếp
             }, ensure_ascii=False) + "\n")
         out.flush()          # mỗi lô một lần: mất máy thì mất nhiều nhất một lô
