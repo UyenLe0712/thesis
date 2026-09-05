@@ -303,3 +303,79 @@ so với độ trải của chính phân bố margin. Điểm tuyệt đối ch�
 lệch ở đó mà không đổi thứ hạng và không đổi phía của margin so với τ thì kết luận không đổi.
 Đây là thay đổi **thiết kế phép kiểm**, phải khoá trước khi nhìn kết quả τ, nên nếu làm thì làm
 ở lượt sau chứ không phải lượt này.
+
+---
+
+## 11. ⭐ NGUYÊN NHÂN CÓ THỂ CỦA OVER-ABSTENTION: prior của nhãn dạy
+
+Đo 5/9 trên `branches/gui_sel.json` (64.567 mẫu) và tệp thô của tập kiểm.
+
+| | tỉ lệ nhãn `<sel>none</sel>` |
+|---|---|
+| toàn tập dạy | **54,78%** (35.369/64.567) |
+| chỉ trên bước CHẠM của tập dạy | **29,1%** (11.993/41.191) |
+| tập kiểm, bước chạm, tỉ lệ đúng | 28,34% |
+| **mô hình thật sự phát ra trên tập kiểm** | **41,97%** |
+
+Ba con số xếp đúng thứ tự **29,1% < 41,97% < 54,78%**. Mô hình được dạy đúng tỉ lệ trên loại bước
+mà nó bị chấm, nhưng con số nó phát ra nằm giữa tỉ lệ đúng và prior của toàn tập, nghiêng về prior.
+
+**Cơ chế đề xuất:** `build_sel_data` gắn `<sel>none</sel>` cho **mọi bước không-chạm** (vuốt, quay
+lại, gõ chữ, mở ứng dụng), mà nhóm đó chiếm **36,2%** tập dạy. Cộng với 29,1% bước chạm không có
+ứng viên vàng, hơn một nửa số mẫu dạy mô hình phát `none`. Mô hình học prior đó rồi mang sang bước
+chạm — đúng loại bước duy nhất được chấm.
+
+⇒ Nếu đúng, đây là **nguyên nhân gốc** của over-abstention 27,27% ở mục 2, chứ không phải mô hình
+"không biết chọn": nhóm dám chọn vẫn đạt 71,41%.
+
+**Phép chữa đề xuất:** loại bước không-chạm khỏi tập dạy nhánh chọn (hoặc bỏ thẻ `<sel>` ở những
+bước đó), đưa prior về 29,1%. Tập còn 41.191 mẫu, tức lượt train **2.575 bước thay vì 4.036**,
+ước **~19 h A100** thay vì 30.
+
+**Ước lợi ích, nói rõ là ước:** nhóm HasAns-bỏ-cuộc có 872 bước đang đạt `exec` 23,74%. Nếu một
+nửa chuyển sang dám chọn và đạt như nhóm dám chọn (71,41%) thì `exec` toàn tập **+4,66 pp → 60,79%**;
+nếu hai phần ba thì **+6,21 pp → 62,34%**. Trần lý thuyết khi triệt tiêu hoàn toàn vế bỏ-cuộc-sai
+là 65,44%.
+
+⚠️ **Chưa chứng minh nhân quả.** Ba tỉ lệ trên là quan sát; chúng loại trừ được giả thuyết "mô
+hình được dạy sai tỉ lệ" (tỉ lệ trên bước chạm khớp tập kiểm tới 0,8 pp), nhưng không loại trừ
+mọi cơ chế khác cho ra 41,97%. Chỉ một lượt train mới trả lời.
+
+### 11b. Ba hướng khác đã đo và LOẠI
+
+| hướng | mua được | vì sao loại |
+|---|---|---|
+| `action_ok` 90,90% → 100% | +1,21 pp | chỉ 54/406 bước sai loại thao tác có bộ trỏ vẫn trúng |
+| thu nhỏ khối ứng viên còn ≤10 | −— | top-10 theo thứ tự đọc chỉ phủ **42,91%** vàng, xếp theo khớp chữ với mục tiêu cũng chỉ **51,74%**, so với 71,66% ở cap-40. Mất phủ ăn hết lợi ích của khối nhỏ |
+| nới dung sai toạ độ của `gold_candidate` | tối đa +4,30 pp phủ | 71,66% → 75,96% ngay cả khi bỏ hẳn ràng buộc toạ độ; và đổi nó là đổi nhãn dạy, phải train lại |
+
+**Ba mức phủ, để khỏi lẫn về sau:** 78,53% số bước có tên vàng trong nhãn · 75,96% có tên đó nằm
+trong khối bất kể toạ độ · **71,66%** khớp cả tên lẫn dung sai 140 (định nghĩa đang dùng). Hai con
+số 96,7% và 91,2% của cổng G1/G2 là **tỉ lệ trong nhóm có tên vàng**, không phải tỉ lệ toàn tập —
+đừng đọc lẫn.
+
+### 11c. Nhánh dữ liệu đã dựng (5/9) — `gui_sel_cham` / `gui_sft_match_cham`
+
+`harness/make_sel_cham.py`. Lọc theo **chỉ số**, không dựng lại từ đầu: `build_sel_data.py`
+duyệt `train.jsonl` tuần tự và không lọc bản ghi nào (chính bất biến ① của nó kiểm điều đó),
+nên dòng thứ i của `gui_sel.json` ứng đúng bản ghi thứ i. Cách này tránh mọi rủi ro lệch lượt
+OCR hoặc lệch lượt dựng khối ứng viên.
+
+| | trước | sau |
+|---|---|---|
+| số mẫu | 64.567 | **41.191** (bỏ 23.376 bước không-chạm = 36,2%) |
+| nhãn `<sel>none</sel>` | 54,78% | **29,12%** |
+| bước train 1 epoch, lô 16 | 4.036 | **2.575** |
+
+**Bảy bất biến đều đạt:** số dòng giữ lại bằng số bước chạm · ảnh khớp bản ghi nguồn · prompt hai
+nhánh vẫn **trùng byte trên toàn tập mới** · target hai nhánh khác nhau ở mọi dòng · nhánh đối
+chứng không còn thẻ `<sel>` · mọi dòng nhánh chọn mở đầu bằng `<sel>` · tỉ lệ `none` về đúng dải
+bước chạm.
+
+Hash pin: `gui_sel_cham.json` `4cdc4524c4328988…` (70.497.278 byte) ·
+`gui_sft_match_cham.json` `aa05bb04b8d6b89d…` (68.896.575 byte).
+Gói mang lên Colab: `_bundles/branches_sel_cham.tar.gz`.
+
+⛔ **Đúng MỘT biến đổi so với lượt đã chạy: tập mẫu.** Câu nhắc, khối ứng viên, cách viết thẻ,
+cấu hình train đều giữ nguyên. Nhờ vậy nếu `exec` tăng thì quy được cho prior của nhãn, không
+phải cho một thay đổi nào khác.
