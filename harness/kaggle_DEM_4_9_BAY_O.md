@@ -36,18 +36,27 @@ print(transformers.__version__, peft.__version__, torch.cuda.get_device_name(0))
 import os, glob, json, shutil, subprocess
 WS = "/kaggle/working/ws"; os.makedirs(WS, exist_ok=True)
 
-# dấu vân tay của bản mã 4/9 — có trong thông báo fail-closed của infer_branch.py
-CAN = "fail-closed ĐẠT"
-src = glob.glob("/kaggle/input/**/harness/infer_branch.py", recursive=True)
-assert src, "DỪNG: chưa thấy harness/infer_branch.py trong /kaggle/input"
+# ⛔ BÀI HỌC 5/9: "New Version" của Kaggle THÊM thư mục chứ không thay thế, nên trong
+#    /kaggle/input tồn tại song song mọi gói đã upload (kaggle_sel_4_9, kaggle_sel_5_9, …).
+#    Dấu vân tay phải là chuỗi CHỈ có trong bản MỚI NHẤT, nếu không nhiều bản cùng đạt và
+#    `ok[0]` lấy phải bản cũ — im lặng, không lỗi. Đã mất một lượt probe vì đúng chuyện này.
+#    ⇒ Mỗi lần vá mã thì ĐỔI hai dòng dưới, và giữ assert "đúng một bản".
+CAN_FILE = "seq_score_sel.py"
+CAN = "KHÔNG gọi .float() trên CẢ bảng logits"     # dấu vân tay bản 5/9 (vá tràn bộ nhớ)
+src = glob.glob(f"/kaggle/input/**/harness/{CAN_FILE}", recursive=True)
+assert src, f"DỪNG: chưa thấy harness/{CAN_FILE} trong /kaggle/input"
 ok = []
 for q in src:
     co = CAN in open(q, encoding="utf-8", errors="ignore").read()
-    print(("  ✅ bản 4/9" if co else "  ⛔ bản cũ"), q)
+    print(("  ✅ bản mới" if co else "  ⛔ bản cũ"), q)
     if co: ok.append(q)
-assert ok, ("DỪNG: không bản nào chứa bản vá 4/9. Dataset chưa lên version mới, hoặc "
+assert ok, ("DỪNG: không bản nào chứa bản vá mới nhất. Dataset chưa lên version mới, hoặc "
             "panel Input còn trỏ version cũ.")
+assert len(ok) == 1, (f"DỪNG: {len(ok)} bản cùng đạt dấu vân tay — không biết lấy bản nào.\n"
+                      f"   {ok}\n"
+                      f"   Đổi CAN thành chuỗi chỉ có trong bản mới nhất.")
 PKG = os.path.dirname(ok[0])
+GOI = os.path.dirname(PKG)          # gốc gói, để lấy runs/sel/... của ĐÚNG gói này
 shutil.rmtree(f"{WS}/harness", ignore_errors=True)
 shutil.copytree(PKG, f"{WS}/harness")
 assert os.path.isfile(f"{WS}/harness/seq_score_sel.py"), \

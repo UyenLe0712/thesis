@@ -220,3 +220,27 @@ upload version mới (`_bundles/kaggle_sel_5_9.zip`). Ô workspace nay có thêm
 **Truy nguyên của lượt probe:** bốn hash in ra trong manifest của script — `candidates.jsonl`,
 `test.jsonl`, `ocr.jsonl`, `adapter_model.safetensors` — **khớp tuyệt đối** với bản trên máy.
 `DynamicCache.crop` có mặt trên transformers 5.0.0 của Kaggle, nên `--cache-prompt` dùng được.
+
+### 10b. Lỗi thứ ba, và nó ăn mất lượt probe thứ hai
+
+**"New Version" của Kaggle THÊM thư mục, không thay thế.** Sau khi upload gói vá, trong
+`/kaggle/input` tồn tại **song song** `kaggle_sel_4_9/` và `kaggle_sel_5_9/`. Ô chọn mã dùng dấu
+vân tay `"fail-closed ĐẠT"`, mà chuỗi đó có trong **cả hai**, nên `ok` có hai phần tử và
+`PKG = os.path.dirname(ok[0])` lấy phải **bản cũ**. Log in `✅ bản 4/9` hai lần liền nhau — dấu
+hiệu duy nhất, và rất dễ đọc lướt qua. Không có lỗi, không có cảnh báo, chỉ là tràn bộ nhớ y hệt
+lần trước với cùng con số 9,88 GiB.
+
+⇒ Đây là **cùng một mẫu hình** với hai lỗi câm ngày 20/8: phép thử chưa hề diễn ra mà báo như đã
+diễn ra. Và dấu hiệu nhận biết cũng giống hệt: **kết quả trùng khít giữa hai lần chạy lẽ ra phải
+khác nhau**.
+
+**Cách xử, đã áp:**
+· Dấu vân tay chuyển sang chuỗi **chỉ có trong bản mới nhất**, và kiểm trên chính tệp vừa vá
+  (`seq_score_sel.py`) chứ không phải tệp không đổi (`infer_branch.py`).
+· Thêm `assert len(ok) == 1` — nhiều bản cùng đạt là **dừng hẳn**, không tự chọn.
+· Thêm biến `GOI = os.path.dirname(PKG)` và mọi tệp phụ (`preds_..._dev1400.jsonl`) lấy theo
+  `GOI` thay vì `glob` mù toàn `/kaggle/input`, để không ghép mã gói này với dữ liệu gói kia.
+
+⚠️ **Luật rút ra, áp cho mọi lần vá mã về sau:** mỗi lần upload gói mới thì **đổi dấu vân tay**
+sang chuỗi chỉ có trong bản đó. Dấu vân tay cũ không sai — nó chỉ hết khả năng phân biệt, mà
+hết khả năng phân biệt thì im lặng chọn bừa.
