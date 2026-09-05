@@ -1,11 +1,24 @@
-# SPRINT `gui_sel` — sáu lượt train trên Colab
+# SPRINT `gui_sel` — train trên Colab
+
+> ⛔⛔ **PHẠM VI ĐÃ THU HẸP 4/9/2026 — ĐỌC TRƯỚC KHI DÙNG FILE NÀY.**
+> Gói **sáu lượt** mô tả bên dưới **ĐÃ HUỶ** (`report/134` mục 0 và `report/106` mục **(x16b)**).
+> Còn đúng **MỘT lượt A100**: `gui_sft_match` · hạt **101** · đối chứng của `Δ_sel`.
+> `gui_sel`/202 và `S1-match` **không chạy**.
+> ⇒ Dùng file này **chỉ để lấy ô kỹ thuật** (bốn luật Colab, S1–S7, thủ tục mất máy).
+> Ở **ô S3** đặt `NHANH = "gui_sft_match"` và `HAT = 101`; mọi bảng "sáu lượt" bên dưới bỏ qua.
+> **Cổng giết:** chưa đạt ≈**2.422/4.036** bước lúc **8/9 12:00 ICT** thì bỏ lượt, không dùng
+> điểm lưu dở (`report/134` §7).
+> Kết quả `gui_sel`/101 đã có: `exec` **56,13%** — xem `report/136`.
+
+---
+
+## Sáu lượt (LỊCH SỬ — đã huỷ, giữ để tra)
 
 > Nguồn lệnh: **`report/132`** · **`report/128` §4** (cấu hình) · skill `soict-paper`.
 > Cấu hình: **`harness/train_config_sel.yaml`** — khác `train_config.yaml` đúng bốn khoá
 > (`cutoff_len` 2560→3072 · `num_train_epochs` 2→1 · `dataset` · `output_dir`).
 > Backbone **Qwen2.5-VL-3B**, không phải Qwen3-VL-4B (`report/128` §3).
 
-## Sáu lượt
 
 | # | dataset | seed | vai trò |
 |---|---|---|---|
@@ -175,9 +188,10 @@ print("cutoff/epoch:", c["cutoff_len"], "/", c["num_train_epochs"], "← cần 3
 ```python
 import os, yaml, json
 
-# ⚠️⚠️ HAI DÒNG DUY NHẤT ĐỔI GIỮA SÁU LƯỢT ⚠️⚠️
-NHANH = "gui_sel"        # gui_sel | gui_sft_match | gui_s1_match
-SEED  = 101              # 101 | 202
+# ⚠️⚠️ HAI DÒNG DUY NHẤT ĐỔI GIỮA CÁC LƯỢT ⚠️⚠️
+# Lượt duy nhất còn lại sau khi thu hẹp phạm vi 4/9: gui_sft_match / 101.
+NHANH = "gui_sft_match"  # gui_sel (ĐÃ CHẠY XONG 3/9) | gui_sft_match | gui_s1_match (đã bỏ)
+SEED  = 101              # 202 đã bỏ — report/106 (x16b)
 # ────────────────────────────────────────────
 
 OUT = f"/content/drive/MyDrive/thesis/ckpt/{NHANH}_seed{SEED}"

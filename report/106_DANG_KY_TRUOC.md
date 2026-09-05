@@ -2264,3 +2264,143 @@ Trần ứng viên **40**. Cách viết `tên <point>x,y</point>` ngăn bằng `
 Mọi thứ khác của cấu hình P9: `image_min_pixels` · `image_max_pixels` · `per_device_train_batch_size`
 · `gradient_accumulation_steps` · lịch `lr` · số bước · luật chọn điểm lưu · `enable_liger_kernel`.
 Và toàn bộ khâu chấm.
+
+---
+
+## (x16) SỬA ĐỔI — THU HẸP PHẠM VI SAU KHI CỔNG G6 TRƯỢT, VÀ ĐĂNG KÝ TRƯỚC NGƯỠNG τ
+
+Ghi **4/9/2026 (ICT)**, **trước** lượt chấm `exec` đầu tiên của nhánh ỨNG-VIÊN, **trước** khi
+train nhánh đối chứng, và **trước** khi tính bất kỳ điểm sequence-score nào. Nguồn phán quyết:
+`report/134_CHOT_4_9_HANDOFF_CHAT.md` (chốt sau vòng debate nhiều họ mô hình ngày 4/9).
+
+Mục này **không nới một ngưỡng nào**. Nó làm ba việc: thu hẹp phạm vi lượt chạy, hạ vai một thước
+đã đăng ký, và **đăng ký trước một thủ tục chọn ngưỡng chưa từng có trong hồ sơ**.
+
+### (x16a) Sự việc — cổng G6 trượt và GIỮ trượt
+
+Cổng G6 của (x14e) đòi `sel_acc ≥ 63,6%` trên các bước có ứng viên vàng của lát dev 1.400.
+Đo được **580/1.008 = 57,54%**, kém **6,1 điểm**. Đã xác minh ba cách trước khi tin số: 100% bản
+ghi có thẻ `<sel>` · 99,6% tên được chọn nằm trong khối ứng viên · n = 1.008.
+
+⛔ **Cổng giữ nguyên phán quyết TRƯỢT.** Không nới, không đổi mẫu số, không đổi lát. Hệ quả đã
+thi hành: năm lượt train còn lại của (x14) **không chạy**.
+
+### (x16b) Thu hẹp phạm vi — hai lượt A100 còn MỘT
+
+Gói sáu lượt của `report/128` (≈69 h A100) **đã huỷ** cùng lúc với phán quyết G6. Bản này chốt
+tiếp: trong hai lượt từng dự kiến còn lại, **chỉ chạy một** — `gui_sft_match`/hạt 101.
+
+**Bị bỏ, kèm lý do:**
+· `gui_sel`/**202** — hạt thứ hai của nhánh xử lý. Bỏ vì cổng đầu vào của chính nhánh đó đã trượt;
+  chi thêm ~23–30 h A100 để đo lại một cơ chế đã biết là chưa qua cổng thì không mua thêm thông tin.
+· **`S1-match`** — lượt tách công của khối ứng viên. Bỏ vì ngân sách, **và kéo theo một hệ quả
+  phải khai**: thiếu nó thì **không được claim công của khối ứng viên** (xem (x16i)).
+
+⚠️ **Hệ quả vĩnh viễn, cùng dạng với (x1):** estimand hai hạt của nhánh ỨNG-VIÊN **không hoàn
+tất**. `Δ_sel` là số **một hạt giống**, nằm dưới MDE 2,11 pp của thiết kế một hạt ⇒ theo đúng luật
+(w) đang có hiệu lực, nó rơi vào ô **TRẮNG theo thiết kế**, không phải kết quả âm và cũng không
+phải kết quả dương. **Cấm** đọc nó qua bảng bốn kết cục Dương/Âm.
+
+### (x16c) Hạ vai `sel_acc`, giữ nguyên định nghĩa
+
+`sel_acc` **giữ đúng định nghĩa đã khoá** và **giữ nguyên phán quyết trượt** của nó. Cái đổi là
+**vai trò khi trình bày**: từ 4/9 nó là **thước phụ**, không phải headline.
+
+Lý do đo được, không phải lý do thẩm mỹ: `sel_acc` chỉ đếm nhóm có ứng viên vàng, tức đúng cột
+*HasAns* của SQuAD 2.0 khi báo một mình. Phép chẩn đoán ép-phải-chọn ngày 3/9 cho thấy **bỏ hoàn
+toàn cơ chế bỏ cuộc kéo `sel_acc` 57,54 → 69,05 (+11,51 pp) trong khi độ đúng trên toàn bộ 1.400
+bước TỤT 63,43 → 49,71 (−13,71 pp)**. Một thước mà cải thiện nó bằng cách làm hệ thống tệ đi thì
+không được đứng ở vị trí headline.
+
+⭐ **Headline confirmatory từ 4/9: `exec` = `action_ok ∧ toggle_ok ∧ hit_voronoi`, dung sai .14,
+trên n = 4.463 bước chạm.** Đây **không phải thước mới** — nó là thước primary đã niêm từ 5/8 cho
+mọi nhánh của dự án, và bảng dải (w) áp cho nó. Việc làm ở đây là **quay về** thước gốc, không
+phải đổi thước.
+
+Thứ bậc thước, khoá tại đây:
+· **Confirmatory / quyết Δ / headline:** `exec` Voronoi gated .14, n = 4.463.
+· **Thứ cấp, interval-only:** nhánh khoảng cách nL2 .14 và chữ nhật .14 (`hit_disk`). Được in
+  khoảng tin cậy để định vị so với văn liệu, **cấm dùng để cứu một Δ Voronoi trắng**.
+· **Cấm:** Holm hay bất kỳ thủ tục nào lấy thước thứ cấp cứu primary.
+
+### (x16d) ⭐ ĐĂNG KÝ TRƯỚC — thủ tục chọn ngưỡng τ cho cơ chế bỏ cuộc
+
+Đây là phần **mới hoàn toàn** so với hồ sơ 5/8. Đăng ký đầy đủ tại đây, **trước khi tính điểm
+sequence-score đầu tiên**, để thủ tục không thể bị chỉnh sau khi thấy số.
+
+**Điểm số.** Với câu nhắc cố định `x`, mỗi phương án `c` là **toàn bộ span chọn**, lấy nguyên văn
+từ artifact đã pin và render bằng đúng hàm dựng chuỗi của khâu dạy, dạng
+`<sel>{tên ứng viên} <point>x,y</point></sel>` hoặc `<sel>none</sel>`. Teacher-force từng span,
+chỉ cộng log-probability của token **thuộc span đó** (không cộng câu nhắc, không cộng câu hướng
+dẫn), rồi chia cho số token của span:
+
+`s(c|x) = ( Σ_t log p(token_t | x, token_<t) ) / số_token(span_c)`
+
+**Quyết định.** `c* = argmax s(c|x)` trên các ứng viên **thật**; margin `m = s(c*) − s(none)`.
+Phát `c*` khi `m > τ`, ngược lại phát `none`.
+
+**Split.** Quét τ **chỉ trên lát dev 1.400**. Áp **một lần duy nhất** lên phần còn lại.
+
+**Tiêu chí chọn τ.** Cực đại **độ đúng trên toàn bộ 1.400 bước** — không phải trên `sel_acc`,
+không phải trên nhóm HasAns. Hoà thì chọn phương án cho **ít `none` sai hơn**.
+
+**Luật null nằm trong lưới quét.** Lưới τ **bao gồm** phương án "giữ nguyên hành vi greedy hiện
+tại" (tức không áp τ). ⛔ **Nếu mức cải thiện tốt nhất nhỏ hơn ~18/1.400 bước (khoảng một sai số
+chuẩn nhị thức), thì khoá luật null** — báo cáo rằng thủ tục không mua được gì. Toàn bộ đường
+cong được in **kể cả khi luật null thắng**.
+
+**Thứ tự bắt buộc.** τ phải được khoá **trước khi nhìn** `exec` của nhánh đối chứng **và trước
+khi nhìn** phần 3.062 bước. Vi phạm thứ tự này là vi phạm đăng ký trước.
+
+**Nhãn.** Toàn bộ dòng τ mang nhãn **thăm dò (exploratory)**. Nó không nằm trong estimand đã niêm
+5/8 và **không được trình như kết quả xác nhận**.
+
+⚠️ **Điểm dùng để quyết định là điểm chuỗi đầy đủ, không phải xác suất token đầu.** `p_none` đo ở
+bước đầu tiên, nếu có chạy, chỉ là **chẩn đoán nhị phân**, không phải xác suất của ứng viên, và
+**không đủ để gọi tên thủ tục của Devlin et al.** Hợp đồng này **thay** phương án τ-first-token
+từng ghi ở `report/133`.
+
+### (x16e) Sửa một thuật ngữ dùng sai của chính dự án — 3.062 KHÔNG phải hold-out
+
+`report/132` và `133` gọi phần 3.063 bước còn lại là *"hold-out"*. **Sai thuật ngữ.** Phần đó
+không được tách ra và niêm phong từ trước như một confirmatory split; nó là **phần dư** sau khi
+lát dev 1.400 đã được chấm.
+
+⇒ Từ 4/9 nó mang đúng tên: **one-look hậu kiểm**, nhìn **đúng một lần** sau khi τ đã khoá.
+Sau khi loại đúng một episode trùng với lát dev (`18852`, 1 bước) còn **3.062 bước / 891 episode**.
+⛔ Cấm gọi nó là hold-out đăng ký trước trong bất kỳ bản thảo nào.
+⚠️ Mẫu số của `exec` **vẫn luôn là 4.463**, không phải 3.062 — hai đại lượng khác nhau, đừng trộn.
+
+### (x16f) Cách đọc kết quả mới — thăm dò, không thay bảng dải
+
+Bộ đọc kết quả cho cơ chế bỏ cuộc, khoá tại đây, mang nhãn **thăm dò**:
+① bộ ba kiểu SQuAD 2.0 — báo **HasAns**, **NoAns** và **overall** cùng lúc, không bao giờ báo
+HasAns một mình; ② **risk tại coverage cố định** và đường cong risk–coverage; ③ ngưỡng τ theo
+(x16d). Tiền lệ và cách trích dẫn ở `report/135`.
+
+⛔ Bộ đọc này **không thay** bảng dải (w) và **không** áp cho `Δ_sel`. `Δ_sel` vẫn đọc bằng đúng
+luật cũ, và vì một hạt nên rơi vào ô TRẮNG theo thiết kế.
+
+### (x16g) Cam kết trước khi thấy số
+
+1. Báo cả nhánh **dừng ở cổng**, đúng cam kết (x11d) đã thi hành hai lần trước đây.
+2. `exec` của nhánh ỨNG-VIÊN được báo **dù nó ra sao**, kể cả khi thấp hơn S1 cũ.
+3. Đường cong risk–coverage in **trọn**, không cắt đoạn xấu.
+4. Nếu luật null thắng ở (x16d) thì **nói thẳng là thủ tục không mua được gì**.
+5. Nếu lượt đối chứng không kịp về đích trước mốc giết (đạt dưới ≈2.422/4.036 bước lúc 8/9 12:00
+   ICT) thì **bỏ lượt đó**, không dùng điểm lưu dở, và bài chỉ còn phần chẩn đoán.
+
+### (x16h) Chữ CẤM dùng
+
+⛔ *"hold-out"* cho 3.062 · *"đầu tiên"/"mới"* cho cơ chế bỏ cuộc (xem `report/135` §5) ·
+*"AITW"* cho luật chữ nhật ±14% · *"human ceiling"* cho mốc 75,73 (đúng tên: **mốc câu người dưới
+cùng dụng cụ**) · gọi `Δ_sel` là **Dương** · trình công của khối ứng viên khi thiếu `S1-match` ·
+đặt điểm nhánh ỨNG-VIÊN cạnh S1 cũ rồi tính hiệu (lệch `cutoff_len` **và** lệch đầu vào, đã cấm ở
+(x15c) điểm 2).
+
+### (x16i) Không đụng
+
+Thước và luật chấm · mẫu số 4.463 · bảng dải (w) và ba ngưỡng của nó (TRẮNG −2,8…+1,7 · Dương
++2,8 · MDE 2,11) · định nghĩa `sel_acc` và phán quyết trượt của G6 · constructor khối ứng viên
+(max 40, thứ tự đọc, merge cùng tên overlap only) · cấu hình train của (x15) · luật chọn điểm lưu
+· hạt giống · tập kiểm.

@@ -1,0 +1,119 @@
+{
+  "tao_luc": "2026-09-04 (ICT) — máy WSL",
+  "muc_dich": "Sel-A vế 1 (artifact -> câu nhắc) + Sel-B, đo 0 giây GPU. Xem report/134 §14.",
+  "git_commit": "f624a484678585daab355e79620a5a1674274b63",
+  "ma_dung_cau_nhac": {
+    "build_branch_data.py": {
+      "sha256": "323945daa8d36387c82f2e18e6c644101a4cf86095e87030197d28d5f7a93608",
+      "commit_cuoi": "e195364 (2/9)"
+    },
+    "build_candidates.py": {
+      "sha256": "b50c9ee58d0bf24077a826b23c40c69f1bcffa457df9222807a738333645e03d",
+      "commit_cuoi": "0c03973 (2/9)"
+    },
+    "build_sel_data.py": {
+      "sha256": "7fab1ceaca4d25d07af49a45120cd8ab20d0abdcaeba3f92e199615d55e149cb",
+      "commit_cuoi": "0c03973 (2/9)"
+    },
+    "infer_branch.py": {
+      "sha256": "b85ecde7fab19fe985fa7ce23adef1421719c9a16cdeae2125c5726474a92250",
+      "commit_cuoi": "f624a48 (3/9) — chỉ thêm cờ, không đụng prompt_body"
+    }
+  },
+  "artifact": {
+    "test_ac/candidates.jsonl": {
+      "sha256": "f10b69411a28e4a9b78aa309241d4a68440e8c463072788c541e887e2e1914f8",
+      "dong": 6958
+    },
+    "test_ac/ocr.jsonl": {
+      "sha256": "d8da12edf7dfb31d4ab3e418b614f450604ea3f9c140b981d01390527676a8d5",
+      "dong": 6969
+    },
+    "test_ac/test.jsonl": {
+      "sha256": "ca4eff3159f09b2cda929bb2a8afcb6819eadd1a31f8954b44db6dfea20235b8",
+      "dong": 6958
+    },
+    "train_ac/candidates.jsonl": {
+      "sha256": "b99586167f9dc2c62c1f9b5d0c2d9ba99cacf625b28edcf97902a360432c669c",
+      "dong": 64567
+    },
+    "train_ac/ocr.jsonl": {
+      "md5": "a7ddf93d18c060e995afa841f039e343",
+      "dong": 64567,
+      "khop_md5_yeu_cau_134": true
+    },
+    "train_ac/train.jsonl": {
+      "sha256": "df6fff49d002a39556d034181d5b6afab215b47de62a72b0db23ed37c9edf887",
+      "dong": 64567
+    }
+  },
+  "sel_A_ve1_cau_nhac": {
+    "lat": "1.400 bước của runs/sel/preds_gui_sel_seed101_dev1400.jsonl",
+    "sha256_noi_1400_cau_nhac": "30012d53fdbc6e4704973b8713b5de221014e396638c56ef3bb682ea34bf6b81",
+    "cach_tinh": "nối prompt_body(rr, ocr[image], cands=cands[image]) theo đúng thứ tự bản ghi trong tệp pred, ngăn bằng byte 0x00",
+    "thieu_key_candidates": 0,
+    "ghi_chu": "KHÔNG thay thế phép replay sinh raw byte-identical (vế 2, cần adapter + GPU)."
+  },
+  "sel_B": {
+    "prompt_byte_identical_gui_sel_vs_gui_sft_match": "64567/64567",
+    "target_trung_nhau": "0/64567",
+    "sha256_gui_sel.json": "9c526b6f70c6985a5fcb2a597d1708ce5ce9c5f46a4e513c283286b486115e82",
+    "ket": "ĐẠT",
+    "sha256_gui_sft_match.json": "f168a2de3b22a9884ce517f7223f49ff8d01e2f14275aa0ae1fc05bf301cef9e",
+    "sha256_gui_s1_match.json": "2879ff135ceff5e5acec7633f77e08f3c41f0691af68ed0eae3acbcae78c73c5",
+    "nguon": "_bundles/branches_sel.tar.gz"
+  },
+  "kiem_doc_lap": {
+    "buoc_cham_test": "click 4.446 + long_press 17 = 4.463 (khớp mẫu số headline)",
+    "lat_1400": "1.400 bước chạm nằm trong 2.222 bản ghi đầu test.jsonl, tăng đơn điệu",
+    "phan_con_lai": "4463-1400=3063 bước/892 episode; episode trùng 18852 (1 bước); sau loại 3062/891"
+  },
+  "adapter": {
+    "duong_dan": "runs/sel/adapter_gui_sel_seed101/ (giải nén 4/9 từ _bundles/gui_sel_seed101_adapter.zip, 55.451.406 byte)",
+    "nguon": "Drive MyDrive/thesis/ckpt/gui_sel_seed101/ — thư mục GỐC, không phải checkpoint-*",
+    "sha256_adapter_model.safetensors": "8b6184798527d3fa4de76b9d2fe3b18005436de07bd51890d71bcb838dc82dfb",
+    "sha256_adapter_config.json": "8ef0a3c40fe8488bbc0383d61817a5640c464cb0840b6a3e2039d92331b488ee",
+    "byte": 59941192,
+    "global_step": 4036,
+    "epoch": 1.0,
+    "max_steps": 4036,
+    "total_flos": 2.8056287738072924e+18,
+    "loss_cuoi": 0.2737,
+    "loss_dau": 2.9206,
+    "kiem_ton_kho_tensor": {
+      "so_tensor": 504,
+      "module": 252,
+      "layer": "0-35 đủ 36",
+      "moi_layer_du_7_ma_tran": true,
+      "tensor_vision_tower": 0,
+      "tham_so_lora": 14966784,
+      "dtype": "F32",
+      "peft_khop": "0 module không được target bắt · 0 target thừa · 112 target = 4 tên ngắn (q,k,v,o) + 108 tên đầy đủ (36 layer × 3 mlp)"
+    },
+    "ghi_chu": "Ô kiểm target_modules của runbook bản đầu in LỆCH — báo động giả, đã sửa ô kiểm."
+  },
+  "luot_kaggle_commit_4_9": {
+    "ket_qua": "chạy trọn cả hai phần trong một commit",
+    "suy_luan": "3.063 bước · 0,4 bước/giây · ~2,1 h (ước trước là ~4 h)",
+    "cham_exec": "4.463 bước",
+    "exec_voronoi": 0.5612816491149452,
+    "ci_voronoi": [
+      0.5424081349664894,
+      0.5798910576486609
+    ],
+    "exec_disk_json_LA_THUAN_KHONG_GATED": 0.6634550750616177,
+    "chu_nhat_14_gated_tinh_lai_tu_raw": 0.6386,
+    "nl2_14_gated_tinh_lai_tu_raw": 0.6352,
+    "clusters": 1091,
+    "g_eff": 454.3319951643439,
+    "cau_rong": 11,
+    "ma_tren_kaggle_trung_md5_voi_may": [
+      "infer_branch.py",
+      "score_run.py",
+      "metric_exec.py",
+      "seq_score_sel.py"
+    ],
+    "chu_ky_preds": "lora:gui-sel-adapter (4463/4463)",
+    "phan_tich": "report/136_KET_QUA_EXEC_GUI_SEL_5_9.md"
+  }
+}

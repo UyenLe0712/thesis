@@ -446,6 +446,21 @@ def main():
     if a.limit:
         recs = recs[:a.limit]
 
+    # ── FAIL-CLOSED KHỐI ỨNG VIÊN (vá 4/9/2026, report/134 §11) ───────────────────
+    # Trước bản vá: `cands.get(image)` trả None im lặng khi thiếu khoá, câu nhắc tụt
+    # về bản 24 dòng OCR và KHÔNG có gì báo lỗi — chấm một hệ thống chưa từng tồn tại.
+    # Đúng dạng "lỗi câm" đã trả giá ngày 20/8. Kiểm ở đây, TRƯỚC khi nạp mô hình, để
+    # hỏng thì hỏng trong 2 giây chứ không phải sau 5,6 giờ Kaggle.
+    if a.cands:
+        thieu = [r["image"] for r in recs if r["image"] not in cands]
+        if thieu:
+            sys.exit(f"DỪNG: {len(thieu)}/{len(recs)} bước không có khoá trong {a.cands} "
+                     f"(ví dụ: {thieu[:3]}). Nhánh gui_sel/gui_sft_match được DẠY với khối "
+                     f"ứng viên; thiếu khoá là dựng câu nhắc khác lúc dạy. Dựng lại "
+                     f"candidates.jsonl bằng build_candidates.py --all-steps --max 40, "
+                     f"hoặc bỏ --cands nếu cố ý chấm nhánh 24 dòng OCR.")
+        print(f"khối ứng viên: phủ {len(recs)}/{len(recs)} bước — fail-closed ĐẠT")
+
     # ── NỐI TIẾP + XẢ ĐỆM (thêm 11/8/2026) ────────────────────────────────────────
     # Bản trước mở tệp ở chế độ "w" và không gọi flush. Máy ảo Colab bị thu hồi giữa
     # chừng — đã xảy ra HAI lần trong hai ngày, 10 và 11/8, cả hai lần đều ở khoảng 90%
@@ -544,8 +559,14 @@ def main():
             # content dạng DANH SÁCH, không phải chuỗi: chat template của Qwen in
             # nguyên văn chuỗi "<image>" chứ không thay bằng token ảnh. "\n" đứng đầu
             # phần chữ để chuỗi render ra trùng đúng bản LLaMA-Factory dựng lúc dạy.
-            body = prompt_body(rr, ocr.get(r["image"]),
-                               cands=cands.get(r["image"]) if a.cands else None)
+            # lưới an toàn thứ hai: phép kiểm phủ ở trên đã chặn, nhưng chỗ này là
+            # chỗ lỗi câm sinh ra nên giữ luôn `assert`, đừng rút gọn về `.get()`.
+            if a.cands:
+                assert r["image"] in cands, f"thiếu khoá ứng viên: {r['image']}"
+                cd = cands[r["image"]]
+            else:
+                cd = None
+            body = prompt_body(rr, ocr.get(r["image"]), cands=cd)
             if a.b_infer:
                 body = with_elements(body, r)
             if a.ceiling:

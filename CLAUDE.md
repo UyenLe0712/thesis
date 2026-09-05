@@ -34,7 +34,10 @@ Colab phụ thuộc cũng dùng tên `harness`).
 | cần biết | mở |
 |---|---|
 | **⭐ TRẠNG THÁI HIỆN TẠI — đọc một mình là hiểu, từ 23/8 trở đi** | **`report/119_TRANG_THAI_SAU_23_8.md`** |
-| **⭐⭐ SPRINT `gui_sel`: cổng G6 TRƯỢT, phán quyết hướng đi + context debate (3/9)** | **`report/133_CONTEXT_DEBATE_SAU_G6.md`** (đọc một mình là đủ) · nhật ký thi hành ở `report/132` mục 16–19 |
+| **⭐⭐⭐ NGUỒN THẮNG 4/9 — chốt thi hành + khoa học sau G6, thắng 124·128·132·133** | **`report/134_CHOT_4_9_HANDOFF_CHAT.md`** (đọc một mình là đủ; §14 là phần đo trên WSL) |
+| **⭐⭐ KẾT QUẢ `exec` CỦA `gui_sel`/101 — đo 5/9, n=4.463** | **`report/136_KET_QUA_EXEC_GUI_SEL_5_9.md`** |
+| tiền lệ cho trục bỏ cuộc / risk-coverage của SOICT (tra 4/9) | `report/135_TIEN_LE_ABSTENTION_SOICT.md` |
+| SPRINT `gui_sel`: context debate ngay sau G6 (3/9) — ⛔ **`134` thắng file này** | `report/133_CONTEXT_DEBATE_SAU_G6.md` · nhật ký thi hành ở `report/132` mục 16–19 |
 | **đi hướng nào tiếp — tranh luận + tiền lệ + phán quyết (25/8)** | **`report/120_TRANH_LUAN_HUONG_TIEP.md`** |
 | kế hoạch tháng 9 (bản chép từ ảnh, phủ tới §3.4 — ⛔ **`126` thắng file này khi mâu thuẫn**) | `report/123_CHOT_CUOI_PIPELINE_CHEP_TU_ANH.md` |
 | **tuần 1 tháng 9: đã chạy tới đâu, chặn ở đâu** | **`report/125_TUAN_1_THANG_9.md`** |
@@ -290,12 +293,85 @@ ngưỡng. Đã xác minh ba lượt: 100% có thẻ `<sel>` · 99,6% tên nằm
 trong khi độ đúng trên cả 1.400 bước TỤT 63,3 → 50,0**. Thước do chính dự án đăng ký đã dẫn
 dự án sai.
 
-**Phán quyết + context đầy đủ để debate: `report/133_CONTEXT_DEBATE_SAU_G6.md`** (đọc một mình
-là đủ, có cả năm hướng research đã tra). Nhật ký đo: `report/132` mục 16–19.
-**Việc kế:** ① ngưỡng τ kiểu Devlin NAACL 2019 trên `p(none)`, quét trên lát dev 1.400, áp MỘT
-lần lên hold-out 3.063 bước — **0 giờ A100** · ② chấm `exec` cho `gui_sel`/101 trên 4.463 bước
-(5,6 h Kaggle) · ③ hai lượt A100 cuối dành cho `gui_sft_match`/101 và `gui_sel`/202.
-Mốc SOICT: abstract **9/9**, full paper **16/9** — nhắm bản **short 8–11 trang**.
+**⭐ CHỐT 4/9 (`report/134`) THAY toàn bộ kế hoạch sau G6.** Sáu quyết định vi mô (M1–M4 phương
+pháp, E1–E2 thước) đã khoá. Rút gọn: **đúng MỘT lượt A100 còn lại** = `gui_sft_match`/101
+(`gui_sel`/202 và `S1-match` **tắt**) · headline là **exec Voronoi gated .14 trên n=4.463** ·
+`sel_acc` xuống thước phụ · readout mới = **bộ ba kiểu SQuAD 2.0 + risk tại coverage cố định +
+ngưỡng τ trên sequence-score length-normalized** · **3.062 bước là one-look hậu kiểm, KHÔNG phải
+hold-out đăng ký trước** (`132`–`133` gọi sai thuật ngữ) · hạn: **abstract 9/9 · full 16/9 · khóa
+số 13/9 12:00**. Tiền lệ chống lưng: `report/135`.
+
+⭐ **Đo trên WSL 4/9 (`report/134` §14), 0 giây GPU:** cổng **Sel-B ĐẠT** — md5 `train_ac/ocr.jsonl`
+khớp tuyệt đối, `train.jsonl` 64.567 dòng, và prompt hai nhánh trùng byte **64.567/64.567** (yêu
+cầu chỉ 3.000), target trùng 0/64.567. Vế *artifact → câu nhắc* của **Sel-A cũng đóng**: SHA-256
+của 1.400 câu nhắc tái dựng = `30012d53fdbc…`, 0 bước thiếu khoá ứng viên. Mọi hash pin ở
+**`runs/sel/manifest_selA_selB_4_9.json`**. Kiểm độc lập tái lập ba số của `134`: bước chạm
+`click` 4.446 + `long_press` 17 = **4.463** · lát dev 1.400 nằm trong 2.222 bản ghi đầu · phần
+còn lại 3.063 → **3.062 / 891** sau khi loại đúng một episode trùng (`18852`, 1 bước).
+⚠️ Kho WSL **có đủ** artifact mà clone Mac báo thiếu; cái WSL không có là **adapter** (trên Drive)
+và **mọi tệp `score_*` của `gui_sel`** — `exec` nhánh này **chưa chạy lần nào**.
+
+✅ **Đã vá 4/9:** `infer_branch.py` nay **fail-closed** khi thiếu khoá ứng viên — kiểm phủ toàn tập
+**trước khi nạp mô hình** (hỏng thì hỏng trong 2 giây, không phải sau 5,6 giờ Kaggle) + `assert`
+tại chỗ dựng câu nhắc. Trước bản vá, `cands.get()` trả `None` im lặng và câu nhắc tụt về bản 24
+dòng OCR mà không có gì báo lỗi.
+### ⭐⭐ 5/9 — `gui_sel`/101 ĐÃ CÓ ĐIỂM `exec`: **56,13%** [54,52 · 57,99], n=4.463
+
+Lượt Kaggle commit đêm 4→5/9 chạy trọn. Suy luận 3.063 bước mất **~2,1 h** (0,4 bước/giây), chấm
+4.463 bước xong luôn trong cùng commit. Toàn văn: **`report/136`**.
+
+| luật | Human | MIN | S1 | Base | **gui_sel** |
+|---|---|---|---|---|---|
+| Voronoi .14 (primary) | 75,73 | 60,05 | 59,11 | 47,59 | **56,13** |
+| nL2 .14 (secondary) | 84,09 | 68,32 | 66,92 | 55,28 | **63,52** |
+| chữ nhật .14 (gated) | 84,23 | 68,72 | 67,24 | 55,86 | **63,86** |
+
+⭐ **Cơ chế chọn KHÔNG hỏng — cái hỏng là bỏ cuộc quá mức.** Bảng 2×2: **HasAns · dám chọn đạt
+`exec` 71,41%** (n=2.326) [69,54 · 73,21], chỉ kém mốc câu người 4,3 pp và cao hơn mọi nhánh đã
+train; **HasAns · bỏ cuộc sai chỉ 23,74%** (n=872). Over-abstention trên HasAns = **27,27%**,
+**tái lập chính xác** mức 27,1% đo trên lát dev 1.400 hôm 3/9 (hai phép đo độc lập, mẫu chênh ba
+lần). Triệt tiêu được vế bỏ-cuộc-sai ⇒ `exec` **56,13 → 65,44 (+9,31 pp)**.
+
+⭐ **Bốn dấu hiệu của bỏ cuộc, ba cái tái lập hiện tượng đã biết:** động từ không-chạm **28,30%
+vs 0,97%** (gấp 29 lần) · sai số bộ trỏ trung vị **19,90% vs 0,78%** bề ngang, p90 vượt 100% màn
+(lỗi lưỡng cực, không phải lẫn nút cạnh bên) · **khối ứng viên càng đông càng bỏ cuộc, đơn điệu**
+15,7% → 33,2% khi cỡ khối đi từ 6–10 lên 40, `exec` tụt 70,5 → 51,8 (⚠️ tương quan hậu kiểm,
+không phải nhân quả) · app chưa thấy bỏ cuộc 51,3% vs 41,8% (n=78). ⛔ **Đã loại:** độ dài câu —
+trung vị 33 ký tự ở cả hai nhóm.
+
+⚠️ **Bẫy tên trường:** `exec_disk` trong JSON của `score_run.py` là `hit_disk` **thuần**, KHÔNG
+gated. Hàng "chữ nhật .14" phải tính lại từ tệp thô. Bảng `134` §3.1 dùng đúng số gated nên
+không sai; chỗ nhầm là đọc thẳng JSON (66,35 ungated vs 63,86 gated).
+
+⛔ **Chưa có `Δ_sel`** — đối chứng `gui_sft_match`/101 chưa chạy. Bảng McNemar so với S1/MIN/CE2
+(−2,98 / −3,92 / −3,29) **KHÔNG phải Δ hợp lệ**: lệch ba biến (cutoff 3072 vs 2560 · có menu vs
+24 dòng OCR · 1 epoch vs 2). Hàng đọc được là **so Base: +8,54 pp** (p=6,8e−31).
+
+**▶️ QUYẾT ĐỊNH 5/9 — CHẠY SONG SONG HAI LƯỢT** (`report/136` mục 9). τ trên **Kaggle T4**
+(`harness/kaggle_SEQSCORE_SAU_O.md`, bảy ô dán tuần tự) và đối chứng `gui_sft_match`/101 trên
+**Colab A100** (~23–30 h). ⭐ **Hai lượt độc lập, không nối tiếp:** `Δ_sel` đo trên hệ thống
+chính (greedy `<sel>`), τ không có trong công thức; điều kiện hoá đối chứng vào kết quả τ sẽ
+biến Δ thành thứ chỉ báo khi có lợi, trái cam kết (x16g). Cổng giết đối chứng: **8/9 12:00 ICT**.
+
+⚠️ **Dự đoán về τ, ghi TRƯỚC khi có số** (`report/136` mục 8): cải thiện **0–3 pp**, khả năng
+luật null thắng là thật. Căn cứ: phép ép chọn 3/9 kéo `sel_acc` +11,51 nhưng đúng-cả-bước
+−13,71 · nhóm 872 bước bỏ-cuộc-sai có `action_ok` chỉ 71,22% nên ép chọn thì câu vẫn sai ·
++9,31 pp là trần lý thuyết chứ không phải mức τ với tới. **Trên 3 pp thì phải soi kỹ hơn
+bình thường trước khi tin.**
+
+**Việc kế — theo `report/134` mục 0, thứ tự phụ thuộc:** ⓪ kéo artifact Drive (**adapter** là thứ
+duy nhất còn thiếu trên WSL) · ① T4 suy luận nốt **3.063 bước** + `exec` đủ **4.463** · ② A100 song
+song: train `gui_sft_match`/101 (~23–30 h) · ③ sequence-score length-normalized mọi ứng viên +
+`none` trên lát dev 1.400, **khóa τ trước khi nhìn exec đối chứng hoặc 3.062** · ④ one-look 3.062
+· ⑤ suy luận + exec đối chứng ⇒ `Δ_sel` **một hạt, dưới MDE, nhãn thăm dò**, không verdict bốn ô ·
+⑥ viết. **Cổng giết:** đối chứng chưa đạt ≈2.422/4.036 bước tới **8/9 12:00** thì bỏ, không dùng
+adapter dở.
+⛔ **Không làm trước 16/9:** prune/retrieval/ID · đầu mới · đổi loss · `gui_sel`/202 · `S1-match` ·
+nới G6 · bbox/AITW-OR · lấy nL2 làm headline khi Voronoi trắng.
+Mốc SOICT: abstract **9/9**, full paper **16/9**, **khóa số 13/9 12:00** — nhắm bản **short 8–11 trang**.
+✅ **Đã vá 5/9:** `colab_train_sel.md` nay có banner thu hẹp phạm vi ở đầu file và ô S3 đặt sẵn
+`NHANH = "gui_sft_match"`, `SEED = 101`. Hai chỗ còn ghi "sáu lượt" là `kaggle_infer_sel.md` và
+comment đầu `train_config_sel.yaml` — chỉ dùng ô kỹ thuật, phạm vi lấy ở `134`.
 
 **▶️ VIỆC CÒN CHỜ (1/9): theo dõi hồi âm của PGS.TS. Trần Văn Lăng về việc mở lại upload cho
 FAIR #276 — bài đã gửi qua email nhưng EDAS vẫn `Pending (no manuscript)`, xem `report/131`.
@@ -957,8 +1033,9 @@ hình không thể trái mã.
 
 `report/106_DANG_KY_TRUOC.md` khoá: 6 nhánh · thước đo · **luật đọc kết quả cho cả 4 kết cục**
 (dương / dương yếu / trắng / âm) · 3 lát cắt · hạt giống 20260805.
-**Mọi thay đổi về sau ghi vào mục sửa đổi cuối file, KHÔNG sửa đè.** Hiện có **27 mục, 21 mục
-trước điểm số đầu tiên**. Các mục đáng nhớ: (k) thêm nhánh mô hình gốc · (o) máy + cấu hình P9 +
+**Mọi thay đổi về sau ghi vào mục sửa đổi cuối file, KHÔNG sửa đè.** Hiện có **28 mục, 21 mục
+trước điểm số đầu tiên** (mục **(x16)** thêm 4/9: thu hẹp còn một lượt A100, hạ `sel_acc` xuống
+thước phụ, **đăng ký trước thủ tục chọn ngưỡng τ**, và sửa thuật ngữ *hold-out* → *one-look hậu kiểm*). Các mục đáng nhớ: (k) thêm nhánh mô hình gốc · (o) máy + cấu hình P9 +
 luật chọn điểm lưu · (p) vá `tag_app_seen` · (q) nhãn khai báo sang tiếng Anh · (r) MDE thật 2,2 pp
 ⇒ dải "4–9 pp không kết luận được" của luật cũ sẽ vứt bỏ một hiệu ứng thật · (v) `strict_back`.
 
@@ -1145,6 +1222,10 @@ Chỗ lưu: thứ bắt buộc sống qua các phiên chỉ ~3 GB; 67 GB ảnh t
 **`build_sel_data.py`** (dựng hai nhánh `gui_sel` / `gui_sft_match` của `report/123` §3.2–3.3 —
 7 bất biến + cổng G3 rò rỉ + G4 độ dài; `gold_candidate()` ở đây là **bản duy nhất**, lúc chấm
 `sel_acc` phải import lại chứ đừng viết bản thứ hai)
+· sequence-score — **`seq_score_sel.py`** (thi hành hợp đồng `report/134` §6.1 và mục **(x16d)**
+của `106`: teacher-force từng span ứng viên + `none`, chia số token, margin `m = s(c*) − s(none)`,
+nối tiếp được, `--probe`. Cờ `--cache-prompt` là đường nhanh gấp 5–7 lần, **ba bước đầu bắt buộc
+so với đường chậm**, lệch quá 1e-3 là dừng. ⛔ Tệp này **không** quét τ và **không** đọc kết quả)
 · train/suy luận/chấm — `train_config.yaml` · **`train_config_orpo.yaml`** (MIN-DESC) ·
 **`train_config_ce2.yaml`** (đối chứng) · `infer_branch.py` · `score_run.py` ·
 `metric_exec.py` (thư viện hàm chấm — **luật chấm mặc định không đổi từ commit `b93e85c`
@@ -1154,7 +1235,12 @@ ngày 5/8**; bản vá `strict_back` là thêm cờ tuỳ chọn, mặc định 
 `mde_that.py` · `rule_sensitivity.py` · `bien_the_khong_tham_chieu.py` · `make_floor.py` ·
 `doc_san.py` · `doc_diem_tam.py` · `kiem_preds.py` (8 phép kiểm tệp preds trước khi tiêu quota) ·
 `make_fig_voronoi.py`
-· runbook — **`colab_smoke_orpo.md`** (cổng kỹ thuật MIN-DESC — chạy TRƯỚC mọi thứ) ·
+· runbook — **`colab_keo_adapter_4_9.md`** (kéo adapter `gui_sel_seed101` khỏi Drive, pin hash,
+đóng gói cho Kaggle; kèm cách probe `seq_score_sel.py` trên CPU máy nhà) ·
+**`kaggle_commit_sel_4_9.md`** (⭐ chạy Kaggle dạng **commit** để gập máy đi ngủ — §0 là lượt
+gộp C1+C2 của đêm 4/9, có **cổng giờ 5,5 h** chặn vượt trần 12 h; bảy khác biệt so với chạy
+tương tác; ⚠️ `score_run.py` **không có cờ `--raw`**, nó tự suy tên từ `--out`) ·
+**`colab_smoke_orpo.md`** (cổng kỹ thuật MIN-DESC — chạy TRƯỚC mọi thứ) ·
 **`colab_train_min_desc.md`** (bốn lượt train + đồng bộ Drive + ô theo dõi có thanh tiến độ) ·
 `S2_DAN_THANG.md` · `colab_train_s2.md` · `run_on_colab.md` · `colab_cham_san.md` ·
 `kaggle_cham_san.md` · `kaggle_upload_dataset.md` · `kaggle_pheA_CHAY_LAI.md` · `run_on_rented.sh`
