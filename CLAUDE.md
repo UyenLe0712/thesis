@@ -36,6 +36,8 @@ Colab phụ thuộc cũng dùng tên `harness`).
 | **⭐ TRẠNG THÁI HIỆN TẠI — đọc một mình là hiểu, từ 23/8 trở đi** | **`report/119_TRANG_THAI_SAU_23_8.md`** |
 | **⭐⭐⭐ NGUỒN THẮNG 4/9 — chốt thi hành + khoa học sau G6, thắng 124·128·132·133** | **`report/134_CHOT_4_9_HANDOFF_CHAT.md`** (đọc một mình là đủ; §14 là phần đo trên WSL) |
 | **⭐⭐ KẾT QUẢ `exec` CỦA `gui_sel`/101 — đo 5/9, n=4.463** | **`report/136_KET_QUA_EXEC_GUI_SEL_5_9.md`** |
+| **⭐⭐ NÂNG TRẦN THƯỚC — luật D.3 gốc của AndroidControl, đo 5/9, 0 giây GPU** | **`report/138_NANG_TRAN_LUAT_D3.md`** |
+| prompt research gửi mô hình phiên khác (tự chứa) | `report/137_PROMPT_RESEARCH_CHO_FABLE.md` |
 | tiền lệ cho trục bỏ cuộc / risk-coverage của SOICT (tra 4/9) | `report/135_TIEN_LE_ABSTENTION_SOICT.md` |
 | SPRINT `gui_sel`: context debate ngay sau G6 (3/9) — ⛔ **`134` thắng file này** | `report/133_CONTEXT_DEBATE_SAU_G6.md` · nhật ký thi hành ở `report/132` mục 16–19 |
 | **đi hướng nào tiếp — tranh luận + tiền lệ + phán quyết (25/8)** | **`report/120_TRANH_LUAN_HUONG_TIEP.md`** |
@@ -263,6 +265,50 @@ Câu hỏi *"60% khó bảo vệ, đổi bộ trỏ cho điểm cao hơn đượ
   69,3 vs 70,0. Cơ chế: thước phán bằng ngưỡng 14% trước rồi mới Voronoi, và **72% ca thước mù là
   bộ trỏ lệch >14%** tức **bỏ cuộc**, không phải trỏ nhầm nút cạnh bên. Thêm giá: 7B chấm ~14,4 h
   một lượt ⇒ ba tuần quota, và mọi số của hai bài + luận văn phải đo lại.
+
+### ⭐⭐ 5/9 — LUẬT D.3 NÂNG TRẦN 75,73 → 83,82 MÀ KHÔNG NỚI LỎNG (`report/138`)
+
+Nguồn: **Li et al., AndroidControl, NeurIPS 2024 D&B, Phụ lục D.3** — luật GỐC của chính bộ dữ
+liệu: *"if the target element's coordinates are within the bounding box of the ground truth
+target element, it is considered as matching"*. Hộp có sẵn trong `descriptors.jsonl` (phủ
+4.448/4.448) ⇒ tính lại từ `*_raw.jsonl`, **0 giây GPU**.
+
+| nhánh | Voronoi .14 | **D.3 trong hộp** |
+|---|---|---|
+| Câu người (trần) | 75,73 | **83,82** |
+| MIN-DESC/101 | 60,05 | **66,55** |
+| S1/101 | 59,11 | 65,49 |
+| `gui_sel`/101 | 56,13 | 62,38 |
+| Base | 47,59 | 53,60 |
+
+⭐ **Thứ tự tám nhánh không đổi chỗ nào**, S1−Base giữ 11,89 (Voronoi 11,52).
+⭐ **Phép kiểm quyết định — D.3 KHÔNG nâng sàn** (cùng lát 800): trần 74,88 → **83,00** (+8,12)
+trong khi sàn câu rỗng 12,00 → 14,12 (+2,12) và sàn sai màn 6,12 → 8,62 (+2,50) ⇒ **dải dùng
+được nới từ 62,88 lên 68,88**. Đối chiếu: luật chữ nhật kéo sàn lên **20,50** — đó mới là nới
+lỏng thật, và đó là lý do nó bị bác 30/8.
+⭐ **Vì sao không phải nới lỏng:** dung sai của D.3 **thích ứng theo cỡ phần tử**. Theo chiều dọc
+hộp thật có trung vị **5,2%** màn, chặt hơn cửa sổ ±14% tới **5 lần**; nó chỉ lỏng hơn ở phần tử
+thật sự rộng, và lỏng đúng nghĩa vật lý (chạm chỗ nào trong phần tử cũng kích hoạt).
+⛔ Nhưng nó vẫn được tính **sau khi đã thấy mọi điểm** ⇒ trình như **thước đồng-báo** cạnh
+Voronoi, khai rõ nguồn và thời điểm tính; **giữ Voronoi làm headline** vì đó là thước niêm 5/8.
+
+⛔⛔ **BỎ cách trình "79,3% năng lực của người"** (`report/138` mục 2). Chuẩn ngành trong sinh
+ngôn ngữ có mốc người là **hai số tuyệt đối cạnh nhau + chữ headroom**, không chia tỉ lệ —
+Zhao et al. EACL 2021 (bài dự án đã trích) in **Human 75,1** cạnh EnvDrop 47,7; AndroidWorld
+ICLR 2025 in mốc người 80,0 cạnh M3A 30,6. Và 79,3% có **hai lỗi**: nếu viện công thức chuẩn hoá
+hai mốc của Mnih et al. (Nature 2015) thì phải trừ sàn ⇒ MIN-DESC là **75,4%**; mà 75,4% cũng
+sai vì sàn 12,0 đo trên lát 800 còn 60,05 đo trên 4.463. Cộng bẫy: Mnih thao tác hoá *"ngang
+người"* = **≥75%**, in 75,4% là tự tuyên bố ngang người.
+✅ Cách đúng: gọi 75,73 là **"ước lượng thận trọng về năng lực của câu người viết, đo qua cùng
+dụng cụ"** (Nangia & Bowman ACL 2019), in hai số cạnh nhau.
+
+⭐ **Jandial et al. nay xác minh được venue: Findings of ACL: EACL 2026, tr. 2772–2785.** Bảng 1
+cho căn cứ MỚI để giữ UGround: **UGround-V1-7B bền nhất trước cách diễn đạt khác nhau**
+(s_mean 0,3176) dù ScreenSpot-Pro chỉ 31,1. ⚠️ Dự án dùng bản **2B** (0,6218) — khai đúng biến thể.
+⭐ **Phi-Ground-4B (MIT, nền Phi-3.5-Vision)** là ứng viên **duy nhất** đóng được đồng thời đòn
+"quen AndroidControl" và đòn "cùng họ Qwen". Để sau 16/9, chạy trên đúng lát 2.532 của phép B.
+⚠️ Luật đọc mới: nhiều bài 2025–2026 không nhắc AndroidControl nhưng **mượn gói dữ liệu** của mô
+hình khác vốn có nó (GTA1 ← OS-Atlas · SE-GUI ← UGround) — phải truy thêm một tầng.
 
 ⭐ **Cách đúng: đổi CÁCH TRÌNH, không đổi thước.** Thước chạy từ **12,0** tới **75,7**, nên đừng
 đọc 60% trên nền 100. Tỉ lệ **so trần người**: Base 62,8% · S1 **78,0%** · MIN **79,3%** ·
