@@ -188,3 +188,35 @@ chọn-sau-khi-thấy-số mà **(x16g)** cam kết không làm.
 
 Ràng buộc thời gian: cổng giết của lượt đối chứng là **8/9 12:00 ICT** (chưa đạt ≈2.422/4.036
 bước thì bỏ, không dùng điểm lưu dở). Quota Kaggle tuần này đã tiêu ~10 h trong 30 h.
+
+---
+
+## 10. Hai lỗi môi trường của lượt τ, đo ngày 4–5/9
+
+**① `peft` 0.20.0 xung khắc `torchao` 0.10.0 của image Kaggle.** `pip -U peft` kéo về 0.20.0;
+lớp dispatch LoRA gọi `is_torchao_available()`, và hàm đó **raise `ImportError`** khi thấy
+torchao dưới 0.16 thay vì trả `False`. Chết ở `PeftModel.from_pretrained`, tức **sau khi** mô
+hình nền đã tải xong. Cách xử: `pip uninstall -y torchao` ngay trong ô cài gói — script không
+dùng torchao ở đâu, vắng mặt thì hàm kia trả `False` bình thường.
+⚠️ Lệnh gỡ phải nằm **trong ô 1**; đặt ở ô sau thì commit chạy lại từ máy ảo sạch sẽ cài lại
+peft rồi vấp y hệt.
+
+**② Tràn bộ nhớ ở đường chậm của `seq_score_sel.py` — bảng logits, không phải trọng số.**
+Đường chậm ghép cả câu nhắc vào từng span, nên một lô 8 span cho tensor logits
+`[8 × ~1.520 × 151.936]`; riêng bản fp16 đã 3,7 GB và `.float()` nhân đôi ⇒ đòi **9,88 GB**,
+tràn T4 16 GB. Đây đúng bài học đã ghi từ tháng 8: *chỗ ngốn bộ nhớ là bảng logits chứ không
+phải trọng số* (P4 tràn nhưng P4+liger chạy được vì liger gộp cross-entropy).
+
+**Cách sửa, giữ nguyên phép tính:** chỉ đổi kiểu số ở đúng `mx` vị trí cuối cần dùng
+(`logits[:, L-mx-1:L-1, :]`) thay vì cả bảng, `mx` là span dài nhất trong lô. Với kích thước
+thật, bảng đi từ ~1.520 vị trí xuống ~25, **giảm khoảng 60 lần**, còn dưới 200 MB.
+✅ Đã kiểm chỉ số bằng tensor giả: công thức mới và công thức cũ cho **lệch 0,0 tuyệt đối**.
+Kèm theo hạ `--span-batch` mặc định 8 → **4**.
+
+⚠️ Bản vá nằm trong `seq_score_sel.py`, mà mã chạy trên Kaggle lấy từ **dataset**, nên phải
+upload version mới (`_bundles/kaggle_sel_5_9.zip`). Ô workspace nay có thêm một `assert` bắt
+đúng bản 5/9, để không lặng lẽ chạy bản cũ rồi tràn lần nữa.
+
+**Truy nguyên của lượt probe:** bốn hash in ra trong manifest của script — `candidates.jsonl`,
+`test.jsonl`, `ocr.jsonl`, `adapter_model.safetensors` — **khớp tuyệt đối** với bản trên máy.
+`DynamicCache.crop` có mặt trên transformers 5.0.0 của Kaggle, nên `--cache-prompt` dùng được.

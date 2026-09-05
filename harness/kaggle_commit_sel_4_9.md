@@ -163,6 +163,10 @@ shutil.rmtree(f"{WS}/harness", ignore_errors=True)
 shutil.copytree(PKG, f"{WS}/harness")
 assert os.path.isfile(f"{WS}/harness/seq_score_sel.py"), \
     "DỪNG: dataset thiếu seq_score_sel.py — upload lại version mới"
+# bản vá OOM ngày 5/9: bản trước gọi .float() trên CẢ bảng logits và tràn T4 ở lô 8 span
+assert "KHÔNG gọi .float() trên CẢ bảng logits" in open(
+    f"{WS}/harness/seq_score_sel.py", encoding="utf-8").read(), \
+    "DỪNG: seq_score_sel.py là bản TRƯỚC 5/9, sẽ tràn bộ nhớ ở đường chậm. Upload version mới."
 
 # ảnh: symlink, không chép
 best = None

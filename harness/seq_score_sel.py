@@ -68,8 +68,10 @@ def main():
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--probe", type=int, default=0,
                     help="chạy N bước rồi dừng và in thống kê — dùng 50 trước lượt dài.")
-    ap.add_argument("--span-batch", type=int, default=8,
-                    help="số span tính cùng một lượt truyền ở ĐƯỜNG CHẬM. Giảm nếu hết bộ nhớ.")
+    ap.add_argument("--span-batch", type=int, default=4,
+                    help="số span tính cùng một lượt truyền ở ĐƯỜNG CHẬM. Mặc định 4 vì T4 16 GB: "
+                         "mỗi span mang cả câu nhắc (~1.520 token) nên bảng logits mới là chỗ "
+                         "ngốn bộ nhớ, không phải trọng số. Hết bộ nhớ thì hạ xuống 2 hoặc 1.")
     ap.add_argument("--dtype", default="", choices=["", "float32", "bfloat16", "float16"],
                     help="ĐỂ TRỐNG cho mọi lượt chấm thật — khi đó dùng đúng pick_dtype() "
                          "của infer_branch, tức cùng kiểu số với các lượt đã chấm. Chỉ đặt "
@@ -244,21 +246,33 @@ def main():
                                 return_tensors="pt", padding=True).to(model.device)
                 with torch.no_grad():
                     out = model(**enc_full)
-                logits = out.logits.float()
                 ids = enc_full["input_ids"]
                 attn = enc_full["attention_mask"]
+                nsp = [len(proc.tokenizer(sp, add_special_tokens=False)["input_ids"])
+                       for sp in lo]
+                # ⛔ KHÔNG gọi .float() trên CẢ bảng logits. Với lô 8 span × ~1.520 token ×
+                #    151.936 từ vựng, riêng bản fp16 đã 3,7 GB và .float() nhân đôi ⇒ đòi
+                #    ~9,9 GB, tràn T4 16 GB. Đo thật 5/9/2026, đúng bài học cũ của dự án:
+                #    chỗ ngốn bộ nhớ là BẢNG LOGITS chứ không phải trọng số.
+                #    Chỉ cần logits ở đúng `mx` vị trí cuối, nên CẮT trước rồi mới đổi kiểu.
+                mx = max(nsp)
+                L = ids.shape[1]
+                lg = out.logits[:, L - mx - 1:L - 1, :].float()   # [B, mx, V]
+                del out
                 for b, sp in enumerate(lo):
-                    n_span = len(proc.tokenizer(sp, add_special_tokens=False)["input_ids"])
+                    n_span = nsp[b]
                     assert int(attn[b].sum().item()) >= n_span, \
                         "span dài hơn cả chuỗi — nghi lệch bộ tách token"
                     # token cuối của chuỗi luôn là token cuối của span, nên đếm NGƯỢC từ
                     # cuối; cách này đúng với cả padding trái lẫn phải.
+                    # lg[j] là logits ở vị trí gốc (L-mx-1+j), tức nó dự đoán token ở
+                    # vị trí (L-mx+j). Cần dự đoán token tại pos = L-1-k ⇒ j = mx-1-k.
                     lp = 0.0
                     for k in range(n_span):
-                        pos = ids.shape[1] - 1 - k
-                        lp += float(torch.log_softmax(logits[b, pos - 1], dim=-1)[ids[b, pos]])
+                        lp += float(torch.log_softmax(lg[b, mx - 1 - k], dim=-1)[ids[b, L - 1 - k]])
                     ds.append(lp / n_span)
                     ts.append(n_span)
+                del lg
             return ds, ts
 
         def _tinh():
