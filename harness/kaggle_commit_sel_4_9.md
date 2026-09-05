@@ -153,7 +153,7 @@ WS = "/kaggle/working/ws"; os.makedirs(WS, exist_ok=True)
 #    `ok[0]` lấy phải bản cũ — im lặng, không lỗi. Đã mất một lượt probe vì đúng chuyện này.
 #    ⇒ Mỗi lần vá mã thì ĐỔI hai dòng dưới, và giữ assert "đúng một bản".
 CAN_FILE = "seq_score_sel.py"
-CAN = "KHÔNG gọi .float() trên CẢ bảng logits"     # dấu vân tay bản 5/9 (vá tràn bộ nhớ)
+CAN = "ĐỆM CỦA QWEN NẰM BÊN PHẢI"                  # dấu vân tay bản 5/9 lượt 2 (vá đệm phải)
 src = glob.glob(f"/kaggle/input/**/harness/{CAN_FILE}", recursive=True)
 assert src, f"DỪNG: chưa thấy harness/{CAN_FILE} trong /kaggle/input"
 ok = []
@@ -396,8 +396,16 @@ phải gọi lại bộ trỏ** — đã cứu trọn một lượt 5,6 giờ h�
 `colab_keo_adapter_4_9.md`). Con số cần lấy từ probe là **giây mỗi bước**; nhân 1.400 rồi so với
 trần 12 giờ trước khi phóng lượt dài.
 
-Trước hết kiểm API bộ nhớ đệm của đúng bản `transformers` trên máy đó — Kaggle đang chạy 5.0.0
-còn máy nhà 5.14.1, và `--cache-prompt` phụ thuộc `DynamicCache.crop`:
+⭐ **Phép kiểm chéo đã làm đúng việc của nó (5/9).** Nó báo hai đường lệch **9,64** và dừng lượt
+lại. Truy ra thì **đường CHẬM sai**, không phải đường tắt: đệm của Qwen nằm bên **phải**
+(`padding_side="right"`), mà bản trước đếm ngược từ cuối *tensor* nên với mọi span ngắn hơn span
+dài nhất trong lô nó đọc trúng token đệm. Đã vá: đếm theo `attention_mask`, tức theo phần thật
+của từng chuỗi. Chi tiết `report/136` mục 10c.
+⇒ Giữ nguyên `--cache-prompt` và giữ nguyên phép kiểm chéo. Lượt tới chính phép kiểm đó sẽ nói
+đường tắt có dùng được không.
+
+Kiểm API bộ nhớ đệm của đúng bản `transformers` trên máy đó — Kaggle chạy 5.0.0, máy nhà 5.14.1,
+và `--cache-prompt` phụ thuộc `DynamicCache.crop`:
 
 ```python
 from transformers import DynamicCache

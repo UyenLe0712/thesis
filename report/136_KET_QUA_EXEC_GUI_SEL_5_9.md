@@ -244,3 +244,36 @@ khác nhau**.
 ⚠️ **Luật rút ra, áp cho mọi lần vá mã về sau:** mỗi lần upload gói mới thì **đổi dấu vân tay**
 sang chuỗi chỉ có trong bản đó. Dấu vân tay cũ không sai — nó chỉ hết khả năng phân biệt, mà
 hết khả năng phân biệt thì im lặng chọn bừa.
+
+### 10c. ⭐ Phép kiểm chéo bắt được lỗi ở ĐƯỜNG CHUẨN, không phải đường tắt
+
+Sau khi vá tràn bộ nhớ và chọn đúng gói, probe chạy tới phép kiểm chéo rồi **dừng**:
+`kiểm chéo nhanh↔chậm: lệch tối đa 9.64e+00 trên 41 span`. Script tự thoát, không sinh dòng nào.
+
+**Nguyên nhân, và nó nằm ở chỗ không ai ngờ:** đệm của Qwen nằm bên **PHẢI**
+(`tokenizer.padding_side == "right"`, đo trực tiếp). Đường chậm ghép mỗi span vào sau cùng một
+câu nhắc rồi gọi `padding=True`, nên trong một lô các chuỗi dài ngắn khác nhau, chỉ chuỗi **dài
+nhất** có token cuối là token cuối của span; mọi chuỗi ngắn hơn kết thúc bằng **token đệm**.
+Bản trước đếm ngược từ cuối *tensor*, nên nó đọc logits của phần đệm.
+
+⛔ **Chú thích trong mã đã khẳng định sai điều này** — nguyên văn *"padding của Qwen processor
+nằm bên TRÁI; token cuối cùng luôn là token cuối của span"*. Đúng dạng lỗi mà dự án đã ghi nhiều
+lần: một câu khẳng định chưa kiểm, sống trong mã, rồi được tin.
+
+**Cách vá:** đếm ngược từ cuối phần **thật** của từng chuỗi, lấy độ dài từ `attention_mask`
+(`n_tot = attn[b].sum()`), và cắt đúng dải `[n_tot-1-n_span, n_tot-1)` trước khi đổi kiểu số —
+vừa sửa lỗi vừa giữ nguyên bản vá bộ nhớ.
+✅ Kiểm bằng chuẩn vàng dựng riêng (tính từng chuỗi **không** đệm): bản mới lệch **0,0**; bản cũ
+lệch tới **0,88** trên mô phỏng ba span, và chỉ đúng ở span dài nhất — khớp chính xác dấu hiệu
+quan sát được trên máy thật.
+
+⭐ **Đây là lần đầu một phép kiểm chéo của dự án bắt lỗi ở chính đường được coi là chuẩn.** Bài
+học: khi hai đường lệch nhau, **đừng mặc định đường tắt là đường sai**. Nếu lúc đó bỏ `--cache-prompt`
+rồi chạy tiếp bằng đường chậm — phản xạ tự nhiên, và là điều đã suýt làm — thì lượt 1.400 bước
+sẽ cho ra một tệp điểm sai mà không có gì báo, rồi ngưỡng τ được khoá trên tệp đó.
+
+⇒ Giữ nguyên `--cache-prompt` và giữ nguyên phép kiểm chéo cho lượt tới. Chính phép kiểm đó sẽ
+nói đường tắt có dùng được hay không, sau khi đường chuẩn đã đúng.
+
+**Gói mới:** `_bundles/kaggle_sel_5_9b.zip`, dấu vân tay đổi sang `"ĐỆM CỦA QWEN NẰM BÊN PHẢI"`
+theo đúng luật ở mục 10b.

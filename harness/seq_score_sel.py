@@ -250,29 +250,33 @@ def main():
                 attn = enc_full["attention_mask"]
                 nsp = [len(proc.tokenizer(sp, add_special_tokens=False)["input_ids"])
                        for sp in lo]
-                # ⛔ KHÔNG gọi .float() trên CẢ bảng logits. Với lô 8 span × ~1.520 token ×
-                #    151.936 từ vựng, riêng bản fp16 đã 3,7 GB và .float() nhân đôi ⇒ đòi
-                #    ~9,9 GB, tràn T4 16 GB. Đo thật 5/9/2026, đúng bài học cũ của dự án:
-                #    chỗ ngốn bộ nhớ là BẢNG LOGITS chứ không phải trọng số.
-                #    Chỉ cần logits ở đúng `mx` vị trí cuối, nên CẮT trước rồi mới đổi kiểu.
-                mx = max(nsp)
-                L = ids.shape[1]
-                lg = out.logits[:, L - mx - 1:L - 1, :].float()   # [B, mx, V]
-                del out
+                # ⛔⛔ ĐỆM CỦA QWEN NẰM BÊN PHẢI (`padding_side="right"`, đo 5/9/2026).
+                #    Bản trước đếm ngược từ cuối CHUỖI, nên với mọi span ngắn hơn span dài
+                #    nhất trong lô nó đọc trúng token ĐỆM — điểm sai mà không có gì báo.
+                #    Phép kiểm chéo bắt được: hai đường lệch 9,64 trên 41 span.
+                #    ⇒ Phải đếm ngược từ cuối phần THẬT của từng chuỗi, lấy theo
+                #    attention_mask, chứ không lấy theo chiều dài tensor.
+                # ⛔ Và KHÔNG gọi .float() trên cả bảng logits: lô 8 span × ~1.520 token ×
+                #    151.936 từ vựng là 3,7 GB ở fp16, .float() nhân đôi ⇒ tràn T4 16 GB.
+                #    Cắt đúng dải cần rồi mới đổi kiểu.
                 for b, sp in enumerate(lo):
                     n_span = nsp[b]
-                    assert int(attn[b].sum().item()) >= n_span, \
+                    n_tot = int(attn[b].sum().item())        # số token THẬT của chuỗi b
+                    assert n_tot >= n_span + 1, \
                         "span dài hơn cả chuỗi — nghi lệch bộ tách token"
-                    # token cuối của chuỗi luôn là token cuối của span, nên đếm NGƯỢC từ
-                    # cuối; cách này đúng với cả padding trái lẫn phải.
-                    # lg[j] là logits ở vị trí gốc (L-mx-1+j), tức nó dự đoán token ở
-                    # vị trí (L-mx+j). Cần dự đoán token tại pos = L-1-k ⇒ j = mx-1-k.
+                    # token thật nằm ở [0, n_tot); token cuối của span ở vị trí n_tot-1.
+                    # Cần logits dự đoán token tại pos = n_tot-1-k, tức logits ở pos-1.
+                    # Dải cần: [n_tot-1-n_span, n_tot-1) — trong dải đó, chỉ số của k là
+                    # (n_span-1-k).
+                    lg = out.logits[b, n_tot - 1 - n_span:n_tot - 1, :].float()
                     lp = 0.0
                     for k in range(n_span):
-                        lp += float(torch.log_softmax(lg[b, mx - 1 - k], dim=-1)[ids[b, L - 1 - k]])
+                        lp += float(torch.log_softmax(lg[n_span - 1 - k], dim=-1)
+                                    [ids[b, n_tot - 1 - k]])
+                    del lg
                     ds.append(lp / n_span)
                     ts.append(n_span)
-                del lg
+                del out
             return ds, ts
 
         def _tinh():

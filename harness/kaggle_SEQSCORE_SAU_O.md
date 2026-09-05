@@ -59,7 +59,7 @@ WS = "/kaggle/working/ws"; os.makedirs(WS, exist_ok=True)
 #    `ok[0]` lấy phải bản cũ — im lặng, không lỗi. Đã mất một lượt probe vì đúng chuyện này.
 #    ⇒ Mỗi lần vá mã thì ĐỔI hai dòng dưới, và giữ assert "đúng một bản".
 CAN_FILE = "seq_score_sel.py"
-CAN = "KHÔNG gọi .float() trên CẢ bảng logits"     # dấu vân tay bản 5/9 (vá tràn bộ nhớ)
+CAN = "ĐỆM CỦA QWEN NẰM BÊN PHẢI"                  # dấu vân tay bản 5/9 lượt 2 (vá đệm phải)
 src = glob.glob(f"/kaggle/input/**/harness/{CAN_FILE}", recursive=True)
 assert src, f"DỪNG: chưa thấy harness/{CAN_FILE} trong /kaggle/input"
 ok = []
