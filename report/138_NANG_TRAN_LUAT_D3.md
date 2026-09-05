@@ -61,7 +61,46 @@ Theo **chiều dọc**, hộp thật hẹp hơn cửa sổ hiện tại tới **
 hơn** ở nút nhỏ. Nó chỉ lỏng hơn ở những phần tử thật sự rộng (hàng danh sách, thanh ngang), và
 lỏng đúng theo nghĩa vật lý: chạm chỗ nào trong phần tử cũng kích hoạt được nó.
 
-### 1.4 Cách dùng, và cái phải giữ
+### 1.4 ⚠️ BA ĐIỂM YẾU TỰ KHAI — đọc trước khi dùng con số 83,82
+
+**① `box` KHÔNG phải nhãn gốc của AndroidControl.** Luật D.3 là gốc, nhưng cái hộp thì dự án
+**tự suy**: `descriptor_label_build.py:334` lấy **nút nhỏ nhất trong cây trợ năng chứa điểm chạm
+vàng** (`min(cont, key=diện tích)`). Cách suy này **bảo thủ** — chọn nút nhỏ nhất chứ không phải
+nút cha, nên hộp chặt nhất trong các lựa chọn khả dĩ. Nhưng nó vẫn là suy luận của nhóm.
+⇒ **Cấm viết "dùng đúng nhãn gốc của AndroidControl".** Câu đúng: *áp luật khớp của AndroidControl
+lên hộp phần tử dựng từ cây trợ năng theo quy tắc nút nhỏ nhất chứa điểm chạm*.
+
+**② Một phần ba số bước có hộp rất rộng.** Bề ngang hộp: **52,09%** số bước dưới 25% màn ·
+15,54% trong 25–50% · 20,39% trong 50–90% · **11,98% từ 90% màn trở lên**. Nhóm cuối là hàng
+danh sách chiếm gần trọn chiều ngang. Với chúng, luật D.3 lỏng theo chiều ngang — dù vẫn chặt
+theo chiều dọc (trung vị hộp 5,2% màn so với cửa sổ ±14%). Về mặt vật lý điều này đúng: chạm chỗ
+nào trên hàng cũng mở đúng mục. Nhưng phải khai, đừng để người đọc tự phát hiện.
+
+**③ Độ nhạy — thứ tự bền, mức tuyệt đối thì không.** Coi mọi hộp rộng hơn một ngưỡng là trượt:
+
+| trần bề ngang hộp | hộp bị loại | Human | MIN | S1 | Base | MIN−Base |
+|---|---|---|---|---|---|---|
+| không giới hạn | 11 | 83,82 | 66,55 | 65,49 | 53,60 | +12,95 |
+| ≤90% màn | 528 | 73,69 | 57,83 | 57,05 | 45,78 | +12,05 |
+| ≤70% | 1.128 | 61,82 | 48,62 | 48,04 | 37,44 | +11,18 |
+| ≤50% | 1.424 | 55,97 | 44,25 | 43,58 | 33,88 | +10,37 |
+| ≤30% | 1.973 | 46,34 | 36,21 | 35,65 | 27,22 | +8,98 |
+
+Thứ tự nhánh **không đổi ở ngưỡng nào**, và khoảng cách MIN−Base chỉ co từ 12,95 xuống 8,98 khi
+loại 44% số bước. Nhưng mức tuyệt đối rất nhạy: 83,82 rơi xuống 55,97 nếu chỉ giữ hộp dưới nửa
+màn. ⇒ **Con số 83,82 phải luôn đi kèm bảng này**, không đứng một mình.
+
+⚠️ 15 bước không có `box` (thiếu cây trợ năng hoặc điểm chạm nằm ngoài mọi nút) được tính là
+**trượt** trong mọi hàng trên — bảo thủ, nhưng phải khai.
+
+### 1.5 Xác minh trích dẫn
+
+✅ Đã tự mở nguồn ngày 5/9, không dựa vào ghi chú: `arxiv.org/abs/2406.03679` là *On the Effects
+of Data Scale on UI Control Agents*, Li, Bishop, A. Li, Rawles, Campbell-Ajala, Tyamagundlu,
+Riva — **NeurIPS 2024 Datasets and Benchmarks**. Bản HTML `arxiv.org/html/2406.03679v2`, **Appendix
+D.3 "Action matching"**, chứa đúng câu đã trích.
+
+### 1.6 Cách dùng, và cái phải giữ
 
 · Rủi ro bị phản biện *"chọn thước cho hợp kết quả"* là **thấp nhất trong mọi hướng đã tra**, vì
   luật này do **tác giả bộ dữ liệu** đặt ra và đã qua bình duyệt NeurIPS 2024, không phải nhóm chế.

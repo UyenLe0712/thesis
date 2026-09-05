@@ -36,6 +36,7 @@ Colab phụ thuộc cũng dùng tên `harness`).
 | **⭐ TRẠNG THÁI HIỆN TẠI — đọc một mình là hiểu, từ 23/8 trở đi** | **`report/119_TRANG_THAI_SAU_23_8.md`** |
 | **⭐⭐⭐ NGUỒN THẮNG 4/9 — chốt thi hành + khoa học sau G6, thắng 124·128·132·133** | **`report/134_CHOT_4_9_HANDOFF_CHAT.md`** (đọc một mình là đủ; §14 là phần đo trên WSL) |
 | **⭐⭐ KẾT QUẢ `exec` CỦA `gui_sel`/101 — đo 5/9, n=4.463** | **`report/136_KET_QUA_EXEC_GUI_SEL_5_9.md`** |
+| **⭐⭐⭐ TRỤC MỚI 5/9 CHIỀU — bỏ SOICT, tra cứu nâng số + ba phép đo 0 GPU, ba việc theo thứ tự** | **`report/138_RESEARCH_NANG_SO_5_9.md`** |
 | **⭐⭐ NÂNG TRẦN THƯỚC — luật D.3 gốc của AndroidControl, đo 5/9, 0 giây GPU** | **`report/138_NANG_TRAN_LUAT_D3.md`** |
 | prompt research gửi mô hình phiên khác (tự chứa) | `report/137_PROMPT_RESEARCH_CHO_FABLE.md` |
 | tiền lệ cho trục bỏ cuộc / risk-coverage của SOICT (tra 4/9) | `report/135_TIEN_LE_ABSTENTION_SOICT.md` |
@@ -392,6 +393,26 @@ không sai; chỗ nhầm là đọc thẳng JSON (66,35 ungated vs 63,86 gated).
 ⛔ **Chưa có `Δ_sel`** — đối chứng `gui_sft_match`/101 chưa chạy. Bảng McNemar so với S1/MIN/CE2
 (−2,98 / −3,92 / −3,29) **KHÔNG phải Δ hợp lệ**: lệch ba biến (cutoff 3072 vs 2560 · có menu vs
 24 dòng OCR · 1 epoch vs 2). Hàng đọc được là **so Base: +8,54 pp** (p=6,8e−31).
+
+**⛔⛔ QUYẾT ĐỊNH 5/9 CHIỀU — BỎ HẠN SOICT 16/9, KHÔNG CHẠY A100 ĐỐI CHỨNG (user quyết).**
+Lý do user nêu: *"cái tôi cần là số cao"* — đối chứng `gui_sft_match` chỉ phục vụ `Δ_sel` của
+bài SOICT, không nâng số cho luận văn. ⇒ Khối "QUYẾT ĐỊNH 5/9 — CHẠY SONG SONG" bên dưới **chỉ
+còn hiệu lực ở vế Kaggle τ**; vế A100 **đã huỷ**. Mọi ràng buộc *"không làm trước 16/9"* của
+`report/134` mất hiệu lực (chúng bảo vệ hạn SOICT), nhưng **luật khoa học của `106` giữ nguyên**:
+không đổi thước headline, không nới ngưỡng sau khi thấy điểm, một hạt giống = TRẮNG.
+⭐ **Trục mới: `report/138_RESEARCH_NANG_SO_5_9.md`** — tra cứu 28 nguồn + ba phép đo 0 GPU:
+· ghép `gui_sel`; `none` → MIN = **60,72** (kịch trần của đồ đã có, vẫn TRẮNG; mọi luật ghép
+  tinh vi hơn đều thấp hơn) · hợp nhất hai bộ trỏ UGround ∪ UI-Venus: trần câu người **79,0 →
+  87,7** (300 bước, luật 14%), S1 **52,84 → 56,71** trên 2.532, **giữ nguyên S1−Base** ·
+  bỏ cuộc theo vị trí ứng viên vàng trong khối có **hình chữ U** (giữa 31,4% vs đầu/cuối
+  27,2/24,3; khối 30–40: 29,1/40,1/35,1) — tái lập "lost in the middle".
+· **Ba việc theo thứ tự:** ① τ trên dev (<1 h T4, đã có runbook) kèm τ₀ = log(0,5478/0,291) ≈
+  0,63 nat suy từ tiên nghiệm (Menon ICLR 2021) · ② **train lại `gui_sel` chỉ trên 41.191 bước
+  chạm** (~15 h A100; căn cứ Rajpurkar ACL 2018 *"different proportions of negative examples at
+  training and test time"* — đúng chẩn đoán `none` 54,78% dạy vs 29,1% chạm) · ③ thước đồng-báo
+  **hộp phần tử theo Phụ lục D.3 của chính AndroidControl** (0 GPU; trần ước 82–86).
+· ⛔ Không có thước hợp lệ nào cho trần 95%; hợp nhất bộ trỏ tối đa ~87,7–90 và nâng **đều**
+  mọi nhánh, nên tỉ lệ mô-hình/trần gần như không đổi.
 
 **▶️ QUYẾT ĐỊNH 5/9 — CHẠY SONG SONG HAI LƯỢT** (`report/136` mục 9). τ trên **Kaggle T4**
 (`harness/kaggle_SEQSCORE_SAU_O.md`, bảy ô dán tuần tự) và đối chứng `gui_sft_match`/101 trên
