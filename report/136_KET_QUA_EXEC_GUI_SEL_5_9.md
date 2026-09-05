@@ -277,3 +277,29 @@ nói đường tắt có dùng được hay không, sau khi đường chuẩn đ
 
 **Gói mới:** `_bundles/kaggle_sel_5_9b.zip`, dấu vân tay đổi sang `"ĐỆM CỦA QWEN NẰM BÊN PHẢI"`
 theo đúng luật ở mục 10b.
+
+### 10d. Sau khi vá đệm phải: lệch còn 8,49e−03, và quyết định KHÔNG nới ngưỡng
+
+Probe chạy lại với gói đã vá: `kiểm chéo nhanh↔chậm: lệch tối đa 8.49e-03 trên 41 span`.
+So với **9,64** trước khi vá, tức **giảm hơn 1.000 lần** — xác nhận lỗi đệm phải đúng là nguyên
+nhân chính. Nhưng 8,49e−03 vẫn trên ngưỡng `1e-3` nên script dừng, đúng thiết kế.
+
+**Nhận định về con số còn lại:** nhiều khả năng là sai số số học của fp16, không phải lỗi logic.
+Hai đường thực hiện cùng phép tính theo thứ tự khác nhau — một bên forward cả chuỗi, một bên
+forward câu nhắc rồi span trên bộ nhớ đệm — trên bảng 151.936 từ vựng, và điểm là trung bình
+log-probability của 7–24 token.
+
+⛔ **Vẫn KHÔNG nới ngưỡng.** Đây là chỗ dễ nguỵ biện nhất: nhận định trên có lý, nhưng nó được
+đưa ra **sau khi thấy số**, và dự án đã tự khai hai lần nới ngưỡng sau khi thấy điểm. Thông báo
+của chính script cũng ghi *"đừng sửa ngưỡng kiểm"*.
+
+⇒ **Chọn đường chậm cho lượt dài.** Nó là đường chuẩn, nay đã sạch, và không đòi bất kỳ quyết
+định nào sau khi thấy số. Giá phải trả là giờ máy, không phải tính hợp lệ.
+
+**Nếu về sau cần đường nhanh** (chỉ khi giờ máy thành ràng buộc thật), cách đúng **không phải**
+là nới ngưỡng trên điểm tuyệt đối, mà là đổi phép kiểm sang đại lượng thật sự được dùng:
+① `argmax` trên các ứng viên có trùng nhau không, và ② `margin = s(c*) − s(none)` lệch bao nhiêu
+so với độ trải của chính phân bố margin. Điểm tuyệt đối chỉ là đại lượng trung gian; hai đường
+lệch ở đó mà không đổi thứ hạng và không đổi phía của margin so với τ thì kết luận không đổi.
+Đây là thay đổi **thiết kế phép kiểm**, phải khoá trước khi nhìn kết quả τ, nên nếu làm thì làm
+ở lượt sau chứ không phải lượt này.

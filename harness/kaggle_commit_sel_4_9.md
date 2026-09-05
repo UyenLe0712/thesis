@@ -172,10 +172,9 @@ shutil.rmtree(f"{WS}/harness", ignore_errors=True)
 shutil.copytree(PKG, f"{WS}/harness")
 assert os.path.isfile(f"{WS}/harness/seq_score_sel.py"), \
     "DỪNG: dataset thiếu seq_score_sel.py — upload lại version mới"
-# bản vá OOM ngày 5/9: bản trước gọi .float() trên CẢ bảng logits và tràn T4 ở lô 8 span
-assert "KHÔNG gọi .float() trên CẢ bảng logits" in open(
-    f"{WS}/harness/seq_score_sel.py", encoding="utf-8").read(), \
-    "DỪNG: seq_score_sel.py là bản TRƯỚC 5/9, sẽ tràn bộ nhớ ở đường chậm. Upload version mới."
+# ⚠️ ĐỪNG thêm assert nội dung thứ hai ở đây. Dấu vân tay CAN bên trên đã kiểm chính tệp
+#    seq_score_sel.py rồi; một phép kiểm thứ hai trên chuỗi khác chỉ tạo thêm một chỗ phải
+#    nhớ cập nhật, và ngày 5/9 nó đã chặn nhầm đúng gói mới nhất.
 
 # ảnh: symlink, không chép
 best = None
