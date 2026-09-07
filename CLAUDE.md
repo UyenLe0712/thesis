@@ -37,7 +37,14 @@ Colab phụ thuộc cũng dùng tên `harness`).
 | **⭐⭐⭐ NGUỒN THẮNG 4/9 — chốt thi hành + khoa học sau G6, thắng 124·128·132·133** | **`report/134_CHOT_4_9_HANDOFF_CHAT.md`** (đọc một mình là đủ; §14 là phần đo trên WSL) |
 | **⭐⭐ KẾT QUẢ `exec` CỦA `gui_sel`/101 — đo 5/9, n=4.463** | **`report/136_KET_QUA_EXEC_GUI_SEL_5_9.md`** |
 | **⭐⭐⭐ TRỤC MỚI 5/9 CHIỀU — bỏ SOICT, tra cứu nâng số + ba phép đo 0 GPU, ba việc theo thứ tự** | **`report/138_RESEARCH_NANG_SO_5_9.md`** |
-| **⭐⭐ NÂNG TRẦN THƯỚC — luật D.3 gốc của AndroidControl, đo 5/9, 0 giây GPU** | **`report/138_NANG_TRAN_LUAT_D3.md`** |
+| **⭐⭐ LƯỢT GRPO `<point>` — train xong 6/9, khai báo +2,56 pp (p=1,3e−08), `exec` chưa chấm; tám đòn phản biện** | **`report/144_KET_QUA_GRPO_POINT_6_9.md`** · đăng ký `report/106` (x19)+(x19d) · chấm: `harness/kaggle_grpo_point_6_9.md` |
+| **⭐⭐⭐ DEBATE NÂNG SỐ MÔ HÌNH 5/9 TỐI — 65 cần 82,1% khai báo đúng (ngang UI-TARS-72B), 70 cần 89% (vượt mọi agent); khối ứng viên KHÔNG thêm thông tin nhận diện (sel đúng chỗ MIN sai chỉ 3,8%); ⭐ KHUYẾN NGHỊ CUỐI §4.3 = RLVR-GRPO tiếp từ MIN, thưởng `<point>` đúng ±14% (miễn phí, không Goodhart), kỳ vọng +2…+4; đường lùi ORPO ngoại tuyến cặp lấy mẫu** | **`report/143_DEBATE_NANG_SO_MO_HINH_5_9.md`** |
+| **⭐⭐⭐ KẾT QUẢ τ 5/9 TỐI — null thắng (C +8/1.400), lượt ② KHÔNG chạy, nhánh ứng viên ĐÓNG; chẩn đoán khâu bỏ cuộc mù (AUC 0,69–0,72), trần bỏ cuộc hoàn hảo 78,0** | **`report/142_KET_QUA_TAU_5_9.md`** |
+| **⭐ PHẢN BIỆN luật D.3 — 48% hộp là nút con, 78% mức tăng từ hộp rộng, 120 bước container; con số nên dùng là D.3∧14% = 79,23** | **`report/139_PHAN_BIEN_LUAT_D3_5_9.md`** |
+| **⭐ TIỀN LỆ THƯỚC BỘ TRỎ (tra 5/9): cơ chế đã có ở REG/VLN, miền GUI chưa thấy ai chấm câu-cho-người bằng bộ trỏ; bảng 10 họ thước khác; §6 = BLEU/ROUGE/action_ok đủ 8 nhánh (`harness/text_metrics.py`)** | **`report/141_TIEN_LE_THUOC_BO_TRO_5_9.md`** |
+| **⭐ LUẬT QUYẾT lượt ② đã khoá trước khi có điểm τ (x17)** | `report/106` mục **(x17)** · mã: `harness/quet_tau.py` · `harness/luat_d3.py` |
+| **⭐⭐ NÂNG TRẦN THƯỚC — luật D.3 gốc của AndroidControl, đo 5/9, 0 giây GPU** | **`report/140_NANG_TRAN_LUAT_D3.md`** |
+| **⭐ LUẬN VĂN + DECK BẢO VỆ đã đồng bộ tới 5/9 (114 trang · 26+12 slide)** | mục *Luận văn — ĐÃ ĐỒNG BỘ TỚI 5/9* trong file này · `thesis/chapters/` · `slides/build/build_baove.js` |
 | prompt research gửi mô hình phiên khác (tự chứa) | `report/137_PROMPT_RESEARCH_CHO_FABLE.md` |
 | tiền lệ cho trục bỏ cuộc / risk-coverage của SOICT (tra 4/9) | `report/135_TIEN_LE_ABSTENTION_SOICT.md` |
 | SPRINT `gui_sel`: context debate ngay sau G6 (3/9) — ⛔ **`134` thắng file này** | `report/133_CONTEXT_DEBATE_SAU_G6.md` · nhật ký thi hành ở `report/132` mục 16–19 |
@@ -267,7 +274,7 @@ Câu hỏi *"60% khó bảo vệ, đổi bộ trỏ cho điểm cao hơn đượ
   bộ trỏ lệch >14%** tức **bỏ cuộc**, không phải trỏ nhầm nút cạnh bên. Thêm giá: 7B chấm ~14,4 h
   một lượt ⇒ ba tuần quota, và mọi số của hai bài + luận văn phải đo lại.
 
-### ⭐⭐ 5/9 — LUẬT D.3 NÂNG TRẦN 75,73 → 83,82 MÀ KHÔNG NỚI LỎNG (`report/138`)
+### ⭐⭐ 5/9 — LUẬT D.3 NÂNG TRẦN 75,73 → 83,82 MÀ KHÔNG NỚI LỎNG (`report/140`)
 
 Nguồn: **Li et al., AndroidControl, NeurIPS 2024 D&B, Phụ lục D.3** — luật GỐC của chính bộ dữ
 liệu: *"if the target element's coordinates are within the bounding box of the ground truth
@@ -293,7 +300,7 @@ thật sự rộng, và lỏng đúng nghĩa vật lý (chạm chỗ nào trong 
 ⛔ Nhưng nó vẫn được tính **sau khi đã thấy mọi điểm** ⇒ trình như **thước đồng-báo** cạnh
 Voronoi, khai rõ nguồn và thời điểm tính; **giữ Voronoi làm headline** vì đó là thước niêm 5/8.
 
-⛔⛔ **BỎ cách trình "79,3% năng lực của người"** (`report/138` mục 2). Chuẩn ngành trong sinh
+⛔⛔ **BỎ cách trình "79,3% năng lực của người"** (`report/140` mục 2). Chuẩn ngành trong sinh
 ngôn ngữ có mốc người là **hai số tuyệt đối cạnh nhau + chữ headroom**, không chia tỉ lệ —
 Zhao et al. EACL 2021 (bài dự án đã trích) in **Human 75,1** cạnh EnvDrop 47,7; AndroidWorld
 ICLR 2025 in mốc người 80,0 cạnh M3A 30,6. Và 79,3% có **hai lỗi**: nếu viện công thức chuẩn hoá
@@ -413,8 +420,102 @@ không đổi thước headline, không nới ngưỡng sau khi thấy điểm, 
   **hộp phần tử theo Phụ lục D.3 của chính AndroidControl** (0 GPU; trần ước 82–86).
 · ⛔ Không có thước hợp lệ nào cho trần 95%; hợp nhất bộ trỏ tối đa ~87,7–90 và nâng **đều**
   mọi nhánh, nên tỉ lệ mô-hình/trần gần như không đổi.
+· ⭐ **5/9 đêm — đã khoá (x17) TRƯỚC khi có điểm τ:** lượt ② `gui_sel_cham`/101 (41.191 bước
+  chạm, đã dựng bằng `make_sel_cham.py`) **chạy nếu quét τ cho lift ≥ 18/1.400 so với greedy,
+  không chạy nếu luật null thắng** — không có ô thứ ba, không nới 18. Hạt 202 phải quyết ở (x18)
+  **trước** khi nhìn exec ②/101. `exec` của hệ `gui_sel`+τ lấy bằng ép thẻ ở các bước bị lật rồi
+  chấm UGround (x17c). ⚠️ **(x17f):** probe 50 bước lộ ra **chuẩn hoá độ dài của (x16d) làm
+  hỏng xếp hạng ứng viên** (vàng top-1 22/40 vs 30/40 theo tổng log-prob) ⇒ đã đăng ký ba nhánh
+  phụ A/B/C (lai · tổng · lai-tổng, ngưỡng 24/1.400) TRƯỚC khi có 1.400; (x16d) vẫn là chính.
+  Mã: **`harness/quet_tau.py`** (thi hành (x16d)+(x17f), chạy khi hai tệp
+  `seqscores_…_gpu0/gpu1.jsonl` về) · **`harness/luat_d3.py`** (bảng D.3 bốn biến thể + sàn,
+  `runs/luat_d3.json`).
+· ⚠️ Lượt Kaggle τ: probe 5/9 đo **56,5 s/bước** đường chậm (đường nhanh bị loại, lệch 8,49e-03)
+  ⇒ 1.400 bước = 22 h, vượt trần 12 h ⇒ chạy **hai tiến trình ghim hai T4 + hai commit** nối
+  tiếp, runbook **`harness/kaggle_SEQSCORE_2GPU_5_9.md`**. Commit 1 phóng ~02:45 ICT 5/9.
+· ⚠️ Tệp luật D.3 của phiên kia đổi số **138 → 140** (`report/140_NANG_TRAN_LUAT_D3.md`) vì
+  trùng số với `138_RESEARCH`. Phản biện ở `139`: **không bỏ, không đưa vào bảng chính**.
 
-**▶️ QUYẾT ĐỊNH 5/9 — CHẠY SONG SONG HAI LƯỢT** (`report/136` mục 9). τ trên **Kaggle T4**
+### ⭐⭐ 6/9 — LƯỢT GRPO `<point>` ĐÃ TRAIN + SUY LUẬN XONG, `exec` CHƯA CHẤM (`report/144`)
+
+500/500 bước (5,63 h A100) · suy luận 4.463 bước chạm trên **Kaggle T4, 0 đồng**, 3,1 h · tệp ở
+`runs/grpo_point/`. **Cổng khai báo tăng có ý nghĩa:** cả hai đúng **60,6 → 63,2 (+2,56 pp)**,
+b=75 c=164, p=1,3e−08, KTC [+1,69 · +3,44]; tên +2,51 · point +2,22. BLEU-4 **−0,09** ⇒ câu không
+bị bẻ thành mật mã.
+⭐ **Cơ chế là đổi hẳn phần tử, không phải nhích qua ngưỡng thưởng:** 66,5% point đứng yên tuyệt
+đối, và trong 184 bước GRPO trúng mà MIN trượt thì MIN vốn lệch **trung vị 359** với 51,6% lệch
+quá 350 (chỉ 17,9% sát ngưỡng 140–200).
+⛔ **Đòn mạnh nhất chưa đóng: KHÔNG có nhánh so sánh "train thêm 500 bước"** ⇒ mọi con số lẫn công
+của GRPO với công của việc học thêm. Tiền lệ MIN vs CE2: 78–88% mức tăng thuộc nhánh so sánh.
+⛔ **Cổng khai báo KHÔNG độc lập với hàm thưởng** — ngưỡng ±140 của `gate_desc_acc.py` trùng khít
+cửa sổ ±140 của `r_point`. Thước độc lập duy nhất là `exec`.
+⭐ **Dự báo `exec` ghi TRƯỚC khi chấm** ((x19d) ghi 5): +2,56 × hệ số 0,43 ≈ **+1,10 pp** (dải
++0,59 … +1,49) ⇒ quanh **61,2%**, **dưới MDE 2,2 ⇒ TRẮNG**, thấp hơn kỳ vọng +2…+4 của (x19e).
+Ba nhánh đọc kết quả đã khoá sẵn.
+⭐ **(x20) khoá 6/9 TRƯỚC khi có `exec`** (user quyết): **(x20a)** nhánh so sánh `min_ce_tiep_seed101`
+(SFT tiếp 125 update trên đúng 2.000 câu nhắc tập thưởng, lr 1e-5) **chỉ chạy nếu `exec` ≥ +2,2 pp**,
+thiết kế đã khoá luôn · **(x20b)** bước KHÔNG chạm 2.495 bước **đo vô điều kiện**, thước
+`--mode noharm`, ngưỡng lấy nguyên mục 3 bản gốc (**không thấp hơn MIN quá 3 pp**), suy luận
+~1,7 h Kaggle còn **chấm 0 GPU ở máy nhà** · **(x20c)** hạt 202 cùng điều kiện +2,2 · **(x20d)**
+lượt GRPO khác là quyết định mới.
+**Việc kế:** C2 chấm `exec` (~5,4 h Kaggle, 0 đồng) → đọc bằng **`harness/doc_exec_grpo.py`**
+(0 GPU, in luôn verdict và câu trả lời cho (x20a)/(x20c)); C3 bước không chạm chạy song song được,
+gói ảnh đã đóng sẵn `test_images_nontap.tar` (1,54 GB, dựng từ ảnh có sẵn trên máy).
+
+### ⭐⭐⭐ 5/9 TỐI — τ ĐÃ CÓ SỐ: **LUẬT NULL THẮNG, LƯỢT ② KHÔNG CHẠY, NHÁNH ỨNG VIÊN ĐÓNG** (`report/142` · `106` (x18))
+
+Đủ 1.400 bước dev (hai commit Kaggle nối tiếp, 7/7 phép kiểm toàn vẹn đạt, tệp ở
+`runs/sel/seqscores_gui_sel_seed101_dev1400_gpu0/1.jsonl`; kết quả máy `runs/sel/tau_scan.json`).
+Null greedy đúng **888/1.400 = 63,43%**. Lift: **X (x16d) −360** [−397·−322] · **A +1** [0·+4] ·
+**B −52** [−83·−21] · **C +8** [−11·+27]; ngưỡng 18/24 ⇒ **không nhánh nào đạt**. τ₀ = −0,633 áp
+lên B: −143, lên C: +1. Dự đoán ghi trước (0–3 pp, null có thể thắng) **đúng**: tốt nhất +0,57 pp.
+⇒ **Áp (x17b), không nới: `gui_sel_cham`/101 KHÔNG chạy.** Hạt 202 vô hiệu. (x17c) không áp dụng.
+Đóng góp mô hình của luận văn **giữ ở MIN-DESC 60,05** (D.3∧14% 62,69 · D.3 66,55).
+
+⭐ **Chẩn đoán, đáng giá hơn con số:**
+· **Xếp hạng ứng viên không hỏng, phép chia số token mới hỏng:** top-1 theo TỔNG log-prob đúng
+  **67,5%** HasAns (680/1.008), trùng ứng viên greedy tự chọn 701/814; theo điểm/token chỉ
+  **38,3%** (ưu ái span dài, trung vị 25 vs 20 token). Tái lập probe (x17f) đúng chiều, đúng cỡ.
+· **Khâu bỏ cuộc mù với likelihood của chính mô hình:** trong 583 bước greedy nói `none`, điểm
+  thẻ `none` ở 275 bước có vàng (trung vị −1,706) **trùng** 308 bước không có vàng (−1,710);
+  AUC biên **0,69–0,72** ⇒ mỗi bước cứu được trả ~1 bước lật sai. Trần nếu bỏ cuộc hoàn hảo
+  **78,0%** trên dev ⇒ **14,6 pp nằm trọn ở khâu bỏ cuộc** và không sửa được ở suy luận.
+· Chỉ 120/275 (43,6%) bước bỏ-cuộc-sai có vàng đứng đầu theo tổng; **32,5%** trong 120 đó câu
+  mang động từ không chạm ⇒ lật thẻ cũng không tăng `exec`.
+· Mô hình bỏ cuộc theo **độ đông khối** (30,6% → 50,2%) trong khi tỉ lệ HasAns phẳng (74 → 67%).
+⚠️ **Lý do đến sau khi thấy số, KHÔNG dùng để mở lại ②:** τ₀ không mô phỏng được việc lượt ②
+bỏ 2.495 bước không chạm (đường tắt *động từ không chạm ⇔ none*, 38,9% câu nhóm bỏ-cuộc-sai).
+Ghi ở (x18); nếu về sau train theo hướng đó thì là **quyết định mới**, không phải hệ quả (x17b).
+✅ **Đã đồng bộ 5/9 tối:** luận văn ch6 §nhanhungvien (đoạn τ viết lại + hàng bảng
+`tab:trangthai`), ch7 kết luận + hướng phát triển ①② (① không chạy, kèm điều kiện; ② mới = học
+quyết định bỏ cuộc từ tín hiệu khác) ⇒ **115 trang, 0 overfull**; deck bảo vệ slide hướng phát
+triển + bảng trạng thái + B12 dựng lại (26 + 12, 20:40). ⚠️ `thesis/main.pdf` **chưa chép được**
+(user đang mở PDF, Permission denied) — bản mới ở scratchpad phiên `build/main.pdf`.
+
+### ▶️▶️ 5/9 ĐÊM — LƯỢT MỚI ĐANG CHUẨN BỊ: **GRPO thưởng `<point>` nối tiếp MIN-DESC/101** (`106` (x19) · `report/143` §4 · mã `harness/grpo_point.py` · runbook `harness/colab_grpo_point.md`)
+
+User quyết chạy sau debate `143` (*"cách nào nâng số cao nhất và đóng góp mô hình nhiều nhất"*).
+Đây là **quyết định mới sau khi thấy điểm**, khai thẳng ở (x19); luật đọc của `106` giữ nguyên.
+· Hệ: TRL **0.29.1** GRPO, học tiếp adapter MIN, β=0,04 với tham chiếu = **bản sao adapter MIN**
+  (TRL `add_adapter("ref")`), G=4, temp 1,0, lr 1e-5, lô 4×4, **500 update = 2.000 câu nhắc = 1 epoch**
+  trên tập thưởng (2.000/41.090 bước chạm train, seed 101, loại 9 bước `point_norm` ngoài lưới).
+· Thưởng (khoá): r_point 1,0 nếu `<point>` trong ±140 quanh `point_norm` vàng · r_format 0,2 ·
+  r_name 0,1. **Không bộ trỏ nào trong phần thưởng** ⇒ không Goodhart lên UGround.
+· Thăm dò G4 (20 bước, 50 câu nhắc dài nhất): ① không OOM · ② `frac_reward_zero_std` ≤ 0,60 ·
+  ③ `reward/r_point/mean` ∈ [0,55; 0,95]. Chỉ được sửa hai thứ, mỗi thứ một lần (accum 4→2 · temp
+  1,0→1,2), ghi (x19d). Kỳ vọng ghi trước: **+2…+4 pp exec**; ≥2,2 mới gọi tăng; một hạt = nhãn
+  "một hạt giống". Thước phụ bắt buộc: gate_desc_acc · BLEU-4 (giảm >1,0 = mật mã) · D.3 · nL2.
+· Đã kiểm trước khi viết: TRL nhận thẳng `PeftModel` (0.29.1, không kèm `peft_config`) ·
+  `prepare_multimodal_messages` đặt khối ảnh TRƯỚC khối chữ ⇒ chuỗi user giữ `"\n"` đầu · processor
+  tự cấp phải tự đặt `padding_side="left"` · metric log tên `reward/<hàm>/mean`, `frac_reward_zero_std`
+  · 67/41.090 tên vàng chứa `|` ⇒ tách khai báo neo vào ô `<point>` · selftest 0 GPU ĐẠT trên WSL.
+· Gói mã mới: `_bundles/thesis_rented.zip` (dựng 5/9 đêm, có `grpo_point.py`) — **phải upload đè
+  lên `MyDrive/thesis/thesis_rented.zip`** trước G2. Đầu ra: `ckpt/grpo_point_seed101` trên Drive;
+  preds `preds_grpo_point_seed101.jsonl`; chấm Kaggle theo `kaggle_cham_min_desc.md`.
+· ⚠️ Rủi ro lớn nhất là **hạ tầng mới chưa từng chạy** (TRL GRPO + VLM + 4-bit trên một A100).
+  Đường lùi đã đăng ký ở `143` §4.2: ORPO ngoại tuyến với cặp lấy mẫu từ MIN, nhãn cùng phần thưởng.
+
+**▶️ QUYẾT ĐỊNH 5/9 — CHẠY SONG SONG HAI LƯỢT** ⛔ **(ĐÃ HẾT HIỆU LỰC CẢ HAI VẾ — τ đã xong, A100 đã huỷ; giữ để tra)** (`report/136` mục 9). τ trên **Kaggle T4**
 (`harness/kaggle_SEQSCORE_SAU_O.md`, bảy ô dán tuần tự) và đối chứng `gui_sft_match`/101 trên
 **Colab A100** (~23–30 h). ⭐ **Hai lượt độc lập, không nối tiếp:** `Δ_sel` đo trên hệ thống
 chính (greedy `<sel>`), τ không có trong công thức; điều kiện hoá đối chứng vào kết quả τ sẽ
@@ -426,7 +527,8 @@ luật null thắng là thật. Căn cứ: phép ép chọn 3/9 kéo `sel_acc` +
 +9,31 pp là trần lý thuyết chứ không phải mức τ với tới. **Trên 3 pp thì phải soi kỹ hơn
 bình thường trước khi tin.**
 
-**Việc kế — theo `report/134` mục 0, thứ tự phụ thuộc:** ⓪ kéo artifact Drive (**adapter** là thứ
+⛔ **Danh sách dưới đã hết hiệu lực (τ xong, đối chứng huỷ, SOICT bỏ) — không còn lượt train nào theo kế hoạch; việc còn lại là VIẾT.**
+**Việc kế CŨ — theo `report/134` mục 0, thứ tự phụ thuộc:** ⓪ kéo artifact Drive (**adapter** là thứ
 duy nhất còn thiếu trên WSL) · ① T4 suy luận nốt **3.063 bước** + `exec` đủ **4.463** · ② A100 song
 song: train `gui_sft_match`/101 (~23–30 h) · ③ sequence-score length-normalized mọi ứng viên +
 `none` trên lát dev 1.400, **khóa τ trước khi nhìn exec đối chứng hoặc 3.062** · ④ one-look 3.062
@@ -847,7 +949,117 @@ nên vế sau phải cùng gốc; **78% ở mục quy công là đại lượng 
 (lát thử đúng **1.074** nhãn) · đếm hướng mỏ neo 7.768/1.894 → **8.382/2.033** (bốn hướng nay cộng
 đúng 27.628) · trùng tên lát thử 6,9 → **7,0%**.
 
-### Luận văn — ĐÃ ĐỒNG BỘ TỚI 30/8, **96 trang, 0 overfull, 0 tham chiếu hỏng**
+### ⭐ Luận văn 6/9 — chặng ba vào đủ cả phương pháp lẫn kết quả: **119 trang, 0 overfull, 0 tham chiếu hỏng**
+
+· **ch4** thêm §`sec:grpothietke` (căn cứ · bảng ba số hạng thưởng 1,0/0,2/0,1 · **không có mô
+  hình định vị nào trong phần thưởng** ⇒ không tối ưu thẳng vào thước · cấu hình G=4 temp 1,0,
+  tham chiếu là bản sao đóng băng, 2.000 câu nhắc = 500 bước · **điều phải nói rõ về khả năng
+  tách công** theo (x20a) · hai giới hạn: chỉ bước chạm, một hạt giống).
+· **02_vietat** thêm dòng GRPO. **99** thêm `guo2025r1` (Nature 645(8081):633–638, 2025 — đã
+  xác minh venue) và `shao2024grpo` (**bản tiền ấn phẩm** arXiv 2402.03300, ghi đúng là tiền
+  ấn phẩm, không trình như đã bình duyệt).
+· **ch6** thêm §`sec:grpo`: bảng exec 60,05 vs **60,07** · Δ **+0,02** (b=98 c=99, p=1, KTC
+  [−0,59;+0,64]) · **dự báo ghi trước bị bác** (+1,10 dự báo vs +0,02 đo, hệ số thực ≈0,01 ⇒ không
+  phải hằng số của bài toán) · **bảng hạch toán bốn nhóm** +62/−30/−14/−17 = +1 bước ·
+  **66,7% thay đổi khai báo không tới được câu** (1.300/1.950) · bài học phương pháp · điều chưa
+  tách được. `tab:trangthai` thêm 2 hàng.
+· **ch4** thêm **định nghĩa dải bốn ô** (≥+2,8 / +1,7…+2,8 / −2,8…+1,7 / ≤−2,8, khoá 17/8/2026).
+  Trước đó dải này được DÙNG ở ch6 mà **không định nghĩa ở đâu** — lỗ thủ tục do lượt phản biện
+  6/9 bắt được. Kèm đoạn khai thẳng: **S2 − S1/202 = −2,44 [−3,53;−1,34] thoả cả hai điều kiện
+  theo chiều gây hại**, không đọc thành kết luận vì đại lượng đòi trung bình hai hạt giống.
+· ✅ **Gỡ số đã rút khỏi ch3 và ch7**: *"mẫu 1.697 bước, tức 2,6% tập huấn luyện"* (giữ 17,3%).
+· ⛔ **Chấm tay 100 câu: user quyết KHÔNG làm (6/9)** — giữ nguyên cách khai hạn chế ở ch7.
+· ⚠️ `thesis/main.pdf` **chưa chép được** (user đang mở PDF); bản 119 trang ở scratchpad phiên.
+
+### ⭐ Luận văn — ĐÃ ĐỒNG BỘ TỚI 5/9, **114 trang, 0 overfull, 0 tham chiếu hỏng** (sau lượt rà 5 agent, 5/9 sáng)
+
+Lượt 5/9 (đêm) đưa toàn bộ trạng thái sau G6 vào luận văn và deck bảo vệ. Dựng bằng
+`tectonic -X compile main.tex --outdir <scratch>/build --keep-logs` rồi chép PDF về (PDF bị
+khoá ghi khi user mở). Bản 30/8 của `chapters/` sao lưu ở scratchpad phiên 5/9.
+· **ch3** thêm §`sec:khoiungvien` (khối ứng viên ≤40, bốn luật dựng, bốn cổng G1–G4 với số
+  thật, hai nhánh `gui_sel`/`gui_sft_match`, bảy bất biến, tỉ lệ `none` 54,78/29,12/28,34, tập
+  lọc 41.191).
+· **ch4** thêm §`sec:ungvienthietke` (căn cứ 99,7/80,2/67,7 · đích `<sel>` · ba biến lệch
+  cutoff 3072 · 1 epoch · đầu vào ⇒ cấm so S1/MIN · cổng G6 63,6 = 60,6 + 3 · thủ tục τ (x16d)
+  + ba nhánh phụ (x17f) · luật quyết lượt ② (x17b)). Hình quy trình thêm chữ "ứng viên".
+· **ch5** ⛔ **bỏ hẳn "78,0% / 79,3% của trần"**, thay bằng nếp Zhao EACL 2021 (hai số cạnh
+  nhau + "khoảng cách còn lại", gọi 75,7 là *ước lượng thận trọng* theo Nangia & Bowman ACL
+  2019, giải thích vì sao không chia tỉ lệ). §`sec:donhay` thêm **Bảng `tab:d3`** (Voronoi ·
+  D.3 · D.3∧14% cho 5 nhánh + 2 sàn) và ba điều khai kèm (48% nút con · 78% từ hộp rộng · 120
+  bước container) + lỗi hệ thống Voronoi ở hàng danh sách. Bỏ ẩn dụ "giám khảo đã học đề thi".
+· **ch6** thêm §`sec:nhanhungvien` (G6 trượt + hạ vai `sel_acc` · exec 56,1 [54,5;58,0] ·
+  chỉ so Base +8,54 · **Bảng `tab:bocuoc`** 2×2 71,4/23,7/37,5/53,8 · bốn dấu hiệu + **Bảng
+  `tab:cokhoi`** · hình chữ U · **Bảng `tab:prior`** · ba hướng đã loại · ghép→MIN 60,7 · τ
+  đang chạy, kỳ vọng 0–3). Bảng chính thêm hàng nhánh ứng viên (dấu †), bảng McNemar thêm hàng
+  Ứng viên − Base, bảng trạng thái thêm 5 hàng. Sửa "Cái mà…" ×2, "đọc rất nặng", câu cụt ở
+  §hai hạt giống.
+· **ch7** thêm đoạn chẩn đoán nhánh ứng viên, hai bullet hạn chế mô hình (không đối chứng cùng
+  đầu vào · thước cổng dẫn sai), hai bullet hạn chế thước (Voronoi hàng danh sách · D.3 tính
+  sau); **Hướng phát triển viết lại**: ① train lại trên bước chạm (điều kiện τ) · ② đọc τ · ③
+  đối chứng cùng đầu vào rồi hạt 202; "khối ứng viên" không còn là hướng phát triển.
+· **ch8** FAIR đổi nhan đề *Descriptor and Preference Targets…*, 7 trang, gửi 31/8; VCL nộp 30/8.
+· **02/03**: thêm ba thuật ngữ (khối ứng viên · nhánh ứng viên · bỏ cuộc); tóm tắt Việt + Anh
+  thêm đoạn nhánh ứng viên; gỡ `---` trong bản Anh. **99**: thêm zhao2021 · nangia2019 ·
+  rajpurkar2018 · menon2021 · liu2024lost.
+· ⭐ **Rà văn phong 5/9 (user chê "câu trơn", "nhét", "mua được" giống AI/văn nói):** đã thay
+  toàn luận văn theo bảng ở memory `van-phong-luan-van` (tụt→giảm, hỏng→sai/lỗi/điểm nghẽn,
+  lọt→lẫn, gánh→chiếm, miễn phí→không tính phí, kiểu→dạng, cái→điều…), bỏ khung "Câu hỏi
+  là…"/"Vì sao…" (8 chỗ), sửa cột bảng "Trả lời câu hỏi"→"Vai trò". Slide + notes cũng đã
+  thay. ⛔ Mọi đoạn viết mới phải theo bảng đó; chuẩn tham khảo: `thesis/_reference/`.
+· ⭐⭐ **5/9 đêm, ba chỉ đạo văn bản mới của user, đã áp toàn luận văn + slide:**
+  ① **"người viết" → bỏ hẳn**: "câu (do) người viết" → **"câu chuẩn"** (có mục giải nghĩa trong
+  danh mục thuật ngữ), "câu hướng dẫn do người viết" → "do người chú thích viết"; **giảm "nó"**
+  từ 157 xuống 17 chỗ (thay bằng danh từ). ② **Gỡ toàn bộ khung "đăng ký trước"**: không còn
+  "đăng ký/khoá/niêm phong/kho phiên bản/mục sửa đổi/cam kết/thăm dò"; §4 "Bản đăng ký trước
+  và luật đọc kết quả" → **"Tiêu chí đọc kết quả"** (giữ bảng bốn kết cục + MDE); mục tiêu 4
+  của ch1 gộp vào mục tiêu 3; ch7 bỏ "Về quy trình"; nhãn "thăm dò" → "một hạt giống"; "cổng
+  chặn" → "điều kiện/tiêu chí/ngưỡng dừng". Lý do user: *"người ta chỉ quan tâm phương pháp,
+  metric, hiệu quả, thực nghiệm"*. ③ **Cắt phần rối/hội đồng không cần** (117 → **112 trang**):
+  bỏ §ghi nhận lượt train chi tiết (total_flos, resume), hai phép kiểm cơ học, đoạn B-infer,
+  "phương án OCR-trước đã loại", "hai lỗi bắt được", số đã rút 70,0, phiên bản bơm lỗi cũ,
+  hàng "bơm lỗi bản đầu AUC 1,000", ước lượng 65,0 của S2/202, đoạn tỉ lệ sinh khai báo
+  không chạm, bốn bullet hạn chế yếu; nén §Mức hai, D.3, ghi chú UI-Venus, KV-cache.
+  ⛔ **Mọi đoạn viết mới phải theo ba luật này** (memory `van-phong-luan-van`).
+· ⭐ **Tên đề tài chính thức (user gửi 5/9, đã đăng ký):** VI *"Phát sinh tự động hướng dẫn sử dụng
+  phần mềm dựa trên LLM từ các trường hợp sử dụng và giao diện người dùng"* · EN *"LLM-Based
+  Automatic Generation of Software User Guides from Use Cases and Front-End Structures"*. Đã
+  thay ở `main.tex` (\TenDeTai ngắt 4 dòng cho vừa bìa), README, bìa + footline deck. Tên cũ
+  "Sinh hướng dẫn sử dụng phần mềm từ ảnh màn hình" chỉ còn ở deck trình thầy 16/8 (chưa đụng).
+· Cùng đêm: **bỏ chữ "đối chứng"** toàn luận văn + slide → "nhánh so sánh" (CE2-S2, gui_sft_match),
+  "nhánh kiểm sàn" (ba nhánh đo sàn), "mốc so sánh lệch chủ ý" (phép ghép). Slide: không xưng
+  "em/thầy cô/hội đồng" trên chữ slide; notes đổi thành gạch ý ngắn (user tự nói), mốc giây giữ
+  từ bản kịch bản cũ. Lời cảm ơn/cam đoan/ch3/ch7 gỡ mọi đoạn kể lỗi cũ, số đã rút, đổi hướng.
+· ✅ **5/9 tối — Bảng 6.1 điền đủ BLEU-4/ROUGE-L cho 8 hàng** (`harness/text_metrics.py`, số ở
+  `report/141` §6; Base sửa 9,7/40,3 → **9,9/40,4**, cách tính tái lập đúng S1 và câu chuẩn),
+  Bảng 6.2 thêm hàng nhánh ứng viên (56,1 · 57,4 · 90,9 · 66,4), §5.10 thêm đoạn *ba thước bất
+  đồng trong cụm 57–60* (BLEU xếp MIN dưới S1, ROUGE-L xếp CE2 cao nhất). Slide dự phòng B1
+  cùng bộ số. Vẫn 112 trang, 0 overfull.
+· ✅ **5/9 sáng — lượt "agent debate khó tính" về văn phong (user yêu cầu):** 5 agent rà độc
+  lập từng cụm chương (ch1+ch2+phần đầu · ch3+ch4 · ch5 · ch6 · ch7+ch8), trợ lý làm trọng tài,
+  5 agent khác áp: **45 + 56 + 57 + 70 + 44 = 272 chỗ**, không khối nào không áp được. Bảy loại
+  lỗi rà: khẩu ngữ/ẩn dụ · câu lộ giọng AI và mẫu "mệnh đề : kể tiếp" · câu hỏi tu từ · câu cụt ·
+  câu rối · cụm dịch máy/thuật ngữ tự chế/tên biến trong văn xuôi · dấu chấm phẩy. Quyết định
+  thuật ngữ toàn kho: **"dám chọn" → "đưa ra lựa chọn"** · **"đường ống" → "quy trình"** ·
+  **"thước đồng báo" → "thước báo kèm"** · **"barem" → "mốc đối chiếu"** · "Cổng" (tiêu chí
+  kiểm) → "tiêu chí" · "nơi" (dịch *where*) → "trong đó / theo đó" · `sel_acc` trong văn xuôi →
+  "độ chính xác chọn" · "card" → "GPU" · "trượt" theo nghĩa *không đạt tiêu chí* → "không đạt"
+  (giữ "trúng/trượt" theo nghĩa lệch mục tiêu) · giữ "bỏ cuộc" và "tức". Grep cuối toàn kho: 0
+  cho đối chứng · người viết · đăng ký · thăm dò · niêm phong · dám chọn · barem · thước đồng báo
+  · đường ống; dấu `;` chỉ còn trong toán, bảng, TikZ. Deck + notes đổi cùng bộ từ (câu người
+  viết → câu chuẩn ở 11 chỗ, "Cổng chặn trượt" → "Không đạt ngưỡng dừng"). Bản trước lượt rà:
+  scratchpad phiên (`ch5_backup.tex`, `ch6_TRUOC.tex`, `ch3_dulieu.tex`, `ch4_phuongphap.tex`).
+· ✅ **5/9 tối — ba chỗ nói τ "đang chạy" đã cập nhật** theo `report/142` (ch6 §nhanhungvien +
+  `tab:trangthai`, ch7 kết luận + hướng phát triển ①②); ch4 §ungvienthietke giữ nguyên vì chỉ tả
+  thủ tục. **115 trang, 0 overfull.**
+
+**Deck bảo vệ `LUAN_VAN_SLIDE_BAOCAO.pptx` (5/9): 26 slide chính + 12 dự phòng, lời nói ~21 phút ở 135 từ/phút (mốc giây trong notes tính tự động từ số từ), để ~4 phút đệm cho 25 phút.**
+Thêm slide 22 (nhánh ứng viên: 2×2 + tiên nghiệm `none`), slide 16 thêm hàng, slide 23–25
+đánh số lại (notes JSON dời khoá), hướng phát triển viết lại, kết luận đổi nhan đề FAIR, B3
+thêm D.3, **B6 sửa "một epoch" → "hai lượt duyệt"** (số cũ sai), B7 thêm 3 hàng, hai dự phòng
+mới B11 (bảng D.3) và B12 (dấu hiệu bỏ cuộc + thủ tục τ). `make_kichban.py` đổi 25 → 26.
+Deck trình thầy `LUAN_VAN_SLIDE.pptx` (16/8) **chưa đụng**, vẫn là bản trước MIN-DESC.
+
+### Luận văn — ĐÃ ĐỒNG BỘ TỚI 30/8 (bản trước), **96 trang, 0 overfull, 0 tham chiếu hỏng**
 
 Bản 18/8 (77 trang) còn dừng ở *"S2 chưa chạy"*; ngày 30/8 đã kéo lên ngang trạng thái hiện tại.
 Dựng bằng `tectonic -X compile main.tex --outdir . --keep-logs` (KHÔNG có `xelatex` trên máy).
@@ -1315,9 +1527,65 @@ tương tác; ⚠️ `score_run.py` **không có cờ `--raw`**, nó tự suy t�
 `infer_branch.py` và `score_run.py` đều **ghi dần + xả đệm + nối tiếp được**; `score_run` gộp số
 cuối **từ tệp thô, không từ bộ nhớ**, nên chạy cắt khúc vẫn ra số toàn tập.
 
-**Nguyên tắc chi tiền:** chạy MỘT lần cho đúng; ưu tiên local/free + cache; bước tốn tiền phải
-hỏi trước. Ưu tiên **độ chính xác**, không ngại tốn thời gian lẫn tốn tiền — nhưng kết quả như
-nhau thì chọn chậm-mà-rẻ. Luôn trình bảng **tiền · thời gian · ảnh hưởng độ chính xác**.
+**Nguyên tắc chi tiền — ⭐ ƯU TIÊN TIẾT KIỆM CHI PHÍ (user chốt 5/9/2026):** mặc định chọn
+phương án **rẻ nhất cho cùng kết quả**; ưu tiên local/free + cache (Kaggle T4 miễn phí trước
+Colab trả tiền); chạy MỘT lần cho đúng; bước tốn tiền phải hỏi trước. Chỉ chi thêm khi cột
+*ảnh hưởng độ chính xác* ghi rõ **đổi ở chỗ nào, kèm bằng chứng** — không phỏng đoán, và không
+đổi thước hay giảm cỡ mẫu để rẻ. Luôn trình bảng **tiền · thời gian · ảnh hưởng độ chính xác**.
+
+⛔ **So card bằng ĐƠN VỊ MỖI LƯỢT, không bằng đơn vị mỗi giờ.** Card rẻ hơn theo giờ mà chậm
+hơn đúng tỉ lệ thì không tiết kiệm được đồng nào. Đo thật 11/8 (`report/110` mục 4h): L4
+**31,26 s/bước** vs A100 **10,70** (nhanh 2,92×) trong khi giá gấp **3,44×**; ở cấu hình P10,
+tám lượt tốn **858 đơn vị trên A100 vs 856 trên L4** — ngang nhau về tiền, nhưng L4 mất **3,4×
+thời gian tường** nên thêm hàng chục mối nối phiên, mỗi mối một lần rủi ro mất bước. Kết luận
+*"chuyện chọn card đóng lại"* của 11/8 vẫn đứng.
+⛔ **VRAM dư KHÔNG phải tiền phí.** Thấy lượt chỉ dùng 17,5/40 GB trên A100 không có nghĩa là
+đang trả thừa — Colab tính theo **giờ**, không theo GB. Và L4 chỉ có ~22 GB dùng được: biên
+4,5 GB đo trên mẫu thường **không** kết luận được, vì luật P10 đã ghi *mọi cấu hình đụng bộ nhớ
+phải thử lại trên mẫu dài nhất*; L4 từng tràn ở đúng bài này khi bỏ 4-bit.
+⚠️ Với lượt **GRPO** còn thêm khâu sinh (bám băng thông bộ nhớ — L4 ~300 GB/s vs A100 ~1.555
+GB/s) nên tỉ lệ chậm nhiều khả năng **tệ hơn** 2,92× của train thuần; **chưa đo**, đừng khẳng
+định theo cả hai chiều.
+✅ **Ba chỗ tiết kiệm thật đã kiểm chứng:** khâu không đụng GPU chạy runtime **CPU** (phiên 0:
+0 đơn vị thay vì 43) · khâu **suy luận/chấm** chạy **Kaggle T4 miễn phí** (30 h/tuần) thay vì
+Colab trả tiền · giữ `*_raw.jsonl` để đổi luật chấm mà **không gọi lại bộ trỏ** (đã cứu trọn
+một lượt 5,6 h).
+⛔ Giá GPU phải **tra tại thời điểm quyết, cấm nhớ** — hai con số nhớ sai từng suýt dẫn tới
+thuê nhầm máy.
+
+### ⭐ THỦ TỤC CHỌN MÁY — bắt buộc chạy trước MỌI lượt GPU (user chốt 5/9/2026)
+
+*"Cái nào không cần GPU thì dùng CPU. Cần GPU thì đo RAM trước: card rẻ đủ RAM thì dùng card
+rẻ, vượt mới lên A100 — chứ cái nào cũng A100 sao chịu nổi."*
+
+**Bậc thang, luôn đi từ trên xuống, dừng ở bậc đầu tiên chạy được:**
+
+| bậc | máy | giá | dùng khi |
+|---|---|---|---|
+| 0 | **CPU** (Colab/WSL) | 0 đơn vị | khâu không gọi GPU lần nào — dựng dữ liệu, OCR (onnxruntime CPU), tính lại từ `*_raw.jsonl`, mọi phép đo 0 GPU |
+| 1 | **Kaggle T4** (×2, 16 GB/card) | **0 đồng**, 30 h/tuần | suy luận, chấm điểm, sequence-score — đường đã đi nhiều lần |
+| 2 | **L4** (~22 GB dùng được) | ~1/3,4 giá A100 mỗi giờ | lượt train/sinh có **đỉnh VRAM ≤ ~17 GB đo trên mẫu nặng nhất** và không bị chậm quá tỉ lệ giá |
+| 3 | **A100 40 GB** | đắt nhất | chỉ khi bậc 2 tràn bộ nhớ, **hoặc** đo được là chậm hơn nhiều hơn tỉ lệ giá |
+
+⛔ **Mặc định probe trên card RẺ trước; A100 phải có số đo biện minh** (user nhắc 5/9: *"mốt
+bạn nên chạy thử trước rồi quyết định A100 tại vì tốn tiền"*). Ô thăm dò dùng lại được cho mọi
+lượt: **`harness/chon_may.md`**.
+⭐ **Luật quyết theo tỉ số thời gian `giờ_L4 / giờ_A100`** (user chốt 5/9): **≤ ~1,4×** — ví dụ
+A100 5 h thì L4 6–7 h — **chọn L4** (rẻ hơn ~2,5 lần tổng tiền, chậm thêm 1–2 giờ); **> ~1,4×**
+mới lên A100. Train SFT đo được 2,92× nên nằm ở ô A100, quyết định 11/8 vẫn đúng.
+⭐ **Phân loại chỗ nghẽn trước khi đo:** khâu nghẽn **CPU/IO** (dựng dữ liệu, OCR, mã hoá token)
+thì L4 **ngang** A100 vì card nằm không — đo 11/8, cùng 12 lõi, L4 rẻ hơn 3,6 lần cho cùng thời
+gian; chỉ khâu nghẽn **GPU compute** (train, sinh mẫu) mới cần đo s/bước.
+
+**Hai phép đo phải có TRƯỚC khi chọn (không đoán):**
+① **đỉnh VRAM** `torch.cuda.max_memory_allocated()/2**30` — đo trên **mẫu nặng nhất của nhánh
+nặng nhất**, không phải mẫu đầu tập (luật P10, đã trả giá: L4 chạy ngọt mẫu thường rồi tràn ở
+200 mẫu dài nhất). Chốt bậc 2 khi đỉnh ≤ ~17 GB, tức chừa biên ≥ 25% trên 22 GB.
+② **s/bước** ở cùng cấu hình trên cả hai card, rồi so **đơn vị mỗi lượt** = giá/giờ × giờ/lượt.
+Chi phí của cả hai phép đo là **vài đơn vị** (12 phép đo trên 2 card ngày 11/8 tốn ~4 đơn vị).
+
+⛔ **Không đổi card giữa một lượt đang chạy** — mất tiến độ từ điểm lưu gần nhất, cộng 15–25
+phút dựng lại dữ liệu và ảnh. Quyết chọn card ở **ô thăm dò**, trước khi bấm lượt thật.
 
 ---
 

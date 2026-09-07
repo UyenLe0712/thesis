@@ -23,7 +23,7 @@ AC & AndroidControl & Bộ dữ liệu điều khiển Android (NeurIPS 2024) \\
 AITW & AndroidInTheWild & Bộ dữ liệu Android quy mô lớn (NeurIPS 2023) \\
 OCR & Optical Character Recognition & Nhận dạng chữ trong ảnh \\
 VH & View Hierarchy & Cây phân cấp khung nhìn của màn hình Android \\
-a11y & Accessibility (tree) & Cây trợ năng; nguồn khai báo vai trò và tên phần tử \\
+a11y & Accessibility (tree) & Cây trợ năng, nguồn khai báo vai trò và tên phần tử \\
 REG & Referring Expression Generation & Sinh biểu thức quy chiếu (mô tả phân biệt một đối tượng) \\
 MDE & Minimum Detectable Effect & Mức chênh lệch nhỏ nhất còn phân biệt được với nhiễu \\
 KTC & (Confidence Interval) & Khoảng tin cậy \\
@@ -31,18 +31,24 @@ dp & density-independent pixel & Đơn vị độ dài độc lập mật độ 
 pp & percentage point & Điểm phần trăm (chênh lệch tuyệt đối giữa hai tỉ lệ) \\
 ORPO & Odds Ratio Preference Optimization & Mục tiêu ưu tiên gắn thẳng vào hàm mất mát có
 giám sát, không cần mô hình tham chiếu \\
+GRPO & Group Relative Policy Optimization & Học tăng cường theo nhóm câu trả lời cùng
+một câu nhắc, lấy trung bình nhóm làm mốc so sánh thay cho một mô hình phê bình riêng \\
 \midrule
 \multicolumn{3}{@{}l@{}}{\textit{Thuật ngữ riêng của luận văn}} \\
 \midrule
 \multicolumn{2}{@{}p{8.2cm}}{\textit{executability} (tính thực thi được)}
 & Thước đo mà luận văn đề xuất. Một câu hướng dẫn được tính là đúng nếu đưa câu đó cho
-một mô hình định vị độc lập thì nó chỉ trúng phần tử mà người dùng đã chạm \\
+một mô hình định vị độc lập thì mô hình ấy chỉ trúng phần tử mà người dùng đã chạm \\
 \multicolumn{2}{@{}p{8.2cm}}{Mô hình định vị phần tử (\textit{GUI grounding model})}
 & Mô hình nhận một câu mô tả cùng một ảnh màn hình và trả về toạ độ của phần tử được mô
-tả. Ở đây nó đóng vai \textbf{dụng cụ đo}, không phải một hệ thống đem ra so sánh \\
+tả. Trong luận văn, mô hình này đóng vai \textbf{dụng cụ đo}, không phải một hệ thống đem ra so sánh \\
 \multicolumn{2}{@{}p{8.2cm}}{Dòng khai báo (\textit{descriptor})}
 & Một dòng có cấu trúc gồm bốn ô, \code{[vai trò | tên | toạ độ | dấu hiệu phân biệt]},
 mà mô hình phải viết ra trước khi viết câu hướng dẫn. Dòng này bị cắt bỏ trước khi chấm \\
+\multicolumn{2}{@{}p{8.2cm}}{Câu chuẩn}
+& Câu hướng dẫn từng bước do người chú thích của AndroidControl viết cho chính bước đó.
+Luận văn dùng câu này làm câu tham chiếu, và khi đưa chính câu này đi chấm thì được mốc
+trần của thước \\
 \multicolumn{2}{@{}p{8.2cm}}{Ô Voronoi}
 & Vùng trên màn hình gồm những điểm nằm gần phần tử cần chạm hơn bất kỳ phần tử nào khác.
 Luận văn dùng vùng này để xác định thế nào là trỏ trúng, thay cho một ngưỡng sai số cố
@@ -51,17 +57,17 @@ Luận văn dùng vùng này để xác định thế nào là trỏ trúng, tha
 & Bước thao tác mà người dùng chạm vào màn hình, tức bước có toạ độ đích. Toàn bộ điểm số
 của luận văn tính trên nhóm bước này \\
 \multicolumn{2}{@{}p{8.2cm}}{Phần tử cần chạm}
-& Nút, ô nhập hoặc mục danh sách mà người dùng đã chạm ở bước đang xét, tức thứ mà câu
+& Nút, ô nhập hoặc mục danh sách mà người dùng đã chạm ở bước đang xét, tức đối tượng mà câu
 hướng dẫn phải chỉ ra được \\
 \multicolumn{2}{@{}p{8.2cm}}{Quần thể chấm}
 & Tập $4.463$ bước chạm của tập kiểm, dùng chung cho mọi nhánh, nên hai nhánh bất kỳ luôn
 so được với nhau trên cùng những bước \\
 \multicolumn{2}{@{}p{8.2cm}}{Trần và sàn của thước}
-& Trần là điểm mà câu do người viết đạt được, tức mức cao nhất mà thước còn cho. Sàn là
+& Trần là điểm mà câu chuẩn đạt được, tức mức cao nhất mà thước đo được. Sàn là
 điểm mà một câu không mang thông tin gì vẫn đạt được. Mọi điểm số đọc trong dải giữa hai
 mức đó \\
 \multicolumn{2}{@{}p{8.2cm}}{Nhánh nền và nhánh xử lý}
-& Nhánh nền là nhánh không có thành phần đề xuất, dùng làm mốc so. Nhánh xử lý là nhánh
+& Nhánh nền là nhánh không có thành phần đề xuất, dùng làm mốc so sánh. Nhánh xử lý là nhánh
 có thành phần đó. Chênh lệch giữa hai nhánh chính là đại lượng cần đo \\
 \multicolumn{2}{@{}p{8.2cm}}{Hạt giống}
 & Số dùng để khởi tạo phần ngẫu nhiên của một lượt huấn luyện. Hai lượt chỉ khác hạt
@@ -78,8 +84,18 @@ thấy những khác biệt thật hay không \\
 & Chặng huấn luyện thứ hai, nối tiếp nhánh S2. Mô hình học từ những cặp câu chỉ khác nhau
 ở dòng khai báo, còn phần câu hướng dẫn thì giống hệt nhau (Mục~\ref{sec:mindescthietke}) \\
 \multicolumn{2}{@{}p{8.2cm}}{CE2-S2}
-& Nhánh đối chứng của MIN-DESC, dùng để tách xem phần cải thiện nào là của mục tiêu huấn
-luyện mới và phần nào chỉ do được học thêm \\
+& Nhánh so sánh của MIN-DESC, dùng để tách xem phần cải thiện nào là của mục tiêu huấn
+luyện mới và phần nào chỉ do mô hình được huấn luyện thêm \\
+\multicolumn{2}{@{}p{8.2cm}}{Khối ứng viên}
+& Danh sách tối đa $40$ phần tử của một màn hình, mỗi dòng gồm tên và toạ độ, dựng sẵn từ
+cây trợ năng và chữ đọc được, đưa vào câu nhắc của nhánh ứng viên
+(Mục~\ref{sec:khoiungvien}) \\
+\multicolumn{2}{@{}p{8.2cm}}{Nhánh ứng viên (gui\_sel)}
+& Nhánh mà mô hình chọn phần tử cần chạm trong khối ứng viên thay vì tự viết dòng khai
+báo, thẻ chọn bị cắt bỏ trước khi chấm (Mục~\ref{sec:ungvienthietke}) \\
+\multicolumn{2}{@{}p{8.2cm}}{Bỏ cuộc}
+& Hành vi của nhánh ứng viên khi phát thẻ \code{none} thay vì chọn một phần tử. Bỏ cuộc
+là đúng khi khối không có đáp án, và là sai khi khối có đáp án \\
 \bottomrule
 \end{longtable}
 \clearpage

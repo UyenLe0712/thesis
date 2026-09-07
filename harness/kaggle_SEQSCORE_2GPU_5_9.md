@@ -2,6 +2,11 @@
 
 > Thay **ô 7** của `kaggle_SEQSCORE_SAU_O.md`. Ô 1 · 2 · 3 · 4 giữ nguyên, dán y hệt.
 > Ô 5 và 6 (probe) **không** đưa vào commit.
+> ⛔ **Commit 2 (nối tiếp) — ô 2 PHẢI là bản đã vá 5/9:** output của commit 1 chứa cả `ws/harness/`,
+> nên khi gắn output làm input, ô 2 thấy **hai** bản `seq_score_sel.py` cùng dấu vân tay và dừng.
+> Bản vá thêm đúng một dòng sau `src = glob.glob(...)`:
+> `src = [q for q in src if "/kaggle/input/notebooks/" not in q]`
+> (`kaggle_SEQSCORE_SAU_O.md` đã sinh lại với dòng này). Dán lại ô 2 trước khi commit 2.
 
 ## Vì sao phải viết lại ô 7
 

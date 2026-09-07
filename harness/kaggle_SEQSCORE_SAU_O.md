@@ -61,6 +61,10 @@ WS = "/kaggle/working/ws"; os.makedirs(WS, exist_ok=True)
 CAN_FILE = "seq_score_sel.py"
 CAN = "ĐỆM CỦA QWEN NẰM BÊN PHẢI"                  # dấu vân tay bản 5/9 lượt 2 (vá đệm phải)
 src = glob.glob(f"/kaggle/input/**/harness/{CAN_FILE}", recursive=True)
+# ⛔ BÀI HỌC 5/9 (commit 2): gắn OUTPUT của chính notebook làm input để nối tiếp thì trong
+#    /kaggle/input/notebooks/<tên>/ws/harness/ có một bản CHÉP của mã, cùng dấu vân tay ⇒ assert
+#    "đúng một bản" nổ. Mã chỉ lấy từ dataset; output notebook chỉ để lấy tệp seqscores dở.
+src = [q for q in src if "/kaggle/input/notebooks/" not in q]
 assert src, f"DỪNG: chưa thấy harness/{CAN_FILE} trong /kaggle/input"
 ok = []
 for q in src:

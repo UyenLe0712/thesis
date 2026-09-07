@@ -1,6 +1,6 @@
 # Luận văn thạc sĩ — thư mục `thesis/`
 
-Bản LaTeX của luận văn **"Sinh hướng dẫn sử dụng phần mềm từ ảnh màn hình"**,
+Bản LaTeX của luận văn **"Phát sinh tự động hướng dẫn sử dụng phần mềm dựa trên LLM từ các trường hợp sử dụng và giao diện người dùng"**,
 trình bày theo mẫu luận văn thạc sĩ Trường ĐH Khoa học Tự nhiên, ĐHQG-HCM.
 
 ---
@@ -12,7 +12,7 @@ cd thesis
 ./build.sh          # hoặc:  tectonic main.tex
 ```
 
-Ra `thesis/main.pdf`. Hiện **70 trang**, biên dịch sạch, không có tham chiếu hay trích
+Ra `thesis/main.pdf`. Hiện **117 trang** (bản 5/9/2026), biên dịch sạch, không có tham chiếu hay trích
 dẫn hỏng.
 
 Yêu cầu: `tectonic` (đã có sẵn ở `~/bin/tectonic` trên máy này). Tectonic tự tải các gói
@@ -56,7 +56,7 @@ thể bỏ sót.
 
 | Biến | Giá trị hiện tại | Trạng thái |
 |---|---|---|
-| `\TenDeTai` | Sinh hướng dẫn sử dụng phần mềm từ ảnh màn hình | lấy từ `LUAN_VAN_SLIDE.pptx` |
+| `\TenDeTai` | Phát sinh tự động hướng dẫn sử dụng phần mềm dựa trên LLM từ các trường hợp sử dụng và giao diện người dùng | tên đã đăng ký (user gửi 5/9) |
 | `\HocVien` | Lê Đoàn Phương Uyên | |
 | `\GVHD` | TS. Nguyễn Hồng Bửu Long | **kiểm lại học hàm/học vị** |
 | `\MSHV` | 24C15039 | suy từ email trong `paper/fair2026/main.tex`, **cần xác nhận** |

@@ -15,22 +15,23 @@ Cơ sở đào tạo: & Trường ĐH Khoa học Tự nhiên, ĐHQG-HCM \\
 
 \subsection*{1. Tóm tắt nội dung luận văn}
 
-Các hệ thống tác tử giao diện hiện nay nhìn ảnh màn hình rồi sinh ra toạ độ để máy tự
-bấm. Luận văn giữ nguyên đầu vào đó nhưng đổi đầu ra. Thay vì một toạ độ cho máy, mô hình
-viết một câu tiếng Anh cho người đọc, nói rõ cần chạm vào phần tử nào trên màn hình.
+Các hệ thống tác tử giao diện hiện nay nhìn ảnh màn hình rồi sinh ra toạ độ để phần mềm tự
+thao tác. Luận văn giữ nguyên đầu vào đó nhưng đổi đầu ra. Thay vì một toạ độ cho máy, mô hình
+viết một câu tiếng Anh cho người đọc, nói rõ cần chạm vào phần tử nào trên màn hình. Đầu vào gồm trường hợp sử dụng, tức mục tiêu người dùng đang thực hiện cùng các
+bước đã làm, và giao diện người dùng, tức ảnh màn hình đang mở cùng chữ đọc được trên đó.
 
 Khó khăn lớn nhất không nằm ở việc sinh câu mà ở việc chấm câu. Cùng một nút có nhiều
-cách gọi tên đều đúng, chẳng hạn ``thanh tìm kiếm'' và ``biểu tượng kính lúp'', nên không
+cách gọi tên đều đúng, ví dụ như ``thanh tìm kiếm'' và ``biểu tượng kính lúp'', nên không
 thể lấy một câu chuẩn duy nhất làm đáp án. Vì vậy phần lớn công sức của luận văn dành cho
 việc xây dựng và kiểm chứng một thước đo dùng được.
 
 Thước đo được đề xuất có tên \textbf{executability}. Câu do mô hình sinh ra được đưa cho
-một mô hình định vị phần tử độc lập, và mô hình này không hề nhìn thấy đáp án. Bước được
+một mô hình định vị phần tử độc lập, và mô hình này không được cung cấp đáp án. Bước được
 tính là đúng khi mô hình định vị chỉ trúng phần tử mà người dùng đã chạm, đồng thời câu
 gọi đúng loại thao tác. Trước khi dùng thước để kết luận bất cứ điều gì, luận văn đo chính
 thước đó. Sai số của dụng cụ đo là $0{,}7\%$ bề ngang màn hình, thấp hơn nhiều so với
-ngưỡng $3\%$ đặt ra từ trước. Đưa chính câu do người viết đi chấm thì được $75{,}7\%$, và
-đây là mức trần mà mọi điểm số khác phải đọc trên nền đó. Ở đầu còn lại, nếu thay câu bằng
+ngưỡng $3\%$ đặt ra từ trước. Đưa chính câu chuẩn đi chấm thì được $75{,}7\%$, và
+mọi điểm số khác phải được đọc trên nền mức trần này. Ở đầu còn lại, nếu thay câu bằng
 một câu chung chung không nói phần tử nào thì điểm chỉ còn $12{,}0\%$, và nếu thay bằng
 câu thật của một màn hình khác thì còn $6{,}1\%$. Hai con số này cho thấy thước đo phản
 ứng theo nội dung của câu chứ không theo cách hành văn. Cuối cùng, chấm lại toàn bộ bằng
@@ -41,58 +42,60 @@ Về phía mô hình, luận văn chuyển bộ dữ liệu AndroidControl thàn
 $64.567$ bước, hoàn toàn tự động, không thuê người gán nhãn. Thành phần được đề xuất là
 ``mô tả phân biệt trước, phát ngôn sau'': trước khi viết câu, mô hình phải viết ra một
 dòng khai báo về phần tử cần chạm gồm vai trò, tên, toạ độ và một dấu hiệu để phân biệt phần tử ấy với các phần tử giống nó. Dòng khai báo này bị cắt bỏ trước khi chấm, nên nếu điểm có tăng thì
-đó là do hành vi của mô hình thay đổi, không phải do nó được cho thêm thông tin.
+đó là do hành vi của mô hình thay đổi, không phải do mô hình được cho thêm thông tin.
 
 Trên $4.463$ bước chạm của tập kiểm, mô hình Qwen2.5-VL-3B sau khi tinh chỉnh đạt
 $59{,}1\%$, so với $47{,}6\%$ của chính mô hình đó khi chưa tinh chỉnh. Khoảng cách
 $11{,}5$ điểm này vẫn giữ nguyên sau khi kiểm sáu cách giải thích khác. Nhánh mang thành
 phần được đề xuất đạt $57{,}2\%$, tức thấp hơn nhánh nền $1{,}93$ điểm. Mức chênh đó nằm
-trong dải mà luật đọc kết quả, khoá từ trước khi có số, gọi là \emph{không kết luận được};
-hạt giống thứ hai của nhánh này bị huỷ vì hết ngân sách máy, nên kết quả dừng lại ở đó.
+dưới mức chênh nhỏ nhất mà thiết kế phát hiện được, nên là kết quả \emph{không kết luận được}.
+Hạt giống thứ hai của nhánh này bị huỷ vì hết ngân sách máy, nên kết quả dừng lại ở đó.
 Một chặng huấn luyện tiếp theo đạt $60{,}0\%$, cao nhất trong các mô hình đã đo, nhưng khi
-tách riêng phần công thì $78\%$ mức tăng thuộc về nhánh đối chứng chứ không thuộc về mục
+tách riêng phần đóng góp thì $78\%$ mức tăng thuộc về nhánh so sánh chứ không thuộc về mục
 tiêu huấn luyện mới.
 
 Phần đóng góp cuối là một chẩn đoán ở mức từng bước. Khi mô hình khai báo đúng phần tử,
-điều xảy ra ở $60{,}6\%$ số bước, nó viết câu tốt hơn nhánh nền $8{,}83$ điểm và vượt cả
-mức của câu do người viết trên nhóm bước đó. Khi khai báo sai, nó thấp hơn $11{,}12$ điểm.
-Hai chiều gần như triệt tiêu nhau, và đó là lý do khoảng cách tổng cộng không đáng kể. Cách làm này không sai về nguyên tắc; cái chặn nó lại là độ chính xác của chính
-dòng khai báo.
+điều xảy ra ở $60{,}6\%$ số bước, mô hình viết câu tốt hơn nhánh nền $8{,}83$ điểm và vượt cả
+mức của câu chuẩn trên nhóm bước đó. Khi khai báo sai, mô hình thấp hơn $11{,}12$ điểm.
+Hai chiều gần như triệt tiêu nhau, nên khoảng cách tổng cộng không đáng kể. Cơ chế này
+không sai về nguyên tắc, mà bị giới hạn bởi độ chính xác của chính
+dòng khai báo. Một nhánh cuối, huấn luyện đầu tháng $9$, đổi dòng khai báo từ sinh tự do
+sang chọn trong một danh sách ứng viên dựng sẵn của chính màn hình. Nhánh này không đạt
+ngưỡng dừng của thiết kế và chỉ đạt $56{,}1\%$, nhưng khi danh sách có đáp án và mô hình đưa ra lựa chọn thì
+mô hình đạt $71{,}4\%$, cách câu chuẩn $4{,}3$ điểm. Điểm yếu là mô hình bỏ cuộc sai ở
+$27{,}3\%$ số bước có đáp án, và nguyên nhân đo được gần nhất là hơn một nửa mẫu huấn
+luyện mang nhãn bỏ cuộc.
 
 \subsection*{2. Những kết quả mới của luận văn}
 
 \begin{itemize}[leftmargin=1.4em]
 \item \textbf{Một thước đo không cần câu chuẩn làm đáp án.} Luật xác định thế nào là trỏ
 trúng không lấy theo một ngưỡng sai số quy ước, mà được chọn dựa trên hành vi đo được, cụ
-thể là luật nào để lọt nhiều câu chỉ sai nút thì bị loại. Thứ tự giữa các hệ thống không đổi khi
+thể là luật nào chấp nhận nhiều câu chỉ sai nút thì bị loại. Thứ tự giữa các hệ thống không đổi khi
 chấm lại bằng năm luật khác nhau.
 
-\item \textbf{Trần và sàn của thước đều được đo, không phải giả định.} Đưa chính câu do
-người viết đi chấm được $75{,}7\%$, nên mọi điểm số của mô hình phải đọc trên nền đó chứ
+\item \textbf{Trần và sàn của thước đều được đo, không phải giả định.} Đưa chính câu chuẩn đi chấm được $75{,}7\%$, nên mọi điểm số của mô hình phải đọc trên nền đó chứ
 không phải trên nền $100$. Ở đầu kia của thang đo, câu chung chung không nói phần tử nào
 chỉ được $12{,}0\%$, còn câu thật nhưng của một màn hình khác chỉ được $6{,}1\%$, thấp
-nhất trong mọi phép đo. Một ước lượng trần cũ, $70{,}0\%$ tính trên mẫu con $300$ bước,
-lệch $5{,}7$ điểm và đã bị rút.
+nhất trong mọi phép đo.
 
-\item \textbf{Một đường ống dựng dữ liệu chạy hoàn toàn tự động.} Đường ống này chuyển
-AndroidControl thành tập huấn luyện cho tác vụ mới. Đường ống ghép hai bản phân phối dữ
-liệu, kiểm phép ghép bằng một đối chứng lệch chủ ý một bước ($48\%$ so với $20\%$), rồi
+\item \textbf{Một quy trình dựng dữ liệu chạy hoàn toàn tự động.} Quy trình này chuyển
+AndroidControl thành tập huấn luyện cho tác vụ mới. Quy trình ghép hai bản phân phối dữ
+liệu, kiểm phép ghép bằng cách so với phép ghép cố ý lệch một bước ($48\%$ so với $20\%$), rồi
 dựng nhãn mô tả phần tử từ cây trợ năng kết hợp với chữ đọc được trên màn hình.
-
-\item \textbf{Một bản đăng ký trước có luật đọc cho cả bốn kết cục.} Bản này được đưa vào
-kho phiên bản trước lượt huấn luyện đầu tiên, nên cách đọc kết quả không phụ thuộc vào
-việc nhìn thấy số trước hay sau. Mọi thay đổi về sau đều ghi thành mục sửa đổi có ngày.
 
 \item \textbf{Một chẩn đoán ở mức từng bước cho thành phần được đề xuất.} Chia số bước
 theo việc dòng khai báo do mô hình tự viết có trỏ đúng phần tử hay không cho thấy cơ chế
 vẫn hoạt động đúng như giả thuyết, nhưng bị chặn bởi độ chính xác của chính dòng khai báo.
 Mô hình hơn nhánh nền $8{,}83$ điểm khi khai báo đúng, và thấp hơn $11{,}12$ điểm khi khai báo sai. Đi
 kèm là một hệ số quy đổi bằng $0{,}43$, cho phép ước lượng trước một cải thiện ở dòng khai
-báo sẽ đổi thành bao nhiêu điểm ở đầu ra.
+báo sẽ đổi thành bao nhiêu điểm ở đầu ra. Nhánh chọn trong danh sách ứng viên nối dài chẩn
+đoán này. Cơ chế chọn đạt $71{,}4\%$ khi mô hình đưa ra lựa chọn, còn điểm nghẽn mới là
+việc bỏ cuộc quá mức, được tái lập qua hai phép đo độc lập.
 
 \item \textbf{Cách đặt lại bài toán.} Trong bộ AndroidControl gốc và trong các công trình
-dùng bộ này, câu hướng dẫn từng bước do người viết là \emph{đầu vào} của mô hình. Ở đây nó
-là thứ mô hình phải sinh ra, và cũng là đầu ra duy nhất được đem chấm.
+dùng bộ này, câu hướng dẫn từng bước do người chú thích viết là \emph{đầu vào} của mô hình. Ở luận văn này, câu đó
+là đích mà mô hình phải sinh ra, và cũng là đầu ra duy nhất được đem chấm.
 \end{itemize}
 
 \vspace{1.5em}
@@ -143,8 +146,8 @@ error is 0.7\% of screen width, well below the 3\% threshold fixed in advance. S
 human-written references gives 75.7\%, the ceiling against which every other score must be
 read. At the other end of the scale, replacing every sentence with one generic sentence
 that names no element leaves only 12.0\%, and replacing them with real sentences describing
-a different screen leaves 6.1\% --- so the instrument responds to what a sentence says, not
-to how it is phrased. Re-scoring everything with a second grounding model, one not trained
+a different screen leaves 6.1\%. The instrument therefore responds to what a sentence says,
+not to how it is phrased. Re-scoring everything with a second grounding model, one not trained
 on this corpus, leaves the results essentially unchanged.
 
 On the model side, an automatic pipeline turns AndroidControl into 64,567 training steps
@@ -158,17 +161,22 @@ extra information at scoring time.
 Over 4,463 held-out touch steps, a QLoRA-tuned Qwen2.5-VL-3B reaches 59.1\% against 47.6\%
 for the same model untuned, and that gap of 11.5 points survives six checks for alternative
 explanations. The descriptor branch reaches 57.2\%, 1.93 points below the control, which
-falls inside the inconclusive band fixed before any score existed; its second seed was
-cancelled for budget reasons, so the registered quantity was never completed. A further
+falls below the minimum detectable effect of the design. Its second seed was cancelled for
+budget reasons, so the comparison remains inconclusive. A further
 training stage reaches 60.0\%, the highest of any checkpoint measured, but attributing the
 movement shows that 78\% of it belongs to the control arm rather than to the new objective.
 
 The final contribution is a step-level diagnosis. Where the model's own descriptor
 identifies the right element, which happens on 60.6\% of steps, it beats the control by
-8.83 points and exceeds even the human ceiling of that group; where the descriptor is
+8.83 points and exceeds even the human ceiling of that group. Where the descriptor is
 wrong, it loses 11.12 points. The two directions nearly cancel, which is why the overall
-gap is small. The mechanism is therefore not unsound; what limits it is the accuracy of the
-descriptor itself.
+gap is small. The mechanism is therefore not unsound. What limits it is the accuracy of the
+descriptor itself. A final branch, trained in early September, replaces free-form
+descriptor generation with selection from a candidate list built for the same screen. It
+fails its stopping threshold and reaches only 56.1\%, yet when the list contains the answer
+and the model commits to a choice it reaches 71.4\%, within 4.3 points of the human-written
+sentences. The failure is over-abstention on 27.3\% of the answerable steps, and the nearest
+measurable cause is that more than half of the training labels are the abstain label.
 
 \subsection*{2. Novelty of thesis}
 
@@ -178,21 +186,19 @@ with the hit rule selected from measured behaviour on wrong-element inputs rathe
 from a tolerance convention, and shown to preserve system ordering under five different
 rules.
 \item A measured, not assumed, ceiling: human-written references score 75.7\%, the
-level every model score must be read against. An earlier 70.0\% estimate from a
-300-step subsample was five points low and has been retracted.
+level every model score must be read against.
 \item A fully automatic pipeline converting AndroidControl into supervision for this
 task, with the cross-modal join validated against a deliberately shifted control
 (48\% against 20\%).
-\item A pre-registered ablation design fixing the reading of all four outcomes,
-committed to version control before the first training run.
 \item A measured floor as well: 12.0\% for a meaningless sentence, and 6.1\% for a real
 sentence describing the wrong screen, the lowest of anything measured, which rules out
 the register-contamination reading of the metric.
 \item A step-level diagnosis of the proposed component, together with a
 descriptor-to-executability conversion factor of 0.43 measured on our own data and used to
-issue a prediction before the run.
+issue a prediction before the run, and extended by a candidate-selection branch whose
+bottleneck is over-abstention rather than selection.
 \item Positioning: in AndroidControl and in work built on it, the human-written
-per-step instruction is an \emph{input}; here it is the generation target and the only
+per-step instruction is an \emph{input}. Here it is the generation target and the only
 scored output.
 \end{itemize}
 

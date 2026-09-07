@@ -5,157 +5,169 @@
 
 Đề tài xuất phát từ một quan sát đơn giản. Cho cùng một ảnh màn hình và cùng một mục
 tiêu, dòng nghiên cứu tác tử giao diện sinh ra toạ độ để máy tự bấm, trong khi người dùng
-đang dừng lại giữa chừng thì cần một câu tiếng Anh nói cho họ biết phải chạm vào đâu. Khi đổi đầu ra
-như vậy, khâu sinh câu không phải phần khó nhất. Phần khó nằm ở chỗ không có cách nào
-chấm được câu sinh ra, vì cùng một nút có nhiều tên gọi đều đúng và không bộ dữ liệu nào
-liệt kê hết. Vì lý do đó, phần lớn công sức của luận văn dồn vào việc dựng và kiểm chứng
+đang dừng lại giữa chừng thì cần một câu chỉ dẫn bằng tiếng Anh cho biết phải chạm vào đâu.
+Khi đổi đầu ra như vậy, khâu khó nhất không phải là sinh câu mà là chấm câu sinh ra, vì
+cùng một nút có nhiều tên gọi đều đúng và không bộ dữ liệu nào
+liệt kê hết. Vì lý do đó, phần lớn công sức của luận văn tập trung vào việc dựng và kiểm chứng
 một dụng cụ đo.
 
 \subsection*{Về đo lường}
 
 Thước \textbf{executability} đưa câu sinh ra cho một mô hình định vị phần tử độc lập,
-không hề thấy toạ độ đáp án, rồi hỏi xem điểm nó trả về có rơi vào ô Voronoi của phần tử
+không được cung cấp toạ độ đáp án, rồi kiểm xem điểm mà mô hình định vị trả về có rơi vào ô Voronoi của phần tử
 người dùng đã chạm hay không. Phần đóng góp không nằm ở bản thân ý tưởng, vốn có gốc từ
-dòng sinh biểu thức quy chiếu, mà ở khối lượng đo đạc đặt bên dưới nó. Bảy phép đo dưới đây tạo nên khối lượng ấy.
+dòng sinh biểu thức quy chiếu, mà ở khối lượng đo đạc đặt bên dưới thước. Bảy phép đo dưới đây tạo nên khối lượng ấy.
 
 \begin{itemize}[leftmargin=1.4em,itemsep=0.2em]
-\item Một cổng chặn về sai số của dụng cụ đo, khoá lại trước khi tiêu tài nguyên và suy
-ra từ hình học màn hình. Kết quả đo cho sai số trung vị $0{,}7\%$ bề ngang màn so với
+\item Một điều kiện về sai số của dụng cụ đo, đặt trước khi chấm và suy ra từ hình học
+màn hình. Kết quả đo cho sai số trung vị $0{,}7\%$ bề ngang màn so với
 ngưỡng $3\%$.
-\item Luật xác định trúng được chọn từ \emph{sàn} mà nó đạt được. Đặt trước một câu gọi
-tên sai nút, ngưỡng dung sai quy ước vẫn cho điểm $84{,}3\%$ số ca, để lại biên độ động
-quá hẹp; luật ô Voronoi hạ con số đó xuống $2{,}8\%$.
-\item Trần của thước là một đại lượng \emph{đo được}. Chấm chính câu do người viết trên
-đủ $4.463$ bước cho $75{,}7\%$, KTC $[74{,}1; 77{,}3]$. Mọi điểm số khác đọc trên nền này.
-\item Mười phép bơm lỗi với ngưỡng đóng băng trước khi chạy, và một phân tích chỉ ra
+\item Luật xác định trúng được chọn dựa trên mức \emph{sàn} mà mỗi luật đạt được. Khi nhận
+một câu gọi sai tên nút, ngưỡng dung sai quy ước vẫn cho điểm ở $84{,}3\%$ số ca, nên khoảng
+phân biệt còn lại quá hẹp. Luật ô Voronoi hạ con số đó xuống $2{,}8\%$.
+\item Trần của thước là một đại lượng \emph{đo được}. Chấm chính câu chuẩn trên
+đủ $4.463$ bước cho $75{,}7\%$, KTC $[74{,}1; 77{,}3]$. Mọi điểm số khác được đọc trên nền này.
+\item Mười phép bơm lỗi với ngưỡng đặt sẵn, và một phân tích chỉ ra
 phần lớn trong đó không thể trượt theo cấu tạo (Mục~\ref{sec:bomloi}).
-\item Sàn của thước cũng là một đại lượng đo được, và nó loại một suy đoán tự nhiên.
+\item Sàn của thước cũng là một đại lượng đo được, và con số này loại một suy đoán tự nhiên.
 Khi mọi câu bị thay bằng một câu chung chung không nói phần tử nào, mô hình định vị chỉ còn
 trúng $12{,}0\%$ số bước, chứ không phải khoảng $40\%$ như tỉ lệ đồng thuận giữa ba nhánh
 gợi ý. Khi thay bằng câu thật của một màn hình khác, tức câu đúng văn phong và đúng độ dài
-nhưng sai nội dung, điểm còn tụt tiếp xuống $6{,}1\%$, thấp nhất trong mọi phép đo của luận
-văn. Dụng cụ đo vì vậy thật sự đọc nội dung câu chứ không thưởng cho văn phong.
-\item Một phép thử độ bền, trong đó ba nhánh được chấm lại dưới năm luật khác nhau. Mức tuyệt đối di
-chuyển tới $26$ điểm, song thứ tự giữa các hệ thống giữ nguyên ở cả năm luật.
-\item Hai phép kiểm nhắm vào chính cách đọc thước. Phép thứ nhất viết lại câu do người
-viết theo ba kiểu bảo toàn nghĩa, cho hiệu ròng $+0{,}35$ điểm, KTC $[-0{,}59; +1{,}29]$ trên $1.139$ câu. Phép thứ hai
+nhưng sai nội dung, điểm còn giảm tiếp xuống $6{,}1\%$, thấp nhất trong mọi phép đo của luận
+văn. Dụng cụ đo vì vậy thật sự đọc nội dung câu chứ không cho điểm theo văn phong.
+\item Một phép thử độ bền, trong đó ba nhánh được chấm lại dưới năm luật khác nhau. Mức tuyệt đối thay
+đổi tới $26$ điểm, song thứ tự giữa các hệ thống giữ nguyên ở cả năm luật.
+\item Hai phép kiểm nhắm vào chính cách đọc thước. Phép thứ nhất viết lại câu chuẩn
+theo ba cách bảo toàn nghĩa, cho hiệu ròng $+0{,}35$ điểm, KTC $[-0{,}59; +1{,}29]$ trên $1.139$ câu. Phép thứ hai
 chấm lại bằng một mô hình định vị thứ hai không dùng AndroidControl khi huấn luyện, và giữ
 được $94\%$ độ lớn của chênh lệch dùng làm phép so đối chiếu (Mục~\ref{sec:phepB}).
 \end{itemize}
 
 \subsection*{Về dữ liệu và mô hình}
 
-Tập giám sát $64.567$ bước được dựng hoàn toàn bằng máy, không thuê người dán nhãn và
+Tập giám sát $64.567$ bước được dựng hoàn toàn bằng máy, không thuê người gán nhãn và
 không đưa nhãn do một mô hình ngôn ngữ khác sinh ra vào vòng huấn luyện. Ba phép kiểm bảo
-vệ phần này. Phép ghép đa nguồn được đối chiếu với một đối chứng lệch chủ ý ($48\%$ so với
+vệ phần này, gồm phép kiểm ghép, phép kiểm bất biến và phép kiểm rò rỉ. Phép ghép đa nguồn được đối chiếu với phép ghép cố ý lệch một bước ($48\%$ so với
 $20\%$), chín bất biến cấu trúc đều đạt ở quy mô đầy đủ, và không có tác vụ nào trùng giữa
 tập huấn luyện với tập kiểm. Thành phần đề xuất đã chạy trên nền dữ liệu đó, ở một hạt giống, cùng
-nhánh đối chứng quy công của nó; phần chưa kiểm được là \emph{hiệu lực} của thành phần, vì
-điều đó đòi hạt giống thứ hai.
+nhánh so sánh để tách công tương ứng. Phần chưa kiểm được là \emph{hiệu lực} của thành phần, vì
+phép kiểm ấy đòi hỏi hạt giống thứ hai.
 
 \subsection*{Về kết quả định lượng}
 
 Trên $4.463$ bước chạm, mô hình Qwen2.5-VL-3B sau tinh chỉnh QLoRA đạt $59{,}1\%$, trong
-khi chính mô hình đó khi chưa tinh chỉnh chỉ đạt $47{,}6\%$; cả hai đọc trên nền trần
-$75{,}7\%$. Chênh lệch ghép cặp $11{,}5$ điểm ($\chi^2 = 243{,}2$, $p < 0{,}001$) giữ
+khi chính mô hình đó khi chưa tinh chỉnh chỉ đạt $47{,}6\%$. Cả hai con số được đọc trên nền
+trần $75{,}7\%$. Chênh lệch ghép cặp $11{,}5$ điểm ($\chi^2 = 243{,}2$, $p < 0{,}001$) giữ
 nguyên sau khi kiểm \emph{sáu} cách giải thích thay thế, kể cả cách mạnh nhất là khả năng
-dụng cụ đo đã quen văn phong của bộ ngữ liệu, vốn chỉ loại trừ được sau khi chấm lại bằng
+dụng cụ đo đã tiếp xúc với văn phong của bộ ngữ liệu, vốn chỉ loại trừ được sau khi chấm lại bằng
 một mô hình định vị thứ hai. Cách còn lại, bắt chước văn phong người chú thích, không loại được theo hướng này và được giữ nguyên trong bảng.
-Trong năm cách đã loại được có một cách mà thước dựa trên câu chuẩn không tự làm giúp, đó
-là loại bỏ toàn bộ những câu mô hình chép lại nguyên văn câu chuẩn; sau khi loại thì khoảng
+Trong năm cách đã loại được có một cách mà thước dựa trên câu chuẩn không tự thực hiện được,
+là loại bỏ toàn bộ những câu mô hình chép lại nguyên văn câu chuẩn. Sau khi loại thì khoảng
 cách vẫn còn $8{,}4$ điểm. Ba khoảng tin cậy rời
-nhau, cho thấy dụng cụ đo tách được hai hệ thống thật.
+nhau, cho thấy dụng cụ đo thực sự tách được hai hệ thống.
 
-Về phía nhánh xử lý, ba con số là kết quả của đề tài và cả ba mang nhãn thăm dò vì chỉ có
-một hạt giống. Nhánh sinh khai báo trước đạt $57{,}2\%$, thấp hơn nhánh nền $1{,}93$ điểm
-và nằm trong dải không kết luận được; dấu giữ nguyên dưới cả mô hình định vị thứ hai.
+Về phía các nhánh xử lý, đề tài thu được ba con số, và cả ba đều là kết quả trên một hạt
+giống. Nhánh sinh khai báo trước đạt $57{,}2\%$, thấp hơn nhánh nền $1{,}93$ điểm
+và nằm trong dải không kết luận được. Dấu giữ nguyên dưới cả mô hình định vị thứ hai.
 Chặng huấn luyện tiếp theo bằng mục tiêu ưu tiên ở tầng khai báo đạt $60{,}0\%$, cao nhất
 trong mọi điểm lưu đã đo, nhưng phép tách công cho thấy $78\%$ mức tăng thuộc về nhánh
-đối chứng học có giám sát thuần, và tầng khai báo cho kết luận cùng chiều với tỉ lệ $88\%$. Sau
-cùng, chặng đó cũng không vượt được học có giám sát trơn, với chênh lệch $+0{,}94$ điểm và
-$p = 0{,}11$.
-
-\subsection*{Về quy trình}
-
-Thiết kế so sánh, cùng luật đọc cho cả bốn kết cục có thể xảy ra, được đưa vào kho phiên
-bản trước lượt huấn luyện đầu tiên. Các mục sửa đổi được ghi kèm ngày tháng ở cuối bản đăng ký, phần
-lớn ra đời khi chưa tồn tại bất kỳ điểm số nào. Những con số bị rút trong quá
-trình làm cũng được giữ lại cùng lý do rút, chẳng hạn ước lượng trần $70{,}0\%$ tính trên
-mẫu con $300$ bước đã bị thay bởi $75{,}7\%$ đo trên toàn tập.
+so sánh học có giám sát thuần, và phép tách ở tầng khai báo cho kết luận cùng chiều với tỉ
+lệ $88\%$. Sau
+cùng, chặng đó cũng không vượt được học có giám sát thuần, với chênh lệch $+0{,}94$ điểm và
+$p = 0{,}11$. Nhánh ứng viên, huấn luyện trong một điều kiện thí nghiệm khác, đạt $56{,}1\%$
+và chỉ so được với mô hình chưa tinh chỉnh, hơn $8{,}54$ điểm. Nhánh so sánh cùng đầu vào
+của nhánh này không được huấn luyện nên không con số nào của nhánh nói được về công của đầu chọn.
 
 \subsection*{Về chẩn đoán}
 
 Đóng góp cuối là một bảng ở mức từng bước mà phần lớn công trình cùng dạng không trình
 bày. Khi ô khai báo do chính mô hình sinh ra trỏ đúng phần tử, ở $60{,}6\%$ số bước, thành phần
-đề xuất hơn nhánh nền $8{,}83$ điểm và vượt cả trần câu người viết của nhóm đó; khi trỏ sai, nó thấp hơn $11{,}12$ điểm. Cơ chế không hỏng, mà nó bị chặn bởi độ chính xác khai báo, và
-$63\%$ dư địa còn lại nằm gọn trong một ô duy nhất. Nếu chặn được vế âm thì mức được là
-$+5{,}4$ điểm, gấp gần hai lần rưỡi ngưỡng phát hiện. Đó là một mục tiêu định lượng cho
-việc tiếp theo, không phải một lời hứa.
+đề xuất hơn nhánh nền $8{,}83$ điểm và vượt cả trần câu chuẩn của nhóm đó. Khi ô này trỏ
+sai, thành phần ấy thấp hơn nhánh nền $11{,}12$ điểm. Cơ chế không sai, mà bị chặn bởi độ
+chính xác khai báo, và
+$63\%$ dư địa còn lại nằm trọn trong một ô duy nhất. Nếu chặn được vế âm thì mức tăng ước
+tính là $+5{,}4$ điểm, gấp gần hai lần rưỡi ngưỡng phát hiện. Con số này là một mục tiêu
+định lượng cho việc tiếp theo, chưa phải kết quả đã đo.
+
+Nhánh ứng viên nối dài chẩn đoán này thêm một bậc. Khi ô khai báo đổi từ sinh tự do sang
+chọn trong danh sách của chính màn hình, cơ chế chọn hoạt động đúng: ở những bước danh sách
+có đáp án và mô hình đưa ra lựa chọn, mô hình đạt $71{,}4\%$, cách câu chuẩn $4{,}3$ điểm. Điểm
+nghẽn mới là việc bỏ cuộc quá mức, ở $27{,}3\%$ số bước có đáp án, và con số này tái lập
+qua hai phép đo độc lập. Bốn dấu hiệu đi kèm đều đo được, trong đó ba dấu hiệu lặp lại hiện
+tượng đã thấy ở các nhánh trước. Nguyên nhân gần nhất có thể đo được là tiên nghiệm của nhãn
+bỏ cuộc. Hơn một nửa mẫu huấn luyện mang nhãn này vì mọi bước không chạm đều nhận nó, trong
+khi nếu chỉ tính riêng bước chạm thì tỉ lệ nhãn này chỉ còn $29{,}1\%$. Đây mới là một quan
+sát tương quan, chưa được xác lập thành quan hệ
+nhân quả, và dữ liệu để kiểm giả thuyết này đã được dựng sẵn.
 
 \subsection*{Về mức độ hoàn thành}
 
 Đại lượng chính của thiết kế, $\Delta = \text{S2} - \text{S1}$ tính bằng trung bình hai
 hạt giống mỗi nhánh, \textbf{không hoàn tất}. Hạt giống thứ hai của nhánh xử lý bị huỷ vì
 ngân sách máy, và hệ quả là vĩnh viễn chứ không tạm thời (Mục~\ref{sec:trangthai}). Phép so
-S1 với Base, tuy đã có số, không được dùng để thế chỗ cho nó. Điều kiện không gây hại đã
-đăng ký cũng \textbf{trượt}, mất $19{,}75$ điểm ở lớp thao tác trên bước không chạm, và
-nguyên nhân quy được về thiết kế dữ liệu của chặng hai chứ không về mục tiêu huấn luyện
-(Mục~\ref{sec:khongcham}).
+S1 với Base, tuy đã có số, không được dùng để thay thế đại lượng ấy. Điều kiện không gây
+hại của thiết kế cũng \textbf{không đạt}, với mức giảm $19{,}75$ điểm ở lớp thao tác trên
+bước không chạm,
+và nguyên nhân quy được về thiết kế dữ liệu của chặng hai chứ không về mục tiêu huấn luyện
+(Mục~\ref{sec:khongcham}). Với nhánh ứng viên, ngưỡng dừng không đạt nên năm lượt còn lại
+của kế hoạch không chạy; thủ tục chọn ngưỡng bỏ cuộc cho mức cải thiện tốt nhất $+8$ trên
+$1.400$ bước, dưới ngưỡng, nên lượt huấn luyện lại trên riêng bước chạm cũng không chạy.
 
 \section{Hạn chế}
 \label{sec:hanche}
 
-Phần này liệt kê những chỗ mà kết luận của luận văn còn hở, kèm số đo cho từng chỗ khi có
+Phần này liệt kê những chỗ mà kết luận của luận văn còn để ngỏ, kèm số đo cho từng chỗ khi có
 thể đo được.
 
 \subsection{Hạn chế của dụng cụ đo}
 
 \begin{itemize}[leftmargin=1.4em,itemsep=0.35em]
 
-\item \textbf{Khả năng nhiễm văn phong đã loại trừ được, nhưng cùng họ mô hình thì chưa.}
-Dụng cụ chính, UGround-V1-2B, có $47$ nghìn phần tử nhãn người lấy từ phần huấn luyện của
-AndroidControl trong công thức dữ liệu, nên nó đã quen văn phong chú thích mà các nhánh tinh
+\item \textbf{Khả năng thiên vị theo văn phong đã được loại trừ, nhưng khả năng thiên vị do
+cùng họ mô hình thì chưa.}
+Dụng cụ chính, UGround-V1-2B, có $47$ nghìn phần tử do người gán nhãn lấy từ phần huấn luyện
+của AndroidControl trong dữ liệu huấn luyện, nên dụng cụ này đã tiếp xúc với văn phong chú thích mà các nhánh tinh
 chỉnh được dạy viết theo. Phép chấm lại bằng UI-Venus-Ground-7B loại trừ khả năng này, vì
 chênh lệch dùng làm phép so đối chiếu giữ được $94\%$ độ lớn và dấu của mọi phép so không
 đổi (Mục~\ref{sec:phepB}).
-Phần \emph{chưa} đóng là cả hai dụng cụ đều thuộc họ Qwen-VL, cùng dòng với mô hình bị
-chấm. Phát biểu đúng là ``đã đổi dụng cụ một lần, sang một mô hình không huấn luyện trên
+Điểm \emph{chưa} loại trừ được là cả hai dụng cụ đều thuộc họ Qwen-VL, cùng dòng với mô
+hình được chấm. Phát biểu đúng là ``đã đổi dụng cụ một lần, sang một mô hình không huấn luyện trên
 AndroidControl'', \emph{không} phải ``đã kiểm chéo qua hai họ mô hình độc lập''. Có một ứng
-viên ngoài họ Qwen, nhưng nó yếu hơn hẳn ở giao diện di động, nên phép đo đó sẽ phải đánh
-đổi bằng chính đại lượng mà cổng chặn về sai số dụng cụ đang bảo vệ.
+viên ngoài họ Qwen, nhưng ứng viên ấy yếu hơn hẳn ở giao diện di động, nên phép đo đó sẽ phải đánh
+đổi bằng chính đại lượng mà điều kiện về sai số dụng cụ đang bảo vệ.
 
-\item \textbf{Câu hỏi về độ mong manh trước cách diễn đạt mới trả lời được một phần.} Phép viết lại ở
+\item \textbf{Độ bền trước cách diễn đạt khác mới chỉ được kiểm một phần.} Phép viết lại ở
 Mục~\ref{sec:phepA} cho thấy thước bền trước việc đổi động từ và đảo trật tự câu ($+0{,}35$
-điểm trên $1.139$ câu, KTC loại được mọi mức tụt lớn hơn $0{,}6$ điểm). Nhưng phép biến đổi
-đó \emph{không đụng vào cách mô tả phần tử}, tức đúng phần nặng nhất trong cảnh báo của
-Jandial và cộng sự~\cite{groundersunderstand}. Phần còn bỏ ngỏ là câu hỏi liệu khi viết lại chính tên gọi
-và cách mô tả phần tử thì mô hình định vị có còn tới đúng chỗ hay không. Bộ bơm lỗi
-(Mục~\ref{sec:bomloi}) không thay được phép đo ấy, vì nó nạp một điểm tổng hợp thẳng vào
+điểm trên $1.139$ câu, KTC loại được mọi mức giảm lớn hơn $0{,}6$ điểm). Nhưng phép biến đổi
+đó \emph{không tác động đến cách mô tả phần tử}, tức đúng phần nặng nhất trong cảnh báo của
+Jandial và cộng sự~\cite{groundersunderstand}. Phần còn bỏ ngỏ là trường hợp viết lại chính tên gọi và cách mô tả phần tử. Luận văn chưa
+đo được mô hình định vị có còn tới đúng chỗ trong trường hợp ấy hay không. Bộ bơm lỗi
+(Mục~\ref{sec:bomloi}) không thay được phép đo ấy, vì bộ bơm lỗi nạp một điểm tổng hợp thẳng vào
 hàm trúng và \emph{không gọi mô hình định vị lần nào}.
 
-\item \textbf{Thước thuộc loại ``mô hình người nghe'', và loại này có tiền lệ về việc không
-đồng biến với chất lượng thật.} Luo và Shakhnarovich~\cite{luo2017} báo cáo trường hợp điểm
-của mô hình người nghe tăng mạnh trong khi mức cải thiện đo trên người thật nhỏ hơn nhiều, và
-trên một bộ dữ liệu quan hệ giữa hai đại lượng còn đảo chiều. Luận văn chịu đúng rủi ro đó và
-không có phép chấm của người để đối chiếu.
-
-\item \textbf{Vùng mù theo cả hai chiều.} Với độ lệch dưới khoảng $63$ điểm ảnh thì thước không phát hiện được. Phát biểu chính xác là nó đo việc gọi tên sai phần tử và bỏ qua việc
-trỏ lệch chút ít bên trong đúng phần tử. Theo chiều ngược lại, $1.083$ bước mà câu người viết
+\item \textbf{Vùng mù theo cả hai chiều.} Với độ lệch dưới khoảng $63$ điểm ảnh thì thước không phát hiện được. Phát biểu chính xác là thước đo việc gọi sai tên phần tử và bỏ qua sai lệch
+nhỏ khi trỏ bên trong đúng phần tử. Theo chiều ngược lại, $1.083$ bước mà câu chuẩn
 cũng trượt phần lớn là giới hạn của dụng cụ, và có $935$ bước ($21\%$ quần thể) mà cả ba nhánh đều trượt. Trần $75{,}7\%$ vì vậy phản ánh năng lực của dụng cụ đo hơn là năng lực của
 ngôn ngữ.
 
-\item \textbf{Luật ô Voronoi chỉ chặt bằng độ đầy đủ của bộ liệt kê phần tử.} Cây trợ
-năng bỏ sót một nút biểu tượng cạnh phần tử cần chạm thì một câu sai vẫn lọt. Chiều ngược
-lại, các hộp trùng lặp, đã được xử bằng phép gộp theo bán kính, nhưng phép gộp ấy xoá
-nhầm một phần tử thật sự riêng biệt ở $8{,}2\%$ số bước.
+\item \textbf{Luật ô Voronoi chỉ chặt bằng độ đầy đủ của bộ liệt kê phần tử.} Nếu cây trợ
+năng bỏ sót một nút biểu tượng cạnh phần tử cần chạm thì một câu sai vẫn được tính là đúng.
+Theo chiều ngược lại, các hộp trùng lặp đã được xử lý bằng phép gộp theo bán kính, nhưng
+phép gộp ấy xoá
+nhầm một phần tử thật sự riêng biệt ở $8{,}2\%$ số bước. Luật này còn một lỗi hệ thống ở
+hàng danh sách, phát hiện khi tính luật hộp phần tử của chính AndroidControl
+(Mục~\ref{sec:donhay}): trong số bước mà câu chuẩn trượt ô Voronoi nhưng trúng luật
+hộp, khoảng một nửa trượt chỉ vì một mảnh chữ OCR trên cùng hàng bị coi là nút riêng. Ở
+những bước ấy luật ô Voronoi chặt hơn mức cần thiết, và con số trần $75{,}7$ vì vậy thấp hơn mức
+mà dụng cụ thật sự đạt được trên hàng danh sách.
 
-\item \textbf{Khái niệm được đo hẹp hơn khái niệm người đọc quan tâm.} Thước hỏi một
-\emph{mô hình} định vị có tới đúng phần tử từ câu hay không. Câu hỏi mà người dùng quan
-tâm là một \emph{người} có tới được hay không. Dòng sinh biểu thức quy chiếu vẫn coi
+\item \textbf{Khái niệm được đo hẹp hơn khái niệm người đọc quan tâm.} Thước đo khả năng một
+\emph{mô hình} định vị tới đúng phần tử dựa trên câu. Điều người dùng quan
+tâm lại là khả năng một \emph{người} tới được phần tử ấy. Dòng sinh biểu thức quy chiếu vẫn coi
 thành công của người nghe là bằng chứng về chất lượng mô
-tả~\cite{mao2016,luo2017,yu2017}, và barem ở đây là toạ độ một người thật đã chạm, song
+tả~\cite{mao2016,luo2017,yu2017}, và mốc đối chiếu ở đây là toạ độ một người thật đã chạm, song
 hai đại lượng ấy không đồng nhất và mức đồng thuận giữa chúng \emph{chưa được đo}. Phép
-chấm tay $100$ câu bởi hai người đã đăng ký nhưng chưa chạy.
+chấm thủ công $100$ câu do hai người thực hiện đã được lên kế hoạch nhưng chưa tiến hành.
 
 \end{itemize}
 
@@ -164,33 +176,40 @@ chấm tay $100$ câu bởi hai người đã đăng ký nhưng chưa chạy.
 \begin{itemize}[leftmargin=1.4em,itemsep=0.35em]
 
 \item \textbf{Một hạt giống ở mọi nhánh xử lý.} Đây là hạn chế nặng nhất của phần mô hình.
-Nhánh nền có hai hạt giống nên biết được nhiễu dựng lại là $\pm0{,}52$ điểm; ba nhánh xử lý
+Nhánh nền có hai hạt giống nên đo được nhiễu giữa hai lần huấn luyện là $\pm0{,}52$ điểm.
+Ba nhánh xử lý
 gồm S2, CE2-S2 và MIN-DESC, mỗi nhánh chỉ có một. Hệ quả không nằm ở mức độ hoàn thiện của
 số liệu mà ở chỗ \emph{không tách được tác dụng khỏi biến thiên huấn luyện}. Chênh lệch
 $+0{,}63$ điểm của đại lượng chính ở chặng hai chỉ bằng $1{,}4$ lần độ lệch chuẩn giữa hạt giống, dưới mức
 chênh nhỏ nhất phát hiện được $2{,}11$ điểm của chính thiết kế đó.
 
-\item \textbf{Điều kiện không gây hại đã đăng ký bị trượt.} Trên bước không chạm, lớp thao
-tác tụt $19{,}75$ điểm so với mốc, trong khi ngưỡng đã khoá là không quá $3$ điểm
+\item \textbf{Điều kiện không gây hại của thiết kế không đạt.} Trên bước không chạm, lớp thao
+tác giảm $19{,}75$ điểm so với mốc, trong khi ngưỡng đặt ra là không quá $3$ điểm
 (Mục~\ref{sec:khongcham}). Executability chỉ chấm trên bước chạm nên điểm chính không bị
-đụng, nhưng không phát biểu nào về ``mô hình cuối tốt hơn'' được viết mà bỏ điều kiện này.
+ảnh hưởng, nhưng mọi phát biểu về ``mô hình cuối tốt hơn'' đều phải kèm điều kiện này.
 
-\item \textbf{Ba nhánh đối chứng đã đăng ký không chạy.} S2r và S2-nopoint được thiết kế để
-quy công cho tính phân biệt và cho ô toạ độ; không có chúng thì phần công của từng ô trong
+\item \textbf{Ba nhánh so sánh trong thiết kế không chạy.} S2r và S2-nopoint được thiết kế để
+quy công cho tính phân biệt và cho ô toạ độ. Không có chúng thì phần công của từng ô trong
 khai báo chỉ ước lượng được gián tiếp. Việc chúng bị huỷ có lý do đo được
-(Bảng~\ref{tab:trangthai}), nhưng lý do tốt không lấp được chỗ trống trong thiết kế.
+(Bảng~\ref{tab:trangthai}), nhưng lý do ấy không thay thế được phần còn thiếu trong thiết kế.
 
 \item \textbf{Một khuyết tật của dữ liệu cặp, phát hiện sau khi đã huấn luyện.} Ở
 $17{,}4\%$ số cặp quy chiếu tối thiểu, chuỗi \code{(no name)} chỉ xuất hiện ở một trong hai
 vế, nên mô hình phân biệt được hai vế mà không cần nhìn màn hình. Bản vá đã viết nhưng không
 còn lượt huấn luyện nào để gộp vào, nên con số ở Mục~\ref{sec:mindesc} là con số của tập
-cặp \emph{chưa} vá. Đây cũng là lần thứ hai đề tài mắc cùng một kiểu lỗi, đó là một lối tắt nằm ở ô phụ của
-chuỗi mà mô hình phải sinh ra.
+cặp \emph{chưa} vá.
 
 \item \textbf{Chẩn đoán điểm nghẽn là hậu kiểm.} Cách chia nhóm ở Mục~\ref{sec:chonghen}
-dùng chính hành vi của mô hình được đo và được nghĩ ra sau khi thấy điểm. Nó không nằm
-trong ba lát cắt đã đăng ký, và con số $+5{,}4$ điểm cho việc ``chặn được vế âm'' là một
-trần lý thuyết, không phải kết quả của một hệ thống đã chạy.
+dùng chính hành vi của mô hình được đo và chỉ được xác định sau khi đã có điểm, và con số
+$+5{,}4$ điểm cho việc ``chặn được vế âm'' là một
+trần lý thuyết, không phải kết quả của một hệ thống đã chạy. Điều tương tự áp cho bảng chia
+theo hành vi bỏ cuộc của nhánh ứng viên và con số $+9{,}3$ điểm ở Mục~\ref{sec:nhanhungvien}.
+
+\item \textbf{Nhánh ứng viên không có nhánh so sánh cùng đầu vào.} Nhánh này lệch ba biến so
+với mọi nhánh trước, và nhánh so sánh duy nhất cho phép tách công của đầu chọn không được
+huấn luyện. Hệ quả là chỉ phép so với mô hình chưa tinh chỉnh đọc được, và phép so ấy không
+tách được phần do đầu vào giàu hơn khỏi phần do đầu chọn. Luận văn vì vậy không phát biểu gì
+về công của khối ứng viên, kể cả khi nhánh đạt $71{,}4\%$ ở nhóm đưa ra lựa chọn.
 
 \end{itemize}
 
@@ -201,31 +220,25 @@ trần lý thuyết, không phải kết quả của một hệ thống đã ch�
 \item \textbf{Tập kiểm không phải ``ứng dụng chưa từng thấy''.} $95{,}6\%$ số bước quy được tên
 thuộc về ứng dụng cũng xuất hiện ở tập huấn luyện ($91{,}8\%$ nếu đếm theo ứng dụng riêng biệt), nên mọi phép so với một mô hình bên ngoài chỉ có giá
 trị tham khảo. Đo trên chính mô hình của đề tài thì ảnh hưởng không xuất hiện
-(Bảng~\ref{tab:sannha}); với $78$ bước ở nhóm chưa thấy, kết luận đúng phải là
+(Bảng~\ref{tab:sannha}). Với $78$ bước ở nhóm chưa thấy, kết luận đúng phải là
 \emph{không phát hiện được ảnh hưởng}, một phát biểu yếu hơn hẳn \emph{đã chặn được ảnh
 hưởng}.
 
-\item \textbf{Hơn một nửa số bước không quy được về ứng dụng.} $3.828$ trong $6.958$ bước
-mang nhãn \emph{không biết}. Nhãn này không bao giờ được đọc thành \emph{chưa thấy}.
-
 \item \textbf{Tách theo tác vụ không đồng nghĩa tách theo cách diễn đạt.} Bộ ngữ liệu
-dùng đi dùng lại các cách nói phổ biến, đến mức $17{,}3\%$ câu chuẩn của tập kiểm đã xuất
-hiện nguyên văn ngay trong một mẫu chỉ chiếm $2{,}6\%$ tập huấn luyện.
+lặp lại nhiều lần các cách diễn đạt phổ biến, đến mức $17{,}3\%$ câu chuẩn của tập kiểm đã xuất
+hiện nguyên văn ngay trong một mẫu của tập huấn luyện.
 
 \item \textbf{Nhãn mô tả còn nhiễu.} Ở bộ dữ liệu này, $24{,}1\%$ ô dấu hiệu phân biệt
 không tách được phần tử cần chạm khỏi các phần tử giống nó, và $22{,}0\%$ phần tử cần chạm
 không có tên nào để điền vào ô tên.
 
 \item \textbf{Khâu chấm cho sẵn ngữ cảnh đúng của mỗi bước.} Trường lịch sử trong câu nhắc chứa
-câu do người viết ở các bước trước, không phải nhật ký thao tác của chính mô hình. Vì là hằng
-số của thí nghiệm nên nó không giải thích được chênh lệch giữa các nhánh, nhưng mọi con
+câu chuẩn ở các bước trước, không phải nhật ký thao tác của chính mô hình. Vì là hằng
+số của thí nghiệm nên trường này không giải thích được chênh lệch giữa các nhánh, nhưng mọi con
 số tuyệt đối phải đọc kèm điều kiện này.
 
-\item \textbf{Tầng mức hai đã đăng ký nhưng chưa cài đặt.} Hàm mất mát có khoản phạt cho
-câu mơ hồ chưa được viết. Trạng thái đúng của nó là \emph{đã đăng ký, không thực hiện}.
-
-\item \textbf{Phạm vi chung.} Một màn hình, giao diện tiếng Anh, một bộ dữ liệu, hai mô
-hình định vị cùng họ, một mô hình gốc cỡ ba tỉ tham số.
+\item \textbf{Phạm vi chung.} Luận văn chỉ xét một màn hình tại mỗi bước, giao diện tiếng
+Anh, một bộ dữ liệu, hai mô hình định vị cùng họ và một mô hình gốc cỡ ba tỉ tham số.
 
 \end{itemize}
 
@@ -233,55 +246,70 @@ hình định vị cùng họ, một mô hình gốc cỡ ba tỉ tham số.
 \label{sec:huongpt}
 
 Các hướng dưới đây xếp theo mức độ cấp thiết đối với độ tin cậy của kết luận, không xếp
-theo độ hấp dẫn về mặt kỹ thuật. Ba hướng đầu đã được \emph{đăng ký trước} cùng cổng chặn
-và điểm quyết định, ghi ngày $25$ tháng $8$, trước khi dựng bất kỳ tệp dữ liệu nào của
-chúng. Chúng được ghi lại ở đây để lần chạy sau không phải quyết định sau khi đã nhìn thấy
-số.
+theo độ hấp dẫn về mặt kỹ thuật. Ba hướng đầu nối thẳng vào nhánh ứng viên, và điều kiện
+chạy của hai hướng đầu đã được cố định trước khi có bất kỳ điểm ngưỡng nào.
 
 \begin{itemize}[leftmargin=1.4em,itemsep=0.35em]
 
-\item \textbf{Sửa cách nhắm bằng việc đưa khối ứng viên vào đầu vào.} Chẩn đoán ở
-Mục~\ref{sec:chonghen} chỉ ra ô ``sai cả tên lẫn toạ độ'' giữ $63\%$ dư địa. Hướng chữa
-trực tiếp là đổi ô khai báo từ \emph{sinh tự do} sang \emph{chọn trong danh sách của chính
-màn hình đó}. Danh sách này dựng sẵn từ hợp của kết quả trích chữ và cây trợ năng, không
-cần gọi thêm mô hình nào. Có ba con số làm căn cứ, đo được mà không tốn tài nguyên tính toán. Tên vàng nằm trong
-danh sách ở $99{,}7\%$ số bước. Tồn tại một ứng viên vừa khớp tên vừa nằm trong dung sai ở
-$80{,}2\%$ số bước, so với $59{,}9\%$ của khai báo hiện tại. Và $67{,}7\%$ số bước mà mô
-hình gọi sai tên đã có sẵn tên đúng trong phần trích chữ của câu nhắc, tức thông tin có sẵn nhưng không dùng được vì thiếu neo vị trí.
-Ràng buộc đi kèm là như sau. Thêm đầu vào tức là đổi điều kiện thí nghiệm, nên nhánh này
-phải huấn luyện kèm một đối chứng \emph{cùng đầu vào} và luôn trình bày theo cặp, không so trực tiếp với các
-nhánh trong luận văn này.
+\item \textbf{Huấn luyện lại trên riêng bước chạm, với điều kiện đã nêu.} Chẩn đoán ở
+Mục~\ref{sec:nhanhungvien} quy nguyên nhân có thể của việc bỏ cuộc quá mức về tỉ lệ nhãn
+\code{none} trong tập huấn luyện, $54{,}8\%$ toàn tập so với $29{,}1\%$ trên riêng bước chạm.
+Tập lọc $41.191$ bước chạm đã được dựng và đạt đủ bảy bất biến. Thủ tục ngưỡng ở
+Mục~\ref{sec:ungvienthietke} là phép thử rẻ cho giả thuyết này, vì hiệu chỉnh biên theo tiên
+nghiệm tương đương với cân lại nhãn khi huấn luyện; phép thử cho $-143$ và $+1$ bước, tức
+không cứu được các bước bỏ cuộc sai, vì điểm của thẻ \code{none} ở bước có vàng và bước không
+có vàng trùng nhau. Theo tiêu chí đã đặt trước, lượt này không chạy. Điều mà phép thử rẻ không
+mô phỏng được là việc bỏ hẳn $2.495$ bước không chạm khỏi tập huấn luyện, tức bỏ luôn đường
+tắt gắn động từ không chạm với thẻ \code{none}, trong khi $38{,}9\%$ câu ở nhóm bỏ cuộc sai
+mang động từ như vậy. Đây là lý do duy nhất còn lại để chạy lượt ấy, và lý do này đến sau khi
+đã thấy kết quả, nên nếu chạy thì phải được nêu là một quyết định mới.
 
-\item \textbf{Hạn chế thiệt hại khi nhắm trượt bằng cách dạy mô hình lùi.} Đích huấn
+\item \textbf{Học quyết định bỏ cuộc từ tín hiệu khác xác suất của chính mô hình.} Trên lát
+phát triển, khoảng $14{,}6$ điểm giữa hành vi hiện tại ($63{,}4\%$) và quyết định bỏ cuộc hoàn
+hảo ($78{,}0\%$) nằm trọn ở khâu bỏ cuộc, và xác suất của chính mô hình không tách được hai
+loại bước, với diện tích dưới đường ROC $0{,}69$ đến $0{,}72$. Mô hình bỏ cuộc theo độ đông của
+khối chứ không theo sự có mặt của ứng viên vàng. Hướng kế là một bộ phân loại riêng cho câu
+hỏi khối có chứa phần tử cần chạm hay không, huấn luyện bằng nhãn có sẵn trong tập dạy và
+đặt trước đầu chọn; hệ thống có bộ phân loại chỉ được so với chính nhánh ứng viên, không so
+với S1 hay MIN-DESC.
+
+\item \textbf{Huấn luyện nhánh so sánh cùng đầu vào, rồi hạt giống thứ hai.} Không có
+nhánh so sánh cùng đầu vào thì không con số nào của nhánh ứng viên cho biết được công của
+đầu chọn. Đây là lượt huấn luyện có giá trị thông tin cao nhất còn lại, và phải chạy trước hạt
+giống thứ hai của bất kỳ nhánh nào.
+
+\item \textbf{Giảm thiệt hại khi gọi sai tên bằng cách huấn luyện mô hình chọn phương án
+thận trọng.} Đích huấn
 luyện được dựng từ chính các lượt sinh đã có. Bước mà mô hình từng gọi sai tên nhận đích
-``không chắc'' kèm câu chung chung, còn bước từng gọi đúng thì giữ khai báo đầy đủ. Ưu điểm là không thêm đầu vào nên
-vẫn so được công bằng với nhánh nền. Hướng này có một thiên lệch biết trước. Nhãn ``từng sai''
-lấy từ hành vi trên tập huấn luyện, nơi mô hình gọi đúng tên $68{,}5\%$, trong khi trên tập kiểm
-chỉ $60{,}6\%$, nên mô hình sẽ lùi ít hơn mức cần.
+``không chắc'' kèm câu chung chung, còn bước từng gọi đúng thì giữ khai báo đầy đủ. Ưu điểm
+là không thêm đầu vào nên vẫn so được công bằng với nhánh nền. Hướng này có một thiên lệch
+đã biết trước. Nhãn ``từng sai'' lấy từ hành vi trên tập huấn luyện, và trên tập này mô hình
+gọi đúng tên $68{,}5\%$, trong khi trên tập kiểm chỉ $60{,}6\%$, nên mô hình sẽ chọn phương
+án thận trọng ít hơn mức cần.
 
-\item \textbf{Gỡ điều kiện không gây hại đang trượt.} Trộn bước không chạm dạng entropy
-chéo thuần vào chặng hai. Lý do tồn tại duy nhất của nhánh này là điều kiện ở
-Mục~\ref{sec:khongcham}, nên nó không được trình bày như một cải tiến điểm số.
+\item \textbf{Khắc phục điều kiện không gây hại chưa đạt.} Hướng này trộn bước không chạm
+dạng entropy chéo thuần vào chặng hai. Lý do tồn tại duy nhất của nhánh này là điều kiện ở
+Mục~\ref{sec:khongcham}, nên nhánh này không được trình bày như một cải tiến điểm số.
 
 \item \textbf{Hoàn tất phần thiết kế còn thiếu.} Chạy hạt giống thứ hai cho \emph{đúng một}
-nhánh xử lý được chọn theo điểm quyết định đã khoá, rồi báo trung bình hai hạt giống bất kể
-kết quả ra sao. Không có bước này thì mọi con số về thành phần đề xuất vẫn là thăm dò.
+nhánh xử lý, rồi báo trung bình hai hạt giống bất kể kết quả ra sao. Không có bước này thì
+mọi con số về thành phần đề xuất, kể cả của nhánh ứng viên, vẫn là kết quả một hạt giống.
 
-\item \textbf{Nối thước với đánh giá của người.} Chấm tay $100$ câu bởi hai người độc lập
-và báo cáo mức đồng thuận. Đây là điều kiện để phát biểu mạnh hơn về giá trị cấu trúc của
-thước, và cũng là phép đo duy nhất chạm được vào rủi ro ``thước người nghe'' nêu ở
-Mục~\ref{sec:hanche}.
+\item \textbf{Nối thước với đánh giá của người.} Hướng này cần hai người độc lập chấm thủ
+công $100$ câu và báo cáo mức đồng thuận. Đây là điều kiện để phát biểu mạnh hơn về giá trị
+cấu trúc của thước, và cũng là phép đo duy nhất kiểm được rủi ro đã nêu ở
+Mục~\ref{sec:hanche} về việc người nghe của thước là một mô hình chứ không phải một người.
 
-\item \textbf{Đo độ mong manh trước phép viết lại nặng hơn.} Viết lại chính \emph{tên gọi
-và cách tả phần tử}, không chỉ động từ và trật tự câu, rồi chạy lại mô hình định vị. Đây là
-phần còn thiếu để trả lời trọn vẹn cảnh báo của~\cite{groundersunderstand}.
+\item \textbf{Đo độ bền trước phép viết lại mạnh hơn.} Hướng này viết lại chính \emph{tên gọi
+và cách mô tả phần tử}, không chỉ động từ và trật tự câu, rồi chạy lại mô hình định vị. Đây
+là phần còn thiếu để đáp lại đầy đủ cảnh báo của~\cite{groundersunderstand}.
 
 \item \textbf{Cải thiện bộ liệt kê phần tử.} Vì độ chặt của luật ô Voronoi bị chặn bởi độ
 đầy đủ của bộ liệt kê, việc ghép thêm một bộ phát hiện phần tử dựa trên ảnh bên cạnh cây
 trợ năng sẽ nâng trực tiếp độ chặt của thước, rõ nhất ở các nút chỉ có biểu tượng.
 
-\item \textbf{Mở rộng phạm vi.} Ba hướng dưới đây xếp theo chi phí tăng dần, gồm chuỗi
-nhiều màn hình liên tiếp; giao diện tiếng Việt, ít nhất ở mức đánh giá định tính; và một bộ
+\item \textbf{Mở rộng phạm vi.} Ba hướng sau được xếp theo chi phí tăng dần, gồm chuỗi
+nhiều màn hình liên tiếp, giao diện tiếng Việt (ít nhất ở mức đánh giá định tính), và một bộ
 dữ liệu thứ hai để tách kết luận khỏi đặc thù của AndroidControl.
 
 \end{itemize}
@@ -301,8 +329,5 @@ chương trình chấm điểm cùng phần tự kiểm chạy được của lu
 \textbf{Kết quả thô} được lưu ở mức từng bước. Mỗi nhánh có một tệp câu sinh ra, một tệp
 điểm tổng hợp, và một tệp ghi mỗi bước một dòng kèm toạ độ mô hình định vị trả về, toạ độ
 đáp án, số phần tử trên màn và giá trị của cả ba điều kiện chấm. Nhờ tệp cuối, việc đổi
-luật chấm hay thêm một cách chia nhóm để phân tích chỉ cần tính lại từ đó, khỏi phải gọi lại mô
+luật chấm hay thêm một cách chia nhóm để phân tích chỉ cần tính lại từ tệp này mà không cần gọi lại mô
 hình định vị, tiết kiệm khoảng $5{,}6$ giờ máy mỗi lần.
-
-Bản đăng ký trước cùng toàn bộ mục sửa đổi có ngày nằm trong kho phiên bản của đề tài,
-kèm danh sách các con số đã bị rút với lý do rút và giá trị thay thế.

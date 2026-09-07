@@ -2,8 +2,8 @@
 \label{ch:phuongphap}
 
 Chương này trình bày thành phần mô hình được đề xuất, cấu hình huấn luyện, thiết kế so
-sánh giữa các nhánh, và bản đăng ký trước quy định cách đọc kết quả. Thước đo dùng để
-chấm được tách hẳn sang Chương~\ref{ch:thuocdo} vì nó là một đóng góp độc lập.
+sánh giữa các nhánh, và tiêu chí đọc kết quả. Thước đo dùng để
+chấm được tách hẳn sang Chương~\ref{ch:thuocdo} vì thước đo là một đóng góp độc lập.
 
 \section{Toàn bộ quy trình}
 
@@ -21,7 +21,7 @@ chấm được tách hẳn sang Chương~\ref{ch:thuocdo} vì nó là một đ�
 ]
 \node (vao) [dongoc] {ảnh màn hình\ \ $+$\ \ mục tiêu\ \ $+$\ \ lịch sử thao tác\ \ $+$\ \ chữ đọc được từ OCR};
 \node (sinh) [huanluyen, below=6mm of vao]
-  {Qwen2.5-VL-3B $+$ QLoRA\\ nhánh S1 / S2 / S2r / S2-nopoint\\[1pt]
+  {Qwen2.5-VL-3B $+$ QLoRA\\ nhánh S1 / S2 / S2r / S2-nopoint / ứng viên\\[1pt]
    \textit{\footnotesize thành phần được huấn luyện}};
 \node (dinhvi) [blk, below=13mm of sinh]
   {mô hình định vị phần tử độc lập\\ câu $\rightarrow$ toạ độ $(x, y)$\\[1pt]
@@ -36,14 +36,15 @@ chấm được tách hẳn sang Chương~\ref{ch:thuocdo} vì nó là một đ�
 \draw [mui] (cham) -- (ra);
 
 \end{tikzpicture}
-\caption{Bốn mắt xích của hệ thống. Khối tô xám là phần duy nhất được huấn luyện; hai khối
+\caption{Bốn mắt xích của hệ thống. Khối tô xám là phần duy nhất được huấn luyện. Hai khối
 dưới thuộc phần đo lường và không bao giờ thấy toạ độ đáp án.}
 \label{fig:pipeline}
 \end{figure}
 
-Hình~\ref{fig:pipeline} còn cho thấy một điểm về triển khai. Lúc chạy thật, hệ
-thống chỉ cần bộ đọc chữ và mô hình đã tinh chỉnh. Cây trợ năng và mô hình định vị chỉ tồn tại ở khâu
-dựng dữ liệu và khâu chấm điểm, không có mặt trong đường chạy tới người dùng.
+Hình~\ref{fig:pipeline} còn cho thấy một điểm về triển khai. Khi triển khai thực tế, hệ
+thống chỉ cần bộ đọc chữ và mô hình đã tinh chỉnh. Cây trợ năng và mô hình định vị chỉ tồn
+tại ở khâu dựng dữ liệu và khâu chấm điểm, không tham gia vào luồng xử lý phục vụ người
+dùng.
 
 \section{Đầu vào và câu nhắc}
 
@@ -66,21 +67,23 @@ Nhãn trường được viết bằng tiếng Việt kèm chỉ thị trả l�
 bộ ngữ liệu nguồn và của mọi câu được chấm.
 
 Việc đưa danh sách chữ OCR vào đầu vào nhắm vào dạng lỗi đã đo được là gọi sai
-hoặc gọi mơ hồ tên nút. \textbf{Tầng này không được kể là đóng góp.} Chính
+hoặc gọi mơ hồ tên nút. \textbf{Tầng này không được tính là đóng góp.} Chính
 nhóm tác giả AndroidControl đã tinh chỉnh với danh sách phần tử làm đầu
 vào~\cite{androidcontrol}, và Widget Captioning~\cite{widgetcap},
-Screen2Words~\cite{screen2words}, Mind2Web~\cite{mind2web} cũng vậy. Nó là một lựa chọn
-thiết kế, và có nhánh đối chứng đi kèm.
+Screen2Words~\cite{screen2words}, Mind2Web~\cite{mind2web} cũng vậy. Danh sách chữ OCR là
+một lựa chọn thiết kế và có nhánh so sánh đi kèm.
 
-Trường ``Đã làm'' chứa \emph{câu do người viết} ở các bước trước, không phải nhật ký thao
-tác của chính mô hình. Ở mỗi bước, mô hình được cho sẵn một ngữ cảnh đúng thay vì phải tự dựng lấy ngữ cảnh từ
-những gì nó đã sinh ra, đúng theo lối đánh giá quen gọi là \emph{teacher forcing}. Trường này là hằng số của thí nghiệm nên không giải
-thích được chênh lệch giữa các nhánh, nhưng nó đặt văn phong của người chú thích vào đầu
-vào, và mọi điểm số tuyệt đối đều có điều kiện trên đó.
+Trường ``Đã làm'' chứa \emph{câu chuẩn} ở các bước trước, không phải nhật ký thao
+tác của chính mô hình. Ở mỗi bước, mô hình nhận một ngữ cảnh đúng thay vì phải tự xây
+dựng ngữ cảnh từ những câu mà chính mô hình đã sinh ra, theo đúng lối đánh giá thường gọi
+là \emph{teacher forcing}. Trường này là hằng số của thí nghiệm nên không giải thích
+được chênh lệch giữa các nhánh. Tuy nhiên, trường này đặt văn phong của người chú thích
+vào đầu vào, nên mọi
+điểm số tuyệt đối đều phải được đọc kèm điều kiện đó.
 
 \section{Mô tả phân biệt trước, phát ngôn sau}
 
-Thay vì dạy mô hình nhảy thẳng từ ảnh sang câu, luận văn dạy nó mô tả phần tử cần chạm trước
+Thay vì dạy mô hình sinh thẳng câu từ ảnh, luận văn dạy mô hình mô tả phần tử cần chạm trước
 rồi mới viết câu. Chuỗi mà mô hình phải sinh ra vì vậy có hai tầng, trình bày ở khối dưới
 đây.
 
@@ -94,32 +97,34 @@ rồi mới viết câu. Chuỗi mà mô hình phải sinh ra vì vậy có hai 
 \end{tabular}
 \end{center}
 
-Lúc chấm, tầng khai báo bị \textbf{cắt bỏ}; chỉ câu hướng dẫn được đưa cho mô hình định
+Lúc chấm, tầng khai báo bị \textbf{cắt bỏ}. Chỉ câu hướng dẫn được đưa cho mô hình định
 vị. Điều này quan trọng về mặt phân loại đóng góp. Nếu điểm số tăng thì không phải vì mô hình
 được cho thêm thông tin lúc chấm, mà vì \emph{hành vi nội tại lúc suy luận đã đổi}.
-Đó là điều kiện để gọi đây là đóng góp về mô hình chứ không phải đóng góp về dữ liệu.
+Điều kiện này cho phép xếp thành phần đề xuất vào đóng góp về mô hình thay vì đóng góp về
+dữ liệu.
 
 Thiết kế này dựa trên ba căn cứ, xếp theo mức độ vững chắc giảm dần.
 
 \begin{enumerate}[leftmargin=1.6em]
-\item \textbf{Dạng lỗi đã đo được là câu mơ hồ}, không phải bịa đặt
-(Mục 1.1). Một dòng khai báo bắt buộc có ô ``dấu hiệu phân biệt'' nhắm vào đó.
+\item \textbf{Dạng lỗi đã đo được là câu mơ hồ}, không phải nội dung không có thật trên
+màn hình (Mục 1.1). Một dòng khai báo bắt buộc có ô ``dấu hiệu phân biệt'' nhắm vào đó.
 
 \item \textbf{Bước trung gian phải có cấu trúc và có toạ độ.} Cặp Shikra trong
-Bảng~\ref{tab:tienle} là bằng chứng sạch nhất, vì cặp này dùng cùng mô hình và cùng bài
-kiểm, chỉ đổi dạng bước trung gian. Viết bằng văn xuôi cho $-7{,}4$, còn viết có toạ độ
-cho $+5{,}9$. Vì vậy dòng khai báo
+Bảng~\ref{tab:tienle} là bằng chứng trực tiếp nhất, vì cặp này dùng cùng mô hình và cùng
+bài kiểm, chỉ đổi dạng bước trung gian. Bước trung gian viết bằng văn xuôi đạt $-7{,}4$,
+còn bước trung gian có toạ độ đạt $+5{,}9$. Vì vậy dòng khai báo
 được ràng buộc thành bốn ô cố định và bắt buộc có ô toạ độ.
 
 \item \textbf{Nhãn toạ độ sạch $100\%$ và chi phí dựng bằng không.} Toạ độ chạm của người
-thật có sẵn trong dữ liệu; đây là nguồn giám sát mà tinh chỉnh thông thường không dùng tới.
+thật có sẵn trong dữ liệu. Đây là nguồn giám sát mà tinh chỉnh thông thường không dùng tới.
 \end{enumerate}
 
-\paragraph{Không dùng chữ ``đầu tiên''.} Như đã nêu ở Mục 1.4.2, ý ``câu phải đủ để bên
-kia trỏ đúng'' đã thuộc về dòng sinh biểu thức quy chiếu từ $2016$~\cite{mao2016,luo2017,yu2017}.
-Phần được nhận ở đây hẹp hơn nhiều. Luận văn chỉ đưa tính phân biệt vào đích huấn luyện
-\emph{trong miền giao diện}, nơi công trình có giám sát gần nhất vẫn dùng entropy chéo
-thuần~\cite{widgetcap}.
+\paragraph{Phạm vi của đóng góp.} Như đã nêu ở Mục 1.4.2, ý ``câu phải đủ để phía
+tiếp nhận trỏ đúng'' đã thuộc về dòng sinh biểu thức quy chiếu từ
+$2016$~\cite{mao2016,luo2017,yu2017}.
+Phần đóng góp được nêu ở đây hẹp hơn nhiều. Luận văn chỉ đưa tính phân biệt vào đích huấn
+luyện \emph{trong miền giao diện}, và công trình có giám sát gần nhất trong miền này vẫn
+dùng entropy chéo thuần~\cite{widgetcap}.
 
 \section{Cấu hình huấn luyện}
 \label{sec:cauhinh}
@@ -157,53 +162,41 @@ Phần cứng & một card A100 \\
 \end{tabular}
 \end{table}
 
-\paragraph{Độ dài ngữ cảnh được nâng trước lượt chạy đầu.} Mẫu S2 dài nhất đạt $2.017$
-token, chỉ còn dư $31$ token so với giới hạn $2048$ ban đầu. Việc cắt bớt sẽ diễn ra
-\emph{im lặng} và lệch đúng theo hướng bất lợi nhất, vì khung huấn luyện cắt từ đuôi, mà
-đuôi chính là chuỗi mô hình phải sinh ra, mà chuỗi của S2 thì dài hơn. Giới hạn được nâng lên
-$2560$; vì đệm tính theo từng lô, không theo trần, nên việc nâng này không tốn thêm gì.
+\paragraph{Độ dài ngữ cảnh.} Mẫu S2 dài nhất đạt $2.017$
+token, chỉ còn dư $31$ token so với giới hạn $2048$ ban đầu. Nếu vượt giới hạn, việc cắt
+bớt sẽ diễn ra
+mà không có cảnh báo nào và lệch đúng theo hướng bất lợi nhất, vì khung huấn luyện cắt từ
+cuối chuỗi, trong khi phần cuối chính là chuỗi mô hình phải sinh ra, và chuỗi của S2 dài
+hơn. Giới hạn được nâng lên
+$2560$. Vì đệm tính theo từng lô, không theo trần, nên việc nâng này không phát sinh chi phí.
 
-\paragraph{Hai phép kiểm cơ học chạy trước mỗi lượt.} Số tham số huấn luyện được phải
-đúng $14.966.784$; và tệp cấu hình của lượt hiện tại được đối chiếu từng khoá với lượt
-tham chiếu, chỉ bốn khoá được phép khác (hạt giống, thư mục đầu ra, tập dữ liệu, số tiến
-trình tiền xử lý), khoá thứ năm khác nhau là dừng hẳn. Ba khoá đầu là ba dòng nói ở
-caption Bảng~\ref{tab:cauhinh}; khoá thứ tư chỉ đổi tốc độ tiền xử lý, không đổi dữ liệu ra.
-
-\paragraph{Hai phép kiểm cho những phần mà người đọc không tự kiểm được.} Thứ nhất, cùng hạt
-giống $101$, hàm mất mát $20$ bước đầu trên card L4 và trên card A100 khớp tới ba chữ số
-($2{,}036$ / $0{,}9686$ / $0{,}8635$ / $0{,}9553$ so với $2{,}040$ / $0{,}9679$ /
-$0{,}8635$ / $0{,}9547$) và tổng khối lượng tính toán giống hệt, nghĩa là đổi phần cứng không
-đổi kết quả. Thứ hai, sinh câu ở cỡ lô $1$ và cỡ lô $8$ cho đầu ra trùng nhau từng byte,
-xác nhận việc đệm bên trái được cài đúng.
-
-\section{Các nhánh đăng ký và thiết kế so sánh}
+\section{Các nhánh và thiết kế so sánh}
 \label{sec:nhanh}
 
-Bảy nhánh được đăng ký, tất cả dùng chung dữ liệu, mô hình gốc, siêu tham số và tập
-kiểm. Bảng~\ref{tab:nhanh} liệt kê từng nhánh cùng câu hỏi mà nó trả lời.
+Thiết kế gồm bảy nhánh, tất cả dùng chung dữ liệu, mô hình gốc, siêu tham số và tập
+kiểm. Bảng~\ref{tab:nhanh} liệt kê từng nhánh cùng vai trò của từng nhánh trong thiết kế.
 
 \begin{table}[t]
-\caption{Các nhánh đã đăng ký và vai trò của từng nhánh. Ba nhánh cuối không cần huấn
+\caption{Các nhánh của thiết kế so sánh và vai trò của từng nhánh. Ba nhánh cuối không cần huấn
 luyện.}
 \label{tab:nhanh}
 \centering\small
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{@{}p{2.7cm}p{4.4cm}p{5.9cm}@{}}
 \toprule
-Nhánh & Chuỗi phải sinh ra hoặc cách chạy & Trả lời câu hỏi \\
+Nhánh & Chuỗi phải sinh ra hoặc cách chạy & Vai trò \\
 \midrule
-\textbf{S1} & câu trơn ($2$ hạt giống) & nền so sánh nội bộ \\
-\textbf{S2} & khai báo thật $+$ câu ($2$ hạt giống) & \textbf{câu hỏi chính} của thiết kế,
-là thành phần đề xuất có tác dụng hay không \\
-\textbf{S2r} & khai báo giả khớp độ dài $+$ câu & điểm tăng có phải chỉ vì chuỗi phải sinh
-ra dài thêm \\
-\textbf{S2-nopoint} & khai báo bỏ ô toạ độ $+$ câu & phần công thuộc về ô toạ độ là bao
-nhiêu \\
+\textbf{S1} & chỉ câu hướng dẫn ($2$ hạt giống) & nền so sánh nội bộ \\
+\textbf{S2} & khai báo thật $+$ câu ($2$ hạt giống) & \textbf{phép so chính} của thiết kế,
+kiểm tác dụng của thành phần đề xuất \\
+\textbf{S2r} & khai báo giả khớp độ dài $+$ câu & loại trừ khả năng điểm tăng chỉ do chuỗi
+phải sinh ra dài thêm \\
+\textbf{S2-nopoint} & khai báo bỏ ô toạ độ $+$ câu & tách phần công thuộc về ô toạ độ \\
 \midrule
-\textbf{B-infer} & trọng số S1, danh sách phần tử nhét vào đầu vào lúc chạy & huấn luyện
-có hơn việc đưa thông tin lúc chạy không \\
-\textbf{Base} & mô hình gốc, không tinh chỉnh & bản thân tinh chỉnh mua được bao nhiêu \\
-\textbf{Trần} & câu do người viết đưa thẳng đi chấm & trần của thước đo \\
+\textbf{B-infer} & trọng số S1, danh sách phần tử đưa vào đầu vào lúc chạy & so huấn luyện
+với việc chỉ cung cấp thông tin lúc chạy \\
+\textbf{Base} & mô hình gốc, không tinh chỉnh & đo phần cải thiện do bản thân việc tinh chỉnh \\
+\textbf{Trần} & câu chuẩn đưa thẳng đi chấm & trần của thước đo \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -211,42 +204,39 @@ có hơn việc đưa thông tin lúc chạy không \\
 Đại lượng quan tâm là $\Delta = \text{S2} - \text{S1}$. Cặp hạt giống của S1 cung cấp
 \textbf{null thực nghiệm}. Chênh lệch giữa hai lượt chạy của cùng một thiết kế chính là
 sàn nhiễu mà $\Delta$ phải vượt qua. Không có con số đó thì không phân biệt được ``S2 hơn
-S1'' với ``hai lượt huấn luyện vốn đã khác nhau chừng đó''.
+S1'' với ``hai lượt huấn luyện vốn đã khác nhau ở mức đó''.
 
-Trình tự thực hiện được khoá cứng và không được đảo, theo đúng sơ đồ dưới đây.
+Trình tự thực hiện đi theo sơ đồ dưới đây, vì ngưỡng phát hiện phải được đo từ nhánh nền
+trước khi so sánh nhánh xử lý.
 \begin{center}
-S1 $\times 2$ hạt giống $\rightarrow$ chấm đủ $\rightarrow$ đo MDE thật $\rightarrow$
-khoá ngưỡng $\rightarrow$ \emph{mới} huấn luyện S2.
+S1 $\times 2$ hạt giống $\rightarrow$ chấm đủ $\rightarrow$ đo MDE $\rightarrow$
+huấn luyện S2.
 \end{center}
 
-Bản đăng ký cam kết trước rằng một mức tăng của riêng S2 \textbf{không} được quy cho tính
-phân biệt nếu chưa đi qua S2r và S2-nopoint.
+Theo thiết kế, một mức tăng của riêng S2 \textbf{không} được quy cho tính phân biệt nếu
+chưa đi qua S2r và S2-nopoint.
 
-\paragraph{Bảng này mô tả thiết kế, không mô tả các lượt đã chạy.} Trong bảy nhánh trên, hạt
+\paragraph{Các nhánh không chạy.} Trong bảy nhánh trên, hạt
 giống thứ hai của S2 cùng ba nhánh S2r, S2-nopoint và B-infer không được chạy. Lý do của
 từng nhánh, gồm ngân sách máy với nhánh thứ nhất và lý do đo được với ba nhánh còn lại, ghi
 ở Bảng~\ref{tab:trangthai}. Hệ quả trực tiếp là đại lượng $\Delta$ định nghĩa ở đây không
-hoàn tất; luận văn giữ nguyên định nghĩa thay vì sửa nó cho vừa với dữ liệu có được.
-
-\paragraph{B-infer là mốc so yếu hơn tên gọi của nó.} Phần này nêu trước để không đọc quá lời một kết quả cao hơn của nhánh huấn luyện. Câu nhắc của B-infer dài trung vị $1.149$
-token so với $486$ của vùng đã huấn luyện, danh sách phần tử bị cắt còn $40$ trong khi màn
-hình có trung vị $72$ phần tử, và chỉ $14{,}1\%$ phần tử trong danh sách có tên. Nếu nhánh này thấp hơn thì không kết luận được gì.
+hoàn tất. Luận văn giữ nguyên định nghĩa thay vì sửa định nghĩa cho vừa với dữ liệu có được.
 
 \section{Chặng huấn luyện thứ hai với mục tiêu ưu tiên ở tầng khai báo}
 \label{sec:mindescthietke}
 
-Mục này mô tả một chặng huấn luyện \emph{ra đời sau} bản đăng ký gốc. Chặng này được ghi thành mục sửa đổi có ngày $23$ tháng $8$, trước khi tồn tại bất kỳ
-điểm số nào, và được trình bày ở đây vì nó nối thẳng vào chẩn đoán mà nhánh S2 để lại.
+Mục này mô tả một chặng huấn luyện được thêm vào sau khi có kết quả của nhánh S2, và được
+trình bày ở đây vì chặng này xuất phát trực tiếp từ chẩn đoán rút ra được từ nhánh S2.
 
 \paragraph{Căn cứ của chặng huấn luyện này.} Nhánh S2 cho thấy một cơ chế tác động theo hai chiều
 ngược nhau. Khi ô khai báo do mô hình tự sinh trỏ đúng phần tử, câu viết ra tốt hơn nhánh
-chỉ sinh câu $5{,}7$ điểm; còn khi ô đó trỏ sai cả tên lẫn toạ độ, nó thấp hơn tới $25{,}2$ điểm (Mục~\ref{sec:o2x2s2}). Điểm nghẽn vì vậy không nằm ở việc \emph{có} tầng khai
+chỉ sinh câu $5{,}7$ điểm, còn khi ô đó trỏ sai cả tên lẫn toạ độ, câu viết ra thấp hơn tới $25{,}2$ điểm (Mục~\ref{sec:o2x2s2}). Điểm nghẽn vì vậy không nằm ở việc \emph{có} tầng khai
 báo hay không, mà ở \emph{độ chính xác} của tầng ấy. Học có giám sát thuần không tác động
-thẳng vào việc chọn phần tử, vì nó chỉ nâng xác suất của chuỗi đúng chứ không hạ xác suất
+thẳng vào việc chọn phần tử, vì phương pháp này chỉ nâng xác suất của chuỗi đúng chứ không hạ xác suất
 của chuỗi sai gần kề.
 
 \paragraph{Cặp quy chiếu tối thiểu.} Từ chính điểm lưu của nhánh S2, chặng hai huấn luyện thêm
-$800$ bước cập nhật bằng một mục tiêu ưu tiên trên các cặp có dạng như sau.
+$800$ bước cập nhật bằng một mục tiêu ưu tiên trên các cặp có dạng dưới đây.
 
 \begin{center}\small
 \begin{tabular}{@{}ll@{}}
@@ -255,43 +245,162 @@ vế bị loại & \code{<desc>}khai báo sai\code{</desc>} $+$ \code{\textbacks
 \end{tabular}
 \end{center}
 
-Hai vế \textbf{chỉ khác nhau ở ô khai báo}; phần câu giống nhau từng chữ. Vì vậy số hạng ưu
-tiên chỉ có thể giảm bằng cách chọn đúng phần tử; nó không giảm được bằng cách đổi văn
-phong, đổi độ dài hay viết một câu nghe trau chuốt hơn. Khai báo sai lấy từ phần tử cùng vai trò gần
+Hai vế \textbf{chỉ khác nhau ở ô khai báo}. Phần câu giống nhau từng chữ. Vì vậy số hạng ưu
+tiên chỉ có thể giảm bằng cách chọn đúng phần tử. Số hạng này không giảm được bằng cách đổi văn
+phong, đổi độ dài hay viết một câu có vẻ trau chuốt hơn. Khai báo sai lấy từ phần tử cùng vai trò gần
 nhất, cách điểm chạm thật từ $80$ đến $350$ điểm ảnh, tức một phần tử thật trên chính màn
-hình đó chứ không phải một chuỗi bịa ra. Tập cặp gồm $22.854$ cặp và phải đi qua bảy bất
-biến cấu trúc kiểm tự động; chương trình dựng dữ liệu dừng hẳn nếu có bất biến nào trượt.
+hình đó chứ không phải một chuỗi không có thật. Tập cặp gồm $22.854$ cặp và phải đi qua bảy bất
+biến cấu trúc kiểm tự động. Chương trình dựng dữ liệu dừng hẳn nếu có bất biến nào không đạt.
 
 Hàm mục tiêu ở đây thuộc họ tối ưu theo ưu tiên dạng tỉ số odds (ORPO). Trong họ này, số
 hạng phạt vế bị loại được cộng thẳng vào hàm mất mát có giám sát của vế được chọn, thay vì đo độ lệch so với
 một mô hình tham chiếu đóng băng như cách làm thông dụng của các phương pháp tối ưu theo ưu
 tiên. Nhờ vậy chỉ cần giữ \emph{một} bản trọng số trong bộ nhớ thay vì hai, và đây là điều
-kiện bắt buộc để chặng này chạy vừa trên một card đồ hoạ đơn với cùng cấu hình lượng tử hoá
-bốn bit của các nhánh trước.
+kiện bắt buộc để chặng này chạy được trên một card đồ hoạ duy nhất với cùng cấu hình lượng
+tử hoá bốn bit của các nhánh trước.
 
-\paragraph{Đối chứng quy công.} Một chặng huấn luyện thêm $800$ bước tự nó đã làm mô hình
-đổi, bất kể mục tiêu là gì. Để tách phần thuộc về mục tiêu ưu tiên, nhánh đối chứng
+\paragraph{Nhánh so sánh để tách công.} Một chặng huấn luyện thêm $800$ bước tự nó đã làm
+thay đổi mô hình, bất kể hàm mục tiêu là gì. Để tách phần thuộc về mục tiêu ưu tiên,
+nhánh so sánh
 \textbf{CE2-S2} chạy học có giám sát thuần trên \emph{riêng vế được chọn} của đúng những
 cặp ấy. Nhánh này giữ nguyên điểm lưu xuất phát, số bước cập nhật và lịch tốc độ học của
-chặng hai, chỉ bỏ đi số hạng ưu tiên. Đại lượng đăng ký cho chặng này là hiệu ghép cặp
-$\Delta_{\text{thành phần}} = \text{MIN-DESC} - \text{CE2-S2}$, và luật đọc là luật ở
-Bảng~\ref{tab:luatdoc} không sửa một chữ.
+chặng hai, chỉ bỏ đi số hạng ưu tiên. Đại lượng chính của chặng này là hiệu ghép cặp
+$\Delta_{\text{thành phần}} = \text{MIN-DESC} - \text{CE2-S2}$, đọc bằng cùng tiêu chí ở
+Bảng~\ref{tab:luatdoc}.
 
 \paragraph{Hai điểm chệch khỏi thiết kế gốc.} Thứ nhất, tập cặp chỉ
-chứa \emph{bước chạm}, vì chỉ bước chạm mới có nhãn khai báo; mức thiệt hại của việc đó đo
-được ở Mục~\ref{sec:khongcham}. Thứ hai, chặng này chỉ chạy được một hạt giống, nên theo đúng luật
-đã khoá, kết quả của nó là thăm dò bất kể con số ra sao.
+chứa \emph{bước chạm}, vì chỉ bước chạm mới có nhãn khai báo. Mức thiệt hại của việc đó đo
+được ở Mục~\ref{sec:khongcham}. Thứ hai, chặng này chỉ chạy được một hạt giống, nên kết
+quả của chặng này phải được đọc
+kèm nhiễu giữa các hạt giống, dù con số có lớn tới đâu.
 
-\section{Bản đăng ký trước và luật đọc kết quả}
+
+\section{Nhánh ứng viên}
+\label{sec:ungvienthietke}
+
+Nhánh này xuất phát từ chẩn đoán ở Mục~\ref{sec:chonghen}. Chẩn đoán ấy cho thấy ô ``sai
+cả tên lẫn toạ độ'' giữ $63\%$ dư địa còn lại của chặng hai, nên hướng khắc phục trực tiếp
+là đổi ô khai báo từ \emph{sinh tự do} sang \emph{chọn trong danh sách của chính màn hình
+đó}. Ba con số sau, đều đo được mà không cần tài nguyên tính toán, làm căn cứ cho hướng
+này. Tên vàng có mặt trong hợp của chữ OCR và cây
+trợ năng ở $99{,}7\%$ số bước. Tồn tại một ứng viên vừa khớp tên vừa nằm trong dung sai ở
+$80{,}2\%$ số bước, so với $59{,}9\%$ mà dòng khai báo tự sinh đạt được. Ở $67{,}7\%$ số
+bước mà MIN-DESC gọi sai tên, tên đúng đã nằm sẵn trong $24$ dòng OCR của câu nhắc, nghĩa
+là thông tin có sẵn nhưng không dùng được vì thiếu mốc vị trí.
+
+\paragraph{Thiết kế.} Câu nhắc thay $24$ dòng OCR bằng khối ứng viên mô tả ở
+Mục~\ref{sec:khoiungvien}. Chuỗi đích mở đầu bằng một thẻ chọn, là bản chép nguyên văn một
+dòng trong khối hoặc thẻ \code{none}, rồi mới tới câu hướng dẫn. Lúc chấm, thẻ chọn bị cắt
+bỏ như dòng khai báo của nhánh S2, nên chỉ câu đi qua mô hình định vị. Việc đưa danh sách
+phần tử vào đầu vào không phải là đóng góp, vì chính nhóm tác giả
+AndroidControl~\cite{androidcontrol} và Mind2Web~\cite{mind2web} đã làm. Phần được đo ở
+đây là \emph{đầu chọn tường minh} trong chuỗi đích.
+
+\paragraph{Ba điểm khác về điều kiện thí nghiệm.} Thứ nhất, độ dài ngữ
+cảnh nâng từ $2560$ lên $3072$, vì mẫu dài nhất của nhánh S2 đã chiếm $2.017$ token và khối
+ứng viên dài nhất chiếm thêm $1.012$. Tổng $3.029$ được làm tròn lên bội của $256$. Việc
+nâng này
+áp dụng cho cả nhánh xử lý lẫn nhánh so sánh. Thứ hai, số lượt duyệt hạ từ hai xuống một,
+tương ứng $4.036$ bước, vì giới hạn tài nguyên tính toán. Thứ ba, đầu vào có
+khối ứng viên. Vì lệch ba biến cùng lúc, điểm của nhánh này \textbf{không được đặt cạnh
+S1 hay MIN-DESC rồi tính hiệu}. Đại lượng hợp lệ duy nhất là hiệu ghép cặp giữa nhánh chọn
+và nhánh so sánh cùng đầu vào, $\Delta_{\text{chọn}} = \text{gui\_sel} -
+\text{gui\_sft\_match}$, đọc bằng đúng bảng dải ở Bảng~\ref{tab:luatdoc}, và theo luật
+đó, một hạt giống là không kết luận được. Kế hoạch được quyết định ngày $30$ tháng $8$
+gồm sáu lượt huấn luyện,
+là ba nhánh gui\_sel, gui\_sft\_match và S1-match, mỗi nhánh hai hạt giống. Mọi tham số cấu
+hình khác giữ nguyên như Bảng~\ref{tab:cauhinh}.
+
+\paragraph{Ngưỡng dừng.} Bốn tiêu chí về dữ liệu ghi ở Mục~\ref{sec:khoiungvien}. Tiêu chí
+thứ năm đặt trên chính mô hình sau lượt huấn luyện đầu tiên. Đại lượng của tiêu chí là độ chính xác
+chọn, ký hiệu \code{sel\_acc}: tỉ lệ bước có ứng viên vàng mà thẻ chọn trúng đúng dòng ấy,
+với trúng nghĩa là tên khớp và toạ độ nằm trong dung sai $14\%$, còn thẻ \code{none} ở
+những bước này tính là sai. Tiêu chí đo trên lát $1.400$ bước chạm đầu tiên của tập kiểm và
+đòi \code{sel\_acc} ít nhất $63{,}6\%$, bằng mức khai báo đúng $60{,}6\%$ của MIN-DESC cộng
+ba điểm. Nếu tiêu chí này không đạt thì năm lượt còn lại không được chạy.
+
+\paragraph{Thủ tục chọn ngưỡng bỏ cuộc.} Kết quả ở Mục~\ref{sec:nhanhungvien} cho thấy mô
+hình phát thẻ \code{none} nhiều hơn mức cần, nên luận văn thêm một thủ tục chọn ngưỡng sau
+huấn luyện, không cần huấn luyện lại. Với câu nhắc $x$ cố định, mỗi phương án $c$ là một
+thẻ chọn hoàn chỉnh, được đưa vào
+mô hình để tính tổng log-xác suất của các token thuộc thẻ chia cho số token của thẻ, ký
+hiệu $s(c \mid x)$. Phương án được chọn là $c^{*} = \arg\max s(c \mid x)$ trên các ứng
+viên thật, và biên $m = s(c^{*} \mid x) - s(\code{none} \mid x)$. Mô hình phát $c^{*}$ khi
+$m > \tau$, ngược lại phát \code{none}. Ngưỡng $\tau$ quét chỉ trên lát $1.400$ bước, theo
+tiêu chí cực đại độ đúng trên \emph{toàn bộ} $1.400$ bước chứ không trên riêng nhóm có ứng
+viên vàng. Lưới quét chứa cả phương án giữ nguyên hành vi hiện tại, và nếu mức cải thiện
+tốt nhất dưới $18$ bước, xấp xỉ một sai số chuẩn nhị thức, thì giữ nguyên hành vi hiện tại.
+Toàn bộ đường cong được báo cáo kể cả khi phương án giữ nguyên là phương án tốt nhất. Một
+lần thử trên $50$
+bước cho thấy phép chia cho số token làm sai lệch phần xếp hạng ứng viên, nên ba biến thể
+phụ được thêm vào với ngưỡng $24$ bước: chỉ áp ngưỡng ở những bước mô hình đã bỏ cuộc,
+xếp hạng theo tổng log-xác suất không chia số token, và kết hợp cả hai.
+
+Kết quả của thủ tục này quyết định lượt huấn luyện kế tiếp. Nếu thủ tục ngưỡng cải thiện
+được ít nhất $18$ trên $1.400$ bước so với hành vi hiện tại thì nhánh chọn được huấn luyện
+lại trên tập lọc $41.191$ bước chạm của Mục~\ref{sec:khoiungvien}, với đúng một biến đổi là
+tập mẫu. Nếu không đạt mức đó, nhánh ứng viên dừng ở phần chẩn đoán.
+
+\section{Chặng huấn luyện thứ ba với phần thưởng đặt trên ô toạ độ}
+\label{sec:grpothietke}
+
+\paragraph{Căn cứ của chặng này.} Hai chặng trước đều tác động vào tầng khai báo bằng cách so
+sánh những chuỗi có sẵn: học có giám sát nâng xác suất của chuỗi đúng, còn mục tiêu ưu tiên hạ
+xác suất của một chuỗi sai được dựng sẵn. Cả hai cách đều bị giới hạn bởi tập chuỗi mà người
+dựng dữ liệu nghĩ ra trước. Chặng ba đổi cơ chế: mô hình tự sinh nhiều câu trả lời cho cùng một
+câu nhắc, mỗi câu trả lời nhận một điểm thưởng tính bằng luật, và mô hình được đẩy về phía những
+câu trả lời ăn điểm cao hơn mức trung bình của nhóm. Cách làm này thuộc dòng học tăng cường với
+phần thưởng kiểm chứng được bằng luật, mà bản mô tả đầy đủ nhất hiện có là công trình về
+DeepSeek-R1 trên \emph{Nature} \cite{guo2025r1}; thuật toán cụ thể tên là tối ưu chính sách
+tương đối theo nhóm, giới thiệu trong một bản tiền ấn phẩm về mô hình toán học \cite{shao2024grpo}.
+
+\paragraph{Phần thưởng.} Điểm thưởng của một câu trả lời là tổng của ba số hạng, cố định trước
+khi chạy:
+
+\begin{center}\small
+\begin{tabular}{@{}lll@{}}
+\textbf{số hạng} & \textbf{điều kiện} & \textbf{điểm} \\
+\midrule
+ô toạ độ & điểm trong ô \code{<point>} nằm trong cửa sổ $\pm 14\%$ quanh toạ độ chuẩn & $1{,}0$ \\
+định dạng & sinh đủ và đúng thứ tự các ô của khuôn khai báo & $0{,}2$ \\
+tên phần tử & tên trong ô khai báo khớp tên chuẩn & $0{,}1$ \\
+\end{tabular}
+\end{center}
+
+\paragraph{Không có mô hình định vị nào trong phần thưởng.} Điểm thưởng chỉ đọc ô toạ độ do mô
+hình tự viết ra rồi so với toạ độ chuẩn có sẵn trong nhãn. Mô hình định vị dùng ở khâu chấm
+không tham gia vào bất kỳ số hạng nào. Nhờ vậy chặng này không tối ưu thẳng vào thước đo, và
+thước đo giữ được vai trò một phép đo độc lập với mục tiêu huấn luyện.
+
+\paragraph{Cấu hình.} Chặng ba học tiếp từ điểm lưu của chặng hai, giữ nguyên lượng tử hoá bốn
+bit và phần thị giác đóng băng. Mỗi câu nhắc sinh bốn câu trả lời ở nhiệt độ $1{,}0$; mô hình
+tham chiếu cho số hạng ràng buộc độ lệch là một bản sao đóng băng của chính điểm lưu xuất phát,
+nên chặng này vẫn chỉ cần một bản trọng số huấn luyện. Tập thưởng gồm $2.000$ câu nhắc lấy từ
+các bước chạm của tập dạy, chạy một lượt duyệt, tức $500$ bước cập nhật.
+
+\paragraph{Điều phải nói rõ về khả năng tách công.} Giống chặng hai, một chặng huấn luyện thêm
+tự nó đã làm thay đổi mô hình. Nhánh so sánh tương ứng ở đây là học có giám sát tiếp trên đúng
+$2.000$ câu nhắc ấy, và nhánh này chỉ được chạy khi chặng ba cho mức tăng vượt ngưỡng phát hiện
+tối thiểu của thiết kế. Nếu nhánh so sánh không chạy, luận văn ghi thẳng rằng phần thuộc về
+thuật toán và phần thuộc về việc học thêm chưa tách được, và không dùng kết quả ở tầng khai báo
+để thay cho phép tách ấy. Kể cả khi chạy, hai nhánh vẫn không đối xứng hoàn toàn: chặng ba nhìn
+thấy bốn chuỗi cho mỗi câu nhắc, còn nhánh so sánh chỉ nhìn thấy một.
+
+\paragraph{Hai giới hạn khác.} Thứ nhất, tập thưởng chỉ gồm bước chạm, vì chỉ bước chạm mới có
+toạ độ chuẩn để tính điểm; ảnh hưởng của việc đó lên các bước còn lại được đo riêng bằng phép
+kiểm không gây hại ở Mục~\ref{sec:khongcham}. Thứ hai, chặng này cũng chỉ chạy một hạt giống.
+
+\section{Tiêu chí đọc kết quả}
 \label{sec:dangky}
 
-Toàn bộ thiết kế được đưa vào kho phiên bản \emph{trước} lượt huấn luyện đầu tiên, và
-quy định cách đọc cả bốn kết cục có thể xảy ra (Bảng~\ref{tab:luatdoc}). Mọi thay đổi về
-sau được ghi thành mục sửa đổi có ngày ở cuối văn bản, không sửa đè lên bản gốc; phần lớn
-các mục này ra đời trước khi tồn tại bất kỳ điểm số nào.
+Hiệu $\Delta$ giữa nhánh xử lý và nhánh nền được đọc theo hai đại lượng: khoảng tin cậy
+ghép cặp và mức chênh nhỏ nhất phát hiện được (MDE) đo từ nhánh nền
+(Mục~\ref{sec:thongke}). Bảng~\ref{tab:luatdoc} liệt kê cách đọc cho bốn kết cục có thể
+xảy ra, để một chênh lệch nhỏ hơn nhiễu không bị đọc thành cải thiện và một chênh lệch âm
+không bị bỏ qua.
 
 \begin{table}[t]
-\caption{Luật đọc kết quả, viết trước khi thấy số.}
+\caption{Tiêu chí đọc kết quả cho hiệu $\Delta$ giữa nhánh xử lý và nhánh nền.}
 \label{tab:luatdoc}
 \centering\small
 \renewcommand{\arraystretch}{1.25}
@@ -301,35 +410,64 @@ Kết cục & Kết luận được phép viết \\
 \midrule
 $\Delta$ vượt MDE và cận dưới KTC $> 0$ & thành phần có tác dụng \\
 KTC chạm $0$ & xu hướng; \emph{không} được gọi là cải thiện \\
-KTC phủ $0$ và $|\Delta|$ dưới MDE & kết quả âm có kiểm soát, báo thẳng \\
-Cận trên KTC $< 0$ & thành phần gây hại, báo thẳng \\
+KTC phủ $0$ và $|\Delta|$ dưới MDE & kết quả âm có kiểm soát, được báo cáo nguyên trạng \\
+Cận trên KTC $< 0$ & thành phần gây hại, được báo cáo nguyên trạng \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Ba lát cắt phân tích, tức ba cách chia quần thể thành các nhóm nhỏ để đọc kết quả riêng
-trên từng nhóm, được cho phép báo cáo và đã công bố trước. Ba cách chia đó là theo độ dài
-câu, theo độ khó của màn hình và theo nguồn của tên phần tử. Bất cứ lát cắt nào tìm ra sau khi thấy số đều
-là thăm dò và phải ghi rõ như vậy.
+\paragraph{Dải quy ra điểm cho chặng khai báo.} Với riêng chặng khai báo, bốn kết cục trên được
+quy thành bốn dải bằng số, cố định ngày $17/8/2026$, tức trước khi chặng ấy chạy. Mức chênh
+lấy trên trung bình hai hạt giống của mỗi nhánh, ghép cặp theo từng bước:
 
-\paragraph{Một mục sửa đổi về ngưỡng MDE.} Ngưỡng MDE ban đầu được \emph{chiếu} chứ không
-được đo, và công thức dùng để chiếu giả định tương quan trong cụm bằng một. Khi đo thật
-thì hệ số nở do gom cụm chỉ là $1{,}10$, nên công thức cũ thổi phồng ngưỡng lên khoảng
-ba lần và sẽ khiến một hiệu ứng thật $3$ điểm bị tuyên là ``không kết luận được'' trong
-khi khoảng tin cậy của nó loại trừ $0$ ở mức $p < 0{,}001$. Ngưỡng được sửa thành sai số
-chuẩn ghép cặp đo được, và mục sửa đổi này được ghi \emph{trước} khi chấm bất kỳ nhánh xử
-lý nào (Mục~\ref{sec:thongke}).
+\begin{center}\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}p{5.0cm}p{7.4cm}@{}}
+\toprule
+$\Delta$ & kết luận \\
+\midrule
+$\ge +2{,}8$ và KTC loại $0$ & dương \\
+$+1{,}7$ đến $+2{,}8$, KTC loại $0$ & dương yếu, không đưa vào tóm tắt \\
+$-2{,}8$ đến $+1{,}7$ & không kết luận được \\
+$\le -2{,}8$ & gây hại \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Dải này bất đối xứng vì hai cận phục vụ hai mục đích khác nhau. Cận $+2{,}8$ là ngưỡng thận
+trọng đặt theo mức chênh mà một hiệu ứng phải đạt để đáng tin trong thiết kế này, còn cận
+$+1{,}7$ là ngưỡng của chính thiết kế đo. Điều phải nói rõ về thời điểm: dải được cố định trước
+khi chặng khai báo chạy, nhưng \emph{sau} khi nhánh nền, mô hình gốc và mốc câu chuẩn đã có
+điểm. Vì vậy dải này không phải một ngưỡng dời sau khi thấy kết quả của chính chặng đang xét,
+nhưng cũng không phải một ngưỡng đặt khi chưa có bất kỳ con số nào.
+
+\paragraph{Điều kiện mà hạt giống thứ hai đặt ra.} Mức chênh của bảng trên được định nghĩa trên
+trung bình \emph{hai} hạt giống. Chặng khai báo chỉ chạy được một hạt, nên với nhánh ấy luận văn
+không có đại lượng đúng như định nghĩa. Hệ quả phải nói thẳng: so với hạt giống thứ hai của
+nhánh nền, mức chênh là $-2{,}44$ điểm với khoảng tin cậy $[-3{,}53; -1{,}34]$, tức thoả cả hai
+điều kiện của hàng cuối bảng theo chiều gây hại. Luận văn không đọc con số ấy thành kết luận,
+vì đại lượng đã cố định đòi trung bình hai hạt giống mà hạt thứ hai của chặng khai báo không
+chạy. Cách đọc được giữ là ô không kết luận được, và điều kiện chưa hoàn tất này được nêu lại
+ở phần hạn chế.
+
+Ba lát cắt phân tích chính, tức ba cách chia quần thể thành các nhóm nhỏ để đọc kết quả
+riêng trên từng nhóm, là theo độ dài câu, theo độ khó của màn hình và theo nguồn của tên
+phần tử. Các lát cắt khác được đề xuất sau khi đã có điểm số là phân tích hậu kiểm và được ghi
+rõ như vậy tại chỗ chúng xuất hiện.
+
+\paragraph{Cách xác định ngưỡng MDE.} Công thức chiếu MDE thông dụng giả
+định tương quan trong cụm bằng một. Hệ số nở do gom cụm đo được ở đây chỉ là $1{,}10$, nên
+công thức ấy đặt ngưỡng cao hơn thực chất khoảng ba lần và sẽ khiến một hiệu ứng thật $3$
+điểm bị đọc thành ``không kết luận được'' trong khi khoảng tin cậy của nó loại trừ $0$ ở
+mức $p < 0{,}001$. Luận văn vì vậy dùng sai số chuẩn ghép cặp đo được từ hai hạt giống của
+nhánh nền (Mục~\ref{sec:thongke}).
 
 \section{Mức hai và khoản phạt cho câu vẫn mơ hồ}
 
-Thiết kế còn một tầng nữa đã đăng ký nhưng \textbf{chưa cài đặt}.
-
-Ý tưởng của tầng này như sau. Khi màn hình có hai phần tử giống hệt nhau, chẳng hạn hai
-biểu tượng kính lúp, thì câu ``Tap the search icon'' khớp với cả hai và vì vậy là câu mơ hồ. Ô mô tả phần tử hàng xóm gần nhất đã được dựng sẵn trong nhãn; hàm mất mát
-mức hai sẽ phạt khi mô hình gán cho khai báo thật một xác suất không cao hơn khai báo
-hàng xóm ít nhất một khoảng lề định trước. Đây đúng là chỗ Widget Captioning~\cite{widgetcap} còn để trống, nơi vấn đề được nêu ra
-nhưng hàm mất mát vẫn là entropy chéo thuần.
-
-Hiện tại, dữ liệu đã sẵn sàng nhưng \emph{mã hàm mất mát chưa được viết}. Tầng này nằm
-sau một điều kiện chặn riêng và chỉ được mở nếu tầng một cho tín hiệu. Nếu không kịp chạy thì trạng
-thái đúng của nó là \emph{đã đăng ký nhưng không thực hiện}.
+Thiết kế còn một tầng nữa chưa cài đặt. Khi màn hình có hai phần tử giống hệt nhau, câu
+``Tap the search icon'' khớp với cả hai và vì vậy là câu mơ hồ. Hàm mất mát mức hai sẽ phạt
+khi mô hình gán cho khai báo thật một xác suất không cao hơn khai báo của phần tử lân cận
+gần nhất ít nhất một khoảng lề định trước. Đây chính là phần mà Widget
+Captioning~\cite{widgetcap} chưa xử lý. Dữ liệu cho tầng này đã dựng sẵn, nhưng tầng này
+chỉ được triển khai nếu tầng một cho thấy tác dụng, và vì tầng một không cho thấy tác dụng
+nên tầng này không được thực hiện.

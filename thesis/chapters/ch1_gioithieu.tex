@@ -5,7 +5,7 @@
 
 Khi thao tác trên điện thoại, người dùng nhiều lúc dừng lại giữa chừng vì không rõ bước
 tiếp theo phải làm gì. Điều họ cần trong tình huống đó là một câu chỉ dẫn cho đúng bước
-trước mắt, chẳng hạn ``Chạm vào biểu tượng chia sẻ ở góc trên bên phải màn hình''. Với dạng
+trước mắt, ví dụ như ``Chạm vào biểu tượng chia sẻ ở góc trên bên phải màn hình''. Với dạng
 câu hướng dẫn ngắn và chỉ nói về màn hình người dùng đang mở như vậy, đối tượng tiếp nhận
 là con người chứ không phải phần mềm.
 
@@ -13,11 +13,19 @@ Dòng nghiên cứu về tác tử giao diện (\emph{GUI agent}) những năm g
 rất gần với bài toán trên, nhưng khác hẳn ở bản chất của đầu ra. Cho cùng một ảnh màn hình và cùng một mục
 tiêu, các hệ thống như SeeClick~\cite{seeclick}, OS-Atlas~\cite{osatlas} hay
 Aguvis~\cite{aguvis} sinh ra một lệnh máy đọc được, dạng \code{click(872,141)}, để phần
-mềm tự bấm thay người. Câu chữ, nếu có xuất hiện, chỉ là biểu diễn trung gian dẫn tới lệnh đó và không được đem chấm.
+mềm tự thực hiện thao tác thay người. Câu chữ, nếu có xuất hiện, chỉ là biểu diễn trung gian dẫn tới lệnh đó và không được đem chấm.
 
 Luận văn nhận cùng đầu vào đó, nhưng lấy câu chữ làm sản phẩm cuối cùng. Đầu ra là một
-câu hướng dẫn cho người đọc, và đó cũng là thứ duy nhất được đem đánh giá. Việc đổi đầu ra
+câu hướng dẫn cho người đọc, và đó cũng là đối tượng duy nhất được đem đánh giá. Việc đổi đầu ra
 như vậy kéo theo hai vấn đề chưa có lời giải sẵn.
+
+Tên đề tài gọi hai thành phần của đầu vào là \emph{trường hợp sử dụng} và \emph{giao diện
+người dùng}. Trong luận văn, trường hợp sử dụng là mục tiêu mà người dùng đang thực hiện,
+ví dụ như đặt vé xem phim cho tối nay hoặc tắt thông báo của một ứng dụng, cùng các bước
+đã làm trước đó. Giao diện người dùng là ảnh chụp màn hình đang mở cùng chữ đọc được trên màn, và
+ở khâu dựng dữ liệu còn có cây trợ năng của chính màn hình ấy. Mô hình ngôn ngữ lớn ở đây
+là một mô hình thị giác và ngôn ngữ cỡ ba tỉ tham số, nhận hai thành phần trên và sinh ra
+câu hướng dẫn cho bước kế tiếp.
 
 \textbf{Vấn đề thứ nhất là đánh giá.} Một toạ độ dự đoán có thể đem so trực tiếp với toạ
 độ mà người dùng đã chạm. Một câu thì không so được với một câu chuẩn duy nhất, bởi cùng
@@ -28,35 +36,37 @@ các cách diễn đạt hợp lệ.
 Các thước đo quen dùng đều thất bại ở đúng điểm này, và luận văn đo mức thất bại của từng
 thước. So khớp chuỗi ký tự loại nhầm $97{,}5\%$ số câu diễn đạt khác. So vector ngữ nghĩa cho
 diện tích dưới đường ROC (AUC) chỉ $0{,}336$ trên $51$ trường hợp viết tay, tức còn kém hơn
-đoán ngẫu nhiên. Lý do là vector ngữ nghĩa đo độ gần về \emph{chủ đề}, trong khi thứ cần
+đoán ngẫu nhiên. Lý do là vector ngữ nghĩa đo độ gần về \emph{chủ đề}, trong khi đại lượng cần
 đo lại là hai câu có nói về \emph{cùng một phần tử} hay không. Ở phép thử này, cặp
 \code{inbox} và \code{outbox} được chấm $0{,}76$, cao hơn hẳn cặp \code{search} và \code{magnifying
 glass} chỉ được $0{,}55$, dù cặp sau mới là cặp cùng chỉ một nút. Chi tiết ở
 Mục~\ref{sec:thuoc-gay}.
 
-\textbf{Vấn đề thứ hai nằm ở dạng lỗi mà mô hình sinh câu hay mắc.} Đọc tay $40$ trường
-hợp sinh sai cho thấy việc mô hình bịa ra một nút không có trên màn hình chỉ chiếm khoảng
+\textbf{Vấn đề thứ hai nằm ở dạng lỗi mà mô hình sinh câu hay mắc.} Đọc thủ công $40$ trường
+hợp sinh sai cho thấy việc mô hình nêu một nút không có trên màn hình chỉ chiếm khoảng
 $0$ đến $2\%$. Phần lớn lỗi là câu \emph{mơ hồ}. Mô hình gọi ``biểu tượng tìm kiếm'' trong khi màn hình
 có tới hai biểu tượng tìm kiếm. Một câu như vậy không sai về mặt sự thật, nhưng không dùng được với người đọc vì câu ấy không phân biệt được phần tử cần chạm với các phần tử giống nó bên cạnh. Quan sát này
-đặt lại trọng tâm của cải tiến. Phần đáng sửa là \emph{tính phân biệt} của câu, còn việc chống bịa đặt gần như không còn khoảng trống để cải thiện.
+đặt lại trọng tâm của cải tiến. Phần cần cải thiện là \emph{tính phân biệt} của câu, còn việc ngăn mô hình nêu phần tử
+không có trên màn hình gần như không còn khoảng trống để cải thiện.
 
 Hai vấn đề này quyết định bố cục của luận văn. Một phần dành cho việc dựng và kiểm chứng
-một thước đo dùng được; phần còn lại dành cho việc thiết kế và huấn luyện một mô hình sinh
+một thước đo dùng được. Phần còn lại dành cho việc thiết kế và huấn luyện một mô hình sinh
 câu ít mơ hồ hơn.
 
 \section{Động lực nghiên cứu}
 
 \subsection{Động lực khoa học}
 
-Câu hỏi ``một mô tả có đủ để bên kia nhận ra đúng đối tượng hay không'' không mới. Dòng
-sinh biểu thức quy chiếu (\emph{referring expression generation}) trong thị giác máy
-tính đã đặt đúng câu hỏi đó từ năm $2016$. Mao và cộng sự~\cite{mao2016} chấm một mô tả
-bằng cách xem một mô hình hiểu (\emph{listener}) có chỉ đúng đối tượng không; Luo và
+Yêu cầu một mô tả phải đủ để phía tiếp nhận xác định đúng đối tượng không phải là yêu
+cầu mới.
+Dòng sinh biểu thức quy chiếu (\emph{referring expression generation}) trong thị giác máy
+tính đã đặt ra đúng yêu cầu đó từ năm $2016$. Mao và cộng sự~\cite{mao2016} chấm một mô tả
+bằng cách xem một mô hình hiểu (\emph{listener}) có chỉ đúng đối tượng không. Luo và
 Shakhnarovich~\cite{luo2017} cũng như Yu và cộng sự~\cite{yu2017} còn đưa mô hình hiểu
-đó vào thẳng vòng huấn luyện. Nguyên tắc này được kế thừa nguyên vẹn ở đây, và đề tài
-không nhận là mình nghĩ ra nó.
+đó vào thẳng vòng huấn luyện. Nguyên tắc này được kế thừa nguyên vẹn ở đây, và luận văn
+không xem nguyên tắc ấy là đóng góp của mình.
 
-Khoảng trống nằm ở miền giao diện. Widget Captioning~\cite{widgetcap}, công trình gần
+Khoảng trống của dòng nghiên cứu này nằm ở miền giao diện. Widget Captioning~\cite{widgetcap}, công trình gần
 nhất trong miền này, nêu rõ vấn đề hai phần tử trông giống hệt nhau nhưng vẫn huấn
 luyện bằng hàm mất mát entropy chéo thuần, tức là không có thành phần nào ép mô tả phải
 phân biệt. Như vậy, tính phân biệt đã được nhận diện như một vấn đề trong miền
@@ -64,52 +74,53 @@ giao diện nhưng chưa được đưa vào \emph{mục tiêu huấn luyện}.
 
 Ở phía đánh giá, việc kiểm chứng một phát biểu bằng một nguồn có cấu trúc \emph{bên
 ngoài} thay vì bằng chính niềm tin của mô hình sinh là nguyên tắc đứng sau
-ALOHa~\cite{aloha}. Hướng đi ở đây bám theo nguyên tắc đó, song có một khác biệt làm bảo đảm ấy yếu đi. ALOHa đối chiếu với một danh sách tĩnh, còn ở đây đối chiếu với một
+ALOHa~\cite{aloha}. Hướng đi ở đây tuân theo nguyên tắc đó, song có một khác biệt làm tính bảo
+đảm của phép kiểm chứng yếu đi. ALOHa đối chiếu với một danh sách tĩnh, còn luận văn đối
+chiếu với một
 \emph{mô hình đã học}, nên độ tin cậy của thước bị chặn trên bởi độ tin cậy của mô hình
 đó. Vì vậy một phần đáng kể của luận văn dành cho việc đo đạc chính dụng cụ đo
-trước khi dùng nó để kết luận bất cứ điều gì.
+trước khi dùng dụng cụ ấy để kết luận bất cứ điều gì.
 
 Cuối cùng, có một cảnh báo nhắm vào chính thước đề xuất.
 Jandial và cộng sự~\cite{groundersunderstand} cho thấy độ chính xác mà các bộ chuẩn hiện
-nay báo cáo, đo trên \emph{một} câu tốt nhất cho mỗi phần tử, là con số thổi phồng so
-với năng lực thật. Một tác tử đối kháng chuyên chế câu phá mô hình đạt tỉ lệ thành công tới
+nay báo cáo, đo trên \emph{một} câu tốt nhất cho mỗi phần tử, là con số cao hơn năng lực
+thật. Một tác tử đối kháng chuyên tạo câu làm mô hình sai đạt tỉ lệ thành công tới
 $84\%$ trên giao diện máy tính để bàn. Con số đó là \emph{năng suất của một phép tìm kiếm
-đối kháng}, không phải tỉ lệ trượt khi người dùng diễn đạt khác đi, còn trường hợp giao diện di động thì họ để ngỏ. Mục~\ref{sec:phepA} đo trực tiếp phần cảnh báo áp
-được vào đây, Mục~\ref{sec:hanche} nêu phần còn hở.
+đối kháng}, không phải tỉ lệ trượt khi người dùng diễn đạt khác đi, còn trường hợp giao diện di động thì các tác giả chưa khảo sát. Mục~\ref{sec:phepA} đo trực tiếp phần cảnh báo áp
+được vào đây, Mục~\ref{sec:hanche} nêu phần còn để ngỏ.
 
 \subsection{Động lực ứng dụng}
 
 Nhu cầu thực tế cho tác vụ này đã có. GuideMe~\cite{guideme} là một hệ thống hỗ trợ người cao
 tuổi tự học dùng điện thoại thông minh. Người dùng hỏi, hệ thống nhìn màn hình và trả về
 hướng dẫn từng bước. Hệ thống đó gọi một mô hình thương mại cỡ lớn qua mạng và không
-huấn luyện gì; chất lượng được đánh giá qua một nghiên cứu người dùng gồm $18$ người,
+huấn luyện thêm mô hình nào. Chất lượng được đánh giá qua một nghiên cứu người dùng gồm $18$ người,
 không có thước định lượng nào đi kèm.
 
 Từ đó có hai khoảng trống mang tính ứng dụng. Thứ nhất, chưa có thước định lượng
 nào cho phép so sánh hai hệ thống sinh hướng dẫn giao diện với nhau một cách tái lập
-được. Thứ hai, việc phải gửi ảnh màn hình lên dịch vụ ngoài là một rào cản thật. Ảnh
+được. Thứ hai, việc phải gửi ảnh màn hình lên dịch vụ ngoài là một rào cản thực tế, vì ảnh
 màn hình điện thoại chứa tin nhắn, số dư tài khoản và danh bạ. Một mô hình cỡ ba tỉ tham
-số chạy được tại máy người dùng giải quyết đúng rào cản đó, và đó là lý do luận văn chọn
+số chạy được tại máy người dùng giải quyết đúng rào cản đó, nên luận văn chọn
 kích cỡ mô hình như vậy thay vì chọn mô hình lớn nhất có thể.
 
 \section{Mục đích nghiên cứu}
 
-Đề tài đặt ra bốn mục tiêu.
+Đề tài đặt ra ba mục tiêu, trình bày theo thứ tự thực hiện.
 
 \begin{enumerate}[leftmargin=1.6em]
 \item Xây dựng một thước đo cho bài toán sinh hướng dẫn giao diện không dựa vào việc so
 sánh với một câu chuẩn duy nhất, và \emph{kiểm chứng} thước đó bằng các phép đo độc lập
-với ngưỡng đóng băng trước khi chạy.
+với ngưỡng đặt sẵn.
 
 \item Chuyển bộ dữ liệu AndroidControl~\cite{androidcontrol} thành tập giám sát cho tác
 vụ này một cách hoàn toàn tự động, không thuê người dán nhãn và không dùng nhãn do mô
 hình khác sinh ra.
 
-\item Thiết kế và huấn luyện một mô hình thị giác và ngôn ngữ cỡ nhỏ cho tác vụ, với một thành phần nhắm vào dạng lỗi đã đo được là câu mơ hồ. Thành phần này bắt mô hình
-mô tả phần tử cần chạm theo một dạng có cấu trúc trước khi viết câu.
-
-\item Đăng ký trước thiết kế so sánh cùng luật đọc kết quả cho cả bốn kết cục có thể
-xảy ra, để kết luận không phụ thuộc vào việc nhìn thấy số trước hay sau.
+\item Thiết kế và huấn luyện một mô hình thị giác và ngôn ngữ cỡ nhỏ cho tác vụ, với một thành phần nhắm vào dạng lỗi đã đo được là câu mơ hồ. Thành phần này yêu cầu mô hình
+mô tả phần tử cần chạm theo một dạng có cấu trúc trước khi viết câu. Thành phần đó được
+đánh giá bằng một thiết kế có nhánh so sánh, với mức chênh nhỏ nhất phát hiện được đo
+từ dữ liệu.
 \end{enumerate}
 
 \section{Một số nghiên cứu liên quan}
@@ -124,15 +135,16 @@ $14\%$ cạnh màn được dùng rộng rãi để tính một dự đoán to�
 Các mô hình định vị phần tử như SeeClick~\cite{seeclick}, OS-Atlas~\cite{osatlas} và
 UGround~\cite{uground} ánh xạ một biểu thức văn bản sang một điểm trên màn hình. Luận
 văn dùng một mô hình thuộc nhóm này làm \textbf{dụng cụ đo}, không phải làm đường cơ sở
-để so sánh, và vì vậy phải báo cáo sai số đo được cùng thành phần dữ liệu huấn luyện của mô hình ấy trước khi phụ thuộc vào nó (Mục~\ref{sec:congA} và Mục~\ref{sec:hanche}).
+để so sánh. Vì vậy, trước khi dựa vào dụng cụ này, luận văn phải báo cáo sai số đo được
+cùng thành phần dữ liệu huấn luyện của nó (Mục~\ref{sec:congA} và Mục~\ref{sec:hanche}).
 
 Việc đưa một danh sách phần tử có cấu trúc vào đầu vào cũng đã phổ biến.
 Chính nhóm tác giả AndroidControl tinh chỉnh mô hình với danh sách phần tử suy từ cây
 trợ năng làm đầu vào và nói rõ tác tử của họ không dùng trực tiếp ảnh màn
-hình~\cite{androidcontrol}; Mind2Web~\cite{mind2web} huấn luyện trên tập ứng viên có
-nhiễu; Widget Captioning~\cite{widgetcap} và Screen2Words~\cite{screen2words} đặt cây
-phần tử ở đầu vào. Đề tài \emph{không} nhận đóng góp nào cho tầng này; nó chỉ xuất
-hiện như một nhánh đối chứng.
+hình~\cite{androidcontrol}. Mind2Web~\cite{mind2web} huấn luyện trên tập ứng viên có
+nhiễu. Widget Captioning~\cite{widgetcap} và Screen2Words~\cite{screen2words} đặt cây
+phần tử ở đầu vào. Đề tài \emph{không} nhận đóng góp nào cho tầng này. Tầng này chỉ xuất
+hiện như một nhánh so sánh.
 
 \subsection{Sinh mô tả có tính phân biệt}
 
@@ -143,15 +155,15 @@ giao diện, công trình có giám sát gần nhất là Widget Captioning~\cit
 đã nêu, hàm mất mát ở đó là entropy chéo thuần.
 
 Vì dòng nghiên cứu này đã tồn tại từ $2016$, luận văn \textbf{không dùng các từ ``đầu
-tiên'', ``mới'' hay ``cơ chế mới''} cho thành phần đề xuất. Phần đóng góp được phát biểu
-hẹp lại. Luận văn đưa tính phân biệt vào đích huấn luyện cho bài toán sinh hướng dẫn
-giao diện, rồi kiểm xem nó có chuyển giao được sang miền này hay không.
+tiên'', ``mới'' hay ``cơ chế mới''} cho thành phần đề xuất. Phần đóng góp vì vậy được phát biểu
+hẹp hơn. Luận văn đưa tính phân biệt vào đích huấn luyện cho bài toán sinh hướng dẫn
+giao diện, rồi kiểm xem tính chất ấy có chuyển giao được sang miền này hay không.
 
 \subsection{Sinh bước trung gian trước khi sinh đáp án}
 
 Việc bắt mô hình sinh một biểu diễn trung gian trước khi sinh đáp án cuối đã được thử
 nhiều lần, và các kết quả \emph{không} cùng chiều. Bảng~\ref{tab:tienle} tổng hợp năm
-điểm dữ liệu đã tra tận nguồn.
+điểm dữ liệu đã được đối chiếu với công bố gốc.
 
 \begin{table}[t]
 \caption{Ảnh hưởng của bước trung gian trong các công trình trước. Số dương nghĩa là có
@@ -177,10 +189,11 @@ mô hình và cùng một bài kiểm, chỉ khác nhau ở \emph{dạng} của 
 văn xuôi thì kết quả âm, còn viết có kèm toạ độ thì kết quả dương. Đó là căn cứ để dòng khai báo trong luận văn bắt buộc có cấu trúc và có ô
 toạ độ, thay vì để mô hình tự do mô tả bằng lời.
 
-Con số âm hay được nhắc tới của GCoT~\cite{gcot} dễ bị trích một nửa, vì nó nằm ở chế độ ra lệnh cho mô hình \emph{chưa} huấn luyện; khi huấn luyện
-theo thứ tự định vị trước thì chính công trình đó cho kết quả dương như trong bảng.
-Ngoài ra, hướng của các công trình trên là sinh trung gian để cuối cùng ra \emph{toạ
-độ}; ở luận văn này là để ra \emph{câu chữ cho người đọc}.
+Con số âm thường được trích dẫn của GCoT~\cite{gcot} dễ gây hiểu sai nếu tách khỏi bối
+cảnh, vì con số ấy được đo ở chế độ ra lệnh cho mô hình \emph{chưa} huấn luyện. Khi huấn
+luyện theo thứ tự định vị trước, chính công trình đó cho kết quả dương như trong bảng.
+Ngoài ra, các công trình trên sinh bước trung gian để cuối cùng đưa ra \emph{toạ
+độ}, còn luận văn này sinh bước trung gian để đưa ra \emph{câu chữ cho người đọc}.
 
 \subsection{Đánh giá không cần đáp án tham chiếu}
 
@@ -189,8 +202,8 @@ chính mô hình sinh, là nền của ALOHa~\cite{aloha}. Việc kiểm chứng
 danh sách các phép bơm lỗi với ngưỡng công bố trước là phương pháp đã được thiết lập
 bởi Sai và cộng sự~\cite{sai2021}, và luận văn áp dụng đúng quy trình đó
 (Mục~\ref{sec:bomloi}). Có hai cảnh báo liên quan trực tiếp tới hướng đi này. Các đại
-lượng tự động thay cho đánh giá của người rất dễ bị tin quá mức~\cite{clark2021}, và các
-mô hình định vị giao diện đã được báo cáo là mong manh trước việc đổi cách diễn
+lượng tự động thay cho đánh giá của người dễ được tin cậy quá mức~\cite{clark2021}, và các
+mô hình định vị giao diện đã được báo cáo là kém bền trước việc đổi cách diễn
 đạt~\cite{groundersunderstand}.
 
 \section{Nội dung và phạm vi thực hiện đề tài}
@@ -202,9 +215,9 @@ mô hình định vị giao diện đã được báo cáo là mong manh trướ
 tham số phù hợp với ràng buộc một card đồ hoạ đơn.
 \item Khảo sát các thước đo hiện có cho văn bản sinh không có đáp án chuẩn, đo mức độ
 thất bại của chúng trên dữ liệu thật, từ đó thiết kế thước thay thế.
-\item Xây dựng đường ống tự động chuyển AndroidControl thành tập giám sát, gồm bốn khâu
+\item Xây dựng quy trình tự động chuyển AndroidControl thành tập giám sát, gồm bốn khâu
 ghép dữ liệu đa nguồn, chạy OCR, dựng nhãn mô tả từ cây trợ năng và kiểm rò rỉ.
-\item Huấn luyện và đánh giá mô hình theo thiết kế so sánh đã đăng ký trước.
+\item Huấn luyện và đánh giá mô hình theo thiết kế có nhánh so sánh.
 \item Phân tích lỗi trên từng bước, khai báo giới hạn kèm số đo loại trừ hoặc xác nhận từng giới hạn.
 \end{itemize}
 
@@ -214,12 +227,12 @@ ghép dữ liệu đa nguồn, chạy OCR, dựng nhãn mô tả từ cây trợ
 chụp màn hình kèm một mục tiêu, còn đầu ra là hướng dẫn cho bước kế tiếp. Trường hợp nhiều
 màn hình liên tiếp nằm ngoài phạm vi.
 
-\textbf{Về thước đo}, luận văn chỉ chấm một khía cạnh hẹp và có tên rõ ràng. Câu hỏi được chấm là câu sinh ra
+\textbf{Về thước đo}, luận văn chỉ chấm một khía cạnh hẹp và có tên rõ ràng. Tiêu chí được chấm là câu sinh ra
 có xác định đúng phần tử cần chạm hay không. Độ trôi chảy, độ dài, mức hữu ích với người đọc
 nằm ngoài thước.
 
 \textbf{Về dữ liệu}, thực nghiệm chạy trên AndroidControl, giao diện tiếng Anh. Luận văn
-không dựng bộ dữ liệu tiếng Việt; phần tiếng Việt nếu có chỉ ở mức minh hoạ định tính.
+không dựng bộ dữ liệu tiếng Việt. Phần tiếng Việt nếu có chỉ ở mức minh hoạ định tính.
 
 \textbf{Về mô hình}, tất cả các nhánh đều tinh chỉnh cùng một mô hình gốc
 Qwen2.5-VL-3B-Instruct~\cite{qwen25vl} bằng QLoRA~\cite{qlora} trên một card A100 đơn.
@@ -228,58 +241,67 @@ phạm vi.
 
 \section{Đóng góp của luận văn}
 
-Luận văn có \textbf{ba đóng góp}. Đóng góp thứ nhất thuộc về đo lường và đã hoàn tất.
-Đóng góp thứ hai là một kết quả thực nghiệm đã đăng ký trước nhưng \emph{không hoàn tất
-được} vì ngân sách máy. Đóng góp thứ ba là một chẩn đoán ở mức từng bước, chỉ ra giới hạn
-thật sự của thành phần được đề xuất. Ba phần độc lập nhau về lập luận, nên
-phần chưa hoàn tất không kéo theo hai phần còn lại.
+Luận văn có \textbf{ba đóng góp}. Đóng góp thứ nhất thuộc về đo lường. Đóng góp thứ hai là
+quy trình dựng dữ liệu cùng kết quả thực nghiệm có nhánh so sánh của thành phần đề xuất, trong đó
+nhánh xử lý chỉ chạy được một hạt giống vì ngân sách máy. Đóng góp thứ ba là một chẩn đoán
+ở mức từng bước, chỉ ra giới hạn thật sự của thành phần được đề xuất. Ba phần độc lập nhau
+về lập luận.
 
 \paragraph{Đóng góp thứ nhất, về thước đo.} Luận văn đề xuất và kiểm chứng
 \textbf{executability}, thước đo cho khả năng xác định phần tử của một câu hướng dẫn
 giao diện. Phần kiểm chứng gồm sáu khối, mỗi khối là một phép đo chứ không phải một lập
-luận. Khối thứ nhất là một cổng chặn đặt trước về sai số của mô hình định vị, và cổng này
+luận. Khối thứ nhất là một điều kiện đặt trước về sai số của mô hình định vị, và điều kiện này
 đạt với sai số trung vị $0{,}7\%$ bề ngang màn so với ngưỡng $3\%$. Khối thứ hai chọn luật
 xác định trúng dựa trên \emph{sàn} đo được, vì luật dung sai quy ước vẫn cho điểm $84{,}3\%$
 số câu chỉ sai nút trong khi luật ô Voronoi chỉ cho $2{,}8\%$. Khối thứ ba đo hai đầu của
-dải điểm. Trần của thước được đo bằng cách đưa chính câu do người viết đi chấm, cho
-$75{,}7\%$ với khoảng tin cậy $[74{,}1; 77{,}3]$ trên đủ $4.463$ bước, còn sàn được đo bằng
-ba nhánh đối chứng, trong đó mô hình định vị vẫn trúng $12{,}0\%$ số bước khi mọi câu bị
-thay bằng một câu chung chung không nói phần tử nào, và chỉ còn trúng $6{,}1\%$ khi thay
-bằng câu thật nhưng mô tả một màn hình khác. Khối thứ tư là một bộ mười phép bơm lỗi với
-ngưỡng đóng băng trước khi chạy. Khối thứ năm là phép viết lại câu, cho thấy thước bền
+dải điểm. Trần của thước được đo bằng cách đưa chính câu chuẩn đi chấm, cho
+$75{,}7\%$ với khoảng tin cậy $[74{,}1; 77{,}3]$ trên đủ $4.463$ bước. Sàn được đo bằng
+ba trường hợp thử. Khi mọi câu bị thay bằng một câu chung chung không nói phần tử nào,
+mô hình định vị vẫn trúng $12{,}0\%$ số bước, và khi thay bằng câu thật nhưng mô tả một
+màn hình khác thì chỉ còn trúng $6{,}1\%$. Khối thứ tư là một bộ mười phép bơm lỗi với
+ngưỡng đặt sẵn. Khối thứ năm là phép viết lại câu, cho thấy thước bền
 trước việc đổi động từ và đảo trật tự câu với hiệu ròng $+0{,}35$ điểm trên $1.139$ câu viết
-lại, mà vẫn phạt đúng khi mệnh đề vị trí bị lấy đi. Khối thứ sáu là một phép kiểm chéo
+lại, mà vẫn phạt đúng khi mệnh đề vị trí bị lược bỏ. Khối thứ sáu là một phép kiểm chéo
 bằng mô hình định vị thứ hai không dùng AndroidControl khi huấn luyện, và phép kiểm này
 giữ được $94\%$ độ lớn của chênh lệch dùng làm phép so đối chiếu.
 
-\paragraph{Đóng góp thứ hai, về đường ống dữ liệu và một kết quả đã đăng ký trước.} Luận văn
+\paragraph{Đóng góp thứ hai, về quy trình dựng dữ liệu và kết quả thực nghiệm có nhánh so sánh.} Luận văn
 xây dựng hoàn toàn tự động một tập giám sát $64.567$ bước, kiểm phép ghép dữ liệu đa nguồn
-bằng một đối chứng lệch chủ ý ($48\%$ so với $20\%$), và xác nhận không có tác vụ nào trùng
+bằng cách so với phép ghép cố ý lệch một bước ($48\%$ so với $20\%$), và xác nhận không có tác vụ nào trùng
 giữa tập huấn luyện và tập kiểm. Trên nền đó, thành phần đề xuất ``mô tả phân biệt trước, phát
-ngôn sau'' được huấn luyện và chấm cùng nhánh đối chứng của nó. Kết quả thu được là nhánh
-xử lý thấp hơn nhánh nền $1{,}93$ điểm ở một hạt giống, con số nằm trong dải \emph{không kết luận
-được} đã khoá từ trước, và hạt giống thứ hai bị huỷ nên kết cục đóng lại ở đó. Chặng huấn
+ngôn sau'' được huấn luyện và chấm cùng nhánh so sánh tương ứng. Kết quả thu được là nhánh
+xử lý thấp hơn nhánh nền $1{,}93$ điểm ở một hạt giống, con số nằm dưới mức chênh nhỏ nhất
+mà thiết kế phát hiện được, và hạt giống thứ hai không chạy được vì ngân sách máy. Chặng huấn
 luyện tiếp theo bằng mục tiêu ưu tiên ở tầng khai báo đạt $60{,}0\%$, cao nhất trong mọi
-điểm lưu của đề tài, nhưng phần thuộc riêng mục tiêu ấy chỉ là $0{,}63$ điểm trên nhánh
-đối chứng, tức \textbf{$78\%$ mức tăng thuộc về đối chứng}; cả hai đều là kết quả một hạt
-giống.
+điểm lưu của đề tài, nhưng phần thuộc riêng mục tiêu ấy chỉ là $0{,}63$ điểm so với nhánh
+so sánh, nghĩa là \textbf{$78\%$ mức tăng thuộc về nhánh so sánh}. Cả hai con số đều là
+kết quả một hạt giống.
 
-\paragraph{Đóng góp thứ ba, về chẩn đoán ở mức từng bước.} Cắt quần thể theo việc ô khai báo
+\paragraph{Đóng góp thứ ba, về chẩn đoán ở mức từng bước.} Chia quần thể theo việc ô khai báo
 do chính mô hình sinh ra có trỏ đúng phần tử hay không cho thấy cơ chế của thành phần đề
 xuất \emph{vẫn hoạt động đúng như giả thuyết}, nhưng bị chặn bởi độ chính xác của chính ô
-khai báo đó. Trên $60{,}6\%$ số bước mà mô hình khai báo đúng, nó hơn nhánh chỉ sinh câu
-$8{,}83$ điểm và vượt cả trần câu người viết của nhóm đó; trên phần còn lại nó thấp hơn $11{,}12$ điểm. Hai chiều gần như triệt tiêu nhau, nên cộng lại trên toàn quần thể chỉ còn
+khai báo đó. Trên $60{,}6\%$ số bước mà mô hình khai báo đúng, mô hình hơn nhánh chỉ sinh câu
+$8{,}83$ điểm và vượt cả trần câu chuẩn của nhóm đó. Trên phần còn lại mô hình thấp hơn $11{,}12$ điểm. Hai chiều gần như triệt tiêu nhau, nên cộng lại trên toàn quần thể chỉ còn
 một chênh lệch $+0{,}94$ điểm không có ý nghĩa thống kê. Đóng góp này còn gồm hai phần phụ.
 Thứ nhất là một hệ số chuyển đổi đo được từ ``đúng khai báo'' sang ``đúng executability''
 bằng $0{,}43$, cho phép quy một mức cải thiện ở tầng khai báo thành dự báo về điểm đầu ra và
-kiểm lại dự báo đó bằng phép đo sau. Thứ hai là lý do đo được vì sao một biến thể đã đăng ký
-không dựng nổi dữ liệu huấn luyện. Khi gọi sai tên, mô hình hoặc gọi đúng phần tử bằng một
+kiểm lại dự báo đó bằng phép đo sau. Thứ hai là lý do đo được khiến một biến thể đã thiết kế
+không dựng được dữ liệu huấn luyện. Khi gọi sai tên, mô hình hoặc gọi đúng phần tử bằng một
 tên khác, hoặc nhìn sang một vùng khác hẳn của màn hình, chứ không lẫn giữa hai nút cạnh
-nhau như biến thể đó giả định.
+nhau như biến thể đó giả định. Phần chẩn đoán còn được nối dài bằng một nhánh thứ tư, huấn
+luyện đầu tháng $9$, trong đó ô khai báo đổi từ sinh tự do sang chọn trong một danh sách ứng
+viên dựng sẵn của chính màn hình. Nhánh này không đạt ngưỡng dừng của thiết kế và chỉ đạt $56{,}1\%$,
+nhưng phép chia theo hành vi bỏ cuộc cho thấy cơ chế chọn hoạt động đúng. Khi danh sách
+có đáp án và mô hình đưa ra lựa chọn, điểm đạt $71{,}4\%$, cách câu chuẩn $4{,}3$ điểm.
+Phần mất điểm nằm ở chỗ mô hình bỏ cuộc sai ở $27{,}3\%$ số bước có đáp án, và tiên nghiệm của nhãn bỏ cuộc
+trong tập huấn luyện ($54{,}8\%$ so với $29{,}1\%$ trên riêng bước chạm) là nguyên nhân đo
+được gần nhất.
 
-\paragraph{Về mức độ hoàn thành.} Đại lượng chính của thiết kế đòi trung bình hai hạt giống
-cho mỗi nhánh; nhánh xử lý chỉ có một. Luận văn vì vậy \textbf{không} phát biểu rằng thành
-phần đề xuất có tác dụng hay gây hại, và cũng không thay đại lượng đó bằng một phép so khác
-đã có số. Mọi kết quả của nhánh xử lý mang nhãn \emph{thăm dò} ở từng chỗ chúng xuất hiện,
-và Bảng~\ref{tab:trangthai} ghi trạng thái cuối cùng của cả bảy nhánh đã đăng ký kèm lý do
-cho từng nhánh không chạy.
+\paragraph{Về mức độ hoàn thành.} Thiết kế so sánh dùng trung bình hai hạt giống cho mỗi
+nhánh. Nhánh xử lý chỉ có một. Luận văn vì vậy \textbf{không} phát biểu rằng thành phần đề
+xuất có tác dụng hay gây hại, và cũng không thay đại lượng đó bằng một phép so khác đã có số.
+Mọi kết quả của nhánh xử lý được ghi rõ là kết quả một hạt giống ở từng chỗ chúng xuất hiện,
+và Bảng~\ref{tab:trangthai} ghi trạng thái cuối cùng của mọi nhánh kèm lý do cho từng nhánh
+không chạy. Nhánh ứng viên cũng chỉ có một hạt giống, và nhánh so sánh
+cùng đầu vào tương ứng không được huấn luyện, nên luận văn không phát biểu gì về đóng góp riêng của
+đầu chọn hay của danh sách ứng viên.

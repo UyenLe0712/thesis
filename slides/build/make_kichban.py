@@ -36,17 +36,17 @@ for i, n in enumerate(sl, 1):
     m = re.match(r"\[~(\d+) giây\]\s*", body); sec = int(m.group(1)) if m else 0
     if m: body = body[m.end():]
     tt = title(n) or "(bìa)"
-    if i <= 25:
+    if i <= 26:
         run += sec
         L += [f"## Slide {i} · {tt}  —  ~{sec}s  (cộng dồn {run//60}:{run%60:02d})", ""]
     else:
-        L += [f"## Dự phòng {i-25} · {tt}", ""]
+        L += [f"## Dự phòng {i-26} · {tt}", ""]
     L += ([p.strip() for para in body.split("\n") if para.strip() for p in (para, "")]
           if body.strip() else ["_(không có lời dẫn: slide chỉ mở khi hội đồng hỏi tới)_", ""])
 L += ["---", "",
       f"**Tổng phần trình bày: {run//60} phút {run%60:02d} giây** ở tốc độ 135 từ mỗi phút, "
       "chưa tính thời gian chuyển slide và dừng lại chỉ bảng.", "",
-      "Mười slide dự phòng nằm sau slide 25, không thuộc mạch chính. "
+      "Mười hai slide dự phòng nằm sau slide 26, không thuộc mạch chính. "
       "Lúc trình chiếu, gõ số slide rồi Enter để mở.", ""]
 open(OUT, "w", encoding="utf-8").write("\n".join(L))
 print("Da ghi", OUT, "| tong %d:%02d" % (run//60, run % 60))

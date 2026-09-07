@@ -1,4 +1,4 @@
-# Bản đồ kho — luận văn "Sinh hướng dẫn sử dụng phần mềm từ ảnh màn hình"
+# Bản đồ kho — luận văn "Phát sinh tự động hướng dẫn sử dụng phần mềm dựa trên LLM từ các trường hợp sử dụng và giao diện người dùng"
 
 Học viên: Lê Đoàn Phương Uyên · GVHD: TS. Nguyễn Hồng Bửu Long · Khoa CNTT, ĐH KHTN – ĐHQG-HCM
 

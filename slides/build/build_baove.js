@@ -1,13 +1,13 @@
-// Deck BẢO VỆ (30/8/2026) - 25 slide chính + 10 slide dự phòng, nhắm 25 phút.
+// Deck BẢO VỆ (cập nhật 5/9/2026) - 26 slide chính + 12 slide dự phòng, nhắm 25 phút.
 // Style giữ nguyên bản 16/8: khổ 4:3, thanh tiêu đề chàm, khối xám bo góc, chữ serif, footline 4 ô.
-// Nội dung lấy từ thesis/chapters (bản 30/8) + CLAUDE.md. Xuất: ../LUAN_VAN_SLIDE_BAOCAO.pptx
+// Nội dung lấy từ thesis/chapters (bản 5/9) + CLAUDE.md. Xuất: ../LUAN_VAN_SLIDE_BAOCAO.pptx
 const pptxgen = require("pptxgenjs");
 const fs = require("fs");
 const pres = new pptxgen();
 pres.defineLayout({ name: "A43", width: 10, height: 7.5 });
 pres.layout = "A43";
 pres.author = "Le Doan Phuong Uyen";
-pres.title = "Sinh huong dan su dung phan mem tu anh man hinh - bao ve luan van";
+pres.title = "Phat sinh tu dong huong dan su dung phan mem dua tren LLM - bao ve luan van";
 
 const TF = "Cambria", MONO = "Consolas";
 const NAVY = "322164", INK = "1A1A1A";
@@ -22,7 +22,7 @@ let htmlSlides = [], cur = "";
 function esc(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 function plain(c) { return typeof c === "string" ? c : c.map(r => r.text).join(""); }
 function hpush(html) { cur += html; }
-let s, PAGE = 0, BPAGE = 0, TOTAL = 25;
+let s, PAGE = 0, BPAGE = 0, TOTAL = 26;
 function slide() { if (cur) htmlSlides.push(cur + "</div>"); s = pres.addSlide(); s.background = { color: WHITE }; cur = `<div class="slide" style="background:#fff">`; }
 function done() { if (cur) { htmlSlides.push(cur + "</div>"); cur = ""; } }
 function text(content, o) {
@@ -67,7 +67,7 @@ function footRow(label) {
   rect(0, yy, 3.0, hh, FOOTA); rect(3.0, yy, 3.7, hh, FOOTB);
   rect(6.7, yy, 1.9, hh, FOOTC); rect(8.6, yy, 1.4, hh, FOOTD);
   text("bảo vệ luận văn thạc sĩ", { x: 0, y: yy, w: 3.0, h: hh, fontSize: 8, color: WHITE, align: "center", valign: "middle", margin: 0, fontFace: MONO });
-  text("Sinh hướng dẫn sử dụng phần mềm từ ảnh màn hình", { x: 3.0, y: yy, w: 3.7, h: hh, fontSize: 8, color: WHITE, align: "center", valign: "middle", margin: 0 });
+  text("Phát sinh tự động hướng dẫn sử dụng phần mềm dựa trên LLM", { x: 3.0, y: yy, w: 3.7, h: hh, fontSize: 8, color: WHITE, align: "center", valign: "middle", margin: 0 });
   text("Lê Đoàn Phương Uyên", { x: 6.7, y: yy, w: 1.9, h: hh, fontSize: 8, color: WHITE, align: "center", valign: "middle", margin: 0 });
   text(label, { x: 8.6, y: yy, w: 1.4, h: hh, fontSize: 8, color: WHITE, align: "center", valign: "middle", margin: 0 });
 }
@@ -120,8 +120,8 @@ rect(0, 0, W, 0.66, NAVY);
 text("ĐẠI HỌC QUỐC GIA TP. HỒ CHÍ MINH  -  TRƯỜNG ĐẠI HỌC KHOA HỌC TỰ NHIÊN", { x: 0, y: 0, w: W, h: 0.66, fontSize: 14, bold: true, color: WHITE, align: "center", valign: "middle", margin: 0 });
 rect(0.8, 1.2, W - 1.6, 2.45, NAVY, { radius: 0.09, shadow: true });
 text("Luận văn thạc sĩ  -  ngành Trí tuệ nhân tạo", { x: 0.8, y: 1.5, w: W - 1.6, h: 0.4, fontSize: 15, bold: true, color: WHITE, align: "center", margin: 0 });
-text("SINH HƯỚNG DẪN SỬ DỤNG PHẦN MỀM\nTỪ ẢNH MÀN HÌNH", { x: 0.8, y: 2.1, w: W - 1.6, h: 1.3, fontSize: 25, bold: true, color: WHITE, align: "center", margin: 0, lh: 1.25 });
-text("Generating Software Usage Instructions from Screenshots", { x: 0.8, y: 3.75, w: W - 1.6, h: 0.35, fontSize: 12, italic: true, color: GREY, align: "center", margin: 0 });
+text("PHÁT SINH TỰ ĐỘNG HƯỚNG DẪN SỬ DỤNG PHẦN MỀM\nDỰA TRÊN LLM TỪ CÁC TRƯỜNG HỢP SỬ DỤNG\nVÀ GIAO DIỆN NGƯỜI DÙNG", { x: 0.8, y: 1.95, w: W - 1.6, h: 1.6, fontSize: 21, bold: true, color: WHITE, align: "center", margin: 0, lh: 1.25 });
+text("LLM-Based Automatic Generation of Software User Guides from Use Cases and Front-End Structures", { x: 0.8, y: 3.75, w: W - 1.6, h: 0.35, fontSize: 12, italic: true, color: GREY, align: "center", margin: 0 });
 text("Học viên thực hiện:   Lê Đoàn Phương Uyên", { x: 0.8, y: 4.4, w: W - 1.6, h: 0.4, fontSize: 15, bold: true, align: "center", margin: 0 });
 text("Người hướng dẫn khoa học:   TS. Nguyễn Hồng Bửu Long", { x: 0.8, y: 4.85, w: W - 1.6, h: 0.4, fontSize: 15, bold: true, align: "center", margin: 0 });
 text("Mã số ngành: 8480107", { x: 0.8, y: 5.45, w: W - 1.6, h: 0.35, fontSize: 12, color: GREY, align: "center", margin: 0 });
@@ -166,7 +166,7 @@ text("Vấn đề 2 · Dạng lỗi không như dự đoán", { x: 5.1, y: 0.9, 
 block(M, 1.4, 4.35, 3.4); block(5.1, 1.4, 4.35, 3.4);
 text("Một nút có nhiều tên gọi đều đúng.", { x: M + 0.22, y: 1.55, w: 4.0, h: 0.4, fontSize: 13, italic: true, margin: 0 });
 bullets([
-  [{ text: "So khớp chuỗi kết oan ", options: {} }, { text: "97,5%", options: { bold: true, color: RED } }, { text: " số câu diễn đạt khác", options: {} }],
+  [{ text: "So khớp chuỗi loại nhầm ", options: {} }, { text: "97,5%", options: { bold: true, color: RED } }, { text: " số câu diễn đạt khác", options: {} }],
   [{ text: "So vector ngữ nghĩa: AUC ", options: {} }, { text: "0,336", options: { bold: true, color: RED } }, { text: ", kém đoán ngẫu nhiên", options: {} }],
   "inbox / outbox được 0,76, còn search / magnifying glass chỉ 0,55",
 ], M + 0.22, 2.1, 4.0, { fs: 13, gap: 0.85, itemH: 0.8, lh: 1.3 });
@@ -186,7 +186,7 @@ bar("1 · Vị trí của luận văn so với các công trình gần nhất");
 table(M, 1.0, [2.9, 3.0, 3.0], [
   { cells: ["Công trình", "Họ làm gì", "Luận văn khác đi"], bold: true, color: WHITE, fill: NAVY, h: 0.45, fs: 13 },
   { cells: ["SeeClick, OS-Atlas,\nAguvis", "Sinh toạ độ cho máy tự bấm", "Câu là sản phẩm cuối, và là thứ đem chấm"], h: 0.85, fs: 12.5, rule: true },
-  { cells: ["AndroidControl\nNeurIPS 2024", "Câu người viết là đầu vào", "Dùng chính câu đó làm đầu ra mong đợi"], h: 0.85, fs: 12.5, rule: true },
+  { cells: ["AndroidControl\nNeurIPS 2024", "Câu chuẩn là đầu vào", "Dùng chính câu đó làm đầu ra mong đợi"], h: 0.85, fs: 12.5, rule: true },
   { cells: ["Sinh biểu thức quy chiếu\nMao 2016 · Yu 2017", "Câu phải đủ để bên kia trỏ đúng", "Đặt yêu cầu đó vào miền giao diện"], h: 0.85, fs: 12.5, rule: true },
   { cells: ["Widget Captioning\nEMNLP 2020", "Sinh mô tả, entropy chéo thuần", "Tính phân biệt nằm trong mục tiêu huấn luyện"], h: 0.85, fs: 12.5, rule: true },
   { cells: ["Zhao và cộng sự\nEACL 2021", "BLEU, ROUGE không đo được hướng dẫn có định vị", "Căn cứ để bỏ nhóm thước đồng thuận"], h: 0.9, fs: 12.5 },
@@ -199,8 +199,8 @@ N(5); foot(); done();
 slide();
 bar("1 · Ba đóng góp và trạng thái thật của từng đóng góp");
 [["1", "Thước đo executability", "Kiểm chứng bằng sáu khối phép đo.", "HOÀN TẤT", TEAL],
- ["2", "Đường ống dữ liệu và một kết quả đã đăng ký trước", "Hạt giống thứ hai bị huỷ vì ngân sách máy.", "KHÔNG HOÀN TẤT", RED],
- ["3", "Chẩn đoán ở mức từng bước", "Cơ chế đúng, nhưng bị chặn bởi độ chính xác khai báo.", "HOÀN TẤT", TEAL]].forEach((c, i) => {
+ ["2", "Đường ống dữ liệu và kết quả thực nghiệm có nhánh so sánh", "Nhánh xử lý chỉ chạy được một hạt giống vì ngân sách máy.", "MỘT HẠT GIỐNG", RED],
+ ["3", "Chẩn đoán ở mức từng bước", "Cơ chế đúng, nhưng bị chặn bởi độ chính xác khai báo. Nhánh ứng viên nối tiếp: chỗ nghẽn mới là bỏ cuộc quá mức.", "HOÀN TẤT", TEAL]].forEach((c, i) => {
   const yy = 1.05 + i * 1.65;
   block(M, yy, W - 2 * M, 1.4);
   text(c[0], { x: M + 0.15, y: yy + 0.15, w: 0.5, h: 0.55, fontSize: 26, bold: true, color: NAVY, align: "center", margin: 0 });
@@ -213,7 +213,7 @@ N(6); foot(); done();
 // ══════════ 7 · DỮ LIỆU ══════════
 slide();
 bar("2 · Dữ liệu: dựng bằng máy, không thuê người dán nhãn");
-text("Ghép hai kho công khai theo khoá (episode_id, step_id): câu người viết và cây trợ năng từ kho thứ nhất, ảnh màn hình từ kho thứ hai.", { x: M, y: 0.9, w: W - 2 * M, h: 0.5, fontSize: 13, margin: 0, lh: 1.3 });
+text("Ghép hai kho công khai theo khoá (episode_id, step_id): câu chuẩn và cây trợ năng từ kho thứ nhất, ảnh màn hình từ kho thứ hai.", { x: M, y: 0.9, w: W - 2 * M, h: 0.5, fontSize: 13, margin: 0, lh: 1.3 });
 table(M + 0.5, 1.6, [2.6, 2.2, 2.2, 1.6], [
   { cells: ["Tập", "Số bước", "Bước chạm", "Tác vụ"], bold: true, color: WHITE, fill: NAVY, h: 0.42, fs: 13, align: ["left", "center", "center", "center"] },
   { cells: ["Huấn luyện", "64.567", "41.191", "12.895"], h: 0.42, fs: 13.5, rule: true },
@@ -221,7 +221,7 @@ table(M + 0.5, 1.6, [2.6, 2.2, 2.2, 1.6], [
 ], { align: ["left", "center", "center", "center"] });
 text("Ba phép kiểm bảo vệ phần này", { x: M, y: 3.15, w: W - 2 * M, h: 0.35, fontSize: 14, bold: true, color: NAVY, margin: 0 });
 bullets([
-  [{ text: "Phép ghép khớp ", options: {} }, { text: "48%", options: { bold: true, color: TEAL } }, { text: ", đối chứng lệch chủ ý chỉ ", options: {} }, { text: "20%", options: { bold: true, color: RED } }],
+  [{ text: "Phép ghép khớp ", options: {} }, { text: "48%", options: { bold: true, color: TEAL } }, { text: ", phép ghép cố ý lệch một bước chỉ ", options: {} }, { text: "20%", options: { bold: true, color: RED } }],
   [{ text: "Chín bất biến cấu trúc đều đạt: ", options: {} }, { text: "9/9", options: { bold: true, color: TEAL } }],
   [{ text: "Rò rỉ dạy và kiểm: ", options: {} }, { text: "không tác vụ nào trùng", options: { bold: true, color: TEAL } }],
 ], M + 0.15, 3.6, W - 2 * M - 0.3, { fs: 13.5, gap: 0.55, itemH: 0.5, lh: 1.2 });
@@ -281,7 +281,7 @@ bullets([
   "Mục tiêu dạng tỉ số odds, không cần mô hình tham chiếu",
 ], M + 0.15, 3.15, W - 2 * M - 0.3, { fs: 13.5, gap: 0.62, itemH: 0.58, lh: 1.25 });
 block(M, 5.15, W - 2 * M, 1.05);
-text([{ text: "Đối chứng CE2-S2 tách phần công của mục tiêu ưu tiên:", options: { bold: true, color: RED } }, { text: " cùng điểm lưu, cùng 800 bước, không có số hạng ưu tiên.", options: {} }], { x: M + 0.25, y: 5.15, w: W - 2 * M - 0.5, h: 1.05, fontSize: 13.5, valign: "middle", margin: 0, lh: 1.35 });
+text([{ text: "Nhánh so sánh CE2-S2 tách phần công của mục tiêu ưu tiên:", options: { bold: true, color: RED } }, { text: " cùng điểm lưu, cùng 800 bước, không có số hạng ưu tiên.", options: {} }], { x: M + 0.25, y: 5.15, w: W - 2 * M - 0.5, h: 1.05, fontSize: 13.5, valign: "middle", margin: 0, lh: 1.35 });
 N(10); foot(); done();
 
 // ══════════ 11 · THƯỚC ĐO ══════════
@@ -324,7 +324,7 @@ N(12); foot(); done();
 // ══════════ 13 · TRẦN VÀ SÀN ══════════
 slide();
 bar("4 · Trần và sàn đều là đại lượng đo được");
-[["Câu do người viết  (trần)", "75,7%", TEAL, 0.757],
+[["Câu chuẩn  (trần)", "75,7%", TEAL, 0.757],
  ["Mô hình sau tinh chỉnh", "59,1%", NAVY, 0.591],
  ["Mô hình chưa tinh chỉnh", "47,6%", FOOTC, 0.476],
  ["Câu chung chung, không nói phần tử nào", "12,0%", RED, 0.12],
@@ -344,10 +344,10 @@ slide();
 bar("4 · Sáu khối kiểm chứng của thước");
 table(M, 1.0, [4.15, 4.74], [
   { cells: ["Khối kiểm chứng", "Kết quả đo"], bold: true, color: WHITE, fill: NAVY, h: 0.45, fs: 13 },
-  { cells: ["Cổng chặn sai số dụng cụ, khoá trước", { t: "sai số trung vị 0,7%, ngưỡng 3%", bold: true, color: TEAL }], h: 0.6, fs: 12.5, rule: true },
+  { cells: ["Điều kiện sai số dụng cụ, đặt trước", { t: "sai số trung vị 0,7%, ngưỡng 3%", bold: true, color: TEAL }], h: 0.6, fs: 12.5, rule: true },
   { cells: ["Luật trúng chọn từ sàn", { t: "84,3%  →  2,8%", bold: true, color: TEAL }], h: 0.6, fs: 12.5, rule: true },
   { cells: ["Trần và sàn của thước", { t: "75,7  /  12,0  /  6,1", bold: true, color: TEAL }], h: 0.6, fs: 12.5, rule: true },
-  { cells: ["Mười phép bơm lỗi, ngưỡng đóng băng trước", { t: "đạt", bold: true, color: TEAL }], h: 0.6, fs: 12.5, rule: true },
+  { cells: ["Mười phép bơm lỗi, ngưỡng đặt sẵn", { t: "đạt", bold: true, color: TEAL }], h: 0.6, fs: 12.5, rule: true },
   { cells: ["Viết lại 1.139 câu, bảo toàn nghĩa", { t: "+0,35 điểm  [−0,59 ; +1,29]", bold: true, color: TEAL }], h: 0.6, fs: 12.5, rule: true },
   { cells: ["Đổi sang một mô hình định vị thứ hai", { t: "giữ 94% độ lớn phép so S1 với Base", bold: true, color: TEAL }], h: 0.6, fs: 12.5 },
 ], { align: ["left", "center"] });
@@ -357,22 +357,22 @@ N(14); foot(); done();
 
 // ══════════ 15 · ĐĂNG KÝ TRƯỚC ══════════
 slide();
-bar("4 · Thiết kế được niêm phong trước lượt huấn luyện đầu tiên");
-text("Ngày 5 tháng 8 năm 2026, toàn bộ thiết kế vào kho phiên bản khi chưa có điểm số nào.", { x: M, y: 0.92, w: W - 2 * M, h: 0.4, fontSize: 13.5, margin: 0 });
-table(M, 1.7, [2.0, 2.6], [
-  { cells: ["Kết cục", "Điều kiện"], bold: true, color: WHITE, fill: NAVY, h: 0.4, fs: 12 },
-  { cells: [{ t: "Dương", color: TEAL, bold: true }, "vượt ngưỡng đã khoá"], h: 0.5, fs: 12.5, rule: true },
-  { cells: [{ t: "Dương yếu", color: TEAL }, "có dấu, dưới ngưỡng"], h: 0.5, fs: 12.5, rule: true },
-  { cells: [{ t: "Trắng", color: MAROON, bold: true }, "không kết luận được"], h: 0.5, fs: 12.5, rule: true },
-  { cells: [{ t: "Âm", color: RED, bold: true }, "thua dưới hai dụng cụ"], h: 0.5, fs: 12.5 },
+bar("4 · Thiết kế so sánh và mức chênh nhỏ nhất phát hiện được");
+text("Mọi nhánh chấm trên cùng 4.463 bước, nên chênh lệch giữa hai nhánh là hiệu ghép cặp. Hiệu đó đọc theo khoảng tin cậy và theo mức chênh nhỏ nhất phát hiện được (MDE), đo từ nhánh nền.", { x: M, y: 0.92, w: W - 2 * M, h: 0.7, fontSize: 13, margin: 0, lh: 1.3 });
+table(M, 1.75, [2.2, 2.6], [
+  { cells: ["Kết cục", "Cách đọc"], bold: true, color: WHITE, fill: NAVY, h: 0.4, fs: 12 },
+  { cells: [{ t: "Δ vượt MDE, KTC loại 0", color: TEAL, bold: true }, "thành phần có tác dụng"], h: 0.5, fs: 12, rule: true },
+  { cells: [{ t: "KTC chạm 0", color: TEAL }, "xu hướng, chưa gọi là cải thiện"], h: 0.5, fs: 12, rule: true },
+  { cells: [{ t: "|Δ| dưới MDE", color: MAROON, bold: true }, "không kết luận được"], h: 0.5, fs: 12, rule: true },
+  { cells: [{ t: "Cận trên KTC < 0", color: RED, bold: true }, "thành phần gây hại"], h: 0.5, fs: 12 },
 ]);
 bullets([
-  "Kết cục trắng đã có sẵn cách đọc từ trước",
-  "27 mục sửa đổi ghi kèm ngày, 21 mục có trước điểm số đầu tiên",
-  "Số đã rút vẫn giữ lại kèm lý do rút",
-], 5.1, 1.75, 4.35, { fs: 12.5, gap: 0.95, itemH: 0.9, lh: 1.3 });
+  "Hai hạt giống của nhánh nền cho nhiễu dựng lại: 0,52 điểm",
+  "Sai số chuẩn ghép cặp đo được 0,79 điểm, nên MDE là 2,2 điểm; công thức chiếu thông dụng cho 4 đến 9 điểm vì giả định tương quan trong cụm bằng một",
+  "Thiết kế một hạt giống có MDE 2,11 điểm",
+], 5.1, 1.8, 4.35, { fs: 12, gap: 1.0, itemH: 0.95, lh: 1.3 });
 block(M, 4.9, W - 2 * M, 1.3);
-text([{ text: "Mức chênh nhỏ nhất phát hiện được là 2,2 điểm.", options: { bold: true, color: RED } }, { text: "\nCon số này cũng chốt trước khi có điểm, và mọi kết quả sau đọc trên nó.", options: {} }], { x: M + 0.25, y: 4.9, w: W - 2 * M - 0.5, h: 1.3, fontSize: 14, valign: "middle", margin: 0, lh: 1.4 });
+text([{ text: "Mức chênh nhỏ nhất phát hiện được là 2,2 điểm.", options: { bold: true, color: RED } }, { text: "\nMọi kết quả ở phần sau đọc trên con số này.", options: {} }], { x: M + 0.25, y: 4.9, w: W - 2 * M - 0.5, h: 1.3, fontSize: 14, valign: "middle", margin: 0, lh: 1.4 });
 N(15); foot(); done();
 
 // ══════════ 16 · KẾT QUẢ CHÍNH ══════════
@@ -380,20 +380,21 @@ slide();
 bar("5 · Kết quả chính trên 4.463 bước chạm");
 table(M, 1.0, [3.9, 1.7, 2.2, 1.09], [
   { cells: ["Nhánh", "Exec.", "KTC 95%", ""], bold: true, color: WHITE, fill: NAVY, h: 0.42, fs: 12.5, align: ["left", "center", "center", "center"] },
-  { cells: [{ t: "Câu do người viết  (trần)", italic: true }, { t: "75,7", bold: true, color: TEAL }, "[74,1 ; 77,3]", ""], h: 0.46, fs: 13, rule: "322164", ruleW: 1.5 },
+  { cells: [{ t: "Câu chuẩn  (trần)", italic: true }, { t: "75,7", bold: true, color: TEAL }, "[74,1 ; 77,3]", ""], h: 0.46, fs: 13, rule: "322164", ruleW: 1.5 },
   { cells: ["Base, chưa tinh chỉnh", "47,6", "[45,9 ; 49,3]", ""], h: 0.44, fs: 13, rule: true },
   { cells: ["S1, hạt giống 101", "59,1", "[57,3 ; 60,8]", ""], h: 0.44, fs: 13, rule: true },
   { cells: ["S1, hạt giống 202", "59,6", "[57,9 ; 61,3]", ""], h: 0.44, fs: 13, rule: "322164", ruleW: 1.5 },
-  { cells: ["S2, khai báo trước", "57,2", "[55,4 ; 58,9]", { t: "thăm dò", color: MAROON, italic: true }], h: 0.44, fs: 13, rule: true },
-  { cells: ["CE2-S2, đối chứng", "59,4", "[57,7 ; 61,1]", { t: "thăm dò", color: MAROON, italic: true }], h: 0.44, fs: 13, rule: true },
-  { cells: [{ t: "MIN-DESC, mục tiêu ưu tiên", bold: true }, { t: "60,0", bold: true, color: NAVY }, "[58,3 ; 61,8]", { t: "thăm dò", color: MAROON, italic: true }], h: 0.44, fs: 13 },
+  { cells: ["S2, khai báo trước", "57,2", "[55,4 ; 58,9]", { t: "một hạt giống", color: MAROON, italic: true }], h: 0.44, fs: 13, rule: true },
+  { cells: ["CE2-S2, nhánh so sánh", "59,4", "[57,7 ; 61,1]", { t: "một hạt giống", color: MAROON, italic: true }], h: 0.44, fs: 13, rule: true },
+  { cells: [{ t: "MIN-DESC, mục tiêu ưu tiên", bold: true }, { t: "60,0", bold: true, color: NAVY }, "[58,3 ; 61,8]", { t: "một hạt giống", color: MAROON, italic: true }], h: 0.44, fs: 13, rule: "322164", ruleW: 1.5 },
+  { cells: ["Nhánh ứng viên, hạt giống 101", "56,1", "[54,5 ; 58,0]", { t: "điều kiện khác", color: MAROON, italic: true }], h: 0.44, fs: 13 },
 ], { align: ["left", "center", "center", "center"] });
-text("Ba nhánh dưới vạch chỉ có một hạt giống.", { x: M, y: 4.35, w: W - 2 * M, h: 0.3, fontSize: 11.5, italic: true, color: GREY, margin: 0 });
-block(M, 4.8, W - 2 * M, 1.4);
+text("Bốn nhánh dưới vạch chỉ có một hạt giống. Nhánh ứng viên lệch ba biến so với các nhánh trên, chỉ so được với Base.", { x: M, y: 5.02, w: W - 2 * M, h: 0.3, fontSize: 11.5, italic: true, color: GREY, margin: 0 });
+block(M, 5.4, W - 2 * M, 1.0);
 bullets([
   "Ba khoảng tin cậy của Base, S1 và trần rời nhau hoàn toàn",
   "Nhánh nền chưa sát trần, nên vẫn còn khoảng trống cho can thiệp",
-], M + 0.2, 4.95, W - 2 * M - 0.4, { fs: 13.5, gap: 0.6, itemH: 0.55, lh: 1.25 });
+], M + 0.2, 5.48, W - 2 * M - 0.4, { fs: 13, gap: 0.45, itemH: 0.42, lh: 1.2 });
 N(16); foot(); done();
 
 // ══════════ 17 · GHÉP CẶP ══════════
@@ -422,13 +423,13 @@ N(17); foot(); done();
 
 // ══════════ 18 · NHÁNH KHAI BÁO ══════════
 slide();
-bar("5 · Nhánh khai báo: một kết quả thăm dò, không kết luận được");
+bar("5 · Nhánh khai báo: một hạt giống, không kết luận được");
 block(M, 0.95, W - 2 * M, 1.0);
-text([{ text: "S2 đạt 57,2%, thấp hơn nhánh nền 1,93 điểm.", options: { bold: true, color: RED } }, { text: "  Độ lớn đó dưới mức phát hiện 2,2 nên đây là ô trắng.", options: {} }], { x: M + 0.25, y: 0.95, w: W - 2 * M - 0.5, h: 1.0, fontSize: 14, valign: "middle", margin: 0, lh: 1.35 });
+text([{ text: "S2 đạt 57,2%, thấp hơn nhánh nền 1,93 điểm.", options: { bold: true, color: RED } }, { text: "  Độ lớn đó dưới mức phát hiện 2,2 nên không kết luận được.", options: {} }], { x: M + 0.25, y: 0.95, w: W - 2 * M - 0.5, h: 1.0, fontSize: 14, valign: "middle", margin: 0, lh: 1.35 });
 text("Vì sao không kết luận được", { x: M, y: 2.15, w: 4.4, h: 0.32, fontSize: 13.5, bold: true, color: NAVY, margin: 0 });
 bullets([
   "Đại lượng chính đòi hai hạt giống; hạt thứ hai bị huỷ vì ngân sách",
-  "Luận văn không nói thành phần có tác dụng hay gây hại",
+  "Luận văn không kết luận thành phần có tác dụng hay gây hại",
   "Cũng không lấy phép so khác để thế chỗ",
 ], M, 2.6, 4.4, { fs: 12.5, gap: 0.78, itemH: 0.74, lh: 1.3 });
 text("Chỗ thiệt hại nằm ở đâu", { x: 5.1, y: 2.15, w: 4.35, h: 0.32, fontSize: 13.5, bold: true, color: NAVY, margin: 0 });
@@ -455,14 +456,14 @@ bar("5 · Chặng hai: điểm cao nhất, nhưng phần lớn không thuộc m�
 text("+2,24\nhọc có giám sát thuần", { x: 3.15, y: 2.08, w: 2.0, h: 0.62, fontSize: 11.5, color: MAROON, align: "center", margin: 0, lh: 1.2 });
 text("+0,63\nriêng mục tiêu ưu tiên", { x: 6.05, y: 2.08, w: 2.0, h: 0.62, fontSize: 11.5, color: MAROON, align: "center", margin: 0, lh: 1.2 });
 block(M, 2.9, W - 2 * M, 0.75);
-text("78% mức tăng thuộc về nhánh đối chứng. Đo ở tầng khai báo, tỉ lệ ấy là 87%.", { x: M + 0.25, y: 2.9, w: W - 2 * M - 0.5, h: 0.75, fontSize: 14, bold: true, color: RED, valign: "middle", margin: 0 });
+text("78% mức tăng thuộc về nhánh so sánh. Đo ở tầng khai báo, tỉ lệ ấy là 87%.", { x: M + 0.25, y: 2.9, w: W - 2 * M - 0.5, h: 0.75, fontSize: 14, bold: true, color: RED, valign: "middle", margin: 0 });
 table(M, 3.85, [4.2, 1.5, 2.2, 1.09], [
   { cells: ["Đại lượng", "Δ", "KTC 95%", "p"], bold: true, color: WHITE, fill: NAVY, h: 0.4, fs: 12, align: ["left", "center", "center", "center"] },
   { cells: [{ t: "MIN-DESC − CE2-S2", bold: true }, { t: "+0,63", bold: true }, "[+0,16 ; +1,10]", "0,011"], h: 0.46, fs: 12.5, rule: true },
   { cells: ["MIN-DESC − S1", "+0,94", "[−0,09 ; +2,05]", "0,11"], h: 0.46, fs: 12.5 },
 ], { align: ["left", "center", "center", "center"] });
 block(M, 5.3, W - 2 * M, 0.9);
-text([{ text: "Theo luật đã khoá, đây là ô TRẮNG:", options: { bold: true, color: MAROON } }, { text: " +0,63 vẫn dưới mức phát hiện 2,11 và chỉ bằng 1,4 lần nhiễu giữa hạt giống.", options: {} }], { x: M + 0.25, y: 5.3, w: W - 2 * M - 0.5, h: 0.9, fontSize: 13.5, valign: "middle", margin: 0, lh: 1.35 });
+text([{ text: "Không kết luận được:", options: { bold: true, color: MAROON } }, { text: " +0,63 vẫn dưới mức phát hiện 2,11 và chỉ bằng 1,4 lần nhiễu giữa hạt giống.", options: {} }], { x: M + 0.25, y: 5.3, w: W - 2 * M - 0.5, h: 0.9, fontSize: 13.5, valign: "middle", margin: 0, lh: 1.35 });
 N(19); foot(); done();
 
 // ══════════ 20 · CHẨN ĐOÁN 2x2 ══════════
@@ -476,7 +477,7 @@ table(M, 1.35, [2.6, 1.7, 1.6, 1.3, 1.4, 0.79], [
 ], { align: ["left", "center", "center", "center", "center", "center"] });
 bullets([
   "Khai báo đúng thì mô hình vượt cả trần của nhóm đó",
-  "Khai báo sai thì nó làm hỏng câu nặng hơn cả không khai báo",
+  "Khai báo sai thì nó làm sai câu nặng hơn cả không khai báo",
   [{ text: "Hai chiều triệt tiêu nhau, cộng lại thành ", options: {} }, { text: "+0,94 điểm không có ý nghĩa", options: { bold: true, color: MAROON } }],
 ], M + 0.15, 3.3, W - 2 * M - 0.3, { fs: 13.5, gap: 0.68, itemH: 0.64, lh: 1.25 });
 block(M, 5.35, W - 2 * M, 0.85);
@@ -497,55 +498,82 @@ table(M, 1.0, [2.7, 1.05, 0.9, 1.1, 1.1, 1.1, 1.04], [
 ], { align: ["left", "center", "center", "center", "center", "center", "center"] });
 bullets([
   "Ô đúng cả hai đã hết dư địa: mô hình vượt trần trên 46,7% số bước",
-  "Ô sai cả hai giữ 63% dư địa, mà câu người viết vẫn đạt 64,4 ở đó",
+  "Ô sai cả hai giữ 63% dư địa, mà câu chuẩn vẫn đạt 64,4 ở đó",
 ], M + 0.15, 4.2, W - 2 * M - 0.3, { fs: 13.5, gap: 0.62, itemH: 0.58, lh: 1.25 });
 block(M, 5.45, W - 2 * M, 0.75);
 text([{ text: "Chặn được thiệt hại ở nhóm khai báo sai thì được +5,4 điểm.", options: { bold: true, color: NAVY } }, { text: "  Bảy cơ chế chọn đã thử đều nằm trong nhiễu, nên phải sửa ở khâu huấn luyện.", options: {} }], { x: M + 0.25, y: 5.45, w: W - 2 * M - 0.5, h: 0.75, fontSize: 12.5, valign: "middle", margin: 0, lh: 1.3 });
 N(21); foot(); done();
 
-// ══════════ 22 · HẠN CHẾ ══════════
+
+// ══════════ 22 · NHÁNH ỨNG VIÊN ══════════
+slide();
+bar("5 · Nhánh ứng viên: cơ chế chọn đúng, điểm nghẽn là bỏ cuộc quá mức");
+text("Ô khai báo đổi từ sinh tự do sang chọn một dòng trong danh sách tối đa 40 ứng viên của chính màn hình. Không đạt ngưỡng dừng: độ chính xác chọn 57,5% so với ngưỡng 63,6%. Executability 56,1% [54,5 ; 58,0].", { x: M, y: 0.85, w: W - 2 * M, h: 0.7, fontSize: 12.5, margin: 0, lh: 1.3 });
+text("Chia theo việc danh sách có đáp án và mô hình có đưa ra lựa chọn hay không", { x: M, y: 1.6, w: 5.2, h: 0.3, fontSize: 12.5, bold: true, color: NAVY, margin: 0 });
+table(M, 1.95, [1.5, 1.35, 0.95, 1.4], [
+  { cells: ["Có đáp án", "Mô hình", "n", "Exec."], bold: true, color: WHITE, fill: NAVY, h: 0.38, fs: 11.5, align: ["left", "left", "center", "center"] },
+  { cells: ["có", { t: "chọn", color: TEAL, bold: true }, "2.326", { t: "71,4", bold: true, color: TEAL }], h: 0.44, fs: 12.5, rule: true },
+  { cells: ["có", { t: "bỏ cuộc (sai)", color: RED, bold: true }, "872", { t: "23,7", bold: true, color: RED }], h: 0.44, fs: 12.5, rule: true },
+  { cells: ["không", "chọn (sai)", "264", "37,5"], h: 0.4, fs: 12, rule: true },
+  { cells: ["không", "bỏ cuộc (đúng)", "1.001", "53,8"], h: 0.4, fs: 12 },
+], { align: ["left", "left", "center", "center"] });
+text("Khi đưa ra lựa chọn, kém câu chuẩn 4,3 điểm. Bỏ cuộc sai ở 27,3% số bước có đáp án, tái lập qua hai phép đo.", { x: M, y: 4.1, w: 5.2, h: 0.75, fontSize: 12, bold: true, color: RED, margin: 0, lh: 1.3 });
+text("Tỉ lệ nhãn bỏ cuộc theo mẫu số", { x: 6.05, y: 1.6, w: 3.4, h: 0.3, fontSize: 12.5, bold: true, color: NAVY, margin: 0 });
+table(6.05, 1.95, [2.45, 0.95], [
+  { cells: ["Toàn tập huấn luyện", "54,8%"], h: 0.44, fs: 12, rule: true },
+  { cells: ["Chỉ bước chạm, tập huấn luyện", "29,1%"], h: 0.44, fs: 12, rule: true },
+  { cells: ["Bước chạm tập kiểm, tỉ lệ đúng", "28,3%"], h: 0.44, fs: 12, rule: true },
+  { cells: [{ t: "Mô hình phát ra", bold: true }, { t: "42,0%", bold: true, color: RED }], h: 0.44, fs: 12 },
+], { align: ["left", "right"] });
+text("Mọi bước không chạm đều mang nhãn bỏ cuộc, nên hơn nửa mẫu huấn luyện dạy mô hình bỏ cuộc. Đây là quan sát, chưa phải nhân quả.", { x: 6.05, y: 3.85, w: 3.4, h: 1.0, fontSize: 11.5, margin: 0, lh: 1.3 });
+block(M, 5.1, W - 2 * M, 1.1);
+text([{ text: "Không có nhánh so sánh cùng đầu vào, nên luận văn không nói gì về công của đầu chọn hay của danh sách.", options: { bold: true, color: NAVY } }, { text: " Nhánh chỉ so được với Base: +8,54 điểm. Mọi số ở đây là kết quả một hạt giống.", options: {} }], { x: M + 0.25, y: 5.1, w: W - 2 * M - 0.5, h: 1.1, fontSize: 12.5, valign: "middle", margin: 0, lh: 1.35 });
+N(22); foot(); done();
+
+// ══════════ 23 · HẠN CHẾ ══════════
 slide();
 bar("6 · Hạn chế, tự khai kèm số đo");
 text("Về kết quả mô hình", { x: M, y: 0.95, w: 4.4, h: 0.32, fontSize: 14, bold: true, color: NAVY, margin: 0 });
 bullets([
   "Mọi nhánh xử lý chỉ chạy được một hạt giống",
-  "Điều kiện không gây hại bị trượt: tụt 19,75 điểm ở bước không chạm",
+  "Điều kiện không gây hại không đạt: giảm 19,75 điểm ở bước không chạm",
   "Dữ liệu cặp có lối tắt ở 17,4% số cặp, phát hiện sau khi huấn luyện",
-  "Ba nhánh đối chứng đã đăng ký không chạy",
-], M, 1.4, 4.4, { fs: 12.5, gap: 0.82, itemH: 0.78, lh: 1.3 });
+  "Ba nhánh so sánh trong thiết kế không chạy",
+  "Nhánh ứng viên không có nhánh so sánh cùng đầu vào",
+], M, 1.4, 4.4, { fs: 12.5, gap: 0.68, itemH: 0.64, lh: 1.3 });
 text("Về dụng cụ đo và dữ liệu", { x: 5.1, y: 0.95, w: 4.35, h: 0.32, fontSize: 14, bold: true, color: NAVY, margin: 0 });
 bullets([
   "Hai dụng cụ đo cùng họ Qwen-VL với mô hình bị chấm",
   "Thước chưa đối chiếu với đánh giá của người thật",
   "Tập kiểm không phải ứng dụng chưa từng thấy: 95,6% trùng",
-  "Khâu chấm mớm sẵn ngữ cảnh do người viết",
+  "Khâu chấm cho sẵn ngữ cảnh là câu chuẩn của các bước trước",
 ], 5.1, 1.4, 4.35, { fs: 12.5, gap: 0.82, itemH: 0.78, lh: 1.3 });
 block(M, 4.9, W - 2 * M, 1.3);
 text("Phạm vi của luận văn gồm một màn hình mỗi lần, giao diện tiếng Anh, một bộ dữ liệu, hai mô hình định vị cùng họ và một mô hình gốc cỡ ba tỉ tham số.", { x: M + 0.25, y: 4.9, w: W - 2 * M - 0.5, h: 1.3, fontSize: 13.5, valign: "middle", margin: 0, lh: 1.4 });
-N(22); foot(); done();
+N(23); foot(); done();
 
-// ══════════ 23 · HƯỚNG PHÁT TRIỂN ══════════
+// ══════════ 24 · HƯỚNG PHÁT TRIỂN ══════════
 slide();
 bar("6 · Hướng phát triển");
-text("Ba hướng đầu đã đăng ký trước ngày 25 tháng 8, kèm cổng chặn và điểm quyết định", { x: M, y: 0.88, w: W - 2 * M, h: 0.32, fontSize: 12, italic: true, color: GREY, margin: 0 });
-[["1", "Đưa danh sách ứng viên vào đầu vào", "Mô hình chọn tên trong danh sách của màn hình đó. Tên đúng có mặt ở 99,7% số bước.", RED],
- ["2", "Dạy mô hình lùi khi không chắc", "Bước từng gọi sai tên nhận đích không chắc, nên vẫn so được với nhánh nền.", NAVY],
- ["3", "Chạy nốt hạt giống thứ hai", "Báo trung bình hai hạt giống, bất kể kết quả ra sao.", NAVY]].forEach((n, i) => {
+text("Ba hướng đầu nối thẳng vào nhánh ứng viên; điều kiện chạy của hai hướng đầu đã cố định trước khi có số", { x: M, y: 0.88, w: W - 2 * M, h: 0.32, fontSize: 12, italic: true, color: GREY, margin: 0 });
+[["1", "Huấn luyện lại trên riêng 41.191 bước chạm", "Đưa tỉ lệ nhãn bỏ cuộc từ 54,8% về 29,1%. Dữ liệu đã dựng. Không chạy: thủ tục ngưỡng chỉ cải thiện tối đa 8 trên 1.400 bước, dưới ngưỡng 18/24 đặt trước.", RED],
+ ["2", "Học quyết định bỏ cuộc từ tín hiệu ngoài xác suất của mô hình", "Thủ tục ngưỡng: giữ nguyên thắng (+8/1.400, KTC phủ 0). Điểm thẻ none ở bước có vàng và không có vàng trùng nhau, AUC 0,69–0,72. Bỏ cuộc hoàn hảo cho 78,0%: khoảng 14,6 điểm cần một bộ phân loại riêng.", NAVY],
+ ["3", "Nhánh so sánh cùng đầu vào, rồi hạt giống thứ hai", "Không có nó thì không nói được công của đầu chọn. Sau đó mới báo trung bình hai hạt giống, bất kể ra sao.", NAVY]].forEach((n, i) => {
   const yy = 1.3 + i * 1.42;
   block(M, yy, W - 2 * M, 1.28);
   text(n[0], { x: M + 0.14, y: yy + 0.12, w: 0.42, h: 0.42, fontSize: 21, bold: true, color: n[3], align: "center", margin: 0 });
   text(n[1], { x: M + 0.62, y: yy + 0.14, w: W - 2 * M - 0.85, h: 0.34, fontSize: 14, bold: true, color: n[3], margin: 0 });
   text(n[2], { x: M + 0.62, y: yy + 0.56, w: W - 2 * M - 0.85, h: 0.66, fontSize: 12.5, margin: 0, lh: 1.3 });
 });
-text("Còn lại: chấm tay 100 câu · viết lại chính tên gọi phần tử · bộ liệt kê phần tử tốt hơn · chuỗi nhiều màn", { x: M, y: 5.65, w: W - 2 * M, h: 0.55, fontSize: 11.5, color: GREY, margin: 0, lh: 1.3 });
-N(23); foot(); done();
+text("Còn lại: dạy mô hình lùi khi không chắc · chấm tay 100 câu · viết lại chính tên gọi phần tử · bộ liệt kê phần tử tốt hơn · chuỗi nhiều màn", { x: M, y: 5.65, w: W - 2 * M, h: 0.55, fontSize: 11.5, color: GREY, margin: 0, lh: 1.3 });
+N(24); foot(); done();
 
-// ══════════ 24 · KẾT LUẬN ══════════
+// ══════════ 25 · KẾT LUẬN ══════════
 slide();
 bar("Kết luận");
 [["Thước đo", "Executability, kiểm chứng bằng sáu khối phép đo. Trần 75,7 và sàn 12,0 đều đo được.", TEAL],
- ["Kết quả", "Tinh chỉnh đáng 11,5 điểm và đứng vững sau sáu cách giải thích thay thế. Thành phần đề xuất cho ô trắng, và luận văn dừng đúng ở đó.", NAVY],
- ["Chẩn đoán", "Cơ chế đúng trên 60,6% số bước, nhưng bị chặn bởi độ chính xác khai báo. 63% dư địa nằm trong một ô.", MAROON]].forEach((c, i) => {
+ ["Kết quả", "Tinh chỉnh đáng 11,5 điểm và đứng vững sau sáu cách giải thích thay thế. Thành phần đề xuất chưa kết luận được ở một hạt giống, và luận văn dừng đúng ở đó.", NAVY],
+ ["Chẩn đoán", "Cơ chế đúng trên 60,6% số bước, nhưng bị chặn bởi độ chính xác khai báo. Nhánh ứng viên: cơ chế chọn đạt 71,4 khi đưa ra lựa chọn, điểm nghẽn mới là bỏ cuộc quá mức.", MAROON]].forEach((c, i) => {
   const yy = 1.05 + i * 1.35;
   rect(M, yy, W - 2 * M, 1.2, BLOCK, { radius: 0.06, shadow: true });
   text(c[0], { x: M + 0.2, y: yy + 0.12, w: 1.6, h: 0.35, fontSize: 14.5, bold: true, color: c[2], margin: 0 });
@@ -553,16 +581,16 @@ bar("Kết luận");
 });
 text("Công trình liên quan tới luận văn", { x: M, y: 5.15, w: W - 2 * M, h: 0.3, fontSize: 13, bold: true, color: NAVY, margin: 0 });
 table(M, 5.5, [2.3, 4.35, 2.25], [
-  { cells: ["VCL 2026", "Nhãn quy chiếu tự động khi phần tử không có tên để gọi", { t: "đang bình duyệt", italic: true, color: GREY }], h: 0.4, fs: 11.5, rule: true },
-  { cells: ["FAIR 2026", "Descriptor-First Supervision for GUI Instruction Generation", { t: "đang bình duyệt", italic: true, color: GREY }], h: 0.4, fs: 11.5 },
+  { cells: ["VCL 2026", "Nhãn quy chiếu tự động khi phần tử không có tên để gọi", { t: "đã nộp 30/8", italic: true, color: GREY }], h: 0.4, fs: 11.5, rule: true },
+  { cells: ["FAIR 2026", "Descriptor and Preference Targets for GUI Instruction Generation", { t: "đã gửi 31/8", italic: true, color: GREY }], h: 0.4, fs: 11.5 },
 ], { align: ["left", "left", "right"] });
-N(24); foot(); done();
+N(25); foot(); done();
 
-// ══════════ 25 · CẢM ƠN ══════════
+// ══════════ 26 · CẢM ƠN ══════════
 slide();
 rect(0, 0, W, H, NAVY);
-text("Em xin cảm ơn hội đồng đã lắng nghe", { x: 0.8, y: 2.6, w: W - 1.6, h: 0.7, fontSize: 26, bold: true, color: WHITE, align: "center", margin: 0 });
-text("Kính mong nhận được góp ý của quý thầy cô", { x: 0.8, y: 3.5, w: W - 1.6, h: 0.5, fontSize: 16, color: "D8D4E6", align: "center", margin: 0 });
+text("Trân trọng cảm ơn", { x: 0.8, y: 2.6, w: W - 1.6, h: 0.7, fontSize: 26, bold: true, color: WHITE, align: "center", margin: 0 });
+text("Hỏi đáp và thảo luận", { x: 0.8, y: 3.5, w: W - 1.6, h: 0.5, fontSize: 16, color: "D8D4E6", align: "center", margin: 0 });
 hline(3.6, 4.35, 2.8, "7A7099", 1.5);
 text("Lê Đoàn Phương Uyên   ·   TS. Nguyễn Hồng Bửu Long\nTrường Đại học Khoa học Tự nhiên, ĐHQG-HCM", { x: 0.8, y: 4.65, w: W - 1.6, h: 0.8, fontSize: 13, color: "D8D4E6", align: "center", margin: 0, lh: 1.4 });
 foot(); done();
@@ -571,19 +599,22 @@ foot(); done();
 
 // B1 · thước đồng thuận
 slide();
-bar("Dự phòng · Vì sao không dùng BLEU, ROUGE hay vector ngữ nghĩa");
+bar("Dự phòng · Lý do không dùng BLEU, ROUGE hay vector ngữ nghĩa");
 table(M, 1.1, [3.5, 1.9, 1.8, 1.69], [
   { cells: ["Nhánh", "Executability", "BLEU-4", "ROUGE-L"], bold: true, color: WHITE, fill: NAVY, h: 0.42, fs: 12.5, align: ["left", "center", "center", "center"] },
-  { cells: ["Base", "47,6", "9,7", "40,3"], h: 0.44, fs: 13, rule: true },
-  { cells: ["S1", "59,1", "38,7", "67,3"], h: 0.44, fs: 13, rule: true },
-  { cells: [{ t: "Câu người viết", italic: true }, "75,7", "96,1", "100,0"], h: 0.44, fs: 13 },
+  { cells: ["Base", "47,6", "9,9", "40,4"], h: 0.4, fs: 12.5, rule: true },
+  { cells: ["S1 (hạt giống 101)", "59,1", "38,7", "67,3"], h: 0.4, fs: 12.5, rule: true },
+  { cells: ["CE2-S2", "59,4", "38,1", { t: "68,6", bold: true }], h: 0.4, fs: 12.5, rule: true },
+  { cells: ["MIN-DESC", { t: "60,0", bold: true }, "37,9", "68,4"], h: 0.4, fs: 12.5, rule: true },
+  { cells: ["Nhánh ứng viên", "56,1", "34,5", "63,0"], h: 0.4, fs: 12.5, rule: true },
+  { cells: [{ t: "Câu chuẩn", italic: true }, "75,7", "96,1", "100,0"], h: 0.4, fs: 12.5 },
 ], { align: ["left", "center", "center", "center"] });
 bullets([
-  "Ba thước xếp cùng thứ tự chỉ vì ba nhánh cách nhau rất xa",
+  "Ba thước cùng thứ tự ở ba nhánh cách xa nhau; trong cụm 57 đến 60 thì bất đồng: BLEU xếp MIN-DESC dưới S1, ROUGE-L xếp CE2-S2 cao nhất",
   "So khớp chuỗi kết oan 97,5% số câu diễn đạt khác; vector ngữ nghĩa cho AUC 0,336",
   "Zhao và cộng sự (EACL 2021) khuyên dùng thước có tham chiếu khi xếp hạng hệ thống, nên luận văn chỉ phát biểu ở mức hệ thống",
   "Bản thước không tham chiếu cho kết luận lệch không quá 0,20 điểm",
-], M, 3.3, W - 2 * M, { fs: 12.5, gap: 0.72, itemH: 0.68, lh: 1.3 });
+], M, 4.05, W - 2 * M, { fs: 12, gap: 0.62, itemH: 0.6, lh: 1.25 });
 footB(); done();
 
 // B2 · đổi dụng cụ
@@ -613,12 +644,13 @@ bullets([
   "Thước cho kết quả tất định: bốn lượt chạy độc lập, 1.625 phép so, không một bất đồng",
   "Hệ số đồng thuận κ = 0,867 toàn tập, và 0,650 trên 1.652 bước hai nhánh viết câu khác nhau",
   "Luận văn nêu thẳng một lỗi cài đặt: phép chuẩn hoá quy “go back” về lớp chạm. Sửa lại thì điểm đổi 0,3 điểm, và ba nhánh đã chấm không được chấm lại",
-], M, 1.0, W - 2 * M, { fs: 13, gap: 1.05, itemH: 1.0, lh: 1.3 });
+  "Luật hộp phần tử của chính AndroidControl (Phụ lục D.3) cho mốc câu chuẩn 83,8, thứ tự tám nhánh không đổi; tính sau khi có điểm nên chỉ là thước báo kèm",
+], M, 1.0, W - 2 * M, { fs: 12.5, gap: 0.9, itemH: 0.86, lh: 1.3 });
 footB(); done();
 
 // B4 · phép viết lại câu
 slide();
-bar("Dự phòng · Thước có mong manh trước cách diễn đạt không");
+bar("Dự phòng · Độ bền của thước trước cách diễn đạt khác");
 table(M, 1.0, [2.8, 2.0, 1.9, 2.19], [
   { cells: ["Biến thể", "Phần bị tác động", "Điểm", "p"], bold: true, color: WHITE, fill: NAVY, h: 0.42, fs: 12, align: ["left", "center", "center", "center"] },
   { cells: ["Đổi động từ thao tác", "725 bước", "76,8 → 77,0", "1,000"], h: 0.44, fs: 12.5, rule: true },
@@ -629,7 +661,7 @@ table(M, 1.0, [2.8, 2.0, 1.9, 2.19], [
 bullets([
   "Gộp ba biến thể bảo toàn nghĩa: 1.139 câu, hiệu ròng +0,35 điểm, KTC [−0,59 ; +1,29]",
   "Bỏ mệnh đề vị trí thì thước phạt đúng, nên đây không phải một thước bất động",
-  "Cơ chế hỏng là hỏng tất cả hoặc không: trung vị sai số giữ nguyên, còn p90 bung từ 6,88 lên 31,16",
+  "Dạng lỗi là tất cả hoặc không: trung vị sai số giữ nguyên, còn p90 bung từ 6,88 lên 31,16",
   "Phần bị tác động là phần dễ nhất, và phép viết lại này chưa đụng vào cách mô tả phần tử",
 ], M, 3.5, W - 2 * M, { fs: 12.5, gap: 0.7, itemH: 0.66, lh: 1.3 });
 footB(); done();
@@ -638,7 +670,7 @@ footB(); done();
 slide();
 bar("Dự phòng · Sàn của thước, và gọi tên so với chỉ vị trí");
 table(M, 1.05, [3.6, 3.5, 1.79], [
-  { cells: ["Nhánh đối chứng", "Câu bị thay thành gì", "Điểm"], bold: true, color: WHITE, fill: NAVY, h: 0.42, fs: 12, align: ["left", "left", "center"] },
+  { cells: ["Nhánh so sánh", "Câu bị thay thành gì", "Điểm"], bold: true, color: WHITE, fill: NAVY, h: 0.42, fs: 12, align: ["left", "left", "center"] },
   { cells: ["Câu chung chung", "“Tap the button.” ở mọi bước", { t: "12,0", bold: true }], h: 0.46, fs: 12.5, rule: true },
   { cells: [{ t: "Câu sai màn hình", bold: true }, "câu thật của bước khác: đúng văn phong, sai nội dung", { t: "6,1", bold: true, color: RED }], h: 0.56, fs: 12.5, rule: true },
   { cells: ["Bỏ tên, giữ vị trí", "chỉ còn mệnh đề vị trí", "61,1"], h: 0.46, fs: 12.5 },
@@ -647,7 +679,7 @@ bullets([
   "Việc gọi tên đắt gấp tám lần việc chỉ chỗ: bỏ tên mất 28,5 điểm, bỏ vị trí chỉ mất 3,5 điểm",
   "Con số phải trình là 28,5 điểm trên phần bị tác động, vì phép thử chỉ đụng 24,1% số bước",
   "Dải dùng được của thước là 62,9 điểm",
-  "Suy đoán sàn khoảng 40% bị bác, vì nó suy từ tỉ lệ ba nhánh cùng trúng",
+  "Suy đoán sàn khoảng 40% bị loại, vì nó suy từ tỉ lệ ba nhánh cùng trúng",
 ], M, 3.35, W - 2 * M, { fs: 12.5, gap: 0.72, itemH: 0.68, lh: 1.3 });
 footB(); done();
 
@@ -658,7 +690,7 @@ table(M, 1.05, [3.0, 5.89], [
   { cells: ["Hạng mục", "Cấu hình"], bold: true, color: WHITE, fill: NAVY, h: 0.4, fs: 12.5 },
   { cells: ["Mô hình gốc", "Qwen2.5-VL-3B-Instruct"], h: 0.4, fs: 12.5, rule: true },
   { cells: ["Cách tinh chỉnh", "QLoRA 4 bit, đóng băng phần thị giác"], h: 0.4, fs: 12.5, rule: true },
-  { cells: ["Độ dài và lô", "2.560 token, lô hiệu dụng 16, một epoch, 8.072 bước"], h: 0.4, fs: 12.5, rule: true },
+  { cells: ["Độ dài và lô", "2.560 token, lô hiệu dụng 16, hai lượt duyệt, 8.072 bước"], h: 0.4, fs: 12.5, rule: true },
   { cells: ["Máy và thời gian", "A100, 10,3 giây mỗi bước, khoảng 23 giờ mỗi lượt"], h: 0.4, fs: 12.5, rule: true },
   { cells: ["Khâu chấm", "Kaggle T4 × 2, khoảng 5,6 giờ mỗi nhánh"], h: 0.4, fs: 12.5 },
 ]);
@@ -672,28 +704,31 @@ footB(); done();
 
 // B7 · trạng thái bảy nhánh
 slide();
-bar("Dự phòng · Trạng thái cuối của bảy nhánh đã đăng ký");
-table(M, 1.0, [2.6, 1.8, 4.49], [
+bar("Dự phòng · Trạng thái cuối của các nhánh trong thiết kế");
+table(M, 0.85, [2.6, 1.8, 4.49], [
   { cells: ["Nhánh", "Trạng thái", "Lý do"], bold: true, color: WHITE, fill: NAVY, h: 0.42, fs: 12, align: ["left", "center", "left"] },
   { cells: ["S1, hai hạt giống", { t: "đã chạy", color: TEAL, bold: true }, "nhánh nền, cho biết nhiễu là 0,52 điểm"], h: 0.46, fs: 11.5, rule: true },
-  { cells: ["S2, hạt giống 101", { t: "đã chạy", color: TEAL, bold: true }, "thăm dò, −1,93 điểm so với nhánh nền"], h: 0.46, fs: 11.5, rule: true },
+  { cells: ["S2, hạt giống 101", { t: "đã chạy", color: TEAL, bold: true }, "một hạt giống, −1,93 điểm so với nhánh nền"], h: 0.46, fs: 11.5, rule: true },
   { cells: ["S2, hạt giống 202", { t: "huỷ", color: RED, bold: true }, "ngân sách máy; đại lượng chính không hoàn tất"], h: 0.46, fs: 11.5, rule: true },
-  { cells: ["CE2-S2 và MIN-DESC", { t: "đã chạy", color: TEAL, bold: true }, "một hạt giống mỗi nhánh, mang nhãn thăm dò"], h: 0.46, fs: 11.5, rule: true },
+  { cells: ["CE2-S2 và MIN-DESC", { t: "đã chạy", color: TEAL, bold: true }, "một hạt giống mỗi nhánh"], h: 0.46, fs: 11.5, rule: true },
   { cells: ["S2r", { t: "không chạy", color: MAROON, bold: true }, "được thiết kế để chắc chắn thua nên giá trị thông tin thấp"], h: 0.5, fs: 11.5, rule: true },
-  { cells: ["S2-nopoint", { t: "không chạy", color: MAROON, bold: true }, "đắt gấp đôi chặng hai, mà ô toạ độ đã đo được là ô gánh"], h: 0.5, fs: 11.5, rule: true },
-  { cells: ["MIN-ONPOLICY", { t: "dừng ở cổng", color: RED, bold: true }, "dựng dữ liệu xong nhưng trượt cổng đã khoá trước"], h: 0.46, fs: 11.5 },
+  { cells: ["S2-nopoint", { t: "không chạy", color: MAROON, bold: true }, "chi phí gấp đôi chặng hai, mà ô toạ độ đã đo được là ô có ích"], h: 0.5, fs: 11.5, rule: true },
+  { cells: ["MIN-ONPOLICY", { t: "dừng", color: RED, bold: true }, "dựng dữ liệu xong nhưng không đạt tiêu chí khả thi"], h: 0.46, fs: 11.5, rule: true },
+  { cells: ["Nhánh ứng viên, hạt 101", { t: "đã chạy", color: TEAL, bold: true }, "không đạt ngưỡng chọn; executability 56,1, một hạt giống"], h: 0.46, fs: 11.5, rule: true },
+  { cells: ["Nhánh so sánh cùng đầu vào", { t: "huỷ", color: RED, bold: true }, "ngân sách 5/9; không quy công được cho danh sách ứng viên"], h: 0.46, fs: 11.5, rule: true },
+  { cells: ["Ngưỡng bỏ cuộc τ", { t: "xong, giữ nguyên thắng", color: MAROON, bold: true }, "tốt nhất +8/1.400, dưới ngưỡng"], h: 0.46, fs: 11.5 },
 ], { align: ["left", "center", "left"] });
-block(M, 5.3, W - 2 * M, 0.9);
-text("Bản đăng ký buộc báo cả ba nhánh, kể cả nhánh dừng ở cổng và kể cả khi số ra xấu.", { x: M + 0.25, y: 5.3, w: W - 2 * M - 0.5, h: 0.9, fontSize: 13, valign: "middle", margin: 0 });
+block(M, 6.1, W - 2 * M, 0.75);
+text("Luận văn báo mọi nhánh, kể cả nhánh dừng ở tiêu chí khả thi và kể cả khi số ra xấu.", { x: M + 0.25, y: 6.1, w: W - 2 * M - 0.5, h: 0.75, fontSize: 12.5, valign: "middle", margin: 0 });
 footB(); done();
 
 // B8 · MIN-ONPOLICY
 slide();
-bar("Dự phòng · Một biến thể đã đăng ký nhưng không dựng nổi dữ liệu");
+bar("Dự phòng · Một biến thể đã thiết kế nhưng không dựng được dữ liệu");
 bullets([
   "Ý tưởng là thay khai báo sai lấy từ phần tử cạnh bên bằng chính khai báo sai mà mô hình đã sinh ra",
-  "Dữ liệu đã dựng thật: 14.000 màn, 4,5 giờ A100, chỉ được 459 cặp, tức 3,3% so với ngưỡng 25%",
-  "Cổng này không có chỗ nới, vì đây là cổng đặt trên tỉ lệ chứ không phải trên số lượng",
+  "Dữ liệu đã dựng thật: 14.000 màn, chỉ được 459 cặp, tức 3,3% so với ngưỡng khả thi 25%",
+  "Ngưỡng này đặt trên tỉ lệ chứ không phải trên số lượng, nên sinh thêm dữ liệu không thay đổi kết luận",
   "Khoảng cách tới phần tử người dùng đã chạm có trung vị 351 điểm ảnh, 76,5% ngoài dải 80 đến 350",
   "Lỗi khai báo có hai cực: gọi đúng phần tử bằng tên khác, hoặc nhìn sang vùng khác hẳn",
 ], M, 1.05, W - 2 * M, { fs: 13, gap: 1.02, itemH: 0.98, lh: 1.3 });
@@ -704,10 +739,10 @@ slide();
 bar("Dự phòng · Vùng mù của thước, theo cả hai chiều");
 bullets([
   "Theo chiều bỏ sót, thước không phát hiện được độ lệch dưới khoảng 63 điểm ảnh",
-  "Theo chiều kết oan, 1.083 bước mà chính câu người viết cũng trượt, 72% do dụng cụ sai quá 14% bề màn",
-  "935 bước, tức 21% quần thể, đánh bại cả ba nhánh. Trần 75,7% vì vậy phản ánh năng lực dụng cụ hơn là giới hạn ngôn ngữ",
+  "Theo chiều kết oan, 1.083 bước mà chính câu chuẩn cũng không đạt, 72% do dụng cụ sai quá 14% bề màn",
+  "935 bước, tức 21% quần thể, cả ba nhánh đều không đạt. Trần 75,7% vì vậy phản ánh năng lực dụng cụ hơn là giới hạn ngôn ngữ",
   "Luật Voronoi chỉ chặt bằng độ đầy đủ của bộ liệt kê phần tử; phép gộp hộp xoá nhầm phần tử riêng biệt ở 8,2% số bước",
-  "Mức câu người viết cũng không phải chặn trên tuyệt đối: hợp ba nhánh giải được 79,1% số bước",
+  "Mức câu chuẩn cũng không phải chặn trên tuyệt đối: hợp ba nhánh giải được 79,1% số bước",
 ], M, 1.05, W - 2 * M, { fs: 13, gap: 1.02, itemH: 0.98, lh: 1.3 });
 footB(); done();
 
@@ -721,13 +756,61 @@ table(M + 0.55, 1.25, [3.0, 1.9, 2.9], [
   { cells: ["CE2-S2", "59,8%", { t: "+5,90  học có giám sát thuần", color: MAROON }], h: 0.44, fs: 12.5, rule: true },
   { cells: [{ t: "MIN-DESC", bold: true }, { t: "60,6%", bold: true }, { t: "+0,80  riêng mục tiêu ưu tiên", color: MAROON }], h: 0.44, fs: 12.5 },
 ], { align: ["left", "center", "left"] });
-text("87% mức tăng ở tầng khai báo cũng thuộc về đối chứng, khớp với 78% đo ở điểm đầu ra.", { x: M, y: 3.15, w: W - 2 * M, h: 0.32, fontSize: 13, bold: true, color: RED, margin: 0 });
+text("87% mức tăng ở tầng khai báo cũng thuộc về nhánh so sánh, khớp với 78% đo ở điểm đầu ra.", { x: M, y: 3.15, w: W - 2 * M, h: 0.32, fontSize: 13, bold: true, color: RED, margin: 0 });
 bullets([
   "Một điểm cải thiện ở tầng khai báo đổi được 0,43 điểm executability",
-  "Điều kiện không gây hại bị trượt: lớp thao tác tụt 19,75 điểm ở bước không chạm, ngưỡng là 3",
+  "Điều kiện không gây hại không đạt: lớp thao tác giảm 19,75 điểm ở bước không chạm, ngưỡng là 3",
   "Nguyên nhân là thiết kế dữ liệu, vì tập cặp chỉ chứa bước chạm",
-  "Cách gỡ đã đăng ký là trộn bước không chạm dạng entropy chéo thuần vào chặng hai",
+  "Cách gỡ là trộn bước không chạm dạng entropy chéo thuần vào chặng hai",
 ], M, 3.6, W - 2 * M, { fs: 12.5, gap: 0.68, itemH: 0.64, lh: 1.3 });
+footB(); done();
+
+
+// B11 · luật hộp phần tử D.3
+slide();
+bar("Dự phòng · Luật hộp phần tử của chính AndroidControl (Phụ lục D.3)");
+text("Điểm dự đoán nằm trong hộp bao của phần tử cần chạm. Tính lại từ bản ghi từng bước ngày 5/9, sau khi đã có mọi điểm, không gọi lại mô hình định vị.", { x: M, y: 0.85, w: W - 2 * M, h: 0.55, fontSize: 12, italic: true, color: GREY, margin: 0, lh: 1.3 });
+table(M, 1.5, [3.3, 1.8, 1.9, 1.89], [
+  { cells: ["Nhánh", "Ô Voronoi", "Hộp D.3", "D.3 và cửa sổ 14%"], bold: true, color: WHITE, fill: NAVY, h: 0.42, fs: 12, align: ["left", "center", "center", "center"] },
+  { cells: [{ t: "Câu chuẩn", italic: true }, "75,7", { t: "83,8", bold: true }, "79,2"], h: 0.42, fs: 12.5, rule: true },
+  { cells: ["MIN-DESC", "60,0", "66,5", "62,7"], h: 0.42, fs: 12.5, rule: true },
+  { cells: ["S1, hạt giống 101", "59,1", "65,5", "61,7"], h: 0.42, fs: 12.5, rule: true },
+  { cells: ["Nhánh ứng viên", "56,1", "62,4", "58,6"], h: 0.42, fs: 12.5, rule: true },
+  { cells: ["Base", "47,6", "53,6", "49,8"], h: 0.42, fs: 12.5, rule: "322164", ruleW: 1.5 },
+  { cells: ["Sàn: câu chung chung (lát 800)", "12,0", "14,1", "12,1"], h: 0.42, fs: 12.5, rule: true },
+  { cells: ["Sàn: câu của màn khác (lát 800)", "6,1", "8,6", "6,6"], h: 0.42, fs: 12.5 },
+], { align: ["left", "center", "center", "center"] });
+bullets([
+  "Nâng trần gần gấp bốn lần mức nâng sàn, nên dải dùng được rộng ra chứ không bị nén",
+  "Hộp do luận văn suy từ cây trợ năng: 48% là nút con không nhận chạm, nên chặt hơn nhãn gốc",
+  "78% mức tăng đến từ hộp rộng hơn nửa màn; 120 bước rơi vào khung chứa rộng cho điểm gần như miễn phí",
+  "Hiệu MIN-DESC trên S1 vẫn +0,9 đến +1,1 dưới mọi biến thể: luật này không thêm bằng chứng cho đóng góp mô hình",
+], M, 5.0, W - 2 * M, { fs: 11.5, gap: 0.5, itemH: 0.46, lh: 1.25 });
+footB(); done();
+
+// B12 · nhánh ứng viên: bốn dấu hiệu và thủ tục ngưỡng
+slide();
+bar("Dự phòng · Nhánh ứng viên: dấu hiệu của bỏ cuộc và thủ tục ngưỡng");
+text("Chỉ bước có đáp án trong danh sách", { x: M, y: 0.85, w: 4.6, h: 0.3, fontSize: 12.5, bold: true, color: NAVY, margin: 0 });
+table(M, 1.2, [1.7, 0.8, 1.1, 0.9], [
+  { cells: ["Số dòng", "n", "Bỏ cuộc", "Exec."], bold: true, color: WHITE, fill: NAVY, h: 0.38, fs: 11.5, align: ["left", "center", "center", "center"] },
+  { cells: ["1 đến 5", "178", "18,5%", "70,8"], h: 0.36, fs: 11.5, rule: true },
+  { cells: ["6 đến 10", "363", "15,7%", "70,5"], h: 0.36, fs: 11.5, rule: true },
+  { cells: ["11 đến 20", "826", "25,9%", "60,3"], h: 0.36, fs: 11.5, rule: true },
+  { cells: ["21 đến 39", "1.036", "29,3%", "55,6"], h: 0.36, fs: 11.5, rule: true },
+  { cells: [{ t: "40, chạm trần", bold: true }, "795", { t: "33,2%", bold: true, color: RED }, { t: "51,8", bold: true }], h: 0.36, fs: 11.5 },
+], { align: ["left", "center", "center", "center"] });
+text("Tương quan hậu kiểm, không phải nhân quả: màn nhiều phần tử cũng là màn khó hơn.", { x: M, y: 3.45, w: 4.6, h: 0.6, fontSize: 11, italic: true, color: GREY, margin: 0, lh: 1.3 });
+text("Bốn dấu hiệu đi kèm việc bỏ cuộc", { x: 5.45, y: 0.85, w: 4.0, h: 0.3, fontSize: 12.5, bold: true, color: NAVY, margin: 0 });
+bullets([
+  "Câu mang động từ không chạm: 28,3% so với 0,97%, gấp 29 lần",
+  "Sai số mô hình định vị: trung vị 19,9% so với 0,78% bề ngang màn",
+  "Danh sách càng dài càng hay bỏ cuộc, đơn điệu",
+  "Ứng dụng chưa thấy: 51,3% so với 41,8% (n = 78, chỉ là gợi ý)",
+  "Đã loại: độ dài câu, trung vị 33 ký tự ở cả hai nhóm",
+], 5.45, 1.25, 4.0, { fs: 11.5, gap: 0.58, itemH: 0.54, lh: 1.25 });
+block(M, 4.3, W - 2 * M, 1.95);
+text([{ text: "Thủ tục chọn ngưỡng bỏ cuộc, cố định trước khi tính điểm nào.", options: { bold: true, color: NAVY } }, { text: " Ép từng thẻ chọn vào mô hình, lấy log-xác suất trung bình theo token; chọn ứng viên tốt nhất khi biên so với thẻ bỏ cuộc vượt τ. Quét τ chỉ trên lát 1.400, theo độ đúng toàn bộ lát; lưới chứa cả phương án giữ nguyên, cải thiện dưới 18 bước thì giữ nguyên thắng. Kỳ vọng ghi trước: 0 đến 3 điểm. Kết quả: giữ nguyên thắng, tốt nhất +8/1.400, KTC [−11; +27]; điểm thẻ none ở bước có vàng và không có vàng trùng nhau (AUC 0,69–0,72). Huấn luyện lại không chạy.", options: {} }], { x: M + 0.25, y: 4.3, w: W - 2 * M - 0.5, h: 1.95, fontSize: 12, valign: "middle", margin: 0, lh: 1.35 });
 footB(); done();
 
 // ---- xuất ----

@@ -2404,3 +2404,328 @@ Thước và luật chấm · mẫu số 4.463 · bảng dải (w) và ba ngư�
 +2,8 · MDE 2,11) · định nghĩa `sel_acc` và phán quyết trượt của G6 · constructor khối ứng viên
 (max 40, thứ tự đọc, merge cùng tên overlap only) · cấu hình train của (x15) · luật chọn điểm lưu
 · hạt giống · tập kiểm.
+
+## (x17) SỬA ĐỔI — BỎ HẠN SOICT, HUỶ ĐỐI CHỨNG A100, VÀ ĐĂNG KÝ TRƯỚC LUẬT QUYẾT LƯỢT ② (khoá 5/9/2026, trước khi có điểm τ)
+
+Ghi lúc commit Kaggle 1 của lượt sequence-score đang chạy (bắt đầu ~02:45 ICT 5/9), **chưa có
+bất kỳ điểm τ nào trên đĩa** ngoài probe 50 bước (`runs/sel/probe50_seqscore.jsonl`, chỉ để kiểm
+mã). Mọi ngưỡng dưới đây khoá tại đây.
+
+### (x17a) Sự việc
+
+Chủ luận văn quyết 5/9: **không nộp SOICT 16/9**; mục tiêu còn lại là đóng góp mô hình cho luận
+văn với số dễ bảo vệ hơn. Hệ quả: lượt A100 `gui_sft_match`/101 (x16b) **huỷ, không chạy**;
+`Δ_sel` **không tồn tại** và sẽ không được tính. Mọi ràng buộc "không làm trước 16/9" của
+`report/134` mục 0 hết hiệu lực. **Không đụng:** thước headline, mẫu số 4.463, bảng dải (w), luật
+một-hạt-giống-là-TRẮNG (x14c), thủ tục τ (x16d), cam kết (x16g) mục 1–4.
+
+### (x17b) Lượt ② — `gui_sel_cham`, và điều kiện chạy
+
+**Định nghĩa.** Train lại nhánh ỨNG-VIÊN trên **41.191 bước chạm** (`click`/`long_press`) của
+tập dạy, lọc theo chỉ số từ `gui_sel.json` bằng `harness/make_sel_cham.py` → `gui_sel_cham.json`
+(đã dựng 5/9 02:26, 41.191 mẫu). **Đúng một biến đổi: tập mẫu** — câu nhắc, khối ứng viên, thẻ
+`<sel>`, yaml (x15), hạt 101 giữ nguyên. Căn cứ: tỉ lệ `<sel>none</sel>` 54,78% ở tập dạy so
+với 29,1% trên bước chạm và 28,34% ở tập kiểm (`report/136` mục 11); Rajpurkar và cs. (ACL 2018)
+*"different proportions of negative examples at training and test time"*; Menon và cs. (ICLR
+2021) về sửa tiên nghiệm lúc train. Số bước ≈ 2.575, ≈ 15 h A100.
+
+**Luật quyết — đọc từ `harness/quet_tau.py` trên đủ 1.400 bước dev, theo (x16d):**
+
+| kết quả quét τ | hành động |
+|---|---|
+| lift ≥ 18/1.400 so với greedy | **chạy ② hạt 101** |
+| lift < 18/1.400 (khoá luật null) | **không chạy ②**; nhánh ỨNG-VIÊN đóng ở chẩn đoán; đóng góp mô hình chốt ở MIN-DESC |
+
+Không có ô thứ ba. Không đổi ngưỡng 18 sau khi thấy đường cong.
+
+**Hạt 202.** Quyết định chạy hay không chạy `gui_sel_cham`/202 phải ghi vào mục (x18) **trước
+khi nhìn `exec` của ②/101**. Không quyết thì ② là một hạt ⇒ TRẮNG theo (x14c), không có ngoại lệ.
+
+### (x17c) Hệ `gui_sel`+τ — cách lấy `exec`, đăng ký trước
+
+τ lật lựa chọn ở một bước thì câu đi kèm chưa tồn tại (câu sinh sau thẻ). Thủ tục: với mọi
+bước mà `chọn(τ*) ≠ chọn(greedy)`, sinh lại câu bằng **ép thẻ** `<sel>…</sel>` đúng phương án
+của τ* (cùng mẫu `preds_gui_sel_forcesel_273.jsonl` ngày 3/9), giữ nguyên câu ở các bước không
+lật, rồi chấm UGround như mọi nhánh. Làm trên dev 1.400 trước, one-look 3.062 sau, **cùng một
+τ*** đã khoá. Nhãn **thăm dò**. So sánh hợp lệ: `gui_sel` greedy vs `gui_sel`+τ (cùng adapter),
+và ②/101 greedy vs `gui_sel`+τ (cùng chẩn đoán, hai cách sửa). Không so với S1/MIN như Δ sạch.
+
+### (x17d) Thước đồng-báo D.3 — vị trí và giới hạn
+
+Luật hộp của Phụ lục D.3 (AndroidControl) tính bằng `harness/luat_d3.py`, kết quả
+`runs/luat_d3.json`. Vị trí: **bảng độ nhạy luật chấm**, cạnh năm luật của
+`rule_sensitivity.py`, cột nguồn + cột "tính 5/9, sau khi có điểm". Không vào bảng chính, không
+vào tóm tắt. Con số dùng khi bảo vệ là biến thể **D.3 ∧ cửa sổ 14%**. Ba số phải khai kèm
+(`report/139`): 48% hộp là nút con không nhận chạm · 78% mức tăng từ hộp rộng hơn nửa màn · 120
+bước container cho điểm gần miễn phí.
+
+### (x17e) Cam kết
+
+1. Báo kết quả quét τ **dù null thắng**, in trọn đường cong (x16d).
+2. Nếu ② chạy: báo `exec` của nó **dù ra sao**, cạnh `gui_sel`/101 greedy, trên đúng 4.463.
+3. Không nới 18/1.400, không đổi tiêu chí "đúng toàn 1.400", không đổi mẫu số.
+4. Không dùng D.3 làm headline; không trình 83,82 như "trần mới".
+
+### (x17f) Hai nhánh luật τ phụ — đăng ký 5/9 SAU probe 50 bước, TRƯỚC khi có 1.400
+
+**Sự việc dẫn tới mục này, khai thẳng:** chạy `quet_tau.py` trên probe 50 bước (tệp chỉ để
+kiểm mã) thấy ở τ = −∞ (luôn phát c\*) luật (x16d) chỉ đúng vàng **22/40** bước có vàng, trong
+khi greedy dám chọn 30/40 và đúng 26. Truy: xếp hạng ứng viên theo **tổng** log-prob (không
+chia số token) cho vàng đứng đầu **30/40**. Tức phép **chuẩn hoá độ dài** của (x16d) làm hỏng
+phần *xếp hạng ứng viên* (thiên về span dài mà từng token dễ đoán), dù nó vẫn hợp lý cho phần
+*bỏ cuộc hay không*. Trên 50 bước, lift so với greedy: (x16d) **−6** · lai **0** · tổng **+2**
+· lai-tổng **+3**. n = 50 nên đây chỉ là dấu hiệu, không phải kết quả.
+
+**Đăng ký** ba nhánh phụ, định nghĩa cố định, thi hành trong cùng `quet_tau.py`:
+· **A — lai, chuẩn hoá:** greedy chọn ⇒ giữ nguyên; greedy `none` ⇒ phát c\* của (x16d) nếu
+  m > τ. Chỉ đụng phần bỏ cuộc, không đụng phần xếp hạng.
+· **B — tổng log-prob:** c\* = argmax Σ log p (= điểm/token × số token); m_sum = log p(c\*) −
+  log p(none); phát c\* nếu m_sum > τ. Mốc tiên nghiệm τ₀ = −0,633 áp thẳng lên m_sum (Menon
+  2021, dạng post-hoc), in làm tham chiếu.
+· **C — lai, tổng:** greedy chọn ⇒ giữ; greedy `none` ⇒ c\* của B nếu m_sum > τ.
+
+**Luật đọc.** (x16d) vẫn là nhánh **chính**, ngưỡng 18/1.400 giữ nguyên. Ba nhánh phụ dùng
+ngưỡng **24/1.400** (≈ +1 SE, bù cho việc chọn trong ba). Luật quyết lượt ② ở (x17b) đọc
+**nhánh đạt ngưỡng có lift lớn nhất**; không nhánh nào đạt ⇒ luật null. Mọi đường cong in trọn.
+Nhãn **thăm dò** cho cả bốn.
+
+**Không được:** thêm nhánh thứ năm sau khi thấy 1.400 · đổi tiêu chí sang HasAns · đổi 18/24.
+
+
+## (x18) KẾT QUẢ QUÉT τ VÀ QUYẾT ĐỊNH LƯỢT ② (ghi 5/9/2026 21:00 ICT, SAU khi có 1.400)
+
+**Sự việc.** `quet_tau.py` chạy trên đủ 1.400 bước dev (hai commit Kaggle nối tiếp, 7/7 phép
+kiểm toàn vẹn đạt). Luật null (greedy) đúng **888/1.400 = 63,43%**. Lift so với null: X (x16d)
+**−360** [−397 · −322] · A **+1** [0 · +4] · B **−52** [−83 · −21] · C **+8** [−11 · +27].
+Ngưỡng 18 (X) / 24 (A·B·C). τ₀ = −0,633 áp lên B: −143; lên C: +1. Toàn văn `report/142`.
+
+**Áp luật (x17b) + (x17f), không nới:** không nhánh nào đạt ⇒ **khoá luật null** ⇒ **lượt ②
+`gui_sel_cham`/101 KHÔNG chạy.** Câu hỏi hạt 202 của (x17b) vô hiệu. Hệ `gui_sel`+τ không tồn
+tại ⇒ (x17c) không áp dụng, không chấm exec nào thêm.
+
+**Ghi nhận theo (x17e).** Báo trọn bốn đường cong (đã in ở `runs/sel/tau_scan_stdout.txt`).
+Chẩn đoán: xếp hạng ứng viên theo tổng log-prob đúng 67,5% HasAns (chuẩn hoá/token 38,3%);
+điểm thẻ `none` ở 275 bước bỏ-cuộc-sai và 308 bước bỏ-cuộc-đúng trùng nhau (trung vị −1,706 vs
+−1,710), AUC biên 0,69–0,72 ⇒ khâu bỏ cuộc mù với likelihood của chính mô hình; trần nếu bỏ
+cuộc hoàn hảo 78,0% trên dev.
+
+**Khai thẳng một lý do đến sau khi thấy số, và KHÔNG dùng:** τ₀ không mô phỏng được việc lượt
+② bỏ 2.495 bước không chạm (bỏ luôn đường tắt *động từ không chạm ⇔ none*, 38,9% câu ở nhóm
+bỏ-cuộc-sai). Lý lẽ này hợp lý nhưng sinh ra sau khi nhìn kết quả; theo (x17f) *"không nới sau
+khi thấy số"*, không dùng nó để mở lại lượt ②. Nếu về sau có lượt train nào theo hướng này thì
+phải ghi là quyết định mới, không phải hệ quả của (x17b).
+
+**Trạng thái nhánh ứng viên: ĐÓNG ở chẩn đoán.** Đóng góp mô hình của luận văn giữ ở MIN-DESC.
+
+## (x19) QUYẾT ĐỊNH MỚI 5/9/2026 (đêm, ICT) — GRPO THƯỞNG `<point>` NỐI TIẾP TỪ MIN-DESC/101 — khoá TRƯỚC khi chạy
+
+**Bối cảnh, khai thẳng.** Đây là quyết định **mới** sau khi đã thấy mọi điểm hiện có (MIN 60,05 ·
+τ null thắng · bảng chéo MIN×gui_sel ở `report/143` §4.1), do chủ luận văn yêu cầu nâng số
+(*"cần 65–70"*). Nó **không** là hệ quả của mục nào trước; các luật đọc của `106` (thước
+headline Voronoi gated · mẫu số 4.463 · MDE 2,2 · một hạt = TRẮNG) **giữ nguyên**.
+Lý do chọn hướng này thay cho các hướng khác: `report/143` §4.2–4.3.
+
+### (x19a) Hệ thống
+· Khởi tạo: adapter **MIN-DESC/101** (gốc `ckpt/min_desc_seed101`, bước 800) trên Qwen2.5-VL-3B
+  4-bit NF4; **học tiếp chính adapter đó** (không adapter mới, không merge).
+· Thuật toán: GRPO (TRL **0.29.1**, pin), `loss_type` mặc định của bản đó (`dapo`), `epsilon` 0,2,
+  `num_iterations` 1, `scale_rewards="group"`, **β = 0,04** với mô hình tham chiếu = **bản sao
+  adapter MIN** (TRL `add_adapter("ref")` sao chép trọng số `default` ⇒ KL neo về MIN, không về
+  mô hình gốc).
+· Lấy mẫu: **G = 4**/câu nhắc, temperature **1,0**, top-p 1, `max_completion_length` 128,
+  `mask_truncated_completions=True`.
+· Tối ưu: lr **1e-5** (LoRA), constant + 10 bước warmup, `max_grad_norm` 1, bf16, gradient
+  checkpointing, cỡ lô 4 × tích luỹ 4 ⇒ **4 câu nhắc × 4 mẫu = 16 chuỗi/update**, **500 update**
+  ⇒ **2.000 câu nhắc, đúng 1 epoch** trên tập thưởng. Hạt **101**. Điểm lưu mỗi 50 bước trên Drive.
+· Ảnh: `min_pixels 200704 · max_pixels 1003520` (trùng SFT/ORPO/suy luận). Câu nhắc lấy **nguyên
+  văn** từ `branches/s2.json` (trùng byte lúc dạy S2/MIN); khối ảnh đứng trước khối chữ, chữ bắt
+  đầu bằng `"\n"` — đúng cách `infer_branch.py` đã kiểm *"chuỗi lúc chấm trùng lúc dạy"*.
+
+### (x19b) Tập thưởng và hàm thưởng — nguyên văn, khoá
+· Tập: **2.000 bước chạm** lấy ngẫu nhiên (seed 101) từ **41.090** = 41.099 bước có khai báo
+  vàng trong `train_ac` **trừ 9** bước `point_norm` ngoài [0,1000]. `assert` không có episode
+  tập kiểm. Danh sách khoá ghi `prompt_keys.json` trong thư mục ra.
+· Vàng: `point_norm` (lưới 0–1000) của `train_ac/descriptors.jsonl`.
+· **r_point = 1,0** nếu completion tách được đúng một khối `<desc>…</desc>` có `<point>x,y</point>`
+  và |x−gx| ≤ 140 ∧ |y−gy| ≤ 140 (đúng `TAU` của cổng khai báo `gate_desc_acc.py`); 0 nếu không.
+· **r_format = 0,2** nếu khối `<desc>` tách được **4 ô** (neo vào ô `<point>`; ô tên được chứa
+  `|` — 67/41.090 tên vàng có `|`), sau `</desc>` là `"\n"` rồi câu **2–40 từ** không còn thẻ.
+· **r_name = 0,1** nếu ≥1 token của ô tên (không phải từ dừng) xuất hiện trong câu.
+· Tổng tối đa **1,3**. Không có phần thưởng nào gọi bộ trỏ. Không có phần thưởng độ dài.
+· Selftest 0 GPU (`grpo_point.py --selftest`): khai báo vàng + câu bất kỳ đạt r_point 500/500,
+  r_format 100/100 — đã chạy 5/9 trên WSL, ĐẠT.
+
+### (x19c) Thăm dò 20 bước trên 50 câu nhắc DÀI NHẤT (luật P10) — ba tiêu chí, quyết TRƯỚC
+① không OOM; ② `frac_reward_zero_std` trung bình **≤ 0,60** (≥40% nhóm có cả đúng cả sai);
+③ `reward/r_point/mean` trong **[0,55; 0,95]** (≈0,75 là kỳ vọng từ 74,6% khai báo đúng).
+Sửa được **đúng hai thứ, mỗi thứ một lần**, phải ghi (x19d): OOM ⇒ tích luỹ 4 → **2** (và 500 →
+1.000 update để giữ 2.000 câu nhắc); ② > 0,60 ⇒ temperature 1,0 → **1,2**. Vẫn không đạt ⇒
+**không chạy**, ghi kết quả thăm dò, nhánh đóng.
+
+### (x19d) Sổ sửa đổi trong lượt (điền khi có)
+_(trống — mọi thay đổi sau (x19c) ghi ở đây kèm giờ ICT và lý do)_
+
+### (x19e) Cách đọc kết quả — khoá TRƯỚC
+· Suy luận **greedy** trên 6.958 bước tập kiểm bằng `infer_branch.py` **không đổi tham số**, rồi
+  chấm **một lần** bằng UGround trên đúng **4.463** bước chạm, `exec` Voronoi gated .14 (headline).
+· Phép so chính: **GRPO/101 − MIN/101 (60,05)**, McNemar ghép cặp, KTC bootstrap. Đọc theo luật
+  (x14b)/(x14c): **một hạt giống ⇒ nhãn "một hạt giống"**, chỉ gọi *tăng* khi Δ ≥ MDE **2,2** và KTC
+  loại 0; dưới đó là TRẮNG dù dấu nào. **Kỳ vọng ghi trước: +2 … +4 pp.** Trên +5 ⇒ soi kỹ hơn
+  bình thường (đối chiếu gate_desc_acc và BLEU trước khi tin).
+· Thước phụ bắt buộc báo kèm: `gate_desc_acc.py` (độ chính xác khai báo, cơ học) · BLEU-4 /
+  ROUGE-L với câu chuẩn theo `text_metrics.py` — **BLEU-4 giảm quá 1,0 so với MIN (mốc ở
+  `report/141` §6) là dấu hiệu câu bị bẻ thành mật mã, phải khai và hạ kết luận** · `action_ok` ·
+  D.3 và nL2 đồng-báo · tỉ lệ sinh `<desc>`.
+· Hạt 202: **chỉ** chạy nếu GRPO/101 − MIN/101 ≥ 2,2; quyết ở (x20) trước khi nhìn số 202.
+· Báo kết quả **dù ra sao**, kể cả âm. Không nới bất kỳ ngưỡng nào ở đây sau khi thấy số.
+
+### (x19f) Không được
+Thưởng bằng UGround (là bộ trỏ chấm) hay bất kỳ bộ trỏ nào · dùng dev 1.400 hoặc 3.062 làm tập
+thưởng · chọn siêu tham số theo exec tập kiểm · thêm hạng thưởng sau khi thấy G4 · đổi
+`infer_branch.py` lúc suy luận · so GRPO với S1/Base làm headline (headline là so MIN).
+Mã: `harness/grpo_point.py` · runbook `harness/colab_grpo_point.md`.
+
+**(x19d) — ghi 1:** G4 5/9 (ICT đêm): ① không OOM · ② zero-std **0,25** · độ dài 46,5 token ·
+**44,3 s/bước** ở 50 câu nhắc dài nhất ⇒ 500 bước ≈ 6 h. ③ chưa đọc được vì ô đọc dùng sai tên
+khoá metric (`reward/…` theo tài liệu, bản 0.29.1 in tên khác) — sửa **ô đọc** để tìm khoá chứa
+`r_point`; **không đổi tham số huấn luyện nào**. Đồng thời tắt `log_completions` ở lượt thật (chỉ giữ
+ở probe) để log còn đọc được — thay đổi về ghi log, không về thuật toán.
+
+**(x19d) — ghi 2:** ③ đọc lại từ `log_history.json` của probe: `rewards/r_point/mean` trung bình
+**0,591** trên 50 câu nhắc dài nhất (5 bước cuối 1,00/0,75/0,50/0,31/0,62) ⇒ **ĐẠT** cả ba tiêu chí
+(x19c). Không sửa tham số nào. Lượt thật G5 được phép phóng với cấu hình (x19a) nguyên văn.
+
+**(x19d) — ghi 3 (6/9, TRƯỚC khi có bất kỳ điểm `exec` nào của nhánh GRPO):** lượt G5 chạy trọn
+**500/500 bước** (5,63 h). Khâu đọc kết quả và khâu suy luận chuyển từ Colab A100 sang **Kaggle
+T4 miễn phí** (user quyết 6/9, lý do chi phí; runbook `harness/kaggle_grpo_point_6_9.md`). Ba
+điều chỉnh, **không điều nào đụng thuật toán, thước hay ngưỡng**:
+
+· **Phạm vi suy luận hẹp lại: 4.463 bước chạm thay vì 6.958 bước.** Lý do vật chất: dataset
+  Kaggle `thesis-score` chỉ chứa 4.463 ảnh, ảnh của 2.495 bước không chạm nằm trong
+  `test_images.tar` trên Drive. Điều này **không đổi con số headline** vì `history` trong câu
+  nhắc là câu chuẩn của người (trùng nguyên văn 5.318/5.318) nên mỗi bước sinh độc lập với các
+  bước khác; tập 4.463 cho kết quả y hệt như khi cắt ra từ lượt 6.958. **Cái mất phải khai:**
+  lượt này **không đo được** hành vi ở bước không chạm, trong khi tập thưởng chỉ gồm bước chạm và
+  MIN-DESC từng lộ giá **−19,75** đúng ở nhóm đó. Bù được bằng một lượt thêm (~1,7 h) nếu upload
+  ảnh; **không** phải điều kiện của headline, và **không** được dùng sự vắng mặt của nó để chọn
+  cách đọc có lợi.
+· **Ô kiểm log của G7 có lỗi dò khoá** — nó tìm tên khoá chỉ trong bản ghi cuối `h[-1]`, mà bản
+  ghi cuối của HF Trainer là dòng tổng kết không mang metric thưởng, nên in ra `bước: 0` và
+  `0.0 → 0.0`. Sửa **ô đọc** (quét toàn bộ bản ghi, ô G7a + `harness/doc_grpo_local.py`, chạy
+  0 GPU trên máy nhà). Cùng dạng đã ghi ở ghi 1; không đụng dữ liệu.
+· **`pip uninstall torchao`** trên máy suy luận: `peft` bản mới do TRL 0.29.1 kéo theo ném
+  `ImportError` khi thấy `torchao 0.10.0` có sẵn của Colab. Dự án không dùng torchao lần nào
+  (4-bit là bitsandbytes). Gỡ, không nâng — nâng sẽ kéo theo torch đang pin bản CUDA.
+
+Luật đọc (x19e) giữ nguyên từng chữ: headline vẫn `exec` Voronoi gated .14 so MIN 60,05, một hạt
+giống, ngưỡng 2,2 pp, báo dù ra sao.
+
+**(x19d) — ghi 4 (6/9, vẫn TRƯỚC mọi điểm `exec`):** đọc trọn `log_history.json` của lượt G5
+(501 bản ghi = 500 bước + dòng tổng kết) và đo dịch chuyển trọng số, cả hai đều 0 GPU trên máy
+nhà (`harness/doc_grpo_local.py`, tệp ở `runs/grpo_point/`). Số theo 5 chặng 100 bước:
+
+| đại lượng | ch1 | ch2 | ch3 | ch4 | ch5 |
+|---|---|---|---|---|---|
+| `rewards/r_point/mean` | 0,686 | 0,702 | 0,709 | 0,758 | **0,758** |
+| `reward` (tổng) | 0,946 | 0,960 | 0,967 | 1,018 | 1,023 |
+| `rewards/r_name/mean` (trần 0,1) | 0,062 | 0,060 | 0,059 | 0,062 | 0,068 |
+| `rewards/r_format/mean` (trần 0,2) | 0,198 | 0,198 | 0,199 | 0,198 | 0,198 |
+| `frac_reward_zero_std` | 0,420 | 0,445 | 0,488 | 0,475 | **0,515** |
+| `kl` | 0,0013 | 0,0017 | 0,0023 | 0,0030 | 0,0037 |
+| `entropy` | 0,274 | 0,267 | 0,251 | 0,247 | 0,248 |
+| `completions/mean_length` | 46,08 | 45,99 | 46,12 | 46,26 | 46,19 |
+
+· **`r_point` tăng đơn điệu +0,072** (0,686 → 0,758) nhưng **chững hẳn ở 100 bước cuối**
+  (+0,0006 giữa ch4 và ch5), trong khi `frac_reward_zero_std` bò từ 0,420 lên 0,515 và `entropy`
+  giảm 0,274 → 0,248 ⇒ tín hiệu học đang cạn: hơn nửa nhóm G=4 cho cùng phần thưởng nên không
+  còn gradient. Vẫn dưới ngưỡng dừng 0,60 của (x19c), nên lượt hợp lệ; nhưng **kéo dài quá 500
+  bước ở cấu hình này khó mua thêm gì** — nếu về sau có lượt nữa thì phải đổi G hoặc temp, và đó
+  là quyết định mới.
+· **`r_format` bão hoà ngay từ đầu** (0,198/0,200) ⇒ định dạng không phải chỗ học được gì;
+  **`r_name` gần như đứng yên** (+0,0055 trên trần 0,1). Toàn bộ mức tăng của `reward` đến từ
+  `r_point`.
+· **Độ dài câu sinh phẳng** (46,1 → 46,2 token) và `completions/clipped_ratio` = 0 ở cả 500 bước
+  ⇒ chưa có dấu hiệu câu bị bẻ ngắn thành mật mã. **Không thay được phép kiểm BLEU-4 của (x19e)**,
+  chỉ là dấu hiệu sớm cùng chiều.
+· **`kl` cực nhỏ** (0,0037 ở cuối, β=0,04) ⇒ mô hình vẫn rất gần MIN.
+· **Dịch chuyển trọng số:** `‖Δ‖/‖MIN‖` thô 1,067e-02, **sàn nhiễu cast 1,652e-03** (adapter train
+  lưu bf16, bản `ref` lưu fp32), **dịch chuyển thật 1,054e-02** — gấp **6,4 lần** sàn, vượt mốc
+  1e-2 của runbook. Lệch lớn nhất ở `layers.31.mlp.gate_proj.lora_B`.
+⇒ **Đủ căn cứ chạy suy luận + chấm.** ⚠️ Nhắc để khỏi đọc quá: `r_point` đo trên **tập thưởng**
+(2.000 câu nhắc bước chạm của tập dạy) bằng cửa sổ ±140, còn `exec` chấm bằng cách đưa **câu** cho
+UGround và **không** đọc ô `<point>` của mô hình. +0,072 ở `r_point` vì vậy **không** quy thẳng
+thành +7,2 pp `exec`; kỳ vọng ghi trước **+2 … +4 pp** của (x19e) giữ nguyên, không nới.
+
+**(x19d) — ghi 5 (6/9, suy luận C1 XONG, `exec` CHƯA chấm — dự báo ghi TRƯỚC):** lượt Kaggle C1
+sinh trọn **4.463/4.463** bước, 0,4 bước/giây, ~3,1 h, chữ ký `lora:grpo-point-adapter`, **0 câu
+rỗng**, **0 câu sót `<desc>`**. `kiem_preds.py` đạt **6/8**; hai phép không đạt là ① và ③ (số bản
+ghi 4.463 thay vì 6.958) — **đúng bằng phạm vi đã khai ở ghi 3**, không phải lỗi mới. Phép 5 đạt:
+cả hai nhánh **không bỏ bước nào**, nên McNemar ghép cặp với MIN dùng được trọn 4.463.
+
+**Thước phụ đo được ngay, 0 GPU:**
+· **Cổng khai báo cơ học** (`gate_desc_acc.py`, giao 3.473 bước có tên vàng): tên đúng
+  **67,0 → 69,5** (+2,51) · point đúng **71,8 → 74,0** (+2,22) · **cả hai đúng 60,6 → 63,2
+  (+2,56 pp)**. Tỉ lệ sinh `<desc>` giữ **99,6%** ở cả hai nhánh.
+· **Mức tăng dồn vào nhóm câu đã đổi**, không rải đều: 961/4.463 câu (**21,5%**) khác MIN; trên
+  683 bước có tên vàng trong nhóm đó, "cả hai đúng" **43,3 → 52,4 (+9,08 pp)**, còn nhóm giữ
+  nguyên câu chỉ **+0,97**. Nhóm đã đổi cũng là nhóm **khó hơn hẳn** (nền 43,3 so với 64,9).
+· **Câu không bị bẻ thành mật mã:** BLEU-4 **37,86 → 37,78 (−0,09)** · ROUGE-L **68,40 → 68,47
+  (+0,06)** · độ dài trung vị **34 ký tự ở cả hai** · số câu dưới 4 token **107 ở cả hai** · mở đầu
+  bằng động từ chạm **93,8 → 94,3%**. Xa ngưỡng "giảm quá 1,0" của (x19e).
+· **Chuyển giao train → test yếu hơn nhiều lần:** `r_point` trên tập thưởng tăng **+7,2 pp**
+  (0,686 → 0,758) trong khi point đúng trên tập kiểm chỉ **+2,22 pp**, tức khoảng **31%**.
+  ⚠️ Hai phép đo khác chế độ giải mã (train: lấy mẫu temp 1,0, G=4; kiểm: greedy) nên **không so
+  thẳng mức tuyệt đối**; chỉ đọc theo chiều và bậc độ lớn.
+
+**⭐ DỰ BÁO `exec`, ghi trước khi chấm:** hệ số chuyển đổi khai-báo→exec đo trên chính dữ liệu này
+là **0,43** (§6.1 của `report/120`, từ cặp S2→MIN: +6,70 pp khai báo cho +2,87 pp exec). Ca đó là
+can thiệp đổi **cả tên lẫn điểm** — cùng loại với lượt này (tên +2,51, point +2,22) — nên áp được,
+khác ca "sửa tên chọn lọc" mà hệ số từng dự báo sai. ⇒ **+2,56 × 0,43 ≈ +1,10 pp**, tức `exec`
+quanh **61,2%**; dải theo biên văn liệu 0,23–0,58 là **+0,59 … +1,49**.
+⇒ **Dự báo này THẤP HƠN kỳ vọng +2 … +4 pp ghi ở (x19e)**, và **dưới MDE 2,2** ⇒ nếu đúng thì
+verdict là **TRẮNG** và hạt 202 **không** chạy. Ghi rõ ở đây để khỏi chỉnh câu chữ sau khi thấy số:
+· ra trong **+0,6 … +1,5** ⇒ khớp hệ số, TRẮNG, kết luận là "cơ chế có tác dụng ở tầng khai báo
+  nhưng không đủ chuyển thành `exec`";
+· ra **≥ +2,2** ⇒ vượt cả dự báo hệ số lẫn MDE, **phải soi kỹ hơn bình thường** trước khi tin
+  (đối chiếu `action_ok`, D.3, nL2, và phân bố theo nhóm câu đã đổi);
+· ra **âm** ⇒ báo âm, không viện dẫn mức tăng khai báo để làm nhẹ.
+
+### (x20) Luật quyết SAU lượt GRPO — khoá 6/9, TRƯỚC khi có bất kỳ điểm `exec` nào
+
+Viết trong lúc commit C2 đang chạy. Chủ luận văn quyết hai điều dưới đây khi chưa ai nhìn thấy
+số. Không nới, không thêm ô thứ ba.
+
+**(x20a) Nhánh so sánh cho đòn Đ1 — CHỈ chạy nếu `exec`(GRPO) − `exec`(MIN) ≥ +2,2 pp.**
+Căn cứ: nhánh so sánh chỉ dùng để **quy công** một hiệu ứng; `exec` dưới MDE là ô TRẮNG, không có
+gì để chia, nên chi tiền cho nó là mua một phép quy công cho hiệu ứng chưa chứng minh được là có.
+· Nếu chạy, thiết kế **khoá luôn tại đây**: học tiếp từ **cùng điểm lưu MIN-DESC/101**, bằng
+  **SFT cross-entropy** trên **đúng 2.000 câu nhắc của tập thưởng** (cùng seed 101, cùng danh
+  sách), nhãn là target gốc của MIN-DESC, **1 epoch**, lr **1e-5** (bằng GRPO), lô hiệu dụng 16
+  ⇒ **125 update**. Tên nhánh `min_ce_tiep_seed101`.
+· Trục đối xứng là **cùng dữ liệu, cùng số câu nhắc nhìn thấy, khác mục tiêu**. ⚠️ Không đối xứng
+  hoàn toàn: GRPO sinh G=4 chuỗi mỗi câu nhắc nên thấy 8.000 chuỗi, SFT thấy 2.000. Khai điều này
+  mỗi lần trình bảng quy công, đừng lặng lẽ.
+· Đọc: **Δ_grpo = `exec`(GRPO) − `exec`(min_ce_tiep)** là phần quy được cho *thuật toán GRPO +
+  phần thưởng `<point>`*; phần còn lại thuộc về *việc học thêm*. Áp đúng luật bốn ô như mọi Δ khác.
+· Nếu **không** chạy (tức `exec` < +2,2): luận văn **phải** ghi thẳng rằng không tách được công
+  của GRPO khỏi công của việc học thêm 2.000 câu nhắc, kèm tiền lệ MIN vs CE2 (78–88% mức tăng
+  thuộc nhánh so sánh). ⛔ Cấm dùng mức tăng ở cổng khai báo (+2,56 pp) để lấp chỗ đó.
+
+**(x20b) Bước KHÔNG chạm — đo NGAY sau C2, vô điều kiện.** Chủ luận văn quyết đóng hạn chế này
+thay vì để ngỏ. 2.495 bước, suy luận trên Kaggle T4 (~1,7 h, 0 đồng); khâu chấm là
+`score_run.py --mode noharm --baseline runs/preds_min_desc_seed101.jsonl`, **không gọi bộ trỏ**
+nên chạy được ở máy nhà, 0 GPU.
+· Thước là **tỉ lệ khớp loại thao tác** (`canon_action` của câu mô hình so với câu chuẩn,
+  `strict_back=True`), cộng *không đảo nghĩa* và *câu rỗng*.
+· **Ngưỡng đã có sẵn từ mục 3 của bản gốc, dùng nguyên, không đặt ngưỡng mới:** nhánh có khai báo
+  không được thấp hơn nhánh thường quá **3 điểm phần trăm**. Ở đây so **GRPO với MIN-DESC**.
+· Kết cục: thấp hơn MIN quá 3 pp ⇒ **báo là tác hại ở bước không chạm**, và mọi chỗ trình `exec`
+  của nhánh GRPO phải in kèm con số đó. Trong 3 pp ⇒ báo là không thấy tác hại, kèm n và KTC.
+· ⛔ Kết quả của phép này **không** được dùng để đổi cách đọc `exec`, theo cả hai chiều.
+
+**(x20c) Hạt giống 202** — giữ nguyên (x19e): chỉ chạy nếu `exec`(GRPO) − `exec`(MIN) ≥ 2,2 pp.
+Nếu chạy thì **phải báo trung bình hai hạt bất kể ra sao**, theo cam kết (x8c).
+
+**(x20d) Lượt GRPO tiếp theo (đổi G hoặc temp) là QUYẾT ĐỊNH MỚI.** `frac_reward_zero_std` đã lên
+0,515 và `r_point` phẳng ở chặng cuối ⇒ cấu hình này đã cạn tín hiệu. Muốn đi tiếp phải mở mục
+đăng ký mới, **không** được trình như phần tiếp diễn của (x19).
