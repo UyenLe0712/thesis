@@ -230,8 +230,20 @@ oracle của 6 nhánh này là 69,86):
 | **chọn câu mà đa số nhánh đồng ý** | **60,36** |
 | *oracle 6 nhánh* | *69,86* |
 
-Luật tốt nhất được **+0,31 pp**, dưới MDE. Khoảng cách **9,8 điểm** giữa luật rẻ nhất và oracle là
-cái giá của việc không có bộ định tuyến.
+Chạy lại trên **đủ 8 nhánh** (lấy câu từ trường `sent` của tệp thô, xem mục 10):
+
+| luật chọn câu, 8 nhánh | `exec` |
+|---|---|
+| luôn dùng MIN | 60,05 |
+| đa số nhánh đồng ý | 60,30 |
+| đa số, hoà thì ưu tiên MIN | **60,34** |
+| đa số, hoà thì xét khớp OCR | 60,30 |
+| chọn câu khớp OCR nhiều nhất | 47,59 *(luật này luôn chọn Base vì Base viết câu dài)* |
+| *oracle 8 nhánh* | *72,80* |
+
+Luật tốt nhất được **+0,29 … +0,31 pp**, dưới MDE ở mọi biến thể. Khoảng cách **12,5 điểm** giữa
+luật rẻ nhất và oracle 8 nhánh là cái giá của việc không có bộ định tuyến. **Đây là dư địa duy
+nhất còn lại chưa bị đóng bằng số.**
 
 ---
 
@@ -295,12 +307,92 @@ mọi tệp dự đoán và tệp chấm thô của 8 nhánh.
 
 ---
 
-## 10. TỆP ĐỂ TRA THÊM (nếu cần, nhưng file này đã tự chứa)
+## 10. TỆP DỮ LIỆU MỞ ĐƯỢC — phiên debate cứ đọc thẳng
+
+Toàn bộ nằm trong kho `/mnt/d/Master/Thesis`. Mọi phép đo ở mục 4, 5, 6 đều dựng lại được từ
+những tệp này mà **không cần GPU**.
+
+### 10.1 Tệp chấm thô — quan trọng nhất, mỗi tệp 4.463 dòng JSONL
+
+| tệp | nhánh |
+|---|---|
+| `runs/score_base_raw.jsonl` | Base |
+| `runs/score_s1_seed101_raw.jsonl` · `runs/score_s1_seed202_raw.jsonl` | S1 hai hạt giống |
+| `runs/score_s2_seed101_raw.jsonl` | S2 |
+| `runs/score_ce2_s2_seed101_raw.jsonl` | CE2-S2 |
+| `runs/score_min_desc_seed101_raw.jsonl` | MIN-DESC |
+| `runs/grpo_point/score_grpo_point_seed101_raw.jsonl` | GRPO-point |
+| `runs/sel/score_gui_sel_seed101_raw.jsonl` | gui_sel |
+| `runs/score_ceiling_human_raw.jsonl` | câu chuẩn (trần) |
+
+Trường mỗi dòng: `episode_id` · `step_id` · `app` · `app_seen_in_train` · `pred_xy` (toạ độ bộ
+trỏ trả về) · `gold_xy` · `wh` (cỡ màn) · `n_buttons` · **`sent`** (câu đã đem chấm) ·
+`gold_instruction` · `action_ok` · `toggle_ok` · `hit_disk` · `hit_voronoi` · **`executable`**.
+
+⭐ **Mẹo quan trọng:** trường **`sent`** chứa chính câu đã chấm, nên lấy câu của **mọi** nhánh từ
+đây, kể cả Base và gui_sel vốn không có tệp `preds` riêng trong kho. Ghép cặp bằng khoá
+`(episode_id, step_id)` — kiểu **số nguyên**, đừng ép sang chuỗi.
+
+### 10.2 Tệp dự đoán (có thêm ô khai báo chưa cắt)
+
+`runs/preds_s1_seed101.jsonl` · `..._s1_seed202` · `..._s2_seed101` · `..._ce2_s2_seed101` ·
+`..._min_desc_seed101` (mỗi tệp **6.958** dòng) · `runs/preds_ceiling_human.jsonl` ·
+`runs/grpo_point/preds_grpo_point_seed101.jsonl` (**4.463** dòng) ·
+`runs/sel/preds_gui_sel_seed101_touch4463.jsonl`.
+
+Trường: `episode_id` · `step_id` · `image` · `app` · `gold_instruction` · `action` · **`raw`**
+(nguyên văn mô hình sinh, **còn** ô `<desc>…</desc>` và `<point>x,y</point>`) · **`pred`** (câu đã
+cắt ô khai báo, đây là thứ đem chấm) · `conf` · `run` (chữ ký lượt chạy).
+
+### 10.3 Dữ liệu tập kiểm
+
+| tệp | dòng | có gì |
+|---|---|---|
+| `harness/dg1_cache/test_ac/test.jsonl` | 6.958 | `episode_id` · `step_id` · `image` · `action` (loại thao tác + toạ độ chuẩn) · `gold_instruction` · `app` |
+| `harness/dg1_cache/test_ac/ocr.jsonl` | 6.969 | chữ trích từ mỗi ảnh, khoá theo `image` |
+| `harness/dg1_cache/test_ac/descriptors.jsonl` | 4.448 | nhãn phần tử chuẩn: `name` · `point_norm` (lưới 1000) · `box` · `role` · `tier` · `area_share` |
+| `harness/dg1_cache/test_ac/candidates.jsonl` | 6.958 | khối ≤40 ứng viên mỗi màn |
+| `harness/dg1_cache/test_ac/images/` | 6.969 ảnh | ảnh màn hình thật, 3,3 GB |
+
+### 10.4 Nhật ký và kết quả tổng hợp
+
+`runs/grpo_point/logs/log_history.json` — 501 bản ghi huấn luyện GRPO (mọi khoá ở mục 3) ·
+`runs/grpo_point/logs/c1_infer.log`, `c2_score.log` — log suy luận và chấm ·
+`runs/grpo_point/score_grpo_point_seed101.json` — số tổng hợp kèm KTC ·
+`runs/score_*.json` — như trên cho các nhánh khác ·
+`runs/sel/tau_scan.json` + `tau_rows_dev1400.json` — kết quả quét ngưỡng (mục 7 ý 6) ·
+`runs/text_metrics.json` — BLEU-4/ROUGE-L mọi nhánh · `runs/luat_d3.json` — bảng luật hộp phần tử.
+
+### 10.5 Script đọc sẵn, chạy bằng `~/.venvs/thesis/bin/python`
+
+`harness/doc_exec_grpo.py` — exec hai nhánh, McNemar, KTC bootstrap cụm, bảng D.3, phân rã nhóm ·
+`harness/doc_grpo_local.py` — nhật ký huấn luyện theo 5 chặng và dịch chuyển trọng số ·
+`harness/text_metrics.py` — BLEU-4/ROUGE-L · `harness/gate_desc_acc.py` — cổng khai báo (0 GPU) ·
+`harness/luat_d3.py` — bảng luật hộp phần tử · `harness/metric_exec.py` — **định nghĩa thật của
+thước**, đọc file này thay vì đọc mô tả về nó.
+
+### 10.6 Đoạn mã nạp dữ liệu, dán là chạy
+
+```python
+import json, statistics as st
+def nap(p):
+    return {(r["episode_id"], r["step_id"]): r
+            for r in map(json.loads, open(p, encoding="utf-8"))}
+MIN  = nap("runs/score_min_desc_seed101_raw.jsonl")
+GRPO = nap("runs/grpo_point/score_grpo_point_seed101_raw.jsonl")
+chung = sorted(set(MIN) & set(GRPO))
+print(100*st.mean(MIN[k]["executable"] for k in chung))   # 60.05
+print(100*st.mean(GRPO[k]["executable"] for k in chung))  # 60.07
+print(MIN[chung[0]]["sent"])                              # câu đã chấm
+```
+
+### 10.7 Tệp báo cáo để tra thêm
 
 `report/144_KET_QUA_GRPO_POINT_6_9.md` — lượt GRPO đầy đủ, tám đòn phản biện ·
-`report/145_CHOT_HUONG_SAU_GRPO_6_9.md` — phán quyết dừng thực nghiệm và các trần đã tính ·
+`report/145_CHOT_HUONG_SAU_GRPO_6_9.md` — phán quyết dừng và các trần đã tính ·
 `report/143_DEBATE_NANG_SO_MO_HINH_5_9.md` — debate nâng số vòng trước ·
+`report/142_KET_QUA_TAU_5_9.md` — quét ngưỡng, luật null thắng ·
+`report/136_KET_QUA_EXEC_GUI_SEL_5_9.md` — nhánh ứng viên ·
 `report/106_DANG_KY_TRUOC.md` mục (x19), (x19d), (x20) — thiết kế và luật đọc đã khoá ·
-`CLAUDE.md` — bối cảnh toàn dự án, bảng số đã rút, luật vận hành máy ·
-`runs/grpo_point/` — adapter, tệp dự đoán, tệp chấm thô, nhật ký huấn luyện ·
-`harness/doc_exec_grpo.py` và `harness/doc_grpo_local.py` — hai script đọc kết quả, 0 GPU.
+`CLAUDE.md` — bối cảnh toàn dự án, **bảng số đã rút** (đọc trước khi trích bất kỳ con số nào),
+luật vận hành máy.
