@@ -45,6 +45,7 @@ import metric_exec as M
 import a11y_inventory as A11Y
 
 TEST = os.path.join(HERE, "dg1_cache", "test_ac")
+RECS = "test.jsonl"                  # P5: đổi được bằng --recs-file
 SEED = 20260805                      # khoá ở report/106 mục 10
 
 def pick_dtype():
@@ -94,10 +95,16 @@ class UGround:
     Cách duy nhất đóng: chấm lại lát ≥500 bước bằng bộ trỏ đã xác minh sạch AC."""
     NAME = "uground"
 
-    def __init__(self, path="osunlp/UGround-V1-2B"):
+    PATH = "osunlp/UGround-V1-2B"
+
+    def __init__(self, path=None):
         import torch
         from transformers import AutoProcessor, Qwen2VLForConditionalGeneration
+        path = path or self.PATH
         self.torch = torch
+        # ⛔ IN RA đường dẫn thật. Bài học 20/8: đọc mã chỉ chứng minh mã trên máy này,
+        # phải bắt tiến trình khai đúng thứ nó đang nạp rồi kiểm dòng đó.
+        print(f"[{self.NAME}] nạp {path}", flush=True)
         self.proc = AutoProcessor.from_pretrained(path)
         self.model = Qwen2VLForConditionalGeneration.from_pretrained(
             path, device_map="auto", **dtype_kw()).eval()
@@ -269,8 +276,101 @@ class UIVenus:
         return (cx * img.width, cy * img.height)
 
 
+class PhiGround:
+    """Bộ trỏ THỨ BA — ứng viên duy nhất NGOÀI họ Qwen, để đóng đòn *cùng họ mô hình*.
+
+    Nguồn tra 9/9/2026 từ thẻ mô hình `microsoft/Phi-Ground` (KHÔNG lấy từ trí nhớ):
+      · nền `microsoft/Phi-3.5-vision-instruct`, giấy phép MIT, arXiv 2507.23779 (preprint)
+      · kho chỉ có **`.bin`** (2 mảnh, ~8,5 GB) và có `configuration_phi3_v.py`
+        ⇒ **bắt buộc `trust_remote_code=True`**
+      · thẻ ghi `transformers==4.43.0` · `flash_attn==2.5.8` · `torch==2.3.0`
+      · **độ phân giải đầu vào CỐ ĐỊNH 1008x672** (336x3 ngang, 336x2 dọc)
+      · đầu ra là **HỘP theo toạ độ TƯƠNG ĐỐI nhân 1000**, không phải pixel
+
+    ⭐ Nhờ toạ độ tương đối nên KHÔNG phải lần theo `image_grid_thw` như UI-Venus —
+    quy đổi thẳng x/1000 × chiều rộng ảnh gốc. Đây là chỗ duy nhất dễ hơn UI-Venus.
+
+    ⛔⛔ BA CHẶN, đọc trước khi đặt lượt 5,6 giờ:
+    ① `flash_attn` KHÔNG chạy trên T4 (Turing sm_75); FlashAttention-2 đòi Ampere trở lên.
+       Phải ép `_attn_implementation="eager"`. Đây đúng tổ hợp đã làm ShowUI-2B ra NaN.
+    ② Thẻ ghim transformers **4.43** còn Kaggle cài sẵn **5.x**. Mã điều khiển từ xa viết
+       cho 4.43 rất dễ vỡ trên 5.x. Lỗi sẽ nổ lúc `from_pretrained`, không phải lúc chấm.
+    ③ Ảnh AndroidControl là **1080x2400 dọc** (tỉ lệ 0,45) còn mô hình nhận **1008x672
+       ngang** (tỉ lệ 1,50). Nếu bộ xử lý KÉO GIÃN thì toạ độ tương đối vẫn đúng; nếu nó
+       ĐỆM VIỀN thì toạ độ tương đối trỏ vào khung đã đệm ⇒ sai hệ thống theo trục dọc.
+       ⭐ Phân biệt được bằng probe: tách sai số theo `dx` và `dy` riêng. Lệch dọc lớn hơn
+       lệch ngang nhiều lần = đang bị đệm viền, và mọi con số sau đó vô nghĩa.
+
+    ⚠️ KỲ VỌNG GHI TRƯỚC: mô hình này **yếu ở màn di động** — ScreenSpot-v2 mobile 78,1
+    (câu ngắn) so với 95,0 của UGround (`report/140` mục 3). Cộng chặn ③, nhiều khả năng
+    nó cho điểm THẤP hơn, giống hệt UI-Venus hồi 20/8. Giá trị của lượt này là đóng đòn
+    *cùng họ Qwen*, KHÔNG phải nâng số.
+    """
+    NAME = "phiground"
+    # BÊ NGUYÊN VĂN từ thẻ mô hình. ⛔ Giữ nguyên thứ tự: mô tả TRƯỚC, `<|image_1|>` SAU.
+    PROMPT = ("<|user|>\nThe description of the element: \n{desc}\n\nLocate the above "
+              "described element in the image. The output should be bounding box using "
+              "relative coordinates multiplying 1000.\n<|image_1|>\n<|end|>\n<|assistant|>")
+
+    def __init__(self, path="microsoft/Phi-Ground"):
+        import torch, transformers
+        from transformers import AutoModelForCausalLM, AutoProcessor
+        self.torch = torch
+        print(f"[PhiGround] transformers {transformers.__version__} "
+              f"(thẻ mô hình ghim 4.43 — lệch lớn thì lỗi nổ ngay dòng dưới)", flush=True)
+        self.proc = AutoProcessor.from_pretrained(path, trust_remote_code=True)
+        self.model = AutoModelForCausalLM.from_pretrained(
+            path, device_map="auto", trust_remote_code=True,
+            # ⛔ eager, KHÔNG flash_attention_2: T4 là Turing, không hỗ trợ.
+            _attn_implementation="eager", **dtype_kw()).eval()
+        print(f"[PhiGround] dtype thật = {next(self.model.parameters()).dtype} · "
+              f"attn = {getattr(self.model.config, '_attn_implementation', '?')}", flush=True)
+
+    def point(self, img, sentence):
+        import re
+        p = self.PROMPT.format(desc=sentence)
+        inp = self.proc(p, [img], return_tensors="pt").to(self.model.device)
+        with self.torch.no_grad():
+            g = self.model.generate(**inp, max_new_tokens=64, do_sample=False,
+                                    eos_token_id=self.proc.tokenizer.eos_token_id)
+        out = self.proc.batch_decode(g[:, inp["input_ids"].shape[1]:],
+                                     skip_special_tokens=True)[0]
+        m = re.findall(r"(\d+(?:\.\d+)?)", out)
+        if len(m) < 4:
+            return None
+        x1, y1, x2, y2 = (float(v) for v in m[:4])
+        # toạ độ TƯƠNG ĐỐI x1000 ⇒ chia 1000 rồi nhân kích thước ảnh GỐC
+        return ((x1 + x2) / 2 / 1000 * img.width, (y1 + y2) / 2 / 1000 * img.height)
+
+
+class UGround7B(UGround):
+    """Bản 7B của CHÍNH bộ trỏ đang dùng — không phải đổi dụng cụ, mà là nâng cỡ.
+
+    ⭐ Vì sao đáng thử hơn mọi ứng viên khác (tra 9/9/2026):
+    Jandial và cs., Findings of ACL: EACL 2026, Bảng 1 — **UGround-V1-7B bền NHẤT trước
+    cách diễn đạt khác nhau** (s_mean 0,3176) trong mọi bộ trỏ họ đo, trong khi bản **2B
+    dự án đang dùng chỉ đạt 0,6218**, tức kém bền gần gấp đôi. Mà bài toán này chấm những
+    câu **do máy sinh** với đủ kiểu diễn đạt, nên độ bền ấy đúng là thứ đang thiếu.
+
+    ⭐ Rẻ và ít rủi ro hơn Phi-Ground: cùng `Qwen2VLForConditionalGeneration`, cùng câu
+    nhắc, cùng thang toạ độ 0–1000, Apache-2.0 ⇒ **không thêm một dòng logic nào**, chỉ
+    đổi đường dẫn. Không `trust_remote_code`, không ghim transformers cũ, không lệch tỉ lệ
+    khung hình — ba chặn của Phi-Ground đều không có ở đây.
+
+    ⛔ Nhưng nó KHÔNG đóng đòn nào: vẫn họ Qwen2-VL, vẫn có AndroidControl 47K trong
+    recipe. Đây thuần tuý là phép thử "số có cao hơn không", và nếu cao hơn thì vào bài
+    như **thước báo kèm**, ⛔ không thay thước tiêu đề.
+    ⚠️ Kỳ vọng ghi trước: chưa ai đo cỡ bộ trỏ đổi `exec` bao nhiêu ở bài này. Tiền lệ
+    duy nhất trong dự án đi **ngược**: UI-Venus-7B mạnh hơn trên benchmark mà chấm thấp
+    hơn 2B ở cả ba nhánh. Nên đây là phép thử thật, không phải điều đã biết trước.
+    """
+    NAME = "uground7b"
+    PATH = "osunlp/UGround-V1-7B"
+
+
 def make_grounder(name):
-    return {"uground": UGround, "openai": OpenAIGrounder, "uivenus": UIVenus}[name]()
+    return {"uground": UGround, "openai": OpenAIGrounder, "uivenus": UIVenus,
+            "phiground": PhiGround, "uground7b": UGround7B}[name]()
 
 
 # ─────────────────────────── nút trên màn ───────────────────────────
@@ -422,8 +522,14 @@ def noharm(a, recs):
 
 
 def main():
+    global TEST, RECS
     ap = argparse.ArgumentParser()
     ap.add_argument("--mode", choices=["gate", "score", "noharm"], required=True)
+    # P5: chấm trên tập khác tập kiểm (val400/val600). Mặc định giữ nguyên hành vi cũ.
+    ap.add_argument("--data-root", default=None,
+                    help="thư mục chứa bản ghi + images/. Mặc định dg1_cache/test_ac")
+    ap.add_argument("--recs-file", default="test.jsonl",
+                    help="tên tệp bản ghi trong --data-root, ví dụ val400.jsonl")
     ap.add_argument("--baseline", help="chế độ noharm: tệp dự đoán của nhánh nền (thường S1) "
                                        "để tính hiệu số theo cặp")
     ap.add_argument("--grounder", default="uground",
@@ -432,9 +538,15 @@ def main():
     ap.add_argument("--out")
     ap.add_argument("--n", type=int, default=0, help="chỉ chạy N bước (0 = tất cả)")
     a = ap.parse_args()
+    # P5: chốt thư mục dữ liệu TRƯỚC mọi thao tác đọc, và in ra để kiểm — bài học 20/8:
+    # đọc mã chỉ chứng minh mã trên máy này, phải bắt tiến trình in cấu hình nó thật sự dùng.
+    if a.data_root:
+        TEST = os.path.abspath(a.data_root)
+    RECS = a.recs_file
+    print(f"[dữ liệu] {os.path.join(TEST, RECS)}", flush=True)
 
     from PIL import Image
-    recs = [json.loads(l) for l in open(os.path.join(TEST, "test.jsonl"), encoding="utf-8")]
+    recs = [json.loads(l) for l in open(os.path.join(TEST, RECS), encoding="utf-8")]
     taps = [r for r in recs if r["action"].get("action_type") in ("click", "long_press")
             and "x" in r["action"]]
 

@@ -198,3 +198,67 @@ Sau 16/9, nếu còn ngân sách: **Phi-Ground-4B** làm phép đổi dụng c�
 của phép B. ⚠️ Nó chỉ có `.bin`, cần `trust_remote_code`, và T4 là Turing (không bf16, không
 flash-attn 2) — đúng tổ hợp đã làm ShowUI-2B ra NaN. Probe một lát nhỏ và bắt tiến trình in ra
 `dtype` thật trước khi đặt lượt 5,6 giờ.
+
+---
+
+## Phụ lục 9/9 — BẢNG THƯỚC BA VAI NAY TÁI LẬP ĐƯỢC TRỌN VẸN
+
+`harness/luat_d3.py` trước đó chỉ tính bốn biến thể D.3. Ba luật **ĐỘ NHẠY** của `151` mục 6
+(±14% từng trục 69,37 · AitW Euclid 68,90 · `hit_disk` thuần 69,89) **không có nguồn tái lập nào
+trong kho** — chúng chỉ tồn tại dưới dạng ba con số chép trong một bảng. Đã thêm vào script,
+0 giây GPU, tính thẳng từ `*_raw.jsonl`.
+
+### ⛔ BA CÁI TÊN, HAI LUẬT — chỗ suýt đọc nhầm
+
+| tên | dùng ở đâu | công thức | GRPO/101 |
+|---|---|---|---|
+| **AitW Euclid** | `151` mục 6 | √((dx/W)² + (dy/H)²) ≤ 0,14, gated | **68,90** |
+| **nL2 .14** | `report/136` | **cùng một luật, khác tên** | 68,90 |
+| `disk_l2` | `harness/rule_sensitivity.py:37` | ‖p−g‖ ≤ 0,14·**W** — **LUẬT KHÁC** | **66,05** |
+
+Chuẩn hoá **hai trục** cho 68,90; chuẩn hoá **một trục theo bề ngang** cho 66,05. Lệch 2,85 pp.
+⛔ Đừng lấy `disk_l2` của `rule_sensitivity.py` thay cho hàng AitW của bảng chính.
+Kiểm chéo đã làm: định nghĩa hai trục tái lập **cả năm** hàng `nL2` của `report/136` — 84,09 ·
+68,32 · 66,91 · 63,52 · 55,28 (S1 lệch 0,01 pp do làm tròn, nhỏ hơn một bước = 0,0224 pp).
+⚠️ Thêm một chỗ nữa: `d14_truc` **gated** (69,37) và `disk_thuan` **không gated** (69,89) là cùng
+một hình chữ nhật, chỉ khác có nhân `action_ok ∧ toggle_ok` hay không — đúng bẫy tên trường
+`exec_disk` đã ghi ở `CLAUDE.md`.
+
+### Bảng đầy đủ, bảy luật × chín nhánh (`runs/luat_d3.json`)
+
+| nhánh | Voronoi | D.3 | D.3∧14% | D.3 -cont | ±14% trục | AitW | `hit_disk` |
+|---|---|---|---|---|---|---|---|
+| Câu người (trần) | 75,73 | 83,82 | 79,23 | 81,54 | 84,23 | 84,09 | 84,27 |
+| GRPO-point/101 | **60,07** | **67,04** | **62,96** | 64,96 | 69,37 | 68,90 | 69,89 |
+| MIN-DESC/101 | 60,05 | 66,55 | 62,69 | 64,44 | 68,72 | 68,32 | 69,19 |
+| S1/202 | 59,62 | 66,10 | 62,36 | 64,06 | 67,91 | 67,62 | 69,77 |
+| CE2-S2/101 | 59,42 | 66,03 | 62,07 | 63,90 | 68,45 | 67,94 | 68,92 |
+| S1/101 | 59,11 | 65,49 | 61,73 | 63,48 | 67,24 | 66,91 | 69,17 |
+| S2/101 | 57,18 | 63,63 | 59,69 | 61,64 | 65,72 | 65,40 | 67,44 |
+| `gui_sel`/101 | 56,13 | 62,38 | 58,62 | 60,45 | 63,86 | 63,52 | 66,35 |
+| Base | 47,59 | 53,60 | 49,76 | 51,47 | 55,86 | 55,28 | 57,63 |
+
+### ⭐ Sàn tái lập đúng lập luận "không đổi tiêu đề sang ±14%"
+
+Lát 800, `f1` = câu rỗng nghĩa `"Tap the button."`:
+
+| luật | trần | sàn `f1` | **dải dùng được** |
+|---|---|---|---|
+| Voronoi (tiêu đề) | 74,88 | 12,00 | 62,88 |
+| **D.3** | 83,00 | 14,12 | **68,88** |
+| D.3 -cont | 81,62 | 12,62 | **69,00** |
+| D.3 ∧ 14% | 78,75 | 12,12 | 66,62 |
+| AitW | 82,88 | 20,12 | 62,75 |
+| ±14% trục · `hit_disk` | 83,00 | **20,50** | **62,50** |
+
+Con số **20,50** mà `151` mục 6 nêu để bác việc đổi tiêu đề sang ±14% nay **tái lập trùng khít**.
+D.3 nới dải lên **68,88** trong khi ±14% **thu hẹp** xuống 62,50 — lập luận giữ Voronoi làm tiêu
+đề và D.3 làm thước báo kèm đứng vững trên số đo, không còn là khẳng định suông.
+⭐ Số mới: biến thể **D.3 -cont** (loại hộp ≥ 25% màn) cho dải **69,00**, rộng nhất trong bảy luật.
+
+### Khối tự kiểm
+
+`luat_d3.py` nay mang **27 số đã niêm** rút từ `151` mục 6, `report/136` và `report/140`; chạy lại
+mà lệch quá **nửa bước (0,0112 pp)** là script `raise SystemExit` và **không ghi đè**
+`runs/luat_d3.json`. Trước đây script ghi đè vô điều kiện, nên một thay đổi âm thầm ở khâu chấm sẽ
+đi thẳng vào tệp kết quả mà không ai biết.

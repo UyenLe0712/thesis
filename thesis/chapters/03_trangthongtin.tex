@@ -45,14 +45,19 @@ dòng khai báo về phần tử cần chạm gồm vai trò, tên, toạ độ 
 đó là do hành vi của mô hình thay đổi, không phải do mô hình được cho thêm thông tin.
 
 Trên $4.463$ bước chạm của tập kiểm, mô hình Qwen2.5-VL-3B sau khi tinh chỉnh đạt
-$59{,}1\%$, so với $47{,}6\%$ của chính mô hình đó khi chưa tinh chỉnh. Khoảng cách
+$59{,}1\%$, so với $47{,}6\%$ của chính mô hình đó khi chưa tinh chỉnh ($65{,}5\%$ so với
+$53{,}6\%$ theo luật hộp phần tử của AndroidControl). Khoảng cách
 $11{,}5$ điểm này vẫn giữ nguyên sau khi kiểm sáu cách giải thích khác. Nhánh mang thành
 phần được đề xuất đạt $57{,}2\%$, tức thấp hơn nhánh nền $1{,}93$ điểm. Mức chênh đó nằm
 dưới mức chênh nhỏ nhất mà thiết kế phát hiện được, nên là kết quả \emph{không kết luận được}.
 Hạt giống thứ hai của nhánh này bị huỷ vì hết ngân sách máy, nên kết quả dừng lại ở đó.
 Một chặng huấn luyện tiếp theo đạt $60{,}0\%$, cao nhất trong các mô hình đã đo, nhưng khi
 tách riêng phần đóng góp thì $78\%$ mức tăng thuộc về nhánh so sánh chứ không thuộc về mục
-tiêu huấn luyện mới.
+tiêu huấn luyện mới. Điểm cao nhất của đề tài, đạt ở chặng
+huấn luyện thứ ba, được báo song song theo hai luật chấm: $60{,}1\%$ theo executability và
+$67{,}0\%$ theo luật hộp phần tử gốc của AndroidControl, trong khi câu chuẩn đạt $75{,}7\%$ và
+$83{,}8\%$ dưới cùng hai luật. Trên các bước chạm, mô hình gọi đúng loại thao tác ở $98{,}9\%$
+số bước.
 
 Phần đóng góp cuối là một chẩn đoán ở mức từng bước. Khi mô hình khai báo đúng phần tử,
 điều xảy ra ở $60{,}6\%$ số bước, mô hình viết câu tốt hơn nhánh nền $8{,}83$ điểm và vượt cả
@@ -87,9 +92,10 @@ dựng nhãn mô tả phần tử từ cây trợ năng kết hợp với chữ 
 \item \textbf{Một chẩn đoán ở mức từng bước cho thành phần được đề xuất.} Chia số bước
 theo việc dòng khai báo do mô hình tự viết có trỏ đúng phần tử hay không cho thấy cơ chế
 vẫn hoạt động đúng như giả thuyết, nhưng bị chặn bởi độ chính xác của chính dòng khai báo.
-Mô hình hơn nhánh nền $8{,}83$ điểm khi khai báo đúng, và thấp hơn $11{,}12$ điểm khi khai báo sai. Đi
-kèm là một hệ số quy đổi bằng $0{,}43$, cho phép ước lượng trước một cải thiện ở dòng khai
-báo sẽ đổi thành bao nhiêu điểm ở đầu ra. Nhánh chọn trong danh sách ứng viên nối dài chẩn
+Mô hình hơn nhánh nền $8{,}83$ điểm khi khai báo đúng, và thấp hơn $11{,}12$ điểm khi khai báo sai. Tách tiếp
+theo hai kênh cho thấy $91\%$ khoảng cách so với câu chuẩn dồn vào $29{,}9\%$ số bước mà mô hình
+nhìn sai phần tử, và phần thiếu hụt riêng của mô hình ở đó là $45{,}30$ điểm; mức truyền từ tầng
+ấy sang điểm đầu ra, đo bằng một can thiệp đã chạy, chỉ $0{,}028$. Nhánh chọn trong danh sách ứng viên nối dài chẩn
 đoán này. Cơ chế chọn đạt $71{,}4\%$ khi mô hình đưa ra lựa chọn, còn điểm nghẽn mới là
 việc bỏ cuộc quá mức, được tái lập qua hai phép đo độc lập.
 
@@ -159,12 +165,17 @@ stripped before scoring, so any gain reflects a change in the model's behaviour 
 extra information at scoring time.
 
 Over 4,463 held-out touch steps, a QLoRA-tuned Qwen2.5-VL-3B reaches 59.1\% against 47.6\%
-for the same model untuned, and that gap of 11.5 points survives six checks for alternative
+for the same model untuned (65.5\% against 53.6\% under AndroidControl's own element-box
+matching rule), and that gap of 11.5 points survives six checks for alternative
 explanations. The descriptor branch reaches 57.2\%, 1.93 points below the control, which
 falls below the minimum detectable effect of the design. Its second seed was cancelled for
 budget reasons, so the comparison remains inconclusive. A further
 training stage reaches 60.0\%, the highest of any checkpoint measured, but attributing the
 movement shows that 78\% of it belongs to the control arm rather than to the new objective.
+The best score of the thesis, reached by the third training stage, is reported under two
+matching rules side by side: 60.1\% under executability and 67.0\% under AndroidControl's
+original element-box rule, against 75.7\% and 83.8\% for the human references under the same
+two rules. On touch steps the model names the correct action type in 98.9\% of cases.
 
 The final contribution is a step-level diagnosis. Where the model's own descriptor
 identifies the right element, which happens on 60.6\% of steps, it beats the control by
@@ -193,10 +204,13 @@ task, with the cross-modal join validated against a deliberately shifted control
 \item A measured floor as well: 12.0\% for a meaningless sentence, and 6.1\% for a real
 sentence describing the wrong screen, the lowest of anything measured, which rules out
 the register-contamination reading of the metric.
-\item A step-level diagnosis of the proposed component, together with a
-descriptor-to-executability conversion factor of 0.43 measured on our own data and used to
-issue a prediction before the run, and extended by a candidate-selection branch whose
-bottleneck is over-abstention rather than selection.
+\item A step-level diagnosis of the proposed component. Splitting the path from screen to
+sentence into a perception channel and a phrasing channel shows that $91\%$ of the gap to the
+reference sentences falls on the $29{,}9\%$ of steps where the model looks at the wrong element,
+with a model-specific shortfall of $45{,}30$ points there. The transfer rate from that channel to
+the scored output, measured with an intervention we ran, is only $0{,}028$. The diagnosis is
+extended by a candidate-selection branch whose bottleneck is over-abstention rather than
+selection.
 \item Positioning: in AndroidControl and in work built on it, the human-written
 per-step instruction is an \emph{input}. Here it is the generation target and the only
 scored output.

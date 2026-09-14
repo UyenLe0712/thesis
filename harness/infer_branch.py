@@ -27,6 +27,7 @@ sys.path.insert(0, HERE)
 from build_branch_data import prompt_body, prompt_of, SYS   # dùng chung mã dựng câu nhắc
 
 TEST = os.path.join(HERE, "dg1_cache", "test_ac")
+RECS = "test.jsonl"          # P5: đổi được bằng --recs-file
 BASE = "Qwen/Qwen2.5-VL-3B-Instruct"
 
 
@@ -233,7 +234,7 @@ def selftest(base=None, n_batch=5):
     proc = AutoProcessor.from_pretrained(base, min_pixels=200704, max_pixels=1003520)
     proc.tokenizer.padding_side = "left"
 
-    recs = [json.loads(l) for l in open(os.path.join(TEST, "test.jsonl"), encoding="utf-8")][:n_batch]
+    recs = [json.loads(l) for l in open(os.path.join(TEST, RECS), encoding="utf-8")][:n_batch]
     ocr = {}
     op = os.path.join(TEST, "ocr.jsonl")
     if os.path.exists(op):
@@ -299,7 +300,7 @@ def selftest_batch(a, n_batch=8):
 
     proc = AutoProcessor.from_pretrained(a.base, min_pixels=200704, max_pixels=1003520)
     proc.tokenizer.padding_side = "left"
-    recs = [json.loads(l) for l in open(os.path.join(TEST, "test.jsonl"), encoding="utf-8")][:n_batch]
+    recs = [json.loads(l) for l in open(os.path.join(TEST, RECS), encoding="utf-8")][:n_batch]
     ocr = {}
     op = os.path.join(TEST, "ocr.jsonl")
     if os.path.exists(op):
@@ -352,8 +353,18 @@ def selftest_batch(a, n_batch=8):
 
 
 def main():
+    global TEST, RECS
     ap = argparse.ArgumentParser()
     ap.add_argument("--adapter", default=None, help="thư mục LoRA của nhánh")
+    # P5: cho phép suy luận trên tập khác tập kiểm (val400/val600). Mặc định giữ nguyên
+    # hành vi cũ, nên mọi lượt đã chấm vẫn tái lập được y hệt.
+    ap.add_argument("--data-root", default=None,
+                    help="thư mục chứa bản ghi + ocr.jsonl + images/. Mặc định dg1_cache/test_ac")
+    ap.add_argument("--recs-file", default="test.jsonl",
+                    help="tên tệp bản ghi trong --data-root, ví dụ val400.jsonl")
+    # P7: co giãn một adapter so với model gốc. ⛔ KHÔNG dựng được điểm giữa của hai
+    # adapter — việc đó cần ghép nối theo hạng, xem harness/noi_suy.py.
+    ap.add_argument("--alpha", type=float, default=1.0)
     ap.add_argument("--no-adapter", action="store_true", help="chạy mô hình gốc, chưa huấn luyện")
     ap.add_argument("--out", help="bắt buộc trừ khi chạy --selftest / --selftest-batch")
     ap.add_argument("--limit", type=int, default=0)
@@ -390,6 +401,12 @@ def main():
                     help="phép [3]: lô 1 và lô n có ra cùng câu không (CẦN GPU). "
                          "Chạy trước lượt chấm đầu tiên trên máy thuê.")
     a = ap.parse_args()
+    # P5: chốt thư mục dữ liệu TRƯỚC mọi thao tác đọc, và in ra để kiểm — bài học 20/8:
+    # đọc mã chỉ chứng minh mã trên máy này, phải bắt tiến trình in cấu hình nó thật sự dùng.
+    if a.data_root:
+        TEST = os.path.abspath(a.data_root)
+    RECS = a.recs_file
+    print(f"[dữ liệu] {os.path.join(TEST, RECS)}", flush=True)
     if a.selftest:
         sys.exit(0 if selftest(a.base) else 1)
     if a.selftest_batch:
@@ -405,7 +422,7 @@ def main():
     from transformers import Qwen2_5_VLForConditionalGeneration, AutoProcessor
     from PIL import Image
 
-    recs = [json.loads(l) for l in open(os.path.join(TEST, "test.jsonl"), encoding="utf-8")]
+    recs = [json.loads(l) for l in open(os.path.join(TEST, RECS), encoding="utf-8")]
     ocr = {}
     op = os.path.join(TEST, "ocr.jsonl")
     if os.path.exists(op):

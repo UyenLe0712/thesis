@@ -250,3 +250,95 @@ Phụ lục D.3) · 2307.10088 (AITW) · 2508.05615 (AAAI 2026) · 2512.08529 (C
 2506.03143 (GUI-Actor, Bảng 7) · 2505.13227 (Jedi) · 2507.05791 (GTA1, ICLR 2026) ·
 2504.01382 (COLM 2025) · 2410.05243 (UGround) · 2007.07314 (ICLR 2021) · 2602.02419 ·
 2510.18488 · 2512.16501 · openaccess CVPR 2023 GRES · ojs.aaai.org 4619 (Read+Verify).
+
+---
+
+## Phụ lục 9/9 — ĐO XONG PHÉP HỢP NHẤT BỘ TRỎ: NÂNG TRẦN THÌ ĐƯỢC, NHƯNG NỚI RỘNG KHOẢNG CÁCH
+
+Tính từ `runs/gate_a/gate_A_raw.jsonl`, `runs/venus/venus_gate_raw.jsonl` và ba tệp
+`venus/score_venus_*_2532_raw.jsonl`. **0 giây GPU.**
+
+### 1. Con số 79,0 → 87,7 của mục trên tái lập được, và nó thuộc luật nào
+
+| luật trên lát trần 300 bước | UGround | UI-Venus | hợp nhất | lợi |
+|---|---|---|---|---|
+| `err_frac` = ‖p−g‖/W ≤ ,14 | **79,00** | 74,00 | **87,67** | +8,67 |
+| chữ nhật ±14% từng trục | 81,33 | 75,00 | 89,33 | +8,00 |
+| AitW hai trục | 81,00 | 75,00 | 89,33 | +8,33 |
+
+⇒ Cặp **79,0 → 87,7** ghi ở mục trên là luật `err_frac`, tức `disk_l2` của
+`rule_sensitivity.py`, **không phải** luật tiêu đề. Kết luận không đổi theo luật: hợp nhất mua
+được **+8,0 đến +8,7 pp** cho trần.
+
+### 2. ⛔ Nhưng mô hình chỉ được một nửa chỗ đó ⇒ khoảng cách RỘNG RA
+
+Cùng luật chữ nhật ±14%, lát 2.532 bước:
+
+| nhánh | UGround | UI-Venus | hợp nhất | lợi |
+|---|---|---|---|---|
+| Base | 50,67 | 45,22 | 54,27 | **+3,59** |
+| S1/101 | 61,41 | 54,94 | 65,05 | **+3,63** |
+| S2/101 | 58,73 | 52,73 | 61,81 | **+3,08** |
+
+**Trần được +8,00 · mô hình được +3,63 ⇒ khoảng cách trần − S1 RỘNG RA 4,37 pp.**
+⇒ ⛔ Hợp nhất bộ trỏ **không** phải đường nâng số. Nó làm mô hình trông **kém đi** so với trần,
+đúng chiều ngược với mục đích. Câu ghi ở `CLAUDE.md` (*"nâng đều mọi nhánh nên tỉ lệ gần như
+không đổi"*) nay phải sửa: **không nâng đều**, trần được gấp **2,2 lần** mô hình.
+
+### 3. ⭐ Vì sao — và đây là con số đáng mang đi bảo vệ
+
+Trên đúng **174 bước** giao nhau giữa hai lát, cùng luật, cùng bước:
+
+| | UGround | UI-Venus | hợp nhất | **CẢ HAI cùng trượt** |
+|---|---|---|---|---|
+| câu chuẩn | 82,18 | 75,86 | 90,80 | **9,20%** |
+| S1/101 | 66,67 | 55,17 | 71,26 | **28,74%** |
+
+Phần mà **không bộ trỏ nào cứu được** ở mô hình gấp **3,1 lần** ở câu chuẩn. Thêm một bộ trỏ thứ
+hai chỉ vớt được những bước mà câu vốn đã đủ tốt để trỏ trúng; nó không vớt được bước mà câu
+**gọi tên sai phần tử**. Đó chính là dạng lỗi lưỡng cực đã tái lập bốn lần (`106` (x13c) ·
+`report/136` · `report/144` · `report/153` §7.4).
+
+⇒ **Trần 75,73 không phải thứ đang chặn.** Chặn là 28,74% số bước mà câu chỉ sang phần tử khác,
+và không phép đổi dụng cụ nào chạm tới được. Đường duy nhất còn lại là **sửa mô hình**, tức đúng
+chẩn đoán tri giác của `151` mục 2 và đúng lượt VIS-SFT.
+
+### 4. Giá nếu vẫn muốn làm
+
+UI-Venus-7B chấm ~14,4 h một lượt; muốn có hàng hợp nhất cho **GRPO** phải chạy thêm một lượt nữa,
+rồi mọi số của hai bài báo và luận văn phải đo lại. Đổi lại là một trần cao hơn mà mô hình **không**
+theo kịp. ⇒ Không đáng.
+
+---
+
+## Phụ lục 9/9 (b) — ghép với GRPO THẤP HƠN ghép với MIN, và một câu của `151` cần sửa
+
+Tính lại mục 0a trên đủ 4.463 bước, thêm hàng cho nhánh tiêu đề hiện tại:
+
+| hệ thống | exec | so nhánh nền | b/c | p |
+|---|---|---|---|---|
+| `gui_sel` một mình | 56,13 | — | — | — |
+| **ghép: sel; `none` → MIN** | **60,72** | +0,67 | 127/157 | 0,085 |
+| ghép: sel; `none` → CE2 | 60,54 | +1,12 | 115/165 | **0,003** |
+| ghép: sel; `none` → GRPO | 60,52 | +0,45 | 112/132 | 0,224 |
+| ghép: sel; `none` → S1 | 59,44 | +0,34 | 116/131 | 0,373 |
+
+Tỉ lệ bỏ cuộc tái lập đúng **41,97%** (1.873/4.463).
+
+⭐ **Số mới:** ghép với **GRPO** cho **60,52**, tức **thấp hơn** ghép với MIN dù GRPO là nhánh
+tiêu đề và hơn MIN 0,02 pp khi đứng một mình. Nghĩa là trên đúng 1.873 bước mà `gui_sel` bỏ
+cuộc, MIN là nhánh dự phòng **tốt hơn** GRPO. Phù hợp với chẩn đoán ở `report/153` §7.4: GRPO
+đổi hẳn phần tử ở một số bước, và trong nhóm bước khó thì việc đổi ấy hại nhiều hơn lợi.
+
+⛔⛔ **Một câu của `151` mục 2.2 sai:** *"mọi bộ chọn không-oracle ≤ 60,45"*. Bộ chọn
+`none → MIN` cho **60,72**, và `none → CE2` cho **60,54** — cả hai đều thi hành được, không
+oracle. Câu ấy có lẽ nói về một họ bộ chọn khác (bộ định tuyến học được trên 8 nhánh); phải
+khai đúng phạm vi, đừng để nó phủ định một phép đo đã có.
+
+⛔ **Nhưng 60,72 KHÔNG được lên tiêu đề**, ba lý do độc lập:
+1. Nó là **argmax của một họ luật thử sau khi thấy điểm** — các luật khác trong cùng bó cho
+   60,12 đến 60,65 (mục 0a). Đây đúng hiệu ứng chọn mẫu mà `151` §2.2 và `report/153` §7.4 nêu.
+2. **p = 0,085**, và +0,67 pp nằm sâu dưới MDE 2,11 ⇒ ô **TRẮNG**.
+3. Nó là **hai mô hình chạy lúc suy luận**, không phải một điểm lưu mới, nên là đóng góp hệ
+   thống chứ không phải đóng góp mô hình.
+⇒ Cách dùng đúng: một hàng bảng gắn nhãn **luật hậu kiểm**, kèm cả ba điều trên.

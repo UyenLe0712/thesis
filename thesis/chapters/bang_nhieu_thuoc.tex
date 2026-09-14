@@ -1,0 +1,48 @@
+% SINH TỰ ĐỘNG bởi harness/sinh_bang_nhieu_thuoc.py — đừng sửa tay
+\begin{table}[t]
+\caption{Nhóm thước theo vị trí trên đủ $4.463$ bước chạm, tính lại từ bản ghi từng bước, không gọi lại mô hình định vị. Exec.\ là executability. Hộp (D.3) là luật khớp gốc của AndroidControl (Mục~\ref{sec:donhay}). Cột cuối là tỉ lệ gọi đúng loại thao tác. Số in đậm là số cao nhất trong các nhánh mô hình ở cột đó. \textsuperscript{$\dagger$}Nhánh ứng viên lệch ba biến so với các nhánh còn lại nên chỉ đọc được so với Base.}
+\label{tab:nhieuthuoc_vitri}
+\centering\small
+\renewcommand{\arraystretch}{1.2}
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+Nhánh & Exec. & Hộp (D.3) & D.3 $\wedge$ $14\%$ & $\pm 14\%$ trục & AitW & Loại thao tác \\
+\midrule
+Base & $47{,}6$ & $53{,}6$ & $49{,}8$ & $55{,}9$ & $55{,}3$ & $96{,}5$ \\
+S1 ($101$) & $59{,}1$ & $65{,}5$ & $61{,}7$ & $67{,}2$ & $66{,}9$ & $94{,}3$ \\
+S1 ($202$) & $59{,}6$ & $66{,}1$ & $62{,}4$ & $67{,}9$ & $67{,}6$ & $94{,}6$ \\
+S2 & $57{,}2$ & $63{,}6$ & $59{,}7$ & $65{,}7$ & $65{,}4$ & $94{,}8$ \\
+CE2-S2 & $59{,}4$ & $66{,}0$ & $62{,}1$ & $68{,}5$ & $67{,}9$ & $\mathbf{98{,}9}$ \\
+MIN-DESC & $60{,}0$ & $66{,}5$ & $62{,}7$ & $68{,}7$ & $68{,}3$ & $\mathbf{98{,}9}$ \\
+Chặng ba & $\mathbf{60{,}1}$ & $\mathbf{67{,}0}$ & $\mathbf{63{,}0}$ & $\mathbf{69{,}4}$ & $\mathbf{68{,}9}$ & $\mathbf{98{,}9}$ \\
+Nhánh ứng viên\textsuperscript{$\dagger$} & $56{,}1$ & $62{,}4$ & $58{,}6$ & $63{,}9$ & $63{,}5$ & $90{,}9$ \\
+\midrule
+\emph{Câu chuẩn} & $75{,}7$ & $83{,}8$ & $79{,}2$ & $84{,}2$ & $84{,}1$ & $100{,}0$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\caption{Nhóm thước so với câu chuẩn trên đủ $4.463$ bước chạm. BLEU-4, METEOR~1.5, ROUGE-L, CIDEr-D và SPICE tính mức kho bằng bộ chấm chính thức của COCO Captions, sau khi tách từ bằng PTBTokenizer. chrF tính bằng sacreBLEU. BERTScore là F1 với \texttt{roberta-large} tầng $17$, đã hiệu chỉnh theo đường cơ sở. Mỗi bước chỉ có một câu chuẩn. Số in đậm là số cao nhất trong các nhánh mô hình ở cột đó. Chặng ba là MIN-DESC học tiếp với phần thưởng đặt trên ô toạ độ. \textsuperscript{$\dagger$}Nhánh ứng viên chỉ đọc được so với Base.}
+\label{tab:nhieuthuoc_vanban}
+\centering\small
+\renewcommand{\arraystretch}{1.2}
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}lrrrrrrr@{}}
+\toprule
+Nhánh & BLEU-4 & METEOR & ROUGE-L & CIDEr-D & SPICE & chrF & BERTScore \\
+\midrule
+Base & $15{,}3$ & $24{,}6$ & $42{,}3$ & $88{,}0$ & $18{,}5$ & $\mathbf{40{,}2}$ & $\mathbf{40{,}1}$ \\
+S1 ($101$) & $51{,}6$ & $36{,}8$ & $67{,}3$ & $416{,}1$ & $\mathbf{44{,}4}$ & - & - \\
+S1 ($202$) & $\mathbf{51{,}7}$ & $37{,}2$ & $67{,}7$ & $\mathbf{419{,}2}$ & $44{,}2$ & - & - \\
+S2 & $48{,}7$ & $35{,}8$ & $66{,}0$ & $387{,}7$ & $41{,}3$ & - & - \\
+CE2-S2 & $50{,}1$ & $\mathbf{37{,}3}$ & $\mathbf{68{,}6}$ & $402{,}2$ & $42{,}3$ & - & - \\
+MIN-DESC & $49{,}9$ & $\mathbf{37{,}3}$ & $68{,}5$ & $401{,}0$ & $42{,}2$ & - & - \\
+Chặng ba & $49{,}9$ & $\mathbf{37{,}3}$ & $68{,}5$ & $402{,}9$ & $42{,}5$ & - & - \\
+Nhánh ứng viên\textsuperscript{$\dagger$} & $46{,}9$ & $34{,}2$ & $63{,}3$ & $370{,}6$ & $39{,}3$ & - & - \\
+\midrule
+\emph{Câu chuẩn} & $100{,}0$ & $100{,}0$ & $100{,}0$ & $988{,}7$ & $98{,}6$ & - & - \\
+\bottomrule
+\end{tabular}
+\end{table}

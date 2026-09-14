@@ -274,7 +274,9 @@ xử lý thấp hơn nhánh nền $1{,}93$ điểm ở một hạt giống, con 
 mà thiết kế phát hiện được, và hạt giống thứ hai không chạy được vì ngân sách máy. Chặng huấn
 luyện tiếp theo bằng mục tiêu ưu tiên ở tầng khai báo đạt $60{,}0\%$, cao nhất trong mọi
 điểm lưu của đề tài, nhưng phần thuộc riêng mục tiêu ấy chỉ là $0{,}63$ điểm so với nhánh
-so sánh, nghĩa là \textbf{$78\%$ mức tăng thuộc về nhánh so sánh}. Cả hai con số đều là
+so sánh, nghĩa là \textbf{$78\%$ mức tăng thuộc về nhánh so sánh}. Điểm cao nhất của đề tài, ở chặng ba, là $60{,}1\%$ theo executability và
+$67{,}0\%$ theo luật hộp phần tử gốc của AndroidControl, báo song song với mức $75{,}7\%$ và
+$83{,}8\%$ của câu chuẩn dưới cùng hai luật. Cả hai con số đều là
 kết quả một hạt giống.
 
 \paragraph{Đóng góp thứ ba, về chẩn đoán ở mức từng bước.} Chia quần thể theo việc ô khai báo
@@ -282,10 +284,24 @@ do chính mô hình sinh ra có trỏ đúng phần tử hay không cho thấy c
 xuất \emph{vẫn hoạt động đúng như giả thuyết}, nhưng bị chặn bởi độ chính xác của chính ô
 khai báo đó. Trên $60{,}6\%$ số bước mà mô hình khai báo đúng, mô hình hơn nhánh chỉ sinh câu
 $8{,}83$ điểm và vượt cả trần câu chuẩn của nhóm đó. Trên phần còn lại mô hình thấp hơn $11{,}12$ điểm. Hai chiều gần như triệt tiêu nhau, nên cộng lại trên toàn quần thể chỉ còn
-một chênh lệch $+0{,}94$ điểm không có ý nghĩa thống kê. Đóng góp này còn gồm hai phần phụ.
-Thứ nhất là một hệ số chuyển đổi đo được từ ``đúng khai báo'' sang ``đúng executability''
-bằng $0{,}43$, cho phép quy một mức cải thiện ở tầng khai báo thành dự báo về điểm đầu ra và
-kiểm lại dự báo đó bằng phép đo sau. Thứ hai là lý do đo được khiến một biến thể đã thiết kế
+một chênh lệch $+0{,}94$ điểm không có ý nghĩa thống kê. Đóng góp này còn gồm ba phần phụ.
+
+Thứ nhất là phép định vị tầng bị nghẽn. Tách đường đi từ ảnh tới câu thành kênh tri giác, tức ô
+toạ độ mà chính mô hình viết ra, và kênh diễn đạt, tức điểm mà mô hình định vị trả về sau khi đọc
+câu, cho thấy $91\%$ khoảng cách so với câu chuẩn dồn vào $29{,}9\%$ số bước mà mô hình nhìn sai
+phần tử ngay từ đầu. Trên nhóm ấy câu chuẩn giảm $28{,}64$ điểm còn mô hình giảm $73{,}94$, nên
+phần thiếu hụt không giải thích được bằng độ khó của nhóm là $\mathbf{45{,}30}$ điểm. Kèm theo là
+mức truyền đo bằng chính một can thiệp đã chạy, chỉ $0{,}028$, thấp hơn tương quan giữa các nhánh
+$26$ lần; luận văn dùng con số này để bác cách lấy tương quan làm hệ số quy đổi. Một hệ số quy đổi
+như vậy từng được dùng để dự báo kết quả của chặng ba và dự báo ấy đã bị phép đo bác bỏ, nên nó
+được trình bày như một bài học phương pháp chứ không phải một hằng số của bài toán.
+
+Thứ hai là một phép tự phản biện áp cho chính các con số thuận lợi của luận văn. Một trần ước
+lượng suy từ nhóm bước được định nghĩa bằng hành vi của chính mô hình đang đo đi từ $+4{,}80$
+điểm xuống $-0{,}65$ khi đổi cách chia nhóm ba lần, trong khi khoảng cách tới câu chuẩn gần như
+đứng yên. Luận văn rút điều đó thành luật đọc và áp ngược lại cho phần chẩn đoán của chính mình.
+
+Thứ ba là lý do đo được khiến một biến thể đã thiết kế
 không dựng được dữ liệu huấn luyện. Khi gọi sai tên, mô hình hoặc gọi đúng phần tử bằng một
 tên khác, hoặc nhìn sang một vùng khác hẳn của màn hình, chứ không lẫn giữa hai nút cạnh
 nhau như biến thể đó giả định. Phần chẩn đoán còn được nối dài bằng một nhánh thứ tư, huấn

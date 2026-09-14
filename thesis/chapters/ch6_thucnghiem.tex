@@ -59,7 +59,7 @@ S2 (khai báo trước, hạt giống $101$) & $57{,}2$ & $[55{,}4; 58{,}9]$ & $
 CE2-S2 (nhánh so sánh để tách công) & $59{,}4$ & $[57{,}7; 61{,}1]$ & $38{,}1$ & $\mathbf{68{,}6}$ \\
 MIN-DESC (mục tiêu ưu tiên) & $\mathbf{60{,}0}$ & $[58{,}3; 61{,}8]$ & $37{,}9$ & $68{,}4$ \\
 \midrule
-Nhánh ứng viên (hạt giống $101$)\textsuperscript{$\dagger$} & $56{,}1$ & $[54{,}5; 58{,}0]$ & $34{,}5$ & $63{,}0$ \\
+Nhánh ứng viên (hạt giống $101$)\textsuperscript{$\dagger$} & $56{,}1$ & $[54{,}2; 58{,}0]$ & $34{,}5$ & $63{,}0$ \\
 \midrule
 \emph{Câu chuẩn (trần)} & $75{,}7$ & $[74{,}1; 77{,}3]$ & $96{,}1$ & $100{,}0$ \\
 \bottomrule
@@ -96,8 +96,8 @@ MIN-DESC & $60{,}0$ & $60{,}4$ & $98{,}9$ & $69{,}2$ \\
 S1 (hạt giống $202$) & $59{,}6$ & $60{,}7$ & $94{,}6$ & $69{,}8$ \\
 CE2-S2 & $59{,}4$ & $59{,}8$ & $98{,}9$ & $68{,}9$ \\
 S1 (hạt giống $101$) & $59{,}1$ & $60{,}2$ & $94{,}4$ & $69{,}2$ \\
-S2 (hạt giống $101$) & $57{,}2$ & $58{,}1$ & $94{,}9$ & $67{,}5$ \\
-Nhánh ứng viên\textsuperscript{$\dagger$} & $56{,}1$ & $57{,}4$ & $90{,}9$ & $66{,}4$ \\
+S2 (hạt giống $101$) & $57{,}2$ & $58{,}1$ & $94{,}8$ & $67{,}4$ \\
+Nhánh ứng viên\textsuperscript{$\dagger$} & $56{,}1$ & $57{,}4$ & $90{,}9$ & $66{,}3$ \\
 Base & $47{,}6$ & $48{,}9$ & $96{,}5$ & $57{,}6$ \\
 \bottomrule
 \multicolumn{5}{@{}p{12.4cm}@{}}{\footnotesize \textsuperscript{$*$}Vì câu dự đoán chính
@@ -114,6 +114,41 @@ $90{,}9$ thấp nhất bảng là dấu vết của việc bỏ cuộc bằng đ
 khoảng trống cho bất kỳ can thiệp nào. Kết quả đo cho thấy điều đó không xảy ra. Khoảng tin cậy của ba nhánh Base, S1 và trần rời nhau hoàn toàn, tức thước tách được cả ba. Thước cũng không rơi về phía ngược lại, tức không dồn mọi nhánh xuống sát sàn
 $12{,}0\%$ đo được ở Mục~\ref{sec:san}.
 
+\section{Kết quả trên nhiều thước}
+\label{sec:nhieuthuoc}
+
+Ngoài executability, luận văn báo song song hai nhóm thước. Cả hai nhóm được tính lại từ bản ghi
+từng bước của chính các lượt chấm ở Bảng~\ref{tab:chinh}, không gọi lại mô hình sinh câu hay mô
+hình định vị lần nào.
+
+\input{chapters/bang_nhieu_thuoc}
+
+\paragraph{Nhóm thước theo vị trí.} Bảng~\ref{tab:nhieuthuoc_vitri} đặt executability cạnh luật
+hộp phần tử gốc của AndroidControl và ba luật dung sai ở Mục~\ref{sec:donhay}. Theo luật hộp phần
+tử, chặng ba đạt $67{,}0\%$, S1 hạt giống $101$ đạt $65{,}5\%$ và Base đạt $53{,}6\%$, trong khi
+câu chuẩn đạt $83{,}8\%$. Thứ tự các nhánh dưới luật này trùng với thứ tự dưới executability.
+Cột cuối cho thấy trên các bước chạm, hai nhánh chặng hai và chặng ba gọi đúng loại thao tác ở
+$98{,}9\%$ số bước. Con số này chỉ áp cho bước chạm và phải đọc cùng mức giảm ở bước không chạm
+nêu tại Mục~\ref{sec:khongcham}.
+
+\paragraph{Nhóm thước so với câu chuẩn.} Bảng~\ref{tab:nhieuthuoc_vanban} dùng các thước mà Widget
+Captioning~\cite{widgetcap} và Screen2Words~\cite{screen2words} báo cho bài toán sinh mô tả giao
+diện: BLEU~\cite{bleu}, METEOR~\cite{meteor}, ROUGE-L~\cite{rouge}, CIDEr~\cite{cider} và
+SPICE~\cite{spice}, cùng chrF~\cite{chrf} và BERTScore~\cite{bertscore}. BLEU-4 ở bảng này tính
+trên toàn tập theo bộ chấm của COCO Captions, nên khác con số BLEU-4 trung bình theo câu ở
+Bảng~\ref{tab:chinh}. Các nhánh đã tinh chỉnh đạt BLEU-4 từ $46{,}9$ đến $51{,}7$ và ROUGE-L tới
+$68{,}6$, so với $15{,}3$ và $42{,}3$ của Base. SPICE, thước mà Zhao và cộng sự~\cite{zhao2021}
+khuyên dùng để xếp hạng các hệ sinh chỉ dẫn khi có câu tham chiếu, tăng từ $18{,}5$ ở Base lên
+$44{,}4$ ở S1.
+
+Có hai điểm cần lưu ý khi đọc nhóm thước này. Thứ nhất, CIDEr-D vượt quá $100$ vì mỗi bước chỉ có
+một câu chuẩn và trọng số tần suất nghịch được ước từ chính tập câu chuẩn, nên con số chỉ so được
+giữa các hàng trong cùng bảng. Thứ hai, nhóm thước này xếp hai hạt giống của S1 trên MIN-DESC và
+chặng ba (BLEU-4 $51{,}6$ và $51{,}7$ so với $49{,}9$, SPICE $44{,}4$ và $44{,}2$ so với $42{,}2$ và $42{,}5$), ngược
+chiều với executability, đúng hiện tượng đã nêu ở Mục~\ref{sec:thamchieu}. Vì vậy luận văn dùng
+nhóm thước này để đặt kết quả cạnh các công trình cùng mảng, còn các phép so giữa các nhánh vẫn
+đọc trên executability.
+
 \section{So sánh ghép cặp}
 \label{sec:ghepcap}
 
@@ -123,8 +158,9 @@ Bảng~\ref{tab:mcnemar} gom toàn bộ các phép so được dùng về sau tr
 \begin{table}[t]
 \caption{So sánh ghép cặp trên $4.463$ bước. Trong bảng, MIN viết tắt cho
 nhánh MIN-DESC và CE2 viết tắt cho nhánh so sánh CE2-S2. $b$ là số bước nhánh dưới giải
-được mà nhánh trên không giải được, $c$ là chiều ngược lại. Khoảng tin cậy lấy từ bootstrap
-gom cụm theo tác vụ.}
+được mà nhánh trên không giải được, $c$ là chiều ngược lại, nên $\Delta = (c-b)/n$ ở mọi hàng. Khoảng tin cậy lấy từ bootstrap
+gom cụm theo tác vụ. Hai hàng có mốc trần dùng $n = 4.462$ vì bỏ một bước mà nhánh so sánh
+sinh câu rỗng.}
 \label{tab:mcnemar}
 \centering\small
 \renewcommand{\arraystretch}{1.2}
@@ -142,11 +178,11 @@ S1/202 $-$ S1/101 \emph{(nhiễu)} & $+0{,}52$ & $[-0{,}22; +1{,}26]$ & $132$ & 
 S2 $-$ S1/101 & $-1{,}93$ & $[-3{,}06; -0{,}75]$ & $340$ & $254$ & $0{,}0005$ \\
 S2 $-$ S1/202 & $-2{,}44$ & $[-3{,}53; -1{,}34]$ & $353$ & $244$ & $<0{,}001$ \\
 S2 $-$ Base & $+9{,}59$ & $[+8{,}16; +11{,}06]$ & $324$ & $752$ & $<0{,}001$ \\
-CE2 $-$ S2 & $+2{,}24$ & $[+1{,}41; +3{,}11]$ & $227$ & $127$ & $<0{,}001$ \\
-MIN $-$ S2 & $+2{,}87$ & $[+2{,}03; +3{,}76]$ & $258$ & $130$ & $<0{,}001$ \\
-\textbf{MIN $-$ CE2} $= \Delta_{\text{thành phần}}$ & $\mathbf{+0{,}63}$ & $[+0{,}16; +1{,}10]$ & $70$ & $42$ & $0{,}011$ \\
-MIN $-$ S1/101 & $+0{,}94$ & $[-0{,}09; +2{,}05]$ & $342$ & $300$ & $0{,}11$ \\
-CE2 $-$ S1/101 & $+0{,}31$ & $[-0{,}76; +1{,}45]$ & $326$ & $312$ & $0{,}61$ \\
+CE2 $-$ S2 & $+2{,}24$ & $[+1{,}41; +3{,}11]$ & $127$ & $227$ & $<0{,}001$ \\
+MIN $-$ S2 & $+2{,}87$ & $[+2{,}03; +3{,}76]$ & $130$ & $258$ & $<0{,}001$ \\
+\textbf{MIN $-$ CE2} $= \Delta_{\text{thành phần}}$ & $\mathbf{+0{,}63}$ & $[+0{,}16; +1{,}10]$ & $42$ & $70$ & $0{,}011$ \\
+MIN $-$ S1/101 & $+0{,}94$ & $[-0{,}09; +2{,}05]$ & $300$ & $342$ & $0{,}11$ \\
+CE2 $-$ S1/101 & $+0{,}31$ & $[-0{,}76; +1{,}45]$ & $312$ & $326$ & $0{,}61$ \\
 \midrule
 \multicolumn{6}{@{}l}{\emph{Nhánh ứng viên, một hạt giống, chỉ so được với Base}}\\
 Ứng viên $-$ Base & $+8{,}54$ & - & $350$ & $731$ & $<0{,}001$ \\
@@ -524,10 +560,10 @@ MIN-DESC & $99{,}6\%$ & $67{,}0\%$ & $71{,}8\%$ & $\mathbf{60{,}6\%}$ \\
 \end{tabular}
 \end{table}
 
-Chặng hai nâng độ chính xác khai báo $6{,}70$ điểm so với mốc S2. Nhưng phép tách công ngay tại
-tầng này cho thấy kết quả quan trọng nhất của mục. Có $5{,}90$ điểm trong số đó thuộc về
-\emph{nhánh so sánh}, tức chỉ do huấn luyện thêm có giám sát trên bước chạm, và chỉ $0{,}80$
-điểm là phần riêng của mục tiêu ưu tiên. Vậy $88\%$ mức tăng ở tầng khai báo không phải công
+Chặng hai nâng độ chính xác khai báo $6{,}77$ điểm so với mốc S2. Nhưng phép tách công ngay tại
+tầng này cho thấy kết quả quan trọng nhất của mục. Có $5{,}93$ điểm trong số đó thuộc về
+\emph{nhánh so sánh}, tức chỉ do huấn luyện thêm có giám sát trên bước chạm, và chỉ $0{,}84$
+điểm là phần riêng của mục tiêu ưu tiên. Vậy $87{,}7\%$ mức tăng ở tầng khai báo không phải công
 của thành phần được đề xuất.
 
 \subsection{Executability và đại lượng chính}
@@ -553,7 +589,7 @@ Nhưng $2{,}24$ điểm $[+1{,}41; +3{,}11]$ trong số đó thuộc về nhánh
 có giám sát không kèm số hạng ưu tiên nào, và chỉ $0{,}63$ điểm nằm bên trên. \textbf{$78\%$
 mức tăng thuộc về nhánh so sánh}. Trình bày $+2{,}87$ như tác dụng của mục tiêu ưu tiên là
 phóng đại hơn bốn lần so với thực chất. Tầng khai báo cho kết luận cùng chiều với một tỉ lệ còn
-nghiêng hơn, $88\%$ so với $12\%$, nên hai phép đo độc lập đều đặt phần lớn mức tăng về phía
+nghiêng hơn, $87{,}7\%$ so với $12{,}3\%$, nên hai phép đo độc lập đều đặt phần lớn mức tăng về phía
 nhánh so sánh.
 
 Chặng này cũng không vượt được học có giám sát thuần. Hiệu MIN $-$ S1/101 là $+0{,}94$ điểm
@@ -562,8 +598,8 @@ Cách đọc đúng là chặng hai \emph{sửa lại phần thiệt hại mà c
 tăng thêm một mức nhỏ so với mức đó.
 
 \paragraph{Dự báo trước khi chạy.} Hệ số chuyển đổi từ ``đúng khai báo'' sang
-``đúng executability'', đo trên chính dữ liệu này, là $0{,}43$, vì cặp MIN và S2 cho
-$+6{,}70$ điểm ở tầng khai báo và $+2{,}87$ điểm ở executability. Áp hệ số đó cho phần $+0{,}80$ điểm
+``đúng executability'', đo trên chính dữ liệu này, là $0{,}42$, vì cặp MIN và S2 cho
+$+6{,}77$ điểm ở tầng khai báo và $+2{,}87$ điểm ở executability. Áp hệ số đó cho phần $+0{,}84$ điểm
 thuộc riêng mục tiêu ưu tiên, luận văn dự báo $\approx +0{,}35$ điểm executability trước
 khi chạy. Phép đo trả về $+0{,}63$. Dự báo và kết quả cùng bậc độ lớn, và cùng nằm dưới
 ngưỡng phát hiện.
@@ -692,7 +728,7 @@ không sinh khai báo & $15$ & $0{,}3$ & $0{,}0$ & $0{,}0$ & $60{,}0$ & $+0{,}20
 \textbf{tên sai, toạ độ sai} & $\mathbf{745}$ & $\mathbf{16{,}7}$ & $\mathbf{3{,}6}$ & $25{,}8$ & $64{,}4$ & $\mathbf{+10{,}15}$ \\
 không có tên vàng & $990$ & $22{,}2$ & $55{,}3$ & $54{,}4$ & $73{,}0$ & $+3{,}94$ \\
 \midrule
-\textbf{Tổng} & $4.463$ & & $\mathbf{60{,}0}$ & $59{,}1$ & $75{,}7$ & $+16{,}0$ \\
+\textbf{Tổng} & $4.463$ & & $\mathbf{60{,}0}$ & $59{,}1$ & $75{,}7$ & $+15{,}7$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -985,6 +1021,187 @@ công riêng của thuật toán. Ngoài ra ngưỡng của phép đo tầng kha
 trong phần thưởng, nên phép đo ấy đang đo lại chính đại lượng đã được tối ưu; đại lượng độc lập
 duy nhất là điểm thực thi.
 
+\section{Ghép hai điểm lưu trong không gian trọng số}
+\label{sec:noisuy}
+
+Chặng ba nối tiếp chặng hai, nên hai bộ trọng số chỉ khác nhau một bước đi ngắn. Điều đó cho phép
+một phép thử không tốn thêm lượt huấn luyện nào: dựng các điểm nằm giữa hai bộ trọng số ấy và
+chấm chúng. Giả thuyết là phần chặng ba làm hỏng và phần chặng ba sửa được có thể không đáp ứng
+giống nhau theo độ dài bước đi, nên một điểm ở giữa giữ được phần sửa mà tránh bớt phần hỏng.
+
+Phép ghép phải làm ở mức từng module và theo cách nối các ma trận hạng thấp, vì lượng hiệu chỉnh
+của một bộ thích ứng là \emph{tích} của hai ma trận chứ không phải tổng. Bình quân riêng từng ma
+trận cho một kết quả khác, và điều đáng chú ý là hai đầu mút vẫn đúng tuyệt đối dưới cách sai ấy,
+nên phép kiểm ở hai đầu mút không phát hiện được. Năm điểm được dựng, ứng với năm mức pha trộn từ
+$0$ đến $1$, và được chấm trên tập kiểm tra nội bộ tách từ dữ liệu huấn luyện.
+
+\paragraph{Kết quả.} Đường cong \textbf{đơn điệu}, cực đại nằm đúng tại đầu mút ứng với chặng ba.
+Không điểm giữa nào vượt được đầu mút; điểm giữa tốt nhất còn thấp hơn $0{,}38$ điểm, và mọi phép
+so ghép cặp giữa các mức đều có khoảng tin cậy phủ $0$. Theo tiêu chí đặt trước, một điểm giữa chỉ
+được đưa lên tập kiểm nếu vượt đầu mút ít nhất $2$ điểm, nên không cấu hình nào được đưa lên. Điểm
+của luận văn giữ nguyên ở giá trị đã báo cho chặng ba.
+
+\paragraph{Kỳ vọng đặt trước và cơ sở của nó.} Phép thử này được ghi trước với kỳ vọng khiêm tốn,
+từ $0{,}2$ đến $0{,}5$ điểm và có thể bằng không. Một phép đo trên chính hai bộ trọng số làm hẹp
+kỳ vọng ấy thêm nữa trước khi chạy: chặng ba chỉ dịch chuyển hai ma trận hạng thấp lần lượt
+$1{,}39\%$ và $6{,}87\%$ so với chặng hai, nên hai đầu mút vốn rất gần nhau và đường cong gần như
+phẳng. Kết quả đo về sau khớp với kỳ vọng ấy.
+
+\paragraph{Điều phép thử này xác nhận.} Số bước mà câu ở đầu ra khác nhau giữa hai đầu mút là
+$155$ trên $407$, và số ấy tăng đều theo mức pha trộn với các giá trị $53$, $95$, $127$ và $155$.
+Phép ghép vì vậy hoạt động đúng như thiết kế, tạo ra một dãy mô hình chuyển dần chứ không phải
+nhảy giữa hai bộ trọng số. Kết quả bằng không ở đây là kết quả thật, không phải hỏng ở khâu dựng.
+
+\paragraph{Vì sao không trích con số tuyệt đối của tập kiểm tra nội bộ.} Tập này tách từ dữ liệu
+huấn luyện, mà cả hai điểm lưu đều đã học trên đó, nên điểm ở đây là điểm trên dữ liệu đã thấy.
+Mức chênh giữa hai nhánh trên tập ấy lớn gần bốn mươi lần mức chênh thật đo trên tập kiểm, còn
+điểm tuyệt đối thì cao hơn khoảng bảy điểm rưỡi. Tập này vì vậy chỉ dùng để xếp hạng các ứng viên
+trong cùng một họ, và không con số nào của nó được đưa vào phần kết quả.
+
+\section{Phân tách kênh tri giác và kênh diễn đạt}
+\label{sec:haikenh}
+
+Năm can thiệp ở các mục trên đều không vượt mức chênh nhỏ nhất phát hiện được. Mục này đo xem
+giới hạn ấy nằm ở đâu, bằng cách tách đường đi từ ảnh màn hình tới câu thành hai kênh quan sát
+được riêng rẽ.
+
+Kênh thứ nhất, gọi là kênh tri giác, là ô toạ độ mà chính mô hình viết ra trong khối khai báo.
+Ô này cho biết mô hình đang nhìn vào phần tử nào trước khi đặt bút viết câu. Kênh thứ hai, gọi
+là kênh diễn đạt, là điểm mà mô hình định vị độc lập trả về sau khi đọc câu đã sinh. Kênh thứ
+hai chính là đại lượng đi vào điểm thực thi. Hai kênh dùng chung một luật phán đúng sai, là cửa
+sổ dung sai $14\%$ quanh điểm chạm vàng, nên số của chúng so được với nhau. Trên $4.442$ bước có
+khối khai báo đọc được, kênh tri giác đạt $70{,}10\%$ và kênh diễn đạt đạt $69{,}36\%$.
+
+\begin{table}[t]
+\caption{Điểm thực thi tách theo trạng thái của kênh tri giác. Cột câu chuẩn là điểm mà chính
+đường ống chấm đạt được khi nhận câu do người chú thích viết, đo trên cùng nhóm bước.}
+\label{tab:haikenh}
+\centering\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Nhóm & $n$ & MIN-DESC & S1 & Câu chuẩn \\
+\midrule
+Kênh tri giác \textbf{đúng} & $3.114$ ($70{,}1\%$) & $\mathbf{82{,}37}$ & $74{,}18$ & $84{,}36$ \\
+Kênh tri giác \textbf{sai}  & $1.328$ ($29{,}9\%$) & $\mathbf{8{,}43}$  & $24{,}47$ & $55{,}72$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Chín phần mười khoảng cách nằm trên một phần ba số bước.} Khoảng cách giữa câu chuẩn
+và MIN-DESC trên toàn quần thể là $15{,}53$ điểm. Nhóm có kênh tri giác đúng chiếm $70{,}1\%$ số
+bước nhưng chỉ đóng góp $1{,}40$ điểm, tức $9{,}0\%$ khoảng cách ấy. Nhóm có kênh tri giác sai
+chiếm $29{,}9\%$ số bước và đóng góp $14{,}14$ điểm, tức $91{,}0\%$. Dư địa cải thiện vì vậy tập
+trung gần như trọn vẹn vào những bước mà mô hình nhìn sai phần tử ngay từ đầu.
+
+\paragraph{Phần thiếu hụt thuộc riêng về mô hình.} Nhóm có kênh tri giác sai khó hơn nhóm còn
+lại với mọi người viết, nên không thể quy toàn bộ $14{,}14$ điểm cho mô hình. Câu chuẩn cũng giảm
+từ $84{,}36$ xuống $55{,}72$ khi đi từ nhóm này sang nhóm kia, tức giảm $28{,}64$ điểm. Cùng phép
+so ấy, MIN-DESC giảm từ $82{,}37$ xuống $8{,}43$, tức $73{,}94$ điểm. Hiệu của hai mức giảm là
+$\mathbf{45{,}30}$ điểm, và đó mới là phần thiếu hụt không giải thích được bằng độ khó của nhóm
+bước. Con số này nói rằng khi mô hình đã nhìn sai phần tử thì câu sinh ra hầu như không còn giá
+trị, trong khi người viết vẫn giữ được hơn một nửa.
+
+\paragraph{Mức truyền từ kênh tri giác sang điểm thực thi.} Sửa được kênh tri giác chưa đủ, vì
+phần sửa còn phải đi qua tầng sinh câu. Chặng ba cho phép đo trực tiếp mức truyền ấy, do chặng
+này là can thiệp duy nhất đặt phần thưởng thẳng lên ô toạ độ. Trên $4.437$ bước ghép cặp được,
+chặng ba nâng kênh tri giác thêm $1{,}60$ điểm nhưng chỉ nâng điểm thực thi thêm $0{,}045$ điểm.
+Tỉ số của hai mức ấy là $\mathbf{0{,}028}$.
+
+\begin{table}[t]
+\caption{Bảng chéo trạng thái kênh tri giác giữa chặng hai và chặng ba, kèm điểm thực thi của
+mỗi nhánh trên từng ô.}
+\label{tab:ocheokenh}
+\centering\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Ô & $n$ & MIN-DESC & Chặng ba & Chênh \\
+\midrule
+giữ đúng & $2.997$ & $83{,}08$ & $82{,}95$ & $-0{,}13$ \\
+giữ sai & $1.143$ & $6{,}91$ & $6{,}30$ & $-0{,}61$ \\
+sai chuyển thành đúng & $184$ & $17{,}93$ & $58{,}15$ & $+40{,}22$ \\
+\textbf{đúng chuyển thành sai} & $\mathbf{113}$ & $62{,}83$ & $8{,}85$ & $\mathbf{-53{,}98}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Bảng~\ref{tab:ocheokenh} cho biết vì sao mức truyền lại nhỏ đến vậy. Chặng ba sửa được $184$
+bước với mức lợi $40{,}22$ điểm mỗi bước, nhưng đồng thời làm sai $113$ bước với mức thiệt
+$53{,}98$ điểm mỗi bước. Hai chiều gần như triệt tiêu nhau. Theo tỉ lệ ấy, muốn vượt mức chênh
+nhỏ nhất phát hiện được thì cần khoảng $243$ bước chuyển từ sai sang đúng mà không kèm bước nào
+chuyển ngược, tức $18{,}3\%$ toàn bộ nhóm có kênh tri giác sai. Chặng ba đạt $184$ bước, bằng
+$13{,}9\%$ nhóm ấy, nhưng kèm $113$ bước theo chiều ngược lại.
+
+\paragraph{Một cách đọc sai cần tránh.} Trên lát cắt ngang giữa các nhánh đã huấn luyện, kênh
+tri giác và điểm thực thi tương quan ở mức $0{,}739$. Con số ấy dễ bị dùng như hệ số quy đổi,
+theo lối ước rằng nâng kênh tri giác thêm mười điểm sẽ nâng điểm thực thi thêm bảy điểm. Phép đo
+can thiệp ở trên bác cách đọc đó: mức truyền thật là $0{,}028$, nhỏ hơn $26$ lần. Tương quan
+giữa các nhánh phản ánh việc mọi nhánh mạnh đều mạnh ở cả hai kênh cùng lúc, chứ không đo được
+điều gì xảy ra khi can thiệp vào riêng một kênh.
+
+\paragraph{Giới hạn của mục này.} Cách chia nhóm được xây dựng sau khi đã có mọi điểm số, nên
+đây là phân tích hậu kiểm. Biến chia nhóm lại là hành vi của chính mô hình được đo, vì vậy phép
+so MIN-DESC với S1 bên trong một nhóm là hợp lệ do ghép cặp trên cùng bước, còn phép so giữa hai
+nhóm thì không. Mẫu số $4.442$ nhỏ hơn $4.463$ của bảng chính, chênh $21$ bước là những bước có
+khối khai báo thiếu hoặc sai định dạng nên không đọc được ô toạ độ. Cuối cùng, ô toạ độ trong
+khối khai báo dùng thang $0$ đến $1000$ chứ không phải đơn vị điểm ảnh; đọc nhầm thang này làm
+sai số chuẩn hoá trung vị lệch mười tám lần.
+
+\section{Độ tin cậy của ước lượng trần trên lát cắt}
+\label{sec:tranlat}
+
+Bảng~\ref{tab:haikenh} gợi ra ngay một hướng can thiệp, và cũng gợi ra một con số hấp dẫn để
+biện minh cho hướng ấy. Trên nhóm có kênh tri giác sai, nếu thay câu của MIN-DESC bằng câu của
+S1 thì điểm toàn quần thể lên $65{,}04$, tức thêm $4{,}80$ điểm; nếu thay bằng câu chuẩn thì lên
+$74{,}40$, tức thêm $14{,}14$ điểm. Đọc thẳng, hai con số ấy nói rằng một cơ chế biết lùi về cách
+viết khác khi tri giác sai sẽ thu được nhiều hơn mức chênh nhỏ nhất phát hiện được vài lần.
+
+Mục này kiểm con số $4{,}80$ và kết luận rằng không dùng được. Lý do nằm ở cách định nghĩa nhóm.
+Nhóm được định nghĩa bằng kênh tri giác \emph{của chính MIN-DESC}, mà kênh ấy và câu của
+MIN-DESC đến từ cùng một lượt sinh, nên chúng chia nhiều thành phần nhiễu chung. Chọn những bước
+có kênh tri giác của MIN-DESC sai là chọn đúng những bước mà lượt sinh ấy gặp bất lợi, và trên
+nhóm được chọn như vậy thì MIN-DESC bị thiệt một cách hệ thống khi đặt cạnh bất kỳ nhánh nào
+khác. Phần chênh thu được vì thế phản ánh cách chọn nhóm chứ không phản ánh một cơ chế có thật.
+
+\begin{table}[t]
+\caption{Ước lượng trần cho một can thiệp ở tầng câu, dưới bốn cách định nghĩa nhóm khác nhau.
+Cột cuối là mức chênh so với điểm toàn quần thể của MIN-DESC khi thay câu trên nhóm đó bằng câu
+của S1. Đo trên $4.437$ bước ghép cặp được.}
+\label{tab:tranlat}
+\centering\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Cách định nghĩa nhóm & $n$ & MIN & S1 & Câu chuẩn & Trần \\
+\midrule
+kênh tri giác của MIN sai & $1.327$ & $8{,}44$ & $24{,}49$ & $55{,}69$ & $\mathbf{+4{,}80}$ \\
+kênh tri giác của chặng ba sai & $1.256$ & $11{,}94$ & $22{,}13$ & $54{,}70$ & $+2{,}88$ \\
+chặng ba sai mà MIN đúng & $113$ & $62{,}83$ & $34{,}51$ & $60{,}18$ & $-0{,}72$ \\
+\textbf{$30\%$ màn đông nút nhất} & $1.331$ & $58{,}53$ & $56{,}35$ & $73{,}55$ & $\mathbf{-0{,}65}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Bảng~\ref{tab:tranlat} thay biến định nghĩa nhóm ba lần trong khi giữ nguyên mọi thứ khác. Hàng
+thứ hai chuyển sang kênh tri giác của chặng ba, tức vẫn là hành vi của một mô hình nhưng không
+phải mô hình đang được đo, và trần giảm còn $2{,}88$. Hàng thứ ba lấy phần mà chặng ba sai còn
+MIN-DESC đúng, tức bỏ hẳn việc chọn theo lỗi của MIN-DESC, và trần đổi dấu. Hàng cuối định nghĩa
+nhóm bằng độ khó đọc được từ chính màn hình, là số phần tử có thể chạm, nên không dùng hành vi
+của mô hình nào; trần ở đó là $-0{,}65$.
+
+\paragraph{Dấu hiệu nhận ra hiệu ứng chọn nhóm.} Cột câu chuẩn gần như không đổi qua ba hàng đầu,
+lần lượt $55{,}69$, $54{,}70$ và $60{,}18$; hàng cuối cao hơn hẳn vì nhóm ấy dễ hơn thật. Trong
+khi đó cột trần đi từ $+4{,}80$ xuống $-0{,}65$. Đại lượng trôi theo cách định nghĩa nhóm là
+\emph{ưu thế giữa hai mô hình cùng họ}, còn khoảng cách tới câu chuẩn thì đứng yên. Đó là dấu
+hiệu phân biệt hiệu ứng chọn nhóm với một cơ chế thật.
+
+\paragraph{Hệ quả cho cách đọc chương này.} Mọi ước lượng trần suy từ một nhóm được định nghĩa
+bằng hành vi của chính mô hình được đo phải được kiểm lại với ít nhất một cách định nghĩa nhóm
+khác trước khi dùng làm căn cứ cho một lượt huấn luyện. Luật này áp cho cả những con số thuận
+lợi ở Mục~\ref{sec:chonghen}, vốn cũng chia nhóm theo hành vi của MIN-DESC. Trong dự án này,
+phép kiểm ấy đã ngăn một lượt huấn luyện được đề xuất trên căn cứ $4{,}80$ điểm.
+
 \section{Vùng mù của thước}
 \label{sec:vungmu}
 
@@ -1054,6 +1271,9 @@ B-infer & \textbf{không chạy} & không chặn nhánh nào \\
 S3 (khoản phạt mức hai) & \textbf{không thực hiện} & mã hàm mất mát chưa viết \\
 Chặng ba (thưởng ô toạ độ) & \textbf{xong, đã chấm} & một hạt giống; mức chênh $+0{,}02$ điểm,
 Mục~\ref{sec:grpo} \\
+Ghép trọng số chặng hai với chặng ba & \textbf{xong, đã chấm} & năm mức pha trộn; đường cong
+đơn điệu, điểm giữa tốt nhất thấp hơn đầu mút $0{,}38$ điểm nên không mức nào được đưa lên tập
+kiểm, Mục~\ref{sec:noisuy} \\
 Nhánh so sánh của chặng ba & \textbf{không chạy} & điều kiện chạy là mức chênh vượt ngưỡng phát
 hiện, điều đã không xảy ra; hệ quả là công của thuật toán chưa tách khỏi công của việc học thêm \\
 Chấm tay $100$ câu, hai người & \textbf{không chạy} & hạn chế còn mở, Mục~\ref{sec:hanche} \\

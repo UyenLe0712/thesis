@@ -57,7 +57,8 @@ phép kiểm ấy đòi hỏi hạt giống thứ hai.
 
 Trên $4.463$ bước chạm, mô hình Qwen2.5-VL-3B sau tinh chỉnh QLoRA đạt $59{,}1\%$, trong
 khi chính mô hình đó khi chưa tinh chỉnh chỉ đạt $47{,}6\%$. Cả hai con số được đọc trên nền
-trần $75{,}7\%$. Chênh lệch ghép cặp $11{,}5$ điểm ($\chi^2 = 243{,}2$, $p < 0{,}001$) giữ
+trần $75{,}7\%$. Theo luật hộp phần tử gốc của AndroidControl, hai con số tương ứng là
+$65{,}5\%$ và $53{,}6\%$ trên trần $83{,}8\%$. Chênh lệch ghép cặp $11{,}5$ điểm ($\chi^2 = 243{,}2$, $p < 0{,}001$) giữ
 nguyên sau khi kiểm \emph{sáu} cách giải thích thay thế, kể cả cách mạnh nhất là khả năng
 dụng cụ đo đã tiếp xúc với văn phong của bộ ngữ liệu, vốn chỉ loại trừ được sau khi chấm lại bằng
 một mô hình định vị thứ hai. Cách còn lại, bắt chước văn phong người chú thích, không loại được theo hướng này và được giữ nguyên trong bảng.
@@ -74,7 +75,9 @@ trong mọi điểm lưu đã đo, nhưng phép tách công cho thấy $78\%$ m�
 so sánh học có giám sát thuần, và phép tách ở tầng khai báo cho kết luận cùng chiều với tỉ
 lệ $88\%$. Sau
 cùng, chặng đó cũng không vượt được học có giám sát thuần, với chênh lệch $+0{,}94$ điểm và
-$p = 0{,}11$. Nhánh ứng viên, huấn luyện trong một điều kiện thí nghiệm khác, đạt $56{,}1\%$
+$p = 0{,}11$. Chặng ba với phần thưởng đặt trên ô toạ độ cho điểm cao nhất của đề tài,
+$60{,}1\%$ theo executability và $67{,}0\%$ theo luật hộp phần tử, với tỉ lệ gọi đúng loại
+thao tác $98{,}9\%$ trên bước chạm. Nhánh ứng viên, huấn luyện trong một điều kiện thí nghiệm khác, đạt $56{,}1\%$
 và chỉ so được với mô hình chưa tinh chỉnh, hơn $8{,}54$ điểm. Nhánh so sánh cùng đầu vào
 của nhánh này không được huấn luyện nên không con số nào của nhánh nói được về công của đầu chọn.
 
@@ -246,10 +249,30 @@ Anh, một bộ dữ liệu, hai mô hình định vị cùng họ và một mô
 \label{sec:huongpt}
 
 Các hướng dưới đây xếp theo mức độ cấp thiết đối với độ tin cậy của kết luận, không xếp
-theo độ hấp dẫn về mặt kỹ thuật. Ba hướng đầu nối thẳng vào nhánh ứng viên, và điều kiện
-chạy của hai hướng đầu đã được cố định trước khi có bất kỳ điểm ngưỡng nào.
+theo độ hấp dẫn về mặt kỹ thuật. Hướng đầu tiên là hướng duy nhất tác động vào tầng mà
+Mục~\ref{sec:haikenh} định vị được; các hướng sau nối vào nhánh ứng viên, và điều kiện chạy
+của chúng đã được cố định trước khi có bất kỳ điểm ngưỡng nào.
 
 \begin{itemize}[leftmargin=1.4em,itemsep=0.35em]
+
+\item \textbf{Mở phần thị giác của mô hình nền cho quá trình tinh chỉnh.} Năm can thiệp đã đo
+đều đặt ở tầng khai báo hoặc tầng ngôn ngữ, trong khi Mục~\ref{sec:haikenh} quy $91\%$ khoảng
+cách so với câu chuẩn về nhóm bước mà mô hình nhìn sai phần tử ngay từ đầu, với phần thiếu hụt
+riêng của mô hình là $45{,}30$ điểm. Không can thiệp nào đã thực hiện chạm tới tầng đó, vì mọi
+lượt huấn luyện đều đóng băng phần thị giác và chỉ cập nhật các ma trận hạng thấp ở phần ngôn
+ngữ. Hướng kế là mở phần thị giác ra, giữ nguyên mọi tham số khác so với nhánh chỉ sinh câu để
+phép so vẫn là phép so một biến, và giữ mốc đối chiếu ở $59{,}11$. Hai ràng buộc thiết kế đi
+kèm. Thứ nhất, lượt này phải xuất phát từ mô hình nền chứ không từ điểm lưu của chặng ba, vì
+xuất phát từ điểm lưu ấy thì phần tăng do mở thị giác và phần vốn có của chặng ba không tách
+được. Thứ hai, thư viện tinh chỉnh bỏ qua trong im lặng những khối mới thêm vào danh sách mục
+tiêu khi nạp lại một bộ trọng số đã lưu, nên phải khẳng định số tham số được huấn luyện trước
+khi lượt chạy bắt đầu.
+
+Điều phải nói rõ kèm hướng này là kỳ vọng. Trên năm can thiệp đã đo, không can thiệp nào vượt
+mức chênh nhỏ nhất phát hiện được, và mức truyền đo được từ tầng tri giác sang điểm thực thi
+chỉ là $0{,}028$. Với hai căn cứ ấy, xác suất để một lượt như vậy vượt ngưỡng phát hiện được
+ước lượng vào khoảng $0{,}30$. Hướng này vì thế được nêu như một phép thử có kỳ vọng khiêm tốn
+và có căn cứ chẩn đoán, không phải như một cải tiến đã hứa trước.
 
 \item \textbf{Huấn luyện lại trên riêng bước chạm, với điều kiện đã nêu.} Chẩn đoán ở
 Mục~\ref{sec:nhanhungvien} quy nguyên nhân có thể của việc bỏ cuộc quá mức về tỉ lệ nhãn

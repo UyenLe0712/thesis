@@ -13,7 +13,7 @@ Bootstrap cụm theo app (1.091 cụm, G hiệu dụng 454,3), cùng thủ tục
 
 | luật spatial | Human | MIN-DESC/101 | S1/101 | Base | **`gui_sel`/101** | KTC95 cụm |
 |---|---|---|---|---|---|---|
-| **Voronoi .14** (primary, prereg) | 75,73 | 60,05 | 59,11 | 47,59 | **56,13** | [54,52 · 57,99] |
+| **Voronoi .14** (primary, prereg) | 75,73 | 60,05 | 59,11 | 47,59 | **56,13** | [54,24 · 57,99] |
 | nL2 .14 (secondary, nhánh khoảng cách AITW) | 84,09 | 68,32 | 66,92 | 55,28 | **63,52** | [61,88 · 65,32] |
 | chữ nhật .14 (hàng khớp mã) | 84,23 | 68,72 | 67,24 | 55,86 | **63,86** | [62,16 · 65,60] |
 
@@ -125,7 +125,7 @@ cùng ba biến đó, **chưa chạy**.
 ## 6. Đọc kết quả này thế nào
 
 **Được nói:**
-· `exec` tuyệt đối **56,13%** [54,52 · 57,99] trên 4.463 bước, đọc trong khung **12,0 → 75,73**
+· `exec` tuyệt đối **56,13%** [54,24 · 57,99] trên 4.463 bước, đọc trong khung **12,0 → 75,73**
   chứ không đọc trên nền 100.
 · Điểm nghẽn là **bỏ cuộc quá mức**, không phải định vị sai: khi dám chọn và có đáp án thì đạt
   **71,41%**, cách mốc câu người 4,3 pp; 27,27% bước có đáp án bị bỏ.
@@ -379,3 +379,20 @@ Gói mang lên Colab: `_bundles/branches_sel_cham.tar.gz`.
 ⛔ **Đúng MỘT biến đổi so với lượt đã chạy: tập mẫu.** Câu nhắc, khối ứng viên, cách viết thẻ,
 cấu hình train đều giữ nguyên. Nhờ vậy nếu `exec` tăng thì quy được cho prior của nhãn, không
 phải cho một thay đổi nào khác.
+
+---
+
+## ⚠️ Đính chính 9/9 — cận dưới KTC là **54,24**, không phải 54,52
+
+Bản đầu của file này ghi `[54,52 · 57,99]`. Con số **54,52 không ra được từ đường ống**.
+`runs/sel/score_gui_sel_seed101.json` ghi `ci_voronoi = [0,5424 · 0,5799]`, và dựng lại
+`cluster_bootstrap` từ tệp thô cho đúng **[54,24 · 57,99]**.
+
+⭐ **Bản dựng lại đã được kiểm trước khi dùng để sửa** — nó tái lập trùng khít KTC của **cả năm**
+nhánh (MIN-DESC · S1/101 · Base · Câu chuẩn · `gui_sel`), nên không phải chuyện dựng lại sai.
+⚠️ Chỗ dễ sai khi dựng lại: khoá gom cụm là `u["app"] or f"ep{u['episode_id']}"` — gom theo
+**ứng dụng** rồi mới lùi về episode. Gom thẳng theo episode cho `[54,41 · 57,93]`, gần đúng
+nhưng sai, và sai kiểu đó không có gì báo.
+
+Điểm ước lượng **56,13** và cận trên **57,99** không đổi. Đã vá `CLAUDE.md` và luận văn
+(`tab:chinh` in `[54,5; 58,0]`, nay là `[54,2; 58,0]`).

@@ -96,11 +96,20 @@ def strip_point(desc):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default=OUT)
+    ap.add_argument("--out", default=None)
+    # P4bis: dựng nhánh từ tập dạy ĐÃ TRỪ VAL. Mặc định giữ train.jsonl để mọi nhánh đã
+    # huấn luyện còn dựng lại được y hệt. ⛔ Lượt nào dùng val để chọn điểm lưu thì BẮT BUỘC
+    # truyền --recs-file train_tru_val.jsonl, nếu không là huấn luyện trên chính tập val và
+    # không có gì báo lỗi; chỗ đó chỉ lộ ra khi chấm test, tức sau hàng chục giờ GPU.
+    ap.add_argument("--recs-file", default="train.jsonl",
+                    help="train.jsonl (mặc định) hoặc train_tru_val.jsonl")
     ap.add_argument("--img-prefix", default="",
                     help="tiền tố đường dẫn ảnh trên máy sẽ huấn luyện, "
                          "vd /workspace/data/ — để trống thì ghi đường dẫn tương đối")
     args = ap.parse_args()
+    if args.out is None:
+        # tên thư mục ra mang theo nguồn dữ liệu ⇒ không thể lẫn hai bộ với nhau
+        args.out = OUT if args.recs_file == "train.jsonl" else OUT + "_tru_val"
     rnd = random.Random(SEED)
 
     ocr = {}
@@ -108,7 +117,9 @@ def main():
         for line in f:
             o = json.loads(line)
             ocr[o["image"]] = o
-    recs = [json.loads(l) for l in open(os.path.join(ROOT, "train.jsonl"), encoding="utf-8")]
+    rp = os.path.join(ROOT, args.recs_file)
+    recs = [json.loads(l) for l in open(rp, encoding="utf-8")]
+    print(f"[dữ liệu] {rp} — {len(recs)} bước", flush=True)
     desc = {}
     dpath = os.path.join(ROOT, "descriptors.jsonl")
     with open(dpath, encoding="utf-8") as f:

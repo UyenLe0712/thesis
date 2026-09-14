@@ -7,6 +7,36 @@ giám sát cho tác vụ đó. Toàn bộ quá trình được \textbf{tự đ�
 thuê người gán nhãn, và cũng không có nhãn nào do một mô hình ngôn ngữ khác sinh ra nằm trong
 vòng huấn luyện.
 
+Bảng~\ref{tab:anhxa} nối ba khái niệm ở tên đề tài với các đối tượng cụ thể mà chương này dựng
+ra, để những chương sau dùng thẳng tên gọi kỹ thuật mà người đọc vẫn theo được.
+
+\begin{table}[t]
+\caption{Ba thành phần ở tên đề tài và dạng cụ thể của chúng trong luận văn.}
+\label{tab:anhxa}
+\centering\small
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}p{3.5cm}p{9.6cm}@{}}
+\toprule
+Khái niệm & Dạng cụ thể trong luận văn \\
+\midrule
+Trường hợp sử dụng & Mục tiêu của cả tác vụ, ví dụ như đặt vé xem phim cho tối nay, cùng chuỗi
+các bước đã thực hiện trước bước đang xét \\
+Giao diện người dùng & Ảnh chụp màn hình đang mở, chuỗi chữ đọc được trên màn, và ở khâu dựng
+dữ liệu còn có cây trợ năng của chính màn hình ấy \\
+Hướng dẫn sử dụng & Câu hướng dẫn cho bước kế tiếp; các câu của cùng một tác vụ nối lại theo
+thứ tự bước thành hướng dẫn đầy đủ cho tác vụ đó \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Đơn vị sinh và đơn vị chấm đều là \emph{một bước}, không phải cả tài liệu hướng dẫn. Cách chia
+này có hai lý do. Thứ nhất, nhãn tham chiếu của AndroidControl vốn được viết theo từng bước, nên
+mọi phép so với câu chuẩn chỉ định nghĩa được ở mức bước. Thứ hai, thước đo ở
+Chương~\ref{ch:thuocdo} phán đúng sai bằng cách kiểm một mô hình độc lập có trỏ trúng phần tử
+cần chạm hay không, và phép kiểm ấy cần đúng một phần tử đích cho mỗi câu. Hướng dẫn cho trọn
+một trường hợp sử dụng là chuỗi các câu bước nối lại, nên chất lượng của chuỗi bị chặn bởi chất
+lượng của từng câu.
+
 \section{Nguồn dữ liệu và phép ghép đa nguồn}
 
 Mỗi bước cần ba thành phần là câu hướng dẫn do người chú thích viết, ảnh màn hình và cây trợ năng.

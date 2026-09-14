@@ -108,11 +108,15 @@ report/KE_HOACH_2_BAI_BAO.md
 .claude/
 
 # Cache OCR/box theo từng ảnh (316 tệp, dựng lại bằng prep_ocr_train.py)
-harness/dg1_cache/
+harness/dg1_cache/*
 # ...trừ tập kiểm: 6.958 bước, 3,3MB, mở khoá doc_san.py và cho phép kiểm độc lập
 # các con số 4.463 bước chạm · 139 bước chưa-thấy-app · câu chuẩn của người.
+# ⛔ Phải loại bằng dg1_cache/* rồi mở lại từng tầng: nếu loại cả thư mục
+#    (harness/dg1_cache/) thì git không duyệt vào trong và mọi dòng ! bên trong vô hiệu.
 !harness/dg1_cache/test_ac/
+harness/dg1_cache/test_ac/*
 !harness/dg1_cache/test_ac/test.jsonl
+!harness/dg1_cache/test_ac/descriptors.jsonl
 
 # Slide bản cũ + 11 script dựng slide đã thay: không giúp gì cho việc phản biện
 slides/_archive/

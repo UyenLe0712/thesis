@@ -588,6 +588,32 @@ S1 $-$ Base & $+12{,}6$ & $+13{,}0$ & $+11{,}7$ & $+9{,}5$ & $+13{,}0$ \\
 \end{tabular}
 \end{table}
 
+\paragraph{Chi phí của việc đổi luật, đo bằng chính phép kiểm ý nghĩa.} Ngoài trần và chênh lệch,
+việc đổi luật còn đổi cả kết luận thống kê. Bảng dưới đây so chặng ba với nhánh chỉ sinh câu trên
+đủ $4.463$ bước, dưới ba luật cùng đòi đúng loại thao tác, và hiệu chỉnh Holm cho ba phép so.
+
+\begin{center}\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}lrrl@{}}
+\toprule
+Luật & $\Delta$ & $p$ & Sau hiệu chỉnh Holm \\
+\midrule
+$\pm 14\%$ từng trục & $+2{,}13$ & $0{,}0003$ & giữ ý nghĩa \\
+AitW Euclid & $+1{,}99$ & $0{,}0010$ & giữ ý nghĩa \\
+\textbf{Voronoi (thước tiêu đề)} & $+0{,}96$ & $0{,}0860$ & \textbf{mất ý nghĩa} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Đổi từ executability sang luật dung sai đơn thuần biến một phép so không có ý nghĩa thống kê
+thành có ý nghĩa, và biến mức chênh từ $0{,}96$ thành $2{,}13$ điểm. Vì vậy luận văn không dùng
+luật dung sai đơn thuần để kết luận về phép so giữa các nhánh, và mọi phép kiểm ý nghĩa trong
+Chương~\ref{ch:thucnghiem} đều đọc trên executability. Căn cứ nằm ở phần sàn: câu rỗng nghĩa
+đạt $12{,}00$ dưới executability nhưng $20{,}50$ dưới luật dung sai, nên $86\%$ mức tăng mà luật
+lỏng mang lại là thứ một câu không mang thông tin gì cũng lấy được. Luật hộp phần tử của
+AndroidControl trình bày ngay sau đây không có nhược điểm ấy, nên được báo song song với
+executability.
+
 Mức tuyệt đối dao động tới $26$ điểm, nên \emph{không con số tuyệt đối nào ở đây là
 thuộc tính của riêng các hệ thống}. Tuy vậy, thứ tự giữa các nhánh không đổi dưới bất kỳ
 luật nào, và chênh lệch nằm trong khoảng $9{,}5$ đến $13{,}0$ điểm, tức gấp nhiều lần
@@ -639,7 +665,9 @@ Ba điều cần nêu kèm con số $83{,}8$. Thứ nhất, luật khớp là c�
 hộp được khớp là do luận văn suy ra từ cây trợ năng theo quy tắc nút nhỏ nhất chứa điểm chạm,
 nên chặt hơn phần tử đích thật ở khoảng $48\%$ số bước. Thứ hai, $78\%$ mức tăng so với luật
 ô Voronoi đến từ các bước có hộp rộng hơn nửa màn. Thứ ba, luật này được tính sau khi đã có
-mọi điểm, nên chỉ được đặt ở bảng độ nhạy với vai trò thước báo kèm. Hiệu MIN-DESC trên S1 là
+mọi điểm. Luận văn vì vậy báo luật hộp \emph{song song} với executability ở mọi chỗ nêu kết quả
+chính, trong đó executability là thước chặt và luật hộp là thước theo quy ước của chính bộ dữ
+liệu, còn các phép kiểm ý nghĩa vẫn đọc trên executability. Hiệu MIN-DESC trên S1 là
 $+0{,}94$ dưới luật ô Voronoi và $+1{,}06$ dưới luật hộp, nên luật hộp không thêm bằng chứng
 nào cho đóng góp mô hình.
 
