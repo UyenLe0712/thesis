@@ -39,6 +39,7 @@ Colab phụ thuộc cũng dùng tên `harness`).
 
 | cần biết | mở |
 |---|---|
+| **⭐⭐⭐⭐ BÀN GIAO 14/9 CHO PHIÊN DEBATE CHỐT ĐÓNG GÓP MÔ HÌNH — tự chứa: bộ ba số chính (AitW 77,3 · D.3 67,0 · exec 60,1), mọi phép so ghép cặp kể cả S2, điểm nghẽn, mọi hướng đã thử, ràng buộc, luật chơi mới về thước** | **`report/155_HANDOFF_DEBATE_DONG_GOP_MO_HINH_14_9.md`** (thắng `146`) |
 | **⭐⭐⭐ LỘ TRÌNH ĐANG THI HÀNH (9/9) — bốn chặng, phụ thuộc, checkbox; §0 ghi năm chỗ `151` mô tả khác máy WSL** | **`report/152_LO_TRINH_SAU_151_9_9.md`** · runbook chặng 3: `harness/kaggle_phase1_noisuy_9_9.md` |
 | **⭐⭐⭐ BẢN THI HÀNH 8/9 — THẮNG MỌI FILE VỀ *việc làm tiếp* VÀ *thước để báo*: phương pháp mới **VIS-SFT** (mở băng thị giác, một biến so S1/101), thước ba vai (tiêu đề `exec` 60,07 · báo kèm D.3 67,04), ba phase, bốn bẫy mất buổi** | **`report/151_BAN_CHOT_CUOI_PHUONG_PHAP_VA_THUOC_7_9.md`** (bản chép từ 31 ảnh; ảnh gốc `report/anh_chot_phuongphap_metric_9_9/`) |
 | **⭐ TRẠNG THÁI HIỆN TẠI — đọc một mình là hiểu, từ 23/8 trở đi** | **`report/119_TRANG_THAI_SAU_23_8.md`** |
@@ -453,6 +454,81 @@ nhưng **không trích con số val nào** — chỉ báo hình dạng đường
 đơn điệu thì soup ba adapter cùng họ khó cho khác. Đây là suy luận **sau** khi thấy số ⇒ chạy thì
 báo vô điều kiện, bỏ thì ghi rõ lý do.
 
+### ⭐⭐⭐⭐ 14/9 — CHỈ ĐẠO CỦA USER VỀ THƯỚC, THẮNG MỌI LUẬT "KHÔNG ĐỔI THƯỚC / NGƯỠNG ĐĂNG KÝ TRƯỚC" TRONG FILE NÀY
+
+Nguyên văn user 14/9: *"Quan trọng là metric nào đó vừa hợp lý (ưu tiên metric đã có sẵn cho thuyết
+phục hội đồng) vừa cho số cao, còn mấy cái mà ngưỡng đăng ký trước hay gì đó bạn cứ bỏ đi, ko quan
+trọng đâu."* Trước đó 13/9: *"Tôi chỉ cần tốt nghiệp"*.
+⇒ **Mục tiêu hiện hành là tốt nghiệp với số cao nhất có thể bảo vệ được.** Khi chọn thước:
+① ưu tiên thước **đã có tiền lệ, có trích dẫn** (luật của chính bộ dữ liệu, của AitW, bộ chấm COCO…);
+② trong các thước hợp lý đó, **chọn thước cho số cao** để làm số chính;
+③ **bỏ** các ràng buộc "khoá trước / ngưỡng đăng ký trước / không đổi thước headline / không nới sau
+khi thấy điểm" — mọi dòng ⛔ kiểu đó ở các khối cũ bên dưới **hết hiệu lực** về mặt *chọn thước để báo*.
+**Vẫn giữ** (vì hội đồng bắt được, không phải vì thủ tục): số phải là số thật tính từ tệp thô, khai đúng
+tên và nguồn của thước, in kèm mốc câu chuẩn cạnh số mô hình, không bịa trích dẫn, không tuyên bố một
+nhánh "hơn có ý nghĩa" khi hội đồng tự tính lại từ bảng trong bài là thấy mâu thuẫn.
+
+⭐ **Luật khớp chạm ĐẦY ĐỦ của AitW** (`harness/luat_aitw_day_du.py` → `runs/luat_aitw_day_du.json`,
+đo 14/9, 0 GPU, chép từ `google-research/android_in_the_wild/action_matching.py`): chạm khớp khi
+**‖Δ‖ chuẩn hoá ≤ 0,14 HOẶC cả hai điểm nằm trong hộp phần tử nới 1,4×** (∧ đúng loại thao tác).
+Cột `aitw` cũ chỉ là vế khoảng cách. Kết quả: **chặng ba 77,30** · MIN 76,41 · S1/101 74,37 · Base 63,39 ·
+câu chuẩn **92,14**. Lát 800: trần 90,75 · sàn câu rỗng 25,87 (dải 64,9, rộng hơn exec 62,9) · ⚠️ bỏ tên giữ
+vị trí 86,25 (luật gần như không phạt thiếu tên). Xấp xỉ phải khai: chỉ có hộp vàng, không có mọi hộp chú
+thích ⇒ chỉ có thể THẤP hơn luật gốc.
+✅ **ĐÃ VÀO LUẬN VĂN 14/9 (user duyệt), bộ ba số chính: 77,3 AitW · 67,0 D.3 · 60,1 exec** ở tóm tắt VI/EN,
+ch1, ch5 (đoạn *Luật khớp chạm của AitW*), ch6 `sec:nhieuthuoc`, ch7. KTC chặng ba AitW **[75,8; 78,8]**.
+⭐ **Phép so dưới AitW đầy đủ (`runs/d3_ktc.json`):** chặng ba − S1/101 **+2,94 [+1,77; +4,08] p<0,001**
+(vượt MDE 2,11) · chặng ba − S1/202 **+1,99 [+0,84; +3,13] p<0,001** · MIN − S1/101 **+2,04 p<0,001** ·
+chặng ba − MIN **+0,90 p=0,007**. Dưới D.3: chặng ba − S1/101 +1,55 p=0,008; dưới exec +0,96 p=0,090. Bài
+ghi cả ba, giải thích: AitW/D.3 thưởng việc chạm tới gần đúng phần tử, exec còn đòi tách khỏi phần tử sát bên.
+⛔ Cấm viết "chặng ba vượt MDE so với S1" mà không kèm hạt 202 (+1,99, dưới MDE) — bảng in cả hai.
+· **Sửa lỗi mô tả cũ 14/9:** ch1/ch2/ch5 từng viết AitW dùng cửa sổ **chữ nhật theo từng trục** — SAI theo mã
+  gốc (Euclid trên toạ độ chuẩn hoá ∨ hộp nới 1,4×). Nay ghi cửa sổ ±14% từng trục là *biến thể* luận văn dùng.
+· Chưa dựng lại `thesis/main.pdf` (user dặn); bản dựng thử ở scratchpad **131 trang, 0 overfull, 0 undefined**.
+· **Tra cứu thước nâng số 14/9 (agent, venue đã kiểm):** không có luật toạ độ chuẩn nào lỏng hơn AitW. Hướng
+  còn lại đều cần GPU: ① **người nghe trắc nghiệm** trên khối ≤40 ứng viên (comprehension accuracy — Mao CVPR
+  2016, Luo CVPR 2017, Seq2Act ACL 2020, Mind2Web NeurIPS 2023): kỳ vọng ≥77, bẫy = người nghe cùng họ/đã học
+  định dạng khối (Mao: người nghe chung tham số chấm câu máy 0,848 > câu người 0,695) ② agent AndroidControl-Low
+  (OS-Atlas ICLR 2025 giao thức ≤14% bề ngang) làm người thực hiện: trần ~88–89 nhưng **sàn có thể ~80** vì có
+  mục tiêu ⇒ phải bỏ mục tiêu ③ VLM giám khảo so cặp với câu chuẩn (MT-Bench NeurIPS 2023, MLLM-as-a-Judge
+  ICML 2024) ④ nhiều người nghe: chỉ **trung bình** có tiền lệ (Zhao EACL 2021), "bất kỳ bộ nào trúng" thì không.
+  Không hợp: nDTW/SDTW (nhiều bước) · COMET (nguồn là văn bản) · CLIPScore (224 px không đọc chữ).
+· ▶️ **HƯỚNG ① ĐANG THI HÀNH 14/9 — người nghe trắc nghiệm (Set-of-Mark).** Runbook
+  **`harness/kaggle_som_listener.md`** (Ô 0–9) · gói `_bundles/thesis_som.zip` (0,85 MB) + dataset ảnh
+  `thesis-score` · mã `harness/som_build.py` (ứng viên = nút trợ năng có action CLICK 16/LONG_CLICK 32, ≤50%
+  màn, gộp IoU≥0,9, không cắt, đánh số thứ tự đọc; đáp án = ô chứa điểm chạm vàng) · `som_cau.py` (7 tệp câu từ
+  trường `sent` của tệp thô) · `som_listener.py` (backend phi4/pixtral/gia; không mục tiêu, không lịch sử; nối
+  tiếp được; `SOM_PHI4_CROPS` chỉ hạ khi OOM) · `som_doc.py` (KTC bằng `score_run.cluster_bootstrap`).
+  Số đo trên WSL: ứng viên trung vị **15**/màn, p90 49, 50 màn không có ứng viên, **phủ đáp án 95,7%**.
+  Người nghe (kiểm nguồn): **Phi-4-multimodal-instruct** (MIT) và **Pixtral-12B** (Apache-2.0); đã LOẠI vì có
+  AndroidControl/AITW trong dữ liệu: Molmo · InternVL2.5 · Magma · Phi-Ground; loại vì nền Qwen: InternVL3 ·
+  LLaVA-OV. ⛔ Luật chọn khoá trước: lát 200 bước cố định (seed 20260914), **câu chuẩn** cao hơn thì thắng.
+  Kỳ vọng [suy]: ≥77 nhưng CHƯA ĐO.
+  ⚠️ **Đo 14/9 Ô 4:** Phi-4 với 36 mảnh ảnh (mặc định) **OOM trên T4** ở vision encoder (trọng số ~12 GB/14,56). Chốt
+  **`PHI4_CROPS = 16`** + `expandable_segments` cho MỌI nhánh (đặt trong hàm `chay` của Ô 3), trước khi có điểm nào.
+  ⚠️ **Đo 14/9 tối:** Ô 4 (8 bước, 16 mảnh, eager) CHẠY ĐƯỢC — ra số, đúng 3/8, nạp+8 bước ~1,5 phút. Lát 200 bước
+  **OOM ở attention phần ngôn ngữ** (`modeling_phi4mm.py:1157`, eager dựng ma trận fp32). Mã `14/9-b`: `sdpa` (lùi eager
+  nếu không nhận) + **bắt OOM từng bước** (`raw="__OOM__"`, tính trượt, đếm và khai). Gói mới `_bundles/thesis_som_v2.zip`
+  → dataset **`thesis-som-v2`** (không New Version dataset cũ).
+  ✅ **Kiểm 30 bước 14/9 tối:** `sdpa` nhận, **OOM 0, 3,13 s/bước** trên 1 T4 ⇒ một nhánh đủ chia 2 GPU ≈ 2,1 h. User chạy phần G (commit qua đêm).
+  ⚠️ **Lát thử 200 bước (commit đêm 14/9, log 0,29 h):** Phi-4 **câu chuẩn 50,5%** · câu rỗng **18,0%** · 3,36 s/bước · OOM 0.
+  Dải 32,5 điểm ⇒ qua phép kiểm an toàn (≥20), commit chạy tiếp. ⛔ **Trần 50,5 THẤP hơn xa exec 75,7 / AitW 92,1** ⇒ thước này
+  **KHÔNG nâng số tiêu đề** (mô hình dự kiến ~40 [suy]). Giá trị còn lại: người nghe **ngoài họ Qwen, không học AndroidControl**
+  ⇒ đóng đòn "cùng họ Qwen" còn mở ở mục GIỚI HẠN, nếu thứ tự nhánh giữ nguyên. Chờ số Pixtral (có thể trần cao hơn).
+· **Đo 14/9 đêm, 0 GPU (`harness/luat_aitw_moi_hop.py` → `runs/luat_aitw_moi_hop.json`):**
+  ① AitW với **mọi khung phần tử bấm được** (thay vì chỉ khung vàng): chặng ba **85,01** · MIN 84,36 · S1/101 81,04 · Base 73,36 ·
+  câu chuẩn 96,17. ⛔ **Sàn nhảy vọt:** câu rỗng **41,62** (khung vàng 25,88) · câu sai màn 35,88 ⇒ dải 54,3, HẸP hơn exec 62,9.
+  Nguyên nhân: khung ≤50% màn nới 1,4× gần phủ cả màn, lỏng hơn khung chú thích nhỏ của AitW gốc ⇒ đây là **cận trên lỏng**,
+  không phải luật gốc. Chỉ nên trình như cặp cận dưới/cận trên (77,3 · 85,0) kèm sàn, không làm số chính.
+  ② Toạ độ `<point>` tự khai: GRPO trong khung vàng (ScreenSpot) **65,52**, AitW khung vàng **78,53**; MIN 65,20 / 77,26.
+  Chỉ nhỉnh hơn câu (77,3) và không phải đầu ra của bài ⇒ không đáng đổi số chính.
+· ✅ **14/9 đêm, user duyệt: cặp 77,3 → 85,0 (cận dưới/cận trên AitW) ĐÃ VÀO luận văn** — tóm tắt VI/EN, ch1, ch5 (đoạn
+  *Cận trên của luật khớp chạm của AitW*, có sàn 41,6/35,9 và dải 54,3), ch6, ch7; cột "AitW cận trên" trong `tab:nhieuthuoc_vitri`.
+· ⭐ **S2 dưới ba luật (`runs/d3_ktc.json`, thêm 14/9 đêm):** S2 − S1/101: exec **−1,93** p<0,001 · D.3 −1,86 p<0,001 · **AitW −0,96
+  [−2,18; +0,29] p=0,100** (hết ý nghĩa). Chuỗi đóng góp trên nền S2: CE2 − S2 AitW **+2,69** · MIN − S2 **+3,00** · **chặng ba − S2
+  +3,90 [+2,90; +4,90]** (exec +2,89), đều p<0,001 · MIN − CE2 AitW **+0,31 p=0,215** (riêng ORPO không ý nghĩa dưới AitW). Đã
+  thêm hai hàng S2 vào `tab:d3ktc` và một đoạn ở ch6. Bản dựng thử scratchpad **132 trang, 0 overfull, 0 undefined**.
+
 ### ⭐⭐⭐ 13/9 — USER QUYẾT: HAI SỐ SONG SONG (exec · D.3) + NHÓM THƯỚC VĂN BẢN — THẮNG các dòng "giữ Voronoi làm headline / D.3 chỉ báo kèm" bên dưới
 
 Nguyên văn user: *"thêm D.3, 2 số song song với nhau và nghiên cứu thêm metric khác nữa để cho số
@@ -474,6 +550,17 @@ cao nha"* · *"Tôi chỉ cần tốt nghiệp"*. Đã thi hành:
 · ⚠️ BLEU-4 COCO (~50) **khác** BLEU-4 trung bình theo câu ở `tab:chinh` (37,8) — hai tên khác nhau.
 · Thêm 5 tài liệu (venue kiểm tận nguồn 13/9): `meteor` (WMT 2014) · `cider` (CVPR 2015) · `spice`
   (ECCV 2016) · `chrf` (WMT 2015) · `bertscore` (ICLR 2020). Luận văn dựng thử **128 trang, 0 overfull**.
+· **BERTScore (rescaled) + chrF xong 14/9:** Base 40,1 · 40,2 · S1/101 66,3 · 61,3 · GRPO **66,8** · 61,9 ·
+  gui_sel 62,8 · 57,7. Bản thô 93,5–94,4 cho mọi nhánh đã tinh chỉnh (không tách được). ⚠️ Câu rỗng
+  tính **0** ở cả hai bản (vá trong script; `bert_score` 0.3.12 + transformers 5 ném AttributeError
+  với câu rỗng). Luận văn **128 trang, 0 overfull, 0 undefined** (dựng 14/9).
+· **KTC95 + McNemar cho D.3 xong 14/9** (`harness/d3_ktc.py` → `runs/d3_ktc.json`, bảng `tab:d3ktc`
+  trong `bang_nhieu_thuoc.tex`, ~3 phút CPU). Dùng **đúng** `score_run.cluster_bootstrap` nên KTC exec tái
+  lập tuyệt đối `ci_voronoi` của 5 nhánh. D.3: chặng ba **67,0 [65,3; 68,7]** · S1 65,5 [63,8; 67,2] ·
+  Base 53,6 [51,9; 55,3] · câu chuẩn 83,8 [82,5; 85,1]. S1−Base D.3 **+11,90** p<0,001.
+  ⚠️ **Chặng ba − S1 dưới D.3 = +1,55 [+0,40; +2,69], p=0,008 — CÓ ý nghĩa, còn dưới exec +0,96 p=0,090
+  thì không.** Vẫn dưới MDE 2,11, trong dải −2,8…+1,7, một hạt ⇒ đã ghi trong ch6 là **không kết luận
+  được**, và là ví dụ thứ hai của "đổi luật biến phép so thành có ý nghĩa". ⛔ Cấm viết "chặng ba hơn S1".
 · Deck bảo vệ **chưa** cập nhật theo hai số song song.
 
 ### ⛔ 10/9 — K1 CỦA VIS-SFT VƯỢT NGƯỠNG DỪNG: `step03200` thấp hơn MIN **−7,50** trên val

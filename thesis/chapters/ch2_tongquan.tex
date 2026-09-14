@@ -59,11 +59,15 @@ biểu thức văn bản, trả về vị trí của phần tử được mô t�
 khung bao. Các mô hình tiêu biểu gồm SeeClick~\cite{seeclick},
 OS-Atlas~\cite{osatlas} và UGround~\cite{uground}.
 
-Quy ước chấm phổ biến, kế thừa từ AndroidInTheWild~\cite{aitw}, là ngưỡng dung sai
-$\tau = 0{,}14$ tính theo từng trục. Một dự đoán được coi là trúng khi
+Quy ước chấm phổ biến bắt nguồn từ AndroidInTheWild~\cite{aitw}. Trong mã chấm gốc của bộ dữ
+liệu ấy, một lần chạm dự đoán được coi là khớp với lần chạm đáp án khi khoảng cách Euclid giữa
+hai điểm, tính trên toạ độ đã chuẩn hoá về đoạn $[0; 1]$ theo bề ngang và chiều cao màn hình,
+không vượt quá $0{,}14$, \emph{hoặc} khi cả hai điểm cùng nằm trong một khung phần tử đã được nới
+rộng thêm $1{,}4$ lần kích thước mỗi chiều. Luận văn gọi đây là \emph{luật khớp chạm của AitW}.
+Một biến thể đơn giản hơn dùng cửa sổ $\tau = 0{,}14$ theo từng trục: dự đoán trúng khi
 $|p_x - g_x| \le \tau W$ và $|p_y - g_y| \le \tau H$, với $g$ là toạ độ đáp án và $W$,
-$H$ là bề ngang và chiều cao màn hình. Vùng chấp nhận ở đây là một \emph{hình chữ nhật} tính theo từng trục, không phải một
-đĩa tròn. Trên màn hình
+$H$ là bề ngang và chiều cao màn hình. Vùng chấp nhận của biến thể này là một
+\emph{hình chữ nhật}, không phải một đĩa tròn. Trên màn hình
 $1080 \times 2400$, vùng đó tương ứng $\pm151$ điểm ảnh theo chiều ngang nhưng tới
 $\pm336$ điểm ảnh theo chiều dọc. Mục~\ref{sec:luattrung} cho thấy quy ước này quá lỏng khi
 đối tượng được chấm là câu chữ, bởi quy ước này vốn được đặt ra để chấm một bộ định vị.

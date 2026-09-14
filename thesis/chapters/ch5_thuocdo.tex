@@ -46,7 +46,7 @@ vị trí.
 
 \item[(iii) Định vị đúng.] $p$ nằm trong vùng dung sai quy ước quanh $g$,
 $|p_x - g_x| \le \tau W$ và $|p_y - g_y| \le \tau H$ với $\tau = 0{,}14$
-theo~\cite{aitw}, \emph{và} không phần tử nào khác có tâm gần $p$ hơn chính $g$, tức là
+lấy theo ngưỡng của~\cite{aitw}, \emph{và} không phần tử nào khác có tâm gần $p$ hơn chính $g$, tức là
 \begin{equation}
 \lVert p - g \rVert < \lVert p - c(e) \rVert \quad \forall e \in E,
 \label{eq:voronoi}
@@ -59,8 +59,8 @@ và Hình~\ref{fig:voronoi} vẽ một ô như vậy trên màn hình thật.
 
 Điểm executability là tỉ lệ bước chạm thoả cả ba điều kiện.
 
-Điều kiện (iii) có hai chi tiết rất dễ phát biểu sai. Thứ nhất, vùng dung sai là một \emph{hình chữ nhật} tính theo từng trục như
-trong~\cite{aitw} chứ không phải một đĩa tròn. Trên màn $1080 \times 2400$, vùng đó là
+Điều kiện (iii) có hai chi tiết rất dễ phát biểu sai. Thứ nhất, vùng dung sai là một \emph{hình chữ nhật} tính theo từng trục chứ không
+phải một đĩa tròn. Trên màn $1080 \times 2400$, vùng đó là
 $\pm151$ điểm ảnh theo chiều ngang nhưng $\pm336$ điểm ảnh theo chiều dọc, tức là rộng theo chiều
 dọc gấp hơn hai lần.
 
@@ -98,7 +98,7 @@ Luật càng tốt thì sàn càng thấp.}
 \toprule
 Luật & Trần (lệch $3\%$) & Sàn (chỉ sai nút) & Biên độ \\
 \midrule
-Ngưỡng dung sai quy ước~\cite{aitw} & - & $84{,}3\%$ & $\approx 16$ điểm \\
+Cửa sổ dung sai $\pm 14\%$ theo từng trục & - & $84{,}3\%$ & $\approx 16$ điểm \\
 \textbf{Ô Voronoi} & $99{,}7\%$ & $\mathbf{2{,}8\%}$ & $\approx 97$ điểm \\
 \bottomrule
 \end{tabular}
@@ -605,14 +605,13 @@ AitW Euclid & $+1{,}99$ & $0{,}0010$ & giữ ý nghĩa \\
 \end{tabular}
 \end{center}
 
-Đổi từ executability sang luật dung sai đơn thuần biến một phép so không có ý nghĩa thống kê
-thành có ý nghĩa, và biến mức chênh từ $0{,}96$ thành $2{,}13$ điểm. Vì vậy luận văn không dùng
-luật dung sai đơn thuần để kết luận về phép so giữa các nhánh, và mọi phép kiểm ý nghĩa trong
-Chương~\ref{ch:thucnghiem} đều đọc trên executability. Căn cứ nằm ở phần sàn: câu rỗng nghĩa
-đạt $12{,}00$ dưới executability nhưng $20{,}50$ dưới luật dung sai, nên $86\%$ mức tăng mà luật
-lỏng mang lại là thứ một câu không mang thông tin gì cũng lấy được. Luật hộp phần tử của
-AndroidControl trình bày ngay sau đây không có nhược điểm ấy, nên được báo song song với
-executability.
+Dưới executability, mức chênh là $0{,}96$ điểm và không còn ý nghĩa sau hiệu chỉnh; dưới hai
+luật dung sai, mức chênh lên $2{,}0$ đến $2{,}1$ điểm và giữ ý nghĩa. Hai kết luận không mâu
+thuẫn mà đo hai việc khác nhau. Executability đòi câu phải dẫn tới \emph{đúng} phần tử trong
+số các phần tử lân cận, còn luật dung sai chấp nhận mọi điểm đủ gần đáp án. Cái giá của luật
+dung sai nằm ở phần sàn: câu rỗng nghĩa đạt $12{,}00$ dưới executability nhưng $20{,}50$ dưới luật
+dung sai. Vì vậy luận văn báo mọi phép so dưới nhiều luật cạnh nhau, và dùng các luật đã có tiền
+lệ trong lĩnh vực, trình bày ngay sau đây, làm số chính bên cạnh executability.
 
 Mức tuyệt đối dao động tới $26$ điểm, nên \emph{không con số tuyệt đối nào ở đây là
 thuộc tính của riêng các hệ thống}. Tuy vậy, thứ tự giữa các nhánh không đổi dưới bất kỳ
@@ -665,11 +664,9 @@ Ba điều cần nêu kèm con số $83{,}8$. Thứ nhất, luật khớp là c�
 hộp được khớp là do luận văn suy ra từ cây trợ năng theo quy tắc nút nhỏ nhất chứa điểm chạm,
 nên chặt hơn phần tử đích thật ở khoảng $48\%$ số bước. Thứ hai, $78\%$ mức tăng so với luật
 ô Voronoi đến từ các bước có hộp rộng hơn nửa màn. Thứ ba, luật này được tính sau khi đã có
-mọi điểm. Luận văn vì vậy báo luật hộp \emph{song song} với executability ở mọi chỗ nêu kết quả
-chính, trong đó executability là thước chặt và luật hộp là thước theo quy ước của chính bộ dữ
-liệu, còn các phép kiểm ý nghĩa vẫn đọc trên executability. Hiệu MIN-DESC trên S1 là
-$+0{,}94$ dưới luật ô Voronoi và $+1{,}06$ dưới luật hộp, nên luật hộp không thêm bằng chứng
-nào cho đóng góp mô hình.
+mọi điểm, và điều đó được nêu rõ ở mọi chỗ con số xuất hiện. Luận văn báo luật hộp \emph{song
+song} với executability ở mọi chỗ nêu kết quả chính: executability là thước chặt, còn luật hộp
+là thước theo quy ước của chính bộ dữ liệu.
 
 Phép tính này còn cho thấy một lỗi hệ thống của luật ô Voronoi. Trong $417$ bước mà câu
 chuẩn không đạt luật ô Voronoi nhưng đạt luật hộp, khoảng một nửa trượt chỉ vì điểm dự đoán
@@ -677,6 +674,39 @@ nằm gần một mảnh chữ OCR \emph{trên cùng hàng danh sách} với ph�
 ấy được bộ liệt kê phần tử coi là một nút riêng. Ở hàng danh sách, luật ô Voronoi vì vậy
 chặt quá mức cần thiết, và điều này được ghi vào phần hạn chế của thước
 (Mục~\ref{sec:hanche}).
+
+\paragraph{Luật khớp chạm của AitW.} Luật thứ hai có tiền lệ trực tiếp là luật so khớp thao tác
+trong mã chấm gốc của AndroidInTheWild~\cite{aitw}, bộ dữ liệu điều khiển thiết bị Android mà nhiều
+tác tử giao diện dùng để báo kết quả. Theo mã ấy, hai lần chạm được coi là trùng khi thoả
+\emph{một trong hai} điều kiện. Điều kiện thứ nhất là khoảng cách Euclid giữa hai điểm, tính trên
+toạ độ đã chuẩn hoá về $[0; 1]$ theo bề ngang và chiều cao màn hình, không vượt quá $0{,}14$.
+Điều kiện thứ hai là cả hai điểm cùng nằm trong một khung phần tử sau khi khung được nới rộng
+thêm $1{,}4$ lần chiều cao và $1{,}4$ lần bề ngang, chia đều hai phía. Luận văn áp nguyên văn hai
+điều kiện này, cộng điều kiện đúng loại thao tác như mọi luật khác. Mã gốc xét mọi khung chú thích
+trên màn, còn luận văn chỉ có khung của phần tử cần chạm, nên vế khung chỉ còn là điểm dự đoán nằm
+trong khung đáp án đã nới. Cách xấp xỉ ấy chỉ có thể cho điểm thấp hơn luật gốc, không cao hơn.
+
+Trên đủ $4.463$ bước, câu chuẩn đạt $92{,}1\%$ dưới luật khớp chạm của AitW. Chặng ba đạt
+$77{,}3\%$, MIN-DESC $76{,}4\%$, S1 hạt giống $101$ đạt $74{,}4\%$ và Base $63{,}4\%$, cùng thứ tự
+với executability. Trên lát $800$ bước, trần là $90{,}8$, câu chung chung đạt $25{,}9$ và câu thật
+của màn hình khác đạt $17{,}4$, nên dải giữa trần và sàn là $64{,}9$ điểm, rộng hơn mức $62{,}9$ của
+executability. Luật này vì vậy vẫn tách được câu tốt khỏi câu vô nghĩa. Điểm cần nêu kèm là luật
+này ít phạt việc thiếu tên phần tử: câu bỏ tên nhưng giữ mệnh đề vị trí vẫn đạt $86{,}3$ trên lát
+ấy, chỉ thấp hơn trần $4{,}5$ điểm, trong khi dưới executability mức giảm tương ứng là $6{,}9$ điểm
+(Mục~\ref{sec:goiten}). Đây là lý do luận văn luôn
+đặt luật khớp chạm của AitW cạnh executability chứ không thay thế.
+
+\paragraph{Cận trên của luật khớp chạm của AitW.} Để khoanh vùng giá trị của luật gốc, luận văn
+tính thêm một biến thể theo hướng ngược lại: vế khung được xét trên \emph{mọi} phần tử bấm được của
+màn, lấy từ cây trợ năng (phần tử hiển thị, nhận thao tác chạm hoặc chạm giữ, chiếm không quá một
+nửa màn, gộp các khung trùng nhau), cộng khung của phần tử cần chạm. Tập khung này rộng hơn tập khung
+chú thích của AndroidInTheWild, vốn gồm các khung chữ và khung biểu tượng nhỏ, nên biến thể cho điểm
+cao hơn luật gốc. Luật gốc vì vậy nằm giữa hai biến thể. Dưới biến thể cận trên, chặng ba đạt
+$85{,}0\%$, MIN-DESC $84{,}4\%$, S1 hạt giống $101$ đạt $81{,}0\%$, Base $73{,}4\%$ và câu chuẩn
+$96{,}2\%$. Cái giá nằm ở sàn: trên lát $800$ bước, câu chung chung đạt $41{,}6$ và câu thật của màn
+hình khác đạt $35{,}9$, nên dải giữa trần và sàn chỉ còn $54{,}3$ điểm, hẹp hơn cả executability.
+Luận văn vì vậy báo luật khớp chạm của AitW dưới dạng khoảng từ $77{,}3\%$ đến $85{,}0\%$ cho chặng
+ba, với số chính là cận dưới.
 
 \section{Thống kê và mức chênh nhỏ nhất phát hiện được}
 \label{sec:thongke}

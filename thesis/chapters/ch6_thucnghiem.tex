@@ -123,13 +123,42 @@ hình định vị lần nào.
 
 \input{chapters/bang_nhieu_thuoc}
 
-\paragraph{Nhóm thước theo vị trí.} Bảng~\ref{tab:nhieuthuoc_vitri} đặt executability cạnh luật
-hộp phần tử gốc của AndroidControl và ba luật dung sai ở Mục~\ref{sec:donhay}. Theo luật hộp phần
-tử, chặng ba đạt $67{,}0\%$, S1 hạt giống $101$ đạt $65{,}5\%$ và Base đạt $53{,}6\%$, trong khi
-câu chuẩn đạt $83{,}8\%$. Thứ tự các nhánh dưới luật này trùng với thứ tự dưới executability.
-Cột cuối cho thấy trên các bước chạm, hai nhánh chặng hai và chặng ba gọi đúng loại thao tác ở
-$98{,}9\%$ số bước. Con số này chỉ áp cho bước chạm và phải đọc cùng mức giảm ở bước không chạm
-nêu tại Mục~\ref{sec:khongcham}.
+\paragraph{Nhóm thước theo vị trí.} Bảng~\ref{tab:nhieuthuoc_vitri} đặt ba số chính của luận văn
+cạnh nhau: luật khớp chạm của AndroidInTheWild, luật hộp phần tử gốc của AndroidControl và
+executability, cùng hai luật dung sai ở Mục~\ref{sec:donhay}. Theo luật khớp chạm của
+AndroidInTheWild, chặng ba đạt $77{,}3\%$ (cận trên $85{,}0\%$ khi xét mọi khung phần tử, Mục~\ref{sec:donhay}),
+S1 hạt giống $101$ đạt $74{,}4\%$ và Base đạt $63{,}4\%$,
+trong khi câu chuẩn đạt $92{,}1\%$. Theo luật hộp phần tử, bốn con số tương ứng là $67{,}0\%$,
+$65{,}5\%$, $53{,}6\%$ và $83{,}8\%$. Thứ tự các nhánh dưới cả hai luật trùng với thứ tự dưới
+executability. Cột cuối cho thấy trên các bước chạm, hai nhánh chặng hai và chặng ba gọi đúng loại
+thao tác ở $98{,}9\%$ số bước. Con số này chỉ áp cho bước chạm và phải đọc cùng mức giảm ở bước
+không chạm nêu tại Mục~\ref{sec:khongcham}.
+
+\paragraph{Sai số và phép so giữa các nhánh.} Bảng~\ref{tab:d3ktc} cho khoảng tin cậy của ba số
+chính, tính bằng cùng một thủ tục bootstrap gom cụm và cùng hạt giống, nên các cột so được với
+nhau. Chặng ba đạt $77{,}3\%$ $[75{,}8; 78{,}8]$ theo luật khớp chạm của AndroidInTheWild và
+$67{,}0\%$ $[65{,}3; 68{,}7]$ theo luật hộp phần tử. Khoảng tin cậy của nhánh này tách hẳn khỏi Base
+lẫn câu chuẩn dưới cả ba luật. Chênh lệch S1 trên Base giữ gần nguyên độ lớn qua ba luật, từ
+$+10{,}98$ đến $+11{,}90$ điểm, đều với $p < 0{,}001$.
+
+Phép so giữa các nhánh đã tinh chỉnh cho kết quả khác nhau theo luật. Nhánh khai báo trước S2,
+nền của hai chặng học tiếp, thấp hơn S1 hạt giống $101$ là $1{,}93$ điểm theo executability với
+$p < 0{,}001$, nhưng chỉ thấp hơn $0{,}96$ điểm theo luật khớp chạm của AndroidInTheWild với
+$p = 0{,}100$. Hai chặng học tiếp trên nền S2 nâng nhánh này lên rõ rệt: chặng ba hơn S2 là
+$+3{,}90$ điểm $[+2{,}90; +4{,}90]$ theo luật khớp chạm của AndroidInTheWild và $+2{,}89$ điểm theo
+executability, đều với $p < 0{,}001$. Phần lớn mức nâng này đến từ việc học tiếp có giám sát, vì
+nhánh so sánh CE2-S2 đã hơn S2 $2{,}69$ điểm theo luật khớp chạm của AndroidInTheWild. Theo luật khớp chạm của
+AndroidInTheWild, chặng ba hơn S1 hạt giống $101$ là $+2{,}94$ điểm $[+1{,}77; +4{,}08]$ và hơn S1
+hạt giống $202$ là $+1{,}99$ điểm $[+0{,}84; +3{,}13]$, cả hai với $p < 0{,}001$. Mức chênh so với
+hạt giống $101$ vượt ngưỡng phát hiện $2{,}11$ điểm của thiết kế. Cũng theo luật này, MIN-DESC hơn
+S1 là $+2{,}04$ điểm với $p < 0{,}001$, và chặng ba hơn MIN-DESC là $+0{,}90$ điểm với $p = 0{,}007$.
+Theo luật hộp phần tử, chặng ba hơn S1 hạt giống $101$ là $+1{,}55$ điểm với $p = 0{,}008$. Theo
+executability, cùng phép so chỉ còn $+0{,}96$ điểm với $p = 0{,}090$. Chênh lệch giữa ba luật có
+cùng một nguồn: executability đòi câu dẫn tới đúng phần tử trong số các phần tử lân cận, còn hai
+luật kia chấp nhận cả những lần chạm rơi vào vùng quanh phần tử cần chạm. Các mức cải thiện của
+chặng hai và chặng ba vì vậy thể hiện rõ nhất ở việc đưa lần chạm tới gần đúng phần tử, và mới
+thể hiện một phần ở việc tách phần tử ấy khỏi các phần tử sát bên. Mọi con số trên là của một hạt
+giống cho nhánh xử lý.
 
 \paragraph{Nhóm thước so với câu chuẩn.} Bảng~\ref{tab:nhieuthuoc_vanban} dùng các thước mà Widget
 Captioning~\cite{widgetcap} và Screen2Words~\cite{screen2words} báo cho bài toán sinh mô tả giao
@@ -139,7 +168,11 @@ trên toàn tập theo bộ chấm của COCO Captions, nên khác con số BLEU
 Bảng~\ref{tab:chinh}. Các nhánh đã tinh chỉnh đạt BLEU-4 từ $46{,}9$ đến $51{,}7$ và ROUGE-L tới
 $68{,}6$, so với $15{,}3$ và $42{,}3$ của Base. SPICE, thước mà Zhao và cộng sự~\cite{zhao2021}
 khuyên dùng để xếp hạng các hệ sinh chỉ dẫn khi có câu tham chiếu, tăng từ $18{,}5$ ở Base lên
-$44{,}4$ ở S1.
+$44{,}4$ ở S1. BERTScore, thước so nghĩa bằng biểu diễn ngữ cảnh thay vì so từ, tăng từ $40{,}1$
+lên $66{,}8$ ở chặng ba, và chrF tăng từ $40{,}2$ lên $61{,}9$. BERTScore trong bảng là bản đã
+hiệu chỉnh theo đường cơ sở; bản chưa hiệu chỉnh nằm trong khoảng $93{,}5$ đến $94{,}4$ với mọi
+nhánh đã tinh chỉnh nên không tách được các nhánh. Câu rỗng được tính $0$ điểm ở mọi thước và
+vẫn nằm trong quần thể, giống quy ước của executability.
 
 Có hai điểm cần lưu ý khi đọc nhóm thước này. Thứ nhất, CIDEr-D vượt quá $100$ vì mỗi bước chỉ có
 một câu chuẩn và trọng số tần suất nghịch được ước từ chính tập câu chuẩn, nên con số chỉ so được

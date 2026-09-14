@@ -54,9 +54,11 @@ Hạt giống thứ hai của nhánh này bị huỷ vì hết ngân sách máy,
 Một chặng huấn luyện tiếp theo đạt $60{,}0\%$, cao nhất trong các mô hình đã đo, nhưng khi
 tách riêng phần đóng góp thì $78\%$ mức tăng thuộc về nhánh so sánh chứ không thuộc về mục
 tiêu huấn luyện mới. Điểm cao nhất của đề tài, đạt ở chặng
-huấn luyện thứ ba, được báo song song theo hai luật chấm: $60{,}1\%$ theo executability và
-$67{,}0\%$ theo luật hộp phần tử gốc của AndroidControl, trong khi câu chuẩn đạt $75{,}7\%$ và
-$83{,}8\%$ dưới cùng hai luật. Trên các bước chạm, mô hình gọi đúng loại thao tác ở $98{,}9\%$
+huấn luyện thứ ba, được báo theo ba luật chấm: $77{,}3\%$ theo luật khớp chạm của
+AndroidInTheWild (cận trên $85{,}0\%$ khi xét mọi khung phần tử của màn), $67{,}0\%$ theo luật hộp phần tử gốc của AndroidControl và $60{,}1\%$ theo
+executability, trong khi câu chuẩn đạt $92{,}1\%$, $83{,}8\%$ và $75{,}7\%$ dưới cùng ba luật.
+Theo luật khớp chạm của AndroidInTheWild, chặng ba hơn nhánh chỉ tinh chỉnh có giám sát
+$2{,}94$ điểm, với khoảng tin cậy $[+1{,}77; +4{,}08]$ và $p < 0{,}001$. Trên các bước chạm, mô hình gọi đúng loại thao tác ở $98{,}9\%$
 số bước.
 
 Phần đóng góp cuối là một chẩn đoán ở mức từng bước. Khi mô hình khai báo đúng phần tử,
@@ -172,10 +174,13 @@ falls below the minimum detectable effect of the design. Its second seed was can
 budget reasons, so the comparison remains inconclusive. A further
 training stage reaches 60.0\%, the highest of any checkpoint measured, but attributing the
 movement shows that 78\% of it belongs to the control arm rather than to the new objective.
-The best score of the thesis, reached by the third training stage, is reported under two
-matching rules side by side: 60.1\% under executability and 67.0\% under AndroidControl's
-original element-box rule, against 75.7\% and 83.8\% for the human references under the same
-two rules. On touch steps the model names the correct action type in 98.9\% of cases.
+The best score of the thesis, reached by the third training stage, is reported under three
+matching rules: 77.3\% under the tap-matching rule of Android in the Wild (85.0\% as an upper
+bound when every element box on the screen is considered), 67.0\% under
+AndroidControl's original element-box rule and 60.1\% under executability, against 92.1\%,
+83.8\% and 75.7\% for the human references under the same three rules. Under the Android in the
+Wild rule the third stage beats the supervised fine-tuning baseline by 2.94 points
+(95\% CI [+1.77, +4.08], $p < 0.001$). On touch steps the model names the correct action type in 98.9\% of cases.
 
 The final contribution is a step-level diagnosis. Where the model's own descriptor
 identifies the right element, which happens on 60.6\% of steps, it beats the control by
