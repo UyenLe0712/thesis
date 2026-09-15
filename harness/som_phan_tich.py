@@ -29,11 +29,15 @@ NHANH = [("Câu chuẩn", "chuan", "score_ceiling_human_raw.jsonl"),
          ("Câu rỗng nghĩa", "san", None)]
 
 
-def nap_chon(ma):
+def nap_file(p):
     d = {}
-    for l in open(os.path.join(SOM, f"chon_phi4_{ma}.jsonl"), encoding="utf-8"):
+    for l in open(p, encoding="utf-8"):
         o = json.loads(l); d[(str(o["episode_id"]), str(o["step_id"]))] = o
     return d
+
+
+def nap_chon(ma):
+    return nap_file(os.path.join(SOM, f"chon_phi4_{ma}.jsonl"))
 
 
 def ghep(A, B, K, f):
@@ -131,6 +135,91 @@ def main():
                                      dong_thuan=round(dong, 2), kappa=round(kappa, 3), mot_trong_hai=round(hoac, 2))
         print(f"  {ma:7s} cả hai {n11} · chỉ người nghe {n10} · chỉ UGround {n01} · cả hai trượt {n00} · "
               f"đồng thuận {dong:.1f}% κ={kappa:.3f} · một trong hai {hoac:.1f}%")
+
+    # (5) toàn vẹn: tệp gộp = hợp hai nửa GPU, không trùng, đúng chẵn/lẻ theo chỉ số; tất định với lát thử
+    print("\nToàn vẹn tệp:")
+    thu_tu = [(str(r["episode_id"]), str(r["step_id"])) for r in
+              map(json.loads, open(os.path.join(HERE, "dg1_cache", "som", "som.jsonl"), encoding="utf-8"))]
+    vi = {k: i for i, k in enumerate(thu_tu)}
+    out["toan_ven"] = {}
+    for _, ma, _ in NHANH:
+        s0 = nap_file(os.path.join(SOM, f"chon_phi4_{ma}_s0.jsonl")); s1 = nap_file(os.path.join(SOM, f"chon_phi4_{ma}_s1.jsonl"))
+        dong = sum(1 for _ in open(os.path.join(SOM, f"chon_phi4_{ma}.jsonl"), encoding="utf-8"))
+        ok = (set(s0) | set(s1) == set(C[ma]) and not set(s0) & set(s1) and dong == len(C[ma])
+              and all(vi[k] % 2 == 0 for k in s0) and all(vi[k] % 2 == 1 for k in s1))
+        oom = sum(1 for o in C[ma].values() if o["raw"] == "__OOM__")
+        khong_so = sum(1 for o in C[ma].values() if o["raw"] and o["chon"] is None)
+        rong = sum(1 for o in C[ma].values() if not o["raw"])
+        out["toan_ven"][ma] = dict(n=len(C[ma]), s0=len(s0), s1=len(s1), dat=ok, oom=oom, khong_ra_so=khong_so,
+                                   khong_goi_mo_hinh=rong)
+        print(f"  {ma:7s} n={len(C[ma])} s0={len(s0)} s1={len(s1)} đạt={ok} OOM={oom} không ra số={khong_so} "
+              f"không gọi mô hình (câu rỗng/không ô)={rong}")
+    for ma in ("chuan", "san"):
+        M = nap_file(os.path.join(SOM, f"chon_phi4_{ma}_mau200.jsonl"))
+        trung = sum(1 for k in M if M[k]["raw"] == C[ma][k]["raw"])
+        out["toan_ven"][f"{ma}_tat_dinh_lat200"] = f"{trung}/{len(M)}"
+        print(f"  lát 200 {ma}: câu trả lời thô trùng lượt đủ {trung}/{len(M)}")
+    P = nap_file(os.path.join(SOM, "chon_pixtral_chuan_mau200.jsonl"))
+    co_so = [o for o in P.values() if o["chon"] is not None]
+    mo_dau = collections.Counter(" ".join((o["raw"] or "").split()[:2]) for o in P.values() if o["chon"] is None)
+    out["pixtral_lat200"] = dict(n=len(P), ra_so=len(co_so), dung=sum(o["dung"] for o in co_so),
+                                 mo_dau_khong_ra_so=mo_dau.most_common(5))
+    print(f"  Pixtral lát 200: ra số {len(co_so)} · đúng {sum(o['dung'] for o in co_so)} · mở đầu khi không ra số {mo_dau.most_common(4)}")
+
+    # (6) thiên lệch chọn ô: ô số 1 và ô trả lời phổ biến
+    print("\nThiên lệch chọn ô (tỉ lệ chọn ô số 1 · tỉ lệ ô 1 là đáp án):")
+    out["thien_lech_o1"] = {}
+    o1_dap = 100 * sum(1 for k in C["chuan"] if 1 in som[k]["dap_an"]) / len(som)
+    for ma in ("chuan", "grpo", "s1_101", "san"):
+        t = 100 * sum(1 for o in C[ma].values() if o["chon"] == 1) / len(C[ma])
+        out["thien_lech_o1"][ma] = round(t, 2)
+        print(f"  {ma:7s} chọn ô 1: {t:5.2f}%")
+    out["thien_lech_o1"]["o1_la_dap_an"] = round(o1_dap, 2)
+    print(f"  ô 1 là đáp án: {o1_dap:.2f}%")
+
+    # (7) có điều kiện: bước có đáp án trong khối; bước UGround trúng / trượt
+    print("\nCó điều kiện:")
+    out["co_dieu_kien"] = {}
+    Kd = [k for k in som if som[k]["dap_an"]]
+    for ma in ("chuan", "grpo", "s1_101", "san"):
+        v = 100 * sum(C[ma][k]["dung"] for k in Kd) / len(Kd)
+        hang = dict(co_dap_an=round(v, 2), n_co_dap_an=len(Kd))
+        if ma in R:
+            Kh = [k for k in C[ma] if R[ma][k]["executable"]]; Km = [k for k in C[ma] if not R[ma][k]["executable"]]
+            hang.update(khi_uground_trung=round(100 * sum(C[ma][k]["dung"] for k in Kh) / len(Kh), 2), n_trung=len(Kh),
+                        khi_uground_truot=round(100 * sum(C[ma][k]["dung"] for k in Km) / len(Km), 2), n_truot=len(Km))
+        out["co_dieu_kien"][ma] = hang
+        print(f"  {ma:7s} " + " · ".join(f"{a}={b}" for a, b in hang.items()))
+
+    # (8) chặng ba vs S1: câu giống hệt / khác nhau; chiều lật dưới người nghe so với chiều lật dưới UGround
+    print("\nChặng ba − S1/101 tách theo câu:")
+    cau = {ma: {(str(o["episode_id"]), str(o["step_id"])): o["sent"] for o in
+                map(json.loads, open(os.path.join(HERE, "dg1_cache", "som", f"cau_{ma}.jsonl"), encoding="utf-8"))}
+           for ma in ("grpo", "s1_101")}
+    giong = [k for k in som if cau["grpo"][k].strip() == cau["s1_101"][k].strip()]
+    khac = [k for k in som if k not in set(giong)]
+    lech_giong = sum(1 for k in giong if C["grpo"][k]["dung"] != C["s1_101"][k]["dung"])
+    g_khac = ghep(C["grpo"], C["s1_101"], khac, lambda o: o["dung"])
+    out["grpo_s1_theo_cau"] = dict(cau_giong=len(giong), lech_tren_cau_giong=lech_giong, cau_khac=g_khac)
+    print(f"  câu giống hệt {len(giong)} bước (người nghe cho kết quả khác ở {lech_giong}) · "
+          f"câu khác {g_khac['n']} bước Δ={g_khac['delta']:+.2f} [{g_khac['lo']:+.2f}; {g_khac['hi']:+.2f}] b={g_khac['b']} c={g_khac['c']}")
+    ug = {k: int(R["grpo"][k]["executable"]) - int(R["s1_101"][k]["executable"]) for k in som}
+    ln = {k: C["grpo"][k]["dung"] - C["s1_101"][k]["dung"] for k in som}
+    bang = collections.Counter((ug[k], ln[k]) for k in som)
+    out["lat_chieu"] = {f"UGround {a:+d} · người nghe {b:+d}": v for (a, b), v in sorted(bang.items())}
+    cung = bang[(1, 1)] + bang[(-1, -1)]; nguoc = bang[(1, -1)] + bang[(-1, 1)]
+    print(f"  bước cả hai dụng cụ cùng lật: cùng chiều {cung} · ngược chiều {nguoc}")
+    for (a, b), v in sorted(bang.items()):
+        print(f"    UGround {a:+d} · người nghe {b:+d}: {v}")
+    out["lat_chieu_tom"] = dict(cung_chieu=cung, nguoc_chieu=nguoc)
+
+    # (9) dải hữu dụng (trần − câu rỗng) cùng lát 800 của runs/floor
+    K8 = sorted(L.nap(os.path.join(RUNS, "floor", "score_f1_trong_raw.jsonl")))
+    K8 = [k for k in K8 if k in C["chuan"]]
+    t8 = 100 * sum(C["chuan"][k]["dung"] for k in K8) / len(K8)
+    s8 = 100 * sum(C["san"][k]["dung"] for k in K8) / len(K8)
+    out["dai_lat800"] = dict(n=len(K8), tran=round(t8, 2), san=round(s8, 2), dai=round(t8 - s8, 2))
+    print(f"\nLát 800 (cùng lát sàn của exec): trần {t8:.2f} · câu rỗng {s8:.2f} · dải {t8-s8:.2f}")
 
     q = os.path.join(SOM, "som_phan_tich.json")
     json.dump(out, open(q, "w", encoding="utf-8"), ensure_ascii=False, indent=1)

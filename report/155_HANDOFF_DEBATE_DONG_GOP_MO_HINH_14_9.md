@@ -111,35 +111,103 @@ gom cụm theo app, G = 1.091. Mọi nhánh cùng 4.463 bước.
 
 ### 2.4 Người nghe trắc nghiệm Phi-4 (commit Kaggle đêm 14/9, về máy 15/9)
 
-**Giao thức.** `microsoft/Phi-4-multimodal-instruct` (MIT, nền Phi-4-mini, ngoài họ Qwen; commit HF `93f923e1…`,
-ghi ở `runs/som/huggingface_repos_commit_14_9.json`) nhận ảnh màn hình có vẽ khung + số lên mọi phần tử bấm được
-(trung vị 15 ô/màn), cộng **một câu**, không mục tiêu, không lịch sử, rồi trả lời số ô. Đúng khi ô chọn chứa điểm chạm
-vàng. Tiền lệ: *comprehension accuracy* của REG (Mao CVPR 2016 · Luo CVPR 2017) và định dạng trắc nghiệm của Mind2Web
-(NeurIPS 2023). Giải mã tham lam, 16 mảnh ảnh, `sdpa`, fp16, T4×2, **3,4 s/bước**, **0 bước tràn bộ nhớ**.
-Mã `harness/som_build.py · som_cau.py · som_listener.py (14/9-b)` · đọc `som_doc.py` + **`som_phan_tich.py`** (mới) →
-`runs/som/som_ket_qua.json`, `runs/som/som_phan_tich.json`.
+Mọi số trong mục này tính lại được bằng `python3 harness/som_doc.py runs/som/chon_phi4_{chuan,grpo,s1_101,base,san}.jsonl`
+(KTC từng nhánh + McNemar → `runs/som/som_ket_qua.json`) và `python3 harness/som_phan_tich.py` (KTC ghép cặp, bảng bốn
+thước, toàn vẹn, phân tích có điều kiện → `runs/som/som_phan_tich.json`), CPU ~1,5 phút.
 
-**Chọn người nghe (luật khoá trước, lát 200 bước cố định seed 20260914, theo câu chuẩn):** Phi-4 **50,5** · Pixtral-12B
-**8,0** ⇒ Phi-4. ⚠️ Pixtral **không thua vì kém hiểu**: 164/200 câu trả lời mở đầu bằng *"The instruction …"* rồi bị cắt ở
-8 token nên không ra số; trên 36 bước có ra số thì đúng 16 (44%). Đây là lỗi định dạng của giao thức (tối đa 8 token),
-không phải phép so năng lực — nếu phải báo thì khai đúng vậy.
-**Kiểm tất định:** 200 bước lát thử chạy lại trong lượt đủ cho kết quả **trùng tuyệt đối** (b = c = 0).
+#### 2.4.1 Giao thức
 
-**Kết quả (4.463 bước chạm, KTC95 bootstrap cụm app G = 1.091):**
+- **Người nghe:** `microsoft/Phi-4-multimodal-instruct` (giấy phép MIT, nền Phi-4-mini, **ngoài họ Qwen**). Commit HF
+  `93f923e1a7727d1c4f446756212d9d3e8fcc5d81`, ghi ở `runs/som/huggingface_repos_commit_14_9.json`.
+- **Đầu vào:** ảnh màn hình có vẽ khung màu + số lên mọi phần tử bấm được, cộng **một câu** cần chấm. **Không** mục tiêu tác
+  vụ, **không** lịch sử ⇒ chỉ giải được bước nếu câu tự đủ thông tin. Câu hỏi cố định: *"Which numbered box is the element
+  the instruction tells the user to tap? Answer with the number only."*
+- **Khối ứng viên** (`harness/som_build.py` → `harness/dg1_cache/som/som.jsonl`): nút trợ năng hiển thị có thao tác
+  CLICK/LONG_CLICK, cạnh ≥ 8 px, ≤ 50% màn, gộp IoU ≥ 0,9, đánh số theo thứ tự đọc. Trung vị **15 ô/màn**, p90 49;
+  50 màn không có ô nào (tính trượt).
+- **Đúng** khi ô được chọn chứa điểm chạm vàng. Trung bình 1,11 ô chứa điểm vàng mỗi bước (ô lồng nhau).
+- **Mốc của thang:** trần phủ đáp án **95,72%** (bước có ít nhất một ô chứa điểm vàng) · đoán ngẫu nhiên kỳ vọng **10,06%**.
+- **Suy luận:** giải mã tham lam, tối đa 8 token, lấy số nguyên đầu tiên; 16 mảnh ảnh (36 mặc định tràn bộ nhớ T4), `sdpa`,
+  fp16; hai T4 chia chẵn/lẻ theo chỉ số bước; **3,36–3,51 s/bước**, ≈ 2,24 h/nhánh.
+- **Tiền lệ:** *comprehension accuracy* của dòng REG (Mao et al. CVPR 2016; Luo & Shakhnarovich CVPR 2017), chấm lời
+  hướng dẫn bằng người thực hiện (Seq2Act ACL 2020), định dạng trắc nghiệm trên phần tử (Mind2Web NeurIPS 2023).
+- **Mã:** `som_build.py` · `som_cau.py` (câu lấy từ trường `sent` của tệp thô) · `som_listener.py` bản `14/9-b` ·
+  runbook `harness/kaggle_som_listener.md` phần G.
 
-| câu đưa vào người nghe | chọn đúng | KTC95 | ∧ đúng thao tác |
+#### 2.4.2 Diễn biến lượt commit (`runs/som/tom_tat.txt`)
+
+| mốc | việc |
+|---|---|
+| 0,29 h | lát thử 200 bước Phi-4: câu chuẩn **50,5** · câu rỗng **18,0** (dải 32,5 ≥ 20 ⇒ qua phép kiểm an toàn) |
+| 0,59 h | lát thử 200 bước Pixtral-12B: câu chuẩn **8,0** ⇒ chọn **Phi-4** theo luật đặt trước (câu chuẩn cao hơn thắng) |
+| 2,83 h | chặng ba (GRPO) xong 4.463 bước |
+| 5,09 h | câu chuẩn xong |
+| 7,33 h | câu rỗng nghĩa xong |
+| 9,56 h | S1/101 xong |
+| 11,33 h | chạm trần giờ tự đặt ⇒ dừng Base ở **3.566/4.463** bước; **MIN và S1/202 không chạy** |
+
+#### 2.4.3 Toàn vẹn dữ liệu (đạt hết)
+
+- Tệp gộp = hợp đúng hai nửa GPU, **không bước trùng**, nửa `s0` toàn chỉ số chẵn, `s1` toàn chỉ số lẻ, số dòng = số khoá.
+- **0 bước tràn bộ nhớ** ở cả năm nhánh. Không ra số: 2 bước (câu chuẩn, chặng ba, S1) · 4 (Base) · 7 (câu rỗng).
+  Không gọi mô hình (màn không có ô hoặc câu rỗng): 50–51 bước mỗi nhánh đủ.
+- **Tất định:** 200 bước lát thử được chấm lại trong lượt đủ, câu trả lời thô **trùng 200/200** ở cả câu chuẩn lẫn câu rỗng.
+- **Câu giống hệt thì kết quả giống hệt:** 1.795 bước chặng ba và S1 viết câu y hệt nhau, người nghe cho kết quả khác ở **0** bước.
+
+#### 2.4.4 Vì sao Pixtral chỉ 8%
+
+Lỗi **định dạng**, không phải kém hiểu: 164/200 câu trả lời không có số vì mở đầu bằng văn xuôi (*"The instruction…"* 124 ·
+*"The element…"* 25 · *"The number…"* 5 · *"To determine…"* 3) rồi bị cắt ở 8 token. Trên 36 bước có ra số, Pixtral đúng
+16 (44%, n quá nhỏ để so). ⇒ Phép chọn người nghe thực chất là chọn mô hình tuân thủ định dạng *"number only"*. Nếu cần
+báo Pixtral phải khai đúng vậy; muốn so công bằng thì tăng `max_new_tokens` và tách số từ câu dài (chưa làm).
+
+#### 2.4.5 Kết quả chính (4.463 bước chạm, KTC95 bootstrap cụm app, G = 1.091)
+
+| câu đưa vào người nghe | chọn đúng | KTC95 | ∧ đúng thao tác | có đáp án trong khối (n = 4.272) |
+|---|---|---|---|---|
+| câu chuẩn | **54,94** | [53,05; 56,82] | 54,90 | 57,40 |
+| chặng ba (GRPO) | **45,78** | [44,07; 47,49] | 45,57 | 47,82 |
+| S1/101 | **44,63** | [42,88; 46,37] | 43,51 | 46,63 |
+| Base *(3.566 bước)* | 38,56 | [36,71; 40,44] | 37,55 | - |
+| câu rỗng nghĩa `"Tap the button."` | 15,86 | [14,69; 17,04] | 15,86 | 16,57 |
+| *đoán ngẫu nhiên (kỳ vọng) · trần phủ đáp án* | *10,06 · 95,72* | | | |
+
+- **Dải hữu dụng** (câu chuẩn − câu rỗng): **39,08** trên 4.463 bước; trên đúng lát 800 bước dùng đo sàn của exec: trần 54,00 ·
+  câu rỗng 14,38 · dải **39,62** (exec trên cùng lát: 62,9; D.3 68,9; AitW 64,9) ⇒ thang **hẹp hơn** các luật toạ độ.
+- **"∧ đúng thao tác"** gần như không đổi với câu chuẩn/chặng ba (đúng thao tác 98,9–100%), trừ S1 (−1,12) và Base (−1,01)
+  vì hai nhánh này hay viết sai loại thao tác.
+
+#### 2.4.6 Phép so ghép cặp trên 4.463 bước
+
+| phép so | Δ | KTC95 ghép cặp (cụm app) | McNemar b / c | p |
+|---|---|---|---|---|
+| **chặng ba − S1/101** | **+1,14** | **[+0,23; +2,10]** | 205 / 256 | **0,020** |
+| câu chuẩn − chặng ba | +9,16 | [+7,84; +10,48] | 162 / 571 | 2,6e−51 |
+| câu chuẩn − S1/101 | +10,31 | [+8,96; +11,70] | 146 / 606 | 6,9e−63 |
+| chặng ba − câu rỗng | +29,91 | [+28,28; +31,59] | 136 / 1.471 | 8,2e−243 |
+| S1/101 − câu rỗng | +28,77 | [+27,03; +30,53] | 151 / 1.435 | 1,0e−227 |
+| câu chuẩn − câu rỗng | +39,08 | - | 58 / 1.802 | < 1e−300 |
+
+Trên **3.566 bước có Base** (McNemar): S1/101 − Base **+6,14** (b 241 / c 460, p = 1,8e−16) · chặng ba − Base **+7,71**
+(212 / 487, p = 3,6e−25) · câu chuẩn − Base +16,66 (155 / 749) · Base − câu rỗng +22,32 (127 / 923).
+
+**Tách theo câu:** trong 4.463 bước, 1.795 bước chặng ba và S1 viết **câu y hệt** (Δ = 0 tuyệt đối), 2.668 bước câu khác nhau.
+Trên phần câu khác nhau: chặng ba − S1 **+1,91 [+0,36; +3,48]** ⇒ con số +1,14 toàn tập là mức tăng +1,91 bị pha loãng bởi
+40% số bước hai nhánh viết giống nhau.
+
+**So cùng phép so dưới bốn thước, đủ 4.463 bước** (ba luật toạ độ lấy từ `runs/d3_ktc.json`):
+
+| chặng ba − S1/101 | Δ | KTC95 | p |
 |---|---|---|---|
-| câu chuẩn | **54,94** | [53,05; 56,82] | 54,90 |
-| chặng ba (GRPO) | **45,78** | [44,07; 47,49] | 45,57 |
-| S1/101 | **44,63** | [42,88; 46,37] | 43,51 |
-| Base *(3.566/4.463 bước — bị cắt ở trần giờ 11,3 h)* | 38,56 | [36,71; 40,44] | 37,55 |
-| câu rỗng nghĩa `"Tap the button."` | 15,86 | [14,69; 17,04] | 15,86 |
-| *mốc: đoán ngẫu nhiên (kỳ vọng) · trần phủ đáp án* | *10,06 · 95,72* | | |
+| exec | +0,96 | [−0,16; +2,11] | 0,090 |
+| **người nghe Phi-4** | **+1,14** | **[+0,23; +2,10]** | **0,020** |
+| D.3 | +1,55 | [+0,40; +2,69] | 0,008 |
+| AitW | +2,94 | [+1,77; +4,08] | 4,8e−07 |
 
-**Phép so ghép cặp (4.463 bước):** chặng ba − S1/101 **+1,14 [+0,23; +2,10]**, McNemar b = 205 c = 256 **p = 0,020** ·
-câu chuẩn − chặng ba +9,16 [+7,84; +10,48] · S1 − câu rỗng +28,77.
+⚠️ Chưa có S1/202 dưới người nghe. Dưới ba luật toạ độ, chặng ba − S1/202 là exec +0,45 (p 0,45) · D.3 +0,94 (p 0,11) ·
+AitW +1,99 (p 0,0008) ⇒ không được viết "chặng ba hơn S1 dưới người nghe" như kết luận chung cho cả hai hạt.
 
-**Trên đúng 3.566 bước Base đã chấm — bốn thước cạnh nhau:**
+#### 2.4.7 Bốn thước trên cùng 3.566 bước (lát Base đã chấm)
 
 | nhánh | người nghe Phi-4 | exec | D.3 | AitW |
 |---|---|---|---|---|
@@ -147,33 +215,86 @@ câu chuẩn − chặng ba +9,16 [+7,84; +10,48] · S1 − câu rỗng +28,77.
 | chặng ba | 46,27 | 60,24 | 67,19 | 77,31 |
 | S1/101 | 44,70 | 58,92 | 65,40 | 74,06 |
 | Base | 38,56 | 47,73 | 53,81 | 63,43 |
-| **chặng ba − S1/101** | **+1,57 [+0,55; +2,58]** | +1,32 [+0,08; +2,53] | +1,79 [+0,52; +3,05] | +3,25 [+1,96; +4,57] |
-| S1/101 − Base | +6,14 [+4,68; +7,62] | +11,19 | +11,58 | +10,63 |
-| **vị trí chặng ba trong dải Base → câu chuẩn** | **46,3%** | 45,3% | 45,1% | 48,4% |
+| câu rỗng | 16,24 | - | - | - |
 
-**Đọc:**
-1. ⭐ **Thứ tự Base < S1 < chặng ba < câu chuẩn giữ nguyên dưới một người đọc ngoài họ Qwen**, và chặng ba nằm ở
-   **cùng một vị trí tương đối (45–48%) trong dải Base → câu chuẩn dưới cả bốn thước**. Đây là bằng chứng độc lập mạnh
-   nhất hiện có rằng mức tăng của mô hình không phải do UGround (dựng trên Qwen2-VL) ưu ái câu của mô hình họ Qwen ⇒
-   **đóng phần lớn đòn "cùng họ Qwen"** còn mở ở mục GIỚI HẠN của `CLAUDE.md`.
-2. ⭐ **Chặng ba hơn S1/101 có ý nghĩa dưới người nghe độc lập** (+1,14, p = 0,020, KTC loại 0), trong khi dưới exec
-   trên 4.463 bước chỉ +0,96 p = 0,090. Cỡ hiệu ứng vẫn dưới MDE 2,11 và **chưa có S1/202, MIN dưới người nghe**.
-3. **Thang nén:** trần câu chuẩn chỉ 54,9 và S1 − Base co từ ~+11 xuống +6,14 ⇒ người nghe này **không nâng số tiêu đề**;
-   vai trò đúng là **kiểm chéo độc lập**, không phải số chính.
-4. **Người nghe khó dần theo cỡ khối ứng viên** (câu chuẩn 79,6 ở ≤5 ô → 30,4 ở >40 ô; câu rỗng 41,4 → 6,4): phần lớn
-   khoảng cách với trần là giới hạn của người nghe khi màn đông phần tử, không phải của câu.
-5. **Đồng thuận từng bước với UGround thấp–vừa:** κ = 0,25 (câu chuẩn) · 0,44 (chặng ba) · 0,43 (S1) ⇒ hai người đọc
-   sai ở **những bước khác nhau**, nên sự trùng thứ tự nhánh ở (1) không phải do hai dụng cụ cùng lỗi.
-   ⛔ Không dùng "một trong hai người đọc trúng" (chặng ba 67,3%) làm số: không có tiền lệ cho luật "bất kỳ bộ nào
-   trúng" (chỉ trung bình nhiều người nghe có tiền lệ, Zhao EACL 2021).
+Lát 3.566 đại diện tốt cho toàn tập: câu chuẩn 55,22 vs 54,94, chặng ba 46,27 vs 45,78, S1 44,70 vs 44,63.
 
-**Còn thiếu (cần một commit Kaggle nữa, ~5 h T4 miễn phí):** 897 bước còn lại của Base (~0,5 h, nối tiếp từ
-`chon_phi4_base_s0/s1.jsonl`) · **MIN** (~2,3 h) · **S1/202** (~2,3 h). Có S1/202 thì mới in được phép so chặng ba − S1
-dưới người nghe cho **cả hai hạt**, đúng luật "so với S1 phải báo cả hai hạt" ở §5.
+| phép so (KTC95 ghép cặp) | người nghe | exec | D.3 | AitW |
+|---|---|---|---|---|
+| S1/101 − Base | +6,14 [+4,68; +7,62] | +11,19 [+9,46; +12,90] | +11,58 [+9,79; +13,36] | +10,63 [+8,80; +12,41] |
+| chặng ba − Base | +7,71 [+6,31; +9,19] | +12,51 [+10,87; +14,12] | +13,38 [+11,71; +15,04] | +13,88 [+12,24; +15,48] |
+| chặng ba − S1/101 | +1,57 [+0,55; +2,58] | +1,32 [+0,08; +2,53] | +1,79 [+0,52; +3,05] | +3,25 [+1,96; +4,57] |
 
-**Hệ quả cho phiên debate đóng góp mô hình:** mọi phương pháp mới nên được chấm thêm bằng người nghe này (≈2,3 h T4/nhánh,
-0 đồng) — nếu mức tăng giữ dưới cả UGround lẫn Phi-4 thì phản biện "tối ưu cho bộ chấm" khó đứng. Không dùng người nghe
-này làm hàm thưởng (sẽ mất vai trò kiểm độc lập).
+**Vị trí trong dải Base → câu chuẩn** = (nhánh − Base) / (câu chuẩn − Base):
+
+| nhánh | người nghe | exec | D.3 | AitW |
+|---|---|---|---|---|
+| S1/101 | 36,9% | 40,6% | 39,0% | 37,1% |
+| chặng ba | **46,3%** | **45,3%** | **45,1%** | **48,4%** |
+
+#### 2.4.8 Người nghe so với UGround, từng bước
+
+**Bảng 2×2 (người nghe đúng × UGround exec trúng), 4.463 bước:**
+
+| câu | cả hai đúng | chỉ người nghe | chỉ UGround | cả hai trượt | đồng thuận | κ Cohen |
+|---|---|---|---|---|---|---|
+| câu chuẩn | 2.124 | 328 | 1.256 | 755 | 64,5% | 0,252 |
+| chặng ba | 1.722 | 321 | 959 | 1.461 | 71,3% | 0,436 |
+| S1/101 | 1.667 | 325 | 971 | 1.500 | 71,0% | 0,430 |
+
+- Người nghe đúng **62,8–64,2%** khi UGround trúng, nhưng chỉ **18,0% (chặng ba) / 17,8% (S1)** khi UGround trượt, so với
+  **30,3%** với câu chuẩn ⇒ ở những bước UGround trượt, câu mô hình **thực sự thiếu thông tin** hơn câu chuẩn, không chỉ là
+  UGround trỏ lệch.
+- Trên câu chuẩn, 1.256 bước UGround trúng mà người nghe trượt ⇒ phần lớn khoảng cách 54,9 ↔ 75,7 là giới hạn của người nghe.
+- ⭐ **Chiều lật chặng ba vs S1 trên cùng một bước:** trong các bước **cả hai** dụng cụ đều thấy kết quả đổi giữa hai nhánh,
+  **276 bước cùng chiều** (155 cùng nghiêng về chặng ba, 121 cùng nghiêng về S1) và chỉ **15 bước ngược chiều** (95% cùng chiều).
+  Bảng đủ: UGround +1 / người nghe +1: 155 · +1/0: 166 · +1/−1: 8 · 0/+1: 94 · 0/0: 3.678 · 0/−1: 76 · −1/+1: 7 ·
+  −1/0: 158 · −1/−1: 121. ⇒ Khi hai dụng cụ cùng phản ứng với việc câu đổi, chúng **gần như luôn đồng ý** câu nào tốt hơn.
+- ⛔ Không dùng "một trong hai dụng cụ trúng" (chặng ba 67,3%, câu chuẩn 83,1%) làm số: không có tiền lệ cho luật
+  "bất kỳ người nghe nào trúng"; chỉ **trung bình** nhiều người nghe có tiền lệ (Zhao et al. EACL 2021).
+
+#### 2.4.9 Độ khó theo cỡ khối ứng viên và thiên lệch chọn ô
+
+| số ô trên màn | n | câu chuẩn | chặng ba | S1/101 | câu rỗng |
+|---|---|---|---|---|---|
+| 1–5 | 486 | 79,6 | 67,3 | 65,6 | 41,4 |
+| 6–10 | 854 | 66,3 | 56,8 | 56,7 | 21,5 |
+| 11–20 | 1.606 | 58,8 | 47,3 | 47,1 | 12,5 |
+| 21–40 | 737 | 45,2 | 37,7 | 36,2 | 10,2 |
+| > 40 | 730 | 30,4 | 26,6 | 22,7 | 6,4 |
+
+- Độ chính xác giảm đơn điệu theo độ đông màn ở **mọi** loại câu, cả câu chuẩn ⇒ trần thấp chủ yếu do người nghe kém ở màn đông.
+- Chặng ba hơn S1 rõ nhất ở màn **> 40 ô** (+3,9), rồi 1–5 ô (+1,7) và 21–40 ô (+1,5); gần bằng nhau ở 6–20 ô (+0,1/+0,2).
+- **Thiên lệch ô số 1:** ô 1 là đáp án ở 9,95% số bước, nhưng người nghe chọn ô 1 ở 14,5% (câu chuẩn) · 14,3% (chặng ba) ·
+  16,2% (S1) · **20,2% (câu rỗng)** ⇒ khi câu không đủ thông tin người nghe dồn về ô đầu; đó là lý do câu rỗng (15,86) cao
+  hơn đoán ngẫu nhiên (10,06).
+
+#### 2.4.10 Đọc kết quả
+
+1. ⭐ **Thứ tự Base < S1 < chặng ba < câu chuẩn giữ nguyên dưới một người đọc ngoài họ Qwen**, và chặng ba nằm ở **cùng
+   vị trí tương đối 45–48%** trong dải Base → câu chuẩn dưới cả bốn thước. Cộng thêm 95% bước lật cùng chiều ⇒ bằng chứng
+   độc lập mạnh nhất hiện có rằng mức tăng của mô hình không do UGround (dựng trên Qwen2-VL) ưu ái câu của mô hình họ Qwen
+   ⇒ **đóng phần lớn đòn "cùng họ Qwen"** ở mục GIỚI HẠN của `CLAUDE.md`.
+2. ⭐ **Chặng ba hơn S1/101 có ý nghĩa dưới người nghe độc lập** (+1,14, p = 0,020; +1,91 trên phần câu khác nhau), trong khi
+   exec chỉ p = 0,090. Vẫn dưới MDE 2,11, một hạt, chưa có S1/202.
+3. **Không nâng số tiêu đề:** trần 54,9, dải 39,1 (hẹp hơn exec 62,9), S1 − Base co từ ~+11 xuống +6,14. Vai trò đúng là
+   **kiểm chéo độc lập** trong chương thực nghiệm hoặc phần trả lời phản biện, không phải số chính.
+4. **Câu mô hình thiếu thông tin thật ở bước UGround trượt** (người nghe đúng 18% vs 30% với câu chuẩn) ⇒ khớp chẩn đoán
+   ở §3: điểm nghẽn là chọn đúng phần tử để gọi tên, không phải UGround trỏ lệch.
+5. **Màn đông phần tử là chỗ khó chung** của cả người nghe lẫn mô hình, và là chỗ chặng ba hơn S1 nhiều nhất.
+
+#### 2.4.11 Còn thiếu, chi phí
+
+| việc | máy | thời gian |
+|---|---|---|
+| Base 897 bước còn lại (nối tiếp từ `chon_phi4_base_s0/s1.jsonl`) | Kaggle T4×2 | ~0,5 h |
+| MIN-DESC/101 | Kaggle T4×2 | ~2,3 h |
+| S1/202 (để so chặng ba với **cả hai** hạt S1) | Kaggle T4×2 | ~2,3 h |
+| Tổng (một commit) | 0 đồng | **~5,1 h + 0,3 h nạp mô hình** |
+
+**Hệ quả cho phiên debate đóng góp mô hình:** mọi phương pháp mới nên chấm thêm bằng người nghe này (≈2,3 h T4/nhánh,
+0 đồng). Mức tăng giữ được dưới cả UGround lẫn Phi-4 thì phản biện "tối ưu cho bộ chấm" khó đứng. ⛔ Không dùng người nghe
+này làm hàm thưởng hay bộ lọc, nếu không nó mất vai trò kiểm độc lập.
 
 ---
 
@@ -248,3 +369,6 @@ này làm hàm thưởng (sẽ mất vai trò kiểm độc lập).
    căn cứ · chi phí theo mục 5 · rủi ro hội đồng bắt (đặc biệt: công thuộc "train thêm" chứ không thuộc phương pháp —
    CE2 − S2 = +2,69 là tiền lệ).
 3. Ưu tiên phương pháp có tiền lệ ở hội nghị lớn và chạy được trong ≤ 2 tuần máy.
+4. Nhánh mới chấm **bốn thước**: AitW · D.3 · exec (UGround) + **người nghe Phi-4** (§2.4, ≈2,3 h T4, 0 đồng) để chặn đòn
+   "tối ưu cho bộ chấm". Chặng ba hiện ở 45–48% dải Base → câu chuẩn dưới cả bốn; phương pháp mới cần dịch vị trí này
+   lên ở **cả bốn**, không chỉ ở một thước.
