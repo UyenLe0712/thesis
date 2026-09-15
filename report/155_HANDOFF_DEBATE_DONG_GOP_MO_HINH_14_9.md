@@ -107,9 +107,73 @@ gom cụm theo app, G = 1.091. Mọi nhánh cùng 4.463 bước.
   ROUGE-L 68,5 · SPICE 42,5 (S1 44,4) · CIDEr-D ~400. **BERTScore** rescaled 66,8 · **chrF** 61,9 (`runs/text_metrics_them.json`).
   ⚠️ Nhóm văn bản xếp **S1 trên** MIN/chặng ba.
 - **Toạ độ mô hình tự khai trong `<desc>`**: chặng ba trong khung vàng 65,5 · AitW khung vàng 78,5 (MIN 65,2 / 77,3).
-- **Người nghe trắc nghiệm** (đang chạy trên Kaggle đêm 14/9, `harness/kaggle_som_listener.md`): Phi-4-multimodal đọc ảnh
-  vẽ số lên phần tử bấm được + một câu, chọn số ô. Lát thử 200 bước: **câu chuẩn 50,5 · câu rỗng 18,0** ⇒ trần thấp,
-  **không dùng để nâng số**, chỉ để kiểm độc lập ngoài họ Qwen.
+- **Người nghe trắc nghiệm**: kết quả đủ ở **§2.4** ngay dưới.
+
+### 2.4 Người nghe trắc nghiệm Phi-4 (commit Kaggle đêm 14/9, về máy 15/9)
+
+**Giao thức.** `microsoft/Phi-4-multimodal-instruct` (MIT, nền Phi-4-mini, ngoài họ Qwen; commit HF `93f923e1…`,
+ghi ở `runs/som/huggingface_repos_commit_14_9.json`) nhận ảnh màn hình có vẽ khung + số lên mọi phần tử bấm được
+(trung vị 15 ô/màn), cộng **một câu**, không mục tiêu, không lịch sử, rồi trả lời số ô. Đúng khi ô chọn chứa điểm chạm
+vàng. Tiền lệ: *comprehension accuracy* của REG (Mao CVPR 2016 · Luo CVPR 2017) và định dạng trắc nghiệm của Mind2Web
+(NeurIPS 2023). Giải mã tham lam, 16 mảnh ảnh, `sdpa`, fp16, T4×2, **3,4 s/bước**, **0 bước tràn bộ nhớ**.
+Mã `harness/som_build.py · som_cau.py · som_listener.py (14/9-b)` · đọc `som_doc.py` + **`som_phan_tich.py`** (mới) →
+`runs/som/som_ket_qua.json`, `runs/som/som_phan_tich.json`.
+
+**Chọn người nghe (luật khoá trước, lát 200 bước cố định seed 20260914, theo câu chuẩn):** Phi-4 **50,5** · Pixtral-12B
+**8,0** ⇒ Phi-4. ⚠️ Pixtral **không thua vì kém hiểu**: 164/200 câu trả lời mở đầu bằng *"The instruction …"* rồi bị cắt ở
+8 token nên không ra số; trên 36 bước có ra số thì đúng 16 (44%). Đây là lỗi định dạng của giao thức (tối đa 8 token),
+không phải phép so năng lực — nếu phải báo thì khai đúng vậy.
+**Kiểm tất định:** 200 bước lát thử chạy lại trong lượt đủ cho kết quả **trùng tuyệt đối** (b = c = 0).
+
+**Kết quả (4.463 bước chạm, KTC95 bootstrap cụm app G = 1.091):**
+
+| câu đưa vào người nghe | chọn đúng | KTC95 | ∧ đúng thao tác |
+|---|---|---|---|
+| câu chuẩn | **54,94** | [53,05; 56,82] | 54,90 |
+| chặng ba (GRPO) | **45,78** | [44,07; 47,49] | 45,57 |
+| S1/101 | **44,63** | [42,88; 46,37] | 43,51 |
+| Base *(3.566/4.463 bước — bị cắt ở trần giờ 11,3 h)* | 38,56 | [36,71; 40,44] | 37,55 |
+| câu rỗng nghĩa `"Tap the button."` | 15,86 | [14,69; 17,04] | 15,86 |
+| *mốc: đoán ngẫu nhiên (kỳ vọng) · trần phủ đáp án* | *10,06 · 95,72* | | |
+
+**Phép so ghép cặp (4.463 bước):** chặng ba − S1/101 **+1,14 [+0,23; +2,10]**, McNemar b = 205 c = 256 **p = 0,020** ·
+câu chuẩn − chặng ba +9,16 [+7,84; +10,48] · S1 − câu rỗng +28,77.
+
+**Trên đúng 3.566 bước Base đã chấm — bốn thước cạnh nhau:**
+
+| nhánh | người nghe Phi-4 | exec | D.3 | AitW |
+|---|---|---|---|---|
+| câu chuẩn | 55,22 | 75,32 | 83,51 | 92,12 |
+| chặng ba | 46,27 | 60,24 | 67,19 | 77,31 |
+| S1/101 | 44,70 | 58,92 | 65,40 | 74,06 |
+| Base | 38,56 | 47,73 | 53,81 | 63,43 |
+| **chặng ba − S1/101** | **+1,57 [+0,55; +2,58]** | +1,32 [+0,08; +2,53] | +1,79 [+0,52; +3,05] | +3,25 [+1,96; +4,57] |
+| S1/101 − Base | +6,14 [+4,68; +7,62] | +11,19 | +11,58 | +10,63 |
+| **vị trí chặng ba trong dải Base → câu chuẩn** | **46,3%** | 45,3% | 45,1% | 48,4% |
+
+**Đọc:**
+1. ⭐ **Thứ tự Base < S1 < chặng ba < câu chuẩn giữ nguyên dưới một người đọc ngoài họ Qwen**, và chặng ba nằm ở
+   **cùng một vị trí tương đối (45–48%) trong dải Base → câu chuẩn dưới cả bốn thước**. Đây là bằng chứng độc lập mạnh
+   nhất hiện có rằng mức tăng của mô hình không phải do UGround (dựng trên Qwen2-VL) ưu ái câu của mô hình họ Qwen ⇒
+   **đóng phần lớn đòn "cùng họ Qwen"** còn mở ở mục GIỚI HẠN của `CLAUDE.md`.
+2. ⭐ **Chặng ba hơn S1/101 có ý nghĩa dưới người nghe độc lập** (+1,14, p = 0,020, KTC loại 0), trong khi dưới exec
+   trên 4.463 bước chỉ +0,96 p = 0,090. Cỡ hiệu ứng vẫn dưới MDE 2,11 và **chưa có S1/202, MIN dưới người nghe**.
+3. **Thang nén:** trần câu chuẩn chỉ 54,9 và S1 − Base co từ ~+11 xuống +6,14 ⇒ người nghe này **không nâng số tiêu đề**;
+   vai trò đúng là **kiểm chéo độc lập**, không phải số chính.
+4. **Người nghe khó dần theo cỡ khối ứng viên** (câu chuẩn 79,6 ở ≤5 ô → 30,4 ở >40 ô; câu rỗng 41,4 → 6,4): phần lớn
+   khoảng cách với trần là giới hạn của người nghe khi màn đông phần tử, không phải của câu.
+5. **Đồng thuận từng bước với UGround thấp–vừa:** κ = 0,25 (câu chuẩn) · 0,44 (chặng ba) · 0,43 (S1) ⇒ hai người đọc
+   sai ở **những bước khác nhau**, nên sự trùng thứ tự nhánh ở (1) không phải do hai dụng cụ cùng lỗi.
+   ⛔ Không dùng "một trong hai người đọc trúng" (chặng ba 67,3%) làm số: không có tiền lệ cho luật "bất kỳ bộ nào
+   trúng" (chỉ trung bình nhiều người nghe có tiền lệ, Zhao EACL 2021).
+
+**Còn thiếu (cần một commit Kaggle nữa, ~5 h T4 miễn phí):** 897 bước còn lại của Base (~0,5 h, nối tiếp từ
+`chon_phi4_base_s0/s1.jsonl`) · **MIN** (~2,3 h) · **S1/202** (~2,3 h). Có S1/202 thì mới in được phép so chặng ba − S1
+dưới người nghe cho **cả hai hạt**, đúng luật "so với S1 phải báo cả hai hạt" ở §5.
+
+**Hệ quả cho phiên debate đóng góp mô hình:** mọi phương pháp mới nên được chấm thêm bằng người nghe này (≈2,3 h T4/nhánh,
+0 đồng) — nếu mức tăng giữ dưới cả UGround lẫn Phi-4 thì phản biện "tối ưu cho bộ chấm" khó đứng. Không dùng người nghe
+này làm hàm thưởng (sẽ mất vai trò kiểm độc lập).
 
 ---
 
@@ -170,6 +234,7 @@ gom cụm theo app, G = 1.091. Mọi nhánh cùng 4.463 bước.
 | câu sinh + `<desc>` | `runs/preds_*.jsonl`, `runs/grpo_point/preds_grpo_point_seed101.jsonl` |
 | khung phần tử vàng | `harness/dg1_cache/test_ac/descriptors.jsonl` (không track; dựng bằng `descriptor_label_build.py`) |
 | tính lại ba luật + KTC | `harness/luat_d3.py` · `luat_aitw_day_du.py` · `luat_aitw_moi_hop.py` · `d3_ktc.py` |
+| người nghe trắc nghiệm Phi-4 | tệp từng bước `runs/som/chon_phi4_{chuan,grpo,s1_101,base,san}.jsonl` (tệp `_s0/_s1` là hai nửa GPU, tệp gộp đã đủ) · khối ứng viên `harness/dg1_cache/som/som.jsonl` · đọc `harness/som_doc.py`, `harness/som_phan_tich.py` · runbook `harness/kaggle_som_listener.md` |
 | bảng trong luận văn | `harness/sinh_bang_nhieu_thuoc.py` → `thesis/chapters/bang_nhieu_thuoc.tex` (sinh tự động) |
 | cấu hình train | `harness/train_config*.yaml`, `harness/grpo_point.py` |
 | trạng thái + luật dự án | `CLAUDE.md` (khối 14/9 đứng đầu phần trạng thái) |

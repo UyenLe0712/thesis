@@ -1,0 +1,23 @@
+[cấu hình] backend=phi4 · câu=cau_chuan.jsonl · ra=/kaggle/working/som/chon_phi4_chuan_mau200.jsonl · bước cần=200 · đã xong=0 · shard=0/1 · mẫu=200
+The cache for model files in Transformers v4.22.0 has been updated. Migrating your old cache. This is a one-time only operation. You can interrupt this and resume the migration later on by calling `transformers.utils.move_cache()`.
+/usr/local/lib/python3.12/dist-packages/transformers/models/auto/image_processing_auto.py:590: FutureWarning: The image_processor_class argument is deprecated and will be removed in v4.42. Please use `slow_image_processor_class`, or `fast_image_processor_class` instead
+  warnings.warn(
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.48, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+A new version of the following files was downloaded from https://huggingface.co/microsoft/Phi-4-multimodal-instruct:
+- speech_conformer_encoder.py
+- vision_siglip_navit.py
+. Make sure to double-check they do not contain any added malicious code. To avoid downloading new versions of the code file, you can pin a revision.
+/root/.cache/huggingface/modules/transformers_modules/microsoft/Phi-4-multimodal-instruct/93f923e1a7727d1c4f446756212d9d3e8fcc5d81/speech_conformer_encoder.py:2774: FutureWarning: Please specify CheckpointImpl.NO_REENTRANT as CheckpointImpl.REENTRANT will soon be removed as the default and eventually deprecated.
+  lambda i: encoder_checkpoint_wrapper(
+[phi4] attn = sdpa
+[phi4] dynamic_hd = 16
+[mô hình] microsoft/Phi-4-multimodal-instruct · [phiên bản mã] 14/9-b (sdpa + bắt OOM)
+  25/200 · 3.31 s/bước · còn ~10 phút
+  50/200 · 3.34 s/bước · còn ~8 phút
+  75/200 · 3.31 s/bước · còn ~7 phút
+  100/200 · 3.37 s/bước · còn ~6 phút
+  125/200 · 3.37 s/bước · còn ~4 phút
+  150/200 · 3.35 s/bước · còn ~3 phút
+  175/200 · 3.36 s/bước · còn ~1 phút
+  200/200 · 3.36 s/bước · còn ~0 phút
+xong 200 bước mới → /kaggle/working/som/chon_phi4_chuan_mau200.jsonl · OOM 0

@@ -514,7 +514,14 @@ ghi cả ba, giải thích: AitW/D.3 thưởng việc chạm tới gần đúng 
   ⚠️ **Lát thử 200 bước (commit đêm 14/9, log 0,29 h):** Phi-4 **câu chuẩn 50,5%** · câu rỗng **18,0%** · 3,36 s/bước · OOM 0.
   Dải 32,5 điểm ⇒ qua phép kiểm an toàn (≥20), commit chạy tiếp. ⛔ **Trần 50,5 THẤP hơn xa exec 75,7 / AitW 92,1** ⇒ thước này
   **KHÔNG nâng số tiêu đề** (mô hình dự kiến ~40 [suy]). Giá trị còn lại: người nghe **ngoài họ Qwen, không học AndroidControl**
-  ⇒ đóng đòn "cùng họ Qwen" còn mở ở mục GIỚI HẠN, nếu thứ tự nhánh giữ nguyên. Chờ số Pixtral (có thể trần cao hơn).
+  ⇒ đóng đòn "cùng họ Qwen" còn mở ở mục GIỚI HẠN, nếu thứ tự nhánh giữ nguyên.
+  ✅ **KẾT QUẢ ĐỦ 15/9 (`report/155` §2.4, `runs/som/`, `harness/som_phan_tich.py`):** Pixtral lát 200 chỉ **8,0** vì lỗi định
+  dạng (164/200 trả lời dài bị cắt ở 8 token, không phải kém hiểu) ⇒ chọn Phi-4. Phi-4 trên 4.463 bước: câu chuẩn **54,94** ·
+  chặng ba **45,78** · S1/101 **44,63** · Base 38,56 (chỉ 3.566 bước, cắt ở trần giờ) · câu rỗng 15,86 · đoán ngẫu nhiên 10,06.
+  ⭐ **Thứ tự nhánh giữ nguyên**, chặng ba nằm ở **45–48% dải Base→câu chuẩn dưới cả bốn thước** (người nghe · exec · D.3 · AitW)
+  ⇒ đòn "cùng họ Qwen" **đóng phần lớn**. ⭐ Chặng ba − S1/101 dưới người nghe **+1,14 [+0,23; +2,10] p=0,020** (exec +0,96
+  p=0,090). κ với UGround chỉ 0,25–0,44 ⇒ hai dụng cụ sai ở bước khác nhau. Kiểm tất định: lát 200 chạy lại trùng tuyệt đối.
+  Còn nợ: Base 897 bước · MIN · S1/202 (~5 h T4, một commit). ⛔ Không làm số tiêu đề (trần 54,9).
 · **Đo 14/9 đêm, 0 GPU (`harness/luat_aitw_moi_hop.py` → `runs/luat_aitw_moi_hop.json`):**
   ① AitW với **mọi khung phần tử bấm được** (thay vì chỉ khung vàng): chặng ba **85,01** · MIN 84,36 · S1/101 81,04 · Base 73,36 ·
   câu chuẩn 96,17. ⛔ **Sàn nhảy vọt:** câu rỗng **41,62** (khung vàng 25,88) · câu sai màn 35,88 ⇒ dải 54,3, HẸP hơn exec 62,9.
