@@ -54,6 +54,7 @@ Colab phụ thuộc cũng dùng tên `harness`).
 | **⭐ LUẬT QUYẾT lượt ② đã khoá trước khi có điểm τ (x17)** | `report/106` mục **(x17)** · mã: `harness/quet_tau.py` · `harness/luat_d3.py` |
 | **⭐⭐ NÂNG TRẦN THƯỚC — luật D.3 gốc của AndroidControl, đo 5/9, 0 giây GPU** | **`report/140_NANG_TRAN_LUAT_D3.md`** |
 | **⭐ LUẬN VĂN + DECK BẢO VỆ đã đồng bộ tới 5/9 (114 trang · 26+12 slide)** | mục *Luận văn — ĐÃ ĐỒNG BỘ TỚI 5/9* trong file này · `thesis/chapters/` · `slides/build/build_baove.js` |
+| **bài SOICT 2026 (21/9, EasyChair mở tới 25/9) — thước: tách cổng loại thao tác khỏi hình học; nguồn chép từ 15 ảnh; ĐÃ NỘP 21/9, EasyChair #5577 (còn thêm đồng tác giả trước 25/9)** | `paper/soict2026/README.md` · `paper/soict2026/main.tex` |
 | hai bài báo đã nộp (FAIR · VCL) — chỉ còn chờ hồi âm EDAS | mục *HAI BÀI BÁO — ĐÃ NỘP* trong file này · `report/118` (phân số) · `report/129·130·131` (FAIR) · `paper/vcl2026/README.md` |
 | prompt research gửi mô hình phiên khác (tự chứa) | `report/137_PROMPT_RESEARCH_CHO_FABLE.md` |
 | tiền lệ cho trục bỏ cuộc / risk-coverage của SOICT (tra 4/9) | `report/135_TIEN_LE_ABSTENTION_SOICT.md` |
@@ -535,6 +536,16 @@ ghi cả ba, giải thích: AitW/D.3 thưởng việc chạm tới gần đúng 
   [−2,18; +0,29] p=0,100** (hết ý nghĩa). Chuỗi đóng góp trên nền S2: CE2 − S2 AitW **+2,69** · MIN − S2 **+3,00** · **chặng ba − S2
   +3,90 [+2,90; +4,90]** (exec +2,89), đều p<0,001 · MIN − CE2 AitW **+0,31 p=0,215** (riêng ORPO không ý nghĩa dưới AitW). Đã
   thêm hai hàng S2 vào `tab:d3ktc` và một đoạn ở ch6. Bản dựng thử scratchpad **132 trang, 0 overfull, 0 undefined**.
+
+### ⭐⭐⭐ 21/9 — NGUỒN CỦA +2,94 DƯỚI AitW LÀ CỔNG LOẠI THAO TÁC, KHÔNG PHẢI ĐỊNH VỊ (đã sửa luận văn)
+
+`harness/phan_ra_cong_thao_tac.py` → `runs/phan_ra_cong_thao_tac.json`, 0 GPU. Chặng ba − S1/101 dưới AitW
+**+2,94 = +3,11 từ 256 bước (5,7%) S1 viết sai loại thao tác + 0,11 từ 4.189 bước cả hai đúng loại thao
+tác** (trúng 79,04 vs 78,92). So S1/202: +3,09 và **−0,67**. Dưới exec nhóm cả hai đúng cho −0,81 (S1/101).
+⇒ Câu cũ ở ch6 *"cải thiện thể hiện rõ nhất ở việc đưa lần chạm tới gần đúng phần tử"* là **SAI**, đã thay
+21/9 (ch6 · tóm tắt VI/EN · ch1 · ch7; ch7 nay kèm hạt 202 +1,99 dưới MDE). Số 77,3 và +2,94 vẫn giữ.
+Bài SOICT (`paper/soict2026/`) nói cùng kết luận. Dựng thử scratchpad **133 trang, 0 overfull, 0 undefined**;
+chưa dựng lại `thesis/main.pdf`.
 
 ### ⭐⭐⭐ 13/9 — USER QUYẾT: HAI SỐ SONG SONG (exec · D.3) + NHÓM THƯỚC VĂN BẢN — THẮNG các dòng "giữ Voronoi làm headline / D.3 chỉ báo kèm" bên dưới
 

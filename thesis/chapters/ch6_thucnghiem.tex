@@ -153,12 +153,20 @@ hạt giống $202$ là $+1{,}99$ điểm $[+0{,}84; +3{,}13]$, cả hai với $
 hạt giống $101$ vượt ngưỡng phát hiện $2{,}11$ điểm của thiết kế. Cũng theo luật này, MIN-DESC hơn
 S1 là $+2{,}04$ điểm với $p < 0{,}001$, và chặng ba hơn MIN-DESC là $+0{,}90$ điểm với $p = 0{,}007$.
 Theo luật hộp phần tử, chặng ba hơn S1 hạt giống $101$ là $+1{,}55$ điểm với $p = 0{,}008$. Theo
-executability, cùng phép so chỉ còn $+0{,}96$ điểm với $p = 0{,}090$. Chênh lệch giữa ba luật có
-cùng một nguồn: executability đòi câu dẫn tới đúng phần tử trong số các phần tử lân cận, còn hai
-luật kia chấp nhận cả những lần chạm rơi vào vùng quanh phần tử cần chạm. Các mức cải thiện của
-chặng hai và chặng ba vì vậy thể hiện rõ nhất ở việc đưa lần chạm tới gần đúng phần tử, và mới
-thể hiện một phần ở việc tách phần tử ấy khỏi các phần tử sát bên. Mọi con số trên là của một hạt
-giống cho nhánh xử lý.
+executability, cùng phép so chỉ còn $+0{,}96$ điểm với $p = 0{,}090$. Phân rã theo từng bước cho thấy nguồn
+của mức chênh. Chia quần thể theo việc S1 hạt giống $101$ có gọi đúng loại thao tác hay không, mức
+hơn $+2{,}94$ điểm theo luật khớp chạm của AndroidInTheWild gồm $+3{,}11$ điểm từ $256$ bước
+($5{,}7\%$) mà S1 viết sai loại thao tác, chẳng hạn viết vuốt hay cuộn khi cần chạm, và chỉ
+$+0{,}11$ điểm từ $4.189$ bước mà cả hai nhánh đều gọi đúng loại thao tác. Trên nhóm bước sau, tỉ
+lệ trúng của hai nhánh gần như bằng nhau ($79{,}04\%$ so với $78{,}92\%$); so với S1 hạt giống
+$202$, nhóm này còn nghiêng về S1 ($-0{,}67$ điểm), trong khi nhóm bước S1 sai loại thao tác vẫn
+cho $+3{,}09$ điểm. Ba luật cho ba mức chênh khác nhau vì hai lý do. Luật lỏng cho thêm điểm trên
+chính nhóm bước S1 sai loại thao tác ($+1{,}97$ theo executability, $+3{,}11$ theo luật khớp chạm
+của AndroidInTheWild). Luật lỏng cũng không phạt những lần chạm rơi sát bên phần tử cần chạm,
+loại lỗi mà chặng ba mắc nhiều hơn S1: trên nhóm bước cả hai gọi đúng loại thao tác, chặng ba
+thấp hơn S1 $0{,}81$ điểm theo executability. Đóng góp của chặng hai và chặng ba vì vậy nằm ở
+việc câu gọi đúng loại thao tác, chưa nằm ở việc định vị phần tử tốt hơn. Mọi con số trên là của
+một hạt giống cho nhánh xử lý.
 
 \paragraph{Nhóm thước so với câu chuẩn.} Bảng~\ref{tab:nhieuthuoc_vanban} dùng các thước mà Widget
 Captioning~\cite{widgetcap} và Screen2Words~\cite{screen2words} báo cho bài toán sinh mô tả giao

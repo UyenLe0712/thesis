@@ -59,7 +59,8 @@ AndroidInTheWild (cận trên $85{,}0\%$ khi xét mọi khung phần tử của 
 executability, trong khi câu chuẩn đạt $92{,}1\%$, $83{,}8\%$ và $75{,}7\%$ dưới cùng ba luật.
 Theo luật khớp chạm của AndroidInTheWild, chặng ba hơn nhánh chỉ tinh chỉnh có giám sát
 $2{,}94$ điểm, với khoảng tin cậy $[+1{,}77; +4{,}08]$ và $p < 0{,}001$. Trên các bước chạm, mô hình gọi đúng loại thao tác ở $98{,}9\%$
-số bước.
+số bước, và mức chênh trên đến từ chính nhóm bước mà nhánh nền gọi sai loại thao tác; trên các
+bước cả hai nhánh gọi đúng loại thao tác, tỉ lệ trúng của hai nhánh gần như bằng nhau.
 
 Phần đóng góp cuối là một chẩn đoán ở mức từng bước. Khi mô hình khai báo đúng phần tử,
 điều xảy ra ở $60{,}6\%$ số bước, mô hình viết câu tốt hơn nhánh nền $8{,}83$ điểm và vượt cả
@@ -180,7 +181,9 @@ bound when every element box on the screen is considered), 67.0\% under
 AndroidControl's original element-box rule and 60.1\% under executability, against 92.1\%,
 83.8\% and 75.7\% for the human references under the same three rules. Under the Android in the
 Wild rule the third stage beats the supervised fine-tuning baseline by 2.94 points
-(95\% CI [+1.77, +4.08], $p < 0.001$). On touch steps the model names the correct action type in 98.9\% of cases.
+(95\% CI [+1.77, +4.08], $p < 0.001$). On touch steps the model names the correct action type in 98.9\% of cases,
+and the gain comes from the steps on which the baseline names the wrong action type; where both
+systems name the correct action type, their hit rates are nearly equal.
 
 The final contribution is a step-level diagnosis. Where the model's own descriptor
 identifies the right element, which happens on 60.6\% of steps, it beats the control by
