@@ -553,7 +553,7 @@ từ 2,9 xuống 0,01: trần cao nhất **+2,8**, không ngưỡng nào chạm 
 ⭐ Mã chép từ ảnh tái lập đúng số Mac: `m2_loose` sau gộp nút = **3.975** (khớp §3.2).
 ⚠️ Mã G0 import `score()` của `m9` (3×F1, có bậc) chứ không phải ranker nhị phân §3 nói đã chọn ⇒ ở
 ngưỡng 2,9 %nhắc-tên người chỉ 9,5% (không phải 33,1%). Đã kiểm độ nhạy, không đổi kết luận.
-⚠️ `runs/noisuy/*/adapter_model.safetensors` (115 MB/tệp) đã vào `.gitignore` — chỉ có trên máy WSL.
+⚠️ `runs/noisuy/*/adapter_model.safetensors` (115 MB/tệp) đã vào `.gitignore`; bản lưu ở **GitHub Release `noisuy-adapters-v1`** (kèm SHA256SUMS, lệnh tải trong ghi chú release).
 
 ### ⭐⭐⭐ 21/9 — NGUỒN CỦA +2,94 DƯỚI AitW LÀ CỔNG LOẠI THAO TÁC, KHÔNG PHẢI ĐỊNH VỊ (đã sửa luận văn)
 
