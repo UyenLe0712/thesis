@@ -1,0 +1,11 @@
+G0  mention (bien>=2.9)  x  UGround exec
+nhanh         n   %ment   exec|ment  exec|khong  exec all
+nguoi      4448    9.53       89.39       74.33     75.76   n_ment=424 n_khong=4024
+S1         4448    6.81       92.41       56.74     59.17   n_ment=303 n_khong=4145
+CE2        4448    6.54       90.03       57.30     59.44   n_ment=291 n_khong=4157
+
+Tran suy ra = Delta(%ment) * Delta(exec|ment vs khong) / 100
+  nguoi vs S1: Delta ment=+2.72 pp  Delta exec|ment-khong (S1)=+35.67 pp  tran suy ra=+0.97 pp
+    => FAIL (< 2.0) - rut preference
+  nguoi vs CE2: Delta ment=+2.99 pp  Delta exec|ment-khong (CE2)=+32.73 pp  tran suy ra=+0.98 pp
+    => FAIL (< 2.0) - rut preference

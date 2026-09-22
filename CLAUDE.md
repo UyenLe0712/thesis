@@ -39,6 +39,7 @@ Colab phụ thuộc cũng dùng tên `harness`).
 
 | cần biết | mở |
 |---|---|
+| **⭐⭐⭐⭐⭐ BÀN GIAO 22/9 — THƯỚC ĐÃ CHỐT + DCRP; KẾT QUẢ G0 = FAIL (trần +0,97) ⇒ rút preference, không train; việc còn lại: UI-Venus 5 nhánh + viết chẩn đoán âm** | **`report/183_BAN_GIAO_METRIC_VA_DCRP_CHAY_THU_22_9.md`** (chép từ ảnh; mục *KẾT QUẢ G0*) · mã `harness/g0_mention_x_exec.py` · `m9_khop_mem.py` · `m2_m3_compare.py` · log `runs/g0/` |
 | **⭐⭐⭐⭐ BÀN GIAO 14/9 CHO PHIÊN DEBATE CHỐT ĐÓNG GÓP MÔ HÌNH — tự chứa: bộ ba số chính (AitW 77,3 · D.3 67,0 · exec 60,1), mọi phép so ghép cặp kể cả S2, điểm nghẽn, mọi hướng đã thử, ràng buộc, luật chơi mới về thước** | **`report/155_HANDOFF_DEBATE_DONG_GOP_MO_HINH_14_9.md`** (thắng `146`) |
 | **⭐⭐⭐ LỘ TRÌNH ĐANG THI HÀNH (9/9) — bốn chặng, phụ thuộc, checkbox; §0 ghi năm chỗ `151` mô tả khác máy WSL** | **`report/152_LO_TRINH_SAU_151_9_9.md`** · runbook chặng 3: `harness/kaggle_phase1_noisuy_9_9.md` |
 | **⭐⭐⭐ BẢN THI HÀNH 8/9 — THẮNG MỌI FILE VỀ *việc làm tiếp* VÀ *thước để báo*: phương pháp mới **VIS-SFT** (mở băng thị giác, một biến so S1/101), thước ba vai (tiêu đề `exec` 60,07 · báo kèm D.3 67,04), ba phase, bốn bẫy mất buổi** | **`report/151_BAN_CHOT_CUOI_PHUONG_PHAP_VA_THUOC_7_9.md`** (bản chép từ 31 ảnh; ảnh gốc `report/anh_chot_phuongphap_metric_9_9/`) |
@@ -536,6 +537,23 @@ ghi cả ba, giải thích: AitW/D.3 thưởng việc chạm tới gần đúng 
   [−2,18; +0,29] p=0,100** (hết ý nghĩa). Chuỗi đóng góp trên nền S2: CE2 − S2 AitW **+2,69** · MIN − S2 **+3,00** · **chặng ba − S2
   +3,90 [+2,90; +4,90]** (exec +2,89), đều p<0,001 · MIN − CE2 AitW **+0,31 p=0,215** (riêng ORPO không ý nghĩa dưới AitW). Đã
   thêm hai hàng S2 vào `tab:d3ktc` và một đoạn ở ch6. Bản dựng thử scratchpad **132 trang, 0 overfull, 0 undefined**.
+
+### ⭐⭐⭐⭐⭐ 22/9 — BÀN GIAO `183` (thước chốt + DCRP) VÀ CỔNG G0 **FAIL**
+
+Nguồn: `report/183_…` (chép từ 9 ảnh do phiên Mac soạn). Thước chốt ở đó: `exec` primary · D.3
+confirmatory · UI-Venus robustness **bắt buộc, còn thiếu 5/9 nhánh** · AitW/BLEU/BERTScore xuống phụ
+lục · Phi-4 SoM ưu tiên bỏ. ⚠️ Lệch với chỉ đạo 14/9 (bộ ba AitW·D.3·exec ở luận văn) — **chưa sửa
+luận văn**, chờ user quyết.
+Phương pháp đề xuất **DCRP** (cặp ưu tiên target-vs-distractor chấm bằng bộ chấm ký hiệu a11y+OCR,
+ORPO/DPO, không bộ trỏ trong thưởng) có cổng G0 chặn trước mọi GPU.
+⛔ **G0 đo 22/9 trên WSL, 16 s CPU: FAIL.** Trần suy ra = Δ%nhắc-tên (người − mô hình) × Δ`exec`
+(nhắc vs không) = **+0,97** (vs S1) / **+0,98** (vs CE2), ngưỡng pass 3,0, fail < 2,0. Quét ngưỡng biên
+từ 2,9 xuống 0,01: trần cao nhất **+2,8**, không ngưỡng nào chạm 3,0 ⇒ FAIL không do scorer.
+⇒ **Rút preference: không G2, không train DCRP.** Việc còn: UI-Venus 5 nhánh × 4.463 · viết chẩn đoán âm.
+⭐ Mã chép từ ảnh tái lập đúng số Mac: `m2_loose` sau gộp nút = **3.975** (khớp §3.2).
+⚠️ Mã G0 import `score()` của `m9` (3×F1, có bậc) chứ không phải ranker nhị phân §3 nói đã chọn ⇒ ở
+ngưỡng 2,9 %nhắc-tên người chỉ 9,5% (không phải 33,1%). Đã kiểm độ nhạy, không đổi kết luận.
+⚠️ `runs/noisuy/*/adapter_model.safetensors` (115 MB/tệp) đã vào `.gitignore` — chỉ có trên máy WSL.
 
 ### ⭐⭐⭐ 21/9 — NGUỒN CỦA +2,94 DƯỚI AitW LÀ CỔNG LOẠI THAO TÁC, KHÔNG PHẢI ĐỊNH VỊ (đã sửa luận văn)
 
