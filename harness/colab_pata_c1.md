@@ -152,8 +152,8 @@ giữa hai card ở mức làm tròn, không đổi recipe.
 3. Đổi runtime sang A100 → P1 → P2 → **P3 (đo, ra thư mục riêng `/content/do_may_S`, không đụng điểm
    lưu thật)** → gửi `s/u`.
 4. A100 đạt luật (L4/A100 > 1,5) ⇒ **P4 với `STAGE = "S"`**: ô tự chép điểm lưu mới nhất trên Drive về và
-   in `[nối tiếp] từ … — update N/2512`. ⛔ Giữ nguyên `--bs 4 --accum 4` (đổi cỡ lô là đổi thứ tự mẫu
-   trong lô và làm lệch phép nối tiếp). Rồi P5.
+   in `[nối tiếp] từ … — update N/2512`. Đổi `BS/ACCUM` được khi nối tiếp **miễn tích = 16** (mỗi update
+   vẫn đúng 16 mẫu đó, cùng thứ tự — trainer tính vị trí nối tiếp bằng update × 16). Rồi P5.
 5. A100 KHÔNG đạt luật (≤ 1,5×) ⇒ quay lại L4 và làm bước 4 trên L4.
 
 ⚠️ Colab trả trước không có background execution ⇒ để máy và trình duyệt mở, ô P5 chạy tiền cảnh. Mất
@@ -173,6 +173,19 @@ trên A100: 10,3 s/u.
 vòng lặp đứng chờ lô kế. **Đọc sau ~40 update:** `chờ-dữ-liệu` > ~20% ⇒ tăng `--workers` (A100 Colab có
 12 lõi) rồi chạy lại P4 — nối tiếp từ điểm lưu, số worker không đổi kết quả.
 
+### Lượt S thật, A100, lô 4 × 4 (23/9 22:30 VN) — [đo]
+
+`u11 … 23,0 s/u (gần 22,8) chờ-dữ-liệu 0% còn 15,8 h vram 6,49` ⇒ **nạp dữ liệu KHÔNG phải chỗ nghẽn**
+(đoán cũ sai). GPU bận 30–50% + chờ dữ liệu 0% + VRAM 6,5/40 GB ⇒ nhiều khả năng GPU đói việc vì lô nhỏ
+[suy]. **Đổi sang lô 16 × 1 ở điểm lưu 100** (quy trình dưới), đo lại `gần`.
+
+**Đổi cỡ lô giữa lượt (không mất gì ngoài vài update sau điểm lưu):**
+1. Chờ P5 in `↑ Drive: …/S/ckpt-00100`.
+2. Terminal Colab: `pkill -f harness/pata_train.py` (P5 sẽ in "tiến trình train đã kết thúc").
+3. P4 bản mới (`BS, ACCUM = "16", "1"`) → in `[nối tiếp] … update 100/2512` và `SID … ✓` → P5.
+4. Sau ~20 update: đọc `(gần …)`. Tràn bộ nhớ ⇒ `"8", "2"` và làm lại bước 3.
+⚠️ Khai vào manifest: "S update 1–100 lô 4 × 4, từ 101 lô 16 × 1 (tương đương toán học)".
+
 ## Ô P4 — chạy một chặng, chạy nền
 
 Đặt `STAGE` rồi chạy. Chạy lại **đúng ô này** sau khi mất máy (sau P1 + P2) là tự nối tiếp: ô chép điểm
@@ -184,6 +197,9 @@ Python restart (tiến trình train vẫn sống): chạy P2 (để có biến) 
 ```python
 import os, glob, shutil, subprocess
 STAGE = "S"          # ⬅ "S" → rồi "H" → rồi "J"  (C1 = J bridge bật)
+BS, ACCUM = "16", "1"  # cỡ lô × gộp PHẢI = 16. Đo 23/9: lô 4 × 4 chạy 22,8 s/u, chờ dữ liệu 0%, GPU bận 30–50%
+                       # ⇒ GPU đói việc vì lô nhỏ. 16 × 1 tương đương toán học (cùng 16 mẫu/update, cùng thứ
+                       # tự, loss chia theo cả lô); tràn bộ nhớ thì lùi "8", "2".
 
 def chay(cmd, log):
     """Định nghĩa LẠI ngay trong ô này (không dựa vào P3): ⛔ start_new_session=True là thứ giữ train
@@ -208,7 +224,7 @@ extra = {"S": [],
          "H": ["--init-adapter", f"{CK}/S/final"],
          "J": ["--init-adapter", f"{CK}/S/final", "--init-heads", f"{CK}/H/final"]}[STAGE]
 P = chay(["python", "harness/pata_train.py", "--stage", STAGE, "--data-root", DR,
-          "--bs", "4", "--accum", "4", "--save-steps", "100", "--milestones", "800",
+          "--bs", BS, "--accum", ACCUM, "--save-steps", "100", "--milestones", "800",
           "--log-steps", "20", "--workers", "8", "--out", OUT] + extra, f"/content/pata_{STAGE}.log")
 print("PID", P.pid, "· log /content/pata_%s.log" % STAGE)
 # kiểm bằng máy, không tin mã: SID phải bằng PID ⇒ tiến trình đứng đầu phiên riêng
@@ -259,7 +275,7 @@ while con_song():
     time.sleep(60)
     L = open(f"/content/pata_{STAGE}.log").read().splitlines()
     dong = [l for l in L if l.startswith("[") and "/" in l and " u" in l]
-    gio = (datetime.datetime.utcnow() + datetime.timedelta(hours=7)).strftime("%H:%M")
+    gio = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=7))).strftime("%H:%M")
     print(f"[{gio} VN] {(dong or L or [''])[-1][:230]}", flush=True)
     if any(k in l for l in L[-30:] for k in ("=nan", "NaN", "OutOfMemory", "Traceback")):
         print("⛔ LỖI trong log — xem /content/pata_%s.log" % STAGE); break
