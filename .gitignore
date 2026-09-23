@@ -122,6 +122,19 @@ harness/dg1_cache/test_ac/*
 !harness/dg1_cache/som/
 harness/dg1_cache/som/*
 !harness/dg1_cache/som/som.jsonl
+# PATA (report/185–186): chỉ giữ tệp nhỏ cần để tái lập + công gán nhãn audit.
+# pata/*.jsonl lớn dựng lại bằng pata_data.py (hash ở split_hash.json); audit/img bằng pata_audit.py build.
+!harness/dg1_cache/train_ac/
+harness/dg1_cache/train_ac/*
+!harness/dg1_cache/train_ac/pata/
+harness/dg1_cache/train_ac/pata/*
+!harness/dg1_cache/train_ac/pata/split_hash.json
+!harness/dg1_cache/train_ac/pata/probe40.jsonl
+!harness/dg1_cache/train_ac/pata/audit/
+harness/dg1_cache/train_ac/pata/audit/*
+!harness/dg1_cache/train_ac/pata/audit/manifest.json
+!harness/dg1_cache/train_ac/pata/audit/audit.html
+!harness/dg1_cache/train_ac/pata/audit/audit_*.json
 
 # Slide bản cũ + 11 script dựng slide đã thay: không giúp gì cho việc phản biện
 slides/_archive/

@@ -1,0 +1,258 @@
+# 186 — TÌNH HÌNH PATA-C1 SAU KHI NHẬN `185` (23/9/2026)
+
+> Ghi lại mọi việc từ lúc nhận bản `185` (9 ảnh chụp máy Mac) tới 14:45 giờ VN ngày 23/9. Spec
+> phương pháp là `report/185_CHOT_PHUONG_PHAP_ACTION_PATA_CAUSAL_22_9.md`; file này chỉ ghi **đã
+> làm gì, đo được gì, còn treo gì**. Nhãn [đo] = số chạy ra từ mã/tệp; [suy] = ước lượng.
+
+## 0. Tóm tắt một bảng
+
+| hạng mục | trạng thái |
+|---|---|
+| spec `185` | đã chép từ 9 ảnh → `report/185_…md`; ảnh gốc ở `report/anh_185_pata_causal_23_9/` |
+| quyết định user | **Stage S chạy 1 epoch** (spec ghi 2) · **C1 trước**, chỉ chạy C0-Loc khi C1 qua cổng §8 |
+| chặng A (0 GPU) — mã | xong: dữ liệu · mô hình · 13 test · trainer S/H/J · đánh giá · audit · gói zip |
+| 13 unit test, mô hình tí hon, CPU | **13/13 ĐẠT** [đo] |
+| 13 unit test, mô hình 3B thật, Kaggle T4 | lượt 1: **6 test đầu ĐẠT rồi OOM ở test 10** (lỗi của chính test, đã vá) — **chờ chạy lại** |
+| audit box (A1) | xong phần một người gán: **lỗi nặng 2,7% < ngưỡng 5%** ⇒ giữ box |
+| quyết định còn treo | tắt KL cho box ≥ 25% màn hay giữ · người gán thứ hai · swap/random-pool · Colab |
+| GPU đã tiêu | **0 đồng**, chỉ Kaggle T4 miễn phí ~3 phút |
+
+---
+
+## 1. Dọn thư mục (yêu cầu đầu phiên)
+
+- Zip `runs/gate_a/My Documents [23-09-2026 12_45].zip` (9 ảnh, 4,0 MB) **nằm nhầm chỗ** — giải
+  nén, xem đủ 9 ảnh, **đã xoá zip**.
+- Ảnh cất ở `report/anh_185_pata_causal_23_9/01…09_<tên gốc>.jpg`, đánh số theo thứ tự đọc (theo
+  hậu tố tên tệp 29…37, khớp thứ tự các mục 1→14 của tài liệu).
+- Chép toàn văn thành `report/185_…md` (14 mục). Chỗ phải lưu ý khi đọc bản chép: các URL ở §10
+  chép từ ảnh mờ, chuỗi hash có thể lệch một ký tự — mở lại trước khi trích.
+- CLAUDE.md: thêm một dòng đầu bảng "Đọc file nào" trỏ tới `185`.
+
+## 2. Quyết định của user trong phiên
+
+1. **Stage S = 1 epoch** thay vì 2 (user: *"1 epoch thôi"*). Hệ quả đã khai ở `185` phần *Quyết định
+   + thi hành 23/9*: điều kiện 3 cổng §8 vẫn so đúng (C1 so với **chính** S của lượt này), nhưng số
+   S/C1 không so thẳng với S1 cũ (2 epoch, học cả val).
+2. Chỉ chạy **C1** để xem có tốt không rồi mới quyết chạy tiếp (C0-Loc, hạt 2) — trùng quyết định
+   vận hành sẵn có trong `185`.
+3. Việc nào làm được không tốn GPU, hoặc không cần A100, thì làm trước và hướng dẫn từng bước.
+
+## 3. Chặng A — mã đã viết (0 GPU, WSL)
+
+Tất cả trong `harness/`. Không mã nào gọi LLaMA-Factory.
+
+| tệp | vai trò | ứng với `185` |
+|---|---|---|
+| `pata_data.py` | dựng Train-proper / val400 / val600 bước chạm + box + cờ `kl_ok`; assert rời nhau; SHA-256; khoá probe 40 | §2, §3, §7b, bước A2–A3 |
+| `pata_model.py` | TARGET token, localizer, bridge, đích patch, KL, dựng mẫu, collator, `forward_losses`, `load_base` (QLoRA NF4) | §4, §5 |
+| `pata_test.py` | 13 unit test; `--tiny` (CPU) và `--real` (GPU) | §7, bước A4 |
+| `pata_train.py` | vòng lặp train chung S / H / J (C1 hoặc `--no-bridge` = C0-Loc), nối tiếp sau mất máy | §6, bước 7–11 |
+| `pata_eval.py` | `diag` (cổng H, mốc 800: CE/KL/hit/mass/lift/xáo) · `gen` (sinh câu bật/tắt bridge, ra preds cho `score_run.py`) | §6 Stage H, §7b, §8 |
+| `pata_audit.py` | `build` (mẫu + trang gán nhãn HTML) · `doc` (tỉ lệ lỗi, Wilson, κ nếu có hai người) | §2 audit, bước A1 |
+| `kaggle_pata_test.md` | runbook Kaggle ô K0–K7 | bước A4–A5 |
+| `make_bundle.py` | thêm hai loại gói `pata_kaggle` · `pata_colab` | — |
+
+### 3.1 Dữ liệu (`pata_data.py`) — [đo]
+
+| tập | bước chạm | có box | thiếu box | box cắt vào biên màn | SHA-256 (16 ký tự đầu) |
+|---|---|---|---|---|---|
+| train_proper | **40.189** | **40.089** (99,75%) | 100 | 107 | `fd4db36c03884ef9` |
+| val400 | 400 | 400 | 0 | 0 | `68ccb1c6259f6c01` |
+| val600 | 602 | 601 | 1 | 1 | `dfacd1b2fc41c278` |
+| probe40 | 40 (từ val400, có box, hạt 20260923) | 40 | — | — | `6c23c1898d85a0fd` |
+
+- 100 bước thiếu box ở Train-proper = **91** bước không có dòng trong `descriptors.jsonl` + **9** bước
+  điểm chạm **vượt khung ảnh khai báo** (vd x = 2163 trên màn rộng 1080 — nhiều khả năng màn ngang).
+  Cả hai nhóm: **KL tắt, CE giữ**, đúng luật §2. (`185` ghi 92 thiếu box trên toàn 64.567 bước; một
+  ca rơi vào val, nên Train-proper còn 91 + 9 ca toạ độ lạ.)
+- **117/41.099** box a11y thò ra ngoài màn (đo trên toàn tập dạy); cắt vào khung ảnh. Sau khi cắt,
+  mọi box đều chứa điểm chạm (assert).
+- Rời nhau: episode · (episode, step) · ảnh/khoá OCR giữa ba tập — **đạt**; episode của tập dạy không
+  chạm episode nào của hai tập val kể cả bước không chạm.
+- Chạy lại hai lần ra đúng cùng hash; probe 40 có khoá: nếu tệp đã tồn tại mà dựng lại ra hash khác
+  thì script dừng.
+- ~2.512 update/epoch ở cỡ lô 16 (khớp ước ~2.500 của `185` §14).
+
+### 3.2 Mô hình (`pata_model.py`) — cách thi hành và lý do
+
+- **TARGET** = chuỗi đặc biệt `<TARGET>`, id **151665** — nằm trong 151.936 hàng embedding sẵn có
+  nên không phải đổi cỡ ma trận. Véc-tơ của nó là tham số riêng `tvec` (khởi tạo = trung bình
+  embedding từ vựng, §4), cắm vào bằng hook trên `embed_tokens`; không mở khoá cả ma trận.
+- **Localizer + bridge** gắn bằng **forward hook trên block 17**, không bọc module. Lý do: bọc sẽ
+  đổi tên tham số LoRA của block 17 và adapter Stage S nạp vào sẽ lệch khoá mà không báo lỗi.
+- Hook chạy **bên trong** gradient checkpointing ⇒ **bắt buộc `use_reentrant=False`**; bản reentrant
+  chạy forward trong `no_grad` nên α sẽ không có gradient mà KL vẫn in ra số bình thường.
+- Các tham số mới (LN, Pq, Pv, Wo, gate, tvec) ở **FP32**, tắt autocast bên trong (§4 cho phép
+  BF16/FP32, không lượng tử).
+- **Stage H** cắt forward sau block 17 (chỉ cần hT và visual tokens ở đó) ⇒ bớt khoảng một nửa phép
+  tính của chặng H.
+- **CE chỉ gọi `lm_head` ở vị trí có nhãn** (~15 token/mẫu) thay vì cả chuỗi ~1.500 token ⇒ không
+  dựng bảng logits 151.936 × chuỗi — đúng thứ làm cấu hình P4 tràn bộ nhớ hồi tháng 8.
+- Đích patch đọc lưới từ `image_grid_thw`, co box theo đúng cỡ resize của processor, ô 28×28 px sau
+  merge là dương nếu giao box, thứ tự raster, chuẩn hoá tổng = 1. Box suy biến (rộng 0) lấy ô chứa
+  tâm.
+- Prompt dùng **đúng** `build_branch_data.prompt_body` + `SYS` như mọi nhánh cũ (goal + 3 bước lịch
+  sử + 24 dòng OCR), ảnh 200.704–1.003.520 px như `train_config.yaml` ⇒ một ảnh 1080×2400 = **1.272**
+  token thị giác (đo lại trên Kaggle, khớp).
+- LoRA: r 8, α 16, dropout 0,05, 7 khối, regex **loại `visual`** (tháp thị giác cũng có
+  `gate/up/down_proj`; thiếu vế này là mở băng thị giác trong im lặng).
+
+**Lựa chọn của phiên thi hành (spec không nói) — phải vào manifest §11:** d_k = 2048 · gate là
+**một vô hướng** · "action head" = LN + Pq + Pv · clip grad 1,0 · NF4 double-quant · CE chuẩn hoá
+theo token trên cả lô hiệu dụng (khớp LLaMA-Factory của S1) · KL chia cho số mẫu có box **trong lô
+hiệu dụng** (nạp trước đủ `accum` lô con để biết mẫu số) · hạt khởi tạo module mới 20260923, hạt
+thứ tự dữ liệu 101 · lưu mỗi 100 update, giữ vĩnh viễn điểm lưu 800.
+
+### 3.3 Unit test (`pata_test.py`) — [đo]
+
+**Mô hình tí hon, CPU** (Qwen2.5-VL dựng từ đúng config thật, thu nhỏ chiều; cùng processor, cùng id
+token ảnh; ~75 s): **13/13 ĐẠT**. Số đáng ghi:
+
+| test | kết quả |
+|---|---|
+| 3 đổi hậu tố vàng không đổi α(TARGET) | Δ = 0 |
+| 4 Wo = 0 ⇒ logits bật = tắt bridge | Δ = 0 |
+| 5 Wo ≠ 0: tiền tố không đổi, hậu tố đổi | tiền tố 0 · hậu tố 0,285 |
+| 9 teacher-forced = KV-cache | Δ 3,3e−07 trên 6 bước |
+| 10 save → reload | logits 0 · α 0 · câu trùng |
+| 6 / 7 gradient | Wo, Pq, Pv, TARGET, LoRA ≠ 0; gate = 0 ở bước đầu (vì Wo = 0) rồi ≠ 0 sau một bước |
+| 8 tháp thị giác | không gradient, trọng số không đổi |
+| 12 overfit 8 mẫu, 40 bước | CE 11,79 → 11,08 · KL 2,41 → 0,11 · mass trong box 0,12 → 0,97 |
+
+**Mô hình 3B thật, Kaggle T4, lượt 1 (user chạy 23/9):**
+
+| test | kết quả |
+|---|---|
+| 1 token thị giác | **1.272** mỗi ảnh = t·h·w/4 = số ô đích |
+| 2 box bốn góc | đạt |
+| 3 α không đổi khi đổi hậu tố | Δ = 0 |
+| 4 Wo = 0 | Δ = **0** (không chỉ trong sai số FP16 — đúng bằng 0) |
+| 5 tiền tố / hậu tố | tiền tố **0** · hậu tố 0,473 |
+| 9 KV-cache | Δ 2,69e−02 — **chỉ trên 2 bước** vì mô hình sinh EOS sớm |
+| 10 save/reload | **OOM** (14,56 GB T4) |
+
+Nguyên nhân OOM nằm ở **mã test**, không ở PATA: `logits_full` trả bảng logits đầy đủ (3 mẫu × ~1.500
+token × 151.936, ~1,4 GB FP16, ×2 khi đổi sang FP32) và giữ vài bảng trên GPU cùng lúc rồi nạp thêm
+bản mô hình thứ hai. **Đã vá:** chuyển logits sang CPU ngay sau mỗi forward, `gc` + `empty_cache`
+trước khi nạp bản thứ hai; test 9 đưa `ref` và logits sinh về cùng CPU (lỗi lệch thiết bị mà chế độ
+tí hon không bắt được vì toàn CPU); test 9 ép **`min_new_tokens=6`** để so đủ 6 bước. Chạy lại tí hon
+13/13 ĐẠT; gói Kaggle đã dựng lại.
+
+### 3.4 Trainer (`pata_train.py`) — chạy thử trên CPU [đo]
+
+- Ba chặng chạy thông trên mô hình tí hon (lọc về ảnh có trên máy).
+- **Nối tiếp:** xin 5 update khi đã có điểm lưu 3 ⇒ in `[nối tiếp] … update 3/981`, chạy tiếp đúng
+  u4–u5 (phép thử xin **nhiều hơn** số đã có, theo luật dự án).
+- **H:** chỉ 4.480 tham số localizer học (tí hon), `gn` LoRA = 0 (LoRA S đóng băng đúng), KL có số.
+- **J (C1) vs `--no-bridge` (C0-Loc):** cùng hạt thứ tự dữ liệu ⇒ update 1 và 2 ra **CE/KL trùng tuyệt
+  đối** (vì Wo = 0 lúc đầu), lệch từ update 3 ⇒ bằng chứng hai nhánh thấy đúng cùng dữ liệu, ghép cặp
+  được như §9 đòi. C0-Loc không có nhóm tham số bridge (37.248 vs 41.345 tham số học ở bản tí hon).
+- Điểm lưu ghi vào thư mục tạm rồi đổi tên, chỉ tính là trọn khi có tệp `DONE`.
+
+### 3.5 Đánh giá (`pata_eval.py`)
+
+- `diag`: CE_val · KL_val · Hit-in-box · mass trong box · mass của **center prior** (Gauss σ = 0,25)
+  và **train-location prior** (histogram phủ box 32×32 trên Train-proper) · mass khi **xáo
+  goal/history** (hoán vị cố định, luôn lấy của episode khác). Cổng H in ra tự động: cận dưới KTC một
+  phía 90% (bootstrap cụm theo episode, 10.000 lần) của cả ba hiệu > 0.
+- `gen`: sinh tham lam bật/tắt bridge, ghi `preds_<ckpt>_<split>_<on|off>.jsonl` đúng định dạng
+  `infer_branch.py` (có `gold_instruction`) để `score_run.py` chấm; in % câu đổi, format hợp lệ, độ
+  dài. Chạy val600 in cảnh báo "chỉ một lần sau hết epoch".
+- Đã chạy thử `diag` (H, S) và `gen` (J) trên CPU tí hon.
+- ⛔ **Chưa viết swap / random-pool** (§8 điều 5): cần hộp của phần tử distractor, chưa có trong dữ
+  liệu (descriptors chỉ có *điểm* của `desc_neg`). Chỉ cần tới ở bước 12, sau khi C1 train xong.
+
+### 3.6 Gói chuyển máy
+
+| gói | nội dung | cỡ |
+|---|---|---|
+| `_bundles/thesis_pata_kaggle.zip` | mã + `pata/*.jsonl` + 40 ảnh probe + 400 ảnh dạy (smoke) + OCR của đúng các ảnh đó | 159 MB |
+| `_bundles/thesis_pata_colab.zip` | mã + `pata/*.jsonl` + `ocr.jsonl` đủ tập dạy, **không ảnh** (ảnh lấy từ `train_images_p*.tar` trên Drive) | 26 MB |
+
+⚠️ `thesis_pata_colab.zip` dựng **trước** các bản vá test 23/9 chiều — dựng lại trước khi dùng.
+
+## 4. Audit box (A1) — [đo]
+
+Trang gán nhãn `dg1_cache/train_ac/pata/audit/audit.html` (ảnh vẽ box đỏ + điểm chạm xanh + khung
+phóng; ẩn tầng, xáo thứ tự; tự lưu nháp). Quần thể lấy mẫu = bước chạm Train-proper **có ảnh trên
+máy** (8 shard rải đều của `keo_anh_val.py`): 3.909 có box + 14 không box. ⚠️ Khai khi viết: ước
+lượng trên 8/76 shard.
+
+Mẫu: U 150 ngẫu nhiên (xác suất chọn 150/3.909) + năm tầng lấy dư 20 mẫu mỗi tầng + 14 bước không box
+= **264**. User gán đủ 264/264 (người gán: Uyên).
+
+| tầng | n | lỗi nặng | loại lỗi |
+|---|---|---|---|
+| **U (ước lượng quần thể)** | 148 (bỏ 2 "không rõ") | **4 = 2,7%** · Wilson95 **[1,1; 6,7]** | 4 × box thuộc phần tử khác |
+| S1 widget nhỏ (area ≤ 0,002) | 20 | 1 = 5% | phần tử khác |
+| **S2 container (area ≥ 0,089)** | 20 | **7 = 35%** | 4 phần tử khác · 3 stale · 1 lỗi nhẹ |
+| S3 sát biên | 20 | 2 = 10% | stale, box phủ 79–87% màn |
+| S4 tên từ OCR | 20 | 2 = 10% | phần tử khác |
+| S5 không tên | 20 | 2 = 10% | stale, box phủ 55–92% màn |
+| N không box | 14 | — | **14/14 có phần tử rõ tại điểm chạm** ⇒ thiếu box là labeler bỏ sót |
+
+**Kết luận theo luật khoá trước (§2):** 2,7% < 5% ⇒ **giữ box, đi tiếp**. Phải khai: cận trên
+Wilson 6,7% vượt 5%; chỉ **một** người gán nên chưa có κ và adjudication như §2 đòi.
+
+**Phát hiện: lỗi nặng dồn vào box rất lớn** (gộp mọi tầng, bỏ "không rõ"):
+
+| diện tích box | lỗi nặng |
+|---|---|
+| ≤ 0,01 | 2/130 |
+| 0,01–0,05 | 1/64 |
+| 0,05–0,089 | 3/17 |
+| ≥ 0,089 | 12/37 |
+
+| ngưỡng tắt KL | box lớn: lỗi nặng | phần còn lại | tầng U còn lại | số bước Train-proper mất KL |
+|---|---|---|---|---|
+| area ≥ 0,25 | **10/18** (Wilson ~[34; 75]%) | 8/230 | 3/145 = 2,1% | **883 (2,20%)** |
+| area ≥ 0,4 | 10/17 | 8/231 | 3/145 | 708 (1,77%) |
+| area ≥ 0,5 | 10/17 | 8/231 | 3/145 | 657 (1,64%) |
+
+Mọi lỗi stale đều nằm ở box ≥ 0,5. Ba ngưỡng cho gần như cùng kết quả ⇒ con số 0,25 không nhạy.
+
+**Lợi/hại của việc tắt KL cho box ≥ 0,25 (đã trình user, chờ quyết):**
+- Lợi: bỏ ~300–650 nhãn KL sai [suy, từ 10/18 × 883]; bỏ nhãn gần như không mang thông tin vị trí
+  (box 25% màn ≈ trên 300/1.272 ô cùng là "đúng"); cổng H sạch hơn vì box khổng lồ làm cả mass của mô
+  hình lẫn của prior cùng cao.
+- Hại: mất tín hiệu đúng ở ~nửa số box lớn (phần tử thật sự to, ~2% số bước); là quyết định **sau khi
+  thấy audit** (trước mọi train, không đụng `exec`) nên phải khai; chỉ sửa được một phần (còn 8/230
+  lỗi ở box nhỏ hơn).
+- Khuyến nghị: tắt, và áp **cùng luật** cho `diag` trên val400/val600. Giữ nguyên cũng hợp lệ vì 2,7%
+  đã dưới ngưỡng.
+
+## 5. Ước giờ GPU (S 1 epoch) — [suy], chờ số đo smoke thay vào
+
+| chặng | update | A100 sàn (10,3 s/u) | ghi chú |
+|---|---|---|---|
+| S, 1 epoch | ~2.512 | ~7 h | |
+| H, 1 epoch | ~2.506 | < 7 h | forward cắt sau block 17, không CE |
+| C1 (J), 1 epoch | ~2.512 | ~7 h | |
+| chấm val600 bật/tắt bridge | — | 1–3 h | sinh câu trên GPU, chấm UGround trên Kaggle T4 |
+| **tổng tới cổng C1** | | **~20–24 h** | spec gốc (S 2 epoch) là 29–35 h |
+
+Theo luật chọn máy: smoke Kaggle (K4) cho đỉnh VRAM; nếu ≤ ~17 GB thì thử L4 trước, chỉ lên A100 khi
+L4 chậm hơn 1,5 lần. Chặng H (chỉ học đầu nhỏ, forward nửa mô hình) là ứng viên L4 rõ nhất.
+
+## 6. Việc kế, theo thứ tự
+
+1. **User:** Kaggle — New Version dataset `thesis-pata` bằng `thesis_pata_kaggle.zip` mới → chạy lại
+   K1 → K3 (phải `13/13 ĐẠT`) → K4–K6 smoke → K7 gom log vào `runs/pata/kaggle_smoke/`.
+2. **User quyết:** tắt KL cho box ≥ 0,25 hay giữ.
+3. **User quyết:** có người gán thứ hai cho 60 mẫu chồng (`audit.html#overlap`) không; không có thì
+   khai là hạn chế.
+4. **Phiên sau:** (nếu tắt) sửa `pata_data.py` + dựng lại hash/gói; seal manifest §11 (sau khi có SHA
+   checkpoint S); viết runbook Colab S → H → C1 kèm phép đo L4 vs A100; viết swap/random-pool trước
+   bước 12.
+
+## 7. Tệp đã đổi trong phiên
+
+- mới: `report/185_…md` · `report/186_…md` (file này) · `report/anh_185_pata_causal_23_9/` (9 ảnh) ·
+  `harness/pata_{data,model,test,train,eval,audit}.py` · `harness/kaggle_pata_test.md`
+- sửa: `harness/make_bundle.py` (thêm `pata_kaggle`, `pata_colab`) · `CLAUDE.md` (dòng trỏ `185`) ·
+  `.gitignore` (mở cho `pata/split_hash.json`, `probe40.jsonl`, `audit/manifest.json`,
+  `audit/audit.html`, `audit/audit_*.json` — tệp nhỏ nhưng cần để tái lập và giữ công gán nhãn)
+- xoá: zip ảnh trong `runs/gate_a/`
+- không commit: `pata/*.jsonl` lớn (dựng lại bằng `pata_data.py`, hash ở `split_hash.json`),
+  `audit/img/` (dựng lại bằng `pata_audit.py build`), gói `_bundles/*.zip`

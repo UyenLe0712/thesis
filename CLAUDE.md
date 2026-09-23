@@ -39,6 +39,8 @@ Colab phụ thuộc cũng dùng tên `harness`).
 
 | cần biết | mở |
 |---|---|
+| **⭐⭐⭐⭐⭐⭐ TÌNH HÌNH PATA 23/9 (mã chặng A, test, audit 2,7%, việc kế)** | **`report/186_TINH_HINH_PATA_C1_23_9.md`** |
+| **⭐⭐⭐⭐⭐⭐ PHƯƠNG PHÁP ĐANG CHỐT 23/9 — PATA-Causal (TARGET token + localizer KL + bridge ở block 17), prefix sạch S(2 ep)→H(1 ep)→C1(1 ep); C1 chạy trước, C0-Loc chỉ khi C1 qua cổng §8. **User 23/9: S chỉ 1 epoch.** Chặng A (0 GPU) đã viết + 13/13 test đạt trên mô hình tí hon; việc kế = audit box (tay) + Kaggle `harness/kaggle_pata_test.md`** | **`report/185_CHOT_PHUONG_PHAP_ACTION_PATA_CAUSAL_22_9.md`** (chép từ 9 ảnh, gốc ở `report/anh_185_pata_causal_23_9/`) |
 | **⭐⭐⭐⭐⭐ BÀN GIAO 22/9 — THƯỚC ĐÃ CHỐT + DCRP; KẾT QUẢ G0 = FAIL (trần +0,97) ⇒ rút preference, không train; việc còn lại: UI-Venus 5 nhánh + viết chẩn đoán âm** | **`report/183_BAN_GIAO_METRIC_VA_DCRP_CHAY_THU_22_9.md`** (chép từ ảnh; mục *KẾT QUẢ G0*) · mã `harness/g0_mention_x_exec.py` · `m9_khop_mem.py` · `m2_m3_compare.py` · log `runs/g0/` |
 | **⭐⭐⭐⭐ BÀN GIAO 14/9 CHO PHIÊN DEBATE CHỐT ĐÓNG GÓP MÔ HÌNH — tự chứa: bộ ba số chính (AitW 77,3 · D.3 67,0 · exec 60,1), mọi phép so ghép cặp kể cả S2, điểm nghẽn, mọi hướng đã thử, ràng buộc, luật chơi mới về thước** | **`report/155_HANDOFF_DEBATE_DONG_GOP_MO_HINH_14_9.md`** (thắng `146`) |
 | **⭐⭐⭐ LỘ TRÌNH ĐANG THI HÀNH (9/9) — bốn chặng, phụ thuộc, checkbox; §0 ghi năm chỗ `151` mô tả khác máy WSL** | **`report/152_LO_TRINH_SAU_151_9_9.md`** · runbook chặng 3: `harness/kaggle_phase1_noisuy_9_9.md` |

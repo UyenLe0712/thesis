@@ -11,6 +11,8 @@ git; cần thì dựng lại bằng đây.
   python harness/make_bundle.py gate     # + 300 ảnh của mẫu cổng A            — 111 MB
   python harness/make_bundle.py infer    # + 300 ảnh, test.jsonl chỉ 300 bản ghi — 110 MB
   python harness/make_bundle.py score    # + đủ 4.463 ảnh bước chạm để CHẤM     — ~1,7 GB
+  python harness/make_bundle.py pata_kaggle  # PATA: unit test thật + smoke trên Kaggle T4
+  python harness/make_bundle.py pata_colab   # PATA: train S/H/J trên Colab (ảnh lấy từ Drive)
 """
 import os, sys, json, random, zipfile
 
@@ -68,7 +70,47 @@ def add_images(z, recs):
         z.write(os.path.join(TEST, r["image"]), f"thesis/harness/dg1_cache/test_ac/{r['image']}")
 
 
+TRAIN = os.path.join(HERE, "dg1_cache", "train_ac")
+
+
+def build_pata(kind):
+    """PATA (report/185). Hai gói:
+      pata_kaggle  mã + pata/*.jsonl + ảnh probe40 + 400 ảnh dạy (smoke) + OCR của đúng các ảnh đó
+                   → Kaggle T4: 13 unit test --real + smoke vài chục update. ~200 MB.
+      pata_colab   mã + pata/*.jsonl + ocr.jsonl ĐỦ của tập dạy, KHÔNG ảnh (ảnh lấy từ
+                   train_images_p*.tar trên Drive) → Colab: train S/H/J.
+    """
+    out = os.path.join(ROOT, "_bundles", f"thesis_{kind}.zip")
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    z = zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED)
+    add_code(z)
+    z.write(os.path.join(ROOT, "report", "185_CHOT_PHUONG_PHAP_ACTION_PATA_CAUSAL_22_9.md"),
+            "thesis/report/185_CHOT_PHUONG_PHAP_ACTION_PATA_CAUSAL_22_9.md")
+    pd = os.path.join(TRAIN, "pata")
+    for f in sorted(os.listdir(pd)):
+        if f.endswith((".jsonl", ".json")):
+            z.write(os.path.join(pd, f), f"thesis/harness/dg1_cache/train_ac/pata/{f}")
+    if kind == "pata_colab":
+        z.write(os.path.join(TRAIN, "ocr.jsonl"), "thesis/harness/dg1_cache/train_ac/ocr.jsonl")
+    else:
+        L = lambda f: [json.loads(l) for l in open(os.path.join(pd, f), encoding="utf-8")]
+        imgs = [r["image"] for r in L("probe40.jsonl")]
+        tr = [r for r in L("train_proper.jsonl") if os.path.exists(os.path.join(TRAIN, r["image"]))]
+        random.Random(20260923).shuffle(tr)
+        imgs += [r["image"] for r in tr[:400]]
+        keep = set(imgs)
+        z.writestr("thesis/harness/dg1_cache/train_ac/ocr.jsonl",
+                   "".join(l for l in open(os.path.join(TRAIN, "ocr.jsonl"), encoding="utf-8")
+                           if json.loads(l)["image"] in keep))
+        for im in sorted(keep):
+            z.write(os.path.join(TRAIN, im), f"thesis/harness/dg1_cache/train_ac/{im}")
+    z.close()
+    print(f"{out}\n  {len(zipfile.ZipFile(out).namelist())} tệp · {os.path.getsize(out)/1e6:.1f} MB")
+
+
 def build(kind):
+    if kind.startswith("pata_"):
+        return build_pata(kind)
     out = os.path.join(ROOT, f"thesis_{kind}.zip")
     z = zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED)
     add_code(z)
