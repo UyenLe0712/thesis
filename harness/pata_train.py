@@ -136,6 +136,12 @@ def param_groups(model, pata, stage, rec, a):
     return g
 
 
+def _mot_luong(_):
+    """Mỗi tiến trình nạp dữ liệu dùng MỘT luồng torch. Mặc định mỗi worker mở ~số-lõi luồng cho khâu
+    xử lý ảnh ⇒ 8 worker × 12 luồng tranh 12 lõi, GPU A100 ngồi chờ (đo 23/9: bận 30–50%)."""
+    torch.set_num_threads(1)
+
+
 def gnorm(ps):
     s = sum(float(p.grad.float().norm()) ** 2 for p in ps if p.grad is not None)
     return math.sqrt(s)
@@ -269,22 +275,29 @@ def main():
     dl = DataLoader(torch.utils.data.Subset(ds, idx), batch_size=a.bs, shuffle=False,
                     num_workers=(0 if a.tiny else a.workers),
                     collate_fn=lambda b: PM.collate(b, proc.tokenizer.pad_token_id),
-                    persistent_workers=False, prefetch_factor=(None if a.tiny else 4))
+                    persistent_workers=False, prefetch_factor=(None if a.tiny else 4),
+                    worker_init_fn=_mot_luong)
     it = iter(dl)
     logf = open(os.path.join(a.out, "train_log.jsonl"), "a", encoding="utf-8")
     milestones = {int(x) for x in a.milestones.split(",") if x}
     dev = next(p for p in params).device
     use_ac = dev.type == "cuda"
     t0 = time.time(); step0 = step
+    _t_log_truoc = [t0]
+    import collections as _c
+    moc = _c.deque(maxlen=21)            # mốc giờ các update gần nhất ⇒ s/u không tính khởi động
+    cho = 0.0                            # giây chờ dữ liệu cộng dồn từ lần log trước
     acc = {"ce": 0.0, "tok": 0, "kl": 0.0, "nkl": 0, "mass": [], "hit": [], "resid": [], "n": 0}
     lora_ps = [p for n_, p in model.named_parameters() if "lora_" in n_]
     while step < total_run:
         micro = []
+        t_cho = time.time()
         for _ in range(a.accum):
             try:
                 micro.append(next(it))
             except StopIteration:
                 break
+        cho += time.time() - t_cho
         if not micro:
             break
         tot_tok = sum(int((b["labels"][:, 1:] != -100).sum()) for b in micro)
@@ -303,6 +316,7 @@ def main():
             acc["ce"] += float(ce.detach()); acc["tok"] += nt; acc["kl"] += float(kl.detach()); acc["nkl"] += nk
             acc["mass"] += ex["mass"]; acc["hit"] += ex["hit"]; acc["resid"] += ex["resid"]
         step += 1
+        moc.append(time.time())
         do_log = step in (1, 2, 11, 101) or step % a.log_steps == 0 or step == total_run
         gn = {}
         if do_log:
@@ -319,6 +333,10 @@ def main():
         if do_log:
             el = time.time() - t0
             spu = el / max(step - step0, 1)
+            # s/u của ≤ 20 update gần nhất (bỏ phần khởi động) và tỉ lệ thời gian CHỜ dữ liệu
+            spu_gan = (moc[-1] - moc[0]) / (len(moc) - 1) if len(moc) > 1 else spu
+            ty_le_cho = cho / max(time.time() - _t_log_truoc[0], 1e-6)
+            _t_log_truoc[0] = time.time(); cho = 0.0
             r = {"update": step, "total": total, "lr": [g["lr"] for g in opt.param_groups],
                  "ce": acc["ce"] / max(acc["tok"], 1) if rec["need_ce"] else None,
                  "kl": acc["kl"] / max(acc["nkl"], 1) if acc["nkl"] else None,
@@ -327,13 +345,15 @@ def main():
                  "gate_sigmoid": float(torch.sigmoid(pata.heads.gate)) if pata else None,
                  "tvec_norm": float(pata.heads.tvec.norm()) if pata else None,
                  "resid_ratio": sum(acc["resid"]) / len(acc["resid"]) if acc["resid"] else None,
-                 "grad_norm": gn, "s_per_update": round(spu, 2),
-                 "eta_h": round(spu * (total_run - step) / 3600, 2),
+                 "grad_norm": gn, "s_per_update": round(spu, 2), "s_per_update_gan": round(spu_gan, 2),
+                 "ty_le_cho_du_lieu": round(ty_le_cho, 3),
+                 "eta_h": round(spu_gan * (total_run - step) / 3600, 2),
                  "vram_gb": round(torch.cuda.max_memory_allocated() / 2 ** 30, 2) if use_ac else None,
                  "time": time.strftime("%H:%M:%S")}
             logf.write(json.dumps(r) + "\n"); logf.flush()
             print(f"[{r['time']}] u{step}/{total} ce={r['ce']} kl={r['kl']} mass={r['mass_in_box']} "
-                  f"gate={r['gate_sigmoid']} resid={r['resid_ratio']} {spu:.1f}s/u còn {r['eta_h']}h "
+                  f"gate={r['gate_sigmoid']} resid={r['resid_ratio']} {spu:.1f}s/u (gần {spu_gan:.1f}) "
+                  f"chờ-dữ-liệu {ty_le_cho:.0%} còn {r['eta_h']}h "
                   f"vram={r['vram_gb']} gn={ {k: round(v, 4) for k, v in gn.items()} }", flush=True)
             acc = {"ce": 0.0, "tok": 0, "kl": 0.0, "nkl": 0, "mass": [], "hit": [], "resid": [], "n": 0}
         if step % a.save_steps == 0 or step in milestones or step == total_run:

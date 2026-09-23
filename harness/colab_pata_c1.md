@@ -67,6 +67,7 @@ DR = f"{REPO}/harness/dg1_cache/train_ac"
 # ── mã phải là bản đã vá 23/9 tối (cắt gradient theo nhóm + luật KL box ≥ 0,50) ──
 t = open("harness/pata_train.py").read()
 assert '"name": "target"' in t and "for g_ in groups" in t, "⛔ pata_train.py BẢN CŨ — upload lại gói"
+assert "_mot_luong" in t and "chờ-dữ-liệu" in t, "⛔ pata_train.py thiếu bản vá nạp dữ liệu 23/9 — upload lại gói"
 assert "AREA_KL_MAX = 0.50" in open("harness/pata_data.py").read(), "⛔ pata_data.py BẢN CŨ"
 assert 'rec.get("kl_ok", True)' in open("harness/pata_model.py").read(), "⛔ pata_model.py BẢN CŨ"
 
@@ -160,6 +161,17 @@ máy giữa đêm thì làm lại P1 → P2 → P4 → P5 (tự nối tiếp t�
 ⭐ Trong lúc L4 chạy, kiểm GPU có bị bỏ đói không: Terminal Colab →
 `nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv -l 5` (Ctrl+C sau ~1 phút). GPU < ~60%
 thường xuyên ⇒ nghẽn khâu nạp ảnh CPU, A100 sẽ không nhanh hơn — báo lại để sửa trước khi đổi máy.
+
+### A100 đo 23/9 tối (P3) — [đo]
+
+`u6/2512 … 23,7 s/u · vram 6,49 GB` ⇒ **L4/A100 = 50,6/23,7 = 2,13 > 1,5 ⇒ chạy A100.**
+⚠️ `nvidia-smi` lúc P3 chạy: GPU bận **30–50%** phần lớn thời gian, vọt 95–100% từng lúc ⇒ GPU chờ dữ
+liệu. Hai số đo trên đều gồm thời gian khởi động worker (6 update quá ít). S1 cũ (LLaMA-Factory + liger)
+trên A100: 10,3 s/u.
+**Vá (0 đổi phép tính, CE u1–u4 trùng tuyệt đối bản trước):** mỗi worker nạp dữ liệu dùng 1 luồng torch
+(`_mot_luong`); log in thêm `(gần X)` = s/u của 20 update gần nhất và `chờ-dữ-liệu Y%` = phần thời gian
+vòng lặp đứng chờ lô kế. **Đọc sau ~40 update:** `chờ-dữ-liệu` > ~20% ⇒ tăng `--workers` (A100 Colab có
+12 lõi) rồi chạy lại P4 — nối tiếp từ điểm lưu, số worker không đổi kết quả.
 
 ## Ô P4 — chạy một chặng, chạy nền
 
