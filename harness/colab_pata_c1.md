@@ -49,6 +49,25 @@ print("torch", torch.__version__, "· transformers", transformers.__version__,
       "· peft", peft.__version__, "· bnb", bitsandbytes.__version__)
 assert torch.cuda.is_available(), "⛔ không có GPU"
 print(torch.cuda.get_device_name(0), round(torch.cuda.get_device_properties(0).total_memory / 2**30, 1), "GB")
+
+# ⛔ THÊM 24/9 sau khi mất máy: VM mới báo `nvrtc: failed to open libnvrtc-builtins.so.13.0` ngay khi train
+#    khởi động (Qwen gọi image_grid_thw.prod(-1) trên GPU ⇒ PyTorch biên dịch kernel tại chỗ). Kiểm ở đây,
+#    trong MỘT TIẾN TRÌNH CON (giống tiến trình train), và tự vá LD_LIBRARY_PATH nếu tìm được thư viện.
+import glob, os
+def thu_prod():
+    r = subprocess.run([sys.executable, "-c",
+        "import torch; print(torch.tensor([[1,2,3],[2,3,4]], device='cuda').prod(-1))"],
+        capture_output=True, text=True, env=os.environ)
+    return r.returncode == 0, (r.stdout + r.stderr)[-300:]
+ok, msg = thu_prod()
+if not ok:
+    libs = glob.glob("/usr/**/libnvrtc-builtins.so*", recursive=True) + \
+           glob.glob("/usr/local/lib/python3*/dist-packages/nvidia/**/libnvrtc-builtins.so*", recursive=True)
+    for d in sorted({os.path.dirname(x) for x in libs}):
+        os.environ["LD_LIBRARY_PATH"] = d + ":" + os.environ.get("LD_LIBRARY_PATH", "")
+    ok, msg = thu_prod()
+print("prod trên GPU (tiến trình con):", "ĐẠT" if ok else "HỎNG", msg.strip()[-120:])
+assert ok, "⛔ JIT CUDA hỏng — gửi phần in ra, ĐỪNG chạy P4"
 ```
 
 Ghi lại dòng phiên bản — đưa vào manifest §11.
