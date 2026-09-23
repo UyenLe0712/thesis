@@ -312,7 +312,8 @@ def make_item(proc, rec, root, with_target, tid, img_open=None):
     body = prompt_body({"goal": rec["goal"], "history": rec.get("history") or []}, ocr)
     ex = build_example(proc, SYS, body, rec["target_instruction"].strip(), img, with_target, tid)
     ex["ptarget"] = None
-    if with_target and rec.get("box"):
+    # ⛔ theo `kl_ok`, KHÔNG theo `box`: box lớn (≥ 25% màn) vẫn giữ trong bản ghi nhưng tắt KL.
+    if with_target and rec.get("box") and rec.get("kl_ok", True):
         ex["ptarget"] = patch_target(rec["box"], rec["w"], rec["h"], img.width, img.height,
                                      ex["image_grid_thw"])
         n_vis = int((ex["input_ids"] == IMAGE_TOKEN_ID).sum())

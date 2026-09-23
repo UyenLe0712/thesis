@@ -12,9 +12,10 @@
 | quyết định user | **Stage S chạy 1 epoch** (spec ghi 2) · **C1 trước**, chỉ chạy C0-Loc khi C1 qua cổng §8 |
 | chặng A (0 GPU) — mã | xong: dữ liệu · mô hình · 13 test · trainer S/H/J · đánh giá · audit · gói zip |
 | 13 unit test, mô hình tí hon, CPU | **13/13 ĐẠT** [đo] |
-| 13 unit test, mô hình 3B thật, Kaggle T4 | lượt 1: **6 test đầu ĐẠT rồi OOM ở test 10** (lỗi của chính test, đã vá) · lượt 2 (23/9 chiều, gói đã vá): qua test 10, **test 9 đạt trên đủ 6 bước (Δ 5,9e−02)**, test 8 đạt; đang chạy test 12 (overfit) |
+| 13 unit test, mô hình 3B thật, Kaggle T4 | lượt 1 OOM ở test 10 (lỗi của chính test, đã vá) · **lượt 2: 13/13 ĐẠT** (§3.7) |
+| smoke S/H/J trên Kaggle T4 | xong, §3.7: S 79 s/u · H 60 s/u · J 79 s/u · VRAM đỉnh ≤ 5,4 GB |
 | audit box (A1) | xong phần một người gán: **lỗi nặng 2,7% < ngưỡng 5%** ⇒ giữ box |
-| quyết định còn treo | ~~tắt KL cho box ≥ 25% màn~~ → **tắt** (lý do §4b, thi hành sau lượt Kaggle) · người gán thứ hai · swap/random-pool · Colab |
+| quyết định còn treo | ~~tắt KL box lớn~~ → **tắt KL khi area ≥ 0,50** (`report/193`, đã thi hành: kl_ok 39.432) · người gán thứ hai · swap/random-pool · Colab |
 | GPU đã tiêu | **0 đồng**, chỉ Kaggle T4 miễn phí ~3 phút |
 
 ---
@@ -172,6 +173,33 @@ tí hon không bắt được vì toàn CPU); test 9 ép **`min_new_tokens=6`** 
 
 ⚠️ `thesis_pata_colab.zip` dựng **trước** các bản vá test 23/9 chiều — dựng lại trước khi dùng.
 
+### 3.7 Kaggle lượt 2 (gói đã vá) — [đo]
+
+**13/13 ĐẠT trên mô hình 3B thật** (1.458 s). Số chính: test 4 và 5 lệch tiền tố **0** · test 9
+KV-cache Δ 5,86e−02 trên **đủ 6 bước** · test 10 save/reload logits **0**, α **0**, câu trùng · test 6
+gradient Wo 2,1 · Pq 6,1 · TARGET 130 · LoRA 110 · gate 0 (đúng vì Wo = 0) · test 7 gate 5,5e−02 sau một
+bước · **test 12 overfit 8 mẫu: CE 1,99 → 0,03 · KL 3,80 → 0,09 · mass trong box 0,08 → 0,98.**
+
+**Smoke 20 update mỗi chặng** (400 ảnh dạy trong gói, T4 FP16, lô 2 × gộp 8 = 16):
+
+| chặng | tham số học | s/update | VRAM đỉnh | diễn biến |
+|---|---|---|---|---|
+| S | **14.966.784** (trùng khít số LoRA của S1 cũ trên LLaMA-Factory) | 79 | 4,5 GB | CE 2,32 → 1,88 → 1,47 → 0,89 (u1 → u15) |
+| H | 8.402.944 = Pq + Pv + 2 LN + TARGET | 60 | 5,4 GB | KL 4,04 → 3,25–3,42 · mass 0,03 → 0,08 · `lora` grad = 0 |
+| J (C1) | 27.564.033 = LoRA + localizer 23.369.728 + Wo 4.194.304 + **1** gate | 79 | ~4,9 GB | CE 2,41 → 1,20 · gate 0,11920 → 0,11927 · resid 0 → 0,050 |
+
+- Chẩn đoán H trên probe 40 sau 20 update: cổng H **không đạt** (đúng dự kiến, chỉ thử script).
+- Sinh câu C1 sau 20 update: tắt bridge làm **20%** câu đổi (ngưỡng mốc 800 là 30%).
+- ⚠️ **H chỉ nhanh hơn S 24%**, không phải một nửa như ước: tháp thị giác + backward qua 18 block vẫn
+  chạy. Sửa ước giờ ở §5.
+- ⭐ **TARGET làm lệch speaker S** — phép kiểm CE trên probe 40: S không TARGET **1,12** · S + TARGET
+  (điểm lưu H, LoRA S giữ nguyên) **2,36** · C1 sau 20 update ở lr 2e−5 **1,27**. ⇒ không phải lỗi nạp
+  adapter; là tính chất của việc chèn token lạ trước câu, và J hồi rất nhanh. Phép so C1 − C0-Loc vẫn
+  công bằng (cả hai có TARGET), nhưng cổng §8 điều 3 (C1 không thua S) phải trả phần "hồi" này ⇒ theo
+  dõi ở mốc 800.
+- **Hệ quả chọn máy:** 79 s/u × ~2.512 update ≈ 55 h/chặng trên T4 ⇒ **không train được trên T4** (Kaggle
+  30 h/tuần, 12 h/phiên). VRAM ≤ 5,4 GB ⇒ L4 thừa bộ nhớ; tốc độ L4 so A100 phải đo trên Colab.
+
 ## 4. Audit box (A1) — [đo]
 
 Trang gán nhãn `dg1_cache/train_ac/pata/audit/audit.html` (ảnh vẽ box đỏ + điểm chạm xanh + khung
@@ -222,7 +250,14 @@ Mọi lỗi stale đều nằm ở box ≥ 0,5. Ba ngưỡng cho gần như cùn
 - Khuyến nghị: tắt, và áp **cùng luật** cho `diag` trên val400/val600. Giữ nguyên cũng hợp lệ vì 2,7%
   đã dưới ngưỡng.
 
-## 4b. Vì sao tắt KL cho box ≥ 25% màn (viết theo yêu cầu user 23/9)
+## 4b. Vì sao tắt KL cho box lớn (viết theo yêu cầu user 23/9)
+
+> ⛔ **ĐÃ BỊ `report/193` THAY (23/9 tối): ngưỡng chốt là `area_share ≥ 0,50`, KHÔNG phải 0,25.**
+> Hai lỗi trong mục này, giữ nguyên văn bên dưới để tra: ① "~300–650 nhãn sai" là SAI — 10/18 đến từ
+> mẫu cố ý lấy dư box lớn, không được nhân với 883; ② câu "ba ngưỡng như nhau nên chọn 0,25" là suy
+> ngược — kết quả audit bằng nhau thì phải chọn ngưỡng bảo thủ 0,50 (0,25 bỏ thêm 226 bước còn mang
+> thông tin: 465/1.272 ô, center prior 0,454). Đã thi hành 0,50: Train-proper `kl_ok` **39.432**
+> (tắt 657) · val400 398 (tắt 2) · val600 587 (tắt 14).
 
 **Hướng đã chọn: tắt KL (CE giữ nguyên) cho bước có box ≥ 0,25 diện tích màn, áp cùng luật cho phép
 đo vị trí trên val400/val600.** Sửa `pata_data.py` **sau** khi lượt Kaggle đang chạy xong, để gói
@@ -290,7 +325,7 @@ bước; chặng H bớt 2,2% số mẫu ⇒ nhanh hơn chút. Tầng U sau khi 
 | chặng | update | A100 sàn (10,3 s/u) | ghi chú |
 |---|---|---|---|
 | S, 1 epoch | ~2.512 | ~7 h | |
-| H, 1 epoch | ~2.506 | < 7 h | forward cắt sau block 17, không CE |
+| H, 1 epoch | ~2.450 (39.432/16) | ~5–6 h | forward cắt sau block 17 nhưng đo trên T4 chỉ nhanh hơn S 24% |
 | C1 (J), 1 epoch | ~2.512 | ~7 h | |
 | chấm val600 bật/tắt bridge | — | 1–3 h | sinh câu trên GPU, chấm UGround trên Kaggle T4 |
 | **tổng tới cổng C1** | | **~20–24 h** | spec gốc (S 2 epoch) là 29–35 h |

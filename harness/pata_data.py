@@ -7,7 +7,8 @@ Dựng ba tập bước CHẠM (click / long_press) cho PATA:
     val400        ← val_cham400.jsonl        (chẩn đoán loss/localizer thường xuyên)
     val600        ← val_cham600.jsonl        (chỉ dùng cho cổng cuối C1, §8)
 Mỗi bản ghi có thêm `box` (khung phần tử proxy lấy từ descriptors.jsonl, toạ độ pixel ảnh
-gốc) hoặc `box: null` ⇒ `kl_ok: false` (KL mask = 0, §2 "Luật train đúng").
+gốc) hoặc `box: null`. `kl_ok: false` khi không có box HOẶC area_share ≥ 0,50 (report/193) ⇒
+KL mask = 0, CE vẫn tính (§2 "Luật train đúng").
 
 Phép kiểm cứng (assert, hỏng là dừng):
   · ba tập rời nhau theo episode_id, (episode_id, step_id), ảnh, khoá OCR
@@ -30,6 +31,12 @@ OUT = os.path.join(ROOT, "pata")
 TOUCH = ("click", "long_press")
 SEED_PROBE = 20260923
 N_PROBE = 40
+AREA_KL_MAX = 0.50   # mask KL khi box phủ ≥ nửa màn; CE vẫn tính (report/193)
+# Luật lọc bổ sung, chốt 23/9 SAU audit, TRƯỚC mọi lượt train và trước khi xem `exec`:
+# kl_ok = có box ∧ điểm chạm trong ảnh ∧ area_share < 0,50. Box ≥ 0,50 phủ trung bình 86% ô ảnh
+# (center prior không nhìn ảnh đã đặt 0,936 mass vào box) ⇒ không còn là giám sát định vị. Ngưỡng
+# 0,25/0,40/0,50 bắt cùng 10 lỗi quan sát trong audit nên chọn ngưỡng BẢO THỦ 0,50 (193 sửa 186).
+# `box` vẫn giữ trong bản ghi, chỉ `kl_ok` đổi.
 
 
 def sha256(p):
@@ -80,12 +87,16 @@ def build(recs, desc, split):
             box = cb
             assert box_ok(box, r), f"box sai luật ở {split} {r['episode_id']},{r['step_id']}: {box}"
             st["co_box"] += 1
+        area = d.get("area_share") if d else None
+        kl_ok = box is not None and not (area is not None and area >= AREA_KL_MAX)
+        if box is not None and area is not None and area >= AREA_KL_MAX:
+            st["box_ge_050"] += 1
         out.append({
             "episode_id": r["episode_id"], "step_id": r["step_id"], "image": r["image"],
             "goal": r["goal"], "history": r.get("history") or [],
             "target_instruction": r["target_instruction"], "action": r["action"],
-            "w": r["w"], "h": r["h"], "box": box, "kl_ok": box is not None,
-            "area_share": d.get("area_share") if d else None,
+            "w": r["w"], "h": r["h"], "box": box, "kl_ok": kl_ok,
+            "area_share": area,
             "name_src": d.get("name_src") if d else None,
         })
     return out, st
@@ -138,19 +149,17 @@ def main():
     paths = {k: dump(v, f"{k}.jsonl") for k, v in sets.items()}
 
     # ── probe 40 ───────────────────────────────────────────────────────────────
-    pool = sorted((r for r in sets["val400"] if r["kl_ok"]),
-                  key=lambda r: (r["episode_id"], r["step_id"]))
-    probe = random.Random(SEED_PROBE).sample(pool, N_PROBE)
-    probe.sort(key=lambda r: (r["episode_id"], r["step_id"]))
+    # Tệp khoá đã tồn tại ⇒ BỎ sample, giữ nguyên tệp (report/193 mục 2): đổi luật kl_ok làm bể
+    # probe đổi và random.sample có thể bốc bộ khác. Chỉ bốc khi chưa có tệp.
     pp = os.path.join(OUT, "probe40.jsonl")
-    old = sha256(pp) if os.path.exists(pp) else None
-    tmp = dump(probe, "probe40.tmp.jsonl")
-    new = sha256(tmp)
-    if old is not None and old != new:
-        os.remove(tmp)
-        sys.exit(f"⛔ probe40.jsonl đã khoá với hash {old[:12]}…, bản dựng lại ra {new[:12]}…. "
-                 f"Không được đổi probe (report/185 §7b).")
-    os.replace(tmp, pp)
+    if not os.path.exists(pp):
+        pool = sorted((r for r in sets["val400"] if r["box"] is not None),
+                      key=lambda r: (r["episode_id"], r["step_id"]))
+        probe = random.Random(SEED_PROBE).sample(pool, N_PROBE)
+        probe.sort(key=lambda r: (r["episode_id"], r["step_id"]))
+        dump(probe, "probe40.jsonl")
+    else:
+        print(f"  probe40 đã khoá — giữ nguyên tệp, không bốc lại ({sha256(pp)[:12]}…)")
 
     hashes = {os.path.basename(p): sha256(p) for p in list(paths.values()) + [pp]}
     hashes["_nguon"] = {fn: sha256(os.path.join(ROOT, fn)) for fn in
@@ -160,8 +169,12 @@ def main():
     print("=" * 72)
     for k in sets:
         s = stats[k]
+        n_mask = s["box_ge_050"]
         print(f"  {k:13} chạm {s['cham']:6}  có box {s['co_box']:6}  "
-              f"thiếu box {s['cham'] - s['co_box']:4}  ({s['co_box'] / s['cham']:.2%})  "
+              f"thiếu box {s['cham'] - s['co_box']:4}  "
+              f"KL tắt vì box≥0.50 {n_mask:4}  "
+              f"kl_ok {s['co_box'] - n_mask:6}  "
+              f"({s['co_box'] / s['cham']:.2%})  "
               f"cắt biên {s['cat_bien']}  điểm ngoài ảnh {s['diem_ngoai_anh']}")
     print(f"  probe40      40 bước từ val400 có box, hạt {SEED_PROBE}")
     print(f"  thiếu OCR    {thieu_ocr} bước (prompt vẫn dựng được, chỉ thiếu dòng chữ)")

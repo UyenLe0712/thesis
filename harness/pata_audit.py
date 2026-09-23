@@ -123,8 +123,9 @@ cnt();
 def build():
     recs = [json.loads(l) for l in open(os.path.join(ROOT, "pata", "train_proper.jsonl"), encoding="utf-8")]
     loc = [r for r in recs if os.path.exists(os.path.join(ROOT, r["image"]))]
-    boxed = sorted((r for r in loc if r["kl_ok"]), key=lambda r: (r["episode_id"], r["step_id"]))
-    nobox = sorted((r for r in loc if not r["kl_ok"]), key=lambda r: (r["episode_id"], r["step_id"]))
+    # theo `box`, không theo `kl_ok` (kl_ok nay còn tắt cả box lớn — xem pata_data.AREA_MAX_KL)
+    boxed = sorted((r for r in loc if r["box"] is not None), key=lambda r: (r["episode_id"], r["step_id"]))
+    nobox = sorted((r for r in loc if r["box"] is None), key=lambda r: (r["episode_id"], r["step_id"]))
     rnd = random.Random(SEED)
     U = rnd.sample(boxed, N_U)
     ids_u = {(r["episode_id"], r["step_id"]) for r in U}
@@ -151,7 +152,7 @@ def build():
         fn = f"img/{i:03d}.jpg"
         render(r, os.path.join(OUT, fn))
         items.append({"id": i, "img": fn, "instr": r["target_instruction"].strip(),
-                      "goal": r["goal"].strip(), "has_box": r["kl_ok"], "overlap": i < N_OVERLAP})
+                      "goal": r["goal"].strip(), "has_box": r["box"] is not None, "overlap": i < N_OVERLAP})
         key.append({"id": i, "tang": t, "episode_id": r["episode_id"], "step_id": r["step_id"],
                     "area_share": r["area_share"], "name_src": r["name_src"], "box": r["box"]})
         if i % 50 == 0:
