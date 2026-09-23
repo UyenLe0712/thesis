@@ -150,3 +150,21 @@ print(os.path.getsize(f"{W}/pata_kaggle_logs.zip") // 1024, "KB → tải về t
 
 Tải `pata_kaggle_logs.zip` về, đặt vào **`runs/pata/kaggle_smoke/`** (luật đọc kết quả: tải về
 đặt thẳng vào thư mục của phép đo) rồi báo mình.
+
+---
+
+## Ô K9 — đo thời gian mỗi update dồn vào đâu (thêm 23/9 tối, ~15 phút T4)
+
+Bối cảnh: Stage S trên A100 chạy **23,9 s/update** (S1 cũ 10,3), chờ dữ liệu 0%, GPU bận 30–50%, lô 16 × 1
+không nhanh hơn 4 × 4. Nghi phạm: tháp thị giác tính attention **từng cửa sổ bằng vòng lặp Python**.
+Ô này đo tháp thị giác / forward / backward cho hai cách (`loop` mặc định · `block` gom cửa sổ vào một lời
+gọi có mặt nạ) và độ lệch số học giữa chúng. Chạy sau K1 + K2 (dùng gói `thesis-pata` bản mới).
+
+```python
+chay(["python", "harness/pata_profile.py", "--data-root", DR, "--bs", "2", "--steps", "3"],
+     f"{W}/k9_profile.log")
+print(open(f"{W}/k9_profile.log").read()[-6000:])
+```
+
+**Gửi mình toàn bộ phần in ra.** Mình đọc bốn số: tỉ trọng tháp thị giác trong cả bước · tăng tốc
+block/loop · lệch đầu ra tháp thị giác · số lời gọi attention mỗi bước.

@@ -384,3 +384,55 @@ def forward_losses(model, pata, batch, *, need_ce=True, need_kl=True, truncate=F
             extra["mass"].append(float(a[pos].sum()))
             extra["hit"].append(float(pos[int(a.argmax())]))
     return ce_sum, n_tok, kl_sum, n_kl, extra
+
+
+# ─────────────────────────────────────────────────────────────── attention tháp thị giác
+_VIS_ORIG = {}
+
+
+def set_vision_attn(mode="loop", block_max=6144):
+    """Chọn cách tính attention CỬA SỔ của tháp thị giác Qwen2.5-VL (không dùng flash-attn).
+
+      loop   mặc định transformers: tách theo cu_seqlens, MỖI cửa sổ một lời gọi sdpa (vòng lặp Python)
+      block  gom các cửa sổ liên tiếp tới ≤ block_max patch vào MỘT lời gọi sdpa, mặt nạ khối-chéo
+             (patch chỉ nhìn patch cùng cửa sổ) ⇒ CÙNG phép toán, ít lời gọi hơn hàng chục lần.
+    Đo lệch số học và tốc độ bằng pata_profile.py TRƯỚC khi dùng cho lượt thật. C1 và C0-Loc phải dùng
+    cùng một chế độ."""
+    import torch.nn.functional as F
+    from transformers.models.qwen2_5_vl import modeling_qwen2_5_vl as M
+    cls = M.Qwen2_5_VLVisionAttention
+    if "fwd" not in _VIS_ORIG:
+        _VIS_ORIG["fwd"] = cls.forward
+    if mode == "loop":
+        cls.forward = _VIS_ORIG["fwd"]
+        return
+    assert mode == "block"
+
+    def forward(self, hidden_states, cu_seqlens, rotary_pos_emb=None, position_embeddings=None, **kw):
+        L = hidden_states.shape[0]
+        q, k, v = self.qkv(hidden_states).reshape(L, 3, self.num_heads, -1).permute(1, 0, 2, 3).unbind(0)
+        if position_embeddings is None:                       # transformers 4.5x
+            emb = torch.cat((rotary_pos_emb, rotary_pos_emb), dim=-1)
+            position_embeddings = (emb.cos(), emb.sin())
+        cos, sin = position_embeddings
+        q, k = M.apply_rotary_pos_emb_vision(q, k, cos, sin)
+        q, k, v = (t.transpose(0, 1).unsqueeze(0) for t in (q, k, v))     # (1, H, L, d)
+        cu = cu_seqlens.tolist()
+        outs, a = [], 0
+        while a < len(cu) - 1:                                 # gom cửa sổ liên tiếp thành nhóm
+            b = a + 1
+            while b < len(cu) - 1 and cu[b + 1] - cu[a] <= block_max:
+                b += 1
+            s, e = cu[a], cu[b]
+            seg = torch.repeat_interleave(
+                torch.arange(b - a, device=q.device),
+                torch.tensor([cu[i + 1] - cu[i] for i in range(a, b)], device=q.device))
+            mask = seg[:, None] == seg[None, :]
+            o = F.scaled_dot_product_attention(q[:, :, s:e], k[:, :, s:e], v[:, :, s:e],
+                                               attn_mask=mask, scale=self.scaling)
+            outs.append(o.transpose(1, 2))                     # (1, len, H, d) — như nhánh gốc
+            a = b
+        out = torch.cat(outs, dim=1).reshape(L, -1).contiguous()
+        return self.proj(out)
+
+    cls.forward = forward
