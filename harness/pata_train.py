@@ -112,16 +112,24 @@ def param_groups(model, pata, stage, rec, a):
         for p in lora: p.requires_grad_(True)
         return [{"params": lora, "lr": rec["lr"], "name": "lora"}]
     H = pata.heads
-    loc = [H.tvec] + list(H.ln_q.parameters()) + list(H.ln_v.parameters()) + \
+    # TARGET (`tvec`) là NHÓM RIÊNG: gradient của nó lớn gấp hàng trăm lần phần còn lại (đo trên
+    # Kaggle 23/9: 300–2.200 so với Pq/Pv ~3) vì khởi tạo mean-vocabulary có chuẩn rất nhỏ và
+    # RMSNorm đầu vào khuếch đại gradient. Cắt gradient theo TỔNG chuẩn chung thì tvec kéo mọi nhóm
+    # khác về gần 0 — xem clip theo nhóm trong vòng lặp.
+    tv = [H.tvec]
+    loc = list(H.ln_q.parameters()) + list(H.ln_v.parameters()) + \
         list(H.pq.parameters()) + list(H.pv.parameters())
     bridge = list(H.wo.parameters()) + [H.gate]
     for p in H.parameters(): p.requires_grad_(False)
     if stage == "H":
         for p in lora: p.requires_grad_(False)
-        for p in loc: p.requires_grad_(True)
-        return [{"params": loc, "lr": rec["lr"], "name": "localizer"}]
-    for p in lora + loc: p.requires_grad_(True)
-    g = [{"params": lora + loc, "lr": rec["lr"], "name": "lora+localizer"}]
+        for p in loc + tv: p.requires_grad_(True)
+        return [{"params": loc, "lr": rec["lr"], "name": "localizer"},
+                {"params": tv, "lr": rec["lr"], "name": "target"}]
+    for p in lora + loc + tv: p.requires_grad_(True)
+    g = [{"params": lora, "lr": rec["lr"], "name": "lora"},
+         {"params": loc, "lr": rec["lr"], "name": "localizer"},
+         {"params": tv, "lr": rec["lr"], "name": "target"}]
     if pata.bridge_enabled:
         for p in bridge: p.requires_grad_(True)
         g.append({"params": bridge, "lr": rec["lr_bridge"], "name": "bridge"})
@@ -250,7 +258,7 @@ def main():
             "d_k": pata.heads.d_k if pata else None, "bridge_enabled": pata.bridge_enabled if pata else None,
             "lora": {"r": 8, "alpha": 16, "dropout": 0.05, "target": PM.LORA_REGEX},
             "quant": "nf4 double-quant" if not a.tiny else "none (tiny)", "compute_dtype": str(cdt),
-            "clip": 1.0, "weight_decay": 0.0, "grad_ckpt": "non-reentrant",
+            "clip": "1.0 theo từng nhóm (lora · localizer · target · bridge)", "weight_decay": 0.0, "grad_ckpt": "non-reentrant",
             "transformers": __import__("transformers").__version__, "torch": torch.__version__}
     print(f"[kế hoạch] {n} mẫu · {per_epoch} update/epoch · tổng {total} · chạy tới {total_run} · "
           f"warmup {math.ceil(rec['warmup'] * total)} · λ={a.lam}", flush=True)
@@ -303,7 +311,10 @@ def main():
                 H = pata.heads
                 gn.update({"wo": gnorm([H.wo.weight]), "gate": gnorm([H.gate]), "pq": gnorm([H.pq.weight]),
                            "pv": gnorm([H.pv.weight]), "tvec": gnorm([H.tvec])})
-        torch.nn.utils.clip_grad_norm_(params, 1.0)
+        # clip 1,0 THEO TỪNG NHÓM (lora · localizer · target · bridge), không theo tổng chung — xem
+        # param_groups. LR mỗi nhóm giữ nguyên recipe §6; chỉ cách cắt gradient đổi (spec không nói).
+        for g_ in groups:
+            torch.nn.utils.clip_grad_norm_(g_["params"], 1.0)
         opt.step(); sch.step(); opt.zero_grad(set_to_none=True)
         if do_log:
             el = time.time() - t0
@@ -314,6 +325,7 @@ def main():
                  "mass_in_box": sum(acc["mass"]) / len(acc["mass"]) if acc["mass"] else None,
                  "hit_in_box": sum(acc["hit"]) / len(acc["hit"]) if acc["hit"] else None,
                  "gate_sigmoid": float(torch.sigmoid(pata.heads.gate)) if pata else None,
+                 "tvec_norm": float(pata.heads.tvec.norm()) if pata else None,
                  "resid_ratio": sum(acc["resid"]) / len(acc["resid"]) if acc["resid"] else None,
                  "grad_norm": gn, "s_per_update": round(spu, 2),
                  "eta_h": round(spu * (total_run - step) / 3600, 2),

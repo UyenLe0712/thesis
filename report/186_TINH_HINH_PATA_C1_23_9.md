@@ -200,6 +200,36 @@ bước · **test 12 overfit 8 mẫu: CE 1,99 → 0,03 · KL 3,80 → 0,09 · ma
 - **Hệ quả chọn máy:** 79 s/u × ~2.512 update ≈ 55 h/chặng trên T4 ⇒ **không train được trên T4** (Kaggle
   30 h/tuần, 12 h/phiên). VRAM ≤ 5,4 GB ⇒ L4 thừa bộ nhớ; tốc độ L4 so A100 phải đo trên Colab.
 
+### 3.8 Đọc kỹ log smoke: gradient của TARGET làm tê liệt các nhóm khác — đã vá — [đo]
+
+`runs/pata/kaggle_smoke/ck/*/train_log.jsonl`, chuẩn gradient TRƯỚC khi cắt:
+
+| update | `tvec` (H) | `pq`/`pv` (H) | `tvec` (C1) | `lora` (C1) |
+|---|---|---|---|---|
+| 1 | 9,8 | 5,0 / 4,9 | 585 | 38 |
+| 11 | 96 | 2,3 / 2,3 | 112 | 8 |
+| 15 | **1.645** | 3,9 / 3,9 | 441 | 26 |
+| 20 | 310 | 3,5 / 3,6 | 770 | 41 |
+
+Trainer cắt gradient theo **tổng chuẩn chung** về 1,0 ⇒ khi `tvec` ~1.645, Pq/Pv/LoRA/Wo bị nhân hệ số
+~1/1.645, gần như đứng yên. Khớp với log: KL chặng H chững 3,4–3,5 từ u5 tới u20, trong khi test 12
+(không cắt gradient) KL 3,80 → 0,09.
+Nguyên nhân [suy]: TARGET khởi tạo bằng trung bình 151k embedding ⇒ chuẩn rất nhỏ ⇒ RMSNorm đầu vào
+khuếch đại gradient. AdamW tự chuẩn hoá bước của chính `tvec` nên TARGET vẫn học; chỉ cắt chung là hại.
+**Vá (23/9 tối):** tách `tvec` thành nhóm riêng và cắt 1,0 **theo từng nhóm** (lora · localizer ·
+target · bridge). LR từng nhóm giữ nguyên §6; khởi tạo mean-vocabulary giữ nguyên §4; spec không quy
+định cách cắt gradient. Log thêm `tvec_norm`. Chạy thử CPU: S/H/J + nối tiếp đạt. ⚠️ Điểm lưu cũ (một
+nhóm) không nối tiếp được sang bản mới — không sao vì chưa có lượt thật.
+
+Các điều khác đọc được:
+- Chẩn đoán H trên probe 40 sau 20 update: mass 0,075 vs center prior 0,025 / train prior 0,040; hit
+  17,5% vs 0% / 7,5% ⇒ đã hơn prior. Nhưng **xáo goal/history không đổi mass (−0,0002)** ⇒ localizer
+  mới học "vùng nào trông bấm được", chưa dùng mục tiêu — đúng vế thứ ba của cổng H; một phần có thể do
+  lỗi cắt gradient ở trên. Phải theo dõi ở cổng H thật.
+- C1: gate nhận gradient từ u5 (0,077), `resid` 0 → 0,053, CE 2,41 → 1,02. VRAM đỉnh ≤ 5,4 GB mọi chặng.
+- Sinh câu probe 40: format hợp lệ bật 95% / tắt 87,5%. Một ca bật bridge đổi sang sai phần tử
+  ("fade in" → "OK button") khi localizer còn kém — minh hoạ vì sao cổng H phải đứng trước C1.
+
 ## 4. Audit box (A1) — [đo]
 
 Trang gán nhãn `dg1_cache/train_ac/pata/audit/audit.html` (ảnh vẽ box đỏ + điểm chạm xanh + khung
