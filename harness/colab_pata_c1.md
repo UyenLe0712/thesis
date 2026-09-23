@@ -56,14 +56,20 @@ print(torch.cuda.get_device_name(0), round(torch.cuda.get_device_properties(0).t
 import glob, os
 def thu_prod():
     r = subprocess.run([sys.executable, "-c",
-        "import torch; print(torch.tensor([[1,2,3],[2,3,4]], device='cuda').prod(-1))"],
+        "import torch; a=torch.randn(64,64,device='cuda',dtype=torch.bfloat16); "
+        "print(torch.tensor([[1,2,3],[2,3,4]], device='cuda').prod(-1), float((a@a).float().abs().sum())>0)"],
         capture_output=True, text=True, env=os.environ)
     return r.returncode == 0, (r.stdout + r.stderr)[-300:]
 ok, msg = thu_prod()
 if not ok:
     libs = glob.glob("/usr/**/libnvrtc-builtins.so*", recursive=True) + \
            glob.glob("/usr/local/lib/python3*/dist-packages/nvidia/**/libnvrtc-builtins.so*", recursive=True)
-    for d in sorted({os.path.dirname(x) for x in libs}):
+    # CHỈ thư mục có builtins khớp ĐÚNG phiên bản CUDA của torch (vd .so.13.0 cho cu130) — đừng thêm thư mục
+    # toolkit (vd cuda-13.3): LD_LIBRARY_PATH đè lên thư viện torch mang theo ⇒ có thể nạp lẫn cuBLAS/cudart.
+    can = f"libnvrtc-builtins.so.{torch.version.cuda}"
+    dirs = sorted({os.path.dirname(x) for x in libs if x.endswith(can) and "dist-packages" in x})
+    print("thêm vào LD_LIBRARY_PATH:", dirs)
+    for d in dirs:
         os.environ["LD_LIBRARY_PATH"] = d + ":" + os.environ.get("LD_LIBRARY_PATH", "")
     ok, msg = thu_prod()
 print("prod trên GPU (tiến trình con):", "ĐẠT" if ok else "HỎNG", msg.strip()[-120:])
