@@ -12,9 +12,9 @@
 | quyết định user | **Stage S chạy 1 epoch** (spec ghi 2) · **C1 trước**, chỉ chạy C0-Loc khi C1 qua cổng §8 |
 | chặng A (0 GPU) — mã | xong: dữ liệu · mô hình · 13 test · trainer S/H/J · đánh giá · audit · gói zip |
 | 13 unit test, mô hình tí hon, CPU | **13/13 ĐẠT** [đo] |
-| 13 unit test, mô hình 3B thật, Kaggle T4 | lượt 1: **6 test đầu ĐẠT rồi OOM ở test 10** (lỗi của chính test, đã vá) — **chờ chạy lại** |
+| 13 unit test, mô hình 3B thật, Kaggle T4 | lượt 1: **6 test đầu ĐẠT rồi OOM ở test 10** (lỗi của chính test, đã vá) · lượt 2 (23/9 chiều, gói đã vá): qua test 10, **test 9 đạt trên đủ 6 bước (Δ 5,9e−02)**, test 8 đạt; đang chạy test 12 (overfit) |
 | audit box (A1) | xong phần một người gán: **lỗi nặng 2,7% < ngưỡng 5%** ⇒ giữ box |
-| quyết định còn treo | tắt KL cho box ≥ 25% màn hay giữ · người gán thứ hai · swap/random-pool · Colab |
+| quyết định còn treo | ~~tắt KL cho box ≥ 25% màn~~ → **tắt** (lý do §4b, thi hành sau lượt Kaggle) · người gán thứ hai · swap/random-pool · Colab |
 | GPU đã tiêu | **0 đồng**, chỉ Kaggle T4 miễn phí ~3 phút |
 
 ---
@@ -221,6 +221,69 @@ Mọi lỗi stale đều nằm ở box ≥ 0,5. Ba ngưỡng cho gần như cùn
   lỗi ở box nhỏ hơn).
 - Khuyến nghị: tắt, và áp **cùng luật** cho `diag` trên val400/val600. Giữ nguyên cũng hợp lệ vì 2,7%
   đã dưới ngưỡng.
+
+## 4b. Vì sao tắt KL cho box ≥ 25% màn (viết theo yêu cầu user 23/9)
+
+**Hướng đã chọn: tắt KL (CE giữ nguyên) cho bước có box ≥ 0,25 diện tích màn, áp cùng luật cho phép
+đo vị trí trên val400/val600.** Sửa `pata_data.py` **sau** khi lượt Kaggle đang chạy xong, để gói
+đang chạy không lệch với mã trên máy.
+
+### Nhắc lại KL làm gì
+
+Ở chặng H và J, bộ định vị của TARGET cho ra một phân phối chú ý α trên 1.272 ô ảnh (lưới 24 × 53, mỗi
+ô 28 × 28 px sau resize). Đích p rải đều lên **mọi ô giao box**. KL(p ‖ α) kéo α dồn vào đúng các ô
+đó. Box càng nhỏ, đích càng nhọn, tín hiệu "phần tử nằm ở đâu" càng rõ. Bridge sau đó lấy
+z = Σ αᵢ vᵢ, tức **trung bình đặc trưng thị giác theo α**, đưa vào TARGET cho phần sinh câu dùng.
+
+### Ba lý do, kèm số đo [đo trên `pata/*.jsonl`, 0 GPU]
+
+**① Box lớn không mang thông tin vị trí: đích phủ gần hết màn.**
+
+| diện tích box | tỉ lệ Train-proper | ô dương TB / 1.272 | mass của center prior trong box | mass của train-location prior |
+|---|---|---|---|---|
+| < 0,01 | 48,60% | 12,3 | 0,007 | 0,021 |
+| 0,01–0,05 | 38,05% | 48,3 | 0,042 | 0,047 |
+| 0,05–0,25 | 11,15% | 126,1 | 0,113 | 0,110 |
+| **0,25–0,5** | **0,56%** (226) | **465,0** | **0,454** | 0,351 |
+| **≥ 0,5** | **1,64%** (657) | **1.096,3** (86% màn) | **0,936** | 0,870 |
+
+Với box ≥ 0,5, một phép đoán không nhìn ảnh ("nhìn vào giữa màn") đã có 0,94 mass trong box. KL trên
+các bước này **không dạy được "phần tử ở đâu"**; nó chỉ dạy α **trải rộng ra**, ngược chiều với 97,8%
+bước còn lại vốn dạy α **nhọn lại**. Kéo theo: z của bridge thành trung bình gần cả màn, không mang
+thông tin gì về phần tử đích.
+
+**② Box lớn phần lớn là nhãn sai** (audit §4): box ≥ 0,25 lỗi nặng **10/18** (Wilson ~[34; 75]%),
+và **mọi** lỗi stale đều ở box ≥ 0,5. Phần còn lại 8/230. Nhìn ảnh audit, dạng lỗi điển hình là
+labeler lấy **khung chứa** (cả thẻ, cả danh sách, cả vùng nội dung) thay cho nút bên trong — đúng dạng
+luật "node usable nhỏ nhất chứa điểm chạm" gặp khi nút con không được đánh dấu bấm được.
+⇒ ước **~300–650** bước đang dạy bộ định vị nhìn sai chỗ [suy: 10/18 × 883, cận theo Wilson].
+
+**③ Chi phí gần bằng 0.** Mất KL ở **883/40.089 = 2,20%** bước; CE (học câu) giữ nguyên cho cả 883
+bước; chặng H bớt 2,2% số mẫu ⇒ nhanh hơn chút. Tầng U sau khi bỏ box lớn còn lỗi nặng 3/145 = 2,1%.
+
+### Cái mất và cái phải khai
+
+- Mất tín hiệu đúng ở khoảng một nửa số box lớn (phần tử thật sự to: thẻ bài viết, ô danh sách rộng).
+  Ở tập kiểm, với phần tử lớn, chỉ vào một phần của nó thường vẫn đúng ⇒ thiệt nhỏ [suy].
+- Quyết định đưa ra **sau khi thấy audit**, trước mọi lượt train, không đụng `exec` hay dữ liệu kiểm.
+  Ngưỡng 0,25 chọn nhìn theo audit; ngưỡng 0,4 và 0,5 cho gần như cùng kết quả (10/17 lỗi, mất
+  1,6–1,8%) ⇒ không nhạy với lựa chọn.
+- ⚠️ **Tự sửa một luận điểm đã nêu với user:** "cổng H sạch hơn" là **đúng về chiều nhưng nhỏ về cỡ**.
+  val400 chỉ có **4** box ≥ 0,25 (1,0%), val600 có **19** (3,2%). Lợi chính của việc tắt nằm ở
+  **tập dạy** (①, ②), không ở phép đo.
+- Luật khoá trước của `185` §2 **không bắt buộc** việc này (2,7% < 5%). Đây là một lọc bổ sung, phải
+  vào manifest §11 dưới mục *box eligibility rule*: `kl_ok = có box ∧ điểm chạm trong ảnh ∧ area_share < 0,25`.
+
+### Việc sẽ làm khi thi hành
+
+1. `pata_data.py`: thêm điều kiện `area_share < 0,25` vào `kl_ok`, đếm riêng `box_lon`; `box` vẫn giữ
+   trong bản ghi (để audit/diag còn đọc được), chỉ `kl_ok` đổi.
+2. Dựng lại `pata/*.jsonl` + `split_hash.json`. **probe40 giữ nguyên hash**: đã kiểm, không mẫu nào
+   trong probe40 có box ≥ 0,25 [đo], nên luật mới không đụng tới probe (bể lấy mẫu của probe đổi
+   nhưng vì probe là tệp khoá, script so hash tệp cũ chứ không bốc lại).
+3. `pata_eval.py diag`: chỉ tính KL/mass/hit/lift trên bước `kl_ok` (đã vậy sẵn vì `ptarget` rỗng khi
+   `kl_ok` sai).
+4. Dựng lại hai gói zip, commit.
 
 ## 5. Ước giờ GPU (S 1 epoch) — [suy], chờ số đo smoke thay vào
 
