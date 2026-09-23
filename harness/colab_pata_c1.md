@@ -9,7 +9,7 @@ Lượt TRẢ PHÍ duy nhất của thử nghiệm C1. Mọi thứ không cần 
 | P1 | cài gói | GPU đã chọn | 3 phút | không thấy GPU |
 | P2 | Drive, mã, dữ liệu, ảnh | như trên | ~15 phút | số đếm hoặc hash lệch |
 | P3 | **đo máy**: 6 update S | **L4 trước**, A100 sau nếu cần | ~10 phút/máy | — |
-| P4 | chạy một chặng, chạy nền | máy đã chọn | S ~? h · H ~? h · C1 ~? h | — |
+| P4 | chạy một chặng, chạy nền | L4 (23/9) → A100 nếu đạt | S ≈ 35 h trên L4 (50,6 s/u) · A100 chưa đo | — |
 | P5 | ô theo dõi + đồng bộ Drive, **chạy tiền cảnh suốt lượt** | — | suốt lượt | NaN · tràn bộ nhớ |
 | P6 | chẩn đoán sau chặng S (CE_val) | cùng máy | ~10 phút | CE_val phân kỳ |
 | P7 | **cổng H** trên val400 | cùng máy | ~15 phút | **không đạt ⇒ DỪNG, không chạy C1** |
@@ -127,6 +127,39 @@ print("\n".join(l for l in open("/content/do_may.log").read().splitlines() if "u
 
 **Ước giờ theo `s/u` đo được:** S ≈ 2.512 × s/u · H ≈ 2.465 × s/u × ~0,76 · C1 ≈ 2.512 × s/u.
 Ghi con số vào bảng đầu runbook trước khi bấm lượt thật.
+
+## ⭐ Đo máy thực tế + ĐỔI MÁY GIỮA LƯỢT (ghi 23/9 tối)
+
+**L4 đo 23/9 (P3):** `u6/2512 … 50,6 s/u · vram 6,49 GB` ⇒ S ≈ 35 h trên L4 (số trung bình có gồm
+update khởi động nên hơi cao). **A100 chưa đo** — tối 23/9 không kết nối được A100.
+⇒ **User quyết: chạy S trên L4 trước, lưu điểm lưu như thường; hôm sau vào được A100 thì đo (P3), nếu
+A100 đạt luật 1,5× thì chạy TIẾP từ điểm lưu L4 trên A100.**
+
+Vì sao chạy tiếp được, không phải chạy lại:
+- điểm lưu có adapter + optimizer + scheduler + số update + RNG (CPU, CUDA, Python); thứ tự dữ liệu là
+  hoán vị cố định theo `--seed` ⇒ A100 học tiếp đúng các mẫu L4 chưa học;
+- L4 và A100 đều Ampere trở lên ⇒ cùng compute BF16, cùng cấu hình NF4;
+- tiền lệ dự án (11/8): L4 vs A100 cùng seed, loss 20 bước trùng ba chữ số, `total_flos` y hệt.
+⚠️ Phải khai trong manifest: "Stage S chạy update 1…N trên L4, N+1…2.512 trên A100". Sai khác số học
+giữa hai card ở mức làm tròn, không đổi recipe.
+
+**Quy trình đổi máy (làm đúng thứ tự, mất ≤ 5 phút tiến độ):**
+1. Chờ ô P5 in `↑ Drive: …/S/ckpt-XXXXX` của điểm lưu **mới nhất** (lưu mỗi 100 update ≈ 84 phút trên L4;
+   đồng bộ mỗi 5 phút). Kiểm trên Drive thư mục đó có tệp `DONE`.
+2. Ghi lại số update cuối trong log. Rồi mới Runtime → Disconnect and delete runtime.
+   (Phần update sau điểm lưu cuối sẽ mất — nên ngắt ngay sau khi vừa có điểm lưu mới.)
+3. Đổi runtime sang A100 → P1 → P2 → **P3 (đo, ra thư mục riêng `/content/do_may_S`, không đụng điểm
+   lưu thật)** → gửi `s/u`.
+4. A100 đạt luật (L4/A100 > 1,5) ⇒ **P4 với `STAGE = "S"`**: ô tự chép điểm lưu mới nhất trên Drive về và
+   in `[nối tiếp] từ … — update N/2512`. ⛔ Giữ nguyên `--bs 4 --accum 4` (đổi cỡ lô là đổi thứ tự mẫu
+   trong lô và làm lệch phép nối tiếp). Rồi P5.
+5. A100 KHÔNG đạt luật (≤ 1,5×) ⇒ quay lại L4 và làm bước 4 trên L4.
+
+⚠️ Colab trả trước không có background execution ⇒ để máy và trình duyệt mở, ô P5 chạy tiền cảnh. Mất
+máy giữa đêm thì làm lại P1 → P2 → P4 → P5 (tự nối tiếp từ Drive).
+⭐ Trong lúc L4 chạy, kiểm GPU có bị bỏ đói không: Terminal Colab →
+`nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv -l 5` (Ctrl+C sau ~1 phút). GPU < ~60%
+thường xuyên ⇒ nghẽn khâu nạp ảnh CPU, A100 sẽ không nhanh hơn — báo lại để sửa trước khi đổi máy.
 
 ## Ô P4 — chạy một chặng, chạy nền
 

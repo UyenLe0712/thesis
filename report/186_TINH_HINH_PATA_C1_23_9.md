@@ -230,6 +230,13 @@ Các điều khác đọc được:
 - Sinh câu probe 40: format hợp lệ bật 95% / tắt 87,5%. Một ca bật bridge đổi sang sai phần tử
   ("fade in" → "OK button") khi localizer còn kém — minh hoạ vì sao cổng H phải đứng trước C1.
 
+### 3.9 Colab 23/9 tối — [đo]
+
+P2 đạt: hash 4/4 · 40.189 chạm · 39.432 kl_ok · đủ 41.191 ảnh. **L4: 50,6 s/update, VRAM 6,49 GB**
+(lô 4 × gộp 4) ⇒ S ≈ 35 h. A100 không kết nối được ⇒ **user quyết chạy S trên L4, lưu điểm lưu, hôm sau
+đo A100 và nếu đạt luật 1,5× thì chạy tiếp từ điểm lưu L4 trên A100.** Quy trình đổi máy ở
+`harness/colab_pata_c1.md` mục *Đo máy thực tế + đổi máy giữa lượt*.
+
 ## 4. Audit box (A1) — [đo]
 
 Trang gán nhãn `dg1_cache/train_ac/pata/audit/audit.html` (ảnh vẽ box đỏ + điểm chạm xanh + khung
