@@ -186,6 +186,14 @@ vòng lặp đứng chờ lô kế. **Đọc sau ~40 update:** `chờ-dữ-liệ
 4. Sau ~20 update: đọc `(gần …)`. Tràn bộ nhớ ⇒ `"8", "2"` và làm lại bước 3.
 ⚠️ Khai vào manifest: "S update 1–100 lô 4 × 4, từ 101 lô 16 × 1 (tương đương toán học)".
 
+### Lô 16 × 1 sau điểm lưu 100 (23/9 23:23 VN) — [đo]
+
+Nối tiếp đúng `update 100/2512`. `u140 … 24,0 s/u (gần 23,9) chờ-dữ-liệu 0% vram 18,7 GB`, CE 0,64 → 0,83.
+⇒ **Lô lớn KHÔNG nhanh hơn** (4 × 4: 22,8 s/u) — giả thuyết "GPU đói việc vì lô nhỏ" **bị bác**. Giữ 16 × 1
+cho mọi chặng còn lại (tương đương toán học, VRAM dư) để C1 và C0-Loc cùng một cách chia lô.
+S dự kiến xong ~**15:10 VN 24/9** (còn ~15,8 h). Chỗ chậm so với S1 cũ (10,3 s/u) chưa rõ — cần đo phân
+rã thời gian (tháp thị giác / forward LM / backward) trên Kaggle T4 trước chặng H.
+
 ## Ô P4 — chạy một chặng, chạy nền
 
 Đặt `STAGE` rồi chạy. Chạy lại **đúng ô này** sau khi mất máy (sau P1 + P2) là tự nối tiếp: ô chép điểm
