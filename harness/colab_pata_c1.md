@@ -109,7 +109,7 @@ import subprocess, time
 def chay(cmd, log):
     env = dict(os.environ, TQDM_DISABLE="1", HF_HUB_DISABLE_PROGRESS_BARS="1",
                PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True", PYTHONUNBUFFERED="1")
-    return subprocess.Popen(cmd, stdout=open(log, "w"), stderr=subprocess.STDOUT, env=env,
+    return subprocess.Popen(cmd, stdout=open(log, "a"), stderr=subprocess.STDOUT, env=env,
                             cwd=REPO, start_new_session=True)
 p = chay(["python", "harness/pata_train.py", "--stage", "S", "--data-root", DR, "--bs", "4", "--accum", "4",
           "--max-updates", "6", "--log-steps", "1", "--save-steps", "1000", "--workers", "8",
@@ -177,11 +177,18 @@ vòng lặp đứng chờ lô kế. **Đọc sau ~40 update:** `chờ-dữ-liệ
 
 Đặt `STAGE` rồi chạy. Chạy lại **đúng ô này** sau khi mất máy (sau P1 + P2) là tự nối tiếp: ô chép điểm
 lưu mới nhất trên Drive về local trước khi khởi động.
+⚠️ **Mất máy ≠ restart nhân Python.** Mất máy (VM mới, `/content` trống): P1 → P2 → P4 → P5. Chỉ nhân
+Python restart (tiến trình train vẫn sống): chạy P2 (để có biến) → P4 (sẽ báo "ĐANG CHẠY" và dừng — đúng) →
+**P5** (bám tiến trình cũ theo PID).
 
 ```python
-import shutil
+import shutil, subprocess
 STAGE = "S"          # ⬅ "S" → rồi "H" → rồi "J"  (C1 = J bridge bật)
-OUT = f"/content/ck/{STAGE}"
+# ⛔ CHẶN CHẠY TRÙNG: nhân Python restart thì tiến trình train (start_new_session) VẪN sống. Chạy lại ô này
+#    khi nó còn sống = hai trainer ghi cùng thư mục. Còn sống thì KHÔNG khởi động mới — sang thẳng ô P5.
+OUT = f"/content/ck/{STAGE}"        # đặt TRƯỚC phép kiểm: ô P5 cần OUT kể cả khi phép kiểm dừng ô này
+dang = subprocess.run(["pgrep", "-f", "harness/pata_train.py"], capture_output=True, text=True).stdout.split()
+assert not dang, f"⛔ pata_train.py ĐANG CHẠY (PID {dang}) — đừng chạy P4, sang ô P5 (nó tự bám PID)."
 os.makedirs(OUT, exist_ok=True)
 # nối tiếp: lấy điểm lưu TRỌN (có DONE) mới nhất trên Drive nếu local chưa có
 dck = sorted(glob.glob(f"{CK}/{STAGE}/ckpt-*/DONE"))
@@ -204,7 +211,8 @@ print("PID", P.pid, "· log /content/pata_%s.log" % STAGE)
 ## Ô P5 — theo dõi + đồng bộ Drive (CHẠY TIỀN CẢNH SUỐT LƯỢT, không bấm Stop)
 
 ```python
-import time, datetime, shutil
+import os, glob, time, datetime, shutil, subprocess
+L = []
 def dong_bo():
     """Đẩy điểm lưu TRỌN chưa có lên Drive: chép sang tên tạm rồi đổi tên (Drive chỉ thấy tệp đã đóng)."""
     os.makedirs(f"{CK}/{STAGE}", exist_ok=True)
@@ -222,8 +230,20 @@ def dong_bo():
     for f in (f"{OUT}/train_log.jsonl", f"{OUT}/final_sha256.json", f"/content/pata_{STAGE}.log"):
         if os.path.exists(f):
             shutil.copy(f, f"{CK}/{STAGE}/")
+    # chỉ giữ trên Drive: 2 điểm lưu mới nhất + mốc 800 + final (mỗi điểm lưu ~180 MB; giữ hết thì
+    # ba chặng ~13 GB, dễ tràn hạn mức Drive giữa đêm)
+    cu = sorted(d for d in glob.glob(f"{CK}/{STAGE}/ckpt-*") if not d.endswith(".tmp")
+                and os.path.exists(f"{d}/DONE") and not d.endswith("ckpt-00800"))
+    for d in cu[:-2]:
+        shutil.rmtree(d, ignore_errors=True)
+        print("   ✗ Drive bỏ", os.path.basename(d), flush=True)
+
+def con_song():
+    """Bám theo PID thay vì biến P — chạy lại được sau khi nhân Python restart."""
+    return bool(subprocess.run(["pgrep", "-f", "harness/pata_train.py"], capture_output=True,
+                               text=True).stdout.split())
 t_sync = 0
-while P.poll() is None:
+while con_song():
     time.sleep(60)
     L = open(f"/content/pata_{STAGE}.log").read().splitlines()
     dong = [l for l in L if l.startswith("[") and "/" in l and " u" in l]
@@ -234,7 +254,7 @@ while P.poll() is None:
     if time.time() - t_sync > 300:
         dong_bo(); t_sync = time.time()
 dong_bo()
-print("== tiến trình kết thúc, mã", P.poll(), "==")
+print("== tiến trình train đã kết thúc ==")
 print("\n".join(L[-8:]))
 ```
 
