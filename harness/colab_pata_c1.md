@@ -182,8 +182,16 @@ Python restart (tiến trình train vẫn sống): chạy P2 (để có biến) 
 **P5** (bám tiến trình cũ theo PID).
 
 ```python
-import shutil, subprocess
+import os, glob, shutil, subprocess
 STAGE = "S"          # ⬅ "S" → rồi "H" → rồi "J"  (C1 = J bridge bật)
+
+def chay(cmd, log):
+    """Định nghĩa LẠI ngay trong ô này (không dựa vào P3): ⛔ start_new_session=True là thứ giữ train
+    sống khi bấm Stop một ô bất kỳ (luật Colab ①)."""
+    env = dict(os.environ, TQDM_DISABLE="1", HF_HUB_DISABLE_PROGRESS_BARS="1",
+               PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True", PYTHONUNBUFFERED="1")
+    return subprocess.Popen(cmd, stdout=open(log, "a"), stderr=subprocess.STDOUT, env=env,
+                            cwd=REPO, start_new_session=True)
 # ⛔ CHẶN CHẠY TRÙNG: nhân Python restart thì tiến trình train (start_new_session) VẪN sống. Chạy lại ô này
 #    khi nó còn sống = hai trainer ghi cùng thư mục. Còn sống thì KHÔNG khởi động mới — sang thẳng ô P5.
 OUT = f"/content/ck/{STAGE}"        # đặt TRƯỚC phép kiểm: ô P5 cần OUT kể cả khi phép kiểm dừng ô này
@@ -203,6 +211,10 @@ P = chay(["python", "harness/pata_train.py", "--stage", STAGE, "--data-root", DR
           "--bs", "4", "--accum", "4", "--save-steps", "100", "--milestones", "800",
           "--log-steps", "20", "--workers", "8", "--out", OUT] + extra, f"/content/pata_{STAGE}.log")
 print("PID", P.pid, "· log /content/pata_%s.log" % STAGE)
+# kiểm bằng máy, không tin mã: SID phải bằng PID ⇒ tiến trình đứng đầu phiên riêng
+sid = subprocess.run(["ps", "-o", "sid=", "-p", str(P.pid)], capture_output=True, text=True).stdout.strip()
+print("SID", sid, "✓ phiên riêng — Stop ô khác không giết train" if sid == str(P.pid)
+      else "⛔ KHÔNG phải phiên riêng — ĐỪNG bấm Stop ô nào, báo lại")
 ```
 
 ⛔ Chặng H và J nạp `final/` của chặng trước **từ Drive** (`{CK}/S/final`, `{CK}/H/final`) — ô P5 đẩy
