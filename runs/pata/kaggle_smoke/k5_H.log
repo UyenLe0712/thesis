@@ -1,0 +1,16 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+The image processor of type `Qwen2VLImageProcessor` is now loaded as a fast processor by default, even if the model checkpoint was saved with a slow processor. This is a breaking change and may produce slightly different outputs. To continue using the slow processor, instantiate this class with `use_fast=False`. 
+[mô hình] Qwen/Qwen2.5-VL-3B-Instruct@main · NF4 · compute torch.float16 · attn sdpa · transformers 5.0.0
+[dữ liệu] /kaggle/working/pk/thesis/harness/dg1_cache/train_ac/pata/train_proper.jsonl — 398 mẫu (chỉ mẫu có box)
+[tham số học] 8,402,944 · nhóm: localizer lr=0.0001 (8,402,944)
+[kế hoạch] 398 mẫu · 25 update/epoch · tổng 25 · chạy tới 20 · warmup 1 · λ=1.0
+[11:21:35] u1/25 ce=None kl=4.040617853403091 mass=0.027873973827809095 gate=0.11920291930437088 resid=None 62.2s/u còn 0.33h vram=4.57 gn={'lora': 0.0, 'wo': 0.0, 'gate': 0.0, 'pq': 4.9574, 'pv': 4.8814, 'tvec': 9.7614}
+[11:22:36] u2/25 ce=None kl=3.587785840034485 mass=0.1142429371830076 gate=0.11920291930437088 resid=None 61.6s/u còn 0.31h vram=5.39 gn={'lora': 0.0, 'wo': 0.0, 'gate': 0.0, 'pq': 4.6458, 'pv': 4.4729, 'tvec': 8.3227}
+[11:25:35] u5/25 ce=None kl=3.5210110743840537 mass=0.06867036594000335 gate=0.11920291930437088 resid=None 60.5s/u còn 0.25h vram=5.39 gn={'lora': 0.0, 'wo': 0.0, 'gate': 0.0, 'pq': 5.106, 'pv': 5.1331, 'tvec': 9.8716}
+[11:30:34] u10/25 ce=None kl=3.4179615914821624 mass=0.08547994024702348 gate=0.11920291930437088 resid=None 60.2s/u còn 0.17h vram=5.39 gn={'lora': 0.0, 'wo': 0.0, 'gate': 0.0, 'pq': 2.7219, 'pv': 2.817, 'tvec': 9.1369}
+  [lưu] /kaggle/working/ck/H/ckpt-00010
+[11:31:34] u11/25 ce=None kl=3.2497044801712036 mass=0.07966590626165271 gate=0.11920291930437088 resid=None 60.2s/u còn 0.15h vram=5.39 gn={'lora': 0.0, 'wo': 0.0, 'gate': 0.0, 'pq': 2.259, 'pv': 2.3367, 'tvec': 96.4837}
+[11:35:33] u15/25 ce=None kl=3.4204816967248917 mass=0.08161250763077987 gate=0.11920291930437088 resid=None 60.0s/u còn 0.08h vram=5.39 gn={'lora': 0.0, 'wo': 0.0, 'gate': 0.0, 'pq': 3.9243, 'pv': 3.8645, 'tvec': 1644.808}
+[11:40:30] u20/25 ce=None kl=3.5239731520414352 mass=0.07463867689948529 gate=0.11920291930437088 resid=None 59.9s/u còn 0.0h vram=5.39 gn={'lora': 0.0, 'wo': 0.0, 'gate': 0.0, 'pq': 3.5287, 'pv': 3.6416, 'tvec': 310.1579}
+  [lưu] /kaggle/working/ck/H/ckpt-00020
+Dừng ở 20/25 (--max-updates). Chưa có final/.

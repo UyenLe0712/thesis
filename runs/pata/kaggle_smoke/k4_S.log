@@ -1,0 +1,16 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+The image processor of type `Qwen2VLImageProcessor` is now loaded as a fast processor by default, even if the model checkpoint was saved with a slow processor. This is a breaking change and may produce slightly different outputs. To continue using the slow processor, instantiate this class with `use_fast=False`. 
+[mô hình] Qwen/Qwen2.5-VL-3B-Instruct@main · NF4 · compute torch.float16 · attn sdpa · transformers 5.0.0
+[dữ liệu] /kaggle/working/pk/thesis/harness/dg1_cache/train_ac/pata/train_proper.jsonl — 400 mẫu
+[tham số học] 14,966,784 · nhóm: lora lr=0.0001 (14,966,784)
+[kế hoạch] 400 mẫu · 25 update/epoch · tổng 25 · chạy tới 20 · warmup 2 · λ=1.0
+[10:53:24] u1/25 ce=2.31916583025897 kl=None mass=None gate=None resid=None 81.5s/u còn 0.43h vram=4.32 gn={'lora': 2.6675}
+[10:54:41] u2/25 ce=2.3486254438221885 kl=None mass=None gate=None resid=None 79.5s/u còn 0.4h vram=4.39 gn={'lora': 3.0385}
+[10:58:37] u5/25 ce=1.8848562091255614 kl=None mass=None gate=None resid=None 79.0s/u còn 0.33h vram=4.47 gn={'lora': 4.0289}
+[11:05:12] u10/25 ce=1.1382887186938278 kl=None mass=None gate=None resid=None 79.0s/u còn 0.22h vram=4.48 gn={'lora': 1.4189}
+  [lưu] /kaggle/working/ck/S/ckpt-00010
+[11:06:32] u11/25 ce=1.46798720322256 kl=None mass=None gate=None resid=None 79.1s/u còn 0.2h vram=4.48 gn={'lora': 1.5532}
+[11:11:49] u15/25 ce=0.8936620854885778 kl=None mass=None gate=None resid=None 79.1s/u còn 0.11h vram=4.48 gn={'lora': 2.2083}
+[11:18:24] u20/25 ce=0.8950298336716296 kl=None mass=None gate=None resid=None 79.1s/u còn 0.0h vram=4.57 gn={'lora': 1.2583}
+  [lưu] /kaggle/working/ck/S/ckpt-00020
+Dừng ở 20/25 (--max-updates). Chưa có final/.

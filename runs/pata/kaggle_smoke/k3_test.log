@@ -1,0 +1,25 @@
+== PATA unit test · THẬT (3B, GPU) ==
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+The image processor of type `Qwen2VLImageProcessor` is now loaded as a fast processor by default, even if the model checkpoint was saved with a slow processor. This is a breaking change and may produce slightly different outputs. To continue using the slow processor, instantiate this class with `use_fast=False`. 
+[mô hình] Qwen/Qwen2.5-VL-3B-Instruct@main · NF4 · compute torch.float16 · attn sdpa · transformers 5.0.0
+  ĐẠT   1 token thị giác = t·h·w/4 = số ô đích  [1272, 1272, 1272]
+  ĐẠT   2 box bốn góc + box vắt ô → đúng ô dương, raster  
+  ĐẠT   3 đổi hậu tố vàng không đổi α(TARGET)  max|Δ|=0.00e+00
+  ĐẠT   4 Wo=0: logits bridge bật = tắt  max|Δ|=0.00e+00
+  ĐẠT   5 Wo≠0: tiền tố không đổi, TARGET/hậu tố đổi  tiền tố 0.00e+00 · hậu tố 4.73e-01
+The following generation flags are not valid and may be ignored: ['temperature']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+  ĐẠT   9 teacher-forced = KV-cache tăng dần (bridge bật, Wo≠0)  max|Δ|=5.86e-02 trên 6 bước
+[mô hình] Qwen/Qwen2.5-VL-3B-Instruct@main · NF4 · compute torch.float16 · attn sdpa · transformers 5.0.0
+  ĐẠT   10 save→reload: logits, α, câu giữ nguyên  logits 0.00e+00 · α 0.00e+00 · câu trùng
+  ĐẠT   11 box nhỏ/sát biên/suy biến: đích hợp lệ, KL hữu hạn  
+  ĐẠT   13 <TARGET> là MỘT token, decode bỏ được, strip_desc giữ nguyên câu  'Tap the share icon.'
+  ĐẠT   6 backward đầu: Wo, Pq, Pv, TARGET, LoRA có gradient; gate = 0 vì Wo=0  Wo 2.1e+00 Pq 6.1e+00 T 1.3e+02 LoRA 1.1e+02 gate 0.0e+00
+  ĐẠT   7 sau một optimizer step: gate có gradient  gate 5.54e-02
+  ĐẠT   8 tháp thị giác: không gradient, trọng số không đổi  
+/kaggle/working/pk/thesis/harness/pata_test.py:287: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:836.)
+  tot[0] += float(ce); tot[1] += nt; tot[2] += float(kl); tot[3] += nk; tot[4] += ex["mass"]
+  ĐẠT   12 overfit 8 mẫu: CE↓ KL↓ mass↑  CE 1.992→0.033 · KL 3.797→0.088 · mass 0.078→0.978
+======================================================================
+13/13 ĐẠT
+(1458 s)

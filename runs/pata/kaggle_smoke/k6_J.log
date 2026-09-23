@@ -1,0 +1,19 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+The image processor of type `Qwen2VLImageProcessor` is now loaded as a fast processor by default, even if the model checkpoint was saved with a slow processor. This is a breaking change and may produce slightly different outputs. To continue using the slow processor, instantiate this class with `use_fast=False`. 
+[mô hình] Qwen/Qwen2.5-VL-3B-Instruct@main · NF4 · compute torch.float16 · attn sdpa · transformers 5.0.0
+[dữ liệu] /kaggle/working/pk/thesis/harness/dg1_cache/train_ac/pata/train_proper.jsonl — 400 mẫu
+[tham số học] 27,564,033 · nhóm: lora+localizer lr=2e-05 (23,369,728), bridge lr=0.0001 (4,194,305)
+[kế hoạch] 400 mẫu · 25 update/epoch · tổng 25 · chạy tới 20 · warmup 1 · λ=1.0
+/kaggle/working/pk/thesis/harness/pata_train.py:316: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:836.)
+  "gate_sigmoid": float(torch.sigmoid(pata.heads.gate)) if pata else None,
+[11:43:40] u1/25 ce=2.4051537454864125 kl=3.9980016946792603 mass=0.03964851381897461 gate=0.11920291930437088 resid=0.0 81.5s/u còn 0.43h vram=4.71 gn={'lora': 38.4413, 'wo': 2.5759, 'gate': 0.0, 'pq': 3.6153, 'pv': 3.7243, 'tvec': 585.3655}
+[11:44:57] u2/25 ce=2.291529209493733 kl=3.1625084280967712 mass=0.07467750762589276 gate=0.11920291930437088 resid=0.0 79.7s/u còn 0.4h vram=4.86 gn={'lora': 101.4479, 'wo': 3.5356, 'gate': 0.0, 'pq': 3.378, 'pv': 3.665, 'tvec': 1965.432}
+[11:48:54] u5/25 ce=1.6142038904313807 kl=3.186158368984858 mass=0.08196940867734763 gate=0.1192246749997139 resid=0.012290803482756019 79.2s/u còn 0.33h vram=4.96 gn={'lora': 118.443, 'wo': 0.7498, 'gate': 0.0771, 'pq': 3.1689, 'pv': 3.0777, 'tvec': 2188.3665}
+[11:55:30] u10/25 ce=1.3622341850022301 kl=3.2891255259513854 mass=0.08107305290759541 gate=0.11924918740987778 resid=0.0316094777546823 79.2s/u còn 0.22h vram=4.98 gn={'lora': 32.3783, 'wo': 0.8552, 'gate': 0.0659, 'pq': 2.7726, 'pv': 2.8661, 'tvec': 592.8992}
+  [lưu] /kaggle/working/ck/J/ckpt-00010
+[11:56:50] u11/25 ce=1.8640361695777712 kl=3.091885358095169 mass=0.12809501856099814 gate=0.1192542165517807 resid=0.046688418835401535 79.3s/u còn 0.2h vram=4.98 gn={'lora': 7.8883, 'wo': 0.8049, 'gate': 0.051, 'pq': 3.1336, 'pv': 3.3015, 'tvec': 112.3227}
+[12:02:06] u15/25 ce=1.1995923621632227 kl=3.3504389316316634 mass=0.08616562178062778 gate=0.11927303671836853 resid=0.05021497351117432 79.2s/u còn 0.11h vram=4.98 gn={'lora': 25.553, 'wo': 1.0253, 'gate': 0.1487, 'pq': 2.6282, 'pv': 2.8199, 'tvec': 441.4689}
+[12:08:40] u20/25 ce=1.018911638085587 kl=2.987750717356235 mass=0.10499058545956129 gate=0.11928369849920273 resid=0.053356354916468264 79.1s/u còn 0.0h vram=5.08 gn={'lora': 41.4151, 'wo': 0.6382, 'gate': 0.1212, 'pq': 2.6532, 'pv': 2.7112, 'tvec': 770.0953}
+  [lưu] /kaggle/working/ck/J/ckpt-00020
+Dừng ở 20/25 (--max-updates). Chưa có final/.
