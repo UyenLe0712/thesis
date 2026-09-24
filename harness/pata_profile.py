@@ -103,6 +103,25 @@ def main():
               f"{t_step:6.2f} s · CE {ce:.6f}", flush=True)
     print(f"tăng tốc cả bước khi gỡ gradient tháp thị giác: "
           f"{kq['co_vis_grad']['fwd_bwd_s'] / kq['khong_vis_grad']['fwd_bwd_s']:.2f}×")
+    # So GRADIENT LoRA trên mô hình thật, cùng lô, dropout tắt: hai chế độ phải cho cùng gradient
+    for m_ in model.modules():
+        if hasattr(m_, "lora_dropout"):
+            for d_ in m_.lora_dropout.values():
+                d_.p = 0.0
+    gs = {}
+    for mode in ("co_vis_grad", "khong_vis_grad"):
+        PM.enable_gc(model, vision_grad=(mode == "co_vis_grad"))
+        model.zero_grad(set_to_none=True)
+        loss = fwd(); loss.backward()
+        gs[mode] = torch.cat([p.grad.float().flatten() for n, p in model.named_parameters()
+                              if "lora_" in n and p.grad is not None]).cpu()
+        model.zero_grad(set_to_none=True)
+    dg = (gs["co_vis_grad"] - gs["khong_vis_grad"]).abs()
+    print(f"GRADIENT LoRA hai chế độ (mô hình thật, cùng lô, dropout tắt): số phần tử "
+          f"{gs['co_vis_grad'].numel()} / {gs['khong_vis_grad'].numel()} · max|Δ| {float(dg.max()):.3e} · "
+          f"chuẩn {float(gs['co_vis_grad'].norm()):.4f} vs {float(gs['khong_vis_grad'].norm()):.4f} · "
+          f"cosine {float(torch.nn.functional.cosine_similarity(gs['co_vis_grad'], gs['khong_vis_grad'], dim=0)):.6f}")
+    PM.enable_gc(model)
     PM.enable_gc(model)                          # về mặc định mới
     for mode in ("loop", "block"):
         PM.set_vision_attn(mode, a.block_max)
