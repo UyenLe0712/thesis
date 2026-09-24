@@ -128,6 +128,18 @@ os.system(f"cd {W} && zip -q -r pata_cong_c1.zip cong_c1 cham_gpu*.log")
 print(os.path.getsize(f"{W}/pata_cong_c1.zip") // 1024, "KB → tải về từ cột Output")
 ```
 
+**Chạy qua đêm (không ngồi canh):** bấm Run ô Q4 **ngay khi Q3 đang chạy** — nó xếp hàng `[*]` và tự chạy khi
+Q3 xong. Rồi xếp hàng tiếp ô Q4b để giữ phiên sống tới sáng: phiên tương tác rỗi quá lâu có thể bị Kaggle tắt,
+và tắt là mất `/kaggle/working` (chưa đo được ngưỡng rỗi — đừng đánh cược). Q4b đốt quota T4 trong lúc chờ
+(tối đa 7 h) ⇒ tải zip xong thì **Stop Session** ngay.
+```python
+# Q4b — giữ phiên sống tối đa 7 h để sáng tải pata_cong_c1.zip
+import time
+for i in range(42):
+    time.sleep(600)
+    print(time.strftime("%H:%M"), "· giữ phiên — tải pata_cong_c1.zip ở Output rồi bấm Stop Session", flush=True)
+```
+
 Trên máy nhà: bung vào **`runs/pata/cong_c1/`**, chép thêm 5 preds + 3 `diag_*_val400.json` từ Drive vào
 cùng thư mục, rồi:
 ```
