@@ -290,6 +290,19 @@ P2 đạt: hash 4/4 · 40.189 chạm · 39.432 kl_ok · đủ 41.191 ảnh. **L4
   P(về D | ép D) − P(về D | ép R) > 0. Chạy thử trên dữ liệu giả: chạy thông.
 - `harness/kaggle_pata_cham_val600.md` (P10): chấm 5 tệp preds trên Kaggle T4 × 2 song song.
 
+### 3.14 Stage H XONG · CỔNG H ĐẠT · C1 bắt đầu (24/9 ~16:20 VN) — [đo]
+
+- `pata_ck/H/final`: `pata_heads.pt` `6fc0d6a63059…` · `adapter_model.safetensors` `da6484273196…` (**trùng S**
+  — đúng thiết kế, LoRA S đóng băng ở H) · `meta.json` `a475792dbcca…`.
+- **P7 — cổng H trên val400 (n = 400, 398 bước có đích KL):** mass trong box **0,184** vs center prior 0,036 ·
+  train prior 0,039 · prompt xáo 0,107 · Hit-in-box **38,7%** vs 5,3% · 5,3% · 21,9% · KL_val 2,580.
+  Cận dưới 90% một phía: lift_center **+0,133** · lift_train **+0,131** · đúng − xáo **+0,067** ⇒ **ĐẠT** cả
+  ba. Vế đúng − xáo (bằng 0 ở smoke 20 update) nay dương rõ ⇒ localizer dùng goal/history, không chỉ học
+  "vùng trông bấm được".
+- C1 (Stage J, bridge bật): u2 → u120: CE 1,27 → 0,56–0,60 (hồi khỏi mức lệch do TARGET) · KL ~2,4 · mass
+  lúc train 0,13 → 0,24 · gate 0,11920 → 0,11946 · resid 0 → 0,074 · ~8,1 s/u · VRAM 15,3 GB. Mốc 800 dự
+  kiến ~18:15 VN, xong ~22:00 VN.
+
 ## 4. Audit box (A1) — [đo]
 
 Trang gán nhãn `dg1_cache/train_ac/pata/audit/audit.html` (ảnh vẽ box đỏ + điểm chạm xanh + khung
