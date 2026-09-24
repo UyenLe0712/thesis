@@ -275,6 +275,21 @@ P2 đạt: hash 4/4 · 40.189 chạm · 39.432 kl_ok · đủ 41.191 ảnh. **L4
 - ⚠️ Terminal Colab KHÔNG thừa hưởng `LD_LIBRARY_PATH` của notebook — lệnh chạy trong Terminal phải
   `export LD_LIBRARY_PATH=/usr/local/lib/python3.13/dist-packages/nvidia/cu13/lib:$LD_LIBRARY_PATH` trước.
 
+### 3.13 Công cụ cổng cuối C1 (viết 24/9 trong lúc H chạy, TRƯỚC khi C1 train)
+
+- `harness/pata_swap.py` → `pata/val600_swap.jsonl` (sha `ef17c5820e6f…`, hạt 20260924): **546** bước val600
+  có hộp D (cùng cỡ hộp vàng, tâm tại điểm `desc_neg` — ⚠️ xấp xỉ vì chỉ có điểm, không có hộp thật của
+  phần tử gây nhiễu) và hộp R (hộp vàng của bước khác, chuẩn hoá theo màn). Bỏ: 15 không kl_ok · 36 không
+  `desc_neg` · 5 D chồng vàng (IoU ≥ 0,3).
+- `pata_eval.py gen`: thêm `swapD`/`swapR` (ép α của bridge), ghi dần + nối tiếp, cờ `--tag` (S/H/J đều
+  tên `final` ⇒ không tag là đè tệp). **Test 14** (ép α đổi hậu tố, không đổi tiền tố; ép đúng α tự sinh
+  = không ép, Δ = 0) ⇒ **14/14 ĐẠT**.
+- `harness/pata_cong_c1.py`: 5 điều kiện §8, **ngưỡng khoá trong mã 24/9**: (1) hợp lệ ≥ 99%, độ dài
+  ≤ 1,5× S, rỗng ≤ S + 1 điểm · (2) CE_val(J) ≤ 1,25× CE_val(S), KL_val(J) ≤ 1,10× KL_val(H), ba cận
+  dưới 90% > 0 · (3) exec(C1) ≥ exec(S) · (4) exec(C1 bật) > exec(C1 tắt) · (5) cận dưới 90% của
+  P(về D | ép D) − P(về D | ép R) > 0. Chạy thử trên dữ liệu giả: chạy thông.
+- `harness/kaggle_pata_cham_val600.md` (P10): chấm 5 tệp preds trên Kaggle T4 × 2 song song.
+
 ## 4. Audit box (A1) — [đo]
 
 Trang gán nhãn `dg1_cache/train_ac/pata/audit/audit.html` (ảnh vẽ box đỏ + điểm chạm xanh + khung

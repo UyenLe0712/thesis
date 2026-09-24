@@ -14,8 +14,8 @@ no_grad, tuyệt đối không cập nhật trọng số (§3).
                 Ghi preds_<variant>.jsonl đúng định dạng infer_branch.py (kèm gold_instruction)
                 để score_run.py chấm `exec`. In: % câu đổi on↔off (không tính TARGET, §7b điều 2),
                 tỉ lệ format hợp lệ, độ dài, lặp.
-                (swap / random-pool của §8 điều 5 chưa viết — cần hộp distractor, làm sau khi C1
-                train xong, trước bước 12.)
+                swapD / swapR: ép α của bridge vào hộp phần tử gây nhiễu / hộp ngẫu nhiên
+                (pata/val600_swap.jsonl, dựng bằng pata_swap.py) — §8 điều 5.
 
 Chạy (GPU):
   python harness/pata_eval.py --ckpt <out>/ckpt-00800 --mode diag --split val400 --out <dir>
@@ -179,7 +179,7 @@ def diag(a, proc, model, pata, cdt):
             res[name] = {"mean": L[name][0], "lower90": L[name][1]}
         res["cong_H_dat"] = all(L[k][1] > 0 for k in L)
     os.makedirs(a.out, exist_ok=True)
-    tag = os.path.basename(os.path.normpath(a.ckpt))
+    tag = a.tag or os.path.basename(os.path.normpath(a.ckpt))
     json.dump(res, open(os.path.join(a.out, f"diag_{tag}_{a.split}.json"), "w"), indent=1)
     with open(os.path.join(a.out, f"diag_{tag}_{a.split}_rows.jsonl"), "w") as f:
         for r in rows:
@@ -200,53 +200,89 @@ def fmt_ok(s):
 
 
 def gen(a, proc, model, pata, cdt):
+    """Sinh câu tham lam. Biến thể:
+         on     bridge bật (C1 bình thường)        off    tắt bridge trên CHÍNH điểm lưu
+         swapD  bridge bật, α ÉP = đích patch của hộp phần tử gây nhiễu (pata/val600_swap.jsonl)
+         swapR  bridge bật, α ÉP = đích patch của hộp ngẫu nhiên lấy từ bước khác (cùng tệp)
+       swapD/swapR chỉ chạy trên các bước có trong val600_swap.jsonl (§8 điều 5).
+       Ghi DẦN từng lô + nối tiếp được (mất máy giữa lượt không mất phần đã sinh)."""
     from build_branch_data import prompt_body, SYS
     from PIL import Image
-    recs = records(a, a.split)
+    recs_all = records(a, a.split)
     dev = PM.parts(model)[2].embed_tokens.weight.device
     wt = pata is not None
     proc.tokenizer.padding_side = "left"
+    swap = {}
+    sp = os.path.join(a.data_root, "pata", f"{a.split}_swap.jsonl")
+    if os.path.exists(sp):
+        for l in open(sp, encoding="utf-8"):
+            x = json.loads(l); swap[(x["episode_id"], x["step_id"])] = x
+    os.makedirs(a.out, exist_ok=True)
+    tag = a.tag or os.path.basename(os.path.normpath(a.ckpt))
     out = {}
     for var in a.variants.split(","):
-        if var not in ("on", "off"):
+        if var not in ("on", "off", "swapD", "swapR"):
             sys.exit(f"biến thể chưa hỗ trợ: {var}")
+        if var.startswith("swap"):
+            assert wt, "swap cần điểm lưu có đầu PATA (C1)"
+            assert swap, f"thiếu {sp} — chạy harness/pata_swap.py rồi dựng lại gói"
+            recs = [r for r in recs_all if (r["episode_id"], r["step_id"]) in swap]
+        else:
+            recs = recs_all
         if wt:
-            pata.bridge_enabled = (var == "on")
-        rows = []
-        for i0 in range(0, len(recs), a.bs):
-            ch = recs[i0: i0 + a.bs]
+            pata.bridge_enabled = (var != "off")
+        fp = os.path.join(a.out, f"preds_{tag}_{a.split}_{var}.jsonl")
+        xong = {}
+        if os.path.exists(fp):
+            for l in open(fp, encoding="utf-8"):
+                try:
+                    x = json.loads(l); xong[(x["episode_id"], x["step_id"])] = x
+                except Exception:
+                    pass
+        todo = [r for r in recs if (r["episode_id"], r["step_id"]) not in xong]
+        print(f"[{var}] {len(recs)} bước · đã có {len(xong)} · còn {len(todo)}", flush=True)
+        f = open(fp, "a", encoding="utf-8")
+        for i0 in range(0, len(todo), a.bs):
+            ch = todo[i0: i0 + a.bs]
             texts, imgs = [], []
             for r in ch:
                 imgs.append(Image.open(os.path.join(a.data_root, r["image"])).convert("RGB"))
                 body = prompt_body({"goal": r["goal"], "history": r.get("history") or []}, r["_ocr"])
                 texts.append(PM.prompt_only(proc, SYS, body, None, wt))
             inp = proc(text=texts, images=imgs, return_tensors="pt", padding=True).to(dev)
+            if var.startswith("swap"):
+                k = "box_D" if var == "swapD" else "box_R"
+                pata.alpha_override = [
+                    PM.patch_target(swap[(r["episode_id"], r["step_id"])][k], r["w"], r["h"],
+                                    im.width, im.height, inp["image_grid_thw"][j].cpu())
+                    for j, (r, im) in enumerate(zip(ch, imgs))]
             with torch.no_grad(), torch.autocast(dev.type, dtype=cdt, enabled=dev.type == "cuda"):
                 g = model.generate(**inp, max_new_tokens=a.max_new, do_sample=False, use_cache=True,
                                    temperature=None, top_p=None)
+            if wt:
+                pata.alpha_override = None
             for r, seq in zip(ch, g):
                 txt = proc.decode(seq[inp["input_ids"].shape[1]:], skip_special_tokens=True).strip()
-                pred = txt.split("\n")[0].strip()
-                rows.append({"episode_id": r["episode_id"], "step_id": r["step_id"], "image": r["image"],
-                             "app": "", "gold_instruction": r["target_instruction"], "action": r["action"],
-                             "raw": txt, "pred": pred, "variant": var, "ckpt": a.ckpt})
-            print(f"  [{var}] {min(i0 + a.bs, len(recs))}/{len(recs)}", flush=True)
-        out[var] = rows
-        os.makedirs(a.out, exist_ok=True)
-        tag = os.path.basename(os.path.normpath(a.ckpt))
-        with open(os.path.join(a.out, f"preds_{tag}_{a.split}_{var}.jsonl"), "w", encoding="utf-8") as f:
-            for x in rows:
+                x = {"episode_id": r["episode_id"], "step_id": r["step_id"], "image": r["image"],
+                     "app": "", "gold_instruction": r["target_instruction"], "action": r["action"],
+                     "raw": txt, "pred": txt.split("\n")[0].strip(), "variant": var, "ckpt": a.ckpt}
                 f.write(json.dumps(x, ensure_ascii=False) + "\n")
+                xong[(r["episode_id"], r["step_id"])] = x
+            f.flush()
+            print(f"  [{var}] {len(xong)}/{len(recs)}", flush=True)
+        f.close()
+        out[var] = xong
     print("=" * 70)
     for var, rows in out.items():
         n = len(rows)
-        ok = sum(fmt_ok(x["pred"]) for x in rows)
-        ln = sum(len(x["pred"].split()) for x in rows) / n
-        print(f"  {var:4} format hợp lệ {ok}/{n} = {ok / n:.1%} · độ dài TB {ln:.1f} từ")
+        ok = sum(fmt_ok(x["pred"]) for x in rows.values())
+        ln = sum(len(x["pred"].split()) for x in rows.values()) / max(n, 1)
+        print(f"  {var:5} format hợp lệ {ok}/{n} = {ok / max(n, 1):.1%} · độ dài TB {ln:.1f} từ")
     if "on" in out and "off" in out:
-        d = sum(x["pred"] != y["pred"] for x, y in zip(out["on"], out["off"]))
-        n = len(out["on"])
-        print(f"  câu ĐỔI khi tắt bridge: {d}/{n} = {d / n:.1%}  (§7b điều 2 cần ≥ 30% ở mốc 800)")
+        ks = set(out["on"]) & set(out["off"])
+        d = sum(out["on"][k]["pred"] != out["off"][k]["pred"] for k in ks)
+        print(f"  câu ĐỔI khi tắt bridge: {d}/{len(ks)} = {d / max(len(ks), 1):.1%}  "
+              f"(§7b điều 2 cần ≥ 30% ở mốc 800)")
 
 
 def main():
@@ -263,6 +299,8 @@ def main():
     ap.add_argument("--no-ce", action="store_true", help="bỏ CE (điểm lưu H: CE không có nghĩa)")
     ap.add_argument("--tiny", action="store_true")
     ap.add_argument("--only-local", action="store_true")
+    ap.add_argument("--tag", default=None, help="tên trong tệp ra (S/H/J/C1). Mặc định = tên thư mục điểm "
+                    "lưu — mà S, H, J đều là 'final' ⇒ ĐÈ nhau nếu cùng --out. Luôn truyền --tag.")
     a = ap.parse_args()
     if a.split == "val600" and a.mode == "gen":
         print("⚠️  val600 = tập CỔNG CUỐI. Chỉ chạy MỘT lần sau khi hết epoch C1 (§7b).", flush=True)

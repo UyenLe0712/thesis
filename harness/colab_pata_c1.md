@@ -346,69 +346,82 @@ print("\n".join(L[-8:]))
   CE vọt 1,12 → 2,36 rồi C1 hồi về 1,27 sau 20 update).
 - ⚠️ Dòng log in lại y hệt nhiều phút là bình thường (log mỗi 20 update, ~3–5 phút/lần).
 
-## Ô P6 — sau chặng S: CE_val trên val400 (§6 Stage S)
+## Ô P6 — sau chặng S: CE_val trên val400 (§6 Stage S) ✅ ĐÃ CHẠY 24/9: CE_val = 0,7295
 
-```python
-e = chay(["python", "harness/pata_eval.py", "--ckpt", f"{CK}/S/final", "--mode", "diag",
-          "--split", "val400", "--data-root", DR, "--out", f"{CK}/eval"], "/content/eval_S.log")
-e.wait(); print(open("/content/eval_S.log").read()[-600:])
+Đã chạy trong Terminal, ghi ra `{CK}/eval/diag_final_val400.json`. **Chép sang tên chuẩn** (một lần, ô bất
+kỳ lúc không có ô nào đang chạy, hoặc Terminal):
 ```
-Ghi `CE_val`. Chỉ để bắt phân kỳ, không dùng làm kết quả.
+mkdir -p /content/drive/MyDrive/thesis/pata_ck/cong_c1
+cp /content/drive/MyDrive/thesis/pata_ck/eval/diag_final_val400.json \
+   /content/drive/MyDrive/thesis/pata_ck/cong_c1/diag_S_val400.json
+```
+⚠️ Mọi lệnh `pata_eval.py` từ đây **phải có `--tag`**: S, H, J đều tên thư mục `final` nên không có tag
+thì tệp ra đè nhau.
 
-## Ô P7 — CỔNG H trên val400 (quan trọng nhất trước C1)
+## Ô P7 — CỔNG H trên val400 (sau khi P5 in `↑ Drive: …/H/final` và kết thúc)
 
+Chạy trong **ô notebook** (lúc này không còn train chạy nền, P5 đã kết thúc; `chay` của P4 mang theo
+`LD_LIBRARY_PATH`):
 ```python
-e = chay(["python", "harness/pata_eval.py", "--ckpt", f"{CK}/H/final", "--mode", "diag",
-          "--split", "val400", "--no-ce", "--data-root", DR, "--out", f"{CK}/eval"], "/content/eval_H.log")
-e.wait(); print(open("/content/eval_H.log").read()[-1200:])
+e = chay(["python", "harness/pata_eval.py", "--ckpt", f"{CK}/H/final", "--mode", "diag", "--split",
+          "val400", "--no-ce", "--tag", "H", "--data-root", DR, "--out", f"{CK}/cong_c1"], "/content/eval_H.log")
+e.wait(); print(open("/content/eval_H.log").read()[-1500:])
 ```
 
 **Luật (khoá trong `185` §6):** đi tiếp C1 **chỉ khi** in `⇒ CỔNG H: ĐẠT`, tức cận dưới KTC một phía
 90% của cả ba hiệu > 0: mass − center prior · mass − train prior · mass(prompt đúng) − mass(prompt xáo).
 ⛔ **Không đạt ⇒ DỪNG**, không chạy C1, không mở test. Kết luận "futility under budget". Gửi mình
-`diag_final_val400.json`.
-⚠️ Smoke 20 update: xáo prompt **không** làm đổi mass — vế thứ ba là vế khó nhất, xem kỹ số này.
+`cong_c1/diag_H_val400.json`.
 
-## Ô P8 — mốc 800 của C1 (chạy song song, không dừng train)
+## Ô P8 — mốc 800 của C1 (Terminal, song song với train)
 
-Khi ô P5 in `↑ Drive: …/J/ckpt-00800`, mở **Terminal Colab** (biểu tượng terminal ở thanh bên trái —
-cùng máy ảo, không đụng tới ô P5 đang chạy; ⛔ không bấm Stop P5 để chạy ô mới) rồi dán:
-
-```bash
+Khi P5 in `↑ Drive: …/J/ckpt-00800`, dán vào **Terminal Colab** (⛔ không bấm Stop P5):
+```
+export LD_LIBRARY_PATH=/usr/local/lib/python3.13/dist-packages/nvidia/cu13/lib:$LD_LIBRARY_PATH
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True TQDM_DISABLE=1
 cd /content/ws/thesis
 DR=harness/dg1_cache/train_ac; CK=/content/drive/MyDrive/thesis/pata_ck
-python harness/pata_eval.py --ckpt /content/ck/J/ckpt-00800 --mode diag --split val400 --data-root $DR --out $CK/eval > /content/m800_diag.log 2>&1
-python harness/pata_eval.py --ckpt /content/ck/J/ckpt-00800 --mode gen --split probe40 --variants on,off --data-root $DR --out $CK/eval > /content/m800_gen.log 2>&1
-tail -25 /content/m800_diag.log; tail -5 /content/m800_gen.log
+python harness/pata_eval.py --ckpt /content/ck/J/ckpt-00800 --mode diag --split val400 --tag J800 \
+  --data-root $DR --out $CK/eval_m800 > /content/m800_diag.log 2>&1
+python harness/pata_eval.py --ckpt /content/ck/J/ckpt-00800 --mode gen --split probe40 --variants on,off \
+  --tag J800 --bs 8 --data-root $DR --out $CK/eval_m800 > /content/m800_gen.log 2>&1
+tail -22 /content/m800_diag.log; tail -5 /content/m800_gen.log
 ```
-(VRAM của train chỉ ~5 GB nên chạy song song được; train chậm lại trong ~20 phút đó.)
 
 **Luật mốc 800 (`185` §7b, §8):** chỉ được dừng vì lỗi kỹ thuật:
 1. `CE_val`, `KL_val` không phân kỳ;
-2. **tắt bridge làm ≥ 30% câu probe đổi** — dòng `câu ĐỔI khi tắt bridge`. Gần như không đổi ⇒ decoder
-   bỏ qua bridge ⇒ **DỪNG** C1, không tốn hết epoch;
+2. **tắt bridge làm ≥ 30% câu probe đổi** (dòng `câu ĐỔI khi tắt bridge`). Gần như không đổi ⇒ decoder
+   bỏ qua bridge ⇒ **DỪNG** C1;
 3. xáo prompt thì mass giảm (`dung_vs_xao` dương);
-4. format hợp lệ ≥ 95% (`format hợp lệ` của biến thể `on`).
+4. format hợp lệ ≥ 95% (dòng `on … format hợp lệ`).
 Đạt ⇒ để C1 chạy hết epoch. ⛔ Không đổi λ, block, LR, gate sau khi xem mốc 800. ⛔ Không suy `exec` từ
 probe 40.
 
-## Ô P9 — hết epoch C1: sinh câu val600 (MỘT lần)
+## Ô P9 — hết epoch C1: chẩn đoán J + sinh câu val600 (MỘT lần, ~1–1,5 h A100)
 
+Sau khi P5 in `↑ Drive: …/J/final` và kết thúc. Ô notebook:
 ```python
-for ck, tag in ((f"{CK}/J/final", "C1"), (f"{CK}/S/final", "S")):
-    e = chay(["python", "harness/pata_eval.py", "--ckpt", ck, "--mode", "gen", "--split", "val600",
-              "--variants", "on,off" if tag == "C1" else "on", "--data-root", DR,
-              "--out", f"{CK}/eval_val600_{tag}"], f"/content/gen600_{tag}.log")
-    e.wait(); print(tag, open(f"/content/gen600_{tag}.log").read()[-400:])
+for cmd, log in (
+    (["--ckpt", f"{CK}/J/final", "--mode", "diag", "--split", "val400", "--tag", "J"], "diag_J"),
+    (["--ckpt", f"{CK}/J/final", "--mode", "gen", "--split", "val600", "--variants", "on,off,swapD,swapR",
+      "--tag", "C1", "--bs", "16"], "gen_C1"),
+    (["--ckpt", f"{CK}/S/final", "--mode", "gen", "--split", "val600", "--variants", "on",
+      "--tag", "S", "--bs", "16"], "gen_S")):
+    e = chay(["python", "harness/pata_eval.py", "--data-root", DR, "--out", f"{CK}/cong_c1"] + cmd,
+             f"/content/{log}.log")
+    e.wait(); print(log, open(f"/content/{log}.log").read()[-700:], flush=True)
 ```
-Ra ba tệp preds: C1 bật bridge · C1 tắt bridge · S (không TARGET) — đủ cho điều kiện 3 và 4 của cổng §8.
-⛔ val600 là tập cổng cuối, **chỉ chạy một lần**.
-⚠️ Điều kiện 5 (swap sang distractor vs random-pool) **chưa có mã** — mình viết trong lúc C1 train.
+Ra trong `{CK}/cong_c1/`: `diag_J_val400.json` + 5 tệp preds (`preds_C1_val600_{on,off,swapD,swapR}.jsonl`,
+`preds_S_val600_on.jsonl`). Sinh câu ghi dần + nối tiếp được: mất máy thì chạy lại ô này.
+⛔ val600 là tập cổng cuối, **chỉ chạy một lần**; không xem số `exec` giữa chừng.
 
-## Ô P10 — chấm `exec` val600 trên Kaggle (0 đồng)
+## Ô P10 — chấm `exec` val600 (Kaggle T4 × 2, 0 đồng, ~2–2,5 h)
 
-Làm sau, khi có ba tệp preds: runbook riêng (dùng lại dataset `thesis-val-cham` + `score_run.py
---data-root … --recs-file val_cham600.jsonl`), mình viết khi C1 chạy.
+Runbook riêng: **`harness/kaggle_pata_cham_val600.md`** (Q0–Q4). Sau đó đọc cổng trên WSL:
+```
+~/.venvs/thesis/bin/python harness/pata_cong_c1.py --dir runs/pata/cong_c1
+```
+Năm điều kiện + ngưỡng đã **khoá trong `pata_cong_c1.py` ngày 24/9, trước khi C1 train**.
 
 ---
 

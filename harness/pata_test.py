@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-PATA · 13 unit test bắt buộc trước train dài (report/185 §7).
+PATA · 14 unit test bắt buộc trước train dài (report/185 §7).
 
 Hai chế độ, cùng một bộ test:
   --tiny  (mặc định) Qwen2.5-VL TÍ HON dựng từ đúng config thật (cùng processor, cùng id
@@ -169,6 +169,23 @@ def run(a):
     post = min(float((L_on[i, t:] - L_off[i, t:]).abs().max()) for i, t in enumerate(tpos))
     check("5 Wo≠0: tiền tố không đổi, TARGET/hậu tố đổi", pre <= tol(a) and post > 10 * max(pre, 1e-7),
           f"tiền tố {pre:.2e} · hậu tố {post:.2e}")
+
+    # 14 ─ ép α (swap §8 điều 5): đổi logits sau TARGET, KHÔNG đổi tiền tố; ép đúng α của chính
+    #      localizer thì phải trùng tuyệt đối với không ép (kiểm đường ép không lệch hàng/thứ tự ô)
+    L_free = logits_full(model, pata, b)
+    la_ = [rec["logalpha"].exp().detach() for rec in pata.last]
+    pata.alpha_override = [PM.patch_target([0, 0, r0["w"] // 3, r0["h"] // 3], r0["w"], r0["h"],
+                                           r0["w"], r0["h"], x["image_grid_thw"]) for x in its]
+    L_sw = logits_full(model, pata, b)
+    pata.alpha_override = la_
+    L_same = logits_full(model, pata, b)
+    pata.alpha_override = None
+    pre = max(float((L_sw[i, :t] - L_free[i, :t]).abs().max()) for i, t in enumerate(tpos))
+    post = min(float((L_sw[i, t:] - L_free[i, t:]).abs().max()) for i, t in enumerate(tpos))
+    same = float((L_same - L_free).abs().max())
+    check("14 ép α: tiền tố không đổi, hậu tố đổi; ép đúng α tự sinh = không ép",
+          pre <= tol(a) and post > 10 * max(pre, 1e-7) and same <= tol(a),
+          f"tiền tố {pre:.2e} · hậu tố {post:.2e} · ép α tự sinh {same:.2e}")
 
     # 9 ─ teacher-forced full pass = sinh tăng dần có KV-cache (dùng Wo≠0 hiện tại)
     x = its[0]
