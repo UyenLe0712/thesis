@@ -88,7 +88,22 @@ def main():
         model.zero_grad(set_to_none=True)
         return float(loss.detach())
 
+    # ⭐ 24/9: lượt K9 đầu cho thấy `block` CHẬM hơn (0,60×) và tháp thị giác chỉ 14% forward, nhưng
+    # backward gấp đôi forward với 4.748 lời gọi backward attention ⇒ tháp thị giác bị kéo vào đồ thị
+    # gradient bởi enable_input_require_grads. So thêm: gỡ hook đó (mặc định mới) vs giữ (hành vi cũ).
     kq = {}
+    for mode in ("khong_vis_grad", "co_vis_grad"):
+        PM.enable_gc(model, vision_grad=(mode == "co_vis_grad"))
+        vis(); step()
+        t_vis, o_vis = do(vis, a.steps)
+        t_fwd, ce = do(lambda: float(fwd().detach()), a.steps)
+        t_step, _ = do(step, a.steps)
+        kq[mode] = {"fwd_bwd_s": t_step, "ce": ce}
+        print(f"[{mode:14}] forward+CE {t_fwd:6.2f} s · backward {t_step - t_fwd:6.2f} s · cả bước "
+              f"{t_step:6.2f} s · CE {ce:.6f}", flush=True)
+    print(f"tăng tốc cả bước khi gỡ gradient tháp thị giác: "
+          f"{kq['co_vis_grad']['fwd_bwd_s'] / kq['khong_vis_grad']['fwd_bwd_s']:.2f}×")
+    PM.enable_gc(model)                          # về mặc định mới
     for mode in ("loop", "block"):
         PM.set_vision_attn(mode, a.block_max)
         vis(); step()                               # khởi động

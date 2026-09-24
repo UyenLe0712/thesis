@@ -237,6 +237,18 @@ P2 đạt: hash 4/4 · 40.189 chạm · 39.432 kl_ok · đủ 41.191 ảnh. **L4
 đo A100 và nếu đạt luật 1,5× thì chạy tiếp từ điểm lưu L4 trên A100.** Quy trình đổi máy ở
 `harness/colab_pata_c1.md` mục *Đo máy thực tế + đổi máy giữa lượt*.
 
+### 3.10 Tốc độ trên A100 và thủ phạm (23–24/9) — [đo]
+
+- Lô 4 × 4: 22,8 s/u · lô 16 × 1 (từ update 100): 23,9 s/u · chờ dữ liệu 0% · GPU bận 30–50% ⇒ giả
+  thuyết "đói việc vì lô nhỏ" bị bác. Giữ 16 × 1 (tương đương toán học; CPU: CE update kế trùng 6 chữ số).
+- Mất máy sau ckpt-01100 (Drive giữ 2 điểm lưu mới nhất + mốc 800 nên không có ckpt-00900 — đúng thiết kế).
+- VM mới (torch 2.11 cu130, Python 3.13) thiếu `libnvrtc-builtins.so.13.0` ⇒ `image_grid_thw.prod(-1)` trên
+  GPU hỏng lúc khởi động. Vá bằng `LD_LIBRARY_PATH` chỉ trỏ `nvidia/cu13/lib`; P1 nay tự kiểm.
+- Kaggle K9: tháp thị giác 14% forward; attention `block` chậm hơn (0,60×), lệch tương đối 7e−3 ⇒ bỏ.
+  **Backward gấp đôi forward, 4.748 lời gọi backward attention mỗi bước ⇒ tháp thị giác bị kéo vào đồ thị
+  gradient** bởi `enable_input_require_grads()` mà `gradient_checkpointing_enable()` tự gọi. Vá trong
+  `enable_gc`; tương đương từng bit trên mô hình tí hon (Δ gradient = 0,0 / 41.345 phần tử).
+
 ## 4. Audit box (A1) — [đo]
 
 Trang gán nhãn `dg1_cache/train_ac/pata/audit/audit.html` (ảnh vẽ box đỏ + điểm chạm xanh + khung

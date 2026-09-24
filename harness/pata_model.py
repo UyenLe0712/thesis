@@ -48,12 +48,31 @@ def parts(model):
     return base, vl, text
 
 
-def enable_gc(model):
+def enable_gc(model, vision_grad=False):
     """Gradient checkpointing KHÔNG reentrant. Bản reentrant chạy forward trong no_grad nên α
-    tính trong hook sẽ không có gradient — KL vẫn in ra số đẹp mà localizer không học gì."""
-    base, _, _ = parts(model)
+    tính trong hook sẽ không có gradient — KL vẫn in ra số đẹp mà localizer không học gì.
+
+    ⛔ `gradient_checkpointing_enable()` tự gọi `enable_input_require_grads()`, hàm này gắn hook
+    "đầu ra phải có gradient" lên embedding đầu vào của MỌI mô hình con — kể cả THÁP THỊ GIÁC ⇒ tháp thị
+    giác (đóng băng, 0 tham số học) bị tính lại + backward qua 32 tầng, từng cửa sổ một. Đo trên Kaggle
+    T4 24/9: 4.748 lời gọi backward attention mỗi bước, backward 6,09 s gấp đôi forward 3,05 s. Gradient
+    đó KHÔNG được dùng cho bất kỳ tham số nào ⇒ gỡ hook đi thì các update y hệt, chỉ bớt việc thừa.
+    Giữ lại đúng một hook ở embedding của mô hình ngôn ngữ."""
+    base, _, text = parts(model)
     base.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
     base.config.use_cache = False
+    if vision_grad:
+        return
+    for m in base.modules():
+        for h in (getattr(m, "_require_grads_hooks", None) or []):
+            h.remove()
+        h1 = getattr(m, "_require_grads_hook", None)
+        if h1 is not None:
+            h1.remove()
+        if hasattr(m, "_require_grads_hooks"):
+            m._require_grads_hooks = []
+    text._pata_grad_hook = text.embed_tokens.register_forward_hook(
+        lambda mod, inp, out: out.requires_grad_(True))
 
 
 def load_base(tiny=False, revision="main", attn="sdpa", quant=True):

@@ -95,6 +95,8 @@ assert '"name": "target"' in t and "for g_ in groups" in t, "⛔ pata_train.py B
 assert "_mot_luong" in t and "chờ-dữ-liệu" in t, "⛔ pata_train.py thiếu bản vá nạp dữ liệu 23/9 — upload lại gói"
 assert "AREA_KL_MAX = 0.50" in open("harness/pata_data.py").read(), "⛔ pata_data.py BẢN CŨ"
 assert 'rec.get("kl_ok", True)' in open("harness/pata_model.py").read(), "⛔ pata_model.py BẢN CŨ"
+assert "vision_grad=False" in open("harness/pata_model.py").read(), \
+    "⛔ pata_model.py thiếu bản vá 24/9 (gỡ gradient thừa qua tháp thị giác) — upload lại gói"
 
 # ── dữ liệu: hash phải khớp split_hash.json ──
 h = json.load(open(f"{DR}/pata/split_hash.json"))
@@ -218,6 +220,24 @@ Nối tiếp đúng `update 100/2512`. `u140 … 24,0 s/u (gần 23,9) chờ-d�
 cho mọi chặng còn lại (tương đương toán học, VRAM dư) để C1 và C0-Loc cùng một cách chia lô.
 S dự kiến xong ~**15:10 VN 24/9** (còn ~15,8 h). Chỗ chậm so với S1 cũ (10,3 s/u) chưa rõ — cần đo phân
 rã thời gian (tháp thị giác / forward LM / backward) trên Kaggle T4 trước chặng H.
+
+### ⭐ 24/9 — THỦ PHẠM CHẬM: gradient thừa qua tháp thị giác — đã vá, tương đương từng bit — [đo]
+
+Kaggle K9 (T4, lô 2): tháp thị giác chỉ **14%** forward; `block` chậm hơn (0,60×) ⇒ bỏ `block`. Nhưng
+**backward 6,09 s gấp đôi forward 3,05 s** và có **4.748 lời gọi backward attention mỗi bước** ⇒ tháp thị
+giác nằm trong đồ thị gradient. Nguyên nhân (`transformers/modeling_utils.py:3361`):
+`gradient_checkpointing_enable()` gọi `enable_input_require_grads()`, hàm này gắn hook lên embedding đầu
+vào của MỌI mô hình con, kể cả tháp thị giác. **Vá** trong `pata_model.enable_gc`: gỡ các hook đó, chỉ giữ
+một hook ở embedding của mô hình ngôn ngữ. Kiểm trên mô hình tí hon: bản cũ tháp thị giác có gradient,
+bản mới không; CE trùng; gradient LoRA + đầu PATA lệch **0,0 trên 41.345 phần tử**. 13/13 test đạt.
+
+**Áp cho lượt S đang chạy (không đổi kết quả, chỉ nhanh hơn):**
+1. Upload `thesis_pata_colab.zip` mới lên `MyDrive/thesis/`.
+2. Chờ P5 in `↑ Drive: …/S/ckpt-XXXXX` mới nhất → Terminal: `pkill -f harness/pata_train.py`.
+3. **P2** (bung gói mới; ảnh đã có nên bỏ qua; dòng assert mới phải xanh) → ô `LD_LIBRARY_PATH` nếu máy
+   này cần → **P4** (`STAGE="S"`, `BS, ACCUM = "16", "1"`) → **P5**.
+4. Sau ~20 update đọc `(gần …)` — kỳ vọng thấp hơn rõ 23,9 [suy, chưa đo].
+Khai vào manifest: "từ update N, tháp thị giác không còn trong đồ thị gradient (tương đương từng bit)".
 
 ## Ô P4 — chạy một chặng, chạy nền
 
