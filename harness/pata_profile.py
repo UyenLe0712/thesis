@@ -108,13 +108,20 @@ def main():
     print(f"tăng tốc cả bước block/loop: {kq['loop']['fwd_bwd_s'] / kq['block']['fwd_bwd_s']:.2f}×")
 
     PM.set_vision_attn("loop")
-    from torch.profiler import profile, ProfilerActivity
-    with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA]) as prof:
-        step(); dong_bo()
-    print(prof.key_averages().table(sort_by="cuda_time_total", row_limit=15))
-    ks = prof.key_averages()
-    n_sdpa = sum(e.count for e in ks if "scaled_dot_product" in e.key or "efficient_attention" in e.key)
-    print(f"số lời gọi attention trong MỘT bước (loop): {n_sdpa}")
+    try:                                    # phần phụ — lỗi ở đây không làm mất các số đo phía trên
+        from torch.profiler import profile, ProfilerActivity
+        with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA]) as prof:
+            step(); dong_bo()
+        ks = prof.key_averages()
+        for key in ("device_time_total", "cuda_time_total", "cpu_time_total"):
+            try:
+                print(ks.table(sort_by=key, row_limit=15)); break
+            except Exception:
+                continue
+        n_sdpa = sum(e.count for e in ks if "scaled_dot_product" in e.key or "efficient_attention" in e.key)
+        print(f"số lời gọi attention trong MỘT bước (loop): {n_sdpa}")
+    except Exception as e:
+        print("(bỏ qua profiler:", repr(e)[:200], ")")
 
 
 if __name__ == "__main__":
