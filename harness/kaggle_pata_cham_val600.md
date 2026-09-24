@@ -19,8 +19,9 @@ Thuộc `harness/colab_pata_c1.md` ô P10. Chạy SAU khi Colab P9 đã sinh đ�
    Tải **cả thư mục** về máy.
 2. Kaggle → New Dataset → kéo 5 tệp preds vào → tên **`thesis-pata-preds`** → Create.
 3. Notebook mới: GPU **T4 x2** · Internet **On** · Add Input: **`thesis-pata`** (gói mã, bản mới nhất —
-   phải có `harness/score_run.py`) · **`thesis-val-cham`** (ảnh + `val_cham600.jsonl` + `ocr_val.jsonl`,
-   đã có từ 9/9) · **`thesis-pata-preds`**.
+   phải có `harness/score_run.py`) · **`thesis-val-cham`** (= `_bundles/thesis_val_cham.zip`: 1.567 ảnh +
+   `val_cham600.jsonl` + `ocr.jsonl`, dựng 9/9). ⛔ **`thesis-val` cũ KHÔNG thay được**: không có
+   `val_cham600.jsonl`, chỉ phủ 391/602 ảnh · **`thesis-pata-preds`**.
 4. ⛔ Chạy tương tác (không Save Version lần đầu).
 
 ## Q1 — gỡ torchao, cài gói
@@ -49,21 +50,29 @@ WS = f"{W}/pk/thesis"
 VD = f"{W}/valdata"; os.makedirs(VD, exist_ok=True)
 
 # val600: bí danh gold_instruction (score_run đòi khoá này; val tách từ tập dạy nên chỉ có target_instruction)
-v600 = glob.glob("/kaggle/input/**/val_cham600.jsonl", recursive=True)[0]
+# ⛔ SỬA 24/9 tối: mọi tệp lấy theo THƯ MỤC CỦA val_cham600.jsonl (dataset thesis-val-cham), không glob toàn
+#    /kaggle/input — gói thesis-pata cũng có 440 ảnh ep*_s*.png và một ocr.jsonl, sắp xếp theo tên thì đứng
+#    TRƯỚC thesis-val-cham ⇒ bản cũ trỏ nhầm thư mục ảnh. Và dataset này có ocr.jsonl, không có ocr_val.jsonl.
+v600s = glob.glob("/kaggle/input/**/val_cham600.jsonl", recursive=True)
+assert v600s, "⛔ thiếu dataset thesis-val-cham (thesis-val cũ KHÔNG đủ: không có val_cham600, chỉ 391/602 ảnh)"
+v600 = v600s[0]; BASE = os.path.dirname(v600)
 with open(v600, encoding="utf-8") as fi, open(f"{VD}/val_cham600.jsonl", "w", encoding="utf-8") as fo:
     for d in map(json.loads, fi):
         d.setdefault("gold_instruction", d["target_instruction"])
         fo.write(json.dumps(d, ensure_ascii=False) + "\n")
-shutil.copy(glob.glob("/kaggle/input/**/ocr_val.jsonl", recursive=True)[0], f"{VD}/ocr.jsonl")
-png = sorted(glob.glob("/kaggle/input/**/ep*_s*.png", recursive=True))
-IMGDIR = os.path.dirname(png[0])
-if os.path.islink(f"{VD}/images"):
+ocr = [p for p in (f"{BASE}/ocr.jsonl", f"{BASE}/ocr_val.jsonl") if os.path.exists(p)][0]
+shutil.copy(ocr, f"{VD}/ocr.jsonl")
+IMGDIR = f"{BASE}/images"
+if os.path.lexists(f"{VD}/images"):
     os.remove(f"{VD}/images")
 os.symlink(IMGDIR, f"{VD}/images")
-n_cham = sum(1 for d in map(json.loads, open(f"{VD}/val_cham600.jsonl"))
-             if d["action"].get("action_type") in ("click", "long_press"))
-print("val600 bước chạm:", n_cham, "← cần 602 · ảnh:", len(png))
-assert n_cham == 602
+cham = [d for d in map(json.loads, open(f"{VD}/val_cham600.jsonl"))
+        if d["action"].get("action_type") in ("click", "long_press")]
+thieu = [d["image"] for d in cham if not os.path.exists(f"{VD}/{d['image']}")]
+print("dataset   :", BASE)
+print("val600 bước chạm:", len(cham), "← cần 602 · ảnh thiếu:", len(thieu), "← cần 0 · ocr",
+      sum(1 for _ in open(f"{VD}/ocr.jsonl")), "dòng")
+assert len(cham) == 602 and not thieu, f"⛔ thiếu ảnh, vd {thieu[:3]}"
 
 PD = os.path.dirname(glob.glob("/kaggle/input/**/preds_C1_val600_on.jsonl", recursive=True)[0])
 BIEN = {"C1_on": "preds_C1_val600_on.jsonl", "C1_off": "preds_C1_val600_off.jsonl",

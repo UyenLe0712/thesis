@@ -397,6 +397,73 @@ tail -22 /content/m800_diag.log; tail -5 /content/m800_gen.log
 Đạt ⇒ để C1 chạy hết epoch. ⛔ Không đổi λ, block, LR, gate sau khi xem mốc 800. ⛔ Không suy `exec` từ
 probe 40.
 
+## ▶️ SAU KHI C1 XONG — trình tự R1–R7 (ghi 24/9 21:30 VN)
+
+C1 lúc 21:27 VN ở u2240/2512, 8,2 s/u ⇒ **xong khoảng 22:05 VN**, cộng vài phút lưu `final/` và đẩy lên Drive.
+⛔ Nếu phiên quyết định mốc 800 (report/194) đã chọn **A** thì làm R1 rồi **Disconnect ngay**, bỏ R2–R6.
+
+| bước | ở đâu | việc | thời gian | tiền |
+|---|---|---|---|---|
+| R1 | Colab, ô P5 | P5 tự kết thúc. Phải thấy `↑ Drive: …/J/final` và `== tiến trình train đã kết thúc ==`, không có `⛔ LỖI` | tự chạy | — |
+| R2 | máy nhà → Drive | thay `MyDrive/thesis/thesis_pata_colab.zip` bằng `_bundles/thesis_pata_colab.zip` (bản 24/9 20:20 VN, 26,2 MB) | 5 phút | 0 |
+| R3 | Colab | chạy lại **chỉ P2**, rồi ô R3 bên dưới. ⛔ **KHÔNG chạy lại P4**: nó sẽ khởi động train J lần nữa | 2 phút | A100 |
+| R4 | Colab | ô **P9** | 1–1,5 h | A100 |
+| R5 | Colab | ô R5 bên dưới, rồi **Runtime → Disconnect and delete runtime** (hết tốn đơn vị) | 1 phút | — |
+| R6 | Kaggle | **P10** = `harness/kaggle_pata_cham_val600.md` Q0–Q4 | ~2,5 h | 0 đồng |
+| R7 | máy nhà | gửi mình `pata_cong_c1.zip` (Q4) + thư mục `cong_c1` tải từ Drive; mình chạy `pata_cong_c1.py` | 5 phút | 0 |
+
+**Mất máy sau khi C1 xong (VM mới):** P1 → P2 → **ô R0** → (nếu R0 báo thiếu `final`: P4 `STAGE="J"` → P5)
+→ R3 → P9 → R5.
+
+**Ô R0** (VM mới, sau P2 — định nghĩa `chay` mà KHÔNG khởi động train, và kiểm `J/final` trên Drive theo SHA):
+```python
+import os, json, hashlib, subprocess
+def chay(cmd, log):
+    env = dict(os.environ, TQDM_DISABLE="1", HF_HUB_DISABLE_PROGRESS_BARS="1",
+               PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True", PYTHONUNBUFFERED="1")
+    return subprocess.Popen(cmd, stdout=open(log, "a"), stderr=subprocess.STDOUT, env=env,
+                            cwd=REPO, start_new_session=True)
+J = f"{CK}/J"; fin, sha = f"{J}/final", f"{J}/final_sha256.json"
+print("Drive J:", sorted(os.listdir(J)))
+if os.path.exists(f"{J}/pata_J.log"):
+    print("log:", [l for l in open(f"{J}/pata_J.log").read().splitlines() if "XONG" in l][-1:])
+ok = False
+if os.path.isdir(fin) and os.path.exists(sha):
+    h = json.load(open(sha))
+    loi = [k for k, v in h.items() if not os.path.exists(f"{fin}/{k}")
+           or hashlib.sha256(open(f"{fin}/{k}", "rb").read()).hexdigest() != v]
+    ok = not loi
+    print("J/final:", len(h), "tệp ·", "KHỚP SHA ✓" if ok else f"LỆCH {loi}")
+if not ok and os.path.isdir(fin):
+    os.rename(fin, fin + "_hong"); print("đổi tên bản dở → final_hong (P5 sẽ không đẩy đè lên bản dở)")
+print("⇒", "sang ô R3" if ok else "⛔ chưa có J/final trọn → chạy P4 (STAGE='J', BS,ACCUM='16','1') rồi P5")
+```
+
+**Ô R3** (sau P2, trước P9):
+```python
+import os, json
+assert "chay" in globals(), "⛔ nhân Python đã restart: chạy P1 → P2 → ô này lại (đừng chạy P4)"
+print("pata_eval bản mới:", open("harness/pata_eval.py").read().count('with open(fp, "a"'), "← phải 1")
+C = f"{CK}/cong_c1"; os.makedirs(C, exist_ok=True)
+if not os.path.exists(f"{C}/diag_S_val400.json"):          # P6 ghi CE_val của S vào eval/ dưới tên final
+    d = json.load(open(f"{CK}/eval/diag_final_val400.json"))
+    assert abs(d["CE_val"] - 0.7295) < 1e-3, f"⛔ tệp không phải diag của S: CE_val={d['CE_val']}"
+    json.dump(d, open(f"{C}/diag_S_val400.json", "w"), indent=1); print("đã chép diag_S")
+print("cong_c1:", sorted(os.listdir(C)), "← cần diag_S + diag_H")
+print("J      :", sorted(os.listdir(f"{CK}/J")), "← cần final")
+print(open(f"{CK}/J/final_sha256.json").read()[:400])
+```
+
+**Ô R5** (sau P9, trước khi Disconnect):
+```python
+C = f"{CK}/cong_c1"
+for f in ("preds_C1_val600_on", "preds_C1_val600_off", "preds_S_val600_on",
+          "preds_C1_val600_swapD", "preds_C1_val600_swapR"):
+    print(f"{f:24}", sum(1 for _ in open(f"{C}/{f}.jsonl")), "dòng")
+print("← cần 602 · 602 · 602 · 546 · 546;  diag_J:", os.path.exists(f"{C}/diag_J_val400.json"))
+```
+Thiếu dòng ⇒ chạy lại P9 (tự sinh phần thiếu), **đừng** Disconnect.
+
 ## Ô P9 — hết epoch C1: chẩn đoán J + sinh câu val600 (MỘT lần, ~1–1,5 h A100)
 
 ⚠️ **Trước P9: upload lại `thesis_pata_colab.zip` bản 24/9 tối (commit sau `561d620`) rồi chạy lại P2.**

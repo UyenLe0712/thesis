@@ -10,15 +10,15 @@
 
 ## 0. Tóm tắt một bảng
 
-| mục | trạng thái 24/9 18:30 VN |
+| mục | trạng thái 24/9 23:30 VN (cập nhật từ bản 18:30) |
 |---|---|
 | phương pháp | PATA-Causal C1: TARGET token + localizer (KL multi-patch) + bridge cộng vào hidden state của TARGET sau block 17 |
 | chuỗi train | **S (1 epoch, user chốt) → H (1 epoch) → C1 = J bridge bật (1 epoch)**; C0-Loc chưa chạy, chỉ chạy nếu C1 qua cổng §8 |
 | Stage S | ✅ xong · CE_val(val400) **0,7295** |
 | Stage H | ✅ xong · **cổng H ĐẠT** rõ (§4) |
-| C1 | ▶️ **đang chạy trên A100**, qua update 800/2.512, ~8,1 s/update, dự kiến xong **~22:00 VN 24/9** |
+| C1 | ✅ **chạy hết epoch** (2.512/2.512 update, ~22:05 VN 24/9) · `J/final` adapter sha `ac0885903d19…` · P9 xong (§5b) |
 | mốc 800 | **3/4 tiêu chí đạt; tiêu chí 2 (tắt bridge làm ≥ 30% câu probe đổi) KHÔNG đạt: 6/40 = 15%** |
-| quyết định treo | **A dừng C1 ngay · B chạy hết epoch rồi đọc cổng cuối §8** (§6) |
+| quyết định treo | C1 **đã chạy hết** trong lúc chờ (thực tế là B) · cổng cuối: đk 1, 2 **ĐẠT** · đk 3, 4, 5 chờ Kaggle P10 (§5b) · tắt bridge trên val600 đổi **90/602 = 15,0%** [12,3; 18,0] |
 | GPU đã tiêu | A100 Colab: S (~6 h tổng, gồm phần chạy chậm trước khi vá) + H (~4 h) + C1 tới u800 (~2 h) · Kaggle T4 miễn phí ~2 h |
 
 ⚠️ **C1 vẫn chạy trong lúc chờ quyết** — mỗi giờ trì hoãn ≈ 450 update ≈ 1 giờ A100. Chọn A thì dừng càng
@@ -167,6 +167,73 @@ không đổi (≤ 5%)". Kết luận thống kê: bridge **được dùng, như
 
 ---
 
+## 5b. C1 hết epoch + P9 (24/9 tối) — [đo]
+
+**Train:** hết 2.512/2.512 update, không NaN/OOM, ~8,2 s/u, VRAM 16,67 GB. Mất máy **sau** khi P5 kết thúc:
+ô R0 (runbook) kiểm `J/final` trên Drive theo `final_sha256.json` ⇒ khớp 5/5 tệp, không phải train lại.
+SHA `J/final` (bản đủ ở `runs/pata/J_final_sha256.json`): adapter `ac0885903d19…` · `pata_heads.pt`
+`b773373afa20…` · `meta.json` `6c989439b1fd…` · `adapter_config.json` `da0d95e635a2…`.
+
+| log train | CE | KL | mass (train) | gate = sigmoid(g) | resid |
+|---|---|---|---|---|---|
+| u2200 | 0,661 | 2,05 | 0,30 | 0,12040 | 0,196 |
+| u2240 | 0,664 | 2,03 | 0,32 | 0,12041 | 0,195 |
+
+⚠️ `gate` gần như đứng yên cả epoch (0,11920 → 0,12041) trong khi `resid` lên ~0,20 ⇒ độ lớn bridge đến từ
+`Wo` lớn dần, không phải từ cổng mở.
+
+**Chẩn đoán J/final trên val400 (`diag_J_val400.json`):**
+
+| | S | H | mốc 800 | **J/final** |
+|---|---|---|---|---|
+| CE_val | 0,72950 | — | 0,742 | **0,72954** |
+| KL_val | — | 2,580 | 2,330 | **2,170** |
+| mass trong box | — | 0,184 | 0,241 | **0,277** |
+| Hit-in-box | — | 38,7% | 46,7% | **52,0%** |
+| mass prompt xáo | — | 0,107 | 0,108 | 0,115 |
+| lift center / train, cận dưới 90% | — | +0,133 / +0,131 | +0,185 / +0,183 | **+0,220 / +0,218** |
+| đúng − xáo, cận dưới 90% | — | +0,067 | +0,117 | **+0,145** |
+
+(CE_val J trùng S tới 4 chữ số: đã so số đủ, 0,7295419 vs 0,7295007 — hai phép đo khác nhau, không phải đọc
+nhầm tệp; mass J khác H nên đầu localizer nạp đúng.)
+
+**P9 — 5 tệp preds val600** (`runs/pata/cong_c1/`, kiểm trên WSL: 0 dòng trùng, khoá bước khớp đúng
+`val600.jsonl`/`val600_swap.jsonl`, câu chuẩn khớp, `ckpt` đúng J/final hoặc S/final):
+
+| biến thể | n | hợp lệ | độ dài TB (từ) | rỗng | câu khác so với C1 on |
+|---|---|---|---|---|---|
+| C1 on | 602 | 100% | 8,25 | 0 | — |
+| C1 off (tắt bridge) | 602 | 99,3% | 8,12 | 4 | **90/602 = 15,0%** (Wilson 95% [12,3; 18,0]) |
+| C1 swapD | 546 | 100% | 8,22 | 0 | 38/546 = 7,0% |
+| C1 swapR | 546 | 100% | 8,24 | 0 | 35/546 = 6,4% |
+| S on | 602 | 100% | 8,41 | 0 | 213/602 = 35,4% |
+
+- **Tắt bridge trên val600 tái lập đúng 15% của probe 40** (6/40), nay với n = 602: mép trên KTC 18,0% < 30%
+  (P(X ≤ 90 | 30%) ≈ 6·10⁻¹⁸) và mép dưới 12,3% > 5%. Kết luận §5.3 đứng: bridge **được dùng nhưng yếu**.
+  ⚠️ Đây là val600 (tập cổng cuối), đo đúng một lần trong P9 theo runbook — không phải phép C của §6.2.
+- **swapD vs swapR chỉ khác câu ở 39/546 = 7,1%.** Bộ trỏ tất định ⇒ ở 507 bước câu trùng, hiệu của đk 5
+  bằng 0 ⇒ chênh "về phía D" **tối đa 7,1 điểm %**; đk 5 còn đạt được nếu 39 bước ấy nghiêng về D, nhưng biên
+  mỏng. [suy]
+
+**Cổng cuối — phần đã đọc được (ngưỡng khoá trong `pata_cong_c1.py`):**
+
+| đk | tiêu chí | số | |
+|---|---|---|---|
+| 1 | hợp lệ ≥ 99% · dài ≤ 1,5× S · rỗng ≤ S + 1 điểm | 100% · 8,25 vs 8,41 · 0 vs 0 | ✅ |
+| 2 | CE ≤ 1,25× S · KL ≤ 1,10× H · 3 cận dưới > 0 | 0,7295 ≤ 0,912 · 2,170 ≤ 2,838 · +0,220/+0,218/+0,145 | ✅ |
+| 3 | exec(C1) ≥ exec(S) | chờ P10 | ⏳ |
+| 4 | exec(C1 bật) > exec(C1 tắt) | chờ P10 | ⏳ |
+| 5 | cận dưới 90% P(về D\|ép D) − P(về D\|ép R) > 0 | chờ P10 | ⏳ |
+
+**P10 (Kaggle):** ô Q2 của `harness/kaggle_pata_cham_val600.md` **đã sửa 24/9 tối** trước khi chạy — bản cũ
+tìm `ocr_val.jsonl` (dataset `thesis-val-cham` chỉ có `ocr.jsonl`) và lấy thư mục ảnh từ `.png` đầu tiên sau
+sắp xếp, tức thư mục 440 ảnh của `thesis-pata` (đứng trước `thesis-val-cham` theo tên). Bản mới lấy mọi thứ
+theo thư mục của `val_cham600.jsonl` và kiểm đủ ảnh cho 602 bước. ⛔ Dataset `thesis-val` cũ không thay được
+(không có `val_cham600.jsonl`, chỉ phủ 391/602 ảnh). Dataset `thesis-pata` cũ dùng được (`score_run.py` không
+đổi từ 14/9).
+
+---
+
 ## 6. QUYẾT ĐỊNH CÒN TREO
 
 ### 6.1 Chỗ spec tự mâu thuẫn (trích nguyên văn `185`)
@@ -212,7 +279,7 @@ probe 40.
 |---|---|---|---|
 | C1 chạy hết | P5 đang chạy | tới ~22:00 VN | `pata_ck/J/final` |
 | P9 | `colab_pata_c1.md` P9 (diag J + gen C1 4 biến thể + gen S) | ~1–1,5 h A100 | `pata_ck/cong_c1/`: `diag_J_val400.json` + 5 preds |
-| P10 | `kaggle_pata_cham_val600.md` Q0–Q4 (upload `thesis_pata_kaggle.zip` mới + dataset preds) | ~2–2,5 h T4×2, 0 đồng | 5 tệp `score_*_raw.jsonl` |
+| P10 | `kaggle_pata_cham_val600.md` Q0–Q4 (dataset `thesis-pata` cũ + `thesis-val-cham` + `thesis-pata-preds` mới; ô Q2 bản sửa 24/9 tối) | ~2–2,5 h T4×2, 0 đồng | 5 tệp `score_*_raw.jsonl` |
 | đọc cổng | `~/.venvs/thesis/bin/python harness/pata_cong_c1.py --dir runs/pata/cong_c1` | vài giây, CPU | `cong_c1.json` + ĐẠT/KHÔNG |
 
 **Ngưỡng cổng cuối đã khoá trong `pata_cong_c1.py` (24/9 ~13:00, trước khi C1 train):** (1) hợp lệ ≥ 99%,
@@ -238,6 +305,11 @@ kết luận "bridge vô ích" (§8). Không P9/P10.
 ---
 
 ## 9. Trạng thái máy và tệp
+
+**Cập nhật 24/9 23:30 VN:** Colab đã Disconnect sau P9. Drive `pata_ck/J/` có `ckpt-00800`, `ckpt-02500`,
+`ckpt-02512`, `final`, `final_sha256.json`; `pata_ck/cong_c1/` có đủ 3 diag + 5 preds, bản sao ở `runs/pata/cong_c1/`.
+Việc kế: Kaggle P10 → `pata_cong_c1.py`. Các dòng dưới là trạng thái lúc 18:30.
+
 - Colab A100 đang chạy C1 (PID tiến trình train 29880 lúc khởi động J; P5 theo dõi, đồng bộ Drive 5 phút/lần,
   Drive giữ 2 điểm lưu mới nhất + `ckpt-00800` + `final`).
 - Drive `MyDrive/thesis/pata_ck/`: `S/final` · `H/final` · `J/ckpt-00800` + 2 điểm lưu mới nhất ·

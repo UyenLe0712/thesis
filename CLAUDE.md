@@ -39,7 +39,7 @@ Colab phụ thuộc cũng dùng tên `harness`).
 
 | cần biết | mở |
 |---|---|
-| **⭐⭐⭐⭐⭐⭐⭐ TIẾN ĐỘ PATA-C1 24/9 + QUYẾT ĐỊNH TREO Ở MỐC 800 (tắt bridge chỉ đổi 6/40 = 15% < 30%; A dừng / B chạy hết / C đo thêm val400) — tự chứa, đọc file này trước** | **`report/194_TIEN_DO_PATA_C1_VA_QUYET_DINH_MOC_800_24_9.md`** · cổng H ĐẠT · C1 đang chạy trên A100 |
+| **⭐⭐⭐⭐⭐⭐⭐ TIẾN ĐỘ PATA-C1 24/9 + QUYẾT ĐỊNH TREO Ở MỐC 800 (tắt bridge chỉ đổi 6/40 = 15% < 30%; A dừng / B chạy hết / C đo thêm val400) — tự chứa, đọc file này trước** | **`report/194_TIEN_DO_PATA_C1_VA_QUYET_DINH_MOC_800_24_9.md`** · cổng H ĐẠT · C1 **hết epoch 24/9**, §5b: cổng cuối đk 1–2 ĐẠT, tắt bridge val600 đổi 90/602 = 15%, swapD≠swapR chỉ 39/546; đk 3–5 chờ Kaggle P10 |
 | **⭐⭐⭐⭐⭐⭐ KL BOX LỚN — CHỐT `area_share ≥ 0,50` thì tắt KL (CE giữ), THẮNG 186 §4b (0,25 là sai: 10/18 từ mẫu lấy dư, không nhân với 883)** | **`report/193_QUYET_DINH_KL_BOX_LON_PATA_C1_23_9.md`** · đã thi hành: Train-proper kl_ok 39.432 |
 | **⭐⭐⭐⭐⭐⭐ TÌNH HÌNH PATA 23/9 (mã chặng A, test, audit 2,7%, việc kế)** | **`report/186_TINH_HINH_PATA_C1_23_9.md`** |
 | **⭐⭐⭐⭐⭐⭐ PHƯƠNG PHÁP ĐANG CHỐT 23/9 — PATA-Causal (TARGET token + localizer KL + bridge ở block 17), prefix sạch S(2 ep)→H(1 ep)→C1(1 ep); C1 chạy trước, C0-Loc chỉ khi C1 qua cổng §8. **User 23/9: S chỉ 1 epoch.** Chặng A (0 GPU) đã viết + 13/13 test đạt trên mô hình tí hon; việc kế = audit box (tay) + Kaggle `harness/kaggle_pata_test.md`** | **`report/185_CHOT_PHUONG_PHAP_ACTION_PATA_CAUSAL_22_9.md`** (chép từ 9 ảnh, gốc ở `report/anh_185_pata_causal_23_9/`) |
