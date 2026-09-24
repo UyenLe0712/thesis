@@ -274,6 +274,27 @@ Chấm bằng UGround-V1-2B, luật `exec` (Voronoi ∧ ±14%), trên 602 bướ
 - +1,0 điểm của C1 so với S (dưới ý nghĩa) nhiều khả năng đến từ **một epoch dạy thêm** (J tiếp tục CE trên
   cùng tập) chứ không từ bridge: tắt bridge vẫn giữ 60,96%, tức 83% phần hơn S còn nguyên khi không có bridge.
 
+**Dưới nhiều thước (`harness/pata_nhieu_thuoc.py` → `runs/pata/cong_c1/nhieu_thuoc.json`, 0 GPU).** Hàm luật đã
+kiểm bằng cách chạy lại trên tệp thô GRPO/test: ra đúng 60,07 · 67,04 · 62,96 · 77,30 như đã công bố. Hộp vàng
+lấy từ `pata/val600.jsonl` (601/602 bước có hộp).
+
+| biến thể | exec | D.3 | D.3 ∧ 14% | AitW đầy đủ |
+|---|---|---|---|---|
+| C1 bật | 61,13 | **67,44** | 63,46 | 77,91 |
+| C1 tắt bridge | 60,96 | 67,44 | 63,46 | 77,74 |
+| S | 60,13 | 66,94 | 63,12 | 75,91 |
+| C1 ép D (546) | 61,54 | 66,48 | 63,37 | 78,02 |
+| C1 ép R (546) | 60,81 | 65,93 | 62,82 | 77,66 |
+
+| hiệu ghép cặp | exec | D.3 | AitW |
+|---|---|---|---|
+| C1 − S | +1,00 [−1,74; +4,02] | +0,50 [−2,28; +3,55] | +1,99 [−0,54; +4,85] |
+| C1 bật − tắt | +0,17 [−1,03; +1,33] | **+0,00** [−1,07; +0,99] (6/6) | +0,17 [−0,98; +1,19] |
+| ép D − ép R | +0,73 [+0,00; +1,66] | +0,55 [−0,37; +1,55] | +0,37 [−0,59; +1,42] |
+
+Không thước nào đổi kết luận: mọi KTC của C1 − S và bật − tắt đều phủ 0; dưới D.3 bật và tắt bridge **bằng
+nhau tuyệt đối**. (Hàng ép D − ép R là `exec`, không phải đk 5 — đk 5 đo *hướng* điểm trỏ về D.)
+
 ⚠️ Số val600 **không trích ra báo** như điểm của phương pháp (val là tập chọn/cổng, luật đọc val ở CLAUDE.md).
 Luận văn chỉ được báo: cổng H đạt (localizer học vị trí), cổng cuối không đạt vì bridge không truyền vị trí
 vào câu — một kết quả âm có cơ chế.
