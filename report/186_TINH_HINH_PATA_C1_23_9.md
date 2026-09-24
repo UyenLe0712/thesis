@@ -263,6 +263,18 @@ P2 đạt: hash 4/4 · 40.189 chạm · 39.432 kl_ok · đủ 41.191 ảnh. **L4
   đương về phép toán; lệch ở mức làm tròn FP)". H, C1, C0-Loc chạy trọn bằng bản đã vá.
 - Ước giờ mới (A100, 8 s/u): H ~4–5 h (2.465 update, forward cắt sau block 17) · C1 ~5,5–6 h.
 
+### 3.12 Stage S XONG · Stage H bắt đầu (24/9 ~11:40 VN) — [đo]
+
+- `pata_ck/S/final` (SHA-256 cho manifest §11): `adapter_model.safetensors`
+  `da6484273196946c81a971dd0fcb354e81d5fbb615a7b7e276aaba04a959c8f7` · `adapter_config.json`
+  `da0d95e635a2…` · `meta.json` `3f29900d5f1f…`.
+- **P6 — CE_val của S trên val400 = 0,7295** (n = 400; chỉ để bắt phân kỳ).
+- H: 39.432 mẫu · 8.402.944 tham số học (localizer 8.400.896 + target 2.048) · 2.465 update · warmup 74 ·
+  `gn lora = 0`. KL 3,88 → 3,49 → 3,22 → 3,16 → 3,11 · mass 0,047 → 0,049 → 0,079 → 0,094 → 0,099 (u2 → u80).
+  ~5,6 s/u (lên ~8 lúc P6 chạy song song) ⇒ dự kiến xong ~15:30 VN.
+- ⚠️ Terminal Colab KHÔNG thừa hưởng `LD_LIBRARY_PATH` của notebook — lệnh chạy trong Terminal phải
+  `export LD_LIBRARY_PATH=/usr/local/lib/python3.13/dist-packages/nvidia/cu13/lib:$LD_LIBRARY_PATH` trước.
+
 ## 4. Audit box (A1) — [đo]
 
 Trang gán nhãn `dg1_cache/train_ac/pata/audit/audit.html` (ảnh vẽ box đỏ + điểm chạm xanh + khung
