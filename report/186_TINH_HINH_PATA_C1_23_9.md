@@ -249,6 +249,20 @@ P2 đạt: hash 4/4 · 40.189 chạm · 39.432 kl_ok · đủ 41.191 ảnh. **L4
   gradient** bởi `enable_input_require_grads()` mà `gradient_checkpointing_enable()` tự gọi. Vá trong
   `enable_gc`; tương đương từng bit trên mô hình tí hon (Δ gradient = 0,0 / 41.345 phần tử).
 
+### 3.11 Sau khi vá gradient tháp thị giác (24/9) — [đo]
+
+- **A100, Stage S nối tiếp từ ckpt-01500:** `u1520 … 8,2 s/u (gần 8,0) · vram 11,7–12,2 GB`, CE 0,66–0,77
+  (trước vá 0,64–0,83), chuẩn gradient LoRA 1,1–1,9 ⇒ **nhanh gấp 3 lần (23,9 → 8,0 s/u)**, đường CE liền
+  mạch. S dự kiến xong ~11:45 VN 24/9.
+- **Kaggle T4, mô hình 3B thật, cùng lô, dropout tắt:** CE 3,307160 ở cả hai chế độ (trùng tuyệt đối) ·
+  chuẩn gradient LoRA 4,9754 (có gradient thị giác) vs 4,9758 (không) trên 14.966.784 phần tử · lệch phần
+  tử lớn nhất 2,7e−3 · thời gian bước 9,32 → 5,49 s (1,70×). Lệch còn lại là sai số FP16 do thứ tự tính
+  lại khác nhau; tí hon FP32 trùng từng bit. ⚠️ Script in `cosine 1,001809` — **vượt 1 là sai số của chính
+  phép cosine float32 trên 15 triệu phần tử**, không phải của gradient; nếu cần số sạch, tính lại float64.
+- Manifest phải ghi: "Stage S update 1–1.500 có gradient thừa qua tháp thị giác, từ 1.501 không (tương
+  đương về phép toán; lệch ở mức làm tròn FP)". H, C1, C0-Loc chạy trọn bằng bản đã vá.
+- Ước giờ mới (A100, 8 s/u): H ~4–5 h (2.465 update, forward cắt sau block 17) · C1 ~5,5–6 h.
+
 ## 4. Audit box (A1) — [đo]
 
 Trang gán nhãn `dg1_cache/train_ac/pata/audit/audit.html` (ảnh vẽ box đỏ + điểm chạm xanh + khung
