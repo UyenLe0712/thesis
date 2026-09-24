@@ -399,6 +399,14 @@ probe 40.
 
 ## Ô P9 — hết epoch C1: chẩn đoán J + sinh câu val600 (MỘT lần, ~1–1,5 h A100)
 
+⚠️ **Trước P9: upload lại `thesis_pata_colab.zip` bản 24/9 tối (commit sau `561d620`) rồi chạy lại P2.**
+Bản này ghi preds theo kiểu mở–ghi–đóng từng lô, nên mất máy giữa P9 không mất tệp trên Drive (bản
+trước mở tệp một lần cho cả biến thể ⇒ mất máy là mất trọn tệp, đã trả giá 24/8). Kiểm:
+`grep -c 'with open(fp, "a"' harness/pata_eval.py` phải ra `1`.
+
+**Mất máy giữa P9:** P1 → P2 → chạy lại đúng ô P9. Mỗi biến thể in `đã có N · còn M` rồi chỉ sinh phần
+thiếu; `diag_J` chạy lại từ đầu (~10 phút).
+
 Sau khi P5 in `↑ Drive: …/J/final` và kết thúc. Ô notebook:
 ```python
 for cmd, log in (

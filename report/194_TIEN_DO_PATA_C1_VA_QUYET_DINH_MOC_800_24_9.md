@@ -221,6 +221,15 @@ dưới 90% > 0 · (3) exec(C1) ≥ exec(S) · (4) exec(C1 bật) > exec(C1 tắ
 P(về D | ép D) − P(về D | ép R) > 0 (546 bước; D = hộp cùng cỡ vàng tại điểm `desc_neg` — xấp xỉ).
 Đạt cả 5 ⇒ được chạy C0-Loc từ đúng `H/final` (sha `6fc0d6a63059…`), cùng mọi thứ, chỉ `--no-bridge`.
 
+### 7.1 Mất máy
+- **Giữa C1:** P1 → P2 → P4 (`STAGE="J"`, `BS, ACCUM = "16", "1"`) → P5. P4 chép điểm lưu J mới nhất trên Drive
+  về; kiểm `grep -E "nối tiếp|kế hoạch" /content/pata_J.log | tail -2` phải thấy `[nối tiếp] … update N/2512`.
+  Mất ≤ 100 update (~14 phút) + ~15 phút dựng máy. `ckpt-00800` giữ vĩnh viễn trên Drive.
+- **Giữa P9:** P1 → P2 → chạy lại ô P9 (tự nối tiếp từng biến thể). ⚠️ Phải dùng gói dựng **sau `561d620`**:
+  `pata_eval gen` nay mở–ghi–đóng tệp từng lô (bản trước mở một lần cho cả biến thể ⇒ mất máy là mất trọn
+  tệp trên Drive, bài học 24/8).
+- **Giữa P10 (Kaggle):** chạy lại ô Q3; `score_run.py` đọc lại tệp thô, chỉ chấm phần thiếu.
+
 ## 8. Nếu chọn A
 `pkill -f harness/pata_train.py` trong Terminal Colab; P5 in "đã kết thúc" và đẩy điểm lưu cuối lên Drive.
 Ghi kết luận "futility under budget tại mốc 800 (§7b điều 2: 6/40 = 15% < 30%)" vào `report/186`; **không**

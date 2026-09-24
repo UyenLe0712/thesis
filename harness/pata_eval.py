@@ -241,7 +241,8 @@ def gen(a, proc, model, pata, cdt):
                     pass
         todo = [r for r in recs if (r["episode_id"], r["step_id"]) not in xong]
         print(f"[{var}] {len(recs)} bước · đã có {len(xong)} · còn {len(todo)}", flush=True)
-        f = open(fp, "a", encoding="utf-8")
+        # ⛔ MỞ–GHI–ĐÓNG TỪNG LÔ: --out nằm trên Drive (FUSE chỉ đẩy lên cloud khi tệp ĐÓNG). Mở một lần
+        #    cho cả biến thể thì mất máy giữa chừng là mất trọn tệp (đã trả giá 24/8, lượt CE2).
         for i0 in range(0, len(todo), a.bs):
             ch = todo[i0: i0 + a.bs]
             texts, imgs = [], []
@@ -261,16 +262,15 @@ def gen(a, proc, model, pata, cdt):
                                    temperature=None, top_p=None)
             if wt:
                 pata.alpha_override = None
-            for r, seq in zip(ch, g):
-                txt = proc.decode(seq[inp["input_ids"].shape[1]:], skip_special_tokens=True).strip()
-                x = {"episode_id": r["episode_id"], "step_id": r["step_id"], "image": r["image"],
-                     "app": "", "gold_instruction": r["target_instruction"], "action": r["action"],
-                     "raw": txt, "pred": txt.split("\n")[0].strip(), "variant": var, "ckpt": a.ckpt}
-                f.write(json.dumps(x, ensure_ascii=False) + "\n")
-                xong[(r["episode_id"], r["step_id"])] = x
-            f.flush()
+            with open(fp, "a", encoding="utf-8") as f:
+                for r, seq in zip(ch, g):
+                    txt = proc.decode(seq[inp["input_ids"].shape[1]:], skip_special_tokens=True).strip()
+                    x = {"episode_id": r["episode_id"], "step_id": r["step_id"], "image": r["image"],
+                         "app": "", "gold_instruction": r["target_instruction"], "action": r["action"],
+                         "raw": txt, "pred": txt.split("\n")[0].strip(), "variant": var, "ckpt": a.ckpt}
+                    f.write(json.dumps(x, ensure_ascii=False) + "\n")
+                    xong[(r["episode_id"], r["step_id"])] = x
             print(f"  [{var}] {len(xong)}/{len(recs)}", flush=True)
-        f.close()
         out[var] = xong
     print("=" * 70)
     for var, rows in out.items():
