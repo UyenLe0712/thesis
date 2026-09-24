@@ -1,6 +1,6 @@
 # 194 — TIẾN ĐỘ PATA-C1 (23–24/9/2026) VÀ QUYẾT ĐỊNH CÒN TREO Ở MỐC 800
 
-> **Tự chứa.** Viết 24/9 ~18:30 VN để một phiên khác đọc rồi quyết **A (dừng C1) hay B (chạy hết epoch)**
+> **Tự chứa.** ⛔ **CẬP NHẬT 25/9: cổng cuối đã đọc — KHÔNG ĐẠT (§5c). Mục 6–8 chỉ còn giá trị lịch sử.** Viết 24/9 ~18:30 VN để một phiên khác đọc rồi quyết **A (dừng C1) hay B (chạy hết epoch)**
 > mà không cần hỏi lại. Nhãn: **[đo]** = số chạy ra từ mã/log · **[suy]** = ước lượng.
 > Spec: `report/185` (chép từ 9 ảnh) · quyết định KL box lớn: `report/193` · nhật ký chi tiết từng
 > bước: `report/186` §3.1–3.14. Runbook: `harness/colab_pata_c1.md` (Colab) ·
@@ -10,7 +10,7 @@
 
 ## 0. Tóm tắt một bảng
 
-| mục | trạng thái 24/9 23:30 VN (cập nhật từ bản 18:30) |
+| mục | trạng thái 25/9 ~01:40 VN (cập nhật từ bản 18:30) |
 |---|---|
 | phương pháp | PATA-Causal C1: TARGET token + localizer (KL multi-patch) + bridge cộng vào hidden state của TARGET sau block 17 |
 | chuỗi train | **S (1 epoch, user chốt) → H (1 epoch) → C1 = J bridge bật (1 epoch)**; C0-Loc chưa chạy, chỉ chạy nếu C1 qua cổng §8 |
@@ -18,7 +18,8 @@
 | Stage H | ✅ xong · **cổng H ĐẠT** rõ (§4) |
 | C1 | ✅ **chạy hết epoch** (2.512/2.512 update, ~22:05 VN 24/9) · `J/final` adapter sha `ac0885903d19…` · P9 xong (§5b) |
 | mốc 800 | **3/4 tiêu chí đạt; tiêu chí 2 (tắt bridge làm ≥ 30% câu probe đổi) KHÔNG đạt: 6/40 = 15%** |
-| quyết định treo | C1 **đã chạy hết** trong lúc chờ (thực tế là B) · cổng cuối: đk 1, 2 **ĐẠT** · đk 3, 4, 5 chờ Kaggle P10 (§5b) · tắt bridge trên val600 đổi **90/602 = 15,0%** [12,3; 18,0] |
+| **CỔNG CUỐI C1** | ⛔ **KHÔNG ĐẠT** (đk 5 trượt; đk 3, 4 chỉ đạt theo ước lượng điểm, KTC phủ 0) ⇒ **dừng: không chạy C0-Loc, không mở test**, kết luận *futility under budget* (§5c) |
+| quyết định treo ở mốc 800 | hết hiệu lực: C1 đã chạy hết (thực tế là B) và cổng cuối đã đọc |
 | GPU đã tiêu | A100 Colab: S (~6 h tổng, gồm phần chạy chậm trước khi vá) + H (~4 h) + C1 tới u800 (~2 h) · Kaggle T4 miễn phí ~2 h |
 
 ⚠️ **C1 vẫn chạy trong lúc chờ quyết** — mỗi giờ trì hoãn ≈ 450 update ≈ 1 giờ A100. Chọn A thì dừng càng
@@ -221,9 +222,9 @@ nhầm tệp; mass J khác H nên đầu localizer nạp đúng.)
 |---|---|---|---|
 | 1 | hợp lệ ≥ 99% · dài ≤ 1,5× S · rỗng ≤ S + 1 điểm | 100% · 8,25 vs 8,41 · 0 vs 0 | ✅ |
 | 2 | CE ≤ 1,25× S · KL ≤ 1,10× H · 3 cận dưới > 0 | 0,7295 ≤ 0,912 · 2,170 ≤ 2,838 · +0,220/+0,218/+0,145 | ✅ |
-| 3 | exec(C1) ≥ exec(S) | chờ P10 | ⏳ |
-| 4 | exec(C1 bật) > exec(C1 tắt) | chờ P10 | ⏳ |
-| 5 | cận dưới 90% P(về D\|ép D) − P(về D\|ép R) > 0 | chờ P10 | ⏳ |
+| 3 | exec(C1) ≥ exec(S) | xem §5c | ✅ (điểm) |
+| 4 | exec(C1 bật) > exec(C1 tắt) | xem §5c | ✅ (điểm) |
+| 5 | cận dưới 90% P(về D\|ép D) − P(về D\|ép R) > 0 | xem §5c | ❌ |
 
 **P10 (Kaggle):** ô Q2 của `harness/kaggle_pata_cham_val600.md` **đã sửa 24/9 tối** trước khi chạy — bản cũ
 tìm `ocr_val.jsonl` (dataset `thesis-val-cham` chỉ có `ocr.jsonl`) và lấy thư mục ảnh từ `.png` đầu tiên sau
@@ -231,6 +232,51 @@ sắp xếp, tức thư mục 440 ảnh của `thesis-pata` (đứng trước `t
 theo thư mục của `val_cham600.jsonl` và kiểm đủ ảnh cho 602 bước. ⛔ Dataset `thesis-val` cũ không thay được
 (không có `val_cham600.jsonl`, chỉ phủ 391/602 ảnh). Dataset `thesis-pata` cũ dùng được (`score_run.py` không
 đổi từ 14/9).
+
+---
+
+## 5c. CỔNG CUỐI C1 — KẾT QUẢ (P10 Kaggle T4×2, xong 25/9 ~01:30 VN) — [đo]
+
+Chấm bằng UGround-V1-2B, luật `exec` (Voronoi ∧ ±14%), trên 602 bước chạm val600 (swap: 546). Tệp thô ở
+`runs/pata/cong_c1/score_*_raw.jsonl`, log ở `runs/pata/cong_c1/log/`, kết quả máy đọc ở
+`runs/pata/cong_c1/cong_c1.json`. Kiểm: đủ 602/602/602/546/546 dòng, 0 bước `n_buttons = 0` (cây trợ năng tải
+đủ), 4 dòng `bo_qua: câu rỗng` của C1 off tính `exec = 0`, hai log không có Traceback.
+
+| biến thể | exec | KTC95 (bootstrap cụm) | `action_ok` |
+|---|---|---|---|
+| **C1 bật bridge** | **61,13%** (368/602) | [56,97; 65,17] | 597 |
+| C1 tắt bridge | 60,96% (367/602) | [56,90; 64,91] | 594 |
+| S (không PATA) | 60,13% (362/602) | [55,94; 64,32] | 598 |
+| C1 ép D | 61,54% (336/546) | [57,26; 65,71] | 542 |
+| C1 ép R | 60,81% (332/546) | [56,57; 64,91] | 542 |
+
+`pata_cong_c1.py --dir runs/pata/cong_c1` (ngưỡng khoá 24/9 trước khi C1 train):
+
+| đk | tiêu chí | số | kết quả |
+|---|---|---|---|
+| 1 | hợp lệ ≥ 99% · dài ≤ 1,5× S · rỗng ≤ S + 1 điểm | 100% · 8,25 vs 8,41 · 0 vs 0 | ✅ |
+| 2 | CE, KL không phân kỳ + 3 cận dưới > 0 | 0,7295 vs S 0,7295 · 2,170 vs H 2,580 · +0,220/+0,218/+0,145 | ✅ |
+| 3 | exec(C1) ≥ exec(S) | **+1,00 điểm**, KTC95 [−1,74; +4,02], C1 hơn 26 / kém 20 bước, McNemar p = 0,46 | ✅ theo điểm, **không có ý nghĩa** |
+| 4 | exec(C1 bật) > exec(C1 tắt) | **+0,17 điểm**, KTC95 [−1,03; +1,33], 8 / 7 bước, p = 1,0 | ✅ theo điểm, **bằng nhiễu** |
+| 5 | cận dưới 90% [P(về D\|ép D) − P(về D\|ép R)] > 0 | 18,32% − 18,68% = **−0,37 điểm**, cận dưới 90% −0,86, KTC95 [−1,13; +0,33] | ❌ |
+
+⇒ **CỔNG C1: KHÔNG ĐẠT.** Theo §8: dừng, không chạy C0-Loc, không mở test, kết luận *futility under budget*.
+
+**Đọc cơ chế (vì sao trượt):**
+- Localizer **học được vị trí thật**: hit-in-box 52,0% so với 5,3% của hai prior, xáo prompt làm mass giảm
+  0,277 → 0,115 (§5b). Phần "nhìn đúng chỗ" của PATA hoạt động.
+- Nhưng **bộ sinh câu gần như không nghe bridge**: tắt bridge chỉ đổi 15% câu, và trong số câu đổi, `exec`
+  gần như không đổi (8 bước lên / 7 bước xuống). Ép α sang hộp nhiễu D chỉ làm câu khác ép R ở 39/546 bước;
+  trong 39 bước đó, số câu trỏ về phía D là **6 khi ép D so với 8 khi ép R** — ngược chiều mong đợi. Tức
+  nội dung câu **không đi theo** vị trí mà bridge đưa vào.
+- `gate` đứng yên cả epoch (0,1192 → 0,1204) trong khi `resid` ~0,20: bridge đưa tín hiệu vào hidden state,
+  nhưng decoder dùng nó như nhiễu nhỏ chứ không như thông tin vị trí.
+- +1,0 điểm của C1 so với S (dưới ý nghĩa) nhiều khả năng đến từ **một epoch dạy thêm** (J tiếp tục CE trên
+  cùng tập) chứ không từ bridge: tắt bridge vẫn giữ 60,96%, tức 83% phần hơn S còn nguyên khi không có bridge.
+
+⚠️ Số val600 **không trích ra báo** như điểm của phương pháp (val là tập chọn/cổng, luật đọc val ở CLAUDE.md).
+Luận văn chỉ được báo: cổng H đạt (localizer học vị trí), cổng cuối không đạt vì bridge không truyền vị trí
+vào câu — một kết quả âm có cơ chế.
 
 ---
 
