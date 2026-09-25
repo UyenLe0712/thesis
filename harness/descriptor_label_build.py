@@ -291,8 +291,14 @@ def main():
     ap.add_argument("--abs", action="store_true", help="dùng pixel thô thay vì lưới [0,1000]")
     ap.add_argument("--split", choices=["train", "test"], default="train",
                     help="test = dựng nhãn cho tập kiểm, dùng cho phép thử TRẦN")
+    ap.add_argument("--out", default=None,
+                    help="ghi ra tệp khác thay vì đè descriptors.jsonl (vd. descriptors_trueD.jsonl)")
     args = ap.parse_args()
     set_split(args.split)
+    if args.out:
+        global OUT_JSONL, OUT_STATS
+        OUT_JSONL = os.path.join(ROOT, args.out)
+        OUT_STATS = os.path.splitext(OUT_JSONL)[0] + "_stats.json"
 
     ocr = {}
     with open(os.path.join(ROOT, "ocr.jsonl"), encoding="utf-8") as f:
@@ -361,6 +367,8 @@ def main():
         # khai báo GIẢ: nút cùng vai trò gần nhất (nhánh mức 2 cần)
         neg, neg_dist = nearest_other(box, cls, nds)
         neg_desc = None
+        neg_f = {"box_neg": None, "name_neg": None, "role_neg": None, "cls_neg": None,
+                 "point_neg_abs": None, "point_neg_norm": None, "area_share_neg": None}
         if neg:
             nb, ncls, nnm = neg
             nshare = (nb[2] - nb[0]) * (nb[3] - nb[1]) / max(w * h, 1)
@@ -380,6 +388,14 @@ def main():
             nhint, _, _ = distinguish(nb, ncls, nname, nds, ocr_rec)
             neg_desc = desc_str(nrole, nname, npt, nhint)
             st["co_hang_xom"] += 1
+            # PATA C2 · P0 (25/9): ghi HỘP THẬT của phần tử gây nhiễu — nearest_other() đã có nó
+            # trong RAM. Trước đây chỉ còn lại <point> trong chuỗi desc_neg, và pata_swap.py phải
+            # dựng D bằng cỡ hộp vàng quanh điểm đó (xấp xỉ). Chỉ THÊM trường, không đổi logic cũ.
+            neg_f = {"box_neg": [int(v) for v in nb], "name_neg": nname, "role_neg": nrole,
+                     "cls_neg": ncls, "point_neg_abs": [ncx, ncy],
+                     "point_neg_norm": [int(round(ncx / max(w, 1) * 1000)),
+                                        int(round(ncy / max(h, 1) * 1000))],
+                     "area_share_neg": round(nshare, 3)}
 
         rows.append({
             "episode_id": r["episode_id"], "step_id": r["step_id"], "image": r["image"],
@@ -392,6 +408,7 @@ def main():
             "point_abs": pt_abs, "point_norm": pt_norm,
             "box": [int(v) for v in box], "area_share": round(area_share, 3),
             "neighbor_dist_px": round(neg_dist, 1) if neg_dist else None,
+            **neg_f,
         })
 
     n = len(rows)

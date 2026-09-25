@@ -1,0 +1,66 @@
+{
+ "luat": {
+  "directional": "lower90(ΔF_GD) > 0 AND lower90(ΔF_GR) > 0 AND mean(ΔF_GD) >= 0.02 (F = L hoặc H)",
+  "extra_resolution": "lower90(Δres_GD) > 0 AND lower90(Δres_GR) > 0 AND mean(Δres_GD) >= 0.01 AND mean(Δres_GR) >= 0.01",
+  "bootstrap": "cụm theo episode, 10.000 lần, lower90 = phân vị 10% (một phía 90%)",
+  "bang_chon_theo_thu_tu": [
+   [
+    "dirL AND NOT res",
+    "thiếu routing",
+    "RCA r=128, 2 tầng"
+   ],
+   [
+    "dirL AND res",
+    "routing + pixel; pixel thêm ích",
+    "dual-view trước (đơn giản hơn)"
+   ],
+   [
+    "NOT dirL AND dirH AND res",
+    "thiếu pixel",
+    "dual-view predicted crop"
+   ],
+   [
+    "gd_only(L) OR gd_only(H)",
+    "artefact D/R",
+    "sửa control, chưa chọn"
+   ],
+   [
+    "NOT dirL AND NOT dirH",
+    "vùng không đủ",
+    "dừng C2 (ghi thêm cờ extra_image nếu H_*>O)"
+   ],
+   [
+    "còn lại",
+    "không khớp bảng",
+    "dừng, báo lại — không tự chọn"
+   ]
+  ],
+  "gd_only(F)": "lower90(ΔF_GD) > 0 AND mean(ΔF_GD) >= 0.02 AND NOT lower90(ΔF_GR) > 0",
+  "extra_image": "lower90(mean(s(H_G),s(H_D),s(H_R)) − s(O)) > 0 — chỉ là cờ, không claim grounding",
+  "ngưỡng": {
+   "dir_mean": 0.02,
+   "res_mean": 0.01
+  }
+ },
+ "n_cap": 232,
+ "crop_px": 448,
+ "audit_dat": true,
+ "audit": {
+  "lan": 1,
+  "n": 100,
+  "dung_G": 93,
+  "ca_hai": 1,
+  "D_khong_widget": 5,
+  "G_khong_widget": 1,
+  "dat": true,
+  "tep_nhan": "audit_trueD_lan1_Uyên.json"
+ },
+ "sha256": {
+  "val400_trueD.jsonl": "634361b877bbec374e7634b3e9d966d7ea62de96b9eda4a8e9ceaa22f243db3f",
+  "p1_crops(ghep)": "6920d5a8c30ea3e2705bc984576e0555e51f7e4f23145dbcf6710c6331298069"
+ },
+ "tol": {
+  "gd0": 1e-05,
+  "order": 0.001
+ }
+}

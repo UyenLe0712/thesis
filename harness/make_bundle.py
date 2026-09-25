@@ -13,6 +13,7 @@ git; cần thì dựng lại bằng đây.
   python harness/make_bundle.py score    # + đủ 4.463 ảnh bước chạm để CHẤM     — ~1,7 GB
   python harness/make_bundle.py pata_kaggle  # PATA: unit test thật + smoke trên Kaggle T4
   python harness/make_bundle.py pata_colab   # PATA: train S/H/J trên Colab (ảnh lấy từ Drive)
+  python harness/make_bundle.py pata_p1      # PATA C2 · P1: likelihood 7 nhánh trên Kaggle T4
 """
 import os, sys, json, random, zipfile
 
@@ -108,7 +109,42 @@ def build_pata(kind):
     print(f"{out}\n  {len(zipfile.ZipFile(out).namelist())} tệp · {os.path.getsize(out)/1e6:.1f} MB")
 
 
+def build_pata_p1():
+    """PATA C2 · P1 (harness/tai_lieu_2026-09-25/204 §4.2): mã + val400_trueD + p1_decision.json +
+    crop G/D/R của pata_p1.py prep + ảnh full của đúng các cặp + OCR của đúng các ảnh đó. ~100 MB.
+    ⛔ Từ chối nếu p1_decision.json ghi audit_dat=false (crop dựng thử bằng --chua-audit)."""
+    pd = os.path.join(TRAIN, "pata")
+    dec = json.load(open(os.path.join(pd, "p1_decision.json")))
+    if not dec["audit_dat"]:
+        sys.exit("⛔ p1_decision.json: audit_dat=false — chạy pata_audit_d.py doc cho ĐẠT rồi pata_p1.py prep lại")
+    recs = [json.loads(l) for l in open(os.path.join(pd, "val400_trueD.jsonl"), encoding="utf-8")]
+    assert len(recs) == dec["n_cap"]
+    out = os.path.join(ROOT, "_bundles", "thesis_pata_p1.zip")
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    z = zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED)
+    add_code(z)
+    D = "thesis/harness/dg1_cache/train_ac"
+    for f in ("val400_trueD.jsonl", "p1_decision.json", "trueD_hash.json"):
+        z.write(os.path.join(pd, f), f"{D}/pata/{f}")
+    cd = os.path.join(pd, "p1_crops")
+    need = {f"{r['episode_id']}_{r['step_id']}_{fa}{b}.png" for r in recs for fa in "LH" for b in "GDR"}
+    have = set(os.listdir(cd))
+    assert need <= have, f"thiếu {len(need - have)} crop — chạy lại pata_p1.py prep"
+    for f in sorted(need):
+        z.write(os.path.join(cd, f), f"{D}/pata/p1_crops/{f}")
+    keep = {r["image"] for r in recs}
+    z.writestr(f"{D}/ocr.jsonl", "".join(l for l in open(os.path.join(TRAIN, "ocr.jsonl"), encoding="utf-8")
+                                         if json.loads(l)["image"] in keep))
+    for im in sorted(keep):
+        z.write(os.path.join(TRAIN, im), f"{D}/{im}")
+    z.close()
+    print(f"{out}\n  {len(zipfile.ZipFile(out).namelist())} tệp · {os.path.getsize(out)/1e6:.1f} MB · "
+          f"{len(recs)} cặp · {len(keep)} ảnh full")
+
+
 def build(kind):
+    if kind == "pata_p1":
+        return build_pata_p1()
     if kind.startswith("pata_"):
         return build_pata(kind)
     out = os.path.join(ROOT, f"thesis_{kind}.zip")

@@ -39,6 +39,7 @@ Colab phụ thuộc cũng dùng tên `harness`).
 
 | cần biết | mở |
 |---|---|
+| **⭐⭐⭐⭐⭐⭐⭐⭐ PATA C2 25/9 — ⛔ DỪNG C2: P0 ĐẠT (232 cặp G/D thật, audit 93/100) nhưng P1 rơi hàng "vùng không đủ": speaker S phân biệt G với vùng ngẫu nhiên (+0,012) nhưng KHÔNG với phần tử lân cận (ΔGD ≈ +0,004 ≪ ngưỡng 0,02), Δres ≈ 0 ⇒ không RCA, không dual-view, không A100** | **`report/205_KET_QUA_PATA_C2_P0_P1_25_9.md`** · handoff `harness/tai_lieu_2026-09-25/204_…md` · runbook `harness/kaggle_pata_p1.md` · tệp thô `runs/pata/p1/` · mã `pata_true_d.py` · `pata_audit_d.py` · `pata_p1.py` |
 | **⭐⭐⭐⭐⭐⭐⭐ PATA-C1: KẾT QUẢ CUỐI 25/9 — localizer học được vị trí (hit 52% vs prior 5%) nhưng CỔNG CUỐI KHÔNG ĐẠT (bridge không đổi nội dung câu) ⇒ dừng, không C0-Loc — tự chứa, đọc §5b–5c trước** | **`report/194_TIEN_DO_PATA_C1_VA_QUYET_DINH_MOC_800_24_9.md`** · cổng H ĐẠT · C1 hết epoch 24/9 · ⛔ **CỔNG CUỐI C1 KHÔNG ĐẠT 25/9 (§5c)**: đk 5 trượt (−0,37 điểm), bật−tắt bridge chỉ +0,17 điểm exec ⇒ bridge không truyền vị trí vào câu; **không chạy C0-Loc, không mở test** |
 | **⭐⭐⭐⭐⭐⭐ KL BOX LỚN — CHỐT `area_share ≥ 0,50` thì tắt KL (CE giữ), THẮNG 186 §4b (0,25 là sai: 10/18 từ mẫu lấy dư, không nhân với 883)** | **`report/193_QUYET_DINH_KL_BOX_LON_PATA_C1_23_9.md`** · đã thi hành: Train-proper kl_ok 39.432 |
 | **⭐⭐⭐⭐⭐⭐ TÌNH HÌNH PATA 23/9 (mã chặng A, test, audit 2,7%, việc kế)** | **`report/186_TINH_HINH_PATA_C1_23_9.md`** |
