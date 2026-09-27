@@ -72,3 +72,54 @@ Bản trước khi cắt: scratchpad phiên 21/9, `main_soict_truoc_cat.tex` (kh
 Track: Multimedia Processing, Computer Vision, and Multimodal Intelligence. Người nộp
 24C15039@student.hcmus.edu.vn. ⚠️ Mail xác nhận chỉ liệt kê MỘT tác giả (thiếu thầy Nguyen Hong Buu Long)
 và tên hiện "Uyen Le Doan Phuong" — cần sửa trên EasyChair trước 25/9. Báo kết quả 12/10.
+
+## ⭐ Bản GUIStep (chép từ 14 ảnh nhận 26/9) — `guistep/` — KHÁC bài đã nộp #5577
+
+⚠️ **Đây là bài khác**, không phải bản "strictness ladder" của `main.tex` (đã nộp 21/9). Khung mô hình
+trước: nhan đề *GUIStep: A Compact Vision–Language Model for GUI Step Instruction Generation*; ba
+cấu hình GUIStep-S/D/P (= S1/101 · S2/101 · MIN-DESC/101) + đối chứng CE2; thước chính **D.3**; kết
+quả 66,5 vs 53,6 (Base), P − S = +1,05 (p=0,078, không ý nghĩa) ⇒ bài **tự khai** phần lớn công thuộc
+SFT trơn. Không đè `main.tex` cũ.
+
+| tệp | là gì |
+|---|---|
+| `guistep/main.tex` | bản nộp: chép từ ảnh + sửa giọng văn + sửa lỗi (danh sách dưới) |
+| `guistep/main_chep_tu_anh.tex` | bản chép trung thành trước khi sửa — `diff` với `main.tex` ra đúng các chỗ đã đổi |
+| `guistep/fig1_screen.png` | dựng lại từ `train_ac/images/ep11904_s3.png`, cắt (0,0,1080,1104), khớp đúng toạ độ vòng tròn 14,2% / 33,2% ghi trong nguồn |
+| `_nguon_anh/soict2026_guistep_main_tex_14_anh_26_9.zip` | 14 ảnh gốc, dòng 1–717 (không commit) |
+
+Dựng: `cd guistep && rm -f main.log && tectonic -X compile main.tex --outdir . --keep-logs` →
+**11 trang gồm cả tài liệu tham khảo (trần 12 không kể tham khảo), 0 overfull, 0 tham chiếu hỏng,
+27/27 tài liệu được trích.**
+
+**Đối chiếu số với `runs/` (26/9):** bảng chính + KTC (`d3_ktc.json`) · P−S +1,05 p=0,078 · D−S −1,86 ·
+P−CE2 +0,52 [+0,02;+1,00] · bảng văn bản (`text_metrics_coco/them.json`) · −34,2 điểm khi bỏ tên (193
+bước, `report/139`) · 33,1% (n=121) và 8/10 tiêu chí (`report/106`) · 97,5% và 0,336 (`report/112`) ·
+UI-Venus +11,14 → +11,02 **tính lại từ `runs/venus/*_raw.jsonl`** ra đúng · **12 ô Bảng 1 (lát 800) khớp
+`runs/luat_d3.json`** (kể cả khoảng dùng được 68,9 / 62,9 / 62,5).
+**Chưa đối chiếu được, lấy nguyên từ ảnh (tra trước khi nộp nếu có thời gian):** −0,09 [−0,93;+0,79] của 1.139
+câu viết lại dưới D.3 (số Voronoi trong CLAUDE.md là +0,35) · 4,7 điểm khi bỏ vị trí · trung vị hộp 1,0% /
+cửa sổ 7,8% · 15 bước không có hộp · 1.493 bước sai / 50 sai loại thao tác · 12 động từ, 9 cặp đảo cực
+tính · 0,0/99,6/100,0/91,1% của bảng bơm lỗi (số bản 3 của `report/106` khớp, nhưng chạy dưới Voronoi).
+
+**Lỗi bắt được khi chép (đã sửa trong `main.tex`):**
+1. ⛔ **Hình 1 ghi *"held-out episode"* nhưng ep11904 nằm trong `train.jsonl` (64.567 bước)** — S1/MIN đã
+   train trên bước này; câu "generated" lấy từ `runs/noisuy/preds_val_a0.00.jsonl` (α=0 = MIN-DESC).
+   Chú thích nay ghi "training-split episode … not a scored example".
+2. ⛔ **Mục `groundersunderstand` sai** (tiêu đề *"On the robustness of GUI grounding models…"*,
+   arXiv:2408.04744 — không truy được). Đã thay bằng bản đúng như `thesis/chapters/99_tailieu.tex`:
+   Jandial, Li, Wagle, Koishida, *Do GUI grounders truly understand UI elements?*, Findings ACL: EACL
+   2026, tr. 2772–2785.
+3. Bảng 2 chỉ có 8 dòng nhưng văn bản viết "đạt 8/10 tiêu chí" ⇒ chú thích nay nêu ba tiêu chí lược đi
+   (đều đạt: 0,0 / 100,0 / 100,0, lấy từ `report/106` bảng bản 3).
+4. Bảng 4 chỉ in đậm SPICE cho S trong khi văn bản viết S dẫn BLEU-4, CIDEr-D, SPICE ⇒ in đậm đủ ba.
+5. Tiêu đề bị ngắt lẻ chữ *for* và Hình 1 đẩy sang trang 2 làm trống 1/3 trang 1 (đã sửa: ngắt tiêu đề lại, `[!ht]`). Hai chỗ tràn lề (hai URL Hugging Face → chú thích chân trang; Bảng 4 → `resizebox`), Bảng 2 căn trái.
+
+**Giọng văn AI đã bỏ (giữ nguyên số và kết luận):** cụm *"rather than"* từ **14 → 1** lần (lượt cuối 26/9: bỏ thêm "only", "however" đệm, "thus", câu CIDEr lặp ở Related Work, "second difficulty" → "a further difficulty"); bỏ *"the picture it
+gives is more qualified"*, *"recover their added complexity"* (tóm tắt nay nói thẳng: D −1,9, P không hơn
+S có ý nghĩa), *"Overall"* ×2, *"moreover"*, *"itself"*, *"Applications may occur in both partitions"* →
+*"The same app can appear in both partitions"*; câu mở đầu bài viết lại; *"second difficulty"* nêu rõ.
+
+**Chưa làm / user quyết:** (a) EasyChair #5577 đang là bản *ladder*; nộp bản này nghĩa là **thay bài** —
+xác nhận với thầy, và nhớ sửa danh sách tác giả (còn thiếu thầy Long trong mail xác nhận). (b) Nếu muốn
+Hình 1 là ví dụ **test** thật thì phải chọn một bước trong `test.jsonl` rồi viết lại ba dòng chữ trong hình.

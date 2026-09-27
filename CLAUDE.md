@@ -39,6 +39,7 @@ Colab phụ thuộc cũng dùng tên `harness`).
 
 | cần biết | mở |
 |---|---|
+| **⭐⭐⭐ ECGR đề xuất 27/9 — ⛔ DỪNG ở G0: kiến trúc hai lượt kiểu MM-SeR + module mới Element-Consistency Gate, cổng đầu (0 GPU) đo 147/958 câu một-block bộ trỏ vẫn đọc sai vị trí, ngưỡng cần ≥250 ⇒ TRƯỢT không sát ngưỡng, dừng ngay, không G1, không train** | **`report/206_BAN_GIAO_ECGR_G0_TRUOT_27_9.md`** · brief gốc `harness/tai_lieu_2026-09-27/226_…md` · kết quả đầy đủ (ngoài kho git) `/mnt/d/Master/ECGR_G0_27_9/ket_qua_g0_ecgr.md` |
 | **⭐⭐⭐⭐⭐⭐⭐⭐ PATA C2 25/9 — ⛔ DỪNG C2: P0 ĐẠT (232 cặp G/D thật, audit 93/100) nhưng P1 rơi hàng "vùng không đủ": speaker S phân biệt G với vùng ngẫu nhiên (+0,012) nhưng KHÔNG với phần tử lân cận (ΔGD ≈ +0,004 ≪ ngưỡng 0,02), Δres ≈ 0 ⇒ không RCA, không dual-view, không A100** | **`report/205_KET_QUA_PATA_C2_P0_P1_25_9.md`** · handoff `harness/tai_lieu_2026-09-25/204_…md` · runbook `harness/kaggle_pata_p1.md` · tệp thô `runs/pata/p1/` · mã `pata_true_d.py` · `pata_audit_d.py` · `pata_p1.py` |
 | **⭐⭐⭐⭐⭐⭐⭐ PATA-C1: KẾT QUẢ CUỐI 25/9 — localizer học được vị trí (hit 52% vs prior 5%) nhưng CỔNG CUỐI KHÔNG ĐẠT (bridge không đổi nội dung câu) ⇒ dừng, không C0-Loc — tự chứa, đọc §5b–5c trước** | **`report/194_TIEN_DO_PATA_C1_VA_QUYET_DINH_MOC_800_24_9.md`** · cổng H ĐẠT · C1 hết epoch 24/9 · ⛔ **CỔNG CUỐI C1 KHÔNG ĐẠT 25/9 (§5c)**: đk 5 trượt (−0,37 điểm), bật−tắt bridge chỉ +0,17 điểm exec ⇒ bridge không truyền vị trí vào câu; **không chạy C0-Loc, không mở test** |
 | **⭐⭐⭐⭐⭐⭐ KL BOX LỚN — CHỐT `area_share ≥ 0,50` thì tắt KL (CE giữ), THẮNG 186 §4b (0,25 là sai: 10/18 từ mẫu lấy dư, không nhân với 883)** | **`report/193_QUYET_DINH_KL_BOX_LON_PATA_C1_23_9.md`** · đã thi hành: Train-proper kl_ok 39.432 |
@@ -60,7 +61,7 @@ Colab phụ thuộc cũng dùng tên `harness`).
 | **⭐ LUẬT QUYẾT lượt ② đã khoá trước khi có điểm τ (x17)** | `report/106` mục **(x17)** · mã: `harness/quet_tau.py` · `harness/luat_d3.py` |
 | **⭐⭐ NÂNG TRẦN THƯỚC — luật D.3 gốc của AndroidControl, đo 5/9, 0 giây GPU** | **`report/140_NANG_TRAN_LUAT_D3.md`** |
 | **⭐ LUẬN VĂN + DECK BẢO VỆ đã đồng bộ tới 5/9 (114 trang · 26+12 slide)** | mục *Luận văn — ĐÃ ĐỒNG BỘ TỚI 5/9* trong file này · `thesis/chapters/` · `slides/build/build_baove.js` |
-| **bài SOICT 2026 (21/9, EasyChair mở tới 25/9) — thước: tách cổng loại thao tác khỏi hình học; nguồn chép từ 15 ảnh; ĐÃ NỘP 21/9, EasyChair #5577 (còn thêm đồng tác giả trước 25/9)** | `paper/soict2026/README.md` · `paper/soict2026/main.tex` |
+| **bài SOICT 2026 (21/9, EasyChair mở tới 25/9) — thước: tách cổng loại thao tác khỏi hình học; nguồn chép từ 15 ảnh; ĐÃ NỘP 21/9, EasyChair #5577 (còn thêm đồng tác giả trước 25/9)**; ⭐ **26/9 có thêm bản KHÁC `paper/soict2026/guistep/` (GUIStep, mô hình đặt trước, thước D.3, tự khai P−S không ý nghĩa) — chép từ 14 ảnh, đã sửa 5 lỗi + bỏ giọng AI, 11 trang; xem cuối README** | `paper/soict2026/README.md` · `paper/soict2026/main.tex` |
 | hai bài báo đã nộp (FAIR · VCL) — chỉ còn chờ hồi âm EDAS | mục *HAI BÀI BÁO — ĐÃ NỘP* trong file này · `report/118` (phân số) · `report/129·130·131` (FAIR) · `paper/vcl2026/README.md` |
 | prompt research gửi mô hình phiên khác (tự chứa) | `report/137_PROMPT_RESEARCH_CHO_FABLE.md` |
 | tiền lệ cho trục bỏ cuộc / risk-coverage của SOICT (tra 4/9) | `report/135_TIEN_LE_ABSTENTION_SOICT.md` |
