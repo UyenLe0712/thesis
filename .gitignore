@@ -42,7 +42,6 @@ report/paper_figures/*.pdf
 
 # Dữ liệu bốn nhánh (7MB, dựng lại bằng harness/build_branch_data.py)
 harness/dg1_cache/train_ac/branches/
-harness/dg1_cache/train_ac/descriptors.jsonl
 
 # Tập kiểm dựng tại máy (~8GB, dựng lại bằng harness/build_test_data.py)
 harness/dg1_cache/test_ac/
@@ -126,6 +125,19 @@ harness/dg1_cache/som/*
 # pata/*.jsonl lớn dựng lại bằng pata_data.py (hash ở split_hash.json); audit/img bằng pata_audit.py build.
 !harness/dg1_cache/train_ac/
 harness/dg1_cache/train_ac/*
+# 27/9: push thẳng mọi tệp jsonl dưới trần 100MB/tệp của GitHub — dựng lại được
+# bằng build_train_data.py/build_branch_data.py nhưng để sẵn cho người/agent khác
+# tái lập không cần chạy lại harness. ocr.jsonl (129,5MB) và images/ (3,5GB) vẫn
+# ignore: ocr.jsonl vượt trần 100MB, images/ quá nặng để đưa vào lịch sử git.
+!harness/dg1_cache/train_ac/train.jsonl
+!harness/dg1_cache/train_ac/train_tru_val.jsonl
+!harness/dg1_cache/train_ac/descriptors.jsonl
+!harness/dg1_cache/train_ac/descriptors_trueD.jsonl
+!harness/dg1_cache/train_ac/candidates.jsonl
+!harness/dg1_cache/train_ac/val400.jsonl
+!harness/dg1_cache/train_ac/val600.jsonl
+!harness/dg1_cache/train_ac/val_cham400.jsonl
+!harness/dg1_cache/train_ac/val_cham600.jsonl
 !harness/dg1_cache/train_ac/pata/
 harness/dg1_cache/train_ac/pata/*
 !harness/dg1_cache/train_ac/pata/split_hash.json
