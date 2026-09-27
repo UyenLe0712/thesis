@@ -961,6 +961,13 @@ giới hạn DỤNG CỤ, không phải của ngôn ngữ.**
 **Dạy:** 64.567 bước / 41.191 chạm (63,8%) / 12.895 tác vụ · OCR phủ 100% và qua kiểm chéo máy ·
 nhãn khai báo khớp cả 5 số tham chiếu dưới 1 điểm · **9/9 bất biến** · **rò rỉ dạy-kiểm = 0** ·
 phép ghép hai kho HF đúng (48% vs đối chứng lệch 20%, n=400).
+⭐ **27/9: `harness/dg1_cache/train_ac/` nay đã có trên GitHub.** Chín tệp jsonl dưới trần
+100MB (`train.jsonl` · `train_tru_val.jsonl` · `descriptors.jsonl` · `descriptors_trueD.jsonl` ·
+`candidates.jsonl` · bốn tệp `val*.jsonl`) **đã commit trực tiếp** (mở ngoại lệ trong
+`.gitignore`). `ocr.jsonl` (129,5MB, vượt trần) và `images/` (3,5GB, 7.625 ảnh) đưa qua
+**GitHub Release `data-train-ac-v1`** (`ocr.jsonl.gz` + 6 zip ảnh ~550-650MB/phần + SHA256SUMS,
+lệnh giải nén trong ghi chú release) — cùng cách đã làm với `noisuy-adapters-v1`.
+
 **Kiểm:** 6.958 bước / 4.463 bước chạm / 1.432 tác vụ · **139 bước chưa-thấy app (22 app)**.
 `history` trong câu nhắc **là câu chuẩn do người viết** ở các bước trước (trùng nguyên văn
 5.318/5.318) ⇒ khâu chấm là **teacher-forced trên ngữ cảnh**, mọi số tuyệt đối đọc kèm điều kiện đó.

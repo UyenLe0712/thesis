@@ -129,6 +129,8 @@ harness/dg1_cache/train_ac/*
 # bằng build_train_data.py/build_branch_data.py nhưng để sẵn cho người/agent khác
 # tái lập không cần chạy lại harness. ocr.jsonl (129,5MB) và images/ (3,5GB) vẫn
 # ignore: ocr.jsonl vượt trần 100MB, images/ quá nặng để đưa vào lịch sử git.
+# Cả hai đã lưu ở GitHub Release `data-train-ac-v1` (ocr.jsonl.gz + 6 zip ảnh +
+# SHA256SUMS, lệnh giải nén trong ghi chú release).
 !harness/dg1_cache/train_ac/train.jsonl
 !harness/dg1_cache/train_ac/train_tru_val.jsonl
 !harness/dg1_cache/train_ac/descriptors.jsonl
