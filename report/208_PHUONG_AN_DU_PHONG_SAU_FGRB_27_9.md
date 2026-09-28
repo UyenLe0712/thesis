@@ -174,8 +174,54 @@ test): Att2in XE greedy 99,0 → SCST 111,3. ⛔ "104,9 → 114,7" là bảng x�
   **11,46** (1.038); lift gộp so với người nghe tốt nhất **+3,24 pp** (ngưỡng 3) — **vừa qua**.
 - Phi-4 trúng câu rỗng 15,86% (đoán ngẫu nhiên 10,06%).
 
-**C1 CHUẨN BỊ XONG, chưa chạy.** `harness/c1_mau_s1.py` (Kaggle T4) + `harness/c1_doc.py` (CPU) +
+**C1 ĐẠT (28/9, Kaggle T4 ×1 commit, 142,9 phút cho 400 bước, chạy song song P2).** Tệp `runs/c1/`
+(`c1_mau.jsonl` 400 dòng · `c1.log`); đọc bằng `harness/c1_doc.py`. Cấu hình in ra đúng: nhiệt độ 1,0,
+top_p 1,0, top_k 0, 8 mẫu, fp16. (a) best-of-8 = **1,236 × greedy** (ngưỡng 1,05) · (b) nhóm có độ
+lệch chuẩn CIDEr bằng 0: **11,2%** (ngưỡng 50%); nhóm 8 câu y hệt 7,8%, trung bình 5,80 câu khác
+nhau/nhóm, greedy nằm trong mẫu 70,5%. Mẫu rỗng 5/3.200. Trung bình một mẫu thấp hơn greedy (lấy mẫu ở
+nhiệt độ 1,0 kém hơn greedy trên trung bình) ⇒ nếu học từ phần thưởng thì mốc trừ nên là greedy
+(kiểu SCST). ⛔ Val là dữ liệu S1 đã thấy lúc dạy ⇒ không trích con số nào ra báo; best-of-8 là
+oracle chọn theo câu chuẩn, chỉ nói "có tín hiệu để học", không nói mức sẽ đạt.
+Mã chuẩn bị (27/9): `harness/c1_mau_s1.py` (Kaggle T4) + `harness/c1_doc.py` (CPU) +
 runbook `harness/kaggle_c1_da_dang_s1.md` + gói `_bundles/c1_script.zip`. Dùng lại dataset
 `fgrb-p1-bundle`. 400 bước val chọn bằng seed 20260927 (249 click · 39 open_app · 33 input_text ·
 32 scroll · 32 wait · 15 navigate_back). Đường đọc đã kiểm trên dữ liệu giả (8 nhánh làm 8 mẫu):
 21,8% nhóm giống hệt, khớp 21,5% đo độc lập ở §2.
+
+## 8. QUYẾT ĐỊNH 28/9 — đi phương pháp §6 kèm ablation, chạy theo bậc
+
+Bối cảnh: FGRB P2 TRƯỢT 28/9 (`report/207` §11) ⇒ FGRB dừng. Hai cổng rẻ của file này đều ĐẠT: C3
+(27/9) · C1 (28/9, §7).
+
+Chỉ đạo của user 28/9, nguyên văn: *"Chạy cái nào mà có đóng góp được nhiều về mô hình nhất, và ra số
+cao nhất á. Đóng góp mô hình cũng phải thuyết phục nữa chứ không phải chỉ sử dụng lại."*
+
+**Chọn: phương pháp §6** — GRPO từ S1/101, thưởng xét **trúng đích trước, CIDEr-D sau**; trúng đích do
+**hai người nghe khác họ** (UI-Venus-7B + Phi-4 SoM) phán, hiệu chỉnh trên **hộp vàng** AndroidControl
+của tập dạy; UGround chỉ chấm, không vào vòng train.
+
+**Loại, kèm lý do:**
+- PA-2 (lọc mẫu + SFT lại): rẻ nhưng về bản chất là ReST/STaR ⇒ hội đồng gọi là áp dụng.
+- GRPO chỉ thưởng CIDEr: là SCST (CVPR 2017) / BLEUBERI (NeurIPS 2025) ⇒ áp dụng. Giữ lại **chỉ làm
+  mốc ablation B0**.
+- Vì cả bốn cơ chế đều trùng một phần tiền lệ (§6), **không có ablation thì không có đóng góp** ⇒
+  ablation là bắt buộc, không phải tuỳ chọn.
+
+**Lộ trình theo bậc — trượt bậc nào dừng ở bậc đó, báo như kết quả âm, tiêu đề luận văn giữ 60,07:**
+
+| bậc | việc | máy | chi phí | điều kiện đi tiếp |
+|---|---|---|---|---|
+| 0 | viết mã GRPO + thưởng hai người nghe; hiệu chỉnh người nghe trên tập dạy; tái lập số cũ | CPU + Kaggle T4 | 0 đồng | mã chạy thử đúng, tái lập khớp |
+| 1 | đo đỉnh VRAM + s/bước **có người nghe trong vòng lặp**, mẫu nặng nhất | L4 trước, A100 chỉ khi > 1,5× | vài đơn vị | chọn máy theo luật 1,5× |
+| 2 | pilot nhánh **ours** + chấm test | L4/A100 + T4 | ~6–8 h A100 [suy] | vượt S1/101 ở thước câu, không kém ở exec |
+| 3 | ablation quyết định **B0 CIDEr-only** | như bậc 2 | ~6–8 h [suy] | ours > B0 ở exec, không mất thước câu |
+| 4 | B1 cổng cứng · B2 một người nghe · B3 g xáo trộn + hạt 202 | như bậc 2 | ~20 h [suy] | đủ bảng để gọi là "phương pháp" |
+
+**Hai điều khai trước khi có số:**
+- 6–8 h/lượt ở §3 **chưa tính** chi phí người nghe trong vòng lặp (mỗi bước GRPO, UI-Venus-7B và Phi-4
+  chấm G = 8 mẫu). Chi phí này có thể lớn hơn phần train ⇒ bậc 1 đo trước khi tiêu tiền.
+- Thước câu có cơ sở để tăng (thưởng nhắm thẳng vào câu; oracle 2 hạt S1 CIDEr-D 457,9 vs 416,1 ở §2);
+  **exec không hứa** (0/5 can thiệp trước vượt MDE 2,11).
+
+**Còn treo:** trần ngân sách A100 cho cả hướng — user chưa chốt ⇒ quyết có đủ cho bậc 4 hay dừng ở bậc 3.
+Mọi bước tốn tiền (từ bậc 1) hỏi user trước.
