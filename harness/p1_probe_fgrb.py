@@ -44,6 +44,18 @@ def label_role_zone(text):
     return role, (zone.group(1).lower() if zone else "NONE")
 
 
+def zone_coarse(z):
+    """CHẨN ĐOÁN (không phải nhãn đã khoá của 230): gộp 31 cách viết zone về lưới 3×3.
+    'bottom of the screen' / 'bottom' / 'lower' → 'bottom'; 'top right corner of the page' → 'top-right'."""
+    if z == "NONE":
+        return z
+    w = z.split()
+    v = next((x for x in w if x in ("top", "upper", "bottom", "lower", "middle", "center")), "")
+    v = {"upper": "top", "lower": "bottom", "center": "middle"}.get(v, v)
+    h = next((x for x in w if x in ("left", "right")), "")
+    return f"{v}-{h}" if h else v
+
+
 def prompt_body(r, ocr_rec):
     parts = [f"Mục tiêu: {r['goal'].strip()}"]
     hist = r.get("history") or []
@@ -121,13 +133,60 @@ def extract_hidden(model, proc, image_dir, rows, ocr, log_every=200):
     return torch.stack(feats)
 
 
+def load_model(bundle):
+    import torch
+    from transformers import Qwen2_5_VLForConditionalGeneration, AutoProcessor
+    from peft import PeftModel
+
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print("device", device, flush=True)
+
+    proc = AutoProcessor.from_pretrained(BASE, min_pixels=200704, max_pixels=1003520)
+    # device_map="auto" (như infer_branch.py) để accelerate tự cân bằng qua nhiều GPU nếu có —
+    # nhưng "auto" có thể quyết định OFFLOAD ra CPU/đĩa tuỳ cách nó ước lượng bộ nhớ, và bản peft
+    # đang cài lỗi khi nạp adapter LoRA vào một model có offload_index (KeyError trong
+    # _update_offload — bắt được khi thử --limit trên CPU, xem harness/kaggle_p1_probe_fgrb.md
+    # mục Ô 2.5). Model 3B thừa chỗ trong MỘT GPU T4 (16 GB) nên không cần "auto" cân bằng gì cả —
+    # chỉ định thẳng một thiết bị, khớp cách harness/pata_model.py:load_base() đã làm
+    # (device_map={"": 0}), loại hẳn nhánh mã có thể kích hoạt offload.
+    dev_map = {"": 0} if torch.cuda.is_available() else {"": "cpu"}
+    model = Qwen2_5_VLForConditionalGeneration.from_pretrained(BASE, device_map=dev_map, **dtype_kw())
+    model = PeftModel.from_pretrained(model, os.path.join(bundle, "adapter_s1_seed101"))
+    model.eval()
+    for p in model.parameters():
+        p.requires_grad = False
+    return model, proc
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--bundle", required=True, help="thư mục bundle (images/, ocr.jsonl, "
                      "p1_train_rows.jsonl, p1_val_rows.jsonl, adapter_s1_seed101/)")
     ap.add_argument("--cache-out", default="/kaggle/working/_fgrb_probe",
                      help="nơi cache vector hidden state, ngoài clone")
+    ap.add_argument("--cache-in", default="",
+                     help="thư mục CHỈ ĐỌC chứa sẵn hiddens_*_seed101.pt (vd. output của một lượt "
+                          "Kaggle trước, gắn vào /kaggle/input). Rỗng = chỉ tìm trong --cache-out")
     ap.add_argument("--max-epoch", type=int, default=30)
+    # Sửa 28/9: lượt đầu train head FULL-BATCH, đặc trưng thô, Adam lr 1e-3 ⇒ 30 epoch = 30 bước
+    # cập nhật, epoch chọn là epoch cuối, loss đầu 14 (logit quá lớn) và tăng ở epoch 1→3 ⇒ head
+    # chưa hội tụ (report/207 §8.2). Mặc định mới: chuẩn hoá z-score theo train + minibatch 64 +
+    # AdamW. Tái lập đúng lượt cũ: --batch-size 0 --no-standardize --lr 1e-3 --weight-decay 0.
+    ap.add_argument("--batch-size", type=int, default=64, help="0 = full-batch (cách của lượt 27/9)")
+    ap.add_argument("--no-standardize", action="store_true")
+    ap.add_argument("--zone-coarse", action="store_true",
+                     help="CHẨN ĐOÁN: gộp zone về lưới 3×3 trước khi train/chấm. Cổng P1 của 230 chấm "
+                          "trên nhãn gốc 31 lớp — kết quả với cờ này KHÔNG dùng để phán P1")
+    ap.add_argument("--save-heads", default="",
+                     help="ghi ba head ở epoch được chọn + mu/sd chuẩn hoá + danh sách lớp ra tệp .pt "
+                          "(P2 khởi tạo head từ tệp này)")
+    ap.add_argument("--head-seed", type=int, default=101,
+                     help="seed khởi tạo head + thứ tự minibatch (KHÔNG đổi mẫu 4.000, mẫu cố định ở bundle)")
+    ap.add_argument("--shuffle-labels", action="store_true",
+                     help="ĐỐI CHỨNG: hoán vị nhãn train (cùng hoán vị cho cả ba đầu) — head không thể học "
+                          "tín hiệu thật; recall đạt được ở chế độ này là mức do đoán tràn")
+    ap.add_argument("--lr", type=float, default=1e-4)
+    ap.add_argument("--weight-decay", type=float, default=1e-2)
     ap.add_argument("--limit", type=int, default=0,
                      help="CHỈ để thử nhanh trước khi commit: cắt train và val còn n dòng đầu. "
                           "0 = chạy đủ 4.000/1.567 (bắt buộc cho kết quả P1 thật). Có --limit thì "
@@ -150,37 +209,25 @@ def main():
         assert len(va_rows) == 1567, "val phai dung 1567, dung ngay neu khac"
 
     import torch
-    from transformers import Qwen2_5_VLForConditionalGeneration, AutoProcessor
-    from peft import PeftModel
-
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    print("device", device, flush=True)
-
-    proc = AutoProcessor.from_pretrained(BASE, min_pixels=200704, max_pixels=1003520)
-    # device_map="auto" (như infer_branch.py) để accelerate tự cân bằng qua nhiều GPU nếu có —
-    # nhưng "auto" có thể quyết định OFFLOAD ra CPU/đĩa tuỳ cách nó ước lượng bộ nhớ, và bản peft
-    # đang cài lỗi khi nạp adapter LoRA vào một model có offload_index (KeyError trong
-    # _update_offload — bắt được khi thử --limit trên CPU, xem harness/kaggle_p1_probe_fgrb.md
-    # mục Ô 2.5). Model 3B thừa chỗ trong MỘT GPU T4 (16 GB) nên không cần "auto" cân bằng gì cả —
-    # chỉ định thẳng một thiết bị, khớp cách harness/pata_model.py:load_base() đã làm
-    # (device_map={"": 0}), loại hẳn nhánh mã có thể kích hoạt offload.
-    dev_map = {"": 0} if torch.cuda.is_available() else {"": "cpu"}
-    model = Qwen2_5_VLForConditionalGeneration.from_pretrained(BASE, device_map=dev_map, **dtype_kw())
-    model = PeftModel.from_pretrained(model, os.path.join(args.bundle, "adapter_s1_seed101"))
-    model.eval()
-    for p in model.parameters():
-        p.requires_grad = False
 
     tag = f"_limit{args.limit}" if args.limit else ""   # tách cache lượt thử khỏi lượt thật,
                                                           # kẻo lượt thật đọc nhầm cache 20 dòng
     cache_tr = os.path.join(args.cache_out, f"hiddens_train_seed101{tag}.pt")
     cache_va = os.path.join(args.cache_out, f"hiddens_val_seed101{tag}.pt")
 
+    for d in [args.cache_in, args.cache_out]:
+        if d and os.path.exists(os.path.join(d, os.path.basename(cache_tr))) \
+                and os.path.exists(os.path.join(d, os.path.basename(cache_va))):
+            cache_tr = os.path.join(d, os.path.basename(cache_tr))
+            cache_va = os.path.join(d, os.path.basename(cache_va))
+            break
+
     if os.path.exists(cache_tr) and os.path.exists(cache_va):
-        print("Dung cache co san, khoi forward lai.", flush=True)
+        print(f"Dung cache co san, khoi nap model va forward lai: {cache_tr} · {cache_va}", flush=True)
         Xtr = torch.load(cache_tr)
         Xva = torch.load(cache_va)
     else:
+        model, proc = load_model(args.bundle)
         print("Trich hidden state — train...", flush=True)
         Xtr = extract_hidden(model, proc, args.bundle, tr_rows, ocr)
         torch.save(Xtr, cache_tr)
@@ -195,6 +242,8 @@ def main():
         for r in rows:
             a = (r.get("action") or {}).get("action_type", "?")
             r_, z_ = label_role_zone(r["target_instruction"])
+            if args.zone_coarse:
+                z_ = zone_coarse(z_)
             act.append(a)
             role.append(r_)
             zone.append(z_)
@@ -216,7 +265,28 @@ def main():
     y_act_va, y_role_va, y_zone_va = (to_idx(act_va, act_classes), to_idx(role_va, role_classes),
                                        to_idx(zone_va, zone_classes))
 
+    assert Xtr.shape[0] == len(tr_rows) and Xva.shape[0] == len(va_rows), \
+        f"cache lech so dong: {tuple(Xtr.shape)} / {tuple(Xva.shape)} vs {len(tr_rows)} / {len(va_rows)}"
+    Xtr = Xtr.float()
+    Xva = Xva.float()
+    mu = torch.zeros(1, Xtr.shape[1])
+    sd = torch.ones(1, Xtr.shape[1])
+    if not args.no_standardize:
+        mu = Xtr.mean(dim=0, keepdim=True)
+        sd = Xtr.std(dim=0, keepdim=True).clamp(min=1e-6)
+        Xtr = (Xtr - mu) / sd          # thống kê CHỈ lấy từ train, áp nguyên cho val
+        Xva = (Xva - mu) / sd
+    torch.manual_seed(args.head_seed)
+    bs = args.batch_size if args.batch_size > 0 else len(tr_rows)
+    print(f"head: standardize={not args.no_standardize} batch={bs} lr={args.lr} "
+          f"weight_decay={args.weight_decay} max_epoch={args.max_epoch} "
+          f"=> {args.max_epoch * ((len(tr_rows) + bs - 1) // bs)} buoc cap nhat", flush=True)
     dim = Xtr.shape[1]
+    if args.zone_coarse:
+        print(f"⚠️  --zone-coarse: CHAN DOAN, zone gop ve {len(zone_classes)} lop — khong phai cong P1",
+              flush=True)
+    if args.shuffle_labels:
+        print("⚠️  --shuffle-labels: DOI CHUNG, nhan train bi hoan vi — khong phai P1 that", flush=True)
 
     def class_weight(y, n_classes):
         cnt = torch.bincount(y, minlength=n_classes).float()
@@ -227,8 +297,14 @@ def main():
     head_role = torch.nn.Linear(dim, len(role_classes))
     head_zone = torch.nn.Linear(dim, len(zone_classes))
     params = list(head_act.parameters()) + list(head_role.parameters()) + list(head_zone.parameters())
-    opt = torch.optim.Adam(params, lr=1e-3)
+    if args.weight_decay > 0:
+        opt = torch.optim.AdamW(params, lr=args.lr, weight_decay=args.weight_decay)
+    else:
+        opt = torch.optim.Adam(params, lr=args.lr)
 
+    if args.shuffle_labels:
+        pi = torch.randperm(len(tr_rows), generator=torch.Generator().manual_seed(args.head_seed + 7))
+        y_act_tr, y_role_tr, y_zone_tr = y_act_tr[pi], y_role_tr[pi], y_zone_tr[pi]
     w_act = class_weight(y_act_tr, len(act_classes))
     w_role = class_weight(y_role_tr, len(role_classes))
     w_zone = class_weight(y_zone_tr, len(zone_classes))
@@ -257,15 +333,23 @@ def main():
     zone_none_idx = zone_classes.index("NONE")
 
     best = {"epoch": -1, "score": -1.0}
+    gen = torch.Generator().manual_seed(args.head_seed)
     for epoch in range(args.max_epoch):
         head_act.train(); head_role.train(); head_zone.train()
-        opt.zero_grad()
-        la = torch.nn.functional.cross_entropy(head_act(Xtr), y_act_tr, weight=w_act)
-        lr_ = torch.nn.functional.cross_entropy(head_role(Xtr), y_role_tr, weight=w_role)
-        lz = torch.nn.functional.cross_entropy(head_zone(Xtr), y_zone_tr, weight=w_zone)
-        loss = la + lr_ + lz
-        loss.backward()
-        opt.step()
+        perm = torch.randperm(len(tr_rows), generator=gen)
+        tot, nb = 0.0, 0
+        for k in range(0, len(tr_rows), bs):
+            idx = perm[k:k + bs]
+            opt.zero_grad()
+            la = torch.nn.functional.cross_entropy(head_act(Xtr[idx]), y_act_tr[idx], weight=w_act)
+            lr_ = torch.nn.functional.cross_entropy(head_role(Xtr[idx]), y_role_tr[idx], weight=w_role)
+            lz = torch.nn.functional.cross_entropy(head_zone(Xtr[idx]), y_zone_tr[idx], weight=w_zone)
+            loss = la + lr_ + lz
+            loss.backward()
+            opt.step()
+            tot += loss.item()
+            nb += 1
+        loss = torch.tensor(tot / nb)
 
         head_act.eval(); head_role.eval(); head_zone.eval()
         with torch.no_grad():
@@ -280,12 +364,25 @@ def main():
               f"{f1_a:.4f}/{f1_r:.4f}/{f1_z:.4f} mean {mean_f1:.4f}", flush=True)
         if mean_f1 > best["score"]:
             best = {"epoch": epoch, "score": mean_f1,
+                    "sd_a": {k: v.clone() for k, v in head_act.state_dict().items()},
+                    "sd_r": {k: v.clone() for k, v in head_role.state_dict().items()},
+                    "sd_z": {k: v.clone() for k, v in head_zone.state_dict().items()},
                     "pa": pa.clone(), "pr": pr.clone(), "pz": pz.clone()}
 
     print("\n=== KHOA EPOCH THEO macro-F1 TRUNG BINH TREN VAL ===", flush=True)
     print(f"epoch chon: {best['epoch']}  macro-F1 trung binh: {best['score']:.4f}", flush=True)
+    if best["epoch"] == args.max_epoch - 1:
+        print("⚠️  epoch chon la epoch CUOI — head co the chua hoi tu, doc ket qua than trong.",
+              flush=True)
 
     pa, pr, pz = best["pa"], best["pr"], best["pz"]
+    if args.save_heads:
+        torch.save({"act_classes": act_classes, "role_classes": role_classes,
+                    "zone_classes": zone_classes, "zone_coarse": args.zone_coarse,
+                    "mu": mu[0], "sd": sd[0], "head_act": best["sd_a"], "head_role": best["sd_r"],
+                    "head_zone": best["sd_z"], "epoch": best["epoch"], "head_seed": args.head_seed},
+                   args.save_heads)
+        print(f"Da ghi head (epoch {best['epoch']}) ra {args.save_heads}", flush=True)
 
     acc_act = (pa == y_act_va).float().mean().item()
     acc_role = (pr == y_role_va).float().mean().item()

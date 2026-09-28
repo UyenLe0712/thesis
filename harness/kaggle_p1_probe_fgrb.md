@@ -148,6 +148,68 @@ Output của Ô 3 tự in đủ mọi thứ mục 6 và Phụ lục B của tài
 **Copy nguyên văn output của Ô 3** (từ dòng `train.jsonl` đầu tiên tới dòng `P1 = ...` cuối cùng)
 gửi lại — đó là thứ cần để viết file kết quả cuối theo mục 6 của tài liệu 230.
 
+## D. CHẠY LẠI PHẦN HEAD — sửa 28/9, KHÔNG cần GPU (dùng cache đã trích)
+
+Lượt 27–28/9 train ba head **full-batch, không chuẩn hoá, Adam lr 1e-3** ⇒ 30 epoch chỉ có 30 bước
+cập nhật, head chưa hội tụ và kết quả đổi theo lần khởi tạo ngẫu nhiên (chạy lại đúng cấu hình đó
+cho action 72,69 thay vì 80,60). Script nay mặc định: **chuẩn hoá z-score theo train · minibatch 64
+(1.890 bước cập nhật) · AdamW lr 1e-4, weight decay 1e-2 · seed head 101**. Mẫu 4.000, seed lấy
+mẫu 101, val 1.567, tối đa 30 epoch, trọng số lớp, luật chọn epoch và ba ngưỡng **giữ nguyên**.
+Chi tiết và số đo: `report/207` §9.
+
+Có cache thì script **không nạp Qwen**, chỉ train head ⇒ chạy trên CPU khoảng 10 giây.
+
+### D.1 Trên máy nhà (WSL) — cách khuyên dùng
+
+```
+cd /mnt/d/Master/Thesis
+mkdir -p ~/fgrb_p1/bundle
+unzip -o -q "harness/results (3).zip" -d ~/fgrb_p1                  # ra ~/fgrb_p1/_test5/*.pt
+unzip -o -j -q _bundles/fgrb_p1_bundle.zip "*/p1_train_rows.jsonl" "*/p1_val_rows.jsonl" -d ~/fgrb_p1/bundle
+PYTHONIOENCODING=utf-8 ~/.venvs/thesis/bin/python harness/p1_probe_fgrb.py \
+    --bundle ~/fgrb_p1/bundle --cache-in ~/fgrb_p1/_test5 --cache-out ~/fgrb_p1/out
+```
+
+Kỳ vọng ở dòng đầu: `Dung cache co san, khoi nap model va forward lai` và
+`head: standardize=True batch=64 ... => 1890 buoc cap nhat`. Không thấy hai dòng đó thì dừng
+(tức là đang chạy cấu hình cũ hoặc đang đi nạp model). Kết quả seed 101: role 51,54 · zone 30,51 ·
+action 82,83 · `P1 = DAT`.
+
+Các cờ đối chứng (chạy thêm, **không** dùng để phán P1):
+
+| cờ | để làm gì |
+|---|---|
+| `--head-seed 102` (103, 104, 105) | xem kết quả có bền theo seed khởi tạo head không |
+| `--shuffle-labels` | xáo nhãn train ⇒ mức recall do đoán tràn, head không học được gì thật |
+| `--zone-coarse` | gộp 31 cách viết zone về lưới 3×3 ⇒ đo nhận vị trí, không đo đoán đúng cách viết |
+| `--batch-size 0 --no-standardize --lr 1e-3 --weight-decay 0` | tái lập cách train của lượt 27/9 |
+
+### D.2 Trên Kaggle (nếu muốn chạy ở đó) — session **CPU**, không tốn quota GPU
+
+1. Đóng lại script: `cd harness && zip ../_bundles/fgrb_p1_script.zip p1_probe_fgrb.py` (đã làm 28/9,
+   21.128 byte) → **New Version** cho dataset `fgrb-p1-script`.
+2. Notebook mới, **Accelerator: None**, Internet không cần. Add Data: `fgrb-p1-bundle`,
+   `fgrb-p1-script`, và **output của notebook P1 cũ** (Add Data → Your Work → notebook đó) — output
+   ấy chứa `_test5/hiddens_*.pt`.
+3. Chạy Ô 1 và Ô 2 như trên, rồi:
+
+```python
+import os
+CACHE = None
+for root, dirs, files in os.walk("/kaggle/input"):
+    if "hiddens_train_seed101.pt" in files and "hiddens_val_seed101.pt" in files:
+        CACHE = root
+        break
+assert CACHE, "Khong thay cache — kiem tra da Add Data output cua notebook P1 cu chua"
+print("CACHE =", CACHE)
+```
+```
+!python p1_probe_fgrb.py --bundle {BUNDLE} --cache-in {CACHE} --cache-out /kaggle/working/_fgrb_probe
+```
+
+⚠️ Không cần `pip install` ở Ô 0 vì không nạp model. Nếu dòng đầu **không** in
+`Dung cache co san` thì dừng ngay: script đang đi tải Qwen và trích lại 3 giờ.
+
 ## Không được làm ở lượt này
 
 - Không mở `test.jsonl` hay bất kỳ file điểm test nào — script không đọc, đừng thêm.

@@ -1,0 +1,87 @@
+train=4000 val=1567 ocr_keys=5567 out=/kaggle/working/p2
+Skipping import of cpp extensions due to incompatible torch version. Please upgrade to torch >= 2.11.0 (found 2.10.0+cu128).
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+model dtype=torch.float16 device=cuda:0
+FGRB: hidden=2048 d_c=256 tham so hoc=1,731,621 lop=[8, 18, 10]
+  kiem dong nhat 7057_1: s1='Type Grocery Store List in the title section' | fgrb(W=0)='Type Grocery Store List in the title section'
+  kiem dong nhat 13970_3: s1='Click on the Upload option on the screen.' | fgrb(W=0)='Click on the Upload option on the screen.'
+Kiem dong nhat DAT: W=0 thi FGRB trung S1 tung ky tu.
+/kaggle/working/p2_fgrb.py:164: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:836.)
+  self.gate_mean = float(g.mean())
+  train 100/4000  ce 0.7029  aux 2.9349  gate 0.268  |g*z|/|h| 0.0006  3.2 phut, con lai ~123.4 phut
+  train 200/4000  ce 0.4948  aux 1.8168  gate 0.106  |g*z|/|h| 0.0006  6.4 phut, con lai ~122.1 phut
+  train 300/4000  ce 0.6039  aux 1.3266  gate 0.059  |g*z|/|h| 0.0004  9.7 phut, con lai ~119.8 phut
+  train 400/4000  ce 0.5778  aux 2.0341  gate 0.043  |g*z|/|h| 0.0003  13.0 phut, con lai ~116.8 phut
+  train 500/4000  ce 0.5801  aux 1.8494  gate 0.034  |g*z|/|h| 0.0002  16.3 phut, con lai ~113.8 phut
+  train 600/4000  ce 0.5472  aux 1.5291  gate 0.031  |g*z|/|h| 0.0002  19.5 phut, con lai ~110.5 phut
+  train 700/4000  ce 0.6278  aux 1.5843  gate 0.032  |g*z|/|h| 0.0002  22.8 phut, con lai ~107.3 phut
+  train 800/4000  ce 0.5936  aux 1.4537  gate 0.031  |g*z|/|h| 0.0002  26.0 phut, con lai ~104.0 phut
+  train 900/4000  ce 0.4475  aux 1.2893  gate 0.034  |g*z|/|h| 0.0003  29.2 phut, con lai ~100.7 phut
+  train 1000/4000  ce 0.6738  aux 1.8785  gate 0.029  |g*z|/|h| 0.0003  32.5 phut, con lai ~97.4 phut
+  train 1100/4000  ce 0.5344  aux 1.8008  gate 0.014  |g*z|/|h| 0.0001  35.7 phut, con lai ~94.1 phut
+  train 1200/4000  ce 0.4965  aux 1.3114  gate 0.011  |g*z|/|h| 0.0001  38.9 phut, con lai ~90.8 phut
+  train 1300/4000  ce 0.5367  aux 1.6433  gate 0.006  |g*z|/|h| 0.0001  42.2 phut, con lai ~87.6 phut
+  train 1400/4000  ce 0.5043  aux 1.2820  gate 0.008  |g*z|/|h| 0.0001  45.4 phut, con lai ~84.3 phut
+  train 1500/4000  ce 0.6389  aux 1.9266  gate 0.005  |g*z|/|h| 0.0001  48.6 phut, con lai ~81.0 phut
+  train 1600/4000  ce 0.5339  aux 1.6854  gate 0.089  |g*z|/|h| 0.0011  51.8 phut, con lai ~77.8 phut
+  train 1700/4000  ce 0.4639  aux 1.5715  gate 0.477  |g*z|/|h| 0.0040  55.1 phut, con lai ~74.5 phut
+  train 1800/4000  ce 0.5359  aux 1.5848  gate 0.565  |g*z|/|h| 0.0041  58.3 phut, con lai ~71.2 phut
+  train 1900/4000  ce 0.5116  aux 1.5734  gate 0.444  |g*z|/|h| 0.0058  61.5 phut, con lai ~68.0 phut
+  train 2000/4000  ce 0.5518  aux 1.4672  gate 0.290  |g*z|/|h| 0.0045  64.8 phut, con lai ~64.8 phut
+  train 2100/4000  ce 0.6231  aux 1.5537  gate 0.190  |g*z|/|h| 0.0024  68.0 phut, con lai ~61.5 phut
+  train 2200/4000  ce 0.5328  aux 1.3587  gate 0.134  |g*z|/|h| 0.0016  71.2 phut, con lai ~58.3 phut
+  train 2300/4000  ce 0.6255  aux 1.5492  gate 0.134  |g*z|/|h| 0.0018  74.5 phut, con lai ~55.0 phut
+  train 2400/4000  ce 0.5548  aux 1.4421  gate 0.123  |g*z|/|h| 0.0015  77.7 phut, con lai ~51.8 phut
+  train 2500/4000  ce 0.6399  aux 1.2747  gate 0.045  |g*z|/|h| 0.0005  80.9 phut, con lai ~48.5 phut
+  train 2600/4000  ce 0.4675  aux 1.3445  gate 0.035  |g*z|/|h| 0.0004  84.1 phut, con lai ~45.3 phut
+  train 2700/4000  ce 0.5146  aux 1.4420  gate 0.051  |g*z|/|h| 0.0007  87.3 phut, con lai ~42.0 phut
+  train 2800/4000  ce 0.6890  aux 1.5337  gate 0.088  |g*z|/|h| 0.0011  90.5 phut, con lai ~38.8 phut
+  train 2900/4000  ce 0.5128  aux 1.4330  gate 0.118  |g*z|/|h| 0.0013  93.7 phut, con lai ~35.5 phut
+  train 3000/4000  ce 0.5563  aux 1.5176  gate 0.128  |g*z|/|h| 0.0013  96.9 phut, con lai ~32.3 phut
+  train 3100/4000  ce 0.4915  aux 1.3882  gate 0.090  |g*z|/|h| 0.0010  100.1 phut, con lai ~29.1 phut
+  train 3200/4000  ce 0.6184  aux 1.6140  gate 0.098  |g*z|/|h| 0.0011  103.3 phut, con lai ~25.8 phut
+  train 3300/4000  ce 0.6679  aux 1.6893  gate 0.065  |g*z|/|h| 0.0008  106.5 phut, con lai ~22.6 phut
+  train 3400/4000  ce 0.5545  aux 1.3930  gate 0.028  |g*z|/|h| 0.0004  109.7 phut, con lai ~19.4 phut
+  train 3500/4000  ce 0.5405  aux 1.9724  gate 0.028  |g*z|/|h| 0.0004  112.9 phut, con lai ~16.1 phut
+  train 3600/4000  ce 0.5128  aux 1.3001  gate 0.057  |g*z|/|h| 0.0008  116.1 phut, con lai ~12.9 phut
+  train 3700/4000  ce 0.5006  aux 1.7562  gate 0.059  |g*z|/|h| 0.0008  119.3 phut, con lai ~9.7 phut
+  train 3800/4000  ce 0.6098  aux 1.4000  gate 0.047  |g*z|/|h| 0.0006  122.5 phut, con lai ~6.4 phut
+  train 3900/4000  ce 0.5304  aux 1.3075  gate 0.061  |g*z|/|h| 0.0009  125.7 phut, con lai ~3.2 phut
+  train 4000/4000  ce 0.5961  aux 1.8110  gate 0.124  |g*z|/|h| 0.0014  129.0 phut, con lai ~0.0 phut
+Da ghi /kaggle/working/p2/fgrb_params.pt
+Sinh che do fgrb: da co 0, con 1567
+  gen fgrb 100/1567  4.3 phut, con lai ~63.3 phut
+  gen fgrb 200/1567  8.6 phut, con lai ~58.5 phut
+  gen fgrb 300/1567  12.9 phut, con lai ~54.5 phut
+  gen fgrb 400/1567  17.2 phut, con lai ~50.2 phut
+  gen fgrb 500/1567  21.6 phut, con lai ~46.1 phut
+  gen fgrb 600/1567  25.9 phut, con lai ~41.8 phut
+  gen fgrb 700/1567  30.2 phut, con lai ~37.5 phut
+  gen fgrb 800/1567  34.5 phut, con lai ~33.1 phut
+  gen fgrb 900/1567  38.9 phut, con lai ~28.8 phut
+  gen fgrb 1000/1567  43.2 phut, con lai ~24.5 phut
+  gen fgrb 1100/1567  47.6 phut, con lai ~20.2 phut
+  gen fgrb 1200/1567  52.1 phut, con lai ~15.9 phut
+  gen fgrb 1300/1567  56.4 phut, con lai ~11.6 phut
+  gen fgrb 1400/1567  60.7 phut, con lai ~7.2 phut
+  gen fgrb 1500/1567  65.0 phut, con lai ~2.9 phut
+  gen fgrb 1567/1567  67.9 phut, con lai ~0.0 phut
+Sinh che do hoanvi: da co 0, con 1567
+  gen hoanvi 100/1567  4.3 phut, con lai ~63.3 phut
+  gen hoanvi 200/1567  8.5 phut, con lai ~58.4 phut
+  gen hoanvi 300/1567  12.9 phut, con lai ~54.4 phut
+  gen hoanvi 400/1567  17.2 phut, con lai ~50.1 phut
+  gen hoanvi 500/1567  21.6 phut, con lai ~46.0 phut
+  gen hoanvi 600/1567  25.9 phut, con lai ~41.7 phut
+  gen hoanvi 700/1567  30.2 phut, con lai ~37.4 phut
+  gen hoanvi 800/1567  34.5 phut, con lai ~33.0 phut
+  gen hoanvi 900/1567  38.9 phut, con lai ~28.8 phut
+  gen hoanvi 1000/1567  43.1 phut, con lai ~24.5 phut
+  gen hoanvi 1100/1567  47.6 phut, con lai ~20.2 phut
+  gen hoanvi 1200/1567  52.1 phut, con lai ~15.9 phut
+  gen hoanvi 1300/1567  56.4 phut, con lai ~11.6 phut
+  gen hoanvi 1400/1567  60.7 phut, con lai ~7.2 phut
+  gen hoanvi 1500/1567  64.9 phut, con lai ~2.9 phut
+  gen hoanvi 1567/1567  67.8 phut, con lai ~0.0 phut
+XONG. Tai ve cac tep gen_*.jsonl + fgrb_params.pt trong /kaggle/working/p2
