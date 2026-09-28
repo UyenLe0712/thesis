@@ -1,0 +1,22 @@
+[renderer] M = 0.35 + 0.65·exp(−½((u−x)/(0.18W))² − ½((v−y)/(0.12H))²) · Blur = GaussianBlur(radius=8) · F = tâm dời nửa màn (mod W,H) · C = tâm màn
+[dữ liệu] val=1567 · 400 bước seed 20260927 · hash400=a044f6d060d264b0 · click trong 400 = 249 (kỳ vọng 249) · hash_click=8a24abe4f7f041e0 · lượt này: tiền tố 400 ⇒ 249 click
+[tiến độ] đã có 0 · còn 249 · ocr_keys=5567 · thiếu OCR 0
+Skipping import of cpp extensions due to incompatible torch version. Please upgrade to torch >= 2.11.0 (found 2.10.0+cu128).
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[cấu hình] dtype=torch.float16 · greedy do_sample=False · max_new=96 · repetition_penalty(mặc định model)=1.05 · pixels [200704, 1003520] · transformers 5.17.0
+/kaggle/working/tfvf_g0.py:56: DeprecationWarning: 'mode' parameter is deprecated and will be removed in Pillow 13 (2026-10-15)
+  return Image.fromarray(np.clip(np.rint(o), 0, 255).astype(np.uint8), "RGB")
+  20/249 · 3.3 phút · còn ~37.2 phút · G: 'Click on the search icon at the bottom right corne' · F: 'Click on the search icon at the bottom right corne'
+  40/249 · 6.4 phút · còn ~33.7 phút · G: 'Click on the heart icon at the top right corner of' · F: 'Click on the heart icon at the top right corner of'
+  60/249 · 9.8 phút · còn ~30.9 phút · G: 'Click on the tab "Pictures".' · F: 'Click on the tab "Pictures".'
+  80/249 · 13.0 phút · còn ~27.5 phút · G: 'Click on the search icon at the bottom right corne' · F: 'Click on the first search result'
+  100/249 · 16.3 phút · còn ~24.3 phút · G: 'Click on the cart icon at the top right corner of ' · F: 'Click on the cart icon at the top right corner of '
+  120/249 · 19.7 phút · còn ~21.2 phút · G: 'Click on the menu icon at the top left corner of t' · F: 'Click on the menu icon at the top left corner of t'
+  140/249 · 22.9 phút · còn ~17.8 phút · G: 'click on the reply option' · F: 'click on the reply option'
+  160/249 · 26.1 phút · còn ~14.5 phút · G: 'Click on the See all option' · F: 'Click on the See all option'
+  180/249 · 29.3 phút · còn ~11.2 phút · G: 'Open the Plantum app.' · F: 'Open the Plantum app.'
+  200/249 · 32.6 phút · còn ~8.0 phút · G: 'Click on November 10th' · F: 'Click on November 10th'
+  220/249 · 35.6 phút · còn ~4.7 phút · G: 'Click on the 1 hour before option to select this o' · F: 'Click on the 1 hour before option to select this o'
+  240/249 · 39.0 phút · còn ~1.5 phút · G: 'click on the Allow button' · F: 'click on the Allow button'
+  249/249 · 40.4 phút · còn ~0.0 phút · G: 'Click on the first result' · F: 'Click on the right arrow key'
+XONG

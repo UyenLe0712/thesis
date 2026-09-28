@@ -1,0 +1,10 @@
+[renderer] M = 0.35 + 0.65·exp(−½((u−x)/(0.18W))² − ½((v−y)/(0.12H))²) · Blur = GaussianBlur(radius=8) · F = tâm dời nửa màn (mod W,H) · C = tâm màn
+[dữ liệu] val=1567 · 400 bước seed 20260927 · hash400=a044f6d060d264b0 · click trong 400 = 249 (kỳ vọng 249) · hash_click=8a24abe4f7f041e0 · lượt này: tiền tố 5 ⇒ 5 click
+[tiến độ] đã có 0 · còn 5 · ocr_keys=5567 · thiếu OCR 0
+Skipping import of cpp extensions due to incompatible torch version. Please upgrade to torch >= 2.11.0 (found 2.10.0+cu128).
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[cấu hình] dtype=torch.float16 · greedy do_sample=False · max_new=96 · repetition_penalty(mặc định model)=1.05 · pixels [200704, 1003520] · transformers 5.17.0
+/kaggle/working/tfvf_g0.py:56: DeprecationWarning: 'mode' parameter is deprecated and will be removed in Pillow 13 (2026-10-15)
+  return Image.fromarray(np.clip(np.rint(o), 0, 255).astype(np.uint8), "RGB")
+  5/5 · 0.7 phút · còn ~0.0 phút · G: 'Click on the Departing from option.' · F: 'Click on the Departing from option.'
+XONG
