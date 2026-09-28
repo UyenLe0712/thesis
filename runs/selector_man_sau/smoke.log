@@ -1,0 +1,45 @@
+[dữ liệu] train 64567 · train_tru_val 63000 · click có bước kế trong train_tru_val 30478
+[câu âm] xong (95 s) · ví dụ: 'Click on the three dots next to the agents.txt' ↔ ['Click on the three dots next to the agent.txt', 'Click on the yoga video ']
+[đặc trưng] xong (113 s)
+  [teacher] epoch 1/5 loss 0.2547 (3 s)
+  [teacher] epoch 2/5 loss 0.1596 (3 s)
+  [teacher] epoch 3/5 loss 0.1480 (3 s)
+  [teacher] epoch 4/5 loss 0.1394 (3 s)
+  [teacher] epoch 5/5 loss 0.1328 (3 s)
+  [student-không-distill (hàng 2)] epoch 1/5 loss 0.2561 (3 s)
+  [student-không-distill (hàng 2)] epoch 2/5 loss 0.1702 (3 s)
+  [student-không-distill (hàng 2)] epoch 3/5 loss 0.1579 (3 s)
+  [student-không-distill (hàng 2)] epoch 4/5 loss 0.1482 (3 s)
+  [student-không-distill (hàng 2)] epoch 5/5 loss 0.1404 (3 s)
+  [student-distill (hàng 3)] epoch 1/5 loss 0.4831 (4 s)
+  [student-distill (hàng 3)] epoch 2/5 loss 0.2880 (4 s)
+  [student-distill (hàng 3)] epoch 3/5 loss 0.2527 (4 s)
+  [student-distill (hàng 3)] epoch 4/5 loss 0.2308 (4 s)
+  [student-distill (hàng 3)] epoch 5/5 loss 0.2176 (3 s)
+[độ đúng cặp trên tập dạy, chẩn đoán] teacher 0.717 · hang2 0.699 · hang3 0.691
+PTBTokenizer tokenized 3428 tokens at 35567.12 tokens per second.
+PTBTokenizer tokenized 3416 tokens at 32774.27 tokens per second.
+Parsing reference captions
+Parsing test captions
+SPICE evaluation took: 1.473 s
+hang1_greedy                     bleu1 75.06 · bleu2 69.52 · bleu3 64.41 · bleu4 59.48 · meteor 42.83 · rougeL 75.32 · cider_d 543.77 · spice 57.3 · doi_khoi_greedy 0
+PTBTokenizer tokenized 3428 tokens at 47396.67 tokens per second.
+PTBTokenizer tokenized 3315 tokens at 55941.11 tokens per second.
+Parsing reference captions
+Parsing test captions
+SPICE evaluation took: 1.841 s
+hang2_student_khong_distill      bleu1 59.79 · bleu2 52.83 · bleu3 47.19 · bleu4 41.96 · meteor 32.0 · rougeL 60.72 · cider_d 379.1 · spice 41.48 · doi_khoi_greedy 287
+PTBTokenizer tokenized 3428 tokens at 28614.45 tokens per second.
+PTBTokenizer tokenized 3373 tokens at 28128.02 tokens per second.
+Parsing reference captions
+Parsing test captions
+SPICE evaluation took: 1.442 s
+hang3_student_distill            bleu1 59.03 · bleu2 51.87 · bleu3 46.08 · bleu4 40.86 · meteor 31.21 · rougeL 59.16 · cider_d 368.09 · spice 41.07 · doi_khoi_greedy 292
+PTBTokenizer tokenized 3428 tokens at 31714.34 tokens per second.
+PTBTokenizer tokenized 3372 tokens at 34531.98 tokens per second.
+Parsing reference captions
+Parsing test captions
+SPICE evaluation took: 1.916 s
+chan_doan_teacher_xem_man_sau    bleu1 61.99 · bleu2 54.95 · bleu3 49.25 · bleu4 44.11 · meteor 33.3 · rougeL 61.96 · cider_d 393.14 · spice 44.41 · doi_khoi_greedy 286
+(1) hàng 3 > hàng 1 cả BLEU-4/CIDEr-D/SPICE: KHÔNG ĐẠT · (2) hàng 3 > hàng 2 ở ≥2/3: KHÔNG ĐẠT ⇒ SMOKE KHÔNG ĐẠT
+ghi runs/selector_man_sau/ · tổng 233 s
