@@ -163,4 +163,4 @@ Chấm tại ba hàng bằng bộ COCO Captions chính thức trên đúng 4.463
 1. ![Phần 0–1](anh_231_action_selector_man_sau_28_9/01_muc_0_1.jpg)
 2. ![Phần 1.1–1.2](anh_231_action_selector_man_sau_28_9/02_muc_1_1_1_2.jpg)
 3. ![Phần 2–3](anh_231_action_selector_man_sau_28_9/03_muc_2_3.jpg)
-4. ![Phần 4–5](anh_231_action_selector_man_sau_28_9/04_muc_4_5.jpg)
+4. ![Phần 4–5](anh_231_action_selector_man_sau_28_9/04_muc_4_5.jpg)`

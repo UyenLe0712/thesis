@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Đóng gói lượt chấm exec 8 mẫu C1 (harness/251_…md) cho Kaggle, 0 GPU.
+"""Đóng gói lượt chấm exec 8 mẫu C1 (harness/tai_lieu_2026-09-28/251_…md) cho Kaggle, 0 GPU.
 
 Ra hai tệp:
   _bundles/c1_exec8.zip   → upload thành Kaggle Dataset `c1-exec8`
@@ -11,7 +11,7 @@ import hashlib, json, os, re, zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-MD = os.path.join(HERE, "251_ACTION_GPU_EXEC_8_MAU_C1_28_9.md")
+MD = os.path.join(HERE, "tai_lieu_2026-09-28", "251_ACTION_GPU_EXEC_8_MAU_C1_28_9.md")
 OUTD = os.path.join(ROOT, "_bundles")
 
 mau = os.path.join(ROOT, "runs/c1/c1_mau.jsonl")

@@ -1,6 +1,6 @@
 # 252 — Kết quả chấm `exec` cho greedy và 8 mẫu S1 trên 249 bước click C1 (28/9/2026)
 
-Runbook: `harness/251_ACTION_GPU_EXEC_8_MAU_C1_28_9.md`. Kaggle T4×2, dạng commit, 0 đồng.
+Runbook: `harness/tai_lieu_2026-09-28/251_ACTION_GPU_EXEC_8_MAU_C1_28_9.md`. Kaggle T4×2, dạng commit, 0 đồng.
 Tệp: `runs/c1/exec8/` (output Kaggle nguyên vẹn) · đọc bằng `harness/c1_exec8_doc.py` (CPU + Java 8).
 
 ⚠️ **Số val.** S1 đã thấy các bước này lúc train ⇒ mọi số dưới đây lạc quan có hệ thống, chỉ dùng

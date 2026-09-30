@@ -5,7 +5,7 @@ trên mỗi bước click (1 greedy + 8 mẫu S1 trong `runs/c1/c1_mau.jsonl`), 
 của luận văn. **2.241 lượt bộ trỏ = 249 × 9**, ước ~1,5–2 h trên T4×2 (+5–10 phút tải model và cây
 trợ năng), 0 đồng. Không đụng tập test.
 
-Nguồn: chép từ 6 ảnh (ảnh gốc ở `harness/anh_251/anh1.jpg … anh6.jpg`). Bản này **sắp xếp lại
+Nguồn: chép từ 6 ảnh (ảnh gốc ở `harness/tai_lieu_2026-09-28/anh_goc_251/anh1.jpg … anh6.jpg`). Bản này **sắp xếp lại
 để chạy commit** và sửa năm chỗ của bản chép từ ảnh, xem §0.
 
 Thay mục 5 của `250_DEBATE_VA_CHOT_PHUONG_PHAP_28_9.md`: bản đó chỉ `--recs-file val400.jsonl`,
@@ -414,5 +414,5 @@ có ý nghĩa. Vì vậy cổng đòi thêm cận dưới KTC > 0.
 
 ## Ảnh gốc
 
-`harness/anh_251/anh1.jpg … anh6.jpg` (tách từ bản base64 nhúng trong file cũ, 4,9 MB → file này
+`harness/tai_lieu_2026-09-28/anh_goc_251/anh1.jpg … anh6.jpg` (tách từ bản base64 nhúng trong file cũ, 4,9 MB → file này
 còn vài chục KB). Đã đối chiếu ảnh 3–5 với Ô 2–4: logic khớp, chỉ khác ở năm chỗ của §0.
