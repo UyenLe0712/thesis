@@ -106,3 +106,53 @@ như mô hình 500 bước.
 `pred_ck250.jsonl` (400) · `score_ck250_raw.jsonl` (249) · `score_ck250.json` ·
 `score_k0_lai_raw.jsonl` (249) · `score_k0_lai.json` · `gen_ck250.log` · `cham_ck250.log` ·
 `cham_k0_lai.log` · `train_c1.log` (log train commit 1).
+
+## 7. Kết quả `checkpoint-500` (1/10) — theo §2: **DỪNG**, chờ người dùng xác nhận
+
+### 7.1 Đường đi tới ck500 và phép kiểm hợp lệ
+
+- Lượt chạy lại 250 → 500 **OOM hai lần ở bước ~443** (điểm lưu cuối `checkpoint-425`), sửa bằng
+  `--bs 2 --accum 8` rồi `--gen-chunk 8` (md5 `07ea87b6…`). Chi tiết ở `harness/kaggle_grpo_spice_commit.md`.
+- Commit nối 425 → 500 (`train_c3.log`): `[tiếp từ] checkpoint-425` · `[nạp default] 504 tensor ·
+  |lora_B| 0.0000 → 9.1140 · khoá lạ 0` · đủ 75 bước · 156,6 s/bước · đỉnh VRAM 12,38 GiB · không
+  Traceback. kl TB 0,014–0,037 (lượt hỏng kiểu commit 2 cũ là ~0,001) ⇒ **cờ đỏ §4 đã gỡ cho đoạn này**.
+- Phải khai: bước 426–500 chạy ở micro-batch 2 + sinh theo khúc (tương đương về toán, lệch số học fp16).
+- Chấm trên tài khoản Kaggle thứ hai: greedy S1 chấm lại (`score_k0_lai500_raw.jsonl`) **trùng từng
+  byte** với `score_k0_lai_raw.jsonl` của phiên ck250 ⇒ dụng cụ ổn định qua hai tài khoản.
+- ⚠️ Thiếu: `train.log` của lượt chạy lại 250 → 443 (version OOM). Không chặn việc đọc, nên tải về
+  đặt tên `train_c2b.log` để lưu vết KL đoạn đó.
+
+### 7.2 Số (`grpo_spice_doc.py`, số val, cấm trích)
+
+| | S1 greedy | ck250 | ck500 |
+|---|---|---|---|
+| SPICE (400 bước) | 57,30 | 57,91 (Δ +0,61 [−1,40; +2,66]) | **57,45 (Δ +0,15 [−2,59; +2,79])** |
+| exec (249 click) | 63,45 | 64,66 (Δ +1,20 [−1,17; +3,73]) | **66,27 (Δ +2,81 [0,00; +6,02])** |
+| cứu / phá | | 6 / 3 (McNemar p = 0,51) | 12 / 5 (p = 0,14) |
+| câu trùng S1 | | 328/400 | 277/400 |
+| số từ · rỗng | 7,28 · 0 | 7,19 · 0 | 7,37 · 0 |
+
+**Đọc theo §2:** cả hai điểm lưu ΔSPICE < +1,0 ⇒ **DỪNG nhánh GRPO**. Hai phép kiểm lệch thưởng đạt.
+Thưởng train tăng 0,44 → ~0,55–0,60 nhưng SPICE trên val không tăng ⇒ thưởng không tổng quát hoá sang val.
+
+### 7.3 Phân rã Δexec của ck500 (+7 bước ròng)
+
+- **5/12 bước cứu là sửa loại thao tác**: S1 viết *"Swipe up …"* ở bước click, ck500 viết *"Click on …"*
+  (`action_ok` 0 → 1). Không bước phá nào do loại thao tác. `action_ok` trên 249 click: 239 → 245.
+- 7 bước cứu còn lại và cả 5 bước phá là **đổi phần tử được gọi tên** (`action_ok` giữ 1) ⇒ phần định vị
+  chỉ ròng **+2 bước (+0,80 pp)**.
+- Cả 6 bước cứu của ck250 đều còn ở ck500 ⇒ xu hướng nhất quán, không phải nhiễu ngẫu nhiên giữa hai điểm lưu.
+- ⚠️ **Mặt trái không nằm trong exec:** ở 32 bước `scroll`, câu mở đầu bằng swipe/scroll giảm 27 → 23,
+  bằng click tăng 3 → 6. GRPO dịch chung về phía "click" — được ở bước click, mất ở bước cuộn, mà exec
+  chỉ chấm bước click. Cùng mẫu hình với `report` 21/9: mức tăng đến từ cổng loại thao tác, không phải định vị.
+- Tiền lệ val phóng đại: GRPO `<point>` +0,76 trên val còn +0,02 trên test (`report/153`).
+
+### 7.4 Việc người dùng quyết
+
+1. Xác nhận **DỪNG** theo §2 (khuyến nghị), ghi vào luận văn như một kết quả âm/trắng có phân rã ở 7.3; hoặc
+2. Chấm test 4.463 bước bằng ck500 (Kaggle T4 ~5,6 h, 0 đồng) chỉ để xem exec. Kỳ vọng thấp theo 7.3;
+   nếu chạy thì phải báo kèm `action_ok` trên **mọi** loại thao tác, không chỉ bước chạm.
+
+Tệp mới trong `runs/grpo_spice/`: `pred_ck500.jsonl` · `score_ck500{,_raw}.json[l]` ·
+`score_k0_lai500{,_raw}.json[l]` · `gen_ck500.log` · `cham_ck500.log` · `cham_k0_lai500.log` · `train_c3.log`.
+Adapter ck500 (60 MB, ngoài git): `_bundles/grpo-spice-ck500/grpo_spice/checkpoint-500/` (md5 `491fa667…`).

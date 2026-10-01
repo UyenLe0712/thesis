@@ -301,6 +301,47 @@ def _n_s1(adapter):
         return sum(f.get_tensor(k).numel() for k in f.keys())
 
 
+def sinh_theo_khuc(model, k, pad_id):
+    """Thay model.generate bằng bản sinh từng khúc ≤ k chuỗi rồi ghép lại, đệm phải bằng pad_id.
+
+    Chỉ để hạ đỉnh VRAM ở khâu sinh (16 chuỗi một lần OOM trên T4 ở bước ~443, 30/9). Không đổi
+    lô cập nhật, sampler hay chuẩn hoá DAPO: TRL vẫn nhận đủ 16 chuỗi trong một lần gọi.
+    Đệm sau EOS giống hệt cách generate tự đệm chuỗi đã xong, và TRL che mọi thứ sau EOS đầu tiên.
+    """
+    import torch
+    goc = model.generate
+    dem = {"n": 0}
+
+    def gen(*args, **kw):
+        ids = kw.get("input_ids")
+        B = ids.shape[0] if ids is not None and not args else 0
+        thw = kw.get("image_grid_thw")
+        if B <= k or (thw is not None and thw.shape[0] != B):
+            return goc(*args, **kw)
+        npatch = thw.prod(-1).tolist() if thw is not None else None
+        out = []
+        for i in range(0, B, k):
+            j = min(B, i + k)
+            sub = {}
+            for key, v in kw.items():
+                if key == "pixel_values" and npatch is not None:
+                    a0, a1 = sum(npatch[:i]), sum(npatch[:j])
+                    sub[key] = v[a0:a1]
+                elif torch.is_tensor(v) and v.dim() > 0 and v.shape[0] == B:
+                    sub[key] = v[i:j]
+                else:
+                    sub[key] = v
+            out.append(goc(**sub))
+        T = max(o.shape[1] for o in out)
+        out = [torch.nn.functional.pad(o, (0, T - o.shape[1]), value=pad_id) for o in out]
+        if dem["n"] == 0:
+            print(f"[sinh theo khúc] {B} chuỗi → {len(out)} khúc ≤ {k}", flush=True)
+        dem["n"] += 1
+        return torch.cat(out, 0)
+
+    model.generate = gen
+
+
 def train(a):
     import torch, trl, transformers, peft
     from peft import LoraConfig, get_peft_model
@@ -430,6 +471,11 @@ def train(a):
         processing_class=proc,
     )
 
+    if a.gen_chunk:
+        sinh_theo_khuc(trainer.model, a.gen_chunk, proc.tokenizer.pad_token_id)
+        print(f"[sinh theo khúc] bật, mỗi khúc ≤ {a.gen_chunk} chuỗi · pad {proc.tokenizer.pad_token_id}",
+              flush=True)
+
     resume = a.resume
     if resume == "auto":
         # chỉ lấy điểm lưu ghi trọn: bị dừng lúc đang lưu thì thư mục cuối có thể thiếu tệp
@@ -508,6 +554,7 @@ def main():
     ap.add_argument("--max-steps", type=int, default=500)
     ap.add_argument("--resume", default=None)
     ap.add_argument("--no-q4", dest="q4", action="store_false")
+    ap.add_argument("--gen-chunk", type=int, default=0)  # 0 = sinh một lần như cũ
 
     a = ap.parse_args()
     a.adapter = a.adapter or os.path.join(a.bundle, "adapter_s1_seed101")

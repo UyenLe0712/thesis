@@ -44,6 +44,109 @@ mốc 11 h quanh bước ~490, lưu cuối 475 ⇒ cần thêm một commit ng�
    adapter gốc nên không dính lỗi chạy tiếp.
 5. Có số của `checkpoint-250` rồi mới quyết có chạy lại 250 → 500 (~12 h hạn mức) hay không.
 
+## ⚠️ SỰ CỐ 30/9 tối — lượt chạy lại 250 → 500 OOM ở bước ~443, điểm lưu cuối `checkpoint-425`
+
+Log: `torch.OutOfMemoryError … Tried to allocate 536.00 MiB … 14.10 GiB in use` trong
+`sdpa_attention_forward`, lúc 7,71 h. Trước đó 20 bước gần nhất: thưởng TB 0,537 · kl TB 0,0301 ·
+rỗng 0. Ô 4 không assert mã thoát nên notebook vẫn kết thúc bình thường và Output được lưu.
+
+Mảnh 536 MiB khớp cỡ ma trận attention của **một micro-batch 4 chuỗi** dài ~2.000 token (câu nhắc có
+ảnh nặng), không khớp khâu sinh 16 chuỗi cùng lúc (sẽ ~2 GiB) [suy]. Chạy tiếp nguyên cấu hình thì
+dữ liệu và RNG nạp lại từ điểm lưu, nhiều khả năng OOM lại đúng lô đó ⇒ **commit nối 425 → 500 đổi
+`--bs 4 --accum 4` thành `--bs 2 --accum 8`**:
+- `generation_batch_size` vẫn 16 = 2 câu nhắc × 8, `loss_type` là `dapo` (chuẩn hoá theo tổng token
+  của cả lô tích luỹ) ⇒ cùng một bước cập nhật, chỉ chia nhỏ forward/backward. Không đổi thuật toán.
+- Bộ lấy mẫu lặp mỗi lô `steps_per_generation` lần, nên bỏ qua 425 × 8 micro-batch vẫn đúng 425 nhóm
+  câu nhắc như cấu hình cũ.
+- Kiểm ở log: dòng `GRPOConfig:` phải có `per_device_train_batch_size': 2`, `gradient_accumulation_steps': 8`,
+  `generation_batch_size': 16`; dòng `[lô] mỗi lượt sinh 16 câu = 2 câu nhắc × 8`.
+- Chậm hơn một chút vì micro-batch nhỏ [chưa đo]. 75 bước × ~150–180 s ≈ 3,1–3,8 h.
+- Phải khai khi báo: bước 426–500 chạy ở micro-batch 2 (tương đương về toán, lệch số học fp16).
+
+### Lần 2 (1/10): `--bs 2 --accum 8` vẫn OOM ở bước ~443, cùng mảnh 536 MiB
+
+Micro-batch giảm một nửa mà mảnh cấp phát **không đổi** ⇒ phép tràn không chạy theo micro-batch
+(forward train và tính logp đều chia theo `per_device_train_batch_size`, `grpo_trainer.py:1746`).
+Còn lại khâu sinh: TRL 0.29.1 gọi `generate` **một lần cho cả 16 chuỗi** (`grpo_trainer.py:1330`) [suy,
+chưa thấy đầu traceback]. Lô cố định ⇒ OOM lặp lại đúng bước.
+⛔ Không dùng `steps_per_generation=4` để sinh 8 câu/lần: DAPO chuẩn hoá theo số token của **một lượt
+sinh** (`:1616`, `:2238`) nên hai lượt 8 câu cộng lại cho gradient ~2 lần so với một lượt 16 câu, tức
+đổi thuật toán.
+✅ Sửa: cờ mới **`--gen-chunk 8`** (md5 `07ea87b6d156d1faa391a4274dffd7cf`) bọc `model.generate`, sinh
+từng khúc ≤ 8 chuỗi (tách `pixel_values` theo `image_grid_thw`), đệm phải bằng `pad_token_id` rồi ghép
+lại. TRL vẫn nhận 16 chuỗi trong một lần gọi ⇒ lô cập nhật, sampler, chuẩn hoá DAPO không đổi. Kiểm
+CPU bằng mô hình giả 16 chuỗi, ảnh khác cỡ: kết quả ghép trùng tuyệt đối bản sinh một lần.
+Log phải có `[sinh theo khúc] bật …` rồi `[sinh theo khúc] 16 chuỗi → 2 khúc ≤ 8`.
+
+#### Ô 4 cho commit nối 425 → 500 (1/10, hạn mức còn 3h59m)
+
+Input: chỉ Output của version OOM lần 2 + ba dataset (script bản `07ea87b6…`).
+
+```python
+import subprocess, time, os, shutil, glob
+
+log = open(f"{W}/train.log", "a")
+cmd = ["python", "grpo_spice.py", "--train", "--no-q4", "--bs", "2", "--accum", "8", "--gen-chunk", "8",
+       "--bundle", BUNDLE, "--merged", MERGED, "--out", OUT, "--resume", "auto"]
+p = subprocess.Popen(cmd, cwd=W, stdout=log, stderr=subprocess.STDOUT, text=True,
+    env={**os.environ, "TQDM_DISABLE": "1", "HF_HUB_DISABLE_PROGRESS_BARS": "1",
+         "PYTORCH_ALLOC_CONF": "expandable_segments:True",
+         "PYTORCH_CUDA_ALLOC_CONF": "expandable_segments:True"})
+
+import ast, re, statistics as st
+TONG, CAT = 500, int(3600 * 3.6)    # hạn mức còn 3h59m (1/10) ⇒ dừng ở 3,6 h, chừa ~0,4 h để lưu Output
+
+def ck_moi():
+    c = sorted(glob.glob(f"{OUT}/checkpoint-*"), key=lambda s: int(s.rsplit("-", 1)[1]))
+    return os.path.basename(c[-1]) if c else "chưa có"
+
+def tinh_trang():
+    L = open(f"{W}/train.log", encoding="utf-8", errors="ignore").read().splitlines()
+    tiep = [l for l in L if l.startswith("[tiếp từ]")]
+    goc = int(re.findall(r"checkpoint-(\d+)", tiep[-1])[0]) if tiep and "checkpoint-" in tiep[-1] else 0
+    D = []
+    for l in L:
+        if l.startswith("{'loss'"):
+            try: D.append({k: float(v) for k, v in ast.literal_eval(l).items() if re.match(r"^[-\d.e+na]+$", str(v))})
+            except Exception: pass
+    sp = [l for l in L if l.startswith("[spice]")][-20:]
+    thuong = [float(re.search(r"thưởng TB (-?[\d.]+)", l).group(1)) for l in sp]
+    tu = [float(re.search(r"số từ TB ([\d.]+)", l).group(1)) for l in sp]
+    rong = sum(int(re.search(r"rỗng (\d+)", l).group(1)) for l in sp)
+    buoc = goc + len(D)
+    msg = f"{(time.time()-T_NB)/3600:5.2f} h · bước {buoc}/{TONG} (tiếp từ {goc}) · lưu cuối {ck_moi()}"
+    nd = [l for l in L if l.startswith("[nạp default]")]
+    if nd: msg += f"\n      {nd[-1][:90]}"
+    if any(l.startswith("[sinh theo khúc] 16") for l in L): msg += "\n      sinh theo khúc: ĐANG CHẠY (16 → 2 khúc)"
+    elif any(l.startswith("[sinh theo khúc] bật") for l in L): msg += "\n      sinh theo khúc: đã bật, chưa sinh lần nào"
+    else: msg += "\n      ⚠️ chưa thấy dòng [sinh theo khúc] — kiểm md5 / cờ --gen-chunk"
+    if D:
+        t_tr = time.time() - T_TRAIN
+        spb = t_tr / len(D)                                   # s/bước lượt này (gồm cả nạp mô hình, hơi bi quan)
+        con_tong = (TONG - buoc) * spb / 3600
+        dung_o = min(TONG, buoc + int(max(0, CAT - (time.time() - T_NB)) / spb))
+        g0 = sum(d.get("grad_norm", 1) < 1e-3 for d in D[-20:])
+        kl = [d["kl"] for d in D[-20:] if "kl" in d]
+        msg += (f"\n      {spb:.0f} s/bước · còn ~{con_tong:.1f} h tới 500 · commit này dừng quanh bước {dung_o}"
+                f"\n      20 bước gần nhất: thưởng TB {st.mean(thuong):.3f} · số từ TB {st.mean(tu):.1f} · rỗng {rong} · "
+                f"bước grad≈0 {g0}/20 · kl TB {st.mean(kl) if kl else float('nan'):.4f}")
+        if any(v != v for d in D[-5:] for v in d.values()): msg += "\n      ⚠️ có nan trong 5 bước cuối"
+    if any("Traceback" in l or "OutOfMemory" in l for l in L[-80:]): msg += "\n      ⚠️ có Traceback/OOM ở cuối log"
+    return msg
+
+T_TRAIN = time.time()
+while p.poll() is None:
+    time.sleep(120)
+    print(tinh_trang(), flush=True)
+    if time.time() - T_NB > CAT and p.poll() is None:
+        print(f"⛔ đã {CAT/3600:.1f} h từ đầu notebook, dừng để Output kịp lưu", flush=True)
+        p.terminate(); p.wait()
+
+print("mã thoát", p.returncode, "· điểm lưu cuối", ck_moi())
+print("\n".join(open(f"{W}/train.log", encoding="utf-8", errors="ignore").read().splitlines()[-40:]))
+shutil.rmtree(MERGED, ignore_errors=True)   # bỏ bản hoà ~7 GB khỏi Output
+```
+
 ## Dự kiến
 
 | commit | từ bước | tới bước (điểm lưu cuối) | giờ GPU |
@@ -129,7 +232,7 @@ SRC = [p for p in glob.glob("/kaggle/input/**/grpo_spice.py", recursive=True)
 assert len(SRC) == 1, f"DỪNG: cần đúng một grpo_spice.py của dataset grpo-spice-script, thấy {SRC}"
 for f in ("grpo_spice.py", "build_branch_data.py"):
     shutil.copy(os.path.join(os.path.dirname(SRC[0]), f), f"{W}/{f}")
-assert md5(f"{W}/grpo_spice.py") == "d99d03c0c01718283e84ac3851ef5591", "DỪNG: grpo_spice.py trên Kaggle là bản cũ, New Version lại dataset"
+assert md5(f"{W}/grpo_spice.py") == "07ea87b6d156d1faa391a4274dffd7cf", "DỪNG: grpo_spice.py trên Kaggle là bản cũ, New Version lại dataset"
 assert md5(f"{W}/build_branch_data.py") == "619e63e123a6dbf60086e65ee94a3912", "DỪNG: build_branch_data.py lệch bản máy nhà"
 MERGED = f"{W}/s1_merged"; OUT = f"{W}/grpo_spice"
 os.makedirs(OUT, exist_ok=True)
