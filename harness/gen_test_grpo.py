@@ -14,6 +14,9 @@ trên bước CLICK (là bước sẽ chấm) thay vì 20 bản ghi đầu bất
   # lượt thật: 4.463 bước click, nối tiếp được
   python gen_test_grpo.py --bundle B --merged M --ckpt CK --recs test.jsonl --ocr ocr.jsonl \
          --images IMG --tap-only --out pred_ck500_test.jsonl --no-q4
+  # bước KHÔNG chạm (action 261 §5.2): 2.495 bước, chỉ cần ảnh không chạm
+  python gen_test_grpo.py --bundle B --merged M --ckpt CK --recs test.jsonl --ocr ocr.jsonl \
+         --images IMG_NONTAP --non-tap --out pred_ck500_test_nontap.jsonl --no-q4
   # chạy khô trên CPU (máy nhà): chỉ dựng câu nhắc, không nạp mô hình
   python gen_test_grpo.py --bundle x --merged x --recs ... --ocr ... --images ... --tap-only --dry --out /dev/null
 """
@@ -36,6 +39,7 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--n", type=int, default=0)
     ap.add_argument("--tap-only", action="store_true")
+    ap.add_argument("--non-tap", action="store_true", help="chỉ 2.495 bước KHÔNG chạm (phần bù của --tap-only)")
     ap.add_argument("--no-q4", dest="q4", action="store_false")
     ap.add_argument("--dry", action="store_true")
     a = ap.parse_args()
@@ -46,6 +50,9 @@ def main():
     if a.tap_only:
         rows = [r for r in rows if r["action"].get("action_type") in TAPT and "x" in r["action"]]
         assert len(rows) == 4463, len(rows)
+    elif a.non_tap:
+        rows = [r for r in rows if not (r["action"].get("action_type") in TAPT and "x" in r["action"])]
+        assert len(rows) == 2495, len(rows)
     if a.n:
         rows = rows[:a.n]
     ocr = {o["image"]: o for o in map(json.loads, open(a.ocr, encoding="utf-8"))}
@@ -53,6 +60,7 @@ def main():
     print(f"[dữ liệu] {a.recs} · {len(rows)} bước · thiếu OCR {sum(r['image'] not in ocr for r in rows)}"
           f" · thiếu ảnh {len(thieu)}", flush=True)
     assert not thieu, f"⛔ thiếu ảnh, ví dụ {thieu[:3]}"
+    assert not (a.non_tap and any(r["image"] not in ocr for r in rows)), "⛔ thiếu OCR ở bước không chạm"
 
     def msg_of(r):
         body = prompt_body({"goal": r["goal"], "history": r.get("history") or []}, ocr.get(r["image"]))
