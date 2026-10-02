@@ -110,6 +110,48 @@ môi trường đã sinh số 66,33 của luận văn (`bert_score` 0.3.12 · tr
    tức đề xuất §5.1 của `report/259` đã bị bác).
 5. Dừng train. Không chạy lại test, không đổi checkpoint.
 
+## 6. KẾT QUẢ bước KHÔNG chạm (2/10, Kaggle T4 2,0 h + đọc WSL) — ⛔ SCROLL RỚT
+
+Tệp: `runs/grpo_spice/pred_ck500_test_nontap.jsonl` (2.495 câu, 0 rỗng, `[điểm lưu] …grpo-spice-ck500`,
+2,94 s/bước) · `nontap_ck500_doc.json`. Kiểm hoà 20 bước không chạm: **20/20** S1-hoà trùng S1 công bố
+(ở bước click là 16/20) ⇒ lẫn biến đường sinh ở đây gần như không có, Δ dưới đây là của GRPO.
+
+Thước: `canon_action(câu) == canon_action(câu chuẩn)`, `strict_back`, cụm app, ghép cặp.
+
+| nhóm | n | S1/101 | ck500 | Δ | KTC95 | phá / cứu |
+|---|---:|---:|---:|---:|---|---|
+| **toàn bộ** | 2.495 | 85,97 | 84,29 | **−1,68** | [−2,76; −0,62] | 108 / 66 |
+| **scroll** | 755 | 83,97 | 77,75 | **−6,23** | [−8,30; −4,31] | 51 / 4 |
+| navigate_back | 270 | 72,96 | 67,04 | −5,93 | [−9,42; −2,58] | 19 / 3 |
+| input_text | 494 | 81,58 | 79,55 | −2,02 | [−5,59; +1,42] | 36 / 26 |
+| wait | 505 | 90,69 | 95,25 | +4,55 | [+2,56; +6,73] | 2 / 25 |
+| open_app | 469 | 96,16 | 97,87 | +1,71 | [+0,65; +2,94] | 0 / 8 |
+
+**Luật khoá trước:** toàn bộ cận dưới −2,76 ≥ −3 ⇒ ĐẠT (sát ngưỡng) · scroll Δ −6,23 < −3 ⇒ **RỚT**
+⇒ **không chốt ck500 là mô hình cuối theo §5.3; phải khai là tác hại ở bước không chạm.**
+
+**Cơ chế (đo):** ck500 dịch thiên hướng về câu *chạm*.
+- 51 bước scroll bị phá: 47 thành câu chạm (*"Swipe up"* → *"Click on technology"*), 4 thành quay lại.
+  Câu ck500 quy về chạm trên 755 bước scroll: S1 117 → ck500 167.
+- 19/19 bước quay lại bị phá thành câu chạm, phần lớn *"Open the X app"* / *"Go to … tab"*.
+- input_text: *"Type X in the search bar"* → *"Search for X"* (quy về chạm) ở 32/36 bước phá.
+- Hai nhóm "được" cũng là cùng một dịch chuyển: wait có câu chuẩn phần lớn là câu chạm, ck500 cứu
+  25 bước mà S1 viết *swipe*; ở bước click (`report/259`) chính dịch chuyển này là +28 bước action_ok.
+- Theo toàn tập kiểm 6.958 bước, ròng đúng loại thao tác: bước click +72 (83/11), bước không chạm
+  −42 (66/108) ⇒ +30 bước. **Một nửa mức tăng action_ok ở bước click được trả lại ở bước không chạm.**
+
+**Đã loại:** "thưởng SPICE mù ở câu ngắn kiểu *Swipe up*" — SPICE câu chuẩn tự so ở 101 bước scroll
+có câu chuẩn ≤ 3 từ chỉ 6,9 (đúng là mù), nhưng mức giảm không dồn vào nhóm đó (−7,9 vs −6,0 ở câu
+dài). Trên bước scroll SPICE còn **thưởng câu scroll cao hơn** câu chạm (ck500 66,3 vs 14,0) ⇒ thưởng
+tại bước scroll không đẩy về chạm. Tập câu nhắc GRPO có đủ loại thao tác (4.000 dòng: click 2.549 ·
+scroll 445 · wait 292 · input_text 286 · open_app 276 · navigate_back 144). [suy] Dịch chuyển học từ
+64% câu nhắc click, nơi sửa *swipe → click* được thưởng, rồi lan sang thiên hướng chung.
+
+**Hệ quả cho luận văn (chờ chat lập kế hoạch quyết):** ck500 vẫn hơn S1 ở 13 cột bước click, nhưng
+không đạt điều kiện chốt mô hình cuối. Cách trình hợp lệ: báo ck500 như một nhánh RL thưởng metric
+câu, in **kèm** hàng bước không chạm (scroll −6,23) cạnh mọi số bước click — đúng cam kết noharm
+của `report/106` mục 3. Tiêu đề 60,07 (GRPO-point) chưa có số bước không chạm để so ((x20b) vẫn nợ).
+
 ## Phụ lục — bản Mac
 
 Script `_so_metric_ck500.py` và `_exports/so_metric_ck500.json` nằm ngoài clone trên máy Mac
