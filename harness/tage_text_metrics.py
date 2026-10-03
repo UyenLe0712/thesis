@@ -6,6 +6,8 @@
 Nhánh: S1/101 greedy (k0, lượt 251) · ck500 · gold · neg · none · none+cổng · pred · pred+cổng.
 Câu của nhánh +cổng: nhận câu sửa khi lp_edit − lp_draft > τ, τ chọn chéo theo episode — đúng hàm
 `cong` của `tage_doc.py` (giữ câu nháp thì dùng câu và kết quả chấm của ck500).
+Thước vị trí: exec · D.3 · AitW đầy đủ · ±14% theo trục · AitW khoảng cách (hàm của `luat_d3.py`,
+`luat_aitw_day_du.py`, hộp vàng từ `train_ac/descriptors.jsonl`).
 Thước chữ: BLEU-4 · METEOR 1.5 · ROUGE-L · CIDEr-D · SPICE (pycocoevalcap, mức kho, như
 `text_metrics_coco.py`) · chrF · BERTScore (đúng `text_metrics_them.tinh`). Một câu tham chiếu mỗi bước.
 Δexec so S1: KTC95 bootstrap theo episode (như `tage_doc.ktc`).
@@ -75,6 +77,11 @@ def main():
         assert sum(int(S[t + "+cổng"][k]["executable"]) for k in keys) == sum(kq.values()), "lệch tage_doc.cong"
     assert all(set(v) == set(keys) for v in S.values())
     ref = [C[k]["gold_instruction"] for k in keys]
+    # hộp phần tử vàng của val C1 (tách từ tập dạy) ⇒ descriptors của train_ac; thiếu hộp tính trượt như luat_d3
+    import luat_d3 as L, luat_aitw_day_du as A
+    L.D = {(d["episode_id"], d["step_id"]): d for d in map(json.loads, open(
+        ROOT / "harness/dg1_cache/train_ac/descriptors.jsonl", encoding="utf-8")) if (d["episode_id"], d["step_id"]) in C}
+    print(f"[hộp] {sum(bool(L.D.get(k, {}).get('box')) for k in keys)}/{len(keys)} bước có hộp vàng", flush=True)
     s1 = {k: int(S["S1/101"][k]["executable"]) for k in keys}
 
     them = None
@@ -85,7 +92,12 @@ def main():
     for ten, R in S.items():
         hyp = [R[k]["sent"] or "" for k in keys]
         x = {k: int(R[k]["executable"]) for k in keys}
+        vt = [L.luat(R[k], k) for k in keys]
         o = {"exec": 100 * sum(x.values()) / len(keys),
+             "D.3": 100 * sum(v["d3"] for v in vt) / len(keys),
+             "AitW đầy đủ": 100 * sum(A.aitw_full(R[k], k) for k in keys) / len(keys),
+             "±14% theo trục": 100 * sum(v["d14_truc"] for v in vt) / len(keys),
+             "AitW khoảng cách": 100 * sum(v["aitw"] for v in vt) / len(keys),
              "action_ok": 100 * sum(int(R[k]["action_ok"]) for k in keys) / len(keys),
              "hit_±14%": 100 * sum(int(R[k]["hit_disk"]) for k in keys) / len(keys)}
         d = {k: x[k] - s1[k] for k in keys}
