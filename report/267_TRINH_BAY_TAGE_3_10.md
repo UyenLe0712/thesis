@@ -245,7 +245,30 @@ cao hơn ở 13/13 cột; bước không chạm −1,68 (scroll −6,23).
 - ck500 trên test: một hạt giống; chưa có nhánh "train thêm cùng số bước không GRPO"; đường sinh khác S1
   công bố (16/20 câu trùng khi kiểm).
 
-## 6. Tệp
+## 6. Trạng thái và các hướng cải thiện đã đề xuất
+
+**TAGE chưa chạy trên tập test** (3/10). Runbook Kaggle dạng commit đã sẵn: `harness/kaggle_tage_test.md`,
+gói `_bundles/tage-test-script/` (thêm chế độ `--rows/--shard` cho `tage_val.py`, tệp `test_rows.jsonl`
+4.463 hàng click). Thiết kế: τ chọn trên toàn bộ 249 bước val (`τ_pred = 0,73767`, `τ_none = −0,04327`) rồi áp
+nguyên lên test; chỉ chấm UGround những câu cổng nhận sửa, phần còn lại gộp từ chấm ck500 test đã có (cùng
+`score_run.py`, cùng T4). Commit 1 = nhánh pred; commit 2 (tuỳ chọn) = nhánh none.
+
+**Đã thử, không tốn GPU, không giúp:** cổng theo đồng thuận hai bộ định vị (nhận câu pred khi `loc_g` và
+`loc_d` chỉ cùng chỗ, ngưỡng 0,02/0,05/0,1 thang chuẩn hoá) ⇒ exec 161–162/249, thấp hơn ck500 165. Kể cả trên
+196 bước vùng cắt chứa phần tử vàng, câu pred cứu 14 phá 11 so ck500.
+
+**Các hướng đề xuất, xếp theo chi phí** (thời gian là ước lượng, chưa đo):
+
+| # | việc | nhắm vào (số đo trên val) | chi phí |
+|---|---|---|---|
+| 1 | Dạy bộ biên tập **giữ câu nháp khi câu nháp đã đúng**: chấm 2.554 câu nháp train bằng UGround; câu đã đúng thì đích = chính câu nháp | 11 bước bị phá dù vùng cắt chứa phần tử vàng | ~1 h chấm + ~4,8 h train L4 |
+| 2 | Dạy bộ biên tập **chịu được vùng cắt sai**: thêm mẫu vùng cắt lệch (kiểu lỗi của bộ định vị), đích vẫn là câu chuẩn | 10 bước bị phá ở 53 bước vùng cắt sai | ~4,8 h train |
+| 3 | Train `ed_gold` thêm epoch 2 (nll vàng ~0,50, biên hoạt 0,5–0,65, chưa bão hoà) | chất lượng sửa câu nói chung | ~4,8 h |
+| 4 | Bộ định vị train trên ~41 nghìn bước click của tập dạy thay vì 2.554 | 53 bước bộ định vị không tìm ra phần tử (gold +13 ở đó) | nhiều giờ, chưa ước |
+| 5 | **Chạy TAGE trên tập test** (runbook trên) | có số test, so S1/ck500 trên 4.463 bước | ~6–9 h Kaggle T4 ×2 (commit 1) |
+| 6 | Cột *AitW cận trên* cho bảng val (cần mọi hộp bấm được của màn val) | đủ 13 cột như bảng test | 0 GPU |
+
+## 7. Tệp
 
 - GRPO: `runs/grpo_spice/` · `report/254`, `259`, `261`, `262`.
 - TAGE: `runs/tage_val/that/` (score `*_raw.jsonl`, `pred_*_meta.jsonl`, `loc_val_*.jsonl`, log, `so_s1.json`)
