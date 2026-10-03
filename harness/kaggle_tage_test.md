@@ -27,7 +27,7 @@ mất trắng output); phần dở được nối tiếp ở commit sau.
 
    | tệp | md5 |
    |---|---|
-   | `tage_val.py` | `1ee4b561176e13397ed6b45a54ac0d71` |
+   | `tage_val.py` | `2a6aa15eabf4d53bfca67ae9abb580ee` |
    | `grpo_spice.py` | `07ea87b6d156d1faa391a4274dffd7cf` |
    | `build_branch_data.py` | `619e63e123a6dbf60086e65ee94a3912` |
    | `test_rows.jsonl` (4.463 hàng click, có w, h) | `c1b05298af0912348002b25382d9d392` |
@@ -56,7 +56,7 @@ Phải thấy **2** card Tesla T4.
 T0 = time.time()
 W = "/kaggle/working"
 md5 = lambda p: hashlib.md5(open(p, "rb").read()).hexdigest()
-MD = {"tage_val.py": "1ee4b561176e13397ed6b45a54ac0d71", "grpo_spice.py": "07ea87b6d156d1faa391a4274dffd7cf",
+MD = {"tage_val.py": "2a6aa15eabf4d53bfca67ae9abb580ee", "grpo_spice.py": "07ea87b6d156d1faa391a4274dffd7cf",
       "build_branch_data.py": "619e63e123a6dbf60086e65ee94a3912", "test_rows.jsonl": "c1b05298af0912348002b25382d9d392",
       "pred_ck500_test.jsonl": "328847ac96fa3104f76cd997f4091bcd", "tage_neg.jsonl": "75539cdc533ecaa578d6067e3fbcd8a5"}
 SRC = [os.path.dirname(p) for p in glob.glob("/kaggle/input/**/test_rows.jsonl", recursive=True)]

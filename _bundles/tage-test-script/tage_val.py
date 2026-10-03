@@ -730,13 +730,13 @@ def main():
         assert a.drafts and a.out and a.crop in ("gold", "none")
         train_editor(a)
     elif a.edit_val:
-        assert a.c1 and a.ck500_pred and a.editor and a.out and (a.crop != "pred" or a.points)
+        assert (a.c1 or a.rows) and a.ck500_pred and a.editor and a.out and (a.crop != "pred" or a.points)
         edit_val(a)
     elif a.train_locator:
         assert a.out and (not a.with_draft or a.drafts)
         train_locator(a)
     elif a.locate_val:
-        assert a.c1 and a.ck500_pred and a.locator and a.out
+        assert (a.c1 or a.rows) and a.ck500_pred and a.locator and a.out
         locate_val(a)
     else:
         ap.error("chọn một chế độ")
