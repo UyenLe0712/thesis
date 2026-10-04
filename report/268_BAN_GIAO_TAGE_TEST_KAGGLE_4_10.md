@@ -39,7 +39,7 @@ commit này làm Input).
 
 ## 5. Sau khi commit xong (0 GPU, WSL)
 
-1. Tải `tage_test_out/` về **`runs/tage_test/`**.
+1. Tải `tage_test_out.zip` (runbook Ô 6 hoặc notebook CPU nếu commit thiếu Ô 6), `unzip -d runs/tage_test/`.
 2. Gộp: bước cổng nhận sửa lấy từ raw mới; bước còn lại lấy từ `runs/grpo_spice/score_ck500_test_raw.jsonl`.
 3. So S1/101 (và ck500) trên 4.463 bước, đủ các cột như `report/261` (exec, D.3, AitW, ±14%, văn bản), KTC bằng
    `score_run.cluster_bootstrap`.

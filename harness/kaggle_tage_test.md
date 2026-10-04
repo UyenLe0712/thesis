@@ -205,6 +205,45 @@ print(f"XONG · {(time.time()-T0)/3600:.2f} h", flush=True)
 `--n 99999` là để bản `score_run.py` cũ chấm một tập con có chủ ý (không có cờ này nó dừng khi thiếu > 1%
 bước). Bước nào không có trong tệp thì không chấm — phần đó gộp từ ck500 test trên WSL.
 
+## Ô 6 — đóng gói một tệp zip để tải về (chạy cuối, mọi commit)
+
+`/kaggle/working` còn chứa `s1_merged/` (mô hình hoà, vài GB) và `thesis/` (gói mã) ⇒ tab Output có rất
+nhiều tệp. Ô này gói **chỉ** `tage_test_out/` thành một tệp `tage_test_out.zip`; tải đúng tệp đó.
+
+```python
+import zipfile, glob
+ZP = f"{W}/tage_test_out.zip"
+with zipfile.ZipFile(ZP, "w", zipfile.ZIP_DEFLATED) as z:
+    for p in sorted(glob.glob(f"{O}/**", recursive=True)):
+        if os.path.isfile(p):
+            z.write(p, os.path.relpath(p, W))
+with zipfile.ZipFile(ZP) as z:
+    n = z.namelist()
+print(f"ZIP {ZP} · {len(n)} tệp · {os.path.getsize(ZP)/2**20:.1f} MB", flush=True)
+for x in n: print("  ", x, flush=True)
+```
+
+### Commit đã chạy xong mà chưa có Ô 6
+
+Không cần chạy lại commit. Tạo notebook mới, **Accelerator: None** (CPU, không tốn hạn mức GPU) → *Add Input*
+→ tab *Your Work / Notebooks* → chọn notebook TAGE test (output của version vừa chạy) → chạy ô:
+
+```python
+import zipfile, glob, os
+src = glob.glob("/kaggle/input/**/tage_test_out", recursive=True)
+assert len(src) == 1, src
+ZP = "/kaggle/working/tage_test_out.zip"
+with zipfile.ZipFile(ZP, "w", zipfile.ZIP_DEFLATED) as z:
+    for p in sorted(glob.glob(f"{src[0]}/**", recursive=True)):
+        if os.path.isfile(p):
+            z.write(p, os.path.join("tage_test_out", os.path.relpath(p, src[0])))
+print(src[0], "→", ZP, len(zipfile.ZipFile(ZP).namelist()), "tệp",
+      f"{os.path.getsize(ZP)/2**20:.1f} MB", flush=True)
+```
+
+Tải `tage_test_out.zip` ở khung *Output* bên phải (⋮ → Download), rồi trên WSL:
+`unzip tage_test_out.zip -d runs/tage_test/` ⇒ ra `runs/tage_test/tage_test_out/`.
+
 ## Chạy
 
 1. **Thử tương tác** (`TEST = True`): *Run All*, khoảng 15–25 phút (hoà S1 + 8 bước định vị + 8 bước sửa
@@ -216,7 +255,7 @@ bước). Bước nào không có trong tệp thì không chấm — phần đó
 4. **Bị dừng ở mốc 10,5 h** (`⛔ tới mốc 10,5 h`): mở notebook → *Add Input* → output của version vừa chạy
    (thư mục `tage_test_out/`) → Save & Run All lần nữa. Ô 2 tự chép phần dở về, `tage_val.py` bỏ qua các bước
    đã có.
-5. Tải từ Output về **`runs/tage_test/`** trên WSL: cả thư mục `tage_test_out/`. Báo trợ lý để gộp với
+5. Tải **một tệp `tage_test_out.zip`** (Ô 6) về, `unzip … -d runs/tage_test/`. Báo trợ lý để gộp với
    `score_ck500_test_raw.jsonl` và so S1/101 trên đủ 13 cột (0 GPU).
 
 ## Commit 2 (tuỳ chọn) — đối chứng `none` (sửa câu không vùng cắt)
