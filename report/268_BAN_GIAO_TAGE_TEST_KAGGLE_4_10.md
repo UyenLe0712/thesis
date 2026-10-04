@@ -11,7 +11,7 @@ Số val cấm trích vào luận văn. TAGE **chưa có số test** tại thờ
 | Adapter `ed_gold`, `loc_g`, `ed_none` nén từ Drive thành `tage-adapters.zip` (ZIP_STORED, arcname `{v}/{tệp}`, 6 tệp) → dataset Kaggle `tage-adapters` | xong (user làm) |
 | Chạy thử tương tác trên Kaggle, `TEST = True` (`--n 4` mỗi shard ⇒ 8 bước) | **đạt toàn chuỗi**, xem §2 |
 | Lỗi `AssertionError` ở `tage_val.py:739`: phép kiểm tham số của `--locate-val`/`--edit-val` đòi `--c1`, chế độ `--rows` không có | **đã sửa** `(a.c1 or a.rows)` ở cả hai chế độ, commit `6155433`; md5 mới `2a6aa15eabf4d53bfca67ae9abb580ee` (đã cập nhật ở bảng runbook và dict `MD` của Ô 2) |
-| Commit 1 (nhánh pred, `TEST = False`) | **chưa xác nhận đã bấm** — hỏi user |
+| Commit 1 (nhánh pred, `TEST = False`) | **xong 4/10**, tệp ở `runs/tage_test/`, kết quả `report/269` |
 
 ## 2. Kết quả lượt thử (8 bước, chỉ để kiểm đường ống, không đọc thành số)
 

@@ -247,7 +247,7 @@ cao hơn ở 13/13 cột; bước không chạm −1,68 (scroll −6,23).
 
 ## 6. Trạng thái và các hướng cải thiện đã đề xuất
 
-**TAGE chưa chạy trên tập test** (3/10). Lượt thử tương tác 8 bước trên Kaggle đạt toàn chuỗi (4/10, bàn giao `report/268`). Runbook Kaggle dạng commit đã sẵn: `harness/kaggle_tage_test.md`,
+**Cập nhật 4/10 — đã có số test (`report/269`):** TAGE pred+cổng exec **60,23** vs ck500 60,65 (Δ −0,43 [−0,87; +0,02], cứu 48 phá 67) · vs S1/101 +1,12 [+0,31; +1,94]. Mức tăng trên val không lặp lại: trên test cổng τ nhận 219 câu mà 139 câu vùng cắt sai (phá 60). Đoạn dưới là thiết kế lúc chuẩn bị. Runbook Kaggle dạng commit đã sẵn: `harness/kaggle_tage_test.md`,
 gói `_bundles/tage-test-script/` (thêm chế độ `--rows/--shard` cho `tage_val.py`, tệp `test_rows.jsonl`
 4.463 hàng click). Thiết kế: τ chọn trên toàn bộ 249 bước val (`τ_pred = 0,73767`, `τ_none = −0,04327`) rồi áp
 nguyên lên test; chỉ chấm UGround những câu cổng nhận sửa, phần còn lại gộp từ chấm ck500 test đã có (cùng
