@@ -196,7 +196,7 @@ Mã: `harness/build_branch_data.py`.
 | Nhánh B-infer | `harness/infer_branch.py --b-infer` | không huấn luyện; nhét danh sách phần tử của màn vào đầu vào lúc chạy |
 | **S3-pilot (mức 2)** | — | ⚠️ **CHƯA CÓ MÃ.** Mới có dữ liệu (`desc_neg`, dựng được 995/1074 bước), chưa có hàm mất mát. Cố ý chưa viết: nằm sau cổng C, viết bây giờ thành thêm một đoạn mã chưa từng chạy. Không kịp làm thì phải khai là **nhánh đã đăng ký nhưng không chạy** |
 | Hàm chấm từng bước | `harness/metric_exec.py` | có sẵn từ trước |
-| Chạy trên máy thuê | `harness/run_on_rented.sh` | một lệnh, tự nối lại khi máy rẻ bị ngắt |
+| Chạy trên máy thuê | `harness/runbook/run_on_rented.sh` | một lệnh, tự nối lại khi máy rẻ bị ngắt |
 
 **Kiểm chạy được (cập nhật 6/8 sau vòng rà):**
 
@@ -338,7 +338,7 @@ sai**, tìm ra nhờ đi kiểm chứ không nhờ báo lỗi.
 | **Phát biểu về năng lực mô hình mà không làm phép chia** (18/8) | Trợ lý nói *"tỉ lệ dữ liệu/tham số ~4:1 nên mô hình thiếu năng lực, quá khớp không đáng lo"*. Chia ra thì ngược: **14.966.784 / 64.567 = 232 tham số mỗi mẫu**, tham số nhiều HƠN mẫu. Người dùng hỏi lại *"bạn chắc nha"* nên mới lộ; gật theo thì con số 4:1 đã vào luận văn | rút lập luận, thay bằng **bằng chứng đo được**: loss đuôi dừng ở 0,4486/0,4467 (không tiến về 0) và điểm ngoài mẫu 59,12/59,64 ổn định qua hai hạt giống. ⭐ **Bài học: mọi tỉ lệ nêu ra phải chia trước khi phát biểu** — và câu hỏi *"bạn chắc nha"* đáng được đối xử như một phép kiểm, không phải như một lời trấn an cần đáp |
 | ⛔ **Dựng PDF bằng lệnh KHÔNG TỒN TẠI, và nuốt lỗi nên không ai biết** (18/8) | Trợ lý gọi `xelatex ... >/dev/null 2>&1` để dựng `paper/fair2026/main.tex`, rồi đọc số trang từ `main.pdf`. Máy này **không có `xelatex`** — kho dùng **`tectonic`** (`thesis/build.sh`, `paper/fair2026/README.md` đều ghi đúng). `command not found` bị `2>&1 >/dev/null` nuốt sạch, nên mọi lần báo *"8 trang, 0 overfull"* đều là đọc **PDF cũ hai ngày trước**. Lặp lại **hơn mười lần trong một ngày**, che mất việc bài đã phình lên **10 trang** trong khi giới hạn là 8 | dựng bằng `tectonic -X compile main.tex --keep-logs`, **KHÔNG chuyển hướng stderr**; và trước khi tin số trang thì **kiểm `ls -la main.pdf` xem mốc giờ có phải vừa xong không**. ⭐ **Bài học: lệnh dựng tài liệu phải đọc từ `build.sh`/README của kho, đừng tự chế** — và `>/dev/null 2>&1` trên một lệnh mình chưa từng chạy ở máy này là tự bịt mắt |
 | ⭐ **Phép kiểm tự che mắt mình bằng `.strip()`** (17/8) | script ghép kết quả có `assert` hỏi *"bộ trỏ tất định không"* (cùng câu cùng ảnh ⇒ cùng toạ độ). Nó **đỏ ngay lần chạy đầu**: 6/589 lệch, và chẩn đoán đầu là *"bộ trỏ không tất định"* — **sai**. Chính bản `assert` đó so chuỗi bằng `.strip()`, tức **tự tay xoá đúng thứ nó cần phát hiện**. Nếu tin chẩn đoán đầu thì đã trả 1 giờ GPU để chấm lại một thứ không cần chấm | `tu_kiem()` so chuỗi **nguyên xi**. **Bài học: phép kiểm không được dùng chính phép biến đổi mà nó cần phát hiện** |
-| **Lượt chấm Kaggle treo 7 giờ vì log ngập** (17/8) | `tqdm` ngoài terminal in mỗi cập nhật thành một dòng (>1.400 dòng cho một lần nạp mô hình, × 4 lần); Kaggle chặn log khi vượt trần ⇒ **tiến trình kẹt cứng ở lệnh ghi stdout**. Bằng chứng: log chỉ có hai mục `59.8s` và `25560.4s`, **nội dung giống hệt nhau**, cùng cụt giữa chữ ở `Loading weights: 29% \| 213/729`. Commit bị huỷ thì Kaggle **không lưu** `/kaggle/working` ⇒ mất trắng 7 giờ quota | vá **gốc**: tắt thanh tiến trình **và** cho tiến trình con ghi ra **tệp** thay vì in qua ống log; cộng nhịp sống in từ notebook mỗi 2 phút, độc lập với log con. Chạy **tương tác** cho lượt đầu. `harness/kaggle_pheA_CHAY_LAI.md`. Chi phí biết mình sai: **7 giờ → 4 phút** |
+| **Lượt chấm Kaggle treo 7 giờ vì log ngập** (17/8) | `tqdm` ngoài terminal in mỗi cập nhật thành một dòng (>1.400 dòng cho một lần nạp mô hình, × 4 lần); Kaggle chặn log khi vượt trần ⇒ **tiến trình kẹt cứng ở lệnh ghi stdout**. Bằng chứng: log chỉ có hai mục `59.8s` và `25560.4s`, **nội dung giống hệt nhau**, cùng cụt giữa chữ ở `Loading weights: 29% \| 213/729`. Commit bị huỷ thì Kaggle **không lưu** `/kaggle/working` ⇒ mất trắng 7 giờ quota | vá **gốc**: tắt thanh tiến trình **và** cho tiến trình con ghi ra **tệp** thay vì in qua ống log; cộng nhịp sống in từ notebook mỗi 2 phút, độc lập với log con. Chạy **tương tác** cho lượt đầu. `harness/runbook/kaggle_pheA_CHAY_LAI.md`. Chi phí biết mình sai: **7 giờ → 4 phút** |
 
 ---
 
@@ -589,7 +589,7 @@ hơn huấn luyện" — phải khai cả ba.
 
 ## 14. Rà runbook trước khi tiêu tiền — 9/8/2026
 
-Sau khi chốt dùng Colab Pro thay vì thuê máy, soạn `harness/run_on_colab.md` rồi rà lại ba lượt.
+Sau khi chốt dùng Colab Pro thay vì thuê máy, soạn `harness/runbook/run_on_colab.md` rồi rà lại ba lượt.
 Mục này ghi những gì lượt rà tìm ra, vì chúng là loại **thiếu sót trong quy trình**, khác với
 lỗi trong mã ở mục 8 — nhưng hậu quả bằng nhau.
 

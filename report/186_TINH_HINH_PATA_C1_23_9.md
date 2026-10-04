@@ -235,7 +235,7 @@ Các điều khác đọc được:
 P2 đạt: hash 4/4 · 40.189 chạm · 39.432 kl_ok · đủ 41.191 ảnh. **L4: 50,6 s/update, VRAM 6,49 GB**
 (lô 4 × gộp 4) ⇒ S ≈ 35 h. A100 không kết nối được ⇒ **user quyết chạy S trên L4, lưu điểm lưu, hôm sau
 đo A100 và nếu đạt luật 1,5× thì chạy tiếp từ điểm lưu L4 trên A100.** Quy trình đổi máy ở
-`harness/colab_pata_c1.md` mục *Đo máy thực tế + đổi máy giữa lượt*.
+`harness/runbook/colab_pata_c1.md` mục *Đo máy thực tế + đổi máy giữa lượt*.
 
 ### 3.10 Tốc độ trên A100 và thủ phạm (23–24/9) — [đo]
 
@@ -288,7 +288,7 @@ P2 đạt: hash 4/4 · 40.189 chạm · 39.432 kl_ok · đủ 41.191 ảnh. **L4
   ≤ 1,5× S, rỗng ≤ S + 1 điểm · (2) CE_val(J) ≤ 1,25× CE_val(S), KL_val(J) ≤ 1,10× KL_val(H), ba cận
   dưới 90% > 0 · (3) exec(C1) ≥ exec(S) · (4) exec(C1 bật) > exec(C1 tắt) · (5) cận dưới 90% của
   P(về D | ép D) − P(về D | ép R) > 0. Chạy thử trên dữ liệu giả: chạy thông.
-- `harness/kaggle_pata_cham_val600.md` (P10): chấm 5 tệp preds trên Kaggle T4 × 2 song song.
+- `harness/runbook/kaggle_pata_cham_val600.md` (P10): chấm 5 tệp preds trên Kaggle T4 × 2 song song.
 
 ### 3.14 Stage H XONG · CỔNG H ĐẠT · C1 bắt đầu (24/9 ~16:20 VN) — [đo]
 
@@ -450,7 +450,7 @@ L4 chậm hơn 1,5 lần. Chặng H (chỉ học đầu nhỏ, forward nửa mô
 ## 7. Tệp đã đổi trong phiên
 
 - mới: `report/185_…md` · `report/186_…md` (file này) · `report/anh_185_pata_causal_23_9/` (9 ảnh) ·
-  `harness/pata_{data,model,test,train,eval,audit}.py` · `harness/kaggle_pata_test.md`
+  `harness/pata_{data,model,test,train,eval,audit}.py` · `harness/runbook/kaggle_pata_test.md`
 - sửa: `harness/make_bundle.py` (thêm `pata_kaggle`, `pata_colab`) · `CLAUDE.md` (dòng trỏ `185`) ·
   `.gitignore` (mở cho `pata/split_hash.json`, `probe40.jsonl`, `audit/manifest.json`,
   `audit/audit.html`, `audit/audit_*.json` — tệp nhỏ nhưng cần để tái lập và giữ công gán nhãn)

@@ -33,7 +33,7 @@ ngang/bề cao quanh điểm vàng ∧ phần tử gần điểm trỏ nhất (V
 - Train trên Kaggle T4 (~160 s/bước, VRAM 13,2 GiB), nối 3 commit; điểm lưu mỗi 25 bước. Lượt chạy tiếp
   ở commit 2 từng nạp sai adapter (transformers chỉ nạp thư mục `ref/`), đã sửa bằng nạp tay và chạy lại
   250 → 500 (`report/254`).
-- Mã: `harness/grpo_spice.py` · runbook `harness/kaggle_grpo_spice_commit.md`.
+- Mã: `harness/grpo_spice.py` · runbook `harness/runbook/kaggle_grpo_spice_commit.md`.
 
 ### 2.2 ck500 so với S1/101 trên test — 13 cột (`report/259`, `261`)
 
@@ -117,7 +117,7 @@ ck500 cho 2.554 bước: greedy trùng câu chuẩn 26,9%.
 
 - Mã viết trên WSL: `harness/tage_val.py` (hoà, selftest, câu nháp, train, sửa val, định vị) ·
   `harness/tage_doc.py` (đọc kết quả, 0 GPU) · `harness/tage_neg_build.py` · `harness/tage_text_metrics.py`
-  (§3.4) · runbook `harness/colab_tage_val_l4.md`.
+  (§3.4) · runbook `harness/runbook/colab_tage_val_l4.md`.
 - Máy: Colab L4, mỗi thành phần train **1 epoch** (320 bước tối ưu, 2.554 mẫu).
 
 | pha | thời gian | tốc độ / VRAM |
@@ -247,7 +247,7 @@ cao hơn ở 13/13 cột; bước không chạm −1,68 (scroll −6,23).
 
 ## 6. Trạng thái và các hướng cải thiện đã đề xuất
 
-**Cập nhật 4/10 — đã có số test (`report/269`):** TAGE pred+cổng exec **60,23** vs ck500 60,65 (Δ −0,43 [−0,87; +0,02], cứu 48 phá 67) · vs S1/101 +1,12 [+0,31; +1,94]. Mức tăng trên val không lặp lại: trên test cổng τ nhận 219 câu mà 139 câu vùng cắt sai (phá 60). Đoạn dưới là thiết kế lúc chuẩn bị. Runbook Kaggle dạng commit đã sẵn: `harness/kaggle_tage_test.md`,
+**Cập nhật 4/10 — đã có số test (`report/269`):** TAGE pred+cổng exec **60,23** vs ck500 60,65 (Δ −0,43 [−0,87; +0,02], cứu 48 phá 67) · vs S1/101 +1,12 [+0,31; +1,94]. Mức tăng trên val không lặp lại: trên test cổng τ nhận 219 câu mà 139 câu vùng cắt sai (phá 60). Đoạn dưới là thiết kế lúc chuẩn bị. Runbook Kaggle dạng commit đã sẵn: `harness/runbook/kaggle_tage_test.md`,
 gói `_bundles/tage-test-script/` (thêm chế độ `--rows/--shard` cho `tage_val.py`, tệp `test_rows.jsonl`
 4.463 hàng click). Thiết kế: τ chọn trên toàn bộ 249 bước val (`τ_pred = 0,73767`, `τ_none = −0,04327`) rồi áp
 nguyên lên test; chỉ chấm UGround những câu cổng nhận sửa, phần còn lại gộp từ chấm ck500 test đã có (cùng

@@ -1015,7 +1015,7 @@ cách đã đăng ký 6/8: **thiếu lực nghiêm trọng, chỉ đọc theo h�
 dùng để cứu nếu kết quả chính không như ý.**
 
 **Mã:** `harness/tag_app_seen.py` (docstring ghi chi tiết) · chạy bằng ô A.1d của
-`harness/run_on_colab.md` · lý do đầy đủ ở `report/110` mục 4j-5.
+`harness/runbook/run_on_colab.md` · lý do đầy đủ ở `report/110` mục 4j-5.
 
 ### (q) Sửa đổi 14/8/2026 — NHÃN KHAI BÁO ĐỔI SANG TIẾNG ANH
 
@@ -2583,7 +2583,7 @@ _(trống — mọi thay đổi sau (x19c) ghi ở đây kèm giờ ICT và lý 
 Thưởng bằng UGround (là bộ trỏ chấm) hay bất kỳ bộ trỏ nào · dùng dev 1.400 hoặc 3.062 làm tập
 thưởng · chọn siêu tham số theo exec tập kiểm · thêm hạng thưởng sau khi thấy G4 · đổi
 `infer_branch.py` lúc suy luận · so GRPO với S1/Base làm headline (headline là so MIN).
-Mã: `harness/grpo_point.py` · runbook `harness/colab_grpo_point.md`.
+Mã: `harness/grpo_point.py` · runbook `harness/runbook/colab_grpo_point.md`.
 
 **(x19d) — ghi 1:** G4 5/9 (ICT đêm): ① không OOM · ② zero-std **0,25** · độ dài 46,5 token ·
 **44,3 s/bước** ở 50 câu nhắc dài nhất ⇒ 500 bước ≈ 6 h. ③ chưa đọc được vì ô đọc dùng sai tên
@@ -2597,7 +2597,7 @@ khoá metric (`reward/…` theo tài liệu, bản 0.29.1 in tên khác) — s�
 
 **(x19d) — ghi 3 (6/9, TRƯỚC khi có bất kỳ điểm `exec` nào của nhánh GRPO):** lượt G5 chạy trọn
 **500/500 bước** (5,63 h). Khâu đọc kết quả và khâu suy luận chuyển từ Colab A100 sang **Kaggle
-T4 miễn phí** (user quyết 6/9, lý do chi phí; runbook `harness/kaggle_grpo_point_6_9.md`). Ba
+T4 miễn phí** (user quyết 6/9, lý do chi phí; runbook `harness/runbook/kaggle_grpo_point_6_9.md`). Ba
 điều chỉnh, **không điều nào đụng thuật toán, thước hay ngưỡng**:
 
 · **Phạm vi suy luận hẹp lại: 4.463 bước chạm thay vì 6.958 bước.** Lý do vật chất: dataset

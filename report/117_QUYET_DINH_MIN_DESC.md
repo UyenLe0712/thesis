@@ -69,7 +69,7 @@ Vì câu giống hệt nhau, toàn bộ gradient của vế ưu tiên rơi đún
 | đo cổng bằng | `harness/do_eligibility.py` (in **cả hai** thiết kế, không có cờ tắt bớt) |
 | cổng cơ học | `harness/gate_desc_acc.py` — độ chính xác khai báo, **không gọi bộ trỏ**. Mốc S2/101 = **53,9% cả hai đúng** |
 | ⚠️ không dùng làm cổng | `rewards/accuracies` — đo được **0,94–0,97 ngay từ bước đầu** vì `chosen` là thứ S2 đã được dạy. Tín hiệu tiến bộ là `rewards/margins` |
-| runbook train | `harness/colab_train_min_desc.md` |
+| runbook train | `harness/runbook/colab_train_min_desc.md` |
 | LR stage-2 | **2,0e-5** (1/5 LR gốc) — phán đoán thiết kế, khai ở (x3b) |
 | bốn lượt | MIN-DESC/101 · MIN-DESC/202 · CE2-S2/101 · CE2-S2/202 |
 | mỗi lượt | stage-2, **800 update**, `pref_loss: orpo`, β=0,1, final checkpoint |
@@ -138,7 +138,7 @@ nhánh mới không liên quan.
 |---|---|---|
 | ✅ 23/8 | Bung `derived_train_en.tar.gz` · đo eligibility đủ tập · dựng 22.854 cặp · 7 bất biến · đăng ký trước (x) | 0 |
 | 24–25/8 | Audit mù 300 cặp · probe text-only/shuffled · wrong-referent counterfactual (validity gate) | 0 |
-| **26/8** | **Smoke ORPO 20 rồi 200 cặp dài nhất** — `harness/colab_smoke_orpo.md` | ~1 h |
+| **26/8** | **Smoke ORPO 20 rồi 200 cặp dài nhất** — `harness/runbook/colab_smoke_orpo.md` | ~1 h |
 | 27–30/8 | MIN-DESC/101 + CE2-S2/101 → cổng cơ học **không gọi listener** → đạt thì chạy 202 | ~20 h |
 | đầu 9/2026 | Chấm UGround **một lần** trên 4.463 cho 4 checkpoint | 0 đồng |
 
@@ -161,9 +161,9 @@ là *không có tín hiệu*.
 
 ## 6. Việc kế tiếp, đúng một dòng
 
-**Chạy `harness/colab_smoke_orpo.md`.** Đó là cổng có thể giết cả phương án, và nó rẻ nhất trong
+**Chạy `harness/runbook/colab_smoke_orpo.md`.** Đó là cổng có thể giết cả phương án, và nó rẻ nhất trong
 mọi thứ còn lại. Chưa qua smoke thì không train gì. Qua rồi thì sang
-`harness/colab_train_min_desc.md`.
+`harness/runbook/colab_train_min_desc.md`.
 
 ---
 
@@ -175,13 +175,13 @@ mọi thứ còn lại. Chưa qua smoke thì không train gì. Qua rồi thì sa
 
 | | bằng chứng |
 |---|---|
-| Bung `derived_train_en.tar.gz` → **41.099 khai báo** bản tiếng Anh | `harness/dg1_cache/train_ac/` · bản pilot cũ sao lưu ở `_bak_pilot_0908/` |
+| Bung `derived_train_en.tar.gz` → **41.099 khai báo** bản tiếng Anh | `harness/dg1_cache/train_ac/` · bản pilot cũ (tiếng Việt) đã xoá 4/10 |
 | Đo eligibility đủ tập: **tầng khai báo 55,61%** vs **tầng câu 26,40%** | `harness/do_eligibility.py` |
 | Dựng **22.854 cặp** MIN-DESC + **22.854** mẫu CE2-S2 + 200 cặp nặng nhất | `harness/build_min_desc.py` · 7/7 bất biến · 0 mẫu lệch |
 | Đăng ký trước MIN-DESC | `report/106` mục **(x)**, **(x3b)** LR, **(x3c)** kết quả smoke |
 | **Smoke ORPO QUA CỔNG** | `report/106` (x3c) |
 | Vá `mde_that.py` | `report/106` mục **(y)** — ngưỡng đổi 0,01 pp, không kết luận nào đổi |
-| Runbook train + cổng cơ học | `harness/colab_train_min_desc.md` · `harness/gate_desc_acc.py` |
+| Runbook train + cổng cơ học | `harness/runbook/colab_train_min_desc.md` · `harness/gate_desc_acc.py` |
 
 ## 7.2 Cấu hình đã khoá — không đổi giữa bốn lượt
 
@@ -215,7 +215,7 @@ output_dir TRÊN DRIVE · save_steps 100 (~35 phút/điểm lưu)
 ## 7.4 Việc kế, đúng thứ tự
 
 1. **Upload `_bundles/thesis_rented.zip` lên Drive** (bản trên đó còn LR 1e-4 và thiếu 3 tệp mới).
-2. `harness/colab_train_min_desc.md`: T1 → Restart → T2 → **T3** → T4 → T5 → T6 → T7.
+2. `harness/runbook/colab_train_min_desc.md`: T1 → Restart → T2 → **T3** → T4 → T5 → T6 → T7.
    Ở T4 đổi đúng một dòng: `NHANH, SEED = "min_desc", 101`.
 3. Xong MIN-DESC/101 → đổi sang `("ce2_s2", 101)` → chạy lại T4–T7.
 4. **Cổng cơ học** `gate_desc_acc.py`, phải vượt mốc S2 **53,9%**. Δ âm ⇒ dừng, không chạy 202.

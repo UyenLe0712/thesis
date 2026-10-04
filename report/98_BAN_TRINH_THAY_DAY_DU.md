@@ -550,7 +550,7 @@ Cách đo đầu tiên là **so chuỗi** (câu mô hình có trùng chữ với
 
 ## 6. Hai cổng go/no-go (chạy TRƯỚC khi tiêu tiền huấn luyện)
 
-Em đã dựng sẵn notebook (`harness/colab_gates.ipynb`). Hai cổng này **chỉ chạy mô hình, không huấn luyện** nên rẻ và nhanh:
+Em đã dựng sẵn notebook (`harness/runbook/colab_gates.ipynb`). Hai cổng này **chỉ chạy mô hình, không huấn luyện** nên rẻ và nhanh:
 
 - **Cổng A — bộ trỏ có đủ tốt VÀ có sạch không.** ⚠️ **Ngưỡng viết lại ngày 28/7 sau khi bơm lỗi cho thấy điều kiện thật sự chặn đường.** Ngưỡng cũ "trúng ~80% trên câu đúng" đặt theo cách chấm đĩa, không dùng được cho cách chấm chặt. Bản sáng nay đổi sang "dải động ≥ 25 điểm" và viện lý do "gấp đôi MDE 18.9" — nhưng gấp đôi 18.9 là 37.8 chứ không phải 25, tức lập luận tự bác con số của chính nó. Nay đặt lại theo đúng thứ đã đo được:
   1. **Sai số trỏ trung vị ≤ 3% cạnh màn.** Đây là điều kiện tiên quyết, không phải điều kiện phụ: ở mức 8% của bộ trỏ rẻ, cách chấm chặt kết oan 42–59% câu đúng, còn ở mức 3% thì chỉ 2.6%. Không đạt điều kiện này thì **cách chấm chặt bỏ hẳn**, quay về đĩa và nói rõ giới hạn nút cạnh.

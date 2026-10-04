@@ -3,7 +3,7 @@
 > ⛔ **Số val — cấm trích vào luận văn.** Chỉ dùng để quyết có đi tiếp TAGE không (action 265).
 > Nguồn: `runs/tage_val/that/` (Colab L4, lượt 2–3/10) · đọc bằng `python3 harness/tage_doc.py`.
 > Action gốc: `harness/tai_lieu_2026-10-02/265_ACTION_KIEM_THU_TAGE_VAL_2_10_checked.md` · runbook
-> `harness/colab_tage_val_l4.md`.
+> `harness/runbook/colab_tage_val_l4.md`.
 
 ## 1. Phán quyết
 

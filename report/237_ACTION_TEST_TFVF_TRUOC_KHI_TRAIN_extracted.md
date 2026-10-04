@@ -75,7 +75,7 @@ Chỉ tạo hai file mã trong clone cho lượt chạy, rồi kết quả bàn 
 
 1. `harness/tfvf_g0.py`
    - dùng cấu trúc nạp model và dựng prompt của `harness/c1_mau_s1.py`;
-   - tự dò bundle như `harness/kaggle_c1_da_dang_s1.md`;
+   - tự dò bundle như `harness/runbook/kaggle_c1_da_dang_s1.md`;
    - kiểm có đúng 1.567 val rows và adapter;
    - chọn đúng 400 bước seed `20260927`;
    - chỉ sinh ba chế độ G, F, C; ghi dần, nối tiếp được;

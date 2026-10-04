@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Đọc kết quả lượt GRPO <point> mà KHÔNG cần GPU và không cần Colab.
 
-Gộp ba ô G7a · G7b · G7d của harness/colab_grpo_point.md. Chạy trên máy nhà sau khi
+Gộp ba ô G7a · G7b · G7d của harness/runbook/colab_grpo_point.md. Chạy trên máy nhà sau khi
 tải ba thứ từ Drive về:
     ckpt/grpo_point_seed101/log_history.json
     ckpt/grpo_point_seed101/final/{adapter_model.safetensors,adapter_config.json}

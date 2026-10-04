@@ -2,8 +2,8 @@
 
 Bản sắp xếp lại từ `265_…_manual_transcription.md` (chép tay từ 8 ảnh, cùng thư mục). Ảnh chỉ có
 **phần đầu** Phụ lục A và **không có** Phụ lục B, C, D, nên máy WSL viết lại toàn bộ script theo đặc tả
-ở thân bài (§4). Các ô chạy: **`harness/colab_tage_val_l4.md`** (Colab L4 — đang dùng, vì Kaggle T4 tuần
-này chỉ còn ~1 h); bản Kaggle T4 ba commit giữ ở `harness/kaggle_tage_val.md` cho lượt sau.
+ở thân bài (§4). Các ô chạy: **`harness/runbook/colab_tage_val_l4.md`** (Colab L4 — đang dùng, vì Kaggle T4 tuần
+này chỉ còn ~1 h); bản Kaggle T4 ba commit giữ ở `harness/runbook/kaggle_tage_val.md` cho lượt sau.
 ⛔ **Mọi số ở đây và mọi số lượt này sinh ra là số val — không trích vào luận văn.**
 
 ## 0. Tóm tắt
@@ -122,7 +122,7 @@ chỉ là tín hiệu hướng. Trần thô tự kiểm: bộ định vị trún
 | `harness/tage_val.py` | viết mới toàn bộ (Phụ lục A): `--selftest` · `--merge` · `--make-drafts` · `--train-editor` · `--edit-val` · `--train-locator` · `--locate-val`. Dùng lại `grpo_spice` (hoà S1, câu nhắc, hằng số) và `build_branch_data.SYS` |
 | `harness/tage_doc.py` | viết mới (Phụ lục B): đọc mốc, các nhánh, cổng chọn chéo, bộ định vị, phán quyết V1–V3 |
 | `harness/tage_neg_build.py` | viết mới (Phụ lục C): `tage_neg.jsonl` từ `descriptors_trueD.jsonl`, 41.099 dòng, 91,6% có phần tử lân cận |
-| `harness/kaggle_tage_val.md` | runbook; Phụ lục D = Ô 7 (nguyên văn Ô 5 của `kaggle_grpo_spice_pha3_ck500.md`) |
+| `harness/runbook/kaggle_tage_val.md` | runbook; Phụ lục D = Ô 7 (nguyên văn Ô 5 của `kaggle_grpo_spice_pha3_ck500.md`) |
 | `_bundles/tage-val-script/` | 6 tệp cho dataset Kaggle, md5 ở runbook |
 
 **Khác bản chép tay, có chủ ý:**

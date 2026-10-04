@@ -354,8 +354,8 @@ Touch exec hợp lệ **chỉ khi mọi tap key có trong candidates**.
 | `132` | lịch sử 1/9; số G6/hold-out/AITW **lỗi thời** |
 | `133` | ngữ cảnh sau G6; τ ~2 h và 3.063-as-holdout **lỗi thời** |
 | `harness/metric_exec.py`, `rule_sensitivity.py` | định nghĩa gated |
-| `harness/colab_train_sel.md` | ô kỹ thuật A100; **bỏ chỉ dẫn "sáu lượt"** |
-| `harness/kaggle_infer_sel.md` | ô kỹ thuật G6/infer; **bỏ chỉ dẫn "sáu lượt"** |
+| `harness/runbook/colab_train_sel.md` | ô kỹ thuật A100; **bỏ chỉ dẫn "sáu lượt"** |
+| `harness/runbook/kaggle_infer_sel.md` | ô kỹ thuật G6/infer; **bỏ chỉ dẫn "sáu lượt"** |
 | `harness/train_config_sel.yaml` | config gốc; lượt còn lại chỉ đổi `dataset=gui_sft_match`, `seed=101`, `output_dir` |
 | `harness/build_candidates.py`, `build_sel_data.py` | constructor + branch; phải `--all-steps`, đúng `--img-prefix` |
 | `harness/infer_branch.py` | infer; **phải vá fail-closed cand key trước full** |

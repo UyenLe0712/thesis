@@ -12,8 +12,8 @@ thưởng = SPICE − 0,02·phạt độ dài. Chạy trên Kaggle T4 (0 đồng
 nối nhiều commit.
 
 - Mã: `harness/grpo_spice.py` (md5 bản đang dùng `d99d03c0c01718283e84ac3851ef5591`).
-- Runbook train: `harness/kaggle_grpo_spice_commit.md`.
-- Runbook chấm: `harness/kaggle_grpo_spice_pha3_ck250.md`.
+- Runbook train: `harness/runbook/kaggle_grpo_spice_commit.md`.
+- Runbook chấm: `harness/runbook/kaggle_grpo_spice_pha3_ck250.md`.
 - Đọc kết quả (0 GPU, WSL): `~/.venvs/thesis/bin/python harness/grpo_spice_doc.py`.
 - Tệp kết quả: `runs/grpo_spice/`.
 
@@ -55,7 +55,7 @@ sau khi thấy số.
 Commit 2 đầu tiên chạy tiếp **sai**. Khi điểm lưu có thư mục con `ref/`, transformers chỉ nạp thư
 mục con đó và bỏ adapter `default` ở gốc, nên policy âm thầm quay về S1 (KL 0,012 → 0,001). Mọi
 điểm lưu 275–500 của lượt đó **không hợp lệ**. Mã đã sửa: nạp tay `default` và in dòng
-`[nạp default] … |lora_B| 0.0000 → x`, dừng nếu x = 0. Chi tiết ở `harness/kaggle_grpo_spice_commit.md`
+`[nạp default] … |lora_B| 0.0000 → x`, dừng nếu x = 0. Chi tiết ở `harness/runbook/kaggle_grpo_spice_commit.md`
 mục *SỰ CỐ 30/9*.
 
 **Lượt chạy lại 250 → 500 đang chạy** (ảnh log người dùng gửi tối 30/9):
@@ -112,7 +112,7 @@ như mô hình 500 bước.
 ### 7.1 Đường đi tới ck500 và phép kiểm hợp lệ
 
 - Lượt chạy lại 250 → 500 **OOM hai lần ở bước ~443** (điểm lưu cuối `checkpoint-425`), sửa bằng
-  `--bs 2 --accum 8` rồi `--gen-chunk 8` (md5 `07ea87b6…`). Chi tiết ở `harness/kaggle_grpo_spice_commit.md`.
+  `--bs 2 --accum 8` rồi `--gen-chunk 8` (md5 `07ea87b6…`). Chi tiết ở `harness/runbook/kaggle_grpo_spice_commit.md`.
 - Commit nối 425 → 500 (`train_c3.log`): `[tiếp từ] checkpoint-425` · `[nạp default] 504 tensor ·
   |lora_B| 0.0000 → 9.1140 · khoá lạ 0` · đủ 75 bước · 156,6 s/bước · đỉnh VRAM 12,38 GiB · không
   Traceback. kl TB 0,014–0,037 (lượt hỏng kiểu commit 2 cũ là ~0,001) ⇒ **cờ đỏ §4 đã gỡ cho đoạn này**.

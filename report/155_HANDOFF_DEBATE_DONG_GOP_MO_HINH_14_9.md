@@ -132,7 +132,7 @@ thước, toàn vẹn, phân tích có điều kiện → `runs/som/som_phan_tic
 - **Tiền lệ:** *comprehension accuracy* của dòng REG (Mao et al. CVPR 2016; Luo & Shakhnarovich CVPR 2017), chấm lời
   hướng dẫn bằng người thực hiện (Seq2Act ACL 2020), định dạng trắc nghiệm trên phần tử (Mind2Web NeurIPS 2023).
 - **Mã:** `som_build.py` · `som_cau.py` (câu lấy từ trường `sent` của tệp thô) · `som_listener.py` bản `14/9-b` ·
-  runbook `harness/kaggle_som_listener.md` phần G.
+  runbook `harness/runbook/kaggle_som_listener.md` phần G.
 
 #### 2.4.2 Diễn biến lượt commit (`runs/som/tom_tat.txt`)
 
@@ -326,7 +326,7 @@ này làm hàm thưởng hay bộ lọc, nếu không nó mất vai trò kiểm 
 | Nhánh ứng viên `gui_sel` | 56,13 exec; bỏ cuộc quá mức; quét ngưỡng τ không cứu được | `report/136`, `142` |
 | Chặng ba GRPO thưởng `<point>` | +0,02 exec / +0,90 AitW so MIN; dự báo +1,10 bị bác | `report/144` |
 | Nội suy trọng số MIN↔GRPO (5 mức α) | đường cong đơn điệu, không điểm giữa nào hơn đầu mút | `report/153` |
-| **VIS-SFT** (mở băng thị giác, SFT từ Base trên dữ liệu S1) | điểm kiểm giữa lượt (bước 3.200/7.876) thấp hơn MIN **−7,50** trên val ⇒ dừng; lượt không chạy hết, **không có điểm test** | `harness/colab_vissft_9_9.md` mục KẾT QUẢ K1 |
+| **VIS-SFT** (mở băng thị giác, SFT từ Base trên dữ liệu S1) | điểm kiểm giữa lượt (bước 3.200/7.876) thấp hơn MIN **−7,50** trên val ⇒ dừng; lượt không chạy hết, **không có điểm test** | `harness/runbook/colab_vissft_9_9.md` mục KẾT QUẢ K1 |
 | Bị bác bằng số, chưa chạy | ORPO tầng câu (trần thật −0,65…+2,88) · `gui_sft_match` (59,44) · OCR/cây trợ năng vào đầu vào · vá tên bằng OCR · chưng cất qua bộ trỏ thứ hai · đa nhiệm đích hộp · RL trực tuyến · Spatial CoT · gộp nhánh ở đầu ra (bộ chọn không-oracle ≤ 60,72) · Qwen3-VL-4B / Qwen2.5-VL-7B (ngân sách) | `report/151` §2.2, `143` |
 
 ⚠️ Với luật AitW (lỏng với lỗi gần), một số hướng bị bác **dưới exec** có thể đáng xét lại — nhưng phải có số, không suy.
@@ -355,7 +355,7 @@ này làm hàm thưởng hay bộ lọc, nếu không nó mất vai trò kiểm 
 | câu sinh + `<desc>` | `runs/preds_*.jsonl`, `runs/grpo_point/preds_grpo_point_seed101.jsonl` |
 | khung phần tử vàng | `harness/dg1_cache/test_ac/descriptors.jsonl` (không track; dựng bằng `descriptor_label_build.py`) |
 | tính lại ba luật + KTC | `harness/luat_d3.py` · `luat_aitw_day_du.py` · `luat_aitw_moi_hop.py` · `d3_ktc.py` |
-| người nghe trắc nghiệm Phi-4 | tệp từng bước `runs/som/chon_phi4_{chuan,grpo,s1_101,base,san}.jsonl` (tệp `_s0/_s1` là hai nửa GPU, tệp gộp đã đủ) · khối ứng viên `harness/dg1_cache/som/som.jsonl` · đọc `harness/som_doc.py`, `harness/som_phan_tich.py` · runbook `harness/kaggle_som_listener.md` |
+| người nghe trắc nghiệm Phi-4 | tệp từng bước `runs/som/chon_phi4_{chuan,grpo,s1_101,base,san}.jsonl` (tệp `_s0/_s1` là hai nửa GPU, tệp gộp đã đủ) · khối ứng viên `harness/dg1_cache/som/som.jsonl` · đọc `harness/som_doc.py`, `harness/som_phan_tich.py` · runbook `harness/runbook/kaggle_som_listener.md` |
 | bảng trong luận văn | `harness/sinh_bang_nhieu_thuoc.py` → `thesis/chapters/bang_nhieu_thuoc.tex` (sinh tự động) |
 | cấu hình train | `harness/train_config*.yaml`, `harness/grpo_point.py` |
 | trạng thái + luật dự án | `CLAUDE.md` (khối 14/9 đứng đầu phần trạng thái) |

@@ -44,7 +44,7 @@ Các mẫu có câu đúng (oracle +21 bước) nhưng bộ chọn không lấy 
 
 - Commit POB lượt 1 chết ở bước chọn C2: `nap_tat_ca` lấy mọi tệp bắt đầu bằng `listener_pob`, gồm cả
   `listener_pob_s*.log` ⇒ `JSONDecodeError`. Sửa `harness/triad_pob.py:179` (chỉ lấy `.jsonl`, md5 mới `36e8e299…`).
-- Lượt nối tiếp: gắn output commit lỗi làm Input. Ô 2–3 của `harness/kaggle_triad_pob.md` nay có `ngoai()` bỏ qua
+- Lượt nối tiếp: gắn output commit lỗi làm Input. Ô 2–3 của `harness/runbook/kaggle_triad_pob.md` nay có `ngoai()` bỏ qua
   output cũ khi glob tìm gói (nếu không sẽ thấy hai bản `triad_pob.py`). Mọi bước GPU tự bỏ qua phần đã xong.
 - Bài học: sửa script xong phải chép cả sang `_bundles/<dataset>/` — lượt đầu upload nhầm bản cũ vì quên bước này.
 
@@ -55,7 +55,7 @@ Các mẫu có câu đúng (oracle +21 bước) nhưng bộ chọn không lấy 
 | `runs/triad_t/pob/triad_pob_out/` | output đủ của commit POB (mẫu, listener, UGround theo lớp, UI-Venus) |
 | `runs/triad_t/pob_ket_qua.json` | bảng lưới C1/C2, oracle, đa dạng, danh sách bước đổi câu |
 | `harness/triad_pob.py` | lấy mẫu · dựng lớp · chọn · báo cáo (`--bao-cao` chạy lại 0 GPU) |
-| `harness/kaggle_triad_pob.md` | runbook commit, có nối tiếp |
+| `harness/runbook/kaggle_triad_pob.md` | runbook commit, có nối tiếp |
 | `report/274` | POA + POB đầy đủ |
 
 ## 6. Việc kế (chưa quyết, user chọn)

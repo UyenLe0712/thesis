@@ -2,7 +2,7 @@
 """FREE · offline — đọc kết quả ba nhánh SÀN theo luật đã khoá TRƯỚC.
 
 Luật đọc nằm ở `harness/make_floor.py` (viết trước khi chấm) và
-`harness/kaggle_cham_san.md`. Script này chỉ **áp** luật đó, không chế thêm.
+`harness/runbook/kaggle_cham_san.md`. Script này chỉ **áp** luật đó, không chế thêm.
 
 ⚠️ Con số của bài là con số trên **phần bị đụng**, không phải số tổng — `f2_khongten` chỉ
 viết lại được ~24% số bước, nên số tổng bị pha loãng ~4 lần (cùng bẫy đã mắc ở phép A).

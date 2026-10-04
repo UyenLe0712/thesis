@@ -177,8 +177,8 @@ Chủ luận văn quyết chạy đồng thời, không điều kiện hoá lư�
 
 | lượt | máy | việc | runbook |
 |---|---|---|---|
-| **τ** | Kaggle T4 | sequence-score lát dev 1.400 | `harness/kaggle_SEQSCORE_SAU_O.md` |
-| **đối chứng** | Colab A100 | train `gui_sft_match`/101, ~23–30 h | `harness/colab_train_sel.md` (bỏ phần phạm vi sáu lượt) |
+| **τ** | Kaggle T4 | sequence-score lát dev 1.400 | `harness/runbook/kaggle_SEQSCORE_SAU_O.md` |
+| **đối chứng** | Colab A100 | train `gui_sft_match`/101, ~23–30 h | `harness/runbook/colab_train_sel.md` (bỏ phần phạm vi sáu lượt) |
 
 ⭐ **Vì sao hai lượt độc lập, không phải nối tiếp:** `gui_sft_match` là đối chứng cho **hệ thống
 chính** — mô hình sinh `<sel>` theo lối greedy, không có τ. `Δ_sel = exec(gui_sel) −

@@ -46,7 +46,7 @@ về câu "chạm vào X".
 | wait | 505 | 90,69 | 95,25 | +4,55 | [+2,56; +6,73] | 2 / 25 |
 | open_app | 469 | 96,16 | 97,87 | +1,71 | [+0,65; +2,94] | 0 / 8 |
 
-Luật khoá trước (runbook `harness/kaggle_grpo_spice_nontap_ck500.md`): toàn bộ cận dưới ≥ −3 ⇒
+Luật khoá trước (runbook `harness/runbook/kaggle_grpo_spice_nontap_ck500.md`): toàn bộ cận dưới ≥ −3 ⇒
 **ĐẠT sát** (−2,76) · scroll Δ ≥ −3 ⇒ **RỚT** (−6,23).
 
 ## 4. Cơ chế (đo)

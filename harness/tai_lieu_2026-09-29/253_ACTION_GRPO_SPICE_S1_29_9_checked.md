@@ -203,7 +203,7 @@ Chọn máy theo số đo, đừng đoán:
 
 ## 5. Pha 2 — train 500 bước (commit, để ngủ được)
 
-> ⭐ **Thay bằng `harness/kaggle_grpo_spice_commit.md` (29/9 tối).** Thăm dò T4 đo **160,6 s/bước** (ngưỡng ≤ 70), đỉnh VRAM 13,22 GiB, 3/20 bước có gradient ≈ 0 do nhóm hoà thưởng. User chọn cách (a): T4 0 đồng, nối **3 commit** (~225 · ~450 · 500 bước, ~25 h hạn mức). Mã: `save_steps` 25 và `--resume auto` chỉ nhận điểm lưu đủ tệp. Ô dưới đây là bản cũ, giữ để tra.
+> ⭐ **Thay bằng `harness/runbook/kaggle_grpo_spice_commit.md` (29/9 tối).** Thăm dò T4 đo **160,6 s/bước** (ngưỡng ≤ 70), đỉnh VRAM 13,22 GiB, 3/20 bước có gradient ≈ 0 do nhóm hoà thưởng. User chọn cách (a): T4 0 đồng, nối **3 commit** (~225 · ~450 · 500 bước, ~25 h hạn mức). Mã: `save_steps` 25 và `--resume auto` chỉ nhận điểm lưu đủ tệp. Ô dưới đây là bản cũ, giữ để tra.
 
 Notebook commit chỉ gồm Ô 1, Ô 2, lệnh `--merge` của Ô 4, và ô dưới. Bấm **Save Version → Save & Run All**.
 

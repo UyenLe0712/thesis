@@ -13,8 +13,8 @@ Sửa nội dung ô thì sửa runbook gốc rồi chạy lại, đừng sửa t
 import re, os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-GOC = os.path.join(HERE, "kaggle_commit_sel_4_9.md")
-RA = os.path.join(HERE, "kaggle_DEM_4_9_BAY_O.md")
+GOC = os.path.join(HERE, "runbook", "kaggle_commit_sel_4_9.md")
+RA = os.path.join(HERE, "runbook", "kaggle_DEM_4_9_BAY_O.md")
 
 # chỉ số khối mã trong runbook gốc, theo THỨ TỰ DÁN (khối 0 là ô cuối §0.1, nằm đầu tệp)
 THU_TU = [(1, "Ô 1 — cài gói và GỠ torchao"),
@@ -61,7 +61,7 @@ Tải về đặt thẳng vào `runs/sel/`, đừng để lạc sang thư mục 
 
 
 # ── Lượt thứ hai: sequence-score trên lát dev 1.400 (mục C3 của runbook gốc) ─────
-RA_C3 = os.path.join(HERE, "kaggle_SEQSCORE_SAU_O.md")
+RA_C3 = os.path.join(HERE, "runbook", "kaggle_SEQSCORE_SAU_O.md")
 
 THU_TU_C3 = [(1, "Ô 1 — cài gói và GỠ torchao"),
              (2, "Ô 2 — dựng workspace, kiểm hai hash"),

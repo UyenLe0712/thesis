@@ -41,7 +41,7 @@
 >
 > **▶️ VIỆC KẾ.** Trình tự cứng của `report/106` mục 5 đã **thông hết**: S1 ×2 hạt giống →
 > chấm → MDE thật **2,2 pp** → ngưỡng khoá **2,8 pp** (mục sửa đổi (w), ghi 17/8). ⇒ **train S2
-> được rồi**, runbook `harness/colab_train_s2.md`. ~26 giờ/lượt, ~252 đơn vị ≈ $25 cho hai hạt
+> được rồi**, runbook `harness/runbook/colab_train_s2.md`. ~26 giờ/lượt, ~252 đơn vị ≈ $25 cho hai hạt
 > giống, tính **3 ngày** vì lịch sử 8 lần mất máy.
 > Song song, không cần GPU: **cắt 2 trang bài FAIR** · **tra 4 tiền lệ** ở `report/114` (chữ
 > *executability* có thể đã có chủ — đụng nhan đề) · bộ trỏ thứ hai (⚠️ 7B có thể không vừa T4,
@@ -237,7 +237,7 @@ bản đã huấn luyện** (83,4% vs S1 55,1% vs S2 38,8%) ⇒ **cái giá củ
 ✅ 1. Commit bản đăng ký              (report/106, đã niêm phong)
 ✅ 2. Cổng A                          (ĐẠT 0,7% — ĐỪNG chạy lại, tốn tiền vô ích)
 ✅ 2b. Tiền trạm đường sinh câu       (4 phép, đều đạt — miễn phí)
-✅ 2c. Runbook Colab + rà 3 lượt      (harness/run_on_colab.md, 6 mốc dừng)
+✅ 2c. Runbook Colab + rà 3 lượt      (harness/runbook/run_on_colab.md, 6 mốc dừng)
 ✅ 3. Huấn luyện S1 × 2 hạt giống → sinh câu → chấm đủ   (101: 59,1 · 202: 59,6)
 ✅ 4. MDE THẬT 2,2 pp + cỡ nhiễu hạt giống 0,52 pp
 ✅ 5. KHOÁ ngưỡng **2,8 pp**                            (report/106 mục sửa đổi (w), 17/8)
@@ -284,7 +284,7 @@ local-scratch 368 GB · RAM 167 GB · đốt **6,77 đơn vị/giờ**. Hai con 
 chứ không phải 40. Quy ra **$0,677/giờ** so với $0,789 của vast.ai — Colab **rẻ hơn và card to
 gấp đôi**. Số đơn vị cần mua: **600–900** (~$58–87).
 
-Runbook: **`harness/run_on_colab.md`** — 35 ô mã, **6 mốc dừng**, ô kiểm sau mỗi khâu, và bảng
+Runbook: **`harness/runbook/run_on_colab.md`** — 35 ô mã, **6 mốc dừng**, ô kiểm sau mỗi khâu, và bảng
 đối chiếu từng mục của `report/106` với chỗ nó chạy.
 
 **Rủi ro của đường Colab, và cách chặn:** phiên chết giữa chừng → `output_dir` trỏ vào Drive,
@@ -418,8 +418,8 @@ vì quá đẹp*. Cùng logic đã bắt được "AUC = 1,000" hồi tháng 7 (
 | Vì sao chốt thành phần này | `report/103_CHOT_THANH_PHAN.md` |
 | Vì sao bác việc đảo sang OCR-trước | `report/107_DEBATE_NGUON_TEN.md` |
 | Kết quả cổng A dạng thô | `runs/gate_a/gate_A_raw.jsonl`, `runs/gate_a/gate_A_ceiling.json` |
-| Lệnh chạy trên máy thuê | `harness/run_on_rented.sh` |
-| Chạy trên GPU miễn phí | `harness/run_on_free_gpu.md` |
+| Lệnh chạy trên máy thuê | `harness/runbook/run_on_rented.sh` |
+| Chạy trên GPU miễn phí | `harness/runbook/run_on_free_gpu.md` |
 
 **Khi hai file mâu thuẫn:** `report/106` (thiết kế) thắng về *phải làm gì*; `report/108` (sổ kê
 khai) thắng về *đã đo được gì*; file này thắng về *đang ở đâu*.

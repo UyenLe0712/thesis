@@ -118,4 +118,4 @@ còn lại rồi nhân `2532/4463` **tái tạo đúng** hiệu của cả tập
 **chứng nhân** tách hai khả năng đó. Mốc UGround trên từng lát: **+10,35 / +11,69 / +11,06 pp**.
 `phan_tich_venus.py` từ chối kết luận nếu thiếu Base hoặc chứng nhân giữ dưới 60%.
 
-Runbook: `harness/kaggle_phepB_uivenus.md`. Chi tiết + hai lỗi câm đã cắn: `report/110` mục **4j-19**.
+Runbook: `harness/runbook/kaggle_phepB_uivenus.md`. Chi tiết + hai lỗi câm đã cắn: `report/110` mục **4j-19**.

@@ -119,7 +119,7 @@ số update, cùng learning rate. Đại lượng chính đăng ký trước là
 `Δ_component = mean_2seed(MIN − CE2)`.
 
 · cấu hình: `train_config_orpo.yaml` (stage `dpo`, `pref_loss: orpo`) và `train_config_ce2.yaml`
-  (stage `sft`) · runbook `harness/colab_train_min_desc.md`
+  (stage `sft`) · runbook `harness/runbook/colab_train_min_desc.md`
 · ⚠️ stage `dpo` **không** ghi `loss`/`lr` vào `trainer_log.jsonl`, stage `sft` thì có — ô theo
   dõi lọc theo `loss` sẽ vứt sạch mọi dòng ở nhánh `dpo`
 · ⚠️ liger **không** kích hoạt ở stage `dpo` — cấm viết "dùng liger" cho MIN-DESC
@@ -225,7 +225,7 @@ mạnh hơn hẳn bản cũ (0 bất đồng trên 1.625 phép so qua bốn lư�
 | vai trò | **bài mô hình** | nhãn mô tả phần tử (REG trong miền GUI) |
 | ngôn ngữ · hạn | tiếng Anh · **31/8**, EDAS | tiếng Việt · **30/8** |
 | tệp | `paper/fair2026/main.tex` — 8 trang, 0 overfull | `paper/vcl2026/main.tex` — 9 trang, 0 overfull |
-| bản dự phòng | `main_v1_metric_backup.tex` = **bản thước-đo cũ**, vẫn dùng được | — |
+| bản dự phòng | `main_v1_metric_backup.tex` (bản thước-đo cũ) đã xoá 4/10, lấy lại từ lịch sử git | — |
 
 · Lệnh dựng: **`tectonic -X compile main.tex --outdir .`** — máy không có `xelatex`. Cấm
   `>/dev/null 2>&1` trên lệnh dựng; kiểm `ls -la main.pdf` mốc giờ trước khi tin số trang.
@@ -360,8 +360,8 @@ người, và trên RefCOCO+ quan hệ **đảo chiều**. Đưa vào Limitation
 | bản chép phiên debate 23/8 (nền tự chứa, 27 ảnh) | `report/116_DEBATE_23_8_FINAL_SOLUTION.md` |
 | cơ chế kỹ thuật toàn dự án | `report/112_HIEU_TOAN_BO_KY_THUAT.md` |
 | số đã đo trước 23/8, số đã rút | `report/108_DA_LAM_DUOC_GI.md` |
-| runbook train MIN-DESC/CE2 (ô T1…T14) | `harness/colab_train_min_desc.md` |
-| runbook chấm Kaggle (ô 0, 1, 1b, 2, 3, 4) | `harness/kaggle_cham_min_desc.md` |
+| runbook train MIN-DESC/CE2 (ô T1…T14) | `harness/runbook/colab_train_min_desc.md` |
+| runbook chấm Kaggle (ô 0, 1, 1b, 2, 3, 4) | `harness/runbook/kaggle_cham_min_desc.md` |
 | luật vận hành, bẫy đã trả giá | `CLAUDE.md` |
 
 **Mâu thuẫn thì:** mã thắng về *hệ thống đang làm gì* · `106` thắng về *estimand và ngưỡng* ·

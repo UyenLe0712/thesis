@@ -152,7 +152,7 @@ Lúc chọn: trong nhóm gồm câu greedy và các câu mẫu, lấy câu có �
 
 Smoke đạt nghĩa là trên `runs/c1/c1_mau.jsonl`, hàng 3 lớn hơn hàng 1 đồng thời ở BLEU-4, CIDEr-D và SPICE, đồng thời lớn hơn hàng 2 ở ít nhất hai trong ba thước.
 
-Khi đó mới được dùng Kaggle T4 ×1, dataset có sẵn `fgrb-p1-bundle`, script mẫu `thesis-master/harness/c1_mau_s1.py` và runbook `thesis-master/harness/kaggle_c1_da_dang_s1.md`.
+Khi đó mới được dùng Kaggle T4 ×1, dataset có sẵn `fgrb-p1-bundle`, script mẫu `thesis-master/harness/c1_mau_s1.py` và runbook `thesis-master/harness/runbook/kaggle_c1_da_dang_s1.md`.
 
 Đổi tập sang 4.463 bước chấm của test. Không sinh trên toàn bộ train. 400 bước đã tốn 142,9 phút, nên 4.463 bước ước lượng khoảng một ngày T4. Chia commit nếu sắp hết hạn mức. Không dùng A100.
 

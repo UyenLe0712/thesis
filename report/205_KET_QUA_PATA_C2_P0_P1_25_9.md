@@ -1,6 +1,6 @@
 # 205 — PATA C2: kết quả P0 + P1 (25/9/2026) ⇒ DỪNG C2 theo bảng chọn đã khoá
 
-Nguồn kế hoạch: `harness/tai_lieu_2026-09-25/204_…` §4.1–4.2. Runbook: `harness/kaggle_pata_p1.md`.
+Nguồn kế hoạch: `harness/tai_lieu_2026-09-25/204_…` §4.1–4.2. Runbook: `harness/runbook/kaggle_pata_p1.md`.
 Tệp thô: `runs/pata/p1/` (`p1_scores.jsonl` · `p1.log` · `p1_run_meta.json` · `p1_ket_qua.json`).
 Chi phí: 0 A100, ~1,5 h Kaggle T4 (thêm ~40 phút vì hai tiến trình chạy song song, xem §4).
 

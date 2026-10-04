@@ -83,3 +83,5 @@ vào (adapter/ảnh/OCR) → P1 (probe phân loại) → P2 (sinh câu trên val
 
 Thứ tự tên hash trong ZIP không trùng thứ tự nội dung; đã xác định lại bằng cách đọc nội dung
 liền mạch giữa các ảnh, giống cách làm với 226.
+
+> **4/10/2026:** ảnh gốc đã xoá khỏi đĩa sau khi chép xong (bản chép là tệp .md/.tex trong thư mục này). Ảnh đã từng commit thì vẫn lấy lại được từ lịch sử git; ảnh/zip chưa commit thì không còn.

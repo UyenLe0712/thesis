@@ -10,3 +10,5 @@
   Zip đó và bốn zip `results (3/5/6/7).zip` tải từ Kaggle đã xoá 29/9 sau khi so từng byte với bản
   đã giải nén (`runs/c1/`, `runs/c1/exec8/`, `runs/tfvf_g0/`, `~/fgrb_p1/_test5/`). 15 ảnh minh hoạ
   `tfvf_anh_mau/` trước đó chưa được giải nén, nay ở `runs/tfvf_g0/tfvf_anh_mau/`.
+
+> **4/10/2026:** ảnh gốc đã xoá khỏi đĩa sau khi chép xong (bản chép là tệp .md/.tex trong thư mục này). Ảnh đã từng commit thì vẫn lấy lại được từ lịch sử git; ảnh/zip chưa commit thì không còn.

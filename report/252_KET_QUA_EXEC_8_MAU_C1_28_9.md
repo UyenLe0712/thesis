@@ -92,4 +92,4 @@ CIDEr-D từng câu dùng IDF tính trên 400 câu chuẩn của C1.
 ## 6. Việc kế
 
 Quyết phần thưởng cho GRPO: SPICE (đúng luật đã chốt) hay CIDEr-D (oracle mạnh hơn, ít hoà hơn,
-nhưng chọn hậu kiểm). Trước lượt GPU, chạy thủ tục chọn máy (`harness/chon_may.md`).
+nhưng chọn hậu kiểm). Trước lượt GPU, chạy thủ tục chọn máy (`harness/runbook/chon_may.md`).

@@ -188,7 +188,7 @@ Cách tính duy nhất tái lập đúng **38,7 / 67,3** (S1/101), **96,1 / 100,
 | Câu chuẩn | 75,73 | 96,1 | 100,0 | 100,00 |
 
 ⚠️ **Base tái lập ra 9,9 / 40,4, bảng đang in 9,7 / 40,3.** Câu của Base trong
-`paper/fair2026/preds_base.jsonl` trùng 4.463/4.463 với tệp thô, tính trên 6.958 bước cho
+`runs/preds_base.jsonl` trùng 4.463/4.463 với tệp thô, tính trên 6.958 bước cho
 8,8 / 36,2 nên cũng không phải nhầm quần thể. Lệch 0,2 và 0,1 điểm chưa truy được nguồn; khi
 điền bảng nên dùng bộ số tính lại bằng một script cho cả tám hàng và ghi rõ như vậy.
 

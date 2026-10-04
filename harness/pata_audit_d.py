@@ -210,7 +210,7 @@ def doc(a):
     print(f"  mẫu không chọn đúng G: {sai}")
     print("-" * 70)
     if ok_all:
-        print(f"⇒ AUDIT LẦN {a.lan}: ĐẠT — P0 xong, sang P1 (harness/kaggle_pata_p1.md)")
+        print(f"⇒ AUDIT LẦN {a.lan}: ĐẠT — P0 xong, sang P1 (harness/runbook/kaggle_pata_p1.md)")
     elif a.lan == 1:
         print("⇒ AUDIT LẦN 1: KHÔNG ĐẠT — sửa pata_true_d.py theo các mẫu sai, dựng lại, rồi `build --lan 2`")
     else:

@@ -3,7 +3,7 @@
 > **Bản bàn giao 4/10 tối:** POA xong · POB đã qua lượt thử (TEST=True) và đang/sắp chạy commit Kaggle ·
 > POC/P1 chưa chạy. Việc của phiên sau ở **§6b**.
 > Đọc một mình là đủ, không cần mở log. Mọi số ở đây là số **val C1** (249 click), cấm trích ra báo.
-> Action gốc: `harness/273_ACTION_PILOT_TRIAD_T_P0_P1_4_10.md`. Đường dẫn báo cáo trong action là máy Mac
+> Action gốc: `harness/tai_lieu_2026-10-04/273_ACTION_PILOT_TRIAD_T_P0_P1_4_10.md`. Đường dẫn báo cáo trong action là máy Mac
 > (`/Users/P836901/...`); máy WSL không có, nên báo cáo nằm ở đây.
 
 ## 0. Tóm tắt một đoạn
@@ -144,7 +144,7 @@ Không trượt ⇒ không kích hoạt Phi-Ground. Lưu ý: +1 là cấu hình 
 
 ## 6. POB — ĐANG CHẠY (commit Kaggle, user chọn 4/10)
 
-Runbook `harness/kaggle_triad_pob.md`, dataset `triad-pob-script` (`_bundles/triad-pob-script/`, 12 tệp, md5 ở Ô 2).
+Runbook `harness/runbook/kaggle_triad_pob.md`, dataset `triad-pob-script` (`_bundles/triad-pob-script/`, 12 tệp, md5 ở Ô 2).
 Một commit T4 ×2, ước **5–6 h**:
 
 1. hoà S1 → ck500 (`checkpoint-500`, md5 adapter `491fa667…`) sinh **8 mẫu/bước** trên 249 click ở **T=0,7 (GPU0)**
@@ -231,7 +231,7 @@ Hạn mức Kaggle (4/10): nick hiện tại còn ~23 h trước commit POB (com
 | `harness/triad_t.py` | luật chọn §4, lưới, §5.3, POA/B3 |
 | `harness/triad_listener.py` | listener ShowUI-2B (nối tiếp được, `--shard`) |
 | `harness/triad_pob.py` | POB: lấy mẫu ck500, lớp câu duy nhất, chọn, báo cáo |
-| `harness/kaggle_triad_poa.md` · `harness/kaggle_triad_pob.md` | runbook commit |
+| `harness/runbook/kaggle_triad_poa.md` · `harness/runbook/kaggle_triad_pob.md` | runbook commit |
 | `runs/triad_t/poa/triad_poa_out/` | output commit POA (listener + UI-Venus raw) |
 | `runs/triad_t/poa_showui.json` | bảng POA đầy đủ + bước đổi câu |
 | `runs/triad_t/b3_uground_vongtron.json` | đối chứng vòng tròn |

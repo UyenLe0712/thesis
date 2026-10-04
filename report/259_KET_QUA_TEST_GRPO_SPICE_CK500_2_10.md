@@ -9,7 +9,7 @@ không đổi điểm lưu. Đọc theo luật 258 §0 đã khoá trước khi c
 - Đường sinh như val: hoà `adapter_s1_seed101` → `s1_merged` (fp16) → gắn `checkpoint-500`
   (adapter md5 `491fa6677340393f1e4464c08a0cec98`) → greedy, 96 token, câu nhắc `prompt_body + SYS`.
 - Chấm bằng **đúng bản `score_run.py` trong dataset `thesis-score`** — bản đã chấm S1/101 ra 59,11.
-- Runbook đã chạy: `harness/kaggle_grpo_spice_test_ck500.md` · script sinh `harness/gen_test_grpo.py` ·
+- Runbook đã chạy: `harness/runbook/kaggle_grpo_spice_test_ck500.md` · script sinh `harness/gen_test_grpo.py` ·
   script đọc `harness/grpo_spice_test_doc.py` · tệp `runs/grpo_spice/*_test*` + `test_ck500_doc.json`.
 
 ### Sáu chỗ 258 (chép từ ảnh) phải sửa mới chạy được

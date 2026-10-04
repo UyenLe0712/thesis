@@ -123,3 +123,5 @@ S có ý nghĩa), *"Overall"* ×2, *"moreover"*, *"itself"*, *"Applications may 
 **Chưa làm / user quyết:** (a) EasyChair #5577 đang là bản *ladder*; nộp bản này nghĩa là **thay bài** —
 xác nhận với thầy, và nhớ sửa danh sách tác giả (còn thiếu thầy Long trong mail xác nhận). (b) Nếu muốn
 Hình 1 là ví dụ **test** thật thì phải chọn một bước trong `test.jsonl` rồi viết lại ba dòng chữ trong hình.
+
+> **4/10/2026:** ảnh gốc đã xoá khỏi đĩa sau khi chép xong (bản chép là tệp .md/.tex trong thư mục này). Ảnh đã từng commit thì vẫn lấy lại được từ lịch sử git; ảnh/zip chưa commit thì không còn.

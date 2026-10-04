@@ -152,7 +152,7 @@ Chưa kiểm được giấy phép của GTA1, InfiGUI-R1, Holo1.5 trong lượt
 
 ### ① τ trên dev 1.400, kèm τ₀ suy từ tiên nghiệm — hôm nay, < 1 h T4
 
-**Thay đổi:** không đổi mô hình. Chạy `harness/kaggle_SEQSCORE_SAU_O.md` để có điểm chuẩn hoá
+**Thay đổi:** không đổi mô hình. Chạy `harness/runbook/kaggle_SEQSCORE_SAU_O.md` để có điểm chuẩn hoá
 độ dài của mọi ứng viên và `none` trên 1.400 bước dev. Quét τ theo thủ tục (x16d): cực đại độ
 đúng trên **toàn bộ** 1.400, luật null trong lưới, khoá trước khi nhìn 3.062.
 

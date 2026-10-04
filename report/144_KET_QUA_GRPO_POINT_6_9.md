@@ -2,7 +2,7 @@
 
 *Viết 6/9/2026, sau khi C1 (suy luận 4.463 bước) xong và TRƯỚC khi có `exec`.*
 Đăng ký: `report/106` mục **(x19)**, ghi số ở **(x19d) ghi 1…5**. Mã `harness/grpo_point.py` ·
-runbook `harness/colab_grpo_point.md` (train) và `harness/kaggle_grpo_point_6_9.md` (suy luận,
+runbook `harness/runbook/colab_grpo_point.md` (train) và `harness/runbook/kaggle_grpo_point_6_9.md` (suy luận,
 chấm) · tệp ở `runs/grpo_point/` · đọc lại bằng `harness/doc_grpo_local.py`.
 
 ---
@@ -182,5 +182,5 @@ Chủ luận văn quyết trong lúc commit C2 đang chạy, khi chưa ai nhìn 
    bước trên Kaggle (~1,7 h); **chấm ở máy nhà, 0 GPU**. Gói ảnh đã đóng sẵn:
    `test_images_nontap.tar` (1,54 GB, 2.495 ảnh, dựng từ ảnh có sẵn trên máy nên không phải tải
    `test_images.tar` từ Drive). Danh sách `--only`: `runs/grpo_point/only_nontap2495.jsonl`.
-   Runbook: mục **C3** của `harness/kaggle_grpo_point_6_9.md`.
+   Runbook: mục **C3** của `harness/runbook/kaggle_grpo_point_6_9.md`.
 3. Chỉ khi `exec` ≥ +2,2 pp mới tới (x20a) và (x20c).

@@ -72,7 +72,7 @@ Số bước câu khác nhau trên 249 click: G≠O **42 (16,9%)** · G≠F **49
 
 - Kết quả thô: `runs/tfvf_g0/tfvf_g0.jsonl` (249 dòng) · log `runs/tfvf_g0/tfvf_g0.log` · lượt thử
   `tfvf_g0_thu.jsonl`, `tfvf_thu.log`, `tfvf_ve.log` · bảng máy đọc `runs/tfvf_g0/g0_doc.json`.
-- Mã: `harness/tfvf_g0.py` · `harness/tfvf_g0_doc.py` · runbook `harness/kaggle_tfvf_g0.md` · gói
+- Mã: `harness/tfvf_g0.py` · `harness/tfvf_g0_doc.py` · runbook `harness/runbook/kaggle_tfvf_g0.md` · gói
   `_bundles/tfvf_g0_script.zip`.
 - Chạy lại phần đọc: `~/.venvs/thesis/bin/python harness/tfvf_g0_doc.py runs/tfvf_g0/tfvf_g0.jsonl
   runs/c1/c1_mau.jsonl --json runs/tfvf_g0/g0_doc.json`

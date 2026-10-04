@@ -214,4 +214,4 @@ dùng dev 1.400 làm tập thưởng (đó là tập kiểm).
 
 ## 5. Thi hành (5/9 đêm)
 
-User quyết chạy. Đăng ký ở `report/106` **(x19)** (hệ, tập thưởng, hàm thưởng nguyên văn, ba tiêu chí thăm dò, cách đọc). Mã `harness/grpo_point.py` (selftest 0 GPU đạt), runbook `harness/colab_grpo_point.md` (G1–G7). Gói mã `_bundles/thesis_rented.zip` dựng lại 5/9.
+User quyết chạy. Đăng ký ở `report/106` **(x19)** (hệ, tập thưởng, hàm thưởng nguyên văn, ba tiêu chí thăm dò, cách đọc). Mã `harness/grpo_point.py` (selftest 0 GPU đạt), runbook `harness/runbook/colab_grpo_point.md` (G1–G7). Gói mã `_bundles/thesis_rented.zip` dựng lại 5/9.

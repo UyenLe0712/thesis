@@ -1,7 +1,7 @@
 # `runs/grpo_point/` — lượt GRPO thưởng `<point>` nối tiếp MIN-DESC/101
 
 Đăng ký: `report/106` mục **(x19)** · mã `harness/grpo_point.py` · runbook train
-`harness/colab_grpo_point.md` · runbook suy luận + chấm `harness/kaggle_grpo_point_6_9.md`.
+`harness/runbook/colab_grpo_point.md` · runbook suy luận + chấm `harness/runbook/kaggle_grpo_point_6_9.md`.
 
 | tệp | là gì |
 |---|---|

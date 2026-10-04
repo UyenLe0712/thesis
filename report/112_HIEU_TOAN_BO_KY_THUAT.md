@@ -1571,7 +1571,7 @@ thật → khoá ngưỡng → **mới** train S2. Lý do: cặp hạt giống S
 biết hai lượt train khác nhau bao nhiêu **khi không có can thiệp nào**. Không có con số đó thì
 không phân biệt được "S2 hơn S1" với "nhiễu giữa hai lượt train". Trình tự này **đã đi đúng**.
 
-**Ô kiểm vàng trước mỗi lượt train** (`harness/run_on_colab.md` ô A.2b): so cấu hình lượt này
+**Ô kiểm vàng trước mỗi lượt train** (`harness/runbook/run_on_colab.md` ô A.2b): so cấu hình lượt này
 với lượt tham chiếu; **chỉ 4 khoá được phép khác** (`seed` · `output_dir` · `dataset` ·
 `preprocessing_num_workers`), khoá thứ năm là **dừng hẳn**. Lượt 202 đã kiểm: **38/38 khoá, chỉ
 khác `seed` và `output_dir`**.
@@ -1621,14 +1621,14 @@ Việt nào. Cách chia hiện hành nằm trong `CLAUDE.md` mục *Hai bài bá
 | `harness/score_run.py` | bộ trỏ + chấm + gộp số (ghi dần, nối tiếp được) |
 | `harness/metric_exec.py` | **luật chấm** — có phần tự kiểm chạy được |
 | `harness/make_bundle.py` | đóng gói mang lên Colab/Kaggle |
-| `harness/run_on_colab.md` | **runbook** train — chạy theo ô, đừng viết lại mã |
+| `harness/runbook/run_on_colab.md` | **runbook** train — chạy theo ô, đừng viết lại mã |
 | `harness/rule_sensitivity.py` | chấm lại dưới 5 luật khác nhau (§5.7) — đọc từ tệp thô, miễn phí |
 | `harness/make_paraphrase.py` | dựng 4 biến thể diễn đạt lại; **có hai cổng chặn**, đọc chú thích trước khi sửa |
 | `harness/phep_a_ghep_cap.py` | đọc kết quả phép A **theo ghép cặp** — dùng cái này, đừng đọc `.json` trần |
 | `harness/phep_a_hieu_chinh.py` | dựng kết quả bản v2 của cả bốn biến thể **từ tệp thô, 0 GPU**; có `assert` tự kiểm bộ trỏ tất định |
 | `harness/rasoat_16_8.py` | bán kính gộp, sàn theo khoảng cách hàng xóm, lát cắt vùng mù |
 | `harness/make_fig_voronoi.py` | dựng hình Voronoi cho bài; **tự khẳng định** bằng `assert` nên hình không thể trái mã |
-| `harness/kaggle_pheA_CHAY_LAI.md` | **runbook** chấm trên Kaggle — có ô kiểm GPU và nhịp sống |
+| `harness/runbook/kaggle_pheA_CHAY_LAI.md` | **runbook** chấm trên Kaggle — có ô kiểm GPU và nhịp sống |
 
 ### Kết quả
 

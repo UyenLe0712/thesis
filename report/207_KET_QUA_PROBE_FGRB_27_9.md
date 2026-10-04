@@ -303,14 +303,14 @@ Việc kế (chờ user): P2 — sinh câu trên val 1.567 bước, ba lần (S1
 role/zone), Kaggle T4. **Mã P2 chưa viết.** Nên quyết trước khi viết: dùng zone 31 lớp như tài liệu
 230 khoá, hay zone 3×3 (tín hiệu mạnh hơn hẳn, nhưng là thay đổi sau khi thấy số — phải khai).
 
-Lệnh chạy lại: `harness/kaggle_p1_probe_fgrb.md` mục D.
+Lệnh chạy lại: `harness/runbook/kaggle_p1_probe_fgrb.md` mục D.
 
 ---
 
 ## 10. P2 — thiết kế đã chốt 28/9, CHƯA CHẠY
 
 User chọn zone **lưới 3×3** (*"cái nào mạnh hơn thì làm"*). Mã: `harness/p2_fgrb.py` (Kaggle) ·
-`harness/p2_doc.py` (chấm, CPU máy nhà) · runbook `harness/kaggle_p2_fgrb.md` · gói
+`harness/p2_doc.py` (chấm, CPU máy nhà) · runbook `harness/runbook/kaggle_p2_fgrb.md` · gói
 `_bundles/fgrb_p2_script.zip`.
 
 Theo 230 mục P2, cộng các điểm tự chọn (khai rõ):

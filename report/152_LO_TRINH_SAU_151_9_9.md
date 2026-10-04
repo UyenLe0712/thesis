@@ -128,7 +128,7 @@ Trên WSL bỏ được P2 và P3bis (xem §0 mục 1–2). Còn lại:
 **P4 → kéo ảnh val → P6 → P7 → `noi_suy.py` → upload dataset → V1 → V2 → V3**. Bốn việc đầu đều
 0 GPU và làm trong một buổi, nên thực tế vẫn song song được với việc viết luận văn.
 
-Runbook step-by-step: **`harness/kaggle_phase1_noisuy_9_9.md`**.
+Runbook step-by-step: **`harness/runbook/kaggle_phase1_noisuy_9_9.md`**.
 
 - [~] **B1** P4 (dựng val) — nhưng phải ràng buộc theo ảnh, xem B2.
 - [x] **B2** ✅ **xong 9/9 — 6.774 ảnh / 1.733 episode**, `train.jsonl` md5 vẫn khớp bản sao lưu. ⛔ Trước đó `train_ac/images/` chỉ có 1.697 ảnh. ⛔ Đừng chạy
@@ -182,7 +182,7 @@ Chỉ bắt đầu sau khi chặng 1 xong và P4bis đã chạy.
       gọi `llamafactory-cli`, nếu không `grid/` rỗng và mất 40 quan sát.
 - [x] **A3** ✅ **xong 9/9** — `harness/khang_dinh_vissft.py` (chưa chạy được trên WSL vì thiếu `transformers`; chạy trên Colab trước bước 1). Nội dung: tham số huấn luyện > 14.966.784 và có tensor `visual.*` với
       `requires_grad=True`. ⛔ Không dùng cổng `grad_norm` bước 10.
-- [x] **Runbook chặng 4** ✅ **xong 9/9** — `harness/colab_vissft_9_9.md`, bảy ô dán kèm bốn điều
+- [x] **Runbook chặng 4** ✅ **xong 9/9** — `harness/runbook/colab_vissft_9_9.md`, bảy ô dán kèm bốn điều
       phải đọc trước. Gói dữ liệu `_bundles/vissft_data.tar.gz` (48 MB, md5 `5130635e5493`) đã đóng,
       chờ upload lên `MyDrive/thesis/`.
 - [x] **Cơ chế cắt lỗ** ✅ **thiết kế 9/9** — `151` không có cơ chế nào cho việc này. Hai điểm

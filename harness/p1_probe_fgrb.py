@@ -15,7 +15,7 @@ import os, sys, json, re, argparse, time, collections
 # Chặn thanh tiến trình tqdm TRƯỚC khi import transformers/huggingface_hub — nếu không,
 # lượt tải Qwen2.5-VL-3B (~7 GB) in mỗi lần cập nhật thành MỘT DÒNG log trên Kaggle
 # (tqdm ngoài terminal tương tác không ghi đè được dòng cũ), đã từng treo một lượt commit
-# 7 giờ vì log ngập (xem harness/kaggle_pheA_CHAY_LAI.md). Đặt ở đây, KHÔNG đặt trong main().
+# 7 giờ vì log ngập (xem harness/runbook/kaggle_pheA_CHAY_LAI.md). Đặt ở đây, KHÔNG đặt trong main().
 os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
 os.environ["TRANSFORMERS_VERBOSITY"] = "error"
 
@@ -145,7 +145,7 @@ def load_model(bundle):
     # device_map="auto" (như infer_branch.py) để accelerate tự cân bằng qua nhiều GPU nếu có —
     # nhưng "auto" có thể quyết định OFFLOAD ra CPU/đĩa tuỳ cách nó ước lượng bộ nhớ, và bản peft
     # đang cài lỗi khi nạp adapter LoRA vào một model có offload_index (KeyError trong
-    # _update_offload — bắt được khi thử --limit trên CPU, xem harness/kaggle_p1_probe_fgrb.md
+    # _update_offload — bắt được khi thử --limit trên CPU, xem harness/runbook/kaggle_p1_probe_fgrb.md
     # mục Ô 2.5). Model 3B thừa chỗ trong MỘT GPU T4 (16 GB) nên không cần "auto" cân bằng gì cả —
     # chỉ định thẳng một thiết bị, khớp cách harness/pata_model.py:load_base() đã làm
     # (device_map={"": 0}), loại hẳn nhánh mã có thể kích hoạt offload.

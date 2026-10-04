@@ -3,8 +3,8 @@
 > **Tự chứa.** ⛔ **CẬP NHẬT 25/9: cổng cuối đã đọc — KHÔNG ĐẠT (§5c). Mục 6–8 chỉ còn giá trị lịch sử.** Viết 24/9 ~18:30 VN để một phiên khác đọc rồi quyết **A (dừng C1) hay B (chạy hết epoch)**
 > mà không cần hỏi lại. Nhãn: **[đo]** = số chạy ra từ mã/log · **[suy]** = ước lượng.
 > Spec: `report/185` (chép từ 9 ảnh) · quyết định KL box lớn: `report/193` · nhật ký chi tiết từng
-> bước: `report/186` §3.1–3.14. Runbook: `harness/colab_pata_c1.md` (Colab) ·
-> `harness/kaggle_pata_test.md` (Kaggle test/smoke) · `harness/kaggle_pata_cham_val600.md` (chấm P10).
+> bước: `report/186` §3.1–3.14. Runbook: `harness/runbook/colab_pata_c1.md` (Colab) ·
+> `harness/runbook/kaggle_pata_test.md` (Kaggle test/smoke) · `harness/runbook/kaggle_pata_cham_val600.md` (chấm P10).
 
 ---
 
@@ -226,7 +226,7 @@ nhầm tệp; mass J khác H nên đầu localizer nạp đúng.)
 | 4 | exec(C1 bật) > exec(C1 tắt) | xem §5c | ✅ (điểm) |
 | 5 | cận dưới 90% P(về D\|ép D) − P(về D\|ép R) > 0 | xem §5c | ❌ |
 
-**P10 (Kaggle):** ô Q2 của `harness/kaggle_pata_cham_val600.md` **đã sửa 24/9 tối** trước khi chạy — bản cũ
+**P10 (Kaggle):** ô Q2 của `harness/runbook/kaggle_pata_cham_val600.md` **đã sửa 24/9 tối** trước khi chạy — bản cũ
 tìm `ocr_val.jsonl` (dataset `thesis-val-cham` chỉ có `ocr.jsonl`) và lấy thư mục ảnh từ `.png` đầu tiên sau
 sắp xếp, tức thư mục 440 ảnh của `thesis-pata` (đứng trước `thesis-val-cham` theo tên). Bản mới lấy mọi thứ
 theo thư mục của `val_cham600.jsonl` và kiểm đủ ảnh cho 602 bước. ⛔ Dataset `thesis-val` cũ không thay được

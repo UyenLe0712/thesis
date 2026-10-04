@@ -1,6 +1,6 @@
 # 110 — PHIÊN 0 TRÊN COLAB (10-11/8/2026): SỐ ĐO, LỖI BẮT ĐƯỢC, TRẠNG THÁI
 
-> Ghi lại kết quả chạy `harness/run_on_colab.md` phiên 0 (dựng dữ liệu dạy + OCR + nhãn
+> Ghi lại kết quả chạy `harness/runbook/run_on_colab.md` phiên 0 (dựng dữ liệu dạy + OCR + nhãn
 > khai báo + bốn nhánh + tập kiểm). Mọi con số dưới đây **đo trên máy thật**, không phải
 > ước. Khi mâu thuẫn với `report/108`: file này thắng về *phiên 0 đo được gì*.
 
@@ -1467,7 +1467,7 @@ chứ không phải câu tốt hơn. `UI-Venus-Ground-7B` (arXiv 2508.10833 §3.
 AndroidControl. ⚠️ Nó **vẫn nền Qwen2.5-VL** ⇒ đóng đòn *nhiễm dữ liệu*, **không** đóng đòn
 *cùng họ*; đừng viết là giải quyết cả hai.
 
-Mã: `harness/kaggle_phepB_uivenus.md` (runbook) · `harness/phan_tich_venus.py` (đọc offline).
+Mã: `harness/runbook/kaggle_phepB_uivenus.md` (runbook) · `harness/phan_tich_venus.py` (đọc offline).
 
 #### ⭐ (a) Phép rút gọn lát KHÔNG MẤT MÁT — cắt đôi chi phí GPU
 

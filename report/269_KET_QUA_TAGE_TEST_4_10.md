@@ -1,6 +1,6 @@
 # Kết quả TAGE pred+cổng trên tập test (4/10/2026)
 
-Nguồn: Kaggle commit theo `harness/kaggle_tage_test.md`, tệp ở `runs/tage_test/`. Đọc bằng
+Nguồn: Kaggle commit theo `harness/runbook/kaggle_tage_test.md`, tệp ở `runs/tage_test/`. Đọc bằng
 `harness/tage_test_doc.py` (0 GPU, ~2 phút, tự kiểm đạt), số ghi ở `runs/tage_test/tage_test_doc.json`.
 Thiết kế: câu nháp ck500 → bộ định vị `loc_g` → vùng cắt 40% → bộ biên tập `ed_gold` → cổng
 lp_edit − lp_draft > τ = 0,73767 (**chọn trên val, không chỉnh trên test**). Bước cổng không nhận giữ kết

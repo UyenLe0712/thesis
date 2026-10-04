@@ -183,7 +183,7 @@ nhiệt độ 1,0 kém hơn greedy trên trung bình) ⇒ nếu học từ phầ
 (kiểu SCST). ⛔ Val là dữ liệu S1 đã thấy lúc dạy ⇒ không trích con số nào ra báo; best-of-8 là
 oracle chọn theo câu chuẩn, chỉ nói "có tín hiệu để học", không nói mức sẽ đạt.
 Mã chuẩn bị (27/9): `harness/c1_mau_s1.py` (Kaggle T4) + `harness/c1_doc.py` (CPU) +
-runbook `harness/kaggle_c1_da_dang_s1.md` + gói `_bundles/c1_script.zip`. Dùng lại dataset
+runbook `harness/runbook/kaggle_c1_da_dang_s1.md` + gói `_bundles/c1_script.zip`. Dùng lại dataset
 `fgrb-p1-bundle`. 400 bước val chọn bằng seed 20260927 (249 click · 39 open_app · 33 input_text ·
 32 scroll · 32 wait · 15 navigate_back). Đường đọc đã kiểm trên dữ liệu giả (8 nhánh làm 8 mẫu):
 21,8% nhóm giống hệt, khớp 21,5% đo độc lập ở §2.

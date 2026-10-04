@@ -22,3 +22,5 @@ Nguồn: `../My Documents [25-09-2026 08_33].zip`, gồm 3 ảnh JPG chụp các
 - Tên file Markdown được lấy từ tab trình soạn thảo trong ảnh. Đề mục được đánh số lại để dễ đọc.
 - Các chỉ dẫn và lệnh trong tài liệu là nội dung được trích xuất, chưa được thực thi trong lần chuyển đổi này.
 - Bản ghép có ghi chú riêng tại công thức directional vì ảnh không ghi rõ chỉ số L/H ở dòng điều kiện đó. Các số liệu là số liệu trong ảnh, chưa được kiểm chứng bằng kết quả thí nghiệm.
+
+> **4/10/2026:** ảnh gốc đã xoá khỏi đĩa sau khi chép xong (bản chép là tệp .md/.tex trong thư mục này). Ảnh đã từng commit thì vẫn lấy lại được từ lịch sử git; ảnh/zip chưa commit thì không còn.

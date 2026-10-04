@@ -541,7 +541,7 @@ Chặng A (0 GPU) đã làm trên WSL:
 | A2 Train-proper | xong: 40.189 chạm, 40.089 có box; 100 thiếu box (91 không có descriptor + 9 điểm chạm vượt khung ảnh khai báo ⇒ KL tắt, CE giữ); 107 box cắt vào biên màn | `harness/pata_data.py` → `dg1_cache/train_ac/pata/*.jsonl` |
 | A3 split + hash | xong: rời nhau theo episode · (episode,step) · ảnh/OCR; SHA-256 ở `pata/split_hash.json`; probe40 khoá hash `6c23c1898d85…` | như trên |
 | A4 decoder + collator + 13 test | xong, **13/13 ĐẠT trên mô hình tí hon (CPU)**; chờ chạy `--real` trên Kaggle | `harness/pata_model.py` · `pata_test.py` |
-| A5 overfit + smoke | overfit tí hon đạt (KL 2,41 → 0,11, mass 0,12 → 0,97); smoke thật chờ Kaggle | `harness/kaggle_pata_test.md` |
+| A5 overfit + smoke | overfit tí hon đạt (KL 2,41 → 0,11, mass 0,12 → 0,97); smoke thật chờ Kaggle | `harness/runbook/kaggle_pata_test.md` |
 | A6 seal manifest | chưa — cần SHA của checkpoint S, H | — |
 | trainer S/H/J | xong, chạy thử cả ba chặng + nối tiếp trên CPU | `harness/pata_train.py` |
 | đánh giá | `diag` (cổng H, mốc 800) + `gen` bật/tắt bridge; **swap/random-pool (§8 điều 5) chưa viết** — cần hộp distractor, làm trước bước 12 | `harness/pata_eval.py` |

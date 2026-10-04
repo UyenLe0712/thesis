@@ -1,6 +1,6 @@
 # Bàn giao — TAGE trên tập test, Kaggle commit (3–4/10/2026)
 
-Đọc kèm: `report/267` (số val + thiết kế) · runbook `harness/kaggle_tage_test.md` (Ô 1–5).
+Đọc kèm: `report/267` (số val + thiết kế) · runbook `harness/runbook/kaggle_tage_test.md` (Ô 1–5).
 Số val cấm trích vào luận văn. TAGE **chưa có số test** tại thời điểm viết.
 
 ## 1. Đã làm 3–4/10

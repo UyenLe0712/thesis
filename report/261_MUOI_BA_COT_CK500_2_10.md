@@ -103,7 +103,7 @@ môi trường đã sinh số 66,33 của luận văn (`bert_score` 0.3.12 · tr
 2. **Chấm 2.495 bước không chạm** (nhất là scroll) — phép kiểm cuối cho tác dụng phụ. Cần sinh câu
    ck500 cho 2.495 bước trên Kaggle T4 (~2 h), chấm `score_run.py --mode noharm` 0 GPU ở máy nhà.
    Gói ảnh `test_images_nontap.tar` (2.495 ảnh, 1,65 GB) **đã chép từ `/tmp` cũ ra
-   `_bundles/test_images_nontap.tar`** (gitignore), chưa lên dataset Kaggle. **Runbook: `harness/kaggle_grpo_spice_nontap_ck500.md`** (luật đọc khoá trong đó) · đọc bằng `harness/grpo_spice_nontap_doc.py`. Mốc S1: 85,97 toàn bộ · scroll 83,97.
+   `_bundles/test_images_nontap.tar`** (gitignore), chưa lên dataset Kaggle. **Runbook: `harness/runbook/kaggle_grpo_spice_nontap_ck500.md`** (luật đọc khoá trong đó) · đọc bằng `harness/grpo_spice_nontap_doc.py`. Mốc S1: 85,97 toàn bộ · scroll 83,97.
 3. Khi scroll không giảm quá 3 điểm so với S1 ⇒ chốt ck500 là mô hình cuối.
 4. Sửa luận văn: thêm hàng ck500 vào hai bảng 13 thước; bỏ sàn MDE 2,2 khỏi luật quyết định; báo KTC
    ghép cặp; ghi rõ một hạt giống và **không chạy S1-hoà theo quyết định ngày 2/10** (bản Mac ghi;
