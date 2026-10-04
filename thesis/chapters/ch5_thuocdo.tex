@@ -31,8 +31,8 @@ về chạm. Lớp ``quay lại'' vì thế gần như không đạt tới đư�
 của chính lớp này. Ảnh hưởng của lỗi này đã được đo trên quần thể chấm. Có $81$ bước đổi phán quyết ở S1, $47$ ở Base và
 $0$ ở nhánh câu chuẩn, đưa điểm từ $59{,}12$ xuống $58{,}81$ và từ $47{,}60$ xuống
 $47{,}40$, còn chênh lệch giữa hai nhánh gần như không đổi ($11{,}52$ xuống $11{,}41$
-điểm). Ba nhánh đã chấm \textbf{không được chấm lại}, để thước không bị sửa sau khi đã thấy điểm. Bản vá đã được
-viết thành một biến thể nghiêm ngặt của điều kiện này, và biến thể đó \textbf{bắt buộc}
+điểm). Ba nhánh đã chấm không được chấm lại, để thước không bị sửa sau khi đã thấy điểm. Bản vá đã được
+viết thành một biến thể nghiêm ngặt của điều kiện này, và biến thể đó bắt buộc
 dùng cho phép kiểm không gây hại, vì phép kiểm ấy chạy trên nhóm bước không chạm, và ở nhóm này thao
 tác quay lại là thao tác thật. Phép kiểm không gây hại ở Mục~\ref{sec:khongcham} được chấm
 bằng đúng biến thể nghiêm ngặt này.
@@ -73,10 +73,10 @@ chứa điểm} $g$ đều thuộc về phần tử cần chạm và loại chú
 \paragraph{Vai trò của mô hình định vị trong phép chấm.} Mốc đối chiếu là một toạ độ mà
 người thật đã chạm, có sẵn trong dữ liệu, không phải kết quả dự đoán của một mô hình. $G$ chỉ
 đóng góp một phép định vị. Việc phán quyết đúng sai do hình học so với $g$ quyết định. $G$ không
-bao giờ được luận văn tinh chỉnh và không bao giờ thấy $g$.
+bao giờ được chúng tôi tinh chỉnh và không bao giờ thấy $g$.
 
 \paragraph{Phạm vi của thước.} Thước đo \emph{câu có xác định đúng phần tử hay
-không}. Độ trôi chảy, độ dài, mức hữu ích với người đọc nằm ngoài phạm vi. Đây là một phạm vi hẹp, và luận văn gọi tên phạm vi ấy ngay từ đầu.
+không}. Độ trôi chảy, độ dài, mức hữu ích với người đọc nằm ngoài phạm vi. Đây là một phạm vi hẹp, và chúng tôi gọi tên phạm vi ấy ngay từ đầu.
 
 \section{Luật xác định trúng và giới hạn của ngưỡng dung sai quy ước}
 \label{sec:luattrung}
@@ -119,7 +119,7 @@ chỉ sang một phần tử \emph{riêng biệt}, không áp cho một điểm 
 ô của chính phần tử cần chạm. Giới hạn này được đo và báo ở Mục~\ref{sec:bomloi}. Thứ hai,
 phép gộp phần tử định nghĩa thế nào là ``riêng biệt'' cũng có chi phí, bởi phép gộp xoá tâm của một phần tử cạnh tranh
 ở $96{,}3\%$ số bước, và ở $8{,}2\%$ số bước có ít nhất một tâm bị xoá thuộc về một
-phần tử thật sự riêng biệt. Vì vậy điểm theo ngưỡng dung sai \textbf{luôn được báo bên cạnh điểm chính}, nhưng không bao giờ lấy điểm ấy làm điểm chính.
+phần tử thật sự riêng biệt. Vì vậy điểm theo ngưỡng dung sai luôn được báo bên cạnh điểm chính, nhưng không bao giờ lấy điểm ấy làm điểm chính.
 
 \begin{figure}[t]
 \centering
@@ -156,13 +156,20 @@ luyện trên chính bộ dữ liệu dùng để chấm.
 \item sai số định vị đủ nhỏ, theo điều kiện ở Mục~\ref{sec:congA}.
 \end{enumerate}
 
-Trong ba điều kiện, chỉ điều kiện thứ ba đạt được, còn \textbf{hai điều kiện đầu không
-đạt}. UGround-V1-2B được dựng trên
+Trong ba điều kiện, chỉ điều kiện thứ ba đạt được, còn hai điều kiện đầu không
+đạt. UGround-V1-2B được dựng trên
 Qwen2-VL, cùng dòng với Qwen2.5-VL-3B đang bị chấm, và bảng thành phần dữ liệu của mô hình này liệt kê $47$ nghìn phần tử có nhãn người
-lấy từ \emph{split train} của AndroidControl. Tập kiểm của luận văn tách rời ở mức màn
-hình nên đây không phải rò rỉ nhãn, nhưng dụng cụ đo đã thấy \emph{văn phong chú thích}
-của bộ ngữ liệu này. Đây là cách giải thích thay thế mạnh nhất mà luận văn phải xét tới, và
-cách giải thích ấy chỉ loại trừ được bằng một phép đo chứ không bằng lập luận. Mục~\ref{sec:phepB} chấm lại
+lấy từ phần huấn luyện chính thức của AndroidControl. Như Mục~\ref{sec:chiatap} đã nêu, $90\%$
+tác vụ trong tập kiểm của đề tài cũng thuộc phần huấn luyện chính thức ấy, nên không loại trừ
+được khả năng dụng cụ đo đã gặp một phần màn hình của tập kiểm, và chắc chắn dụng cụ đã thấy
+\emph{văn phong chú thích} của bộ ngữ liệu này. Một phép đo trực tiếp cho thấy điều đó không làm
+lệch điểm số. Tách $4.463$ bước theo phần chia chính thức, câu chuẩn đạt $75{,}9\%$ trên $3.994$
+bước thuộc phần huấn luyện và $74{,}0\%$ trên $469$ bước thuộc phần kiểm và phần kiểm định. S1 đạt
+$59{,}1\%$ và $59{,}3\%$, Base đạt $47{,}7\%$ và $46{,}7\%$. Mọi cặp khoảng tin cậy chồng lên
+nhau, và các nhánh mô hình không cao hơn ở phần mà dụng cụ có thể đã học. Với $469$ bước, phép đo
+này loại được một độ lệch cỡ năm điểm trở lên nhưng không loại được độ lệch một đến hai điểm. Cách
+giải thích thay thế mạnh nhất vì vậy vẫn là thiên vị theo văn phong, và cách giải thích ấy chỉ loại
+trừ được bằng một phép đo chứ không bằng lập luận. Mục~\ref{sec:phepB} chấm lại
 bằng một dụng cụ thứ hai không dùng AndroidControl. Điều kiện thứ nhất, khác họ mô hình,
 thì \emph{vẫn chưa giải quyết được} kể cả sau phép đo đó, vì dụng cụ thứ hai cũng thuộc họ Qwen
 (Mục~\ref{sec:hanche}).
@@ -174,9 +181,8 @@ bộ nhớ đệm khoá-giá trị khi sinh được bật. Hai chi tiết này 
 \section{Điều kiện về sai số của dụng cụ đo}
 \label{sec:congA}
 
-Thước kế thừa độ tin cậy của $G$. Trước khi chấm bất kỳ nhánh nào, luận văn đặt một điều
-kiện đạt hoặc không đạt cho dụng cụ, đó là \textbf{sai số định vị trung vị không quá $3\%$ bề
-ngang màn}. Ngưỡng này có căn cứ hình học, không phải một lựa chọn tuỳ ý. Trên $1.496$ bước chạm, biên dung sai, tức nửa
+Thước kế thừa độ tin cậy của $G$, nên dụng cụ được kiểm trước khi chấm bất kỳ nhánh nào. Yêu cầu
+đặt ra là sai số định vị trung vị không quá $3\%$ bề ngang màn. Ngưỡng này có căn cứ hình học, không phải một lựa chọn tuỳ ý. Trên $1.496$ bước chạm, biên dung sai, tức nửa
 khoảng cách từ phần tử cần chạm tới phần tử khác gần nhất sau khi gộp, có trung vị $67$ điểm ảnh ($6{,}2\%$ bề
 ngang) và phân vị thứ mười là $39$ điểm ảnh ($3{,}6\%$). Ngưỡng $3\%$ tương ứng khoảng
 $32$ điểm ảnh, nằm dưới cả phân vị thứ mười. Bài toán cũng khả thi về nguyên tắc, vì toạ độ
@@ -200,8 +206,8 @@ Tỉ lệ loại nhầm & $0\%$ & $7{,}5\%$ & $24{,}1\%$ & $55\%$ \\
 \end{table}
 
 \paragraph{Kết quả đo.} UGround-V1-2B trên $300$ bước tập kiểm với hạt giống cố định cho
-sai số trung vị \textbf{$0{,}7\%$} bề ngang màn (phân vị $25$: $0{,}2$, phân vị $75$: $8{,}8$, phân vị $90$: $36{,}3$, $62{,}7\%$ số bước ở mức $3\%$ trở xuống).
-\textbf{Điều kiện đạt}, và đạt với biên rất rộng, vì sai số đo được thấp hơn ngưỡng
+sai số trung vị $0{,}7\%$ bề ngang màn (phân vị $25$: $0{,}2$, phân vị $75$: $8{,}8$, phân vị $90$: $36{,}3$, $62{,}7\%$ số bước ở mức $3\%$ trở xuống).
+Điều kiện đạt, và đạt với biên rất rộng, vì sai số đo được thấp hơn ngưỡng
 tới hơn bốn lần.
 
 Trung vị là một phép kiểm yếu trên một phân phối lưỡng cực như phân phối này, vì mô hình
@@ -212,7 +218,7 @@ Trung vị là một phép kiểm yếu trên một phân phối lưỡng cực 
 \label{sec:tran}
 
 Điều kiện ở mục trước đo khoảng cách, còn thước thì chấm theo ô Voronoi. Để biết điểm cao nhất mà thước
-có thể cho một bộ sinh câu hoàn hảo, luận văn đưa \emph{chính câu chuẩn} của mọi
+có thể cho một bộ sinh câu hoàn hảo, chúng tôi đưa \emph{chính câu chuẩn} của mọi
 bước chạm cho mô hình định vị rồi chấm bằng đúng luật đang triển khai.
 
 Cách làm này có chi phí thấp hơn nhiều so với dự kiến. Vì không cần sinh câu nên cũng
@@ -223,7 +229,7 @@ chấm như mọi nhánh khác.
 
 \begin{quote}
 Trên toàn bộ $4.463$ bước chạm, $1.091$ cụm (hiệu dụng $454{,}3$), trần là
-\textbf{$75{,}7\%$}, KTC 95\% $[74{,}1; 77{,}3]$ theo luật ô Voronoi, và $84{,}3\%$
+$75{,}7\%$, KTC 95\% $[74{,}1; 77{,}3]$ theo luật ô Voronoi, và $84{,}3\%$
 $[82{,}9; 85{,}6]$ theo ngưỡng dung sai báo kèm. Con số $84{,}3\%$ này trùng số học với sàn
 của luật dung sai ở Mục~\ref{sec:luattrung}. Hai đại lượng đo trên hai quần thể khác nhau
 ($4.463$ bước so với $250$ bước) và sự trùng nhau là ngẫu nhiên.
@@ -233,16 +239,16 @@ Vì đầu vào chính là câu chuẩn nên hai điều kiện (i) và (ii) tho
 mà ở đó luật đảo nghĩa kích hoạt trên một câu chuẩn chứa cả ``on'' lẫn ``off'', do đó trần này
 là một điểm số thuần về định vị, sai lệch dưới $0{,}07\%$.
 
-\textbf{Mọi điểm số executability phải đọc trên nền $75{,}7$, không phải trên nền $100$.}
-Cách trình bày được dùng trong luận văn là đặt hai số tuyệt đối cạnh nhau và gọi phần chênh
+Mọi điểm số executability phải đọc trên nền $75{,}7$, không phải trên nền $100$.
+Cách trình bày được dùng trong đề tài là đặt hai số tuyệt đối cạnh nhau và gọi phần chênh
 là \emph{khoảng cách còn lại}: nhánh S1 đạt $59{,}1$ so với $75{,}7$ của câu chuẩn,
-còn cách $16{,}6$ điểm. Điểm cao nhất mà đề tài đo được, $60{,}0$, còn cách $15{,}7$ điểm.
+còn cách $16{,}6$ điểm. Điểm executability cao nhất mà đề tài đo được, $60{,}6$, còn cách $15{,}1$ điểm.
 Đây là cách trình bày thông dụng của các công trình sinh câu chỉ đường có mốc người, ví dụ
 như Zhao và
-cộng sự~\cite{zhao2021} in mốc người $75{,}1$ cạnh $47{,}7$ của hệ thống tốt nhất. Luận
-văn \emph{không} quy điểm mô hình thành tỉ lệ phần trăm của mốc câu chuẩn, vì tỉ lệ ấy bỏ
+cộng sự~\cite{zhao2021} in mốc người $75{,}1$ cạnh $47{,}7$ của hệ thống tốt nhất. Chúng tôi
+\emph{không} quy điểm mô hình thành tỉ lệ phần trăm của mốc câu chuẩn, vì tỉ lệ ấy bỏ
 qua sàn của thước. Một phép chuẩn hoá hai mốc đúng nghĩa phải trừ sàn, trong khi sàn $12{,}0$
-được đo trên lát $800$ bước còn $60{,}0$ đo trên toàn tập, nên hai con số không ghép được vào
+được đo trên lát $800$ bước còn điểm mô hình đo trên toàn tập, nên hai con số không ghép được vào
 cùng một công thức. Theo cách gọi của Nangia và Bowman~\cite{nangia2019}, $75{,}7$ là một
 \emph{ước lượng thận trọng} về năng lực của câu chuẩn, đo qua cùng dụng cụ, chứ không
 phải năng lực của con người.
@@ -262,14 +268,14 @@ cũng cần được đo với cùng mức cẩn trọng. Đại lượng cần 
 \emph{bức ảnh} chứ không phải cho \emph{câu}, và khi đó thước không còn đo được đại lượng mà thước
 được thiết kế để đo.
 
-Có một dấu hiệu cho thấy phép đo này là cần thiết. Trên $4.463$ bước, \textbf{$40{,}0\%$}
+Có một dấu hiệu cho thấy phép đo này là cần thiết. Trên $4.463$ bước, $40{,}0\%$
 số bước được cả ba nhánh giải đúng, \emph{kể cả mô hình chưa hề tinh chỉnh}. Cách đọc tự
 nhiên là hai phần năm quần thể dễ tới mức mọi nhánh đều giải đúng, nên sàn có lẽ nằm quanh
 $40\%$.
 
 \subsection{Ba trường hợp thử để đo sàn}
 
-Luận văn dựng ba trường hợp thử dưới đây.
+Chúng tôi dựng ba trường hợp thử dưới đây.
 
 \begin{itemize}
 \item \textbf{Nhánh câu chung chung} thay câu của mọi bước bằng cùng một câu duy nhất,
@@ -357,11 +363,11 @@ Bỏ VỊ TRÍ, giữ tên & $198$ & $89{,}4 \to 85{,}9$ & $-3{,}5$ pp \\
 \end{table}
 
 Phép kiểm McNemar trên phép cắt tên cho $b = 58$, $c = 3$, $\chi^2 = 47{,}8$ và $p < 0{,}001$.
-\textbf{Việc gọi đúng tên phần tử có ảnh hưởng gấp tám lần việc chỉ đúng vị trí.}
+Việc gọi đúng tên phần tử có ảnh hưởng gấp tám lần việc chỉ đúng vị trí.
 
 Đây là bằng chứng thực nghiệm cho tên gọi của bài toán. Nếu con số ngược lại, tức bỏ tên
 cũng chỉ mất khoảng ba điểm như bỏ vị trí, thì thước này đo \emph{định vị} chứ không đo
-\emph{định danh}, và cả cách đặt vấn đề của luận văn phải viết lại.
+\emph{định danh}, và cả cách đặt vấn đề của đề tài phải viết lại.
 
 \paragraph{Cách đọc con số trên phần bị tác động.} Nhánh bỏ tên phần tử chỉ viết lại được những câu
 \emph{có} mệnh đề vị trí, tức $24{,}1\%$ số bước. Trên toàn mẫu $800$ bước, điểm của nhánh là
@@ -372,12 +378,12 @@ phần bị tác động, $-28{,}5$ điểm. Mọi phép cắt chỉ chạm mộ
 \section{Kiểm chứng bằng bơm lỗi có kiểm soát}
 \label{sec:bomloi}
 
-Theo phương pháp danh sách phép bơm lỗi của Sai và cộng sự~\cite{sai2021}, mười tiêu chí
-cùng ngưỡng đạt được cố định \emph{trước} khi chạy, trên $398$ bước chạm của tập kiểm.
+Theo phương pháp danh sách phép bơm lỗi của Sai và cộng sự~\cite{sai2021}, mười tiêu chí, mỗi
+tiêu chí kèm một mức mà một thước tốt cần đạt, được kiểm trên $398$ bước chạm của tập kiểm.
 Kết quả được ghi ở Bảng~\ref{tab:bomloi}.
 
 \begin{table}[t]
-\caption{Tự kiểm thước bằng lỗi bơm vào. Ngưỡng cố định trước khi thực thi.}
+\caption{Tự kiểm thước bằng lỗi bơm vào. Cột ngưỡng là mức mà một thước tốt cần đạt.}
 \label{tab:bomloi}
 \centering\small
 \renewcommand{\arraystretch}{1.15}
@@ -399,12 +405,12 @@ Bắt được sai hướng & $\ge 90\%$ & $100{,}0\%$ & $755$ & đạt \\
 \end{tabular}
 \end{table}
 
-\paragraph{Cách đọc kết quả bơm lỗi.} Luận văn tự phân
-tích và chỉ ra rằng \textbf{năm dòng không thể không đạt do chính cách cấu tạo của chúng}. Điều kiện thao tác hoán đổi
+\paragraph{Cách đọc kết quả bơm lỗi.} Chúng tôi tự phân
+tích và chỉ ra rằng năm dòng không thể không đạt do chính cách cấu tạo của chúng. Điều kiện thao tác hoán đổi
 đúng những động từ mà hàm chuẩn hoá coi là tương đương. Luật đảo nghĩa chỉ có thể kích
 hoạt trên ba câu chuẩn. Hai dòng ``sai loại thao tác'' và ``sai hướng'' kiểm một bảng tra
 bằng chính bảng đó. Ở dòng ``diễn đạt khác'', điểm ``đúng'' được bơm vào chỉ cách đáp án
-$23$ điểm ảnh, tức vẫn nằm trong bán kính gộp. \textbf{Chỉ bốn dòng mang thông tin}, tức những
+$23$ điểm ảnh, tức vẫn nằm trong bán kính gộp. Chỉ bốn dòng mang thông tin, tức những
 dòng đặt điểm lên một phần tử kề hoặc phủ định câu, và \emph{hai trong bốn dòng đó
 không đạt}.
 
@@ -428,7 +434,7 @@ Phản biện nặng nhất nhắm vào một thước lấy mô hình định v
 sau. Nếu chỉ cần đổi cách nói mà điểm số đã đổi thì thước đang đo văn phong chứ không đo
 nội dung. Jandial và
 cộng sự~\cite{groundersunderstand} đưa cảnh báo này bằng một tìm kiếm đối kháng trên giao
-diện máy tính để bàn. Luận văn kiểm cảnh báo này trực tiếp bằng cách viết lại chính câu chuẩn
+diện máy tính để bàn. Chúng tôi kiểm cảnh báo này trực tiếp bằng cách viết lại chính câu chuẩn
 rồi chấm lại, trên mẫu $800$ bước.
 
 Bốn biến thể được dựng bằng luật, không dùng mô hình ngôn ngữ, để phép biến đổi có thể
@@ -471,7 +477,7 @@ vùng khác hẳn.
 
 \paragraph{Phạm vi của kết luận.} Kết quả này cho phép nói
 \emph{``dụng cụ đo bền trước việc đổi động từ và đổi trật tự câu''}. Kết quả này
-\textbf{không} cho
+không cho
 phép nói ``bền trước diễn đạt lại'' nói chung, bởi Jandial và cộng sự đổi \emph{cách mô tả
 phần tử}, một phép biến đổi nặng hơn hẳn, trong khi ở đây điều kiện khớp thao tác giữ nguyên
 $100\%$ ở cả ba biến thể, tức phép viết lại này không chạm tới phần việc mà mô hình định vị phải
@@ -483,14 +489,14 @@ tử, vẫn là một hạn chế mở (Mục~\ref{sec:hanche}).
 
 Mọi con số cho tới đây có điều kiện trên một mô hình định vị duy nhất, và mô hình đó có một
 khuyết điểm đã biết. Bảng thành phần dữ liệu của UGround liệt kê $47$ nghìn phần tử có nhãn
-người lấy từ phần huấn luyện của chính bộ ngữ liệu này~\cite{uground}. Ở mức màn hình thì
-tập kiểm vẫn tách rời nên đây không phải rò rỉ nhãn, nhưng dụng cụ đo \emph{đã tiếp xúc với văn phong chú thích} của bộ dữ liệu, trong khi các nhánh tinh chỉnh lại được dạy viết đúng văn
-phong ấy. Đây là cách đọc thay thế mạnh nhất còn lại cho mọi chênh lệch trong luận văn, và
+người lấy từ phần huấn luyện của chính bộ ngữ liệu này~\cite{uground}, nên dụng cụ đo
+\emph{đã tiếp xúc với văn phong chú thích} của bộ dữ liệu, trong khi các nhánh tinh chỉnh lại được
+dạy viết đúng văn phong ấy. Đây là cách đọc thay thế mạnh nhất còn lại cho mọi chênh lệch trong đề tài, và
 chỉ có phép chấm lại bằng một dụng cụ khác mới loại trừ được cách đọc ấy.
 
 Dụng cụ thứ hai là \textbf{UI-Venus-Ground-7B}~\cite{uivenus}, chọn sau khi xét mười ứng
 viên theo ba tiêu chí là giấy phép mở, kết quả cao hơn UGround trên bộ chuẩn định vị di
-động, và \textbf{không dùng AndroidControl khi huấn luyện}. Phần được chấm gồm $2.532$ bước mà các nhánh
+động, và không dùng AndroidControl khi huấn luyện. Phần được chấm gồm $2.532$ bước mà các nhánh
 viết câu khác nhau, với thời gian chấm $8{,}15$ giờ.
 
 Thiết kế của phép đo này có một chi tiết quyết định. Phép đo không kiểm việc hai dụng cụ có
@@ -519,7 +525,7 @@ Trần trên mẫu & $70{,}0\%$ & $69{,}3\%$ \\
 \end{table}
 
 \paragraph{Kết quả trên phép so đối chiếu.} Thang đo không bị nén, nên các chênh
-lệch nhỏ hơn trong bảng vẫn đọc được. Chênh lệch S1 trên Base vì vậy \textbf{không} phải hệ quả của việc
+lệch nhỏ hơn trong bảng vẫn đọc được. Chênh lệch S1 trên Base vì vậy không phải hệ quả của việc
 dụng cụ đã tiếp xúc với văn phong, bởi chênh lệch gần như nguyên vẹn dưới một dụng cụ chưa từng học bộ ngữ
 liệu này.
 Đây là phép đo loại trừ cách đọc thay thế mạnh nhất mà Chương~\ref{ch:thucnghiem} nêu ra.
@@ -538,11 +544,62 @@ UI-Venus chấm thấp hơn UGround ở cả ba nhánh ($39{,}1$ so với $42{,}
 với $52{,}8$ ở S1, và $46{,}6$ so với $49{,}5$ ở S2), nên việc chọn dụng cụ này không mang lại lợi
 thế nào cho kết quả.
 
+\section{Kiểm chéo bằng một người nghe ngoài họ Qwen}
+\label{sec:phi4}
+
+Hai mô hình định vị ở các mục trên đều thuộc họ Qwen-VL, cùng dòng với mô hình được chấm. Mục này
+thay hẳn cách chấm để đóng phần lớn mối lo đó. Một mô hình thị giác và ngôn ngữ ngoài họ Qwen,
+\textbf{Phi-4-multimodal-instruct}~\cite{phi4mini}, đóng vai người nghe trong một câu hỏi trắc
+nghiệm. Mọi phần tử bấm được trên màn, lấy từ cây trợ năng, được vẽ khung và đánh số lên ảnh theo
+lối Set-of-Mark~\cite{setofmark}, trung vị $15$ ô mỗi màn. Người nghe nhận ảnh đã đánh số cùng
+\emph{một câu duy nhất}, không có mục tiêu và không có lịch sử, rồi trả lời số của ô mà câu bảo
+người dùng chạm vào. Bước được tính đúng khi ô được chọn chứa điểm chạm thật. Cách chấm này là dạng
+\emph{độ đúng khi hiểu} của dòng sinh biểu thức quy chiếu~\cite{mao2016,luo2017}, đặt trên khung
+trắc nghiệm theo phần tử như Mind2Web~\cite{mind2web}. Người nghe không học AndroidControl, và chúng tôi
+cũng không tinh chỉnh người nghe.
+
+\begin{table}[t]
+\caption{Người nghe trắc nghiệm Phi-4 trên $4.463$ bước chạm. Đoán ngẫu nhiên đạt $10{,}1\%$, và
+$95{,}7\%$ số bước có ít nhất một ô chứa điểm chạm thật. Base chỉ chấm được $3.566$ bước vì hết
+giờ máy.}
+\label{tab:phi4}
+\centering\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}lrc@{}}
+\toprule
+Câu đưa cho người nghe & Chọn đúng & KTC $95\%$ \\
+\midrule
+Câu chuẩn & $54{,}9$ & $[53{,}1; 56{,}8]$ \\
+Chặng ba & $45{,}8$ & $[44{,}1; 47{,}5]$ \\
+S1 (hạt giống $101$) & $44{,}6$ & $[42{,}9; 46{,}4]$ \\
+Base ($3.566$ bước) & $38{,}6$ & $[36{,}7; 40{,}4]$ \\
+Câu chung chung \emph{``Tap the button.''} & $15{,}9$ & $[14{,}7; 17{,}0]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Bảng~\ref{tab:phi4} cho kết quả. Thứ tự các nhánh trùng với thứ tự dưới executability, luật hộp
+phần tử và luật khớp chạm của AitW. Đặt mỗi nhánh vào dải giữa Base và câu chuẩn, chặng ba nằm ở
+khoảng $45$ đến $48\%$ dải ấy dưới cả bốn cách chấm. Chênh lệch giữa chặng ba và S1 hạt giống $101$
+là $+1{,}14$ điểm $[+0{,}23; +2{,}10]$ với $p = 0{,}020$, nằm giữa mức $+0{,}96$ của executability
+và $+1{,}55$ của luật hộp. Trên $1.795$ bước hai nhánh viết câu giống hệt nhau, người nghe trả lời
+giống hệt nhau ở mọi bước, và lát $200$ bước chấm hai lần cho câu trả lời trùng $200/200$, nên dụng
+cụ này cũng tất định. Mức đồng thuận từng bước giữa người nghe và UGround chỉ ở mức vừa phải, hệ số
+$\kappa$ từ $0{,}25$ đến $0{,}44$ tuỳ nhánh, tức hai dụng cụ sai ở những bước khác nhau mà vẫn xếp
+các hệ thống cùng một thứ tự.
+
+Thang của người nghe hẹp hơn: câu chuẩn chỉ đạt $54{,}9\%$, dải giữa câu chuẩn và câu chung chung
+là $39$ điểm, so với $63$ điểm của executability. Một lý do khả dĩ là người nghe không được cho mục
+tiêu của tác vụ, nên những câu chuẩn rất ngắn mất đi phần ngữ cảnh vốn giúp xác định phần tử. Vì vậy
+chúng tôi dùng người nghe này để kiểm thứ tự và hướng của các phép so, không dùng làm số chính. Hai
+giới hạn còn lại: hạt giống thứ hai của S1 và MIN-DESC chưa được chấm bằng người nghe, và Base chỉ
+có $3.566$ bước.
+
 \section{So sánh với thước dựa trên câu chuẩn}
 \label{sec:thamchieu}
 
 Tiền đề ``một câu chuẩn duy nhất không đủ làm căn cứ phán quyết'' là một phát biểu kiểm được,
-và luận văn kiểm tiền đề ấy trên chính các câu ở Chương~\ref{ch:thucnghiem}.
+và chúng tôi kiểm tiền đề ấy trên chính các câu ở Chương~\ref{ch:thucnghiem}.
 
 Chấm bằng F1 trên từ nội dung thì $52{,}8\%$ số câu \emph{được thước executability chấp
 nhận} của mô hình chưa tinh chỉnh rơi xuống dưới $0{,}5$, so với $13{,}9\%$ của mô hình đã tinh
@@ -569,7 +626,7 @@ Zhao và cộng sự~\cite{zhao2021} đã chỉ ra thước dựa trên tham chi
 \section{Độ nhạy của kết luận với luật chấm}
 \label{sec:donhay}
 
-Việc chọn luật chấm là một bậc tự do của người nghiên cứu, nên luận văn đo lợi ích và chi phí của lựa chọn đó. Ba nhánh được chấm lại trên $698$ bước dưới năm luật khác nhau, gồm đĩa Euclid, hình chữ
+Việc chọn luật chấm là một bậc tự do của người nghiên cứu, nên chúng tôi đo lợi ích và chi phí của lựa chọn đó. Ba nhánh được chấm lại trên $698$ bước dưới năm luật khác nhau, gồm đĩa Euclid, hình chữ
 nhật theo từng trục như đang dùng, luật ô Voronoi như triển khai, luật ô Voronoi lấy hạt
 là tâm hộp chứa $g$ thay vì $g$, và luật hộp gần nhất.
 
@@ -605,12 +662,12 @@ AitW Euclid & $+1{,}99$ & $0{,}0010$ & giữ ý nghĩa \\
 \end{tabular}
 \end{center}
 
-Dưới executability, mức chênh là $0{,}96$ điểm và không còn ý nghĩa sau hiệu chỉnh; dưới hai
+Dưới executability, mức chênh là $0{,}96$ điểm và không còn ý nghĩa sau hiệu chỉnh, còn dưới hai
 luật dung sai, mức chênh lên $2{,}0$ đến $2{,}1$ điểm và giữ ý nghĩa. Hai kết luận không mâu
 thuẫn mà đo hai việc khác nhau. Executability đòi câu phải dẫn tới \emph{đúng} phần tử trong
-số các phần tử lân cận, còn luật dung sai chấp nhận mọi điểm đủ gần đáp án. Cái giá của luật
+số các phần tử lân cận, còn luật dung sai chấp nhận mọi điểm đủ gần đáp án. Chi phí của luật
 dung sai nằm ở phần sàn: câu rỗng nghĩa đạt $12{,}00$ dưới executability nhưng $20{,}50$ dưới luật
-dung sai. Vì vậy luận văn báo mọi phép so dưới nhiều luật cạnh nhau, và dùng các luật đã có tiền
+dung sai. Vì vậy chúng tôi báo mọi phép so dưới nhiều luật cạnh nhau, và dùng các luật đã có tiền
 lệ trong lĩnh vực, trình bày ngay sau đây, làm số chính bên cạnh executability.
 
 Mức tuyệt đối dao động tới $26$ điểm, nên \emph{không con số tuyệt đối nào ở đây là
@@ -661,10 +718,10 @@ $34{,}2$ điểm trên phần bị tác động, nặng hơn mức $28{,}5$ dư�
 này không làm yếu đi kết luận rằng thước đo việc gọi tên.
 
 Ba điều cần nêu kèm con số $83{,}8$. Thứ nhất, luật khớp là của tác giả bộ dữ liệu, nhưng
-hộp được khớp là do luận văn suy ra từ cây trợ năng theo quy tắc nút nhỏ nhất chứa điểm chạm,
+hộp được khớp là do chúng tôi suy ra từ cây trợ năng theo quy tắc nút nhỏ nhất chứa điểm chạm,
 nên chặt hơn phần tử đích thật ở khoảng $48\%$ số bước. Thứ hai, $78\%$ mức tăng so với luật
 ô Voronoi đến từ các bước có hộp rộng hơn nửa màn. Thứ ba, luật này được tính sau khi đã có
-mọi điểm, và điều đó được nêu rõ ở mọi chỗ con số xuất hiện. Luận văn báo luật hộp \emph{song
+mọi điểm, và điều đó được nêu rõ ở mọi chỗ con số xuất hiện. Chúng tôi báo luật hộp \emph{song
 song} với executability ở mọi chỗ nêu kết quả chính: executability là thước chặt, còn luật hộp
 là thước theo quy ước của chính bộ dữ liệu.
 
@@ -681,9 +738,9 @@ tác tử giao diện dùng để báo kết quả. Theo mã ấy, hai lần ch�
 \emph{một trong hai} điều kiện. Điều kiện thứ nhất là khoảng cách Euclid giữa hai điểm, tính trên
 toạ độ đã chuẩn hoá về $[0; 1]$ theo bề ngang và chiều cao màn hình, không vượt quá $0{,}14$.
 Điều kiện thứ hai là cả hai điểm cùng nằm trong một khung phần tử sau khi khung được nới rộng
-thêm $1{,}4$ lần chiều cao và $1{,}4$ lần bề ngang, chia đều hai phía. Luận văn áp nguyên văn hai
+thêm $1{,}4$ lần chiều cao và $1{,}4$ lần bề ngang, chia đều hai phía. Chúng tôi áp nguyên văn hai
 điều kiện này, cộng điều kiện đúng loại thao tác như mọi luật khác. Mã gốc xét mọi khung chú thích
-trên màn, còn luận văn chỉ có khung của phần tử cần chạm, nên vế khung chỉ còn là điểm dự đoán nằm
+trên màn, còn chúng tôi chỉ có khung của phần tử cần chạm, nên vế khung chỉ còn là điểm dự đoán nằm
 trong khung đáp án đã nới. Cách xấp xỉ ấy chỉ có thể cho điểm thấp hơn luật gốc, không cao hơn.
 
 Trên đủ $4.463$ bước, câu chuẩn đạt $92{,}1\%$ dưới luật khớp chạm của AitW. Chặng ba đạt
@@ -693,19 +750,19 @@ của màn hình khác đạt $17{,}4$, nên dải giữa trần và sàn là $6
 executability. Luật này vì vậy vẫn tách được câu tốt khỏi câu vô nghĩa. Điểm cần nêu kèm là luật
 này ít phạt việc thiếu tên phần tử: câu bỏ tên nhưng giữ mệnh đề vị trí vẫn đạt $86{,}3$ trên lát
 ấy, chỉ thấp hơn trần $4{,}5$ điểm, trong khi dưới executability mức giảm tương ứng là $6{,}9$ điểm
-(Mục~\ref{sec:goiten}). Đây là lý do luận văn luôn
+(Mục~\ref{sec:goiten}). Đây là lý do chúng tôi luôn
 đặt luật khớp chạm của AitW cạnh executability chứ không thay thế.
 
-\paragraph{Cận trên của luật khớp chạm của AitW.} Để khoanh vùng giá trị của luật gốc, luận văn
+\paragraph{Cận trên của luật khớp chạm của AitW.} Để khoanh vùng giá trị của luật gốc, chúng tôi
 tính thêm một biến thể theo hướng ngược lại: vế khung được xét trên \emph{mọi} phần tử bấm được của
 màn, lấy từ cây trợ năng (phần tử hiển thị, nhận thao tác chạm hoặc chạm giữ, chiếm không quá một
 nửa màn, gộp các khung trùng nhau), cộng khung của phần tử cần chạm. Tập khung này rộng hơn tập khung
 chú thích của AndroidInTheWild, vốn gồm các khung chữ và khung biểu tượng nhỏ, nên biến thể cho điểm
 cao hơn luật gốc. Luật gốc vì vậy nằm giữa hai biến thể. Dưới biến thể cận trên, chặng ba đạt
 $85{,}0\%$, MIN-DESC $84{,}4\%$, S1 hạt giống $101$ đạt $81{,}0\%$, Base $73{,}4\%$ và câu chuẩn
-$96{,}2\%$. Cái giá nằm ở sàn: trên lát $800$ bước, câu chung chung đạt $41{,}6$ và câu thật của màn
+$96{,}2\%$. Chi phí nằm ở sàn: trên lát $800$ bước, câu chung chung đạt $41{,}6$ và câu thật của màn
 hình khác đạt $35{,}9$, nên dải giữa trần và sàn chỉ còn $54{,}3$ điểm, hẹp hơn cả executability.
-Luận văn vì vậy báo luật khớp chạm của AitW dưới dạng khoảng từ $77{,}3\%$ đến $85{,}0\%$ cho chặng
+Vì vậy chúng tôi báo luật khớp chạm của AitW dưới dạng khoảng từ $77{,}3\%$ đến $85{,}0\%$ cho chặng
 ba, với số chính là cận dưới.
 
 \section{Thống kê và mức chênh nhỏ nhất phát hiện được}
@@ -719,7 +776,7 @@ Bootstrap ở đây nghĩa là lấy lại mẫu từ chính dữ liệu đã c�
 nguyên cả cụm có hoàn lại rồi tính lại điểm. Khoảng tin cậy là khoảng giữa hai phân vị của
 mười nghìn giá trị thu được. Cameron và cộng sự~\cite{cameron2008}
 cho thấy khoảng tin cậy tính theo cách này có độ phủ thấp hơn mức danh nghĩa khi số cụm ít,
-nên luận văn báo số cụm bên cạnh mọi khoảng tin cậy.
+nên chúng tôi báo số cụm bên cạnh mọi khoảng tin cậy.
 
 \paragraph{Luật gom cụm} quyết định lực thống kê. Với những bước
 không quy được về ứng dụng, mỗi tác vụ tạo thành một cụm riêng, cho $G = 1.091$ cụm và số
@@ -743,31 +800,29 @@ khoảng $12{,}1$ điểm nếu hạn chế về các bước có nhãn ứng d�
 Công thức~\eqref{eq:mde} chia cho $\sqrt{G_{\text{eff}}}$, tức giả định tương quan trong
 cụm bằng một. Hệ số nở đo được chỉ là $1{,}10$, nên công thức này đặt ngưỡng cao hơn thực chất khoảng ba
 lần. Vì mọi nhánh đều được chấm trên \emph{cùng} $4.463$ bước, phân tích đúng là phân
-tích \textbf{ghép cặp}. Sai số chuẩn của hiệu ghép cặp đo được là $0{,}79$ điểm, so với
-$1{,}05$ điểm nếu tính như hai tỉ lệ độc lập, cho MDE \textbf{$2{,}2$ điểm}.
+tích ghép cặp. Sai số chuẩn của hiệu ghép cặp đo được là $0{,}79$ điểm, so với
+$1{,}05$ điểm nếu tính như hai tỉ lệ độc lập, cho MDE $2{,}2$ điểm.
 
-Sai số chuẩn dùng để đặt ngưỡng lấy từ cặp S1 và Base, trong khi cặp đích S2 và S1 gồm
-hai mô hình gần nhau hơn nên sai số thật sẽ nhỏ hơn. Ngưỡng $2{,}2$ điểm vì vậy nghiêng về
-phía bảo thủ, và được giữ cố định thay vì tính lại từ phương sai của chính nhánh xử lý. Hai
-đại lượng MDE và ngưỡng công bố phải được tách bạch. MDE là một đại lượng \emph{thiết kế},
-cho biết độ lớn nhỏ nhất còn phát hiện được ở lực $80\%$, còn ngưỡng công bố là một
-\emph{quy tắc quyết định}, phát biểu ở dạng khoảng tin cậy ghép cặp loại trừ $0$ \emph{và}
-$|\Delta| \ge \max(2{,}2 \text{ điểm}, \text{sàn nhiễu hạt giống})$. Con số $2{,}2$ vì vậy
-đóng vai sàn ý nghĩa thực tiễn chứ không thay thế phép kiểm ý nghĩa thống kê.
+Sai số chuẩn ở đây lấy từ cặp S1 và Base, trong khi các cặp so sánh về sau gồm hai mô hình gần
+nhau hơn nên sai số thật thường nhỏ hơn. Con số $2{,}2$ điểm vì vậy nghiêng về phía bảo thủ. MDE là
+một đại lượng \emph{thiết kế}, cho biết độ lớn nhỏ nhất mà thiết kế phát hiện được ở lực $80\%$, chứ
+không phải một ngưỡng để quyết định đúng sai. Phép so cụ thể vẫn đọc bằng khoảng tin cậy ghép cặp
+và giá trị $p$ (Mục~\ref{sec:dangky}).
 
 Sàn nhiễu hạt giống về sau đã đo được. Hai lượt S1 chỉ khác nhau ở hạt giống lệch nhau
 $0{,}52$ điểm, tương ứng độ lệch chuẩn giữa hạt giống $\sigma \approx 0{,}46$ điểm
 (Mục~\ref{sec:haihatgiong}). Ghép độ lệch chuẩn này với sai số của thước theo tổng bình phương cho mức
-chênh nhỏ nhất phát hiện được của một thiết kế \textbf{một hạt giống} là $2{,}11$ điểm.
+chênh nhỏ nhất phát hiện được của một thiết kế một hạt giống là $2{,}11$ điểm.
 Con số này quan trọng ở chỗ tách được hai loại nhiễu. Một chênh lệch có thể tách khỏi
-nhiễu \emph{đo} mà vẫn không tách được khỏi nhiễu \emph{huấn luyện}, và đây chính là tình
+nhiễu \emph{đo} mà vẫn không tách được khỏi nhiễu \emph{huấn luyện}, và đây là tình
 huống của $\Delta_{\text{thành phần}} = +0{,}63$ điểm ở Mục~\ref{sec:mindesc}.
 
 
-\paragraph{Điều kiện không gây hại ở bước không chạm.} Một phép kiểm không gây hại phủ $35{,}9\%$ số bước tập
-kiểm không phải bước chạm, gồm cuộn, chờ, gõ, mở ứng dụng và quay lại. Ở đó nhánh xử lý không
-được thấp hơn nhánh so sánh quá $3$ điểm về mức khớp loại thao tác, tính bằng đúng hàm
-chuẩn hoá của thước chính để không phát sinh một định nghĩa thứ hai khác biệt tinh vi. Phép
-kiểm này \textbf{đã được thực hiện và không đạt}, với mức giảm $19{,}75$ điểm, gấp gần bảy
-lần ngưỡng. Kết quả
-và cách quy trách nhiệm ghi ở Mục~\ref{sec:khongcham}.
+\paragraph{Phép kiểm ở bước không chạm.} Executability chỉ chấm bước chạm, trong khi $35{,}9\%$
+số bước của tập kiểm là bước không chạm, gồm cuộn, chờ, gõ, mở ứng dụng và quay lại. Một nhánh có thể
+tăng điểm ở bước chạm nhờ nghiêng hẳn về câu chạm, rồi trả giá ở các bước còn lại mà thước chính không
+nhìn thấy. Vì vậy các nhánh huấn luyện thêm được kiểm ở nhóm bước này bằng mức khớp loại thao tác,
+tính bằng đúng hàm chuẩn hoá của thước chính để không phát sinh một định nghĩa thứ hai khác biệt tinh
+vi. Mức giảm đo được của chặng hai ở Mục~\ref{sec:khongcham} là $19{,}75$ điểm, và của nhánh thưởng
+SPICE ở Mục~\ref{sec:grpospice} là $1{,}68$ điểm trên toàn nhóm, dồn vào bước cuộn và quay lại.
+Chặng ba chưa được kiểm ở nhóm bước này.

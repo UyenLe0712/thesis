@@ -3,7 +3,7 @@
 
 Không có bộ dữ liệu công khai nào được dựng sẵn cho tác vụ ``nhìn một màn hình, viết một
 câu hướng dẫn cho người đọc''. Chương này trình bày cách chuyển AndroidControl thành tập
-giám sát cho tác vụ đó. Toàn bộ quá trình được \textbf{tự động hoá hoàn toàn}. Đề tài không
+giám sát cho tác vụ đó. Toàn bộ quá trình được tự động hoá hoàn toàn. Đề tài không
 thuê người gán nhãn, và cũng không có nhãn nào do một mô hình ngôn ngữ khác sinh ra nằm trong
 vòng huấn luyện.
 
@@ -11,13 +11,13 @@ Bảng~\ref{tab:anhxa} nối ba khái niệm ở tên đề tài với các đ�
 ra, để những chương sau dùng thẳng tên gọi kỹ thuật mà người đọc vẫn theo được.
 
 \begin{table}[t]
-\caption{Ba thành phần ở tên đề tài và dạng cụ thể của chúng trong luận văn.}
+\caption{Ba thành phần ở tên đề tài và dạng cụ thể của chúng trong đề tài.}
 \label{tab:anhxa}
 \centering\small
 \renewcommand{\arraystretch}{1.3}
 \begin{tabular}{@{}p{3.5cm}p{9.6cm}@{}}
 \toprule
-Khái niệm & Dạng cụ thể trong luận văn \\
+Khái niệm & Dạng cụ thể trong đề tài \\
 \midrule
 Trường hợp sử dụng & Mục tiêu của cả tác vụ, ví dụ như đặt vé xem phim cho tối nay, cùng chuỗi
 các bước đã thực hiện trước bước đang xét \\
@@ -100,6 +100,7 @@ tin cậy không giao nhau. Tỉ lệ $48\%$ chỉ đọc được khi đặt c�
 nhánh so sánh. Mọi phép ghép về sau đều được kiểm theo cùng cách này.
 
 \section{Quy mô, cách chia tập và kiểm rò rỉ}
+\label{sec:chiatap}
 
 \begin{table}[t]
 \caption{Quy mô hai tập sau khi dựng.}
@@ -119,14 +120,36 @@ Số tác vụ & $12.895$ & $1.432$ \\
 \end{tabular}
 \end{table}
 
-Tập được chia \textbf{theo tác vụ}, không chia ngẫu nhiên theo dòng. Các màn hình trong
+Tập được chia theo tác vụ, không chia ngẫu nhiên theo dòng. Các màn hình trong
 cùng một tác vụ gần như trùng nhau, nên chia ngẫu nhiên sẽ để dữ liệu tập huấn luyện lẫn sang tập
 kiểm và làm điểm số cao hơn thực chất. Phép kiểm rò rỉ được chạy trên toàn bộ dữ liệu,
 đối chiếu $12.895$ tác vụ tập huấn luyện với $1.432$
-tác vụ tập kiểm, và cho kết quả \textbf{không có tác vụ nào trùng}. Lỗi mà phép kiểm này
+tác vụ tập kiểm, và cho kết quả không có tác vụ nào trùng. Lỗi mà phép kiểm này
 phát hiện
 không thể sửa được sau khi đã huấn luyện, nên phép kiểm được xếp vào nhóm điều kiện
 bắt buộc phải đạt trước khi sử dụng tài nguyên tính toán.
+
+\paragraph{Quan hệ với cách chia chính thức của AndroidControl.} Cách chia tập huấn luyện và tập
+kiểm ở đây là cách chia sẵn có của bản phân phối ảnh \code{ckg}, tức một phép chia ngẫu nhiên theo
+tác vụ, \emph{không} phải phần kiểm chính thức mà nhóm tác giả AndroidControl công
+bố~\cite{androidcontrol}. Đối chiếu với tệp chia chính thức cho thấy $1.287$ trong $1.432$ tác vụ
+của tập kiểm, tức $90\%$, thuộc phần \emph{huấn luyện} chính thức, chỉ $131$ tác vụ thuộc phần kiểm
+và $14$ tác vụ thuộc phần kiểm định. Tỉ lệ này khớp với kỳ vọng của một phép chọn ngẫu nhiên
+($1.274{,}6$ / $144{,}6$ / $12{,}8$ tác vụ), và cũng xác nhận rằng hai bản phân phối dùng chung một
+hệ đánh số tác vụ. Tính hợp lệ bên trong của các phép so không đổi, vì tập huấn luyện và tập kiểm
+của đề tài vẫn rời nhau hoàn toàn. Điều thay đổi là cách gọi: chúng tôi gọi tập này là \emph{tập
+kiểm giữ riêng theo tác vụ}, không gọi là phần kiểm chính thức của AndroidControl. Hệ quả của việc
+này với mô hình định vị dùng làm dụng cụ đo được đo ở Mục~\ref{sec:botro}.
+
+\paragraph{Tập kiểm định nội bộ.} Từ tháng $9$, các nhánh mới cần một tập để so các điểm lưu và
+các biến thể với nhau mà không chạm vào tập kiểm. Tập này gồm $1.567$ bước tách từ tập huấn luyện theo
+tác vụ, và các phép so ở Chương~\ref{ch:thucnghiem} dùng những lát $400$ đến $960$ bước của nó.
+Các nhánh huấn luyện từ tháng $9$ trở đi chỉ học trên phần còn lại, $63.000$ bước. Tuy vậy, S1 và các
+chặng nối tiếp S1 đã học trên toàn bộ $64.567$ bước, nên với các nhánh ấy tập kiểm định nội bộ là
+dữ liệu đã thấy. Đo trên hai nhánh có cả hai loại điểm, điểm trên tập này cao hơn điểm trên tập kiểm
+khoảng bảy điểm rưỡi, và chênh lệch giữa hai nhánh bị phóng đại tới gần bốn mươi lần
+(Mục~\ref{sec:noisuy}). Vì vậy tập kiểm định nội bộ chỉ dùng để xếp hạng hoặc để quyết định có
+chạy tiếp hay không. Chúng tôi không báo điểm tuyệt đối nào trên tập này như một kết quả.
 
 Ba tính chất của cách chia này giới hạn phạm vi kết luận.
 
@@ -143,7 +166,7 @@ về một ứng dụng có tên, $95{,}6\%$ thuộc về ứng dụng cũng xu�
 các nhánh không bị ảnh hưởng, vì mọi nhánh dùng chung dữ liệu huấn luyện, chung mô hình gốc và
 chung tập kiểm, nên chênh lệch giữa hai nhánh vẫn quy được về can thiệp. Tuy nhiên, một phép
 so với một mô hình bên ngoài chưa từng thấy các ứng dụng này sẽ nghiêng về phía mô hình
-của đề tài, nên luận văn không báo cáo bất kỳ phép so nào thuộc loại này dưới dạng một kết
+của đề tài, nên chúng tôi không báo cáo bất kỳ phép so nào thuộc loại này dưới dạng một kết
 quả độc lập.
 Mục~\ref{sec:latcat} đo trực tiếp ảnh hưởng của việc trùng ứng dụng này.
 
@@ -169,7 +192,7 @@ kết quả vừa làm đặc trưng đầu vào vừa làm nguồn tên phần 
 Khâu này được kiểm chéo giữa hai máy khác nhau, cách nhau năm ngày. Kết quả là $24{,}2$
 chuỗi nhận dạng được mỗi màn trên tập kiểm so với $23{,}6$ trên tập huấn luyện, còn trung vị thì
 bằng nhau. Vì
-AndroidControl không có nhãn chuẩn cho chữ trên màn nên luận văn \emph{không} tuyên bố
+AndroidControl không có nhãn chuẩn cho chữ trên màn nên chúng tôi \emph{không} tuyên bố
 độ chính xác của OCR. Ở bộ dữ liệu này, hai dạng lỗi đã quan sát được là biểu tượng bị
 đọc thành ký tự, và khoảng trắng bị mất (\code{Turnon}). Dạng lỗi thứ hai làm phần tử bị
 xếp vào nhóm ``không có
@@ -178,7 +201,7 @@ tên'' thay vì nhận một tên sai, nên nhãn chỉ mất bớt thông tin c
 \section{Nhãn mô tả tự động}
 \label{sec:nhanmota}
 
-Đích huấn luyện của nhánh đề xuất chứa một dòng khai báo có cấu trúc về phần tử cần chạm.
+Đích huấn luyện của nhánh khai báo (Mục~\ref{sec:motatruoc}) chứa một dòng khai báo có cấu trúc về phần tử cần chạm.
 Dòng này được dựng hoàn toàn bằng luật, không có người tham gia.
 
 Quy trình dựng dòng khai báo diễn ra như sau. Từ toạ độ chạm đáp án, chương trình chọn
@@ -322,7 +345,7 @@ vì vậy là mô tả \emph{dữ liệu đã dựng}, không phải mô tả th
 
 Chặng huấn luyện thứ hai (Mục~\ref{sec:mindescthietke}) cần một dạng dữ liệu khác. Mỗi
 mẫu ở đây là một cặp gồm một vế được chọn và một vế bị loại, thay vì một chuỗi duy nhất
-mà mô hình phải sinh ra. Tập cặp gồm \textbf{$22.854$ cặp}, dựng từ chính nhãn khai báo đã
+mà mô hình phải sinh ra. Tập cặp gồm $22.854$ cặp, dựng từ chính nhãn khai báo đã
 có và theo đúng một nguyên tắc. Hai vế \emph{chỉ} khác nhau ở ô khai báo, còn phần câu
 thì giữ nguyên từng byte.
 
@@ -337,7 +360,7 @@ trùng nhau từng byte, vế bị loại không bao giờ trùng phần tử c�
 bị loại luôn là toạ độ thật của phần tử được nêu.
 
 Hai giới hạn của tập cặp này áp dụng cho mọi kết quả của chặng hai. Thứ nhất, tập chỉ
-chứa \textbf{bước chạm}, vì chỉ bước chạm mới có nhãn khai báo. Bất
+chứa bước chạm, vì chỉ bước chạm mới có nhãn khai báo. Bất
 biến số $7$ ở trên, vốn bảo vệ phép kiểm không gây hại cho bốn nhánh đầu, \emph{không áp
 dụng} cho tập cặp này. Mức thiệt hại đo được ở Mục~\ref{sec:khongcham}. Thứ hai, có một khuyết tật chỉ
 phát hiện được sau khi đã huấn luyện. Ở $17{,}4\%$ số cặp, chuỗi \code{(no name)} xuất hiện ở

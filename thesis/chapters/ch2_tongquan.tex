@@ -1,15 +1,15 @@
 \chapter{Tổng quan}
 \label{ch:tongquan}
 
-Chương này trình bày nền tảng khái niệm cho phần còn lại của luận văn. Các mục lần lượt trình bày
-kiến trúc mô hình được dùng, kỹ thuật tinh chỉnh trong điều kiện tài nguyên hạn chế, bài
-toán định vị phần tử giao diện, bộ dữ liệu nguồn, và sau cùng là lý do các thước đo có
-sẵn không dùng được cho bài toán này, kèm số đo cho từng cách.
+Chương này trình bày nền tảng khái niệm cho phần còn lại của đề tài. Các mục lần lượt trình bày
+kiến trúc mô hình được dùng, kỹ thuật tinh chỉnh trong điều kiện tài nguyên hạn chế, học tăng
+cường với phần thưởng tính bằng luật, bài toán định vị phần tử giao diện, bộ dữ liệu nguồn, và
+sau cùng là lý do các thước đo có sẵn không dùng được cho bài toán này, kèm số đo cho từng cách.
 
 \section{Từ học sâu tới mô hình thị giác và ngôn ngữ}
 
 Học sâu là nhánh học máy dùng mạng nơ-ron nhiều tầng để tự học biểu diễn từ dữ liệu thô.
-Bước ngoặt gần nhất với luận văn là kiến trúc Transformer với cơ chế tự chú
+Bước ngoặt gần nhất với đề tài là kiến trúc Transformer với cơ chế tự chú
 ý~\cite{vaswani2017}, cho phép mô hình ước lượng quan hệ giữa các đơn vị trong chuỗi mà
 không phụ thuộc khoảng cách vị trí, đồng thời tận dụng được tính toán song song để mở
 rộng quy mô tham số.
@@ -46,11 +46,46 @@ xuống $4$ bit theo định dạng NormalFloat (NF4) rồi mới gắn các b�
 được giải nén khi cần cho phép nhân, còn gradient chỉ chảy qua phần $A$, $B$ ở độ chính
 xác cao.
 
-Trong luận văn, cấu hình cụ thể (Mục~\ref{sec:cauhinh}) cho $14.966.784$ tham số học
+Ở đây, cấu hình cụ thể (Mục~\ref{sec:cauhinh}) cho $14.966.784$ tham số học
 được, tức $0{,}48\%$ số tham số của phần mô hình ngôn ngữ. Con số này được tính lại thủ công từ bảy mô-đun
 trên $36$ tầng và dùng làm phép kiểm cơ học trước mỗi lượt huấn luyện. Nếu số tham số
 không khớp thì cấu hình có sai sót, chẳng hạn như tháp thị giác không thực sự bị đóng
 băng.
+
+\section{Học tăng cường với phần thưởng tính bằng luật}
+\label{sec:nengrpo}
+
+Học có giám sát dạy mô hình chép lại một chuỗi đích cho trước. Cách học này không cho mô hình
+biết câu nào trong số những câu mà chính mô hình \emph{có thể} viết ra là tốt hơn. Học tăng cường bù vào chỗ đó:
+mô hình tự sinh câu trả lời, một hàm thưởng chấm từng câu, và trọng số được đẩy về phía những câu
+được thưởng cao. Khi hàm thưởng là một luật tính được, chẳng hạn so một toạ độ với đáp án hoặc tính
+một thước so câu, cách làm này thường được gọi là học tăng cường với phần thưởng kiểm chứng được.
+Công trình DeepSeek-R1 trên \emph{Nature}~\cite{guo2025r1} là bản mô tả đầy đủ nhất của hướng này
+cho mô hình ngôn ngữ lớn.
+
+Thuật toán được dùng trong đề tài là tối ưu chính sách tương đối theo nhóm (GRPO), giới thiệu
+trong DeepSeekMath~\cite{shao2024grpo}. Với mỗi câu nhắc $x$, mô hình sinh một nhóm $G$ câu trả
+lời $y_1, \ldots, y_G$ và nhận các điểm thưởng $r_1, \ldots, r_G$. Lợi thế của câu thứ $i$ được
+tính bằng cách chuẩn hoá trong nhóm,
+\begin{equation}
+\hat{A}_i = \frac{r_i - \operatorname{mean}(r_{1:G})}{\operatorname{std}(r_{1:G})},
+\label{eq:grpo_adv}
+\end{equation}
+rồi mỗi token của $y_i$ được cập nhật theo $\hat{A}_i$, cộng một số hạng phạt độ lệch KL so với
+một mô hình tham chiếu đóng băng để mô hình không trôi quá xa điểm xuất phát. Điểm mạnh của cách
+chuẩn hoá này là không cần một mô hình phê bình riêng để ước lượng mức thưởng kỳ vọng, nên tiết
+kiệm bộ nhớ. Điểm yếu đi kèm cũng suy ra trực tiếp từ công thức: nếu mọi câu trong nhóm nhận cùng
+một điểm thì $\hat{A}_i = 0$ với mọi $i$ và nhóm đó không sinh gradient. Mục~\ref{sec:grpospice}
+gặp lại đúng hiện tượng này khi phần thưởng là một thước so câu.
+
+\paragraph{SPICE.} Trong các thước so câu với câu chuẩn ở Mục~\ref{sec:thuoc-gay},
+SPICE~\cite{spice} là thước mà Zhao và cộng sự~\cite{zhao2021} khuyên dùng để xếp hạng các hệ
+sinh chỉ dẫn khi có câu tham chiếu. SPICE không so chuỗi từ mà phân tích cả hai câu thành đồ thị
+cảnh gồm đối tượng, thuộc tính và quan hệ, rồi tính F1 trên các bộ ba trùng nhau. Với câu hướng
+dẫn giao diện, đối tượng thường là tên phần tử (``search icon'') và quan hệ thường là vị trí (``at
+the top''), nên SPICE nhạy với đúng hai thông tin mà executability quan tâm hơn là với động từ hay
+trật tự câu. Chúng tôi dùng SPICE làm phần thưởng trong một nhánh học tăng cường
+(Mục~\ref{sec:grpospicethietke}), còn mọi phán quyết vẫn đọc trên executability.
 
 \section{Định vị phần tử giao diện}
 
@@ -63,7 +98,7 @@ Quy ước chấm phổ biến bắt nguồn từ AndroidInTheWild~\cite{aitw}. 
 liệu ấy, một lần chạm dự đoán được coi là khớp với lần chạm đáp án khi khoảng cách Euclid giữa
 hai điểm, tính trên toạ độ đã chuẩn hoá về đoạn $[0; 1]$ theo bề ngang và chiều cao màn hình,
 không vượt quá $0{,}14$, \emph{hoặc} khi cả hai điểm cùng nằm trong một khung phần tử đã được nới
-rộng thêm $1{,}4$ lần kích thước mỗi chiều. Luận văn gọi đây là \emph{luật khớp chạm của AitW}.
+rộng thêm $1{,}4$ lần kích thước mỗi chiều. Chúng tôi gọi đây là \emph{luật khớp chạm của AitW}.
 Một biến thể đơn giản hơn dùng cửa sổ $\tau = 0{,}14$ theo từng trục: dự đoán trúng khi
 $|p_x - g_x| \le \tau W$ và $|p_y - g_y| \le \tau H$, với $g$ là toạ độ đáp án và $W$,
 $H$ là bề ngang và chiều cao màn hình. Vùng chấp nhận của biến thể này là một
@@ -72,8 +107,8 @@ $1080 \times 2400$, vùng đó tương ứng $\pm151$ điểm ảnh theo chiều
 $\pm336$ điểm ảnh theo chiều dọc. Mục~\ref{sec:luattrung} cho thấy quy ước này quá lỏng khi
 đối tượng được chấm là câu chữ, bởi quy ước này vốn được đặt ra để chấm một bộ định vị.
 
-Trong luận văn, một mô hình thuộc nhóm này giữ vai trò khác hẳn. Mô hình ấy đóng vai \textbf{dụng cụ đo}, còn bản thân mô hình thì không được đem đo. Ba điều
-kiện được đặt ra cho dụng cụ này ở Mục~\ref{sec:botro}, và mọi điểm số trong luận văn đều là điểm số \emph{có điều kiện}
+Ở đây, một mô hình thuộc nhóm này giữ vai trò khác hẳn. Mô hình ấy đóng vai \textbf{dụng cụ đo}, còn bản thân mô hình thì không được đem đo. Ba điều
+kiện được đặt ra cho dụng cụ này ở Mục~\ref{sec:botro}, và mọi điểm số trong đề tài đều là điểm số \emph{có điều kiện}
 trên dụng cụ này.
 
 \section{Bộ dữ liệu AndroidControl}
@@ -81,15 +116,15 @@ trên dụng cụ này.
 AndroidControl~\cite{androidcontrol} do nhóm Google DeepMind công bố tại NeurIPS 2024,
 giấy phép CC0, gồm $15.283$ chuỗi thao tác do người thật thực hiện trên thiết bị Pixel
 trong khoảng một năm. Mỗi bước lưu ảnh màn hình, loại thao tác, toạ độ chạm nếu có, và
-trường quan trọng nhất đối với luận văn là \code{step\_instructions}, câu hướng dẫn do
+trường quan trọng nhất đối với đề tài là \code{step\_instructions}, câu hướng dẫn do
 chính người thao tác viết cho bước đó.
 
 \begin{quote}
-\textbf{Vị trí của luận văn so với các công trình dùng bộ dữ liệu này.} Trong bài gốc
+\textbf{Vị trí của đề tài so với các công trình dùng bộ dữ liệu này.} Trong bài gốc
 AndroidControl cũng như trong các công
-trình dùng bộ này mà luận văn khảo sát (Aguvis~\cite{aguvis}, SeeClick~\cite{seeclick}), câu hướng dẫn từng
+trình dùng bộ này mà chúng tôi khảo sát (Aguvis~\cite{aguvis}, SeeClick~\cite{seeclick}), câu hướng dẫn từng
 bước nằm ở \textbf{đầu vào}, dùng để gợi ý cho tác tử suy ra thao tác cần thực hiện. Ở
-luận văn này, chính câu đó là \textbf{đầu ra mà mô hình phải sinh ra}, và cũng là đối tượng duy
+đề tài này, chính câu đó là \textbf{đầu ra mà mô hình phải sinh ra}, và cũng là đối tượng duy
 nhất được đem chấm. Hướng sử dụng dữ liệu vì vậy bị đảo ngược.
 \end{quote}
 

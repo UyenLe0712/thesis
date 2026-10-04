@@ -1,0 +1,99 @@
+Failed to load /usr/local/lib/python3.13/dist-packages/torchao/_C_cutlass_90a.abi3.so: Could not load this library: /usr/local/lib/python3.13/dist-packages/torchao/_C_cutlass_90a.abi3.so
+Failed to load /usr/local/lib/python3.13/dist-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so: Could not load this library: /usr/local/lib/python3.13/dist-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so
+[nạp] /kaggle/working/s1_merged · dtype torch.float16 · 4-bit False · Tesla T4
+[token động từ chạm] ['select', 'press', 'open', 'Click', 'Select', 'click', 'Open', 'Press', 'Tap', 'Choose', 'tap']
+[câu nhắc] 75 bước C1 có lớp vàng scroll/type/navigate_back
+[adapter] ck250 ← /kaggle/input/datasets/uyenle0712/grpo-spice-ck250
+[adapter] ck500 ← /kaggle/input/datasets/uyenle0712/grpo-spice-ck500
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+Traceback (most recent call last):
+  File "/kaggle/working/ctg_grpo.py", line 590, in <module>
+    main()
+    ~~~~^^
+  File "/kaggle/working/ctg_grpo.py", line 584, in main
+    logp_probe(a)
+    ~~~~~~~~~~^^^
+  File "/kaggle/working/ctg_grpo.py", line 515, in logp_probe
+    res.append(mot_buoc(r, d))
+               ~~~~~~~~^^^^^^
+  File "/kaggle/working/ctg_grpo.py", line 501, in mot_buoc
+    lg = model(input_ids=full, attention_mask=torch.ones_like(full), **kw).logits.float()
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/usr/local/lib/python3.13/dist-packages/peft/peft_model.py", line 2120, in forward
+    return self.base_model(
+           ~~~~~~~~~~~~~~~^
+        input_ids=input_ids,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/usr/local/lib/python3.13/dist-packages/peft/tuners/tuners_utils.py", line 359, in forward
+    return self.model(*args, **kwargs)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/usr/local/lib/python3.13/dist-packages/transformers/utils/generic.py", line 939, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_5_vl/modeling_qwen2_5_vl.py", line 1394, in forward
+    outputs = self.model(
+        input_ids=input_ids,
+    ...<12 lines>...
+        **kwargs,
+    )
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/usr/local/lib/python3.13/dist-packages/transformers/utils/generic.py", line 939, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_5_vl/modeling_qwen2_5_vl.py", line 1252, in forward
+    position_ids = self.compute_3d_position_ids(
+        input_ids=input_ids,
+    ...<6 lines>...
+        mm_token_type_ids=mm_token_type_ids,
+    )
+  File "/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_5_vl/modeling_qwen2_5_vl.py", line 1162, in compute_3d_position_ids
+    position_ids, rope_deltas = self.get_rope_index(
+                                ~~~~~~~~~~~~~~~~~~~^
+        input_ids,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        mm_token_type_ids=mm_token_type_ids,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_5_vl/modeling_qwen2_5_vl.py", line 1028, in get_rope_index
+    input_token_type = input_token_type[attention_mask[batch_idx].bool()]
+                       ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+IndexError: The shape of the mask [1479] at index 0 does not match the shape of the indexed tensor [1470] at index 0
+Failed to load /usr/local/lib/python3.13/dist-packages/torchao/_C_cutlass_90a.abi3.so: Could not load this library: /usr/local/lib/python3.13/dist-packages/torchao/_C_cutlass_90a.abi3.so
+Failed to load /usr/local/lib/python3.13/dist-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so: Could not load this library: /usr/local/lib/python3.13/dist-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so
+[nạp] /kaggle/working/s1_merged · dtype torch.float16 · 4-bit False · Tesla T4
+[token động từ chạm] ['select', 'press', 'open', 'Click', 'Select', 'click', 'Open', 'Press', 'Tap', 'Choose', 'tap']
+[câu nhắc] 75 bước C1 có lớp vàng scroll/type/navigate_back
+[adapter] ck250 ← /kaggle/input/datasets/uyenle0712/grpo-spice-ck250
+[adapter] ck500 ← /kaggle/input/datasets/uyenle0712/grpo-spice-ck500
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+[S1] 2.3 phút · navigate_back n=15: log P(động từ chạm ở token đầu) TB -2.355, logp/token câu chuẩn TB -0.788 · scroll n=32: log P(động từ chạm ở token đầu) TB -3.309, logp/token câu chuẩn TB -0.668 · type n=28: log P(động từ chạm ở token đầu) TB -4.063, logp/token câu chuẩn TB -0.604
+[ck250] 2.6 phút · navigate_back n=15: log P(động từ chạm ở token đầu) TB -2.608, logp/token câu chuẩn TB -0.832 · scroll n=32: log P(động từ chạm ở token đầu) TB -3.631, logp/token câu chuẩn TB -0.715 · type n=28: log P(động từ chạm ở token đầu) TB -5.330, logp/token câu chuẩn TB -0.605
+[ck500] 2.6 phút · navigate_back n=15: log P(động từ chạm ở token đầu) TB -2.899, logp/token câu chuẩn TB -0.991 · scroll n=32: log P(động từ chạm ở token đầu) TB -3.911, logp/token câu chuẩn TB -0.811 · type n=28: log P(động từ chạm ở token đầu) TB -6.406, logp/token câu chuẩn TB -0.657
+[P0(b) scroll] log P(động từ chạm) TB: {'S1': -3.309, 'ck250': -3.631, 'ck500': -3.911}
+⛔ P0(b) KHÔNG ĐẠT: không tăng theo điểm lưu ⇒ DỪNG, báo user trước khi thuê A100

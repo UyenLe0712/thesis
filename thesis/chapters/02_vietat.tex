@@ -33,29 +33,33 @@ ORPO & Odds Ratio Preference Optimization & Mục tiêu ưu tiên gắn thẳng 
 giám sát, không cần mô hình tham chiếu \\
 GRPO & Group Relative Policy Optimization & Học tăng cường theo nhóm câu trả lời cùng
 một câu nhắc, lấy trung bình nhóm làm mốc so sánh thay cho một mô hình phê bình riêng \\
+KL & Kullback-Leibler divergence & Độ lệch giữa hai phân bố xác suất, dùng để giữ mô hình
+không trôi xa mô hình tham chiếu \\
+SPICE & Semantic Propositional Image Caption Evaluation & Thước so câu theo đồ thị đối tượng,
+thuộc tính và quan hệ \\
 \midrule
-\multicolumn{3}{@{}l@{}}{\textit{Thuật ngữ riêng của luận văn}} \\
+\multicolumn{3}{@{}l@{}}{\textit{Thuật ngữ riêng của đề tài}} \\
 \midrule
 \multicolumn{2}{@{}p{8.2cm}}{\textit{executability} (tính thực thi được)}
-& Thước đo mà luận văn đề xuất. Một câu hướng dẫn được tính là đúng nếu đưa câu đó cho
+& Thước đo mà chúng tôi đề xuất. Một câu hướng dẫn được tính là đúng nếu đưa câu đó cho
 một mô hình định vị độc lập thì mô hình ấy chỉ trúng phần tử mà người dùng đã chạm \\
 \multicolumn{2}{@{}p{8.2cm}}{Mô hình định vị phần tử (\textit{GUI grounding model})}
 & Mô hình nhận một câu mô tả cùng một ảnh màn hình và trả về toạ độ của phần tử được mô
-tả. Trong luận văn, mô hình này đóng vai \textbf{dụng cụ đo}, không phải một hệ thống đem ra so sánh \\
+tả. Ở đây, mô hình này đóng vai \textbf{dụng cụ đo}, không phải một hệ thống đem ra so sánh \\
 \multicolumn{2}{@{}p{8.2cm}}{Dòng khai báo (\textit{descriptor})}
 & Một dòng có cấu trúc gồm bốn ô, \code{[vai trò | tên | toạ độ | dấu hiệu phân biệt]},
 mà mô hình phải viết ra trước khi viết câu hướng dẫn. Dòng này bị cắt bỏ trước khi chấm \\
 \multicolumn{2}{@{}p{8.2cm}}{Câu chuẩn}
 & Câu hướng dẫn từng bước do người chú thích của AndroidControl viết cho chính bước đó.
-Luận văn dùng câu này làm câu tham chiếu, và khi đưa chính câu này đi chấm thì được mốc
+Chúng tôi dùng câu này làm câu tham chiếu, và khi đưa chính câu này đi chấm thì được mốc
 trần của thước \\
 \multicolumn{2}{@{}p{8.2cm}}{Ô Voronoi}
 & Vùng trên màn hình gồm những điểm nằm gần phần tử cần chạm hơn bất kỳ phần tử nào khác.
-Luận văn dùng vùng này để xác định thế nào là trỏ trúng, thay cho một ngưỡng sai số cố
+Chúng tôi dùng vùng này để xác định thế nào là trỏ trúng, thay cho một ngưỡng sai số cố
 định \\
 \multicolumn{2}{@{}p{8.2cm}}{Bước chạm}
 & Bước thao tác mà người dùng chạm vào màn hình, tức bước có toạ độ đích. Toàn bộ điểm số
-của luận văn tính trên nhóm bước này \\
+của đề tài tính trên nhóm bước này \\
 \multicolumn{2}{@{}p{8.2cm}}{Phần tử cần chạm}
 & Nút, ô nhập hoặc mục danh sách mà người dùng đã chạm ở bước đang xét, tức đối tượng mà câu
 hướng dẫn phải chỉ ra được \\
@@ -67,7 +71,7 @@ so được với nhau trên cùng những bước \\
 điểm mà một câu không mang thông tin gì vẫn đạt được. Mọi điểm số đọc trong dải giữa hai
 mức đó \\
 \multicolumn{2}{@{}p{8.2cm}}{Nhánh nền và nhánh xử lý}
-& Nhánh nền là nhánh không có thành phần đề xuất, dùng làm mốc so sánh. Nhánh xử lý là nhánh
+& Nhánh nền là nhánh không có can thiệp đang xét, thường là S1, dùng làm mốc so sánh. Nhánh xử lý là nhánh
 có thành phần đó. Chênh lệch giữa hai nhánh chính là đại lượng cần đo \\
 \multicolumn{2}{@{}p{8.2cm}}{Hạt giống}
 & Số dùng để khởi tạo phần ngẫu nhiên của một lượt huấn luyện. Hai lượt chỉ khác hạt
@@ -96,6 +100,16 @@ báo, thẻ chọn bị cắt bỏ trước khi chấm (Mục~\ref{sec:ungvienth
 \multicolumn{2}{@{}p{8.2cm}}{Bỏ cuộc}
 & Hành vi của nhánh ứng viên khi phát thẻ \code{none} thay vì chọn một phần tử. Bỏ cuộc
 là đúng khi khối không có đáp án, và là sai khi khối có đáp án \\
+\multicolumn{2}{@{}p{8.2cm}}{Phương pháp đề xuất (thưởng SPICE)}
+& Học tiếp từ S1 bằng học tăng cường theo nhóm, phần thưởng là SPICE của câu sinh ra so
+với câu chuẩn (Mục~\ref{sec:grpospicethietke}) \\
+\multicolumn{2}{@{}p{8.2cm}}{TAGE}
+& Bộ sửa câu đặt sau phương pháp đề xuất: một bộ định vị đoán điểm, một bộ biên tập xem phóng to
+vùng quanh điểm ấy rồi viết lại câu, và một cổng quyết định có nhận câu sửa hay không
+(Mục~\ref{sec:tagethietke}) \\
+\multicolumn{2}{@{}p{8.2cm}}{Tập kiểm định nội bộ}
+& Tập $1.567$ bước tách từ tập huấn luyện theo tác vụ, chỉ dùng để so các biến thể với nhau,
+không dùng để báo kết quả (Mục~\ref{sec:chiatap}) \\
 \bottomrule
 \end{longtable}
 \clearpage

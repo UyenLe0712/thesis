@@ -10,6 +10,9 @@ Nguồn (không tự tính lại gì, chỉ ghép nên không lệch được v�
   runs/text_metrics_them.json  ← harness/text_metrics_them.py (chrF · BERTScore)
   runs/luat_aitw_day_du.json   ← harness/luat_aitw_day_du.py (luật khớp chạm đầy đủ của AitW)
   runs/d3_ktc.json             ← harness/d3_ktc.py            (KTC95 + McNemar cho ba số chính)
+  runs/hang_ck500_tage.json    ← harness/hang_ck500_tage.py   (sáu cột vị trí của ck500 và TAGE)
+  runs/grpo_spice/text_metrics_ck500.json ← harness/ck500_text_metrics.py (bảy cột chữ của ck500)
+  runs/tage_test/tage_test_doc.json        ← harness/tage_test_doc.py     (SPICE của TAGE; sáu cột chữ còn lại chưa tính)
 """
 import json, os
 
@@ -25,6 +28,8 @@ HANG = [
     ("CE2-S2/101", "CE2-S2/101", "CE2-S2", True),
     ("MIN-DESC/101", "MIN-DESC/101", "MIN-DESC", True),
     ("GRPO-point/101", "GRPO-point/101", "Chặng ba", True),
+    ("ck500", "ck500", "Thưởng SPICE\\textsuperscript{$\\ast$}", True),
+    ("TAGE", "TAGE", "TAGE", True),
     ("gui_sel/101", "gui_sel/101", "Nhánh ứng viên\\textsuperscript{$\\dagger$}", True),
     ("Câu người (trần)", "Câu chuẩn", "\\emph{Câu chuẩn}", False),
 ]
@@ -67,9 +72,22 @@ def main():
     C = R("text_metrics_coco.json")
     M = R("text_metrics_them.json")
     ra = []
+    # hai nhánh mới (2–4/10): ghép vào cùng các từ điển để dùng chung hàm in bảng
+    HN = R("hang_ck500_tage.json")
+    CK = R("grpo_spice/text_metrics_ck500.json")["ck500"]
+    TG = R("tage_test/tage_test_doc.json")["diem"]
+    AF0 = R("luat_aitw_day_du.json")["n4463"]
+    AM0 = R("luat_aitw_moi_hop.json")["n4463"]
+    for t in ("ck500", "TAGE"):
+        P[t] = {c: HN[t][c] for c in ("vor", "d3", "d14_truc")}
+        AF0[t] = {"aitw_full": HN[t]["aitw_full"]}
+        AM0[t] = {"aitw_moi_khung": HN[t]["aitw_moi_khung"]}
+        T[t] = {"action_ok": HN[t]["action_ok"]}
+    C["ck500"] = {c: CK[c] for c in ("bleu4", "meteor15", "rougeL", "cider_d", "spice")}
+    M["ck500"] = {c: CK[c] for c in ("chrf", "bertscore_f1_rescaled")}
+    C["TAGE"] = {"spice": TG["SPICE"]["TAGE"]}
 
-    AF = R("luat_aitw_day_du.json")["n4463"]
-    AM = R("luat_aitw_moi_hop.json")["n4463"]
+    AF, AM = AF0, AM0
     vt = [("AitW", lambda h: AF[h[0]]["aitw_full"]), ("Hộp (D.3)", lambda h: P[h[0]]["d3"]),
           ("Exec.", lambda h: P[h[0]]["vor"]),
           ("$\\pm 14\\%$ trục", lambda h: P[h[0]]["d14_truc"]),
@@ -80,7 +98,7 @@ def main():
            r" không gọi lại mô hình định vị. AitW là luật khớp chạm trong mã chấm gốc của"
            r" AndroidInTheWild, AitW cận trên là biến thể của luật ấy khi vế khung xét mọi phần tử bấm được (sàn cao hơn, Mục~\ref{sec:donhay}). Hộp (D.3) là luật khớp gốc của"
            r" AndroidControl. Exec.\ là executability (Mục~\ref{sec:donhay}). Thao tác là tỉ lệ gọi đúng loại thao tác. Số in đậm"
-           r" là số cao nhất trong các nhánh mô hình ở cột đó. \textsuperscript{$\dagger$}Nhánh ứng viên lệch ba"
+           r" là số cao nhất trong các nhánh mô hình ở cột đó. \textsuperscript{$\ast$}Thưởng SPICE là phương pháp đề xuất, học tiếp từ S1 ($101$) bằng GRPO với phần thưởng SPICE, TAGE là bộ sửa câu đặt sau phương pháp đó (Mục~\ref{sec:grpospice} và~\ref{sec:tage}). \textsuperscript{$\dagger$}Nhánh ứng viên lệch ba"
            r" biến so với các nhánh còn lại nên chỉ đọc được so với Base.}",
            r"\label{tab:nhieuthuoc_vitri}", r"\centering\small", r"\renewcommand{\arraystretch}{1.2}",
            r"\setlength{\tabcolsep}{3.5pt}",
@@ -99,7 +117,7 @@ def main():
            r" bằng PTBTokenizer. chrF tính bằng sacreBLEU. BERTScore là F1 với \texttt{roberta-large}"
            r" tầng $17$, đã hiệu chỉnh theo đường cơ sở. Mỗi bước chỉ có một câu chuẩn. Số in đậm là số"
            r" cao nhất trong các nhánh mô hình ở cột đó. Chặng ba là MIN-DESC học tiếp với phần thưởng"
-           r" đặt trên ô toạ độ. \textsuperscript{$\dagger$}Nhánh ứng viên chỉ đọc được so với Base.}",
+           r" đặt trên ô toạ độ. \textsuperscript{$\ast$}Phương pháp đề xuất. Với TAGE mới tính SPICE. \textsuperscript{$\dagger$}Nhánh ứng viên chỉ đọc được so với Base.}",
            r"\label{tab:nhieuthuoc_vanban}", r"\centering\small", r"\renewcommand{\arraystretch}{1.2}",
            r"\setlength{\tabcolsep}{3.5pt}",
            r"\begin{tabular}{@{}l" + "r" * len(vb) + "@{}}", r"\toprule",

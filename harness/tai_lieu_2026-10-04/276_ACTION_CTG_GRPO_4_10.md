@@ -14,9 +14,9 @@ Tệp này trước nằm ở `harness/276_DEEP_RESEARCH_…_extracted.md`, chuy
 |---|---|
 | mã (r_cider · CTGTrainer · lưu/nạp `ctg_state.json` · `ctg_log.jsonl` · A4 · A7 · P0(b)) | `harness/ctg_grpo.py` |
 | đọc val: K1/K2/K3, chọn điểm lưu, hình λ | `harness/ctg_doc.py` |
-| P0 trên Kaggle T4 | `harness/kaggle_ctg_p0.md` |
-| train A3/A2/A4/A7 trên Colab (kèm bước đo L4) | `harness/colab_ctg_train.md` |
-| chấm val C1 các điểm lưu | `harness/kaggle_ctg_val.md` |
+| P0 trên Kaggle T4 | `harness/runbook/kaggle_ctg_p0.md` |
+| train A3/A2/A4/A7 trên Colab (kèm bước đo L4) | `harness/runbook/colab_ctg_train.md` |
+| chấm val C1 các điểm lưu | `harness/runbook/kaggle_ctg_val.md` |
 | gói upload | `_bundles/ctg-grpo-script/` |
 
 Tự kiểm 0 GPU đã ĐẠT trên WSL: tái lập CIDEr-D **3.484/3.600 · 399/400**; selftest (thưởng, 2.000 câu nhắc,
@@ -39,6 +39,25 @@ CTGTrainer chạy với lớp TRL giả (A3 cộng, A2 không cộng). Chưa ch�
 
 Luật P0(b) cụ thể hoá trước khi đo (bản gốc chỉ ghi "không tăng theo checkpoint"): đo log P(token đầu là
 động từ chạm) trên 32 câu nhắc scroll của C1; **ĐẠT khi ck500 > S1 và ck250 ≥ S1 − 0,05**.
+
+### Kết quả P0 (Kaggle T4, 4/10) và đổi luật P0(b) — user quyết 4/10
+
+- **P0(a) ĐẠT**: 20 bước, chạy tiếp từ checkpoint-10 nạp đúng adapter (|lora_B| 0 → 0,576) và λ trùng bản
+  lưu; CTG kéo lực đẩy về tap xuống ở nhóm có std(c) > 0. T4: 136–137 s/bước, đỉnh 11,6–11,9 GiB.
+  Tệp: `runs/ctg/p0/`.
+- **P0(b) luật cũ KHÔNG ĐẠT**: log P(động từ chạm ở token đầu) trên scroll S1 −3,31 · ck250 −3,63 ·
+  ck500 −3,91 (type −4,06 → −6,41; back −2,36 → −2,90), tức **giảm** theo điểm lưu; logp câu chuẩn cũng
+  giảm ⇒ GRPO làm nhọn phân phối, không kéo đều về câu chạm.
+- **User đổi luật sau khi thấy số (phải khai):** đo trung bình log-prob không bắt được hiện tượng vì lỗi
+  nằm ở số ít bước sát biên. Luật mới đo đúng thứ CTG nhắm, **ở mức câu greedy**: số bước không-chạm
+  mà S1 đúng loại rồi ck500 lật thành câu chạm phải nhiều hơn số bước lật ngược.
+  Val C1 (75 bước): **4 lật sang chạm vs 1 lật ngược** (cả 4 là scroll). Test không chạm (đã có ở
+  `report/261`): 51 bước scroll bị phá thì 47 thành câu chạm; câu quy về chạm trên 755 bước scroll
+  S1 117 → ck500 167 ⇒ **ĐẠT theo luật mới**. Hệ quả: CTG được biện minh bởi hiện tượng *lật ở biên*,
+  không phải *lực kéo trung bình*; bài phải viết đúng như vậy.
+- **Phân tích kỹ `p0b.json`: `report/278_PHAN_TICH_P0_CTG_4_10.md`** — tính theo xác suất (không theo log)
+  P(tap) scroll tăng 0,140 → 0,161 → 0,212, KTC loại 0; GRPO phân cực (bước phân vân bị đẩy sang chạm);
+  rủi ro λ rơi vào vùng chết vì đích `p_k` đo trên val thấp hơn tỉ lệ của S1 trên câu nhắc train.
 
 ## 0. Tóm tắt một màn hình
 
@@ -215,10 +234,10 @@ Mọi nhánh: A100 40 GB, `bf16=True`, seed 101, `--n-prompt 2000`. `dung_hang` 
 **Tệp trong repo:**
 
 - **Train:**
-  - `harness/grpo_spice.py` (`train()`, `r_spice()`); runbook mẫu `harness/kaggle_grpo_spice_commit.md`.
+  - `harness/grpo_spice.py` (`train()`, `r_spice()`); runbook mẫu `harness/runbook/kaggle_grpo_spice_commit.md`.
   - Giữ nguyên `dung_hang()`, `remove_unused_columns=False`, và cách nạp lại adapter `default` khi resume.
-- **Chấm test click:** `harness/kaggle_grpo_spice_test_ck500.md`, sau đó `harness/grpo_spice_test_doc.py`.
-- **Chấm test không chạm:** `harness/kaggle_grpo_spice_nontap_ck500.md`, sau đó `harness/grpo_spice_nontap_doc.py`.
+- **Chấm test click:** `harness/runbook/kaggle_grpo_spice_test_ck500.md`, sau đó `harness/grpo_spice_test_doc.py`.
+- **Chấm test không chạm:** `harness/runbook/kaggle_grpo_spice_nontap_ck500.md`, sau đó `harness/grpo_spice_nontap_doc.py`.
 
 ## 8. Luật (khoá trước khi chạy)
 

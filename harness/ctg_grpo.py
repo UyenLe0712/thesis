@@ -162,9 +162,12 @@ class CTG:
         self.chat = dict(P_DICH)
 
     def to_dict(self):
-        return {"lam": self.lam, "chat": self.chat}
+        return {"lam": self.lam, "chat": self.chat, "dich": dict(P_DICH)}
 
     def nap(self, d):
+        if "dich" in d:
+            assert all(abs(d["dich"][k] - P_DICH[k]) < 1e-9 for k in CTG_LOP), \
+                f"⛔ đích trong ctg_state {d['dich']} khác đích lượt này {P_DICH}: quên --dich?"
         self.lam = {k: float(d["lam"][k]) for k in CTG_LOP}
         self.chat = {k: float(d["chat"][k]) for k in CTG_LOP}
 
@@ -343,6 +346,8 @@ def train(a):
 
     dung_cider(a.bundle)
     kiem_thuong()
+    if a.dich:
+        nap_dich(a.dich)
 
     proc, model, dt = nap(a)
     proc.tokenizer.padding_side = "left"
@@ -452,6 +457,71 @@ def train(a):
     json.dump(trainer.state.log_history, open(os.path.join(a.out, "log_history.json"), "w"), indent=1)
 
 
+# ============================ hiệu chỉnh đích p_k trên câu nhắc train ============================
+def nap_dich(p):
+    d = json.load(open(p))["dich"]
+    P_DICH.update({k: float(d[k]) for k in CTG_LOP})
+    print(f"[đích] nạp từ {p}: {P_DICH}", flush=True)
+
+
+def do_dich(a):
+    """Tỉ lệ câu đúng loại của S1 khi lấy mẫu như GRPO (nhiệt độ 1,0, G = 8) trên chính các câu nhắc
+    train thuộc ba lớp CTG. Ghi nối tiếp được."""
+    import torch
+    from PIL import Image
+    from grpo_spice import nap
+    from build_branch_data import SYS
+
+    rows, _ = hang(a.bundle, "A3", a.n_prompt)
+    rows = [r for r in rows if r["lop"] in CTG_LOP]
+    if a.n_dich:
+        rows = rows[:a.n_dich]
+    print(f"[đích] {len(rows)} câu nhắc · {dict(collections.Counter(r['lop'] for r in rows))}", flush=True)
+    done = set()
+    if os.path.exists(a.out):
+        done = {json.loads(l)["key"] for l in open(a.out, encoding="utf-8")}
+    if any(r["key"] not in done for r in rows):
+        proc, model, _ = nap(a)
+        model.eval()
+    fo = open(a.out, "a", encoding="utf-8")
+    t0 = time.time()
+    for i, r in enumerate(rows):
+        if r["key"] in done:
+            continue
+        torch.manual_seed(SEED + i)
+        msg = [{"role": "system", "content": SYS},
+               {"role": "user", "content": [{"type": "image"}, {"type": "text", "text": r["prompt"][1]["content"]}]}]
+        text = proc.apply_chat_template(msg, tokenize=False, add_generation_prompt=True)
+        img = Image.open(r["image"]).convert("RGB")
+        inp = proc(text=[text], images=[img], return_tensors="pt").to(model.device)
+        L = inp["input_ids"].shape[1]
+        with torch.no_grad():
+            g = model.generate(**inp, max_new_tokens=96, do_sample=True, temperature=1.0, top_p=1.0, top_k=0,
+                               num_return_sequences=a.G, use_cache=True)
+        sents = [s.strip() for s in proc.batch_decode(g[:, L:], skip_special_tokens=True)]
+        fo.write(json.dumps({"key": r["key"], "lop": r["lop"], "gold": r["gold"], "mau": sents},
+                            ensure_ascii=False) + "\n")
+        fo.flush()
+        if (i + 1) % 20 == 0:
+            print(f"  {i+1}/{len(rows)} · {(time.time()-t0)/60:.1f} phút · {sents[0][:50]!r}", flush=True)
+    fo.close()
+
+    R = [json.loads(l) for l in open(a.out, encoding="utf-8")]
+    kq = {}
+    for k in CTG_LOP:
+        x = [r for r in R if r["lop"] == k]
+        c = [sum(lop(s) == k for s in r["mau"]) / len(r["mau"]) for r in x]
+        kq[k] = sum(c) / len(c)
+        rng = random.Random(SEED)
+        b = sorted(sum(rng.choices(c, k=len(c))) / len(c) for _ in range(2000))
+        print(f"[đích] {k}: {len(x)} câu nhắc · đúng loại {kq[k]:.3f} [{b[50]:.3f}; {b[1949]:.3f}]"
+              f" · đích cũ (val C1) {P_DICH[k]}", flush=True)
+    p = os.path.splitext(a.out)[0] + "_dich.json"
+    json.dump({"dich": kq, "n": {k: sum(r["lop"] == k for r in R) for k in CTG_LOP}, "nguon": a.out},
+              open(p, "w"), indent=1)
+    print(f"✅ ghi {p}", flush=True)
+
+
 # ============================ P0(b): log-prob động từ chạm ============================
 TAP_VERB = ["Click", "click", "Tap", "tap", "Select", "select", "Open", "open", "Press", "press", "Choose"]
 
@@ -497,6 +567,11 @@ def logp_probe(a):
         g = tk(d["gold"], add_special_tokens=False, return_tensors="pt")["input_ids"].to(model.device)
         full = torch.cat([P["input_ids"], g], 1)
         kw = {k: v for k, v in P.items() if k not in ("input_ids", "attention_mask")}
+        # transformers ≥ 5.18: processor trả thêm tensor theo token (mm_token_type_ids, dài L) ⇒ đệm 0
+        # cho phần câu chuẩn nối thêm (token văn bản), nếu không get_rope_index báo lệch kích thước
+        for k, v in list(kw.items()):
+            if torch.is_tensor(v) and v.dim() == 2 and v.shape == P["input_ids"].shape:
+                kw[k] = torch.cat([v, v.new_zeros((1, g.shape[1]))], 1)
         with torch.no_grad():
             lg = model(input_ids=full, attention_mask=torch.ones_like(full), **kw).logits.float()
         lp = torch.log_softmax(lg[0], -1)
@@ -547,7 +622,7 @@ class _null:
 
 def main():
     ap = argparse.ArgumentParser()
-    for f in ("--selftest-cider", "--selftest", "--train", "--logp-probe"):
+    for f in ("--selftest-cider", "--selftest", "--train", "--logp-probe", "--do-dich"):
         ap.add_argument(f, action="store_true")
     ap.add_argument("--arm", choices=("A3", "A2", "A4", "A7"), default="A3")
     ap.add_argument("--bundle")
@@ -556,6 +631,8 @@ def main():
     ap.add_argument("--out")
     ap.add_argument("--c1")
     ap.add_argument("--ckpts", default="")
+    ap.add_argument("--dich", default=None)       # tệp *_dich.json của --do-dich; bỏ trống = đích khoá trước
+    ap.add_argument("--n-dich", type=int, default=0)
     ap.add_argument("--c1-recs")
     ap.add_argument("--c1-mau")
     ap.add_argument("--metric")
@@ -579,6 +656,9 @@ def main():
     elif a.train:
         assert a.out, "cần --out"
         train(a)
+    elif a.do_dich:
+        assert a.out, "cần --out"
+        do_dich(a)
     elif a.logp_probe:
         assert a.c1 and a.out, "cần --c1 và --out"
         logp_probe(a)

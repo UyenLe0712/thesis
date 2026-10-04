@@ -1,6 +1,6 @@
 % SINH TỰ ĐỘNG bởi harness/sinh_bang_nhieu_thuoc.py — đừng sửa tay
 \begin{table}[t]
-\caption{Nhóm thước theo vị trí trên đủ $4.463$ bước chạm, tính lại từ bản ghi từng bước, không gọi lại mô hình định vị. AitW là luật khớp chạm trong mã chấm gốc của AndroidInTheWild, AitW cận trên là biến thể của luật ấy khi vế khung xét mọi phần tử bấm được (sàn cao hơn, Mục~\ref{sec:donhay}). Hộp (D.3) là luật khớp gốc của AndroidControl. Exec.\ là executability (Mục~\ref{sec:donhay}). Thao tác là tỉ lệ gọi đúng loại thao tác. Số in đậm là số cao nhất trong các nhánh mô hình ở cột đó. \textsuperscript{$\dagger$}Nhánh ứng viên lệch ba biến so với các nhánh còn lại nên chỉ đọc được so với Base.}
+\caption{Nhóm thước theo vị trí trên đủ $4.463$ bước chạm, tính lại từ bản ghi từng bước, không gọi lại mô hình định vị. AitW là luật khớp chạm trong mã chấm gốc của AndroidInTheWild, AitW cận trên là biến thể của luật ấy khi vế khung xét mọi phần tử bấm được (sàn cao hơn, Mục~\ref{sec:donhay}). Hộp (D.3) là luật khớp gốc của AndroidControl. Exec.\ là executability (Mục~\ref{sec:donhay}). Thao tác là tỉ lệ gọi đúng loại thao tác. Số in đậm là số cao nhất trong các nhánh mô hình ở cột đó. \textsuperscript{$\ast$}Thưởng SPICE là phương pháp đề xuất, học tiếp từ S1 ($101$) bằng GRPO với phần thưởng SPICE, TAGE là bộ sửa câu đặt sau phương pháp đó (Mục~\ref{sec:grpospice} và~\ref{sec:tage}). \textsuperscript{$\dagger$}Nhánh ứng viên lệch ba biến so với các nhánh còn lại nên chỉ đọc được so với Base.}
 \label{tab:nhieuthuoc_vitri}
 \centering\small
 \renewcommand{\arraystretch}{1.2}
@@ -15,7 +15,9 @@ S1 ($202$) & $75{,}3$ & $66{,}1$ & $59{,}6$ & $67{,}9$ & $81{,}9$ & $94{,}6$ \\
 S2 & $73{,}4$ & $63{,}6$ & $57{,}2$ & $65{,}7$ & $80{,}8$ & $94{,}8$ \\
 CE2-S2 & $76{,}1$ & $66{,}0$ & $59{,}4$ & $68{,}5$ & $83{,}9$ & $\mathbf{98{,}9}$ \\
 MIN-DESC & $76{,}4$ & $66{,}5$ & $60{,}0$ & $68{,}7$ & $84{,}4$ & $\mathbf{98{,}9}$ \\
-Chặng ba & $\mathbf{77{,}3}$ & $\mathbf{67{,}0}$ & $\mathbf{60{,}1}$ & $\mathbf{69{,}4}$ & $\mathbf{85{,}0}$ & $\mathbf{98{,}9}$ \\
+Chặng ba & $\mathbf{77{,}3}$ & $\mathbf{67{,}0}$ & $60{,}1$ & $\mathbf{69{,}4}$ & $\mathbf{85{,}0}$ & $\mathbf{98{,}9}$ \\
+Thưởng SPICE\textsuperscript{$\ast$} & $76{,}2$ & $\mathbf{67{,}0}$ & $\mathbf{60{,}6}$ & $68{,}9$ & $82{,}9$ & $96{,}0$ \\
+TAGE & $76{,}1$ & $66{,}4$ & $60{,}2$ & $68{,}7$ & $82{,}7$ & $96{,}6$ \\
 Nhánh ứng viên\textsuperscript{$\dagger$} & $71{,}2$ & $62{,}4$ & $56{,}1$ & $63{,}9$ & $77{,}9$ & $90{,}9$ \\
 \midrule
 \emph{Câu chuẩn} & $92{,}1$ & $83{,}8$ & $75{,}7$ & $84{,}2$ & $96{,}2$ & $100{,}0$ \\
@@ -24,7 +26,7 @@ Nhánh ứng viên\textsuperscript{$\dagger$} & $71{,}2$ & $62{,}4$ & $56{,}1$ &
 \end{table}
 
 \begin{table}[t]
-\caption{Nhóm thước so với câu chuẩn trên đủ $4.463$ bước chạm. BLEU-4, METEOR~1.5, ROUGE-L, CIDEr-D và SPICE tính mức kho bằng bộ chấm chính thức của COCO Captions, sau khi tách từ bằng PTBTokenizer. chrF tính bằng sacreBLEU. BERTScore là F1 với \texttt{roberta-large} tầng $17$, đã hiệu chỉnh theo đường cơ sở. Mỗi bước chỉ có một câu chuẩn. Số in đậm là số cao nhất trong các nhánh mô hình ở cột đó. Chặng ba là MIN-DESC học tiếp với phần thưởng đặt trên ô toạ độ. \textsuperscript{$\dagger$}Nhánh ứng viên chỉ đọc được so với Base.}
+\caption{Nhóm thước so với câu chuẩn trên đủ $4.463$ bước chạm. BLEU-4, METEOR~1.5, ROUGE-L, CIDEr-D và SPICE tính mức kho bằng bộ chấm chính thức của COCO Captions, sau khi tách từ bằng PTBTokenizer. chrF tính bằng sacreBLEU. BERTScore là F1 với \texttt{roberta-large} tầng $17$, đã hiệu chỉnh theo đường cơ sở. Mỗi bước chỉ có một câu chuẩn. Số in đậm là số cao nhất trong các nhánh mô hình ở cột đó. Chặng ba là MIN-DESC học tiếp với phần thưởng đặt trên ô toạ độ. \textsuperscript{$\ast$}Phương pháp đề xuất. Với TAGE mới tính SPICE. \textsuperscript{$\dagger$}Nhánh ứng viên chỉ đọc được so với Base.}
 \label{tab:nhieuthuoc_vanban}
 \centering\small
 \renewcommand{\arraystretch}{1.2}
@@ -34,12 +36,14 @@ Nhánh ứng viên\textsuperscript{$\dagger$} & $71{,}2$ & $62{,}4$ & $56{,}1$ &
 Nhánh & BLEU-4 & METEOR & ROUGE-L & CIDEr-D & SPICE & chrF & BERTScore \\
 \midrule
 Base & $15{,}3$ & $24{,}6$ & $42{,}3$ & $88{,}0$ & $18{,}5$ & $40{,}2$ & $40{,}1$ \\
-S1 ($101$) & $51{,}6$ & $36{,}8$ & $67{,}3$ & $416{,}1$ & $\mathbf{44{,}4}$ & $61{,}3$ & $66{,}3$ \\
-S1 ($202$) & $\mathbf{51{,}7}$ & $37{,}2$ & $67{,}7$ & $\mathbf{419{,}2}$ & $44{,}2$ & $\mathbf{61{,}9}$ & $\mathbf{66{,}8}$ \\
+S1 ($101$) & $51{,}6$ & $36{,}8$ & $67{,}3$ & $416{,}1$ & $44{,}4$ & $61{,}3$ & $66{,}3$ \\
+S1 ($202$) & $51{,}7$ & $37{,}2$ & $67{,}7$ & $419{,}2$ & $44{,}2$ & $61{,}9$ & $66{,}8$ \\
 S2 & $48{,}7$ & $35{,}8$ & $66{,}0$ & $387{,}7$ & $41{,}3$ & $59{,}9$ & $65{,}1$ \\
-CE2-S2 & $50{,}1$ & $\mathbf{37{,}3}$ & $\mathbf{68{,}6}$ & $402{,}2$ & $42{,}3$ & $\mathbf{61{,}9}$ & $\mathbf{66{,}8}$ \\
-MIN-DESC & $49{,}9$ & $\mathbf{37{,}3}$ & $68{,}5$ & $401{,}0$ & $42{,}2$ & $61{,}8$ & $66{,}7$ \\
-Chặng ba & $49{,}9$ & $\mathbf{37{,}3}$ & $68{,}5$ & $402{,}9$ & $42{,}5$ & $\mathbf{61{,}9}$ & $\mathbf{66{,}8}$ \\
+CE2-S2 & $50{,}1$ & $37{,}3$ & $\mathbf{68{,}6}$ & $402{,}2$ & $42{,}3$ & $61{,}9$ & $66{,}8$ \\
+MIN-DESC & $49{,}9$ & $37{,}3$ & $68{,}5$ & $401{,}0$ & $42{,}2$ & $61{,}8$ & $66{,}7$ \\
+Chặng ba & $49{,}9$ & $37{,}3$ & $68{,}5$ & $402{,}9$ & $42{,}5$ & $61{,}9$ & $66{,}8$ \\
+Thưởng SPICE\textsuperscript{$\ast$} & $\mathbf{52{,}4}$ & $\mathbf{37{,}9}$ & $68{,}4$ & $\mathbf{430{,}1}$ & $\mathbf{45{,}8}$ & $\mathbf{62{,}9}$ & $\mathbf{67{,}1}$ \\
+TAGE & - & - & - & - & $45{,}7$ & - & - \\
 Nhánh ứng viên\textsuperscript{$\dagger$} & $46{,}9$ & $34{,}2$ & $63{,}3$ & $370{,}6$ & $39{,}3$ & $57{,}7$ & $62{,}8$ \\
 \midrule
 \emph{Câu chuẩn} & $100{,}0$ & $100{,}0$ & $100{,}0$ & $988{,}7$ & $98{,}6$ & $100{,}0$ & $100{,}0$ \\

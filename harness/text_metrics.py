@@ -26,6 +26,8 @@ BRANCHES = [
     ("MIN-DESC/101", "runs/score_min_desc_seed101_raw.jsonl"),
     ("gui_sel/101", "runs/sel/score_gui_sel_seed101_raw.jsonl"),
     ("GRPO-point/101", "runs/grpo_point/score_grpo_point_seed101_raw.jsonl"),
+    ("ck500", "runs/grpo_spice/score_ck500_test_raw.jsonl"),          # thêm 4/10: GRPO thưởng SPICE
+    ("TAGE", "runs/tage_test/score_tage_gop_raw.jsonl"),               # thêm 4/10: ← harness/hang_ck500_tage.py
     ("Câu chuẩn", "runs/score_ceiling_human_raw.jsonl"),
 ]
 
