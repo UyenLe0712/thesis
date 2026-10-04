@@ -63,3 +63,19 @@ Các mẫu có câu đúng (oracle +21 bước) nhưng bộ chọn không lấy 
 1. Luận văn: thêm TRIAD-T vào ch6 như một hướng đã thử (báo vô điều kiện, chỉ hình dạng kết quả, không trích số val).
 2. Nếu còn muốn nâng exec: điểm nghẽn là bộ định vị chỉ-ảnh, không phải listener hay độ đa dạng của mẫu.
 3. Nợ cũ của ck500: tác hại ở bước không chạm (scroll 83,97 → 77,75, `report/261` §6) phải khai trong bài.
+
+## 7. Quyết định cuối 4/10 tối (user): ĐÓNG TRIAD-T VÀ TAGE
+
+Hỏi thêm: bỏ luật cổng §6.3 thì có cứu được không. Không, vì cả hai nhánh bị chặn bởi số đo chứ không bởi ngưỡng.
+
+- **TAGE**: đóng bằng **số test** (`report/269`): exec 60,23, thua ck500 −0,43 [−0,87; +0,02]. Trên val nó hơn
+  ck500 ~1,2 điểm, sang test đổi dấu. Không còn luật nào để bỏ.
+- **TRIAD-T bỏ cổng**: cấu hình tốt nhất (C1 không cổng tin cậy, T=0,7, r=60) chỉ +2/249 bước so ck500, KTC
+  [−1,18; +2,75] phủ 0, lại được chọn từ một lưới trên val như τ của TAGE ⇒ [suy] nhiều khả năng về 0 hoặc âm
+  trên test. Chạy test cần 8 mẫu × 4.463 bước + listener + UGround, [suy] cỡ trọn hạn mức Kaggle 30 h/tuần
+  (greedy GRPO trên test một mình đã 3,1 h T4) ⇒ không chạy.
+- Oracle 187/249 dùng câu chuẩn để chọn nên không phải phương pháp.
+
+Hệ quả: mô hình chính giữ **ck500 (exec test 60,65)**. TRIAD-T và TAGE vào ch6 như hướng đã thử, cùng một chẩn
+đoán: mẫu sinh có chứa câu đúng nhưng bộ định vị chỉ-ảnh chọn sai. Hướng nâng số còn mở: CTG-GRPO (action 276,
+chưa chạy GPU).
