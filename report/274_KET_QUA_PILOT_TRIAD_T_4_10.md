@@ -242,3 +242,28 @@ Hạn mức Kaggle (4/10): nick hiện tại còn ~23 h trước commit POB (com
 Git: action §12 cấm commit/push trong lượt; **user yêu cầu push bản bàn giao 4/10** nên đã commit các tệp TRIAD ở
 trên (không kèm các thay đổi luận văn/CLAUDE.md đang dở của phiên khác, không kèm `harness/triad_poa_out.zip` vì
 đã giải nén vào `runs/triad_t/poa/`).
+
+## 7. KẾT QUẢ POB (4/10 tối) — ⛔ TRƯỢT CỔNG §6.3 ⇒ DỪNG TRIAD-T
+
+Commit Kaggle chạy hai lượt: lượt đầu chết ở bước chọn C2 vì `nap_tat_ca` đọc nhầm `listener_pob_s*.log` làm JSON
+(sửa `triad_pob.py:179`, chỉ lấy `.jsonl`); lượt sau nối tiếp từ output cũ. Đủ bộ: mẫu 249/249 × 2 nhiệt độ ·
+listener 1.042/1.042 · UGround 1.339/1.339 · UI-Venus 12 câu. Bảng: `runs/triad_t/pob_ket_qua.json`.
+
+| | T=0,7 | T=1,0 |
+|---|---|---|
+| câu khác greedy | 55,7% | 67,3% |
+| câu duy nhất / 8 (trung vị) | 4 | 6 |
+| oracle C3 (ck500 166) | 181 (+15) | 187 (+21) |
+| C2 tốt nhất theo §5.3 | r=60, rt=80: đổi 7 · cứu 0 · phá 0 · **net 0** · Venus −1 | r=60, rt=140: đổi 9 · cứu 0 · phá 0 · **net 0** · Venus 0 |
+| C1 (không cổng) tốt nhất | r=60: net +2 (cứu 4, phá 2), Δ +0,80 [−1,18; +2,75] | r=60: net +1, Δ +0,40 [−1,95; +2,82] |
+
+Luật chọn: net C2 hoà (0) → break hoà (0) → UI-Venus 0 > −1 ⇒ **T=1,0**. Net 0 và rescue = break = 0 ⇒ hàng
+**trượt** của §6.3 ⇒ **dừng TRIAD-T, không P1**. Đa dạng (6 ≥ 3) và headroom (+21 ≥ 10) đều đạt ⇒ pool có câu đúng,
+bộ chọn không lấy ra được.
+
+Chẩn đoán (sau khi thấy số, tính xấp xỉ bằng cửa sổ ±140/1000 từng trục, không phải đúng luật exec):
+trong 21 bước cứu được ở T=1,0, **10 bước loc_g lệch vàng** · 6 `locator_bat_dong` · 2 ShowUI không đặt câu đúng gần
+loc_g · 2 ShowUI đọc câu ck500 trúng (UGround sai) · chỉ **1** bước còn đường đổi (T=0,7: 8 · 4 · 1 · 1 · 1/15).
+⇒ Điểm nghẽn là **bộ định vị chỉ-ảnh** (16/21 bước bị chặn trước khi tới listener), cùng mẫu hình TAGE test
+(`report/269`: 139 câu vùng cắt sai). Các câu C2 đổi thì ShowUI dời về gần loc_g nhưng UGround vẫn trượt cả câu cũ lẫn
+câu mới (vd. 1117/0, 3308/4, 7182/2). Số val, cấm trích.

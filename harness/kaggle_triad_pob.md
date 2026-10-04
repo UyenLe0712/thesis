@@ -54,28 +54,32 @@ HAN = T0 + 10.5 * 3600
 W = "/kaggle/working"
 D = f"{W}/triad_pob_out"; os.makedirs(D, exist_ok=True)
 md5 = lambda p: hashlib.md5(open(p, "rb").read()).hexdigest()
-MD = {"triad_pob.py": "bb63754c0da3d9b64bcaf081067533c0", "triad_t.py": "21ca76081bad6e9c9c73d15c61f16066",
+MD = {"triad_pob.py": "36e8e299d15b7c630f9815a207ce666a", "triad_t.py": "21ca76081bad6e9c9c73d15c61f16066",
       "triad_listener.py": "ebc70af0d344694ef99c509d80363d4e", "metric_exec.py": "9bf0b84145458fd55919a5e161b9766f",
       "grpo_spice.py": "07ea87b6d156d1faa391a4274dffd7cf", "build_branch_data.py": "619e63e123a6dbf60086e65ee94a3912",
       "pred_ck500.jsonl": "eb6162d86730a936beb5ae5a9fd6d652"}
 MDD = {"score_ck500_l4_raw.jsonl": "6980d5ee119b55109d8e21dab91a66b4", "loc_val_g.jsonl": "3bf8af87e64f321f8193f373583b568c",
        "loc_val_d.jsonl": "ff950e585ae22aba614ae4f10168f176", "listener_showui_poa.jsonl": "936723712cdc876b34ad1a6e187462d7",
        "score_venus_ck500_raw.jsonl": "e741545618d72b22cef1af24435219a4"}
-SRC = sorted({os.path.dirname(p) for p in glob.glob("/kaggle/input/**/triad_pob.py", recursive=True)})
+# output của commit trước (nếu gắn làm Input) chứa bản sao script/dữ liệu cũ ⇒ mọi glob tìm gói phải bỏ qua nó
+OLD = sorted({os.path.dirname(p) for p in glob.glob("/kaggle/input/**/triad_pob_out", recursive=True)})
+ngoai = lambda p: not any(p == o or p.startswith(o + "/") for o in OLD)
+print("output commit trước:", OLD or "không có", flush=True)
+SRC = sorted({os.path.dirname(p) for p in glob.glob("/kaggle/input/**/triad_pob.py", recursive=True) if ngoai(p)})
 assert len(SRC) == 1, f"DỪNG: cần đúng một triad-pob-script, thấy {SRC}"
 for f, h in MD.items():
     shutil.copy(f"{SRC[0]}/{f}", f"{W}/{f}"); assert md5(f"{W}/{f}") == h, f"DỪNG: {f} lệch md5"
 for f, h in MDD.items():
     shutil.copy(f"{SRC[0]}/{f}", f"{D}/{f}"); assert md5(f"{D}/{f}") == h, f"DỪNG: {f} lệch md5"
 
-BUNDLE = next(r for r, d, f in os.walk("/kaggle/input") if "adapter_s1_seed101" in d and "images" in d)
-C1M = glob.glob("/kaggle/input/**/c1_mau.jsonl", recursive=True); C1M = [p for p in C1M if "triad" not in p]
+BUNDLE = next(r for r, d, f in os.walk("/kaggle/input") if "adapter_s1_seed101" in d and "images" in d and ngoai(r))
+C1M = glob.glob("/kaggle/input/**/c1_mau.jsonl", recursive=True); C1M = [p for p in C1M if "triad" not in p and ngoai(p)]
 assert len(C1M) == 1 and md5(C1M[0]) == "d757554326977309c3a65ae0b144c211", f"DỪNG: c1_mau.jsonl {C1M}"
 C1M = C1M[0]
 def la_grpo(d):
     c = os.path.join(d, "adapter_config.json")
     return os.path.exists(c) and "s1_merged" in json.load(open(c)).get("base_model_name_or_path", "")
-CK = [os.path.dirname(f) for f in glob.glob("/kaggle/input/**/adapter_model.safetensors", recursive=True) if la_grpo(os.path.dirname(f))]
+CK = [os.path.dirname(f) for f in glob.glob("/kaggle/input/**/adapter_model.safetensors", recursive=True) if la_grpo(os.path.dirname(f)) and ngoai(f)]
 if len(CK) > 1: CK = [d for d in CK if d.rstrip("/").endswith("checkpoint-500")]
 assert len(CK) == 1, f"DỪNG: cần đúng một adapter ck500, thấy {CK}"
 CK500 = CK[0]
@@ -84,6 +88,7 @@ MERGED = f"{W}/s1_merged"
 
 # commit trước bị cắt: chép phần dở về (bỏ dòng ghi dở), các script tự nối tiếp
 for p in glob.glob("/kaggle/input/**/triad_pob_out/**/*.jsonl", recursive=True):
+    if ".ipynb_checkpoints" in p: continue
     rel = p.split("triad_pob_out/", 1)[1]; d = f"{D}/{rel}"
     if os.path.exists(d) or os.path.basename(p) in MDD: continue
     os.makedirs(os.path.dirname(d), exist_ok=True)
@@ -99,7 +104,7 @@ print("BUNDLE", BUNDLE, "\nCK500", CK500, "\nTEST", TEST, flush=True)
 
 ```python
 cand = sorted({os.path.dirname(p) for p in glob.glob("/kaggle/input/**/c1_picks.json", recursive=True)
-               if os.path.exists(os.path.join(os.path.dirname(p), "c1_mau.jsonl"))})
+               if os.path.exists(os.path.join(os.path.dirname(p), "c1_mau.jsonl")) and ngoai(p)})
 assert len(cand) == 1, f"DỪNG: cần đúng một gói c1-exec8, thấy {cand}"
 PK = cand[0]
 WS = f"{W}/pk/thesis"
@@ -107,7 +112,7 @@ shutil.copytree(f"{PK}/thesis", WS, dirs_exist_ok=True)
 sr = open(f"{WS}/harness/score_run.py", encoding="utf-8").read()
 assert "--recs-file" in sr and "VENUS_MIN_PIXELS" in sr[sr.index("class UIVenus"):], "DỪNG: score_run.py là bản cũ"
 v600 = sorted(glob.glob("/kaggle/input/**/val_cham600.jsonl", recursive=True), key=len)
-v600 = [p for p in v600 if all(os.path.exists(os.path.join(os.path.dirname(p), f)) for f in ("val_cham400.jsonl", "ocr.jsonl", "images"))]
+v600 = [p for p in v600 if ngoai(p) and all(os.path.exists(os.path.join(os.path.dirname(p), f)) for f in ("val_cham400.jsonl", "ocr.jsonl", "images"))]
 assert v600, "DỪNG: không thấy thesis-val-cham đủ bộ"
 BASE = os.path.dirname(v600[0])
 C1 = [json.loads(l) for l in open(f"{PK}/c1_mau.jsonl", encoding="utf-8")]

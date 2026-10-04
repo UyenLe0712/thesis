@@ -176,7 +176,7 @@ def nap_tat_ca(D, can_venus=False):
     M = nap_mau(D)
     L = {}
     for p in [f"{D}/listener_showui_poa.jsonl"] + sorted(
-            f"{D}/{x}" for x in os.listdir(D) if x.startswith("listener_pob")):
+            f"{D}/{x}" for x in os.listdir(D) if x.startswith("listener_pob") and x.endswith(".jsonl")):
         for d in nap(p):
             L[(K(d), d["sent"].strip())] = tuple(d["xy"]) if d.get("xy") else None
     UG = {(k, ck[k]["sent"].strip()): ck[k]["executable"] for k in keys}
