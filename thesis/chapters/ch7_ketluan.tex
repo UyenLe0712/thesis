@@ -6,7 +6,7 @@
 Đề tài xuất phát từ một quan sát đơn giản. Cho cùng một ảnh màn hình và cùng một mục
 tiêu, dòng nghiên cứu tác tử giao diện sinh ra toạ độ để máy tự bấm, trong khi người dùng
 đang dừng lại giữa chừng thì cần một câu chỉ dẫn bằng tiếng Anh cho biết phải chạm vào đâu.
-Khi đổi đầu ra như vậy, khâu khó nhất không phải là sinh câu mà là chấm câu sinh ra, vì
+Khi đổi đầu ra như vậy, khâu khó nhất trở thành việc chấm câu sinh ra, vì
 cùng một nút có nhiều tên gọi đều đúng và không bộ dữ liệu nào
 liệt kê hết. Vì lý do đó, phần lớn công sức của đề tài tập trung vào việc dựng và kiểm chứng
 một dụng cụ đo.
@@ -19,21 +19,23 @@ người dùng đã chạm hay không. Phần đóng góp không nằm ở bản
 dòng sinh biểu thức quy chiếu, mà ở khối lượng đo đạc đặt bên dưới thước. Tám phép đo dưới đây tạo nên khối lượng ấy.
 
 \begin{itemize}[leftmargin=1.4em,itemsep=0.2em]
-\item Một yêu cầu về sai số của dụng cụ đo, suy ra từ hình học màn hình. Kết quả đo cho sai số
-trung vị $0{,}7\%$ bề ngang màn so với mức $3\%$ mà hình học cho phép.
+\item Sai số của dụng cụ đo, đặt cạnh khoảng cách giữa các phần tử trên màn. Sai số trung vị
+là $0{,}7\%$ bề ngang màn, trong khi phần tử gần nhất thường cách xa hơn $3\%$.
 \item Luật xác định trúng được chọn dựa trên mức \emph{sàn} mà mỗi luật đạt được. Khi nhận
-một câu gọi sai tên nút, ngưỡng dung sai quy ước vẫn cho điểm ở $84{,}3\%$ số ca, nên khoảng
+một câu gọi sai tên nút, luật dung sai quy ước vẫn cho điểm ở $84{,}3\%$ số ca, nên khoảng
 phân biệt còn lại quá hẹp. Luật ô Voronoi hạ con số đó xuống $2{,}8\%$.
 \item Trần của thước là một đại lượng \emph{đo được}. Chấm chính câu chuẩn trên
 đủ $4.463$ bước cho $75{,}7\%$, KTC $[74{,}1; 77{,}3]$. Mọi điểm số khác được đọc trên nền này.
-\item Mười phép bơm lỗi, và một phân tích chỉ ra phần lớn trong đó không thể trượt theo cấu tạo,
-còn hai trong bốn phép mang thông tin thật thì không đạt (Mục~\ref{sec:bomloi}).
+\item Mười phép bơm lỗi, và một phân tích chỉ ra phần lớn trong đó chắc chắn cho kết quả tốt theo
+cấu tạo, còn hai trong bốn phép mang thông tin thật cho tỉ lệ bắt lỗi thấp, $33{,}1\%$ và
+$20{,}0\%$ (Mục~\ref{sec:bomloi}).
 \item Sàn của thước cũng là một đại lượng đo được, và con số này loại một suy đoán tự nhiên.
 Khi mọi câu bị thay bằng một câu chung chung không nói phần tử nào, mô hình định vị chỉ còn
-trúng $12{,}0\%$ số bước, chứ không phải khoảng $40\%$ như tỉ lệ đồng thuận giữa ba nhánh
-gợi ý. Khi thay bằng câu thật của một màn hình khác, tức câu đúng văn phong và đúng độ dài
+trúng $12{,}0\%$ số bước, thấp hơn nhiều so với mức khoảng $40\%$ mà tỉ lệ đồng thuận giữa ba
+nhánh gợi ý. Khi thay bằng câu thật của một màn hình khác, tức câu đúng văn phong và đúng độ dài
 nhưng sai nội dung, điểm còn giảm tiếp xuống $6{,}1\%$, thấp nhất trong mọi phép đo của
-đề tài. Dụng cụ đo vì vậy thật sự đọc nội dung câu chứ không cho điểm theo văn phong.
+đề tài. Như vậy dụng cụ đo chấm theo nội dung câu, và văn phong đúng mà nội dung sai không được
+cho điểm.
 \item Một phép thử độ bền, trong đó ba nhánh được chấm lại dưới năm luật khác nhau. Mức tuyệt đối thay
 đổi tới $26$ điểm, song thứ tự giữa các hệ thống giữ nguyên ở cả năm luật.
 \item Hai phép kiểm nhắm vào chính cách đọc thước. Phép thứ nhất viết lại câu chuẩn
@@ -77,8 +79,8 @@ thống kê dưới chính executability, và mức tăng xuất hiện ở cả
 trí tới SPICE, BLEU-4 và BERTScore. Hơn một nửa mức tăng nằm ở các bước cả hai mô hình cùng gọi đúng
 loại thao tác, tức là định vị thật. Đi kèm là một tác dụng phụ: mô hình nghiêng về câu chạm, nên ở
 bước cuộn tỉ lệ gọi đúng loại thao tác giảm $6{,}23$ điểm. Bộ sửa câu TAGE đặt sau phương pháp này
-chưa giúp thêm, thấp hơn câu nháp $0{,}43$ điểm executability, vì cổng nhận câu sửa chọn đúng những
-bước mà ô cắt sai chỗ.
+chưa giúp thêm, thấp hơn câu nháp $0{,}43$ điểm executability, vì bộ chọn nhận câu sửa lại nhắm đúng
+những bước mà ô cắt sai chỗ.
 
 Các hướng thử trước phương pháp đề xuất đều là kết quả một hạt giống. Nhánh đích khai báo đạt
 $57{,}2\%$, thấp hơn S1 $1{,}93$ điểm với khoảng tin cậy nằm hẳn dưới $0$, và dấu giữ nguyên dưới mô
@@ -101,7 +103,7 @@ mô hình sinh ra trỏ đúng phần tử, ở $60{,}6\%$ số bước, đích 
 trần câu chuẩn của nhóm đó. Khi ô này trỏ sai, đích khai báo thấp hơn S1 $11{,}12$ điểm. Cơ chế không sai, mà bị chặn bởi độ
 chính xác khai báo, và
 $63\%$ dư địa còn lại nằm trọn trong một ô duy nhất. Nếu chặn được vế âm thì mức tăng ước
-tính là $+5{,}4$ điểm, hơn hai lần MDE. Con số này là một mục tiêu định lượng cho việc tiếp theo,
+tính là $+5{,}4$ điểm. Con số này là một mục tiêu định lượng cho việc tiếp theo,
 chưa phải kết quả đã đo.
 
 Tách tiếp theo hai kênh cho thấy $91\%$ khoảng cách tới câu chuẩn dồn vào $29{,}9\%$ số bước mà mô
@@ -126,14 +128,14 @@ nhân quả, và dữ liệu để kiểm giả thuyết này đã được dự
 \subsection*{Về mức độ hoàn thành}
 
 Đại lượng chính của thiết kế ban đầu, $\Delta = \text{S2} - \text{S1}$ tính bằng trung bình hai hạt
-giống mỗi nhánh, \textbf{không hoàn tất} vì hạt giống thứ hai của nhánh xử lý bị huỷ do ngân sách máy
+giống mỗi nhánh, không hoàn tất vì hạt giống thứ hai của nhánh xử lý bị huỷ do ngân sách máy
 (Mục~\ref{sec:trangthai}). Mọi nhánh xử lý về sau cũng chỉ có một hạt giống. Phép so S1 với Base,
 tuy đã có số, không được dùng để thay thế đại lượng ấy. Hai nhánh huấn luyện thêm đã được kiểm ở bước
 không chạm và cả hai đều kém đi ở đó: chặng hai giảm $19{,}75$ điểm do tập cặp chỉ chứa bước chạm
 (Mục~\ref{sec:khongcham}), phương pháp đề xuất giảm $1{,}68$ điểm trên toàn nhóm và $6{,}23$ điểm ở bước
 cuộn (Mục~\ref{sec:grpospice}). Chặng ba chưa được kiểm ở nhóm này. Với nhánh ứng viên, độ chính xác
-chọn không vượt được mức khai báo tự do nên năm lượt còn lại của kế hoạch không chạy, và thủ tục chọn
-ngưỡng bỏ cuộc không cứu được các bước bỏ cuộc sai nên lượt huấn luyện lại trên riêng bước chạm cũng
+chọn không vượt được mức khai báo tự do nên năm lượt còn lại của kế hoạch không chạy, và thủ tục hiệu
+chỉnh mức bỏ cuộc không cứu được các bước bỏ cuộc sai nên lượt huấn luyện lại trên riêng bước chạm cũng
 không chạy.
 
 \section{Hạn chế}
@@ -200,8 +202,8 @@ chấm thủ công $100$ câu do hai người thực hiện đã được lên k
 Nhánh nền có hai hạt giống nên đo được nhiễu giữa hai lần huấn luyện là $0{,}52$ điểm. Mọi nhánh xử
 lý, từ S2 tới phương pháp đề xuất, chỉ có một. Chênh lệch $+0{,}63$ điểm của đại lượng chính ở chặng
 hai chỉ bằng $1{,}4$ lần độ lệch chuẩn giữa hạt giống. Chênh lệch $+1{,}55$ điểm của phương pháp đề xuất
-so với S1 có ý nghĩa thống kê và giữ dấu khi so với cả hạt giống thứ hai của S1, nhưng vẫn nhỏ hơn
-MDE $2{,}11$ điểm, nên thiết kế chưa đủ lực để bảo đảm mức tăng ấy lặp lại ở hạt giống khác.
+so với S1 có ý nghĩa thống kê và giữ dấu khi so với cả hạt giống thứ hai của S1, nhưng nhánh này
+chưa được huấn luyện lại với hạt giống khác, nên chưa biết mức tăng ấy có lặp lại hay không.
 
 \item \textbf{Các nhánh huấn luyện thêm kém đi ở bước không chạm.} Chặng hai giảm $19{,}75$ điểm
 về tỉ lệ gọi đúng loại thao tác ở bước không chạm (Mục~\ref{sec:khongcham}). Phương pháp đề xuất giảm
@@ -253,7 +255,7 @@ con số tuyệt đối của đề tài không so thẳng được với các c
 thuộc về ứng dụng cũng xuất hiện ở tập huấn luyện ($91{,}8\%$ nếu đếm theo ứng dụng riêng biệt), nên mọi phép so với một mô hình bên ngoài chỉ có giá
 trị tham khảo. Đo trên chính mô hình của đề tài thì ảnh hưởng không xuất hiện
 (Bảng~\ref{tab:sannha}). Với $78$ bước ở nhóm chưa thấy, kết luận đúng phải là
-\emph{không phát hiện được ảnh hưởng}, một phát biểu yếu hơn hẳn \emph{đã chặn được ảnh
+\emph{không phát hiện được ảnh hưởng}, một phát biểu yếu hơn nhiều so với \emph{đã chặn được ảnh
 hưởng}.
 
 \item \textbf{Tách theo tác vụ không đồng nghĩa tách theo cách diễn đạt.} Bộ ngữ liệu
@@ -290,10 +292,10 @@ sửa trực tiếp: cộng vào phần thưởng một số hạng đúng loạ
 loại thao tác. Chặng ba cũng cần được đo ở bước không chạm để hai nhánh học tăng cường so được trên
 cùng một hàng.
 
-\item \textbf{Một cổng độc lập với ô cắt cho TAGE.} Khi ô cắt đúng chỗ, bộ biên tập cứu được nhiều
-hơn hẳn số bước bị phá (Mục~\ref{sec:tage}). Điểm yếu là cổng dựa trên xác suất của chính bộ biên tập
-nên chọn ngược. Một cổng so điểm mà mô hình định vị trỏ theo câu nháp với điểm của bộ định vị, chọn
-ngưỡng trên toàn bộ tập kiểm định thay vì trên $11$ câu, là bước thử rẻ nhất còn lại. Song song, bộ
+\item \textbf{Một bộ chọn độc lập với ô cắt cho TAGE.} Khi ô cắt đúng chỗ, bộ biên tập cứu được
+nhiều bước hơn rõ so với số bước bị phá (Mục~\ref{sec:tage}). Điểm yếu là bộ chọn dựa trên xác suất
+của chính bộ biên tập nên chọn ngược. Một bộ chọn so điểm mà mô hình định vị trỏ theo câu nháp với
+điểm của bộ định vị, với $\tau$ chọn trên toàn bộ tập kiểm định thay vì trên $11$ câu, là bước thử rẻ nhất còn lại. Song song, bộ
 biên tập có thể được dạy chịu ô cắt sai bằng cách trộn những mẫu có ô cắt lệch mà đích vẫn là câu
 nháp đúng.
 
@@ -318,8 +320,8 @@ sánh cùng khối ứng viên thì không con số nào của nhánh này cho b
 sánh ấy phải chạy trước mọi hạt giống thứ hai.
 
 \item \textbf{Nối thước với đánh giá của người.} Hai người độc lập chấm thủ công $100$ câu và báo mức
-đồng thuận với executability. Đây là phép đo duy nhất kiểm được rủi ro người nghe của thước là một mô
-hình chứ không phải một người.
+đồng thuận với executability. Chỉ phép đo này mới kiểm được rủi ro đến từ việc người nghe của
+thước là một mô hình.
 
 \item \textbf{Đo độ bền trước phép viết lại mạnh hơn.} Viết lại chính \emph{tên gọi và cách mô tả phần
 tử}, không chỉ động từ và trật tự câu, rồi chạy lại mô hình định vị, để đáp đầy đủ cảnh báo

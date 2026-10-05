@@ -1,14 +1,14 @@
 \chapter{Xây dựng bộ dữ liệu}
 \label{ch:dulieu}
 
-Không có bộ dữ liệu công khai nào được dựng sẵn cho tác vụ ``nhìn một màn hình, viết một
-câu hướng dẫn cho người đọc''. Chương này trình bày cách chuyển AndroidControl thành tập
-giám sát cho tác vụ đó. Toàn bộ quá trình được tự động hoá hoàn toàn. Đề tài không
-thuê người gán nhãn, và cũng không có nhãn nào do một mô hình ngôn ngữ khác sinh ra nằm trong
-vòng huấn luyện.
+Hiện chưa có bộ dữ liệu công khai nào được dựng sẵn cho tác vụ ``nhìn một màn hình rồi viết một
+câu hướng dẫn cho người đọc''. Chương này trình bày cách chuyển AndroidControl thành tập giám sát
+cho tác vụ ấy. Toàn bộ quá trình được tự động hoá: đề tài không thuê người gán nhãn, và cũng không
+đưa nhãn do một mô hình ngôn ngữ khác sinh ra vào vòng huấn luyện.
 
-Bảng~\ref{tab:anhxa} nối ba khái niệm ở tên đề tài với các đối tượng cụ thể mà chương này dựng
-ra, để những chương sau dùng thẳng tên gọi kỹ thuật mà người đọc vẫn theo được.
+Để các chương sau có thể dùng thẳng tên gọi kỹ thuật mà người đọc vẫn dễ theo dõi,
+Bảng~\ref{tab:anhxa} nối ba khái niệm ở tên đề tài với các đối tượng cụ thể được dựng trong chương
+này.
 
 \begin{table}[t]
 \caption{Ba thành phần ở tên đề tài và dạng cụ thể của chúng trong đề tài.}
@@ -29,19 +29,18 @@ thứ tự bước thành hướng dẫn đầy đủ cho tác vụ đó \\
 \end{tabular}
 \end{table}
 
-Đơn vị sinh và đơn vị chấm đều là \emph{một bước}, không phải cả tài liệu hướng dẫn. Cách chia
-này có hai lý do. Thứ nhất, nhãn tham chiếu của AndroidControl vốn được viết theo từng bước, nên
-mọi phép so với câu chuẩn chỉ định nghĩa được ở mức bước. Thứ hai, thước đo ở
-Chương~\ref{ch:thuocdo} phán đúng sai bằng cách kiểm một mô hình độc lập có trỏ trúng phần tử
-cần chạm hay không, và phép kiểm ấy cần đúng một phần tử đích cho mỗi câu. Hướng dẫn cho trọn
-một trường hợp sử dụng là chuỗi các câu bước nối lại, nên chất lượng của chuỗi bị chặn bởi chất
-lượng của từng câu.
+Đơn vị sinh và đơn vị chấm đều là \emph{một bước}, thay vì cả một tài liệu hướng dẫn. Cách chia này
+có hai lý do. Một là nhãn tham chiếu của AndroidControl vốn được viết theo từng bước, nên phép so với
+câu chuẩn chỉ định nghĩa được ở mức bước. Hai là thước đo ở Chương~\ref{ch:thuocdo} xét đúng sai
+bằng cách kiểm một mô hình độc lập có trỏ trúng phần tử cần chạm hay không, và phép kiểm ấy cần đúng
+một phần tử đích cho mỗi câu. Hướng dẫn cho trọn một trường hợp sử dụng là chuỗi các câu bước nối
+lại, nên chất lượng của cả chuỗi phụ thuộc trực tiếp vào chất lượng của từng câu.
 
 \section{Nguồn dữ liệu và phép ghép đa nguồn}
 
-Mỗi bước cần ba thành phần là câu hướng dẫn do người chú thích viết, ảnh màn hình và cây trợ năng.
-Không bản phân phối công khai nào của AndroidControl mang đủ cả ba, nên hai bản phải
-được ghép lại với nhau (Bảng~\ref{tab:nguon}).
+Mỗi bước cần ba thành phần: câu hướng dẫn do người chú thích viết, ảnh màn hình và cây trợ năng.
+Vì không bản phân phối công khai nào của AndroidControl có đủ cả ba, chúng tôi ghép hai bản lại với
+nhau (Bảng~\ref{tab:nguon}).
 
 \begin{table}[t]
 \caption{Hai bản phân phối trên Hugging Face và phần thiếu của mỗi bản.}
@@ -61,28 +60,26 @@ Bản phát hành & Có & Thiếu \\
 \end{tabular}
 \end{table}
 
-Hai bản phát hành được ghép theo khoá \code{(episode\_id, step\_id)}. Cây trợ năng của $99.131$ màn
-lấy từ cùng bản phát hành gốc.
+Hai bản phát hành được ghép theo khoá \code{(episode\_id, step\_id)}, còn cây trợ năng của $99.131$
+màn được lấy từ chính bản phát hành gốc.
 
-Một tính chất của bản phân phối ảnh hưởng tới cách đọc kết quả. Chuỗi
-mục tiêu, tức câu mô tả mục tiêu chung của cả tác vụ, bị cắt ngay từ nguồn, với
-$99{,}0\%$ số chuỗi kết thúc giữa chừng một cụm từ, ví dụ
-\code{...look for Calvin Kle}. Mọi nhánh huấn luyện đều đọc cùng chuỗi mục tiêu bị cắt
-đó, nên chuỗi mục tiêu không giải thích được chênh lệch \emph{giữa} các nhánh. Tuy nhiên,
-nhánh tham chiếu (câu chuẩn) hoàn toàn không phụ thuộc vào chuỗi mục tiêu, nên khoảng cách
-giữa mô hình và câu chuẩn bị ước lượng cao hơn thực chất ở chừng mực đó.
+Có một tính chất của bản phân phối ảnh hưởng tới cách đọc kết quả. Chuỗi mục tiêu, tức câu mô tả
+mục tiêu chung của cả tác vụ, đã bị cắt ngay từ nguồn: $99{,}0\%$ số chuỗi kết thúc giữa chừng một
+cụm từ, ví dụ như \code{...look for Calvin Kle}. Vì mọi nhánh huấn luyện đều đọc cùng chuỗi mục tiêu
+bị cắt này, chuỗi mục tiêu không giải thích được chênh lệch \emph{giữa} các nhánh. Tuy vậy, nhánh
+tham chiếu (câu chuẩn) hoàn toàn không phụ thuộc vào chuỗi mục tiêu, nên khoảng cách giữa mô hình và
+câu chuẩn có phần bị ước lượng cao hơn thực tế.
 
 \section{Kiểm phép ghép}
 
-Ghép lệch một bước là loại lỗi nguy hiểm nhất trong toàn bộ quy trình. Số dòng vẫn đủ,
-huấn luyện vẫn hội tụ và mọi khâu phía sau vẫn chạy bình thường, nhưng mô hình
-lại học ảnh của bước $A$ với câu của bước $B$, và lỗi này không tự bộc lộ ở bất kỳ khâu
-nào.
+Ghép lệch một bước là loại lỗi đáng ngại nhất trong toàn bộ quy trình. Khi gặp lỗi này, số dòng vẫn
+đủ, huấn luyện vẫn hội tụ và các khâu phía sau vẫn chạy bình thường, trong khi mô hình thực ra đang
+học ảnh của bước $A$ với câu của bước $B$; lỗi không tự bộc lộ ở khâu nào cả.
 
-Phép kiểm dựa trên chữ đọc được ngay tại điểm chạm. Chương trình chạy OCR tại điểm chạm
-đáp án, rồi xem chuỗi chữ đọc được có xuất hiện trong câu hướng dẫn hay không. Nếu phép ghép đúng, tỉ lệ khớp phải cao
-hơn hẳn so với một \emph{phép ghép cố ý lệch một bước}. Trên $n = 400$ bước lấy mẫu, hai
-tỉ lệ đo được là
+Phép kiểm dựa trên chữ đọc được ngay tại điểm chạm. Chương trình chạy OCR tại điểm chạm đáp án, rồi
+xem chuỗi chữ thu được có xuất hiện trong câu hướng dẫn hay không. Nếu phép ghép đúng, tỉ lệ khớp sẽ
+cao hơn rõ so với một \emph{phép ghép cố ý lệch một bước}. Trên $n = 400$ bước lấy mẫu, hai tỉ lệ đo
+được như sau.
 
 \begin{center}
 \begin{tabular}{@{}lr@{}}
@@ -95,9 +92,9 @@ Tỉ số & $2{,}4\times$ \\
 \end{tabular}
 \end{center}
 
-Nếu phép ghép sai thì hai con số phải xấp xỉ nhau. Chúng cách nhau $2{,}4$ lần và khoảng
-tin cậy không giao nhau. Tỉ lệ $48\%$ chỉ đọc được khi đặt cạnh $20\%$ của
-nhánh so sánh. Mọi phép ghép về sau đều được kiểm theo cùng cách này.
+Nếu phép ghép sai, hai con số này sẽ xấp xỉ nhau. Thực tế chúng cách nhau $2{,}4$ lần và khoảng tin
+cậy không giao nhau. Có thể thấy tỉ lệ $48\%$ chỉ có ý nghĩa khi đặt cạnh mức $20\%$ của nhánh so
+sánh. Mọi phép ghép về sau đều được kiểm theo cùng cách này.
 
 \section{Quy mô, cách chia tập và kiểm rò rỉ}
 \label{sec:chiatap}
@@ -120,95 +117,86 @@ Số tác vụ & $12.895$ & $1.432$ \\
 \end{tabular}
 \end{table}
 
-Tập được chia theo tác vụ, không chia ngẫu nhiên theo dòng. Các màn hình trong
-cùng một tác vụ gần như trùng nhau, nên chia ngẫu nhiên sẽ để dữ liệu tập huấn luyện lẫn sang tập
-kiểm và làm điểm số cao hơn thực chất. Phép kiểm rò rỉ được chạy trên toàn bộ dữ liệu,
-đối chiếu $12.895$ tác vụ tập huấn luyện với $1.432$
-tác vụ tập kiểm, và cho kết quả không có tác vụ nào trùng. Lỗi mà phép kiểm này
-phát hiện
-không thể sửa được sau khi đã huấn luyện, nên phép kiểm được xếp vào nhóm điều kiện
-bắt buộc phải đạt trước khi sử dụng tài nguyên tính toán.
+Tập được chia theo tác vụ thay vì chia ngẫu nhiên theo dòng. Các màn hình trong cùng một tác vụ
+thường gần như trùng nhau, nên nếu chia ngẫu nhiên, dữ liệu huấn luyện sẽ lẫn sang tập kiểm và làm
+điểm số cao hơn thực tế. Phép kiểm rò rỉ được chạy trên toàn bộ dữ liệu, đối chiếu $12.895$ tác vụ
+của tập huấn luyện với $1.432$ tác vụ của tập kiểm, và không tìm thấy tác vụ nào trùng. Vì lỗi loại
+này không thể sửa sau khi đã huấn luyện, phép kiểm được chạy trước mọi lượt huấn luyện.
 
-\paragraph{Quan hệ với cách chia chính thức của AndroidControl.} Cách chia tập huấn luyện và tập
-kiểm ở đây là cách chia sẵn có của bản phân phối ảnh \code{ckg}, tức một phép chia ngẫu nhiên theo
-tác vụ, \emph{không} phải phần kiểm chính thức mà nhóm tác giả AndroidControl công
-bố~\cite{androidcontrol}. Đối chiếu với tệp chia chính thức cho thấy $1.287$ trong $1.432$ tác vụ
-của tập kiểm, tức $90\%$, thuộc phần \emph{huấn luyện} chính thức, chỉ $131$ tác vụ thuộc phần kiểm
-và $14$ tác vụ thuộc phần kiểm định. Tỉ lệ này khớp với kỳ vọng của một phép chọn ngẫu nhiên
-($1.274{,}6$ / $144{,}6$ / $12{,}8$ tác vụ), và cũng xác nhận rằng hai bản phân phối dùng chung một
-hệ đánh số tác vụ. Tính hợp lệ bên trong của các phép so không đổi, vì tập huấn luyện và tập kiểm
-của đề tài vẫn rời nhau hoàn toàn. Điều thay đổi là cách gọi: chúng tôi gọi tập này là \emph{tập
-kiểm giữ riêng theo tác vụ}, không gọi là phần kiểm chính thức của AndroidControl. Hệ quả của việc
-này với mô hình định vị dùng làm dụng cụ đo được đo ở Mục~\ref{sec:botro}.
+\paragraph{Quan hệ với cách chia chính thức của AndroidControl.} Cách chia tập huấn luyện và tập kiểm
+ở đây là cách chia sẵn có của bản phân phối ảnh \code{ckg}, tức một phép chia ngẫu nhiên theo tác vụ,
+và \emph{không} trùng với phần kiểm chính thức mà nhóm tác giả AndroidControl công
+bố~\cite{androidcontrol}. Khi đối chiếu với tệp chia chính thức, chúng tôi thấy $1.287$ trong $1.432$
+tác vụ của tập kiểm, tức khoảng $90\%$, thuộc phần \emph{huấn luyện} chính thức; chỉ $131$ tác vụ
+thuộc phần kiểm và $14$ tác vụ thuộc phần kiểm định. Tỉ lệ này khớp với kỳ vọng của một phép chọn
+ngẫu nhiên ($1.274{,}6$ / $144{,}6$ / $12{,}8$ tác vụ), đồng thời xác nhận hai bản phân phối dùng chung
+một hệ đánh số tác vụ. Tính hợp lệ bên trong của các phép so vẫn giữ nguyên, vì tập huấn luyện và
+tập kiểm của đề tài hoàn toàn rời nhau; điều thay đổi chỉ là cách gọi. Chúng tôi gọi tập này là
+\emph{tập kiểm giữ riêng theo tác vụ} thay vì phần kiểm chính thức của AndroidControl. Ảnh hưởng của
+việc này đối với mô hình định vị dùng làm dụng cụ đo được xem xét ở Mục~\ref{sec:botro}.
 
-\paragraph{Tập kiểm định nội bộ.} Từ tháng $9$, các nhánh mới cần một tập để so các điểm lưu và
-các biến thể với nhau mà không chạm vào tập kiểm. Tập này gồm $1.567$ bước tách từ tập huấn luyện theo
-tác vụ, và các phép so ở Chương~\ref{ch:thucnghiem} dùng những lát $400$ đến $960$ bước của nó.
-Các nhánh huấn luyện từ tháng $9$ trở đi chỉ học trên phần còn lại, $63.000$ bước. Tuy vậy, S1 và các
-chặng nối tiếp S1 đã học trên toàn bộ $64.567$ bước, nên với các nhánh ấy tập kiểm định nội bộ là
-dữ liệu đã thấy. Đo trên hai nhánh có cả hai loại điểm, điểm trên tập này cao hơn điểm trên tập kiểm
-khoảng bảy điểm rưỡi, và chênh lệch giữa hai nhánh bị phóng đại tới gần bốn mươi lần
-(Mục~\ref{sec:noisuy}). Vì vậy tập kiểm định nội bộ chỉ dùng để xếp hạng hoặc để quyết định có
-chạy tiếp hay không. Chúng tôi không báo điểm tuyệt đối nào trên tập này như một kết quả.
+\paragraph{Tập kiểm định nội bộ.} Từ tháng $9$, các nhánh mới cần một tập để so các điểm lưu và các
+biến thể với nhau mà không phải chạm vào tập kiểm. Tập này gồm $1.567$ bước tách từ tập huấn luyện
+theo tác vụ, và các phép so ở Chương~\ref{ch:thucnghiem} dùng những lát $400$ đến $960$ bước của nó.
+Các nhánh huấn luyện từ tháng $9$ trở đi chỉ học trên phần còn lại, gồm $63.000$ bước. Riêng S1 và
+các chặng nối tiếp S1 đã học trên toàn bộ $64.567$ bước, nên với các nhánh này, tập kiểm định nội bộ
+là dữ liệu đã thấy. Đo trên hai nhánh có cả hai loại điểm, điểm trên tập này cao hơn điểm trên tập
+kiểm khoảng bảy điểm rưỡi, còn chênh lệch giữa hai nhánh bị phóng đại tới gần bốn mươi lần
+(Mục~\ref{sec:noisuy}). Do đó tập kiểm định nội bộ chỉ được dùng để xếp hạng các biến thể với nhau,
+và chúng tôi không báo điểm tuyệt đối nào trên tập này như một kết quả.
 
-Ba tính chất của cách chia này giới hạn phạm vi kết luận.
+Bên cạnh đó, ba tính chất của cách chia này giới hạn phạm vi của kết luận.
 
-\paragraph{Trùng lặp cách diễn đạt giữa hai tập.} Trên một mẫu của tập huấn luyện, đã có
-$17{,}3\%$ câu chuẩn của tập kiểm xuất
-hiện \emph{nguyên văn} và $66{,}5\%$ có chung ít nhất một cụm bốn từ, vì bộ dữ
-liệu lặp lại nhiều lần các cách diễn đạt như ``click on the search bar''. Phép kiểm tái tạo ở
-Mục~\ref{sec:phanbien} loại được những câu mà mô hình chép lại từ chính bước tương ứng,
-nhưng không loại được hiện tượng này.
+\paragraph{Trùng lặp cách diễn đạt giữa hai tập.} Ngay trên một mẫu của tập huấn luyện, đã có
+$17{,}3\%$ câu chuẩn của tập kiểm xuất hiện \emph{nguyên văn} và $66{,}5\%$ có chung ít nhất một cụm
+bốn từ, bởi bộ dữ liệu lặp lại khá nhiều những cách diễn đạt như ``click on the search bar''. Phép
+kiểm tái tạo ở Mục~\ref{sec:phanbien} loại được những câu mà mô hình chép lại từ chính bước tương
+ứng, nhưng không loại được hiện tượng này.
 
-\paragraph{Mức trùng ứng dụng giữa hai tập.} Trong số các bước quy được
-về một ứng dụng có tên, $95{,}6\%$ thuộc về ứng dụng cũng xuất hiện ở tập huấn luyện
-($2.991/3.130$ bước). Tính theo ứng dụng riêng biệt thì tỉ lệ là $91{,}8\%$ ($247/269$). Phép so chính giữa
-các nhánh không bị ảnh hưởng, vì mọi nhánh dùng chung dữ liệu huấn luyện, chung mô hình gốc và
-chung tập kiểm, nên chênh lệch giữa hai nhánh vẫn quy được về can thiệp. Tuy nhiên, một phép
-so với một mô hình bên ngoài chưa từng thấy các ứng dụng này sẽ nghiêng về phía mô hình
-của đề tài, nên chúng tôi không báo cáo bất kỳ phép so nào thuộc loại này dưới dạng một kết
-quả độc lập.
-Mục~\ref{sec:latcat} đo trực tiếp ảnh hưởng của việc trùng ứng dụng này.
+\paragraph{Mức trùng ứng dụng giữa hai tập.} Trong số các bước quy được về một ứng dụng có tên,
+$95{,}6\%$ thuộc về những ứng dụng cũng xuất hiện ở tập huấn luyện ($2.991/3.130$ bước); nếu tính theo
+ứng dụng riêng biệt thì tỉ lệ là $91{,}8\%$ ($247/269$). Phép so chính giữa các nhánh không bị ảnh
+hưởng, vì mọi nhánh dùng chung dữ liệu huấn luyện, chung mô hình gốc và chung tập kiểm, nên chênh
+lệch giữa hai nhánh vẫn quy được về can thiệp. Tuy nhiên, một phép so với mô hình bên ngoài chưa
+từng thấy các ứng dụng này sẽ nghiêng về phía mô hình của đề tài, nên chúng tôi không báo cáo phép so
+nào thuộc loại này như một kết quả độc lập. Ảnh hưởng của việc trùng ứng dụng được đo trực tiếp ở
+Mục~\ref{sec:latcat}.
 
-\paragraph{Các bước không quy được về ứng dụng.} Chỉ $45{,}0\%$ số bước tập
-kiểm gán được tên ứng dụng ($269$ ứng dụng). $3.828$ bước còn lại mang nhãn
-\emph{không biết}. Nhãn này khác hẳn nhãn \emph{chưa thấy} và không bao giờ được đọc
-thành \emph{chưa thấy}. Chính tính chất này quyết định luật gom cụm khi tính khoảng tin
-cậy ở Mục~\ref{sec:thongke}.
+\paragraph{Các bước không quy được về ứng dụng.} Chỉ $45{,}0\%$ số bước của tập kiểm gán được tên
+ứng dụng ($269$ ứng dụng), còn $3.828$ bước còn lại mang nhãn \emph{không biết}. Nhãn này khác với
+nhãn \emph{chưa thấy}, và chúng tôi không đọc hai nhãn này như nhau. Chính tính chất này quyết định
+cách gom cụm khi tính khoảng tin cậy ở Mục~\ref{sec:thongke}.
 
 \section{Trích chữ trên màn hình}
 
-Cây trợ năng về nguyên tắc là nguồn tên phần tử tự nhiên nhất. Tuy nhiên, phép đo trên
-$120$ màn hình lấy ngẫu nhiên từ tập $99.131$ màn cho thấy chỉ $12{,}6\%$ phần tử mang tên,
-khớp với các báo cáo
-cho thấy phần lớn ứng dụng Android được phát hành với nhãn trợ năng không đầy đủ~\cite{chen2020}.
-Trung vị là $86$ phần tử mỗi màn, nhưng phần lớn trong số đó không mang nhãn văn bản nào. Ngoài ra, bản
-trích xuất hiện có chứa \code{content\_description} viết cho lập trình viên đọc thay vì chữ
-thật sự hiển thị trên màn.
+Về nguyên tắc, cây trợ năng là nguồn tên phần tử tự nhiên nhất. Tuy nhiên, phép đo trên $120$ màn
+hình lấy ngẫu nhiên từ tập $99.131$ màn cho thấy chỉ $12{,}6\%$ phần tử có tên, khớp với các báo cáo
+cho rằng phần lớn ứng dụng Android được phát hành với nhãn trợ năng chưa đầy đủ~\cite{chen2020}. Mỗi
+màn có trung vị $86$ phần tử, nhưng phần lớn không mang nhãn văn bản nào. Ngoài ra, bản trích xuất
+hiện có còn chứa \code{content\_description} vốn viết cho lập trình viên đọc, thay vì chữ thật sự
+hiển thị trên màn.
 
-Vì vậy toàn bộ ảnh màn hình được chạy qua OCR (RapidOCR, ONNX, chỉ dùng CPU), lấy
-kết quả vừa làm đặc trưng đầu vào vừa làm nguồn tên phần tử, thu được $64.567$ bản ghi.
+Vì vậy toàn bộ ảnh màn hình được chạy qua OCR (RapidOCR, ONNX, chỉ dùng CPU), và kết quả được dùng
+vừa làm đặc trưng đầu vào vừa làm nguồn tên phần tử, thu được $64.567$ bản ghi.
 
-Khâu này được kiểm chéo giữa hai máy khác nhau, cách nhau năm ngày. Kết quả là $24{,}2$
-chuỗi nhận dạng được mỗi màn trên tập kiểm so với $23{,}6$ trên tập huấn luyện, còn trung vị thì
-bằng nhau. Vì
-AndroidControl không có nhãn chuẩn cho chữ trên màn nên chúng tôi \emph{không} tuyên bố
-độ chính xác của OCR. Ở bộ dữ liệu này, hai dạng lỗi đã quan sát được là biểu tượng bị
-đọc thành ký tự, và khoảng trắng bị mất (\code{Turnon}). Dạng lỗi thứ hai làm phần tử bị
-xếp vào nhóm ``không có
-tên'' thay vì nhận một tên sai, nên nhãn chỉ mất bớt thông tin chứ không bị sai lệch.
+Khâu này được kiểm chéo trên hai máy khác nhau, cách nhau năm ngày. Kết quả là $24{,}2$ chuỗi nhận
+dạng được mỗi màn trên tập kiểm, so với $23{,}6$ trên tập huấn luyện, và trung vị thì bằng nhau. Do
+AndroidControl không có nhãn chuẩn cho chữ trên màn, chúng tôi \emph{không} nêu độ chính xác của OCR.
+Ở bộ dữ liệu này có hai dạng lỗi đã quan sát được: biểu tượng bị đọc thành ký tự, và khoảng trắng bị
+mất (\code{Turnon}). Dạng lỗi thứ hai khiến phần tử bị xếp vào nhóm ``không có tên'' thay vì nhận một
+tên sai, nên nhãn chỉ mất bớt thông tin chứ không bị sai lệch.
 
 \section{Nhãn mô tả tự động}
 \label{sec:nhanmota}
 
-Đích huấn luyện của nhánh khai báo (Mục~\ref{sec:motatruoc}) chứa một dòng khai báo có cấu trúc về phần tử cần chạm.
-Dòng này được dựng hoàn toàn bằng luật, không có người tham gia.
+Đích huấn luyện của nhánh khai báo (Mục~\ref{sec:motatruoc}) chứa một dòng khai báo có cấu trúc về
+phần tử cần chạm, và dòng này được dựng hoàn toàn bằng luật, không có người tham gia.
 
-Quy trình dựng dòng khai báo diễn ra như sau. Từ toạ độ chạm đáp án, chương trình chọn
-hộp trợ năng \emph{nhỏ nhất} chứa điểm đó. Vai trò được lấy từ cây trợ năng. Tên cũng lấy
-từ cây nếu qua được bộ lọc hợp lệ, còn nếu không thì lấy từ OCR bên trong hộp. Ô toạ độ,
-tức trường thông tin thứ ba của dòng, giữ chính điểm chạm đáp án quy về thang $[0, 1000]$.
-Ô thứ tư giữ một dấu hiệu phân biệt tính bằng luật.
+Quy trình dựng dòng khai báo diễn ra như sau. Từ toạ độ chạm đáp án, chương trình chọn hộp trợ năng
+\emph{nhỏ nhất} chứa điểm đó. Vai trò được lấy từ cây trợ năng; tên cũng lấy từ cây nếu qua được bộ
+lọc hợp lệ, nếu không thì lấy từ OCR bên trong hộp. Ô toạ độ, tức trường thứ ba của dòng, giữ chính
+điểm chạm đáp án quy về thang $[0, 1000]$, còn ô thứ tư giữ một dấu hiệu phân biệt được tính bằng
+luật.
 
 \begin{table}[t]
 \caption{Bốn ô của dòng khai báo và lý do tồn tại của từng ô.}
@@ -232,30 +220,28 @@ các phần tử giống nó, nhắm vào dạng lỗi ``câu mơ hồ'' \\
 
 \subsection{Hai bộ lọc làm sạch tên phần tử}
 
-Hai bộ lọc dưới đây được đưa vào vì phép đo trên mẫu thử cho thấy nhãn trợ năng thô bị
-nhiễu.
+Hai bộ lọc dưới đây được thêm vào sau khi phép đo trên mẫu thử cho thấy nhãn trợ năng thô khá nhiễu.
 
-\textbf{Bộ lọc nhãn trợ năng} loại bỏ $14{,}7\%$ nhãn tại các nút cần chạm. Bốn loại nhãn
-bị loại
-là định danh lấy trực tiếp từ mã nguồn, chuỗi số dài, hậu tố dành cho trình đọc màn hình và những chuỗi chỉ báo rằng phần tử không hề có nhãn, ví dụ như \code{No label specified} hay \code{unlabeled}.
+\textbf{Bộ lọc nhãn trợ năng} loại bỏ $14{,}7\%$ nhãn tại các nút cần chạm. Có bốn loại nhãn bị loại:
+định danh lấy trực tiếp từ mã nguồn, chuỗi số dài, hậu tố dành cho trình đọc màn hình, và những chuỗi
+cho biết phần tử thật ra không có nhãn, ví dụ như \code{No label specified} hay \code{unlabeled}.
 
-\textbf{Bộ lọc hình học} chỉ cho phép lấy tên từ OCR khi hộp chiếm dưới $25\%$ diện tích
-màn. Căn cứ của bộ lọc này là một phép kiểm thủ công trên $25$ trường hợp có hộp lớn bằng
-gần cả màn hình, trong đó \emph{không trường hợp nào} khớp với câu chuẩn.
+\textbf{Bộ lọc hình học} chỉ cho phép lấy tên từ OCR khi hộp chiếm dưới $25\%$ diện tích màn. Bộ lọc
+này dựa trên một phép kiểm thủ công trên $25$ trường hợp có hộp lớn gần bằng cả màn hình, trong đó
+\emph{không trường hợp nào} khớp với câu chuẩn.
 
 \subsection{Ô dấu hiệu phân biệt}
 
-Các luật dựng ô thứ tư được xếp theo khả năng tự tách phần tử cần chạm của từng mệnh đề.
-Luật ưu tiên mỏ neo theo chữ, tức chuỗi OCR gần nhất nằm ngoài hộp kèm hướng
-tương đối, rồi mới tới các dấu hiệu đếm số lượng như ``một trong bảy phần tử cùng loại''.
-Trên mẫu thử, $75{,}9\%$ dấu hiệu dựng ra tự nó tách được phần tử cần chạm khỏi các phần tử
-giống nó. Phần còn lại, $24{,}1\%$, không tách được và được nêu như một giới hạn ở
-Mục~\ref{sec:hanche}.
+Các luật dựng ô thứ tư được xếp theo khả năng tự tách phần tử cần chạm của từng loại mệnh đề. Luật
+ưu tiên mỏ neo theo chữ, tức chuỗi OCR gần nhất nằm ngoài hộp kèm hướng tương đối, rồi mới tới các
+dấu hiệu đếm số lượng như ``một trong bảy phần tử cùng loại''. Trên mẫu thử, $75{,}9\%$ dấu hiệu dựng
+ra tự tách được phần tử cần chạm khỏi các phần tử giống nó; $24{,}1\%$ còn lại thì không, và điều này
+được nêu như một giới hạn ở Mục~\ref{sec:hanche}.
 
 \subsection{Chất lượng nhãn ở quy mô đầy đủ}
 
-Bảng~\ref{tab:chatluongnhan} đối chiếu nhãn dựng ở quy mô đầy đủ ($41.191$ bước chạm) với
-mẫu thử trước đó ($1.074$ nhãn), tức nhỏ hơn gần $38$ lần.
+Bảng~\ref{tab:chatluongnhan} đối chiếu nhãn dựng ở quy mô đầy đủ ($41.191$ bước chạm) với mẫu thử
+trước đó ($1.074$ nhãn), vốn nhỏ hơn gần $38$ lần.
 
 \begin{table}[t]
 \caption{Chất lượng nhãn mô tả ở quy mô đầy đủ so với mẫu thử ($n = 1.074$). Cả năm chỉ số
@@ -277,16 +263,15 @@ Có phần tử cùng vai trò để so & $91{,}6\%$ & - \\
 \end{tabular}
 \end{table}
 
-Trong $32.061$ tên lấy được, $8.581$ đến từ cây trợ năng và $23.480$ đến từ OCR. Tỉ lệ
-này là hệ quả trực tiếp của con số $12{,}6\%$ nêu ở trên, và tỉ lệ ấy cũng cho thấy một quy
-trình chỉ dựa vào cây trợ năng sẽ mất khoảng ba phần tư số tên.
+Trong $32.061$ tên lấy được, $8.581$ tên đến từ cây trợ năng và $23.480$ tên đến từ OCR. Tỉ lệ này là
+hệ quả trực tiếp của con số $12{,}6\%$ nêu ở trên, và cũng cho thấy nếu chỉ dựa vào cây trợ năng, quy
+trình sẽ mất khoảng ba phần tư số tên.
 
 \section{Bốn nhánh dữ liệu và các bất biến cấu trúc}
 \label{sec:bonnhanh}
 
-Bốn tập dữ liệu được dựng từ \emph{cùng một đầu vào} và chỉ khác nhau ở chuỗi mà mô hình
-phải sinh ra. Bốn khối dưới đây lấy đúng một bước thật, là bước $1$ của chuỗi $5590$, làm
-ví dụ.
+Bốn tập dữ liệu được dựng từ \emph{cùng một đầu vào} và chỉ khác nhau ở chuỗi mà mô hình phải sinh
+ra. Để minh hoạ, bốn khối dưới đây cùng lấy một bước thật, là bước $1$ của chuỗi $5590$.
 
 \begin{description}[leftmargin=1.6em,style=nextline,font=\normalfont\bfseries]
 \item[Nhánh S1, chỉ có câu hướng dẫn, dùng làm mốc so nội bộ]
@@ -308,15 +293,14 @@ Click on the search bar}
 Click on the search bar}
 \end{description}
 
-Nhánh \textbf{S2r} là nhánh so sánh mà đề tài không tìm thấy tiền lệ. Nhánh này loại trừ
-cách giải thích thay thế đáng lo ngại nhất cho một kết quả dương của S2, theo đó đầu ra
-mong đợi dài thêm thì mô hình học kỹ hơn, không liên quan tới nội dung mô tả. Để nhánh này
-loại trừ được cách giải thích đó, độ dài khai báo giả phải sát độ dài thật, nên khai báo
-giả được
-ghép theo \emph{độ dài token}, và $99{,}9\%$ số cặp lệch nhau không quá hai token.
+Nhánh \textbf{S2r} là nhánh so sánh mà chúng tôi chưa tìm thấy tiền lệ. Nhánh này dùng để loại trừ
+cách giải thích thay thế đáng ngại nhất cho một kết quả dương của S2, theo đó chỉ cần đầu ra mong đợi
+dài hơn là mô hình đã học kỹ hơn, bất kể nội dung mô tả. Muốn loại trừ được cách giải thích ấy, độ
+dài của khai báo giả phải sát với khai báo thật, nên khai báo giả được ghép theo \emph{độ dài
+token}, và $99{,}9\%$ số cặp lệch nhau không quá hai token.
 
-\paragraph{Chín bất biến.} Sau mỗi lần dựng lại dữ liệu, chín bất biến cấu trúc được
-kiểm, và ở quy mô đầy đủ thì cả chín đều đạt.
+\paragraph{Chín bất biến.} Sau mỗi lần dựng lại dữ liệu, chín bất biến cấu trúc được kiểm lại, và ở
+quy mô đầy đủ cả chín đều thoả.
 
 \begin{enumerate}[leftmargin=1.6em,itemsep=0.1em]
 \item câu được chấm giống hệt nhau từng byte ở mọi nhánh, trên cả $64.567$ mẫu;
@@ -327,90 +311,79 @@ kiểm, và ở quy mô đầy đủ thì cả chín đều đạt.
 \item khai báo giả không bao giờ tái sử dụng toạ độ đích thật;
 \item các bước không phải bước chạm mang đích y hệt nhau ở cả bốn nhánh;
 \item khoá ghép và số dòng khớp nhau giữa các nhánh;
-\item độ dài token của khai báo thật và khai báo giả khớp theo ngưỡng đã nêu.
+\item khai báo thật và khai báo giả lệch nhau không quá hai token như đã nêu.
 \end{enumerate}
 
-Bất biến số $7$ là điều kiện tiên quyết cho phép kiểm không gây hại. Bước không chạm, gồm
-cuộn, gõ, mở ứng dụng và quay lại, chiếm $36{,}2\%$ dữ liệu, và phần dữ liệu đó giống hệt
-nhau ở bốn nhánh. Vì vậy, nếu nhánh S2 làm giảm chất lượng nhóm bước này thì điểm yếu bộc
-lộ ngay và không quy được cho khác biệt dữ liệu.
+Bất biến số $7$ là điều kiện tiên quyết cho phép kiểm không gây hại. Bước không chạm, gồm cuộn, gõ,
+mở ứng dụng và quay lại, chiếm $36{,}2\%$ dữ liệu và giống hệt nhau ở cả bốn nhánh. Nhờ vậy, nếu nhánh
+S2 làm giảm chất lượng ở nhóm bước này thì sự suy giảm sẽ lộ ra ngay và không thể quy cho khác biệt
+dữ liệu.
 
-\paragraph{Hai nhánh chỉ dựng dữ liệu.} Dữ liệu của \textbf{S2r}
-và \textbf{S2-nopoint} tồn tại đầy đủ và qua hết chín bất biến, nhưng cả hai không được
-huấn luyện. Lý do đo được của từng nhánh ghi ở Bảng~\ref{tab:trangthai}. Phần mô tả ở đây
-vì vậy là mô tả \emph{dữ liệu đã dựng}, không phải mô tả thí nghiệm đã chạy.
+\paragraph{Hai nhánh chỉ dựng dữ liệu.} Dữ liệu của \textbf{S2r} và \textbf{S2-nopoint} đã được dựng
+đầy đủ và thoả cả chín bất biến, nhưng hai nhánh này không được huấn luyện; lý do đo được của từng
+nhánh ghi ở Bảng~\ref{tab:trangthai}. Vì vậy phần mô tả ở đây là mô tả \emph{dữ liệu đã dựng}, chưa
+phải thí nghiệm đã chạy.
 
 \section{Tập cặp quy chiếu tối thiểu cho chặng hai}
 \label{sec:capmindesc}
 
-Chặng huấn luyện thứ hai (Mục~\ref{sec:mindescthietke}) cần một dạng dữ liệu khác. Mỗi
-mẫu ở đây là một cặp gồm một vế được chọn và một vế bị loại, thay vì một chuỗi duy nhất
-mà mô hình phải sinh ra. Tập cặp gồm $22.854$ cặp, dựng từ chính nhãn khai báo đã
-có và theo đúng một nguyên tắc. Hai vế \emph{chỉ} khác nhau ở ô khai báo, còn phần câu
-thì giữ nguyên từng byte.
+Chặng huấn luyện thứ hai (Mục~\ref{sec:mindescthietke}) cần một dạng dữ liệu khác. Mỗi mẫu ở đây là
+một cặp gồm vế được chọn và vế bị loại, thay vì một chuỗi duy nhất mà mô hình phải sinh. Tập cặp gồm
+$22.854$ cặp, được dựng từ chính các nhãn khai báo đã có theo một nguyên tắc duy nhất: hai vế
+\emph{chỉ} khác nhau ở ô khai báo, còn phần câu giữ nguyên từng byte.
 
-Vế bị loại lấy phần tử \emph{cùng vai trò gần nhất} với phần tử cần chạm, và chỉ giữ những cặp
-có khoảng cách giữa hai phần tử nằm trong dải $80$ đến $350$ điểm ảnh. Cận dưới loại những
-phần tử sát nhau tới mức phép gộp theo bán kính coi chúng là một, cận trên loại những phần
-tử ở vùng khác hẳn của màn hình, vì một vế âm quá xa thì quá dễ phân biệt và không cung cấp
-tín hiệu huấn luyện hữu ích. Ngoài dải khoảng cách, cặp còn phải khác nhau ở cả ô tên lẫn
-ô toạ độ mới được giữ. Bảy
-bất biến được kiểm sau khi dựng. Ba bất biến quan trọng nhất trong số đó đòi câu ở hai vế
-trùng nhau từng byte, vế bị loại không bao giờ trùng phần tử cần chạm, và toạ độ trong vế
-bị loại luôn là toạ độ thật của phần tử được nêu.
+Vế bị loại lấy phần tử \emph{cùng vai trò gần nhất} với phần tử cần chạm, và chỉ những cặp có khoảng
+cách giữa hai phần tử trong khoảng $80$ đến $350$ điểm ảnh mới được giữ. Cận dưới loại những phần tử
+sát nhau tới mức phép gộp theo bán kính coi chúng là một; cận trên loại những phần tử nằm ở vùng khác
+hẳn của màn hình, vì một vế âm quá xa thì quá dễ phân biệt và ít mang tín hiệu huấn luyện. Ngoài
+khoảng cách, hai vế còn phải khác nhau ở cả ô tên lẫn ô toạ độ. Sau khi dựng, bảy bất biến được kiểm,
+trong đó ba bất biến quan trọng nhất yêu cầu câu ở hai vế trùng nhau từng byte, vế bị loại không bao
+giờ trùng phần tử cần chạm, và toạ độ trong vế bị loại luôn là toạ độ thật của phần tử được nêu.
 
-Hai giới hạn của tập cặp này áp dụng cho mọi kết quả của chặng hai. Thứ nhất, tập chỉ
-chứa bước chạm, vì chỉ bước chạm mới có nhãn khai báo. Bất
-biến số $7$ ở trên, vốn bảo vệ phép kiểm không gây hại cho bốn nhánh đầu, \emph{không áp
-dụng} cho tập cặp này. Mức thiệt hại đo được ở Mục~\ref{sec:khongcham}. Thứ hai, có một khuyết tật chỉ
-phát hiện được sau khi đã huấn luyện. Ở $17{,}4\%$ số cặp, chuỗi \code{(no name)} xuất hiện ở
-\emph{đúng một} trong hai vế ($9{,}6\%$ ở vế bị loại và $7{,}8\%$ ở vế được chọn), nên hai
-vế tách được chỉ bằng chuỗi đó, không cần nhìn màn hình. Bản sửa lỗi đã được viết, nhưng
-không còn lượt huấn luyện nào để áp dụng bản sửa này.
+Tập cặp này có hai giới hạn, áp dụng cho mọi kết quả của chặng hai. Giới hạn đầu tiên là tập chỉ
+chứa bước chạm, vì chỉ bước chạm mới có nhãn khai báo; như vậy bất biến số $7$, vốn bảo vệ phép kiểm
+không gây hại cho bốn nhánh đầu, \emph{không áp dụng} cho tập cặp này, và mức thiệt hại được đo ở
+Mục~\ref{sec:khongcham}. Giới hạn thứ hai là một khuyết tật chỉ phát hiện được sau khi đã huấn luyện:
+ở $17{,}4\%$ số cặp, chuỗi \code{(no name)} xuất hiện ở \emph{đúng một} trong hai vế ($9{,}6\%$ ở vế
+bị loại và $7{,}8\%$ ở vế được chọn), nên chỉ cần dựa vào chuỗi đó là tách được hai vế mà không cần
+nhìn màn hình. Bản sửa lỗi đã được viết, nhưng không còn lượt huấn luyện nào để áp dụng.
 
 \section{Khối ứng viên và hai nhánh dữ liệu cho đầu chọn}
 \label{sec:khoiungvien}
 
-Nhánh ứng viên (Mục~\ref{sec:ungvienthietke}) cần một dạng đầu vào mà bốn nhánh đầu không
-có. Câu nhắc của bốn nhánh đầu chỉ mang $24$ dòng chữ đọc được từ OCR, không kèm vị trí.
-Câu nhắc của nhánh ứng viên thay khối chữ đó bằng một \emph{khối ứng viên}, gồm tối đa $40$
-dòng, mỗi dòng là tên một phần tử trên màn kèm toạ độ của nó trên lưới $[0, 1000]$, viết
-đúng dạng \code{tên <point>x,y</point>} của ô toạ độ trong dòng khai báo để mô hình chép
-thẳng sang đầu ra được.
+Nhánh ứng viên (Mục~\ref{sec:ungvienthietke}) cần một dạng đầu vào mà bốn nhánh đầu chưa có. Câu
+nhắc của bốn nhánh đầu chỉ mang $24$ dòng chữ đọc được từ OCR, không kèm vị trí. Ở nhánh ứng viên,
+khối chữ ấy được thay bằng một \emph{khối ứng viên} gồm tối đa $40$ dòng, mỗi dòng là tên một phần tử
+trên màn kèm toạ độ của nó trên lưới $[0, 1000]$. Các dòng được viết đúng dạng
+\code{tên <point>x,y</point>} như ô toạ độ trong dòng khai báo, để mô hình có thể chép thẳng sang đầu
+ra.
 
-Khối được dựng bằng máy theo bốn luật.
-Tên ứng viên được tạo bằng đúng hàm đã đặt tên cho nhãn vàng ở Mục~\ref{sec:nhanmota}, lấy từ
-cây trợ năng khi qua được bộ lọc và từ OCR bên trong hộp khi không, nên mọi tên trong khối
-đều là chuỗi có thể xuất hiện trong nhãn vàng. Hai hộp lồng nhau cùng mang một tên được gộp
-làm một, vì cây trợ năng thường bọc một dòng chữ trong nhiều tầng khung. Danh sách sắp theo
-thứ tự đọc, từ trên xuống rồi từ trái sang, và cắt ở dòng thứ $40$ theo đúng thứ tự đó. Mọi
-cách sắp hay cắt phụ thuộc vào phần tử cần chạm đều bị cấm, vì chúng để lộ vị trí của đáp
+Khối được dựng tự động theo bốn luật. Tên ứng viên được tạo bằng đúng hàm đã đặt tên cho nhãn vàng ở
+Mục~\ref{sec:nhanmota}, lấy từ cây trợ năng nếu qua được bộ lọc và từ OCR bên trong hộp nếu không, nên
+mọi tên trong khối đều là chuỗi có thể xuất hiện trong nhãn vàng. Hai hộp lồng nhau cùng mang một tên
+được gộp làm một, vì cây trợ năng thường bọc một dòng chữ trong nhiều tầng khung. Danh sách được sắp
+theo thứ tự đọc, từ trên xuống rồi từ trái sang, và cắt ở dòng thứ $40$ theo đúng thứ tự ấy. Chúng tôi
+tránh mọi cách sắp hay cắt phụ thuộc vào phần tử cần chạm, vì những cách đó sẽ để lộ vị trí của đáp
 án trong danh sách.
 
-Trần $40$ dòng được chọn theo ngân sách token, không theo độ phủ. Đo trên tập kiểm, trần
-$16$ dòng chỉ chứa tên vàng ở $76{,}2\%$ số bước, trần $32$ chứa ở $93{,}2\%$, còn trần $40$
-chứa ở $96{,}7\%$, trong khi tiêu chí phủ đòi ít nhất $95\%$. Khối dài nhất ở trần $40$
-chiếm $1.012$ token, và chính con số này dẫn tới việc nâng độ dài ngữ cảnh nêu ở
+Giới hạn $40$ dòng được chọn theo ngân sách token. Đo trên tập kiểm, khối $16$ dòng chỉ chứa tên vàng
+ở $76{,}2\%$ số bước, khối $32$ dòng chứa ở $93{,}2\%$, còn khối $40$ dòng chứa ở $96{,}7\%$. Khối dài
+nhất ở mức $40$ dòng chiếm $1.012$ token, và chính con số này dẫn tới việc nâng độ dài ngữ cảnh nêu ở
 Mục~\ref{sec:ungvienthietke}.
 
-\paragraph{Bốn tiêu chí kiểm của khối.} Cả bốn tiêu chí đều đạt. Tiêu chí phủ yêu cầu tên
-vàng có mặt trong khối ở ít nhất $95\%$ số bước có tên vàng, đo được $96{,}7\%$ trên tập
-kiểm và $96{,}4\%$ trên tập huấn luyện. Tiêu chí khớp yêu cầu tồn tại một dòng vừa trùng
-tên vừa cách điểm chạm không quá $14\%$ màn ở ít nhất $75\%$ số bước có tên vàng, đo được
-$91{,}2\%$ và $91{,}1\%$. Hai tỉ lệ này tính trên nhóm có tên vàng.
-Quy về toàn bộ $4.463$ bước chạm của tập kiểm thì $71{,}66\%$ số bước có một ứng viên vàng
-trong khối, và $28{,}34\%$ còn lại không có. Tiêu chí rò rỉ kiểm trên $300$ mẫu rằng khối không
-mang dấu hiệu nào chỉ ra đáp án, qua bốn phép đo. Không chuỗi đánh dấu nào xuất hiện trong
-câu nhắc. Hạng chuẩn hoá trung bình của ứng viên vàng trong danh sách là $0{,}481$ so với
-dải cho phép $[0{,}40; 0{,}60]$. Ứng viên vàng đứng đầu danh sách ở $5{,}0\%$ số mẫu so với
-trần $8\%$. Tương quan hạng giữa vị trí trong danh sách với khoảng cách tới đáp án là
-$0{,}047$ so với trần $0{,}10$. Tiêu chí độ dài đo trên toàn bộ $64.567$ mẫu bằng bộ tách
-token của chính mô hình gốc,
-cho mẫu dài nhất $1.482$ token chữ cộng $1.272$ token ảnh, bằng $2.754$ so với giới hạn
-$3.072$, và không mẫu nào bị cắt.
+\paragraph{Bốn phép kiểm của khối.} Về độ phủ, tên vàng có mặt trong khối ở $96{,}7\%$ số bước có tên
+vàng trên tập kiểm và $96{,}4\%$ trên tập huấn luyện. Về độ khớp, có một dòng vừa trùng tên vừa cách
+điểm chạm không quá $14\%$ màn ở $91{,}2\%$ và $91{,}1\%$ số bước có tên vàng. Nếu quy về toàn bộ
+$4.463$ bước chạm của tập kiểm, $71{,}66\%$ số bước có một ứng viên vàng trong khối, còn $28{,}34\%$
+thì không. Về rò rỉ, phép kiểm trên $300$ mẫu cho thấy khối không để lộ đáp án: không chuỗi đánh dấu
+nào xuất hiện trong câu nhắc, hạng chuẩn hoá trung bình của ứng viên vàng là $0{,}481$, tức gần giữa
+danh sách, ứng viên vàng chỉ đứng đầu ở $5{,}0\%$ số mẫu, và tương quan hạng giữa vị trí trong danh
+sách với khoảng cách tới đáp án chỉ là $0{,}047$. Về độ dài, phép kiểm trên toàn bộ $64.567$ mẫu bằng
+bộ tách token của chính mô hình gốc cho mẫu dài nhất gồm $1.482$ token chữ cộng $1.272$ token ảnh,
+tổng cộng $2.754$, vẫn trong giới hạn $3.072$, nên không mẫu nào bị cắt.
 
-\paragraph{Hai nhánh dữ liệu.} Từ cùng câu nhắc trên, hai nhánh
-được dựng với hai chuỗi đích khác nhau.
+\paragraph{Hai nhánh dữ liệu.} Từ cùng câu nhắc trên, hai nhánh được dựng với hai chuỗi đích khác
+nhau.
 
 \begin{center}\small
 \renewcommand{\arraystretch}{1.35}
@@ -421,31 +394,28 @@ $3.072$, và không mẫu nào bị cắt.
 \end{tabular}
 \end{center}
 
-Nội dung thẻ chọn là bản chép nguyên văn một dòng trong khối, không viết lại tên và không
-tự tạo toạ độ. Ứng viên vàng của một bước là dòng trùng tên với nhãn vàng, so chuỗi chính xác
-sau khi bỏ khoảng trắng hai đầu và chữ hoa, và cách điểm chạm không quá $140$ đơn vị lưới
-theo mỗi trục. Khi có nhiều dòng cùng thoả điều kiện thì dòng gần điểm chạm nhất được chọn. Thẻ
-\code{none} được đặt trong ba tình huống: bước không chạm, bước chạm không có tên vàng, và
-bước chạm có tên vàng nhưng không dòng nào trong khối khớp. Câu ở cả hai nhánh là câu
-chuẩn nguyên bản, không bổ sung mệnh đề vị trí và không ép
-dùng tên nguyên văn, vì bất kỳ phép bổ sung nào cũng tạo ra một chênh lệch giả giữa hai
-nhánh mà không đổi cơ chế chọn.
+Nội dung thẻ chọn là bản chép nguyên văn một dòng trong khối, không viết lại tên và không tự tạo toạ
+độ. Ứng viên vàng của một bước là dòng trùng tên với nhãn vàng (so chuỗi chính xác sau khi bỏ khoảng
+trắng hai đầu và chữ hoa) và cách điểm chạm không quá $140$ đơn vị lưới theo mỗi trục; khi có nhiều
+dòng cùng thoả, dòng gần điểm chạm nhất được chọn. Thẻ \code{none} được dùng trong ba tình huống:
+bước không chạm, bước chạm không có tên vàng, và bước chạm có tên vàng nhưng không dòng nào trong khối
+khớp. Câu ở cả hai nhánh là câu chuẩn nguyên bản, không bổ sung mệnh đề vị trí và không ép dùng tên
+nguyên văn, vì bất kỳ phép bổ sung nào cũng sẽ tạo ra một chênh lệch giả giữa hai nhánh mà không đổi
+cơ chế chọn.
 
-Bảy bất biến được kiểm sau khi dựng và đều đạt ở quy mô đầy đủ: hai nhánh cùng $64.567$
-dòng, bằng số bản ghi nguồn. Câu nhắc và ảnh trùng nhau từng byte ở mọi mẫu. Nhánh so
-sánh không chứa thẻ chọn nào. Đích của nhánh chọn bằng thẻ cộng đúng câu của nhánh so
-sánh. Nội dung thẻ có nguyên văn trong khối của chính mẫu đó. Mọi bước không chạm mang thẻ
-\code{none}, và không mẫu rỗng nào được tạo thêm ngoài số câu vàng vốn rỗng trong nguồn. Một
-nhánh thứ ba, gọi là S1-match, giữ nguyên $24$ dòng OCR thay vì khối ứng viên và có đích là
-câu, cũng được dựng trong cùng lượt để tách riêng công của khối. Nhánh này chỉ dựng dữ liệu,
-không huấn luyện.
+Sau khi dựng, bảy bất biến được kiểm và đều thoả ở quy mô đầy đủ. Hai nhánh có cùng $64.567$ dòng,
+bằng số bản ghi nguồn; câu nhắc và ảnh trùng nhau từng byte ở mọi mẫu; nhánh so sánh không chứa thẻ
+chọn nào; đích của nhánh chọn đúng bằng thẻ cộng với câu của nhánh so sánh; nội dung thẻ có nguyên văn
+trong khối của chính mẫu đó; mọi bước không chạm mang thẻ \code{none}; và không mẫu rỗng nào được tạo
+thêm ngoài những câu vàng vốn rỗng trong nguồn. Một nhánh thứ ba, gọi là S1-match, giữ nguyên $24$
+dòng OCR thay vì khối ứng viên và có đích là câu, cũng được dựng trong cùng lượt để tách riêng phần
+đóng góp của khối. Nhánh này chỉ được dựng dữ liệu, chưa được huấn luyện.
 
-\paragraph{Tỉ lệ nhãn \code{none} theo hai mẫu số.} Trên toàn bộ tập huấn luyện, $54{,}78\%$
-số mẫu ($35.369$ trên $64.567$) mang thẻ \code{none}, vì $36{,}2\%$ tập là bước không chạm
-và toàn bộ nhóm đó nhận thẻ này theo thiết kế. Chỉ tính trên $41.191$ bước chạm, tỉ lệ còn
-$29{,}12\%$ ($11.993$ bước), gần trùng với $28{,}34\%$ của tập kiểm. Hai con số này được
-nhắc lại ở Mục~\ref{sec:nhanhungvien}, vì chúng là căn cứ của chẩn đoán về hiện tượng bỏ
-cuộc. Một tập lọc chỉ giữ $41.191$ bước chạm, lấy theo chỉ số dòng từ chính tập trên để
-không phát sinh lệch lượt OCR hay lệch lượt dựng khối, đã được dựng ngày $5$ tháng $9$ và qua
-đủ bảy bất biến. Tập này chưa được huấn luyện, và điều kiện để huấn luyện tập này ghi ở
-Mục~\ref{sec:ungvienthietke}.
+\paragraph{Tỉ lệ nhãn \code{none} theo hai mẫu số.} Trên toàn bộ tập huấn luyện, $54{,}78\%$ số mẫu
+($35.369$ trên $64.567$) mang thẻ \code{none}, do $36{,}2\%$ tập là bước không chạm và cả nhóm này
+nhận thẻ \code{none} theo thiết kế. Nếu chỉ tính trên $41.191$ bước chạm, tỉ lệ giảm còn $29{,}12\%$
+($11.993$ bước), gần với mức $28{,}34\%$ của tập kiểm. Hai con số này sẽ được nhắc lại ở
+Mục~\ref{sec:nhanhungvien}, vì chúng là căn cứ cho chẩn đoán về hiện tượng bỏ cuộc. Ngoài ra, một tập
+lọc chỉ giữ $41.191$ bước chạm, lấy theo chỉ số dòng từ chính tập trên để tránh lệch lượt OCR hay
+lệch lượt dựng khối, đã được dựng ngày $5$ tháng $9$ và thoả đủ bảy bất biến. Tập này chưa được huấn
+luyện, và lý do được nêu ở Mục~\ref{sec:nhanhungvien}.

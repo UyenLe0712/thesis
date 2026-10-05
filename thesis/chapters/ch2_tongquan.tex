@@ -1,143 +1,135 @@
 \chapter{Tổng quan}
 \label{ch:tongquan}
 
-Chương này trình bày nền tảng khái niệm cho phần còn lại của đề tài. Các mục lần lượt trình bày
-kiến trúc mô hình được dùng, kỹ thuật tinh chỉnh trong điều kiện tài nguyên hạn chế, học tăng
-cường với phần thưởng tính bằng luật, bài toán định vị phần tử giao diện, bộ dữ liệu nguồn, và
-sau cùng là lý do các thước đo có sẵn không dùng được cho bài toán này, kèm số đo cho từng cách.
+Chương này trình bày những kiến thức nền cho phần còn lại của đề tài. Lần lượt các mục sẽ giới thiệu
+kiến trúc mô hình được sử dụng, kỹ thuật tinh chỉnh trong điều kiện tài nguyên hạn chế, học tăng
+cường với phần thưởng tính bằng luật, bài toán định vị phần tử giao diện và bộ dữ liệu nguồn. Mục
+cuối cùng giải thích lý do các thước đo sẵn có khó dùng cho bài toán này, kèm số đo cho từng cách.
 
 \section{Từ học sâu tới mô hình thị giác và ngôn ngữ}
 
-Học sâu là nhánh học máy dùng mạng nơ-ron nhiều tầng để tự học biểu diễn từ dữ liệu thô.
-Bước ngoặt gần nhất với đề tài là kiến trúc Transformer với cơ chế tự chú
-ý~\cite{vaswani2017}, cho phép mô hình ước lượng quan hệ giữa các đơn vị trong chuỗi mà
-không phụ thuộc khoảng cách vị trí, đồng thời tận dụng được tính toán song song để mở
-rộng quy mô tham số.
+Học sâu là nhánh học máy dùng mạng nơ-ron nhiều tầng để tự học biểu diễn từ dữ liệu thô. Bước
+tiến gần nhất với đề tài là kiến trúc Transformer với cơ chế tự chú ý~\cite{vaswani2017}. Cơ chế này
+cho phép mô hình ước lượng quan hệ giữa các đơn vị trong chuỗi mà không phụ thuộc vào khoảng cách vị
+trí, đồng thời tận dụng được tính toán song song để mở rộng quy mô tham số.
 
-Mô hình thị giác và ngôn ngữ (\emph{vision-language model}, VLM) ghép một bộ mã hoá ảnh
-vào một mô hình ngôn ngữ, thường qua một tầng chiếu (\emph{projector}) đưa đặc trưng ảnh
-về cùng không gian với nhúng từ. Ảnh được cắt thành các mảnh, mã hoá thành một dãy
-\emph{token thị giác}, rồi nối vào chuỗi văn bản. Từ đó mô hình sinh văn bản có điều kiện
-trên cả hai phương thức.
+Mô hình thị giác và ngôn ngữ (\emph{vision-language model}, VLM) ghép một bộ mã hoá ảnh vào một mô
+hình ngôn ngữ, thường thông qua một tầng chiếu (\emph{projector}) đưa đặc trưng ảnh về cùng không
+gian với nhúng từ. Ảnh được cắt thành nhiều mảnh, mã hoá thành một dãy \emph{token thị giác} rồi nối
+vào chuỗi văn bản, nhờ đó mô hình có thể sinh văn bản dựa trên cả hai phương thức.
 
-Mô hình gốc được chọn là \textbf{Qwen2.5-VL-3B-Instruct}~\cite{qwen25vl}, vì ba lý do.
-Thứ nhất, đây là mô hình mở, tải được trọng số và tinh chỉnh được, khác với các mô hình
-thương mại chỉ gọi qua giao diện lập trình. Thứ hai, ba tỉ tham số là cỡ chạy được tại
-máy người dùng, phù hợp với động lực ứng dụng đã nêu ở Mục 1.2.2. Thứ ba, họ Qwen-VL xử
-lý ảnh ở độ phân giải động, không ép ảnh về một kích thước cố định, điều có ý nghĩa
-với ảnh màn hình điện thoại vốn có tỉ lệ rất dài, ví dụ $1080 \times 2400$.
+Mô hình gốc được chọn là \textbf{Qwen2.5-VL-3B-Instruct}~\cite{qwen25vl}, với ba lý do. Trước hết,
+đây là mô hình mở, có thể tải trọng số về và tinh chỉnh, khác với các mô hình thương mại chỉ gọi
+được qua giao diện lập trình. Kế đến, cỡ ba tỉ tham số đủ nhỏ để chạy trên máy người dùng, phù hợp
+với động lực ứng dụng đã nêu ở Mục 1.2.2. Cuối cùng, họ Qwen-VL xử lý ảnh ở độ phân giải động thay vì
+ép ảnh về một kích thước cố định, điều này đặc biệt có ích với ảnh màn hình điện thoại vốn có tỉ lệ
+rất dài, ví dụ như $1080 \times 2400$.
 
 \section{Tinh chỉnh hiệu quả tham số bằng LoRA và QLoRA}
 
-Tinh chỉnh toàn bộ ba tỉ tham số đòi hỏi bộ nhớ vượt xa một card đồ hoạ đơn, vì ngoài
-trọng số còn phải giữ gradient và trạng thái của bộ tối ưu. LoRA~\cite{lora} giải quyết vấn đề này bằng
-cách đóng băng trọng số gốc $W \in \mathbb{R}^{d \times k}$ và chỉ học một số hạng bổ
-sung hạng thấp:
+Tinh chỉnh toàn bộ ba tỉ tham số đòi hỏi bộ nhớ vượt xa khả năng của một GPU, vì ngoài trọng số còn
+phải lưu gradient và trạng thái của bộ tối ưu. LoRA~\cite{lora} giải quyết vấn đề này bằng cách đóng
+băng trọng số gốc $W \in \mathbb{R}^{d \times k}$ và chỉ học thêm một số hạng hạng thấp:
 \begin{equation}
 W' = W + \frac{\alpha}{r} BA, \qquad
 B \in \mathbb{R}^{d \times r},\; A \in \mathbb{R}^{r \times k},\; r \ll \min(d,k),
 \label{eq:lora}
 \end{equation}
-trong đó $r$ là hạng và $\alpha$ là hệ số tỉ lệ. Số tham số phải học giảm từ $dk$ xuống
-$r(d+k)$.
+trong đó $r$ là hạng và $\alpha$ là hệ số tỉ lệ. Nhờ vậy, số tham số cần học giảm từ $dk$ xuống
+còn $r(d+k)$.
 
-QLoRA~\cite{qlora} mở rộng ý tưởng này thêm một bước. Kỹ thuật này lượng tử hoá trọng số đóng băng
-xuống $4$ bit theo định dạng NormalFloat (NF4) rồi mới gắn các bộ chuyển đổi LoRA lên trên. Trọng số gốc chỉ
-được giải nén khi cần cho phép nhân, còn gradient chỉ chảy qua phần $A$, $B$ ở độ chính
-xác cao.
+QLoRA~\cite{qlora} đi thêm một bước: trọng số đóng băng được lượng tử hoá xuống $4$ bit theo định
+dạng NormalFloat (NF4), rồi các bộ chuyển đổi LoRA mới được gắn lên trên. Trọng số gốc chỉ được giải
+nén khi cần cho phép nhân, còn gradient chỉ đi qua hai ma trận $A$, $B$ ở độ chính xác cao.
 
-Ở đây, cấu hình cụ thể (Mục~\ref{sec:cauhinh}) cho $14.966.784$ tham số học
-được, tức $0{,}48\%$ số tham số của phần mô hình ngôn ngữ. Con số này được tính lại thủ công từ bảy mô-đun
-trên $36$ tầng và dùng làm phép kiểm cơ học trước mỗi lượt huấn luyện. Nếu số tham số
-không khớp thì cấu hình có sai sót, chẳng hạn như tháp thị giác không thực sự bị đóng
-băng.
+Với cấu hình cụ thể của đề tài (Mục~\ref{sec:cauhinh}), số tham số học được là $14.966.784$, tức
+$0{,}48\%$ số tham số của phần mô hình ngôn ngữ. Con số này được tính lại thủ công từ bảy mô-đun
+trên $36$ tầng và được dùng làm phép kiểm trước mỗi lượt huấn luyện: nếu số tham số không khớp thì
+nhiều khả năng cấu hình có sai sót, chẳng hạn như tháp thị giác chưa thật sự được đóng băng.
 
 \section{Học tăng cường với phần thưởng tính bằng luật}
 \label{sec:nengrpo}
 
-Học có giám sát dạy mô hình chép lại một chuỗi đích cho trước. Cách học này không cho mô hình
-biết câu nào trong số những câu mà chính mô hình \emph{có thể} viết ra là tốt hơn. Học tăng cường bù vào chỗ đó:
-mô hình tự sinh câu trả lời, một hàm thưởng chấm từng câu, và trọng số được đẩy về phía những câu
-được thưởng cao. Khi hàm thưởng là một luật tính được, chẳng hạn so một toạ độ với đáp án hoặc tính
-một thước so câu, cách làm này thường được gọi là học tăng cường với phần thưởng kiểm chứng được.
-Công trình DeepSeek-R1 trên \emph{Nature}~\cite{guo2025r1} là bản mô tả đầy đủ nhất của hướng này
-cho mô hình ngôn ngữ lớn.
+Học có giám sát dạy mô hình chép lại một chuỗi đích cho trước, nhưng không cho mô hình biết trong
+số những câu mà chính mô hình \emph{có thể} viết ra, câu nào tốt hơn. Học tăng cường bổ sung đúng phần
+này: mô hình tự sinh câu trả lời, một hàm thưởng chấm từng câu, và trọng số được điều chỉnh dần về
+phía những câu được thưởng cao. Khi hàm thưởng là một luật tính được, chẳng hạn như so một toạ độ
+với đáp án hay tính một thước so câu, cách làm này thường được gọi là học tăng cường với phần thưởng
+kiểm chứng được. Công trình DeepSeek-R1 trên \emph{Nature}~\cite{guo2025r1} là bản mô tả đầy đủ nhất
+của hướng này đối với mô hình ngôn ngữ lớn.
 
-Thuật toán được dùng trong đề tài là tối ưu chính sách tương đối theo nhóm (GRPO), giới thiệu
-trong DeepSeekMath~\cite{shao2024grpo}. Với mỗi câu nhắc $x$, mô hình sinh một nhóm $G$ câu trả
-lời $y_1, \ldots, y_G$ và nhận các điểm thưởng $r_1, \ldots, r_G$. Lợi thế của câu thứ $i$ được
-tính bằng cách chuẩn hoá trong nhóm,
+Thuật toán được dùng trong đề tài là tối ưu chính sách tương đối theo nhóm (GRPO), được giới thiệu
+trong DeepSeekMath~\cite{shao2024grpo}. Với mỗi câu nhắc $x$, mô hình sinh một nhóm $G$ câu trả lời
+$y_1, \ldots, y_G$ và nhận các điểm thưởng $r_1, \ldots, r_G$. Lợi thế của câu thứ $i$ được tính bằng
+cách chuẩn hoá trong nhóm,
 \begin{equation}
 \hat{A}_i = \frac{r_i - \operatorname{mean}(r_{1:G})}{\operatorname{std}(r_{1:G})},
 \label{eq:grpo_adv}
 \end{equation}
-rồi mỗi token của $y_i$ được cập nhật theo $\hat{A}_i$, cộng một số hạng phạt độ lệch KL so với
-một mô hình tham chiếu đóng băng để mô hình không trôi quá xa điểm xuất phát. Điểm mạnh của cách
-chuẩn hoá này là không cần một mô hình phê bình riêng để ước lượng mức thưởng kỳ vọng, nên tiết
-kiệm bộ nhớ. Điểm yếu đi kèm cũng suy ra trực tiếp từ công thức: nếu mọi câu trong nhóm nhận cùng
-một điểm thì $\hat{A}_i = 0$ với mọi $i$ và nhóm đó không sinh gradient. Mục~\ref{sec:grpospice}
-gặp lại đúng hiện tượng này khi phần thưởng là một thước so câu.
+sau đó mỗi token của $y_i$ được cập nhật theo $\hat{A}_i$, cùng với một số hạng phạt độ lệch KL so
+với một mô hình tham chiếu đóng băng để mô hình không trôi quá xa điểm xuất phát. Ưu điểm của cách
+chuẩn hoá này là không cần một mô hình phê bình riêng để ước lượng mức thưởng kỳ vọng, nhờ đó tiết
+kiệm bộ nhớ. Đi kèm là một hạn chế có thể thấy ngay từ công thức: khi mọi câu trong nhóm nhận cùng
+một điểm thì $\hat{A}_i = 0$ với mọi $i$, và nhóm đó không đóng góp gradient nào. Mục~\ref{sec:grpospice}
+sẽ gặp lại hiện tượng này khi phần thưởng là một thước so câu.
 
-\paragraph{SPICE.} Trong các thước so câu với câu chuẩn ở Mục~\ref{sec:thuoc-gay},
-SPICE~\cite{spice} là thước mà Zhao và cộng sự~\cite{zhao2021} khuyên dùng để xếp hạng các hệ
-sinh chỉ dẫn khi có câu tham chiếu. SPICE không so chuỗi từ mà phân tích cả hai câu thành đồ thị
-cảnh gồm đối tượng, thuộc tính và quan hệ, rồi tính F1 trên các bộ ba trùng nhau. Với câu hướng
-dẫn giao diện, đối tượng thường là tên phần tử (``search icon'') và quan hệ thường là vị trí (``at
-the top''), nên SPICE nhạy với đúng hai thông tin mà executability quan tâm hơn là với động từ hay
-trật tự câu. Chúng tôi dùng SPICE làm phần thưởng trong một nhánh học tăng cường
-(Mục~\ref{sec:grpospicethietke}), còn mọi phán quyết vẫn đọc trên executability.
+\paragraph{SPICE.} Trong số các thước so câu với câu chuẩn nêu ở Mục~\ref{sec:thuoc-gay},
+SPICE~\cite{spice} là thước mà Zhao và cộng sự~\cite{zhao2021} khuyên dùng để xếp hạng các hệ sinh
+chỉ dẫn khi có câu tham chiếu. Thay vì so chuỗi từ, SPICE phân tích cả hai câu thành đồ thị cảnh gồm
+đối tượng, thuộc tính và quan hệ, rồi tính F1 trên các bộ ba trùng nhau. Với câu hướng dẫn giao diện,
+đối tượng thường là tên phần tử (``search icon'') và quan hệ thường là vị trí (``at the top''), nên
+SPICE nhạy với chính hai loại thông tin mà executability quan tâm, hơn là với động từ hay trật tự
+câu. Chúng tôi dùng SPICE làm phần thưởng trong một nhánh học tăng cường
+(Mục~\ref{sec:grpospicethietke}), còn mọi kết luận vẫn được đọc trên executability.
 
 \section{Định vị phần tử giao diện}
 
-Bài toán định vị phần tử giao diện (\emph{GUI grounding}) nhận một ảnh màn hình và một
-biểu thức văn bản, trả về vị trí của phần tử được mô tả, thường ở dạng một điểm hoặc một
-khung bao. Các mô hình tiêu biểu gồm SeeClick~\cite{seeclick},
-OS-Atlas~\cite{osatlas} và UGround~\cite{uground}.
+Bài toán định vị phần tử giao diện (\emph{GUI grounding}) nhận một ảnh màn hình và một biểu thức văn
+bản, rồi trả về vị trí của phần tử được mô tả, thường dưới dạng một điểm hoặc một khung bao. Các mô
+hình tiêu biểu gồm SeeClick~\cite{seeclick}, OS-Atlas~\cite{osatlas} và UGround~\cite{uground}.
 
-Quy ước chấm phổ biến bắt nguồn từ AndroidInTheWild~\cite{aitw}. Trong mã chấm gốc của bộ dữ
-liệu ấy, một lần chạm dự đoán được coi là khớp với lần chạm đáp án khi khoảng cách Euclid giữa
-hai điểm, tính trên toạ độ đã chuẩn hoá về đoạn $[0; 1]$ theo bề ngang và chiều cao màn hình,
-không vượt quá $0{,}14$, \emph{hoặc} khi cả hai điểm cùng nằm trong một khung phần tử đã được nới
-rộng thêm $1{,}4$ lần kích thước mỗi chiều. Chúng tôi gọi đây là \emph{luật khớp chạm của AitW}.
-Một biến thể đơn giản hơn dùng cửa sổ $\tau = 0{,}14$ theo từng trục: dự đoán trúng khi
-$|p_x - g_x| \le \tau W$ và $|p_y - g_y| \le \tau H$, với $g$ là toạ độ đáp án và $W$,
-$H$ là bề ngang và chiều cao màn hình. Vùng chấp nhận của biến thể này là một
-\emph{hình chữ nhật}, không phải một đĩa tròn. Trên màn hình
-$1080 \times 2400$, vùng đó tương ứng $\pm151$ điểm ảnh theo chiều ngang nhưng tới
-$\pm336$ điểm ảnh theo chiều dọc. Mục~\ref{sec:luattrung} cho thấy quy ước này quá lỏng khi
-đối tượng được chấm là câu chữ, bởi quy ước này vốn được đặt ra để chấm một bộ định vị.
+Quy ước chấm phổ biến bắt nguồn từ AndroidInTheWild~\cite{aitw}. Theo mã chấm gốc của bộ dữ liệu
+này, một lần chạm dự đoán được coi là khớp với lần chạm đáp án khi khoảng cách Euclid giữa hai điểm,
+tính trên toạ độ đã chuẩn hoá về đoạn $[0; 1]$ theo bề ngang và chiều cao màn hình, không vượt quá
+$0{,}14$, \emph{hoặc} khi cả hai điểm cùng nằm trong một khung phần tử đã được nới rộng thêm $1{,}4$
+lần kích thước mỗi chiều. Chúng tôi gọi đây là \emph{luật khớp chạm của AitW}. Một biến thể đơn giản
+hơn dùng cửa sổ $\tau = 0{,}14$ theo từng trục: dự đoán được coi là trúng khi $|p_x - g_x| \le \tau W$
+và $|p_y - g_y| \le \tau H$, với $g$ là toạ độ đáp án, còn $W$ và $H$ là bề ngang và chiều cao màn
+hình. Vùng chấp nhận của biến thể này vì vậy là một \emph{hình chữ nhật} chứ không phải đĩa tròn;
+trên màn hình $1080 \times 2400$, vùng đó rộng $\pm151$ điểm ảnh theo chiều ngang nhưng tới $\pm336$
+điểm ảnh theo chiều dọc. Mục~\ref{sec:luattrung} sẽ cho thấy quy ước này khá lỏng khi đối tượng được
+chấm là câu chữ, bởi quy ước ấy vốn được đặt ra để chấm một bộ định vị.
 
-Ở đây, một mô hình thuộc nhóm này giữ vai trò khác hẳn. Mô hình ấy đóng vai \textbf{dụng cụ đo}, còn bản thân mô hình thì không được đem đo. Ba điều
-kiện được đặt ra cho dụng cụ này ở Mục~\ref{sec:botro}, và mọi điểm số trong đề tài đều là điểm số \emph{có điều kiện}
-trên dụng cụ này.
+Trong đề tài, một mô hình thuộc nhóm này giữ một vai trò khác: mô hình đóng vai dụng cụ đo, còn bản
+thân mô hình không phải đối tượng được đánh giá. Mục~\ref{sec:botro} nêu ba điều kiện đặt ra cho dụng cụ
+này, và mọi điểm số trong đề tài đều là điểm số \emph{có điều kiện} trên chính dụng cụ ấy.
 
 \section{Bộ dữ liệu AndroidControl}
 
-AndroidControl~\cite{androidcontrol} do nhóm Google DeepMind công bố tại NeurIPS 2024,
-giấy phép CC0, gồm $15.283$ chuỗi thao tác do người thật thực hiện trên thiết bị Pixel
-trong khoảng một năm. Mỗi bước lưu ảnh màn hình, loại thao tác, toạ độ chạm nếu có, và
-trường quan trọng nhất đối với đề tài là \code{step\_instructions}, câu hướng dẫn do
-chính người thao tác viết cho bước đó.
+AndroidControl~\cite{androidcontrol} do nhóm Google DeepMind công bố tại NeurIPS 2024 theo giấy phép
+CC0, gồm $15.283$ chuỗi thao tác do người thật thực hiện trên thiết bị Pixel trong khoảng một năm.
+Mỗi bước lưu ảnh màn hình, loại thao tác, toạ độ chạm nếu có, và quan trọng nhất đối với đề tài là
+trường \code{step\_instructions}, tức câu hướng dẫn do chính người thao tác viết cho bước đó.
 
 \begin{quote}
-\textbf{Vị trí của đề tài so với các công trình dùng bộ dữ liệu này.} Trong bài gốc
-AndroidControl cũng như trong các công
-trình dùng bộ này mà chúng tôi khảo sát (Aguvis~\cite{aguvis}, SeeClick~\cite{seeclick}), câu hướng dẫn từng
-bước nằm ở \textbf{đầu vào}, dùng để gợi ý cho tác tử suy ra thao tác cần thực hiện. Ở
-đề tài này, chính câu đó là \textbf{đầu ra mà mô hình phải sinh ra}, và cũng là đối tượng duy
-nhất được đem chấm. Hướng sử dụng dữ liệu vì vậy bị đảo ngược.
+\textbf{Vị trí của đề tài so với các công trình dùng bộ dữ liệu này.} Trong bài gốc AndroidControl
+cũng như trong các công trình dùng bộ dữ liệu này mà chúng tôi khảo sát (Aguvis~\cite{aguvis},
+SeeClick~\cite{seeclick}), câu hướng dẫn từng bước nằm ở đầu vào, giúp tác tử suy ra thao tác cần
+thực hiện. Ở đề tài này, chính câu đó lại là đầu ra mà mô hình phải sinh, đồng thời là đối tượng duy
+nhất được chấm, nên hướng sử dụng dữ liệu được đảo ngược.
 \end{quote}
 
-Một tính chất của bộ dữ liệu chi phối trần của mọi kết quả. Câu chuẩn rất ngắn, trung vị chỉ khoảng sáu từ, dạng ``click on OK'' hay ``Select the
-search result''. Câu càng ngắn thì càng khó xác định phần tử, và Mục~\ref{sec:tran} cho
-thấy điều này hạ trần đo được xuống còn $75{,}7\%$.
+Một tính chất của bộ dữ liệu ảnh hưởng tới trần của mọi kết quả: câu chuẩn rất ngắn, trung vị chỉ
+khoảng sáu từ, có dạng như ``click on OK'' hay ``Select the search result''. Câu càng ngắn thì càng
+khó xác định phần tử, và Mục~\ref{sec:tran} sẽ cho thấy điều này kéo trần đo được xuống còn
+$75{,}7\%$.
 
 \section{Giới hạn của các thước đo có sẵn}
 \label{sec:thuoc-gay}
 
-Bài toán có sẵn câu chuẩn, nên cách làm trực tiếp nhất là so câu sinh ra với câu
-chuẩn. Hai nhóm phương pháp đã được thử, và mức độ thất bại của từng nhóm được đo lại. Kết quả ở
-Bảng~\ref{tab:thuocgay}.
+Vì bài toán đã có sẵn câu chuẩn, cách làm trực tiếp nhất là so câu sinh ra với câu chuẩn. Chúng tôi
+đã thử hai nhóm phương pháp theo hướng này và đo lại mức hạn chế của từng nhóm, kết quả được tóm tắt
+ở Bảng~\ref{tab:thuocgay}.
 
 \begin{table}[t]
 \caption{Hai cách chấm dựa trên câu chuẩn, và mức độ thất bại đo được trên dữ liệu thật của
@@ -161,14 +153,14 @@ AUC $0{,}336$ trên $51$ ca viết tay &
 \end{tabular}
 \end{table}
 
-Dòng thứ hai đi ngược một trực giác phổ biến. Nhúng ngữ nghĩa
-được huấn luyện để đặt gần nhau những đoạn văn nói về cùng chủ đề. ``Hộp thư đến'' và
-``hộp thư đi'' cùng nói về thư từ nên nằm gần nhau, dù chúng là \emph{hai nút khác nhau}
-trên màn hình. Ngược lại, ``thanh tìm kiếm'' và ``kính lúp'' nói về hai đối tượng khác nhau
-(một là ô nhập, một là hình vẽ) dù chúng là \emph{cùng một nút}. Tín hiệu mà thước
-cần là tính đồng nhất của phần tử, còn tín hiệu mà nhúng cung cấp là độ gần chủ đề. Hai
-tín hiệu này không xếp cùng chiều, nên không tồn tại ngưỡng nào tách được chúng.
+Kết quả ở dòng thứ hai đi ngược một trực giác khá phổ biến. Nhúng ngữ nghĩa được huấn luyện để đặt
+gần nhau những đoạn văn cùng chủ đề. ``Hộp thư đến'' và ``hộp thư đi'' cùng nói về thư từ nên nằm
+gần nhau, dù trên màn hình chúng là \emph{hai nút khác nhau}. Ngược lại, ``thanh tìm kiếm'' và ``kính
+lúp'' nói về hai đối tượng khác nhau (một là ô nhập, một là hình vẽ), trong khi thật ra chúng là
+\emph{cùng một nút}. Thước đo cần một tín hiệu về tính đồng nhất của phần tử, còn nhúng ngữ nghĩa lại
+cung cấp tín hiệu về độ gần chủ đề. Hai tín hiệu này không xếp cùng chiều, nên không có mức điểm nào
+tách được hai trường hợp.
 
-Tiêu chí ``câu sinh ra giống câu chuẩn'' vì vậy không đánh giá được một cách đáng tin.
-Chương~\ref{ch:thuocdo} thay tiêu chí ấy bằng tiêu chí ``câu sinh ra dẫn được tới đúng phần tử'',
-và tiêu chí này có mốc đối chiếu khách quan là toạ độ mà người dùng thật đã chạm.
+Vì vậy, tiêu chí ``câu sinh ra giống câu chuẩn'' khó đánh giá được một cách đáng tin.
+Chương~\ref{ch:thuocdo} thay tiêu chí ấy bằng tiêu chí ``câu sinh ra dẫn được tới đúng phần tử'', vốn
+có một mốc đối chiếu khách quan là toạ độ mà người dùng thật đã chạm.

@@ -20,7 +20,7 @@ thao tác. Chúng tôi giữ nguyên đầu vào đó nhưng đổi đầu ra. T
 viết một câu tiếng Anh cho người đọc, nói rõ cần chạm vào phần tử nào trên màn hình. Đầu vào gồm trường hợp sử dụng, tức mục tiêu người dùng đang thực hiện cùng các
 bước đã làm, và giao diện người dùng, tức ảnh màn hình đang mở cùng chữ đọc được trên đó.
 
-Khó khăn lớn nhất không nằm ở việc sinh câu mà ở việc chấm câu. Cùng một nút có nhiều
+Khó khăn lớn nhất nằm ở việc chấm câu. Cùng một nút có nhiều
 cách gọi tên đều đúng, ví dụ như ``thanh tìm kiếm'' và ``biểu tượng kính lúp'', nên không
 thể lấy một câu chuẩn duy nhất làm đáp án. Vì vậy phần lớn công sức của đề tài dành cho
 việc xây dựng và kiểm chứng một thước đo dùng được.
@@ -29,12 +29,12 @@ Thước đo được đề xuất có tên \textbf{executability}. Câu do mô 
 một mô hình định vị phần tử độc lập, và mô hình này không được cung cấp đáp án. Bước được
 tính là đúng khi mô hình định vị chỉ trúng phần tử mà người dùng đã chạm, đồng thời câu
 gọi đúng loại thao tác. Trước khi dùng thước để kết luận bất cứ điều gì, chúng tôi đo chính
-thước đó. Sai số của dụng cụ đo là $0{,}7\%$ bề ngang màn hình, thấp hơn nhiều so với
-mức $3\%$ mà hình học màn hình cho phép. Đưa chính câu chuẩn đi chấm thì được $75{,}7\%$, và
+thước đó. Sai số trung vị của dụng cụ đo là $0{,}7\%$ bề ngang màn hình, trong khi phần tử gần
+nhất thường cách phần tử cần chạm hơn $3\%$. Đưa chính câu chuẩn đi chấm thì được $75{,}7\%$, và
 mọi điểm số khác phải được đọc trên nền mức trần này. Ở đầu còn lại, nếu thay câu bằng
 một câu chung chung không nói phần tử nào thì điểm chỉ còn $12{,}0\%$, và nếu thay bằng
-câu thật của một màn hình khác thì còn $6{,}1\%$. Hai con số này cho thấy thước đo phản
-ứng theo nội dung của câu chứ không theo cách hành văn. Chấm lại bằng một mô hình định vị
+câu thật của một màn hình khác thì còn $6{,}1\%$. Hai con số này cho thấy thước đo chấm
+theo nội dung của câu, và câu đúng văn phong mà sai nội dung không được cho điểm. Chấm lại bằng một mô hình định vị
 thứ hai không dùng bộ dữ liệu của đề tài khi huấn luyện, và bằng một người nghe trắc nghiệm
 thuộc họ mô hình khác, đều giữ nguyên thứ tự giữa các hệ thống.
 
@@ -71,12 +71,12 @@ giống.
 
 \begin{itemize}[leftmargin=1.4em]
 \item \textbf{Một thước đo không cần câu chuẩn làm đáp án.} Luật xác định thế nào là trỏ
-trúng không lấy theo một ngưỡng sai số quy ước, mà được chọn dựa trên hành vi đo được, cụ
+trúng không lấy theo một dung sai quy ước, mà được chọn dựa trên hành vi đo được, cụ
 thể là luật nào chấp nhận nhiều câu chỉ sai nút thì bị loại. Thứ tự giữa các hệ thống không đổi khi
 chấm lại bằng năm luật khác nhau.
 
-\item \textbf{Trần và sàn của thước đều được đo trực tiếp.} Đưa chính câu chuẩn đi chấm được $75{,}7\%$, nên mọi điểm số của mô hình phải đọc trên nền đó chứ
-không phải trên nền $100$. Ở đầu kia của thang đo, câu chung chung không nói phần tử nào
+\item \textbf{Trần và sàn của thước đều được đo trực tiếp.} Đưa chính câu chuẩn đi chấm được $75{,}7\%$, nên mọi điểm số của mô hình phải đọc trên nền đó thay
+vì trên nền $100$. Ở đầu kia của thang đo, câu chung chung không nói phần tử nào
 chỉ được $12{,}0\%$, còn câu thật nhưng của một màn hình khác chỉ được $6{,}1\%$, thấp
 nhất trong mọi phép đo.
 
@@ -151,7 +151,8 @@ The proposed measure is called \textbf{executability}. The generated sentence is
 a separate GUI grounding model that never sees the gold coordinate, and the step counts as
 correct when that model points at the element the user actually touched and the sentence
 names the right action type. The instrument itself is then characterised. Its own pointing
-error is 0.7\% of screen width, well below the 3\% that the screen geometry allows. Scoring the
+error has a median of 0.7\% of screen width, while the nearest other element is usually more than
+3\% away. Scoring the
 human-written references gives 75.7\%, the ceiling against which every other score must be
 read. At the other end of the scale, replacing every sentence with one generic sentence
 that names no element leaves only 12.0\%, and replacing them with real sentences describing
