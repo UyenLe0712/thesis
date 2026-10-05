@@ -241,10 +241,41 @@ def lam_callback(trainer):
     return LuuCTG()
 
 
+def do_may(trainer):
+    """Đo máy: thời gian khâu sinh (bọc model.generate) và đỉnh VRAM, in mỗi 5 bước. Không đổi phép tính."""
+    import torch
+    from transformers import TrainerCallback
+    goc = trainer.model.generate
+    T = {"gen": 0.0, "n": 0, "t0": time.time(), "b0": 0}
+
+    def gen(*args, **kw):
+        torch.cuda.synchronize()
+        t = time.time()
+        out = goc(*args, **kw)
+        torch.cuda.synchronize()
+        T["gen"] += time.time() - t
+        T["n"] += 1
+        return out
+
+    trainer.model.generate = gen
+
+    class In(TrainerCallback):
+        def on_step_end(self, args, state, control, **kw):
+            if state.global_step % 5 == 0:
+                nb = max(state.global_step - T["b0"], 1)
+                tong = time.time() - T["t0"]
+                print(f"[máy] bước {state.global_step} · {tong/nb:.1f} s/bước · sinh {T['gen']/nb:.1f} s/bước"
+                      f" ({100*T['gen']/max(tong,1e-9):.0f}%) · đỉnh VRAM {torch.cuda.max_memory_allocated()/2**30:.2f} GiB"
+                      f" · đang giữ {torch.cuda.memory_reserved()/2**30:.2f} GiB", flush=True)
+                T.update(gen=0.0, t0=time.time(), b0=state.global_step)
+
+    trainer.add_callback(In())
+
+
 # ============================ câu nhắc ============================
-def hang(bundle, arm, n):
+def hang(bundle, arm, n, dai_nhat=0):
     from grpo_spice import dung_hang
-    rows, bo = dung_hang(bundle, n=n)
+    rows, bo = dung_hang(bundle, n=n, dai_nhat=dai_nhat)
     for r in rows:
         r["lop"] = lop(r["gold"])
     if arm == "A4":
@@ -370,9 +401,10 @@ def train(a):
     print(f"[LoRA mới] tham số học {ntr:,} · S1 có {ns1:,}", flush=True)
     assert ntr == ns1, "⛔ LoRA mới không cùng cỡ S1"
 
-    rows, bo = hang(a.bundle, a.arm, a.n_prompt)
-    print(f"[câu nhắc] {len(rows)} · bỏ {bo} · n_char max {max(r['n_char'] for r in rows)}", flush=True)
-    assert len(rows) == a.n_prompt
+    rows, bo = hang(a.bundle, a.arm, a.n_prompt, dai_nhat=a.dai_nhat)
+    print(f"[câu nhắc] {len(rows)} · bỏ {bo} · n_char max {max(r['n_char'] for r in rows)}"
+          f"{' · THĂM DÒ trên câu nhắc dài nhất' if a.dai_nhat else ''}", flush=True)
+    assert len(rows) == (a.dai_nhat or a.n_prompt)
     in_phan_bo(rows)
 
     os.makedirs(a.out, exist_ok=True)
@@ -382,7 +414,7 @@ def train(a):
     bf = dt == torch.bfloat16
     want = dict(
         output_dir=a.out, seed=SEED, bf16=bf, fp16=not bf,
-        gradient_checkpointing=True, gradient_checkpointing_kwargs={"use_reentrant": False},
+        gradient_checkpointing=not a.no_gc, gradient_checkpointing_kwargs={"use_reentrant": False},
         num_generations=a.G, per_device_train_batch_size=a.bs, gradient_accumulation_steps=a.accum,
         steps_per_generation=a.accum,
         max_completion_length=96, temperature=1.0, top_p=1.0, top_k=0, repetition_penalty=1.0,
@@ -403,7 +435,9 @@ def train(a):
         "generation_batch_size", "steps_per_generation", "num_iterations", "beta", "learning_rate",
         "loss_type", "scale_rewards", "temperature", "max_steps", "save_steps", "bf16", "fp16")}, flush=True)
     gb = args.generation_batch_size
-    print(f"[lô] mỗi lượt sinh {gb} câu = {gb // a.G} câu nhắc × {a.G}", flush=True)
+    print(f"[lô] mỗi lượt sinh {gb} câu = {gb // a.G} câu nhắc × {a.G} · micro-batch {a.bs} × {a.accum}"
+          f" · gradient checkpointing {'TẮT' if a.no_gc else 'bật'}", flush=True)
+    assert gb == 2 * a.G, "⛔ mỗi bước phải đúng 2 câu nhắc × G như ck500 (bs × accum = 16): đổi lô là đổi thuật toán"
     assert args.steps_per_generation <= args.gradient_accumulation_steps and args.num_iterations == 1, \
         "⛔ old_per_token_logps khác None ⇒ tỉ số PPO ≠ 1, khác thiết kế 276 §3"
 
@@ -417,6 +451,7 @@ def train(a):
     if a.gen_chunk:
         sinh_theo_khuc(trainer.model, a.gen_chunk, proc.tokenizer.pad_token_id)
         print(f"[sinh theo khúc] bật, mỗi khúc ≤ {a.gen_chunk} chuỗi", flush=True)
+    do_may(trainer)
 
     can = ("trainer_state.json", "optimizer.pt", "adapter_model.safetensors", "ctg_state.json")
     resume = a.resume
@@ -645,6 +680,8 @@ def main():
     ap.add_argument("--resume", default=None)
     ap.add_argument("--no-q4", dest="q4", action="store_false")
     ap.add_argument("--gen-chunk", type=int, default=0)
+    ap.add_argument("--no-gc", action="store_true")         # tắt gradient checkpointing (nhanh hơn, tốn VRAM)
+    ap.add_argument("--dai-nhat", type=int, default=0)      # thăm dò bộ nhớ: chỉ dùng N câu nhắc dài nhất
     a = ap.parse_args()
     if a.bundle:
         a.adapter = a.adapter or os.path.join(a.bundle, "adapter_s1_seed101")

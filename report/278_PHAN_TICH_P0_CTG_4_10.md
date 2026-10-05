@@ -57,3 +57,20 @@ Giả thuyết của 276 đúng ở dạng hẹp hơn: GRPO không kéo cả l�
 sang câu chạm** và làm các bước dễ chắc hơn. Trung bình theo xác suất vẫn tăng có ý nghĩa ở scroll. Luật
 P0(b) cũ (trung bình log) đo sai đại lượng; hai luật thay thế (đếm lật greedy, §2; trung bình xác suất,
 §1) đều đạt nhưng đều đặt **sau khi thấy số** ⇒ phải khai.
+
+## 5. Đo đích trên câu nhắc train (Kaggle T4, 4/10 chiều) — rủi ro vùng chết KHÔNG xảy ra
+
+Nguồn: `runs/ctg/dich/` (S1, 8 mẫu nhiệt độ 1,0, 440 câu nhắc train, 0 câu rỗng, số từ TB 6,39).
+
+| lớp | đích mới (train) [KTC95] | đích cũ (val C1) | câu nhắc "lẫn" (std(c) > 0, CTG có tác dụng) | câu sai loại thành tap |
+|---|---|---|---|---|
+| scroll (242) | 0,856 [0,820; 0,887] | 0,837 | 79 (33%) | 235/279 (84%) |
+| type (114) | 0,814 [0,763; 0,860] | 0,813 | 55 (48%) | 168/170 |
+| back (84) | 0,707 [0,644; 0,768] | 0,733 | 60 (71%) | 152/197 (44 thành scroll) |
+
+- Đích mới gần như trùng đích cũ, KTC phủ đích cũ ở cả ba lớp. Con số 0,87–0,90 của P0(a) là nhiễu của
+  3 nhóm, không phải lệch phân phối train/val. Mã dùng đích mới (`--dich`) vì đo đúng phân phối train.
+- Mô phỏng λ (200 lượt, lấy mẫu lại từ phân bố trên, đúng tham số 276 §6): không trôi thì λ_scroll dao
+  động quanh 0,84–0,93 (chạm 0 ở 1/4 đầu trong 32% lượt rồi hồi lại); trôi −0,07 (cỡ ck500) thì λ lên
+  1,41 ở giữa lượt và 2,6 ở cuối ⇒ bộ điều khiển phản ứng đúng chiều. [mô phỏng, không phải đo]
+- Câu sai của scroll 84% là câu chạm ⇒ CTG nhắm đúng dạng lỗi.

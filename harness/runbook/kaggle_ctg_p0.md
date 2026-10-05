@@ -15,7 +15,7 @@ Kaggle T4, **0 đồng**, khoảng **1,5–2 h** hạn mức. Hai phép kiểm:
 `_bundles/ctg-grpo-script/` gồm 5 tệp:
 
 ```
-5be2bf98713a1ba6d76ed0a7684fe201  ctg_grpo.py
+332765b7c3657c1117ada5bf6ea3b936  ctg_grpo.py
 07ea87b6d156d1faa391a4274dffd7cf  grpo_spice.py
 619e63e123a6dbf60086e65ee94a3912  build_branch_data.py
 9bf0b84145458fd55919a5e161b9766f  metric_exec.py
@@ -59,7 +59,7 @@ BUNDLE = next(r for r, d, f in os.walk("/kaggle/input") if "adapter_s1_seed101" 
 C1 = glob.glob("/kaggle/input/**/c1_mau.jsonl", recursive=True); assert len(C1) == 1, C1; C1 = C1[0]
 assert md5(C1) == "d757554326977309c3a65ae0b144c211", "DỪNG: c1_mau.jsonl lệch"
 SRC = glob.glob("/kaggle/input/**/ctg_grpo.py", recursive=True); assert len(SRC) == 1, SRC
-MD5 = {"ctg_grpo.py": "5be2bf98713a1ba6d76ed0a7684fe201", "grpo_spice.py": "07ea87b6d156d1faa391a4274dffd7cf",
+MD5 = {"ctg_grpo.py": "332765b7c3657c1117ada5bf6ea3b936", "grpo_spice.py": "07ea87b6d156d1faa391a4274dffd7cf",
        "build_branch_data.py": "619e63e123a6dbf60086e65ee94a3912", "metric_exec.py": "9bf0b84145458fd55919a5e161b9766f"}
 for f, h in MD5.items():
     shutil.copy(os.path.join(os.path.dirname(SRC[0]), f), f"{W}/{f}")

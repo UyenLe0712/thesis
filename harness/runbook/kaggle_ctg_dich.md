@@ -11,9 +11,9 @@ T4, 0 đồng, ước **30–60 phút** [chưa đo].
 ## Chuẩn bị
 
 1. Kaggle → dataset `ctg-grpo-script` → **New Version**: thay `ctg_grpo.py` bằng bản trong
-   `_bundles/ctg-grpo-script/` (md5 `5be2bf98713a1ba6d76ed0a7684fe201`).
+   `_bundles/ctg-grpo-script/` (md5 `332765b7c3657c1117ada5bf6ea3b936`).
 2. Dùng lại notebook P0 (cùng input), chọn version dataset mới nhất. Trong Ô 2 sửa md5 `ctg_grpo.py`
-   thành `5be2bf98713a1ba6d76ed0a7684fe201`.
+   thành `332765b7c3657c1117ada5bf6ea3b936`.
 3. Chạy **Ô 1 → Ô 4** của `kaggle_ctg_p0.md` (gói · đường dẫn · hoà S1 · hàm `chay`). Bỏ Ô 5, Ô 6.
 
 ## Ô D1 — thử 10 câu nhắc
