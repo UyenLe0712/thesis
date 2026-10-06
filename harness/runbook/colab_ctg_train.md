@@ -153,7 +153,8 @@ def doc(arm):
         ref = [KL5[b] for b in range(buoc - 19, buoc + 1) if b in KL5]
         m += (f"\n      20 bước: thưởng TB {st.mean(th) if th else float('nan'):.3f} · số từ TB {st.mean(tu) if tu else float('nan'):.1f}"
               f" · rỗng {rong}/{20*16} · kl TB {kl:.4f}" + (f" (ck500 cùng đoạn {st.mean(ref):.4f})" if ref else ""))
-        if ref and st.mean(ref) > 0 and kl > 3 * st.mean(ref): m += "\n      ⛔ K3: KL gấp > 3 lần ck500 cùng đoạn"
+        # ck500 ở các bước đầu có kl ≈ 0 ⇒ "gấp 3 lần" vô nghĩa; chỉ xét khi mốc ≥ 0,002 (5/10, báo động giả lượt đầu)
+        if ref and st.mean(ref) >= 0.002 and kl > 3 * st.mean(ref): m += "\n      ⛔ K3: KL gấp > 3 lần ck500 cùng đoạn"
         if rong > 0.01 * 20 * 16: m += "\n      ⛔ K3: câu rỗng > 1%"
         if any(v != v for d in D_[-5:] for v in d.values()): m += "\n      ⛔ có nan"
     if os.path.exists(f"{out}/ctg_log.jsonl"):
