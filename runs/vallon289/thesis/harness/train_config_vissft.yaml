@@ -1,0 +1,119 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# VIS-SFT — mở băng tầng thị giác. Chép từ train_config.yaml ngày 9/9/2026,
+# thi hành A1 của `report/151` §3.
+#
+# ⭐ CAN THIỆP DUY NHẤT so với S1/101: freeze_vision_tower true -> false.
+#    Mốc so là S1/101 = 59,11. Mọi khoá khác giữ nguyên để phép so là phép so MỘT biến.
+#
+# ⛔ Bốn điều đã suýt làm sai, ghi lại để đừng "sửa" cho hợp lý:
+#  · weight_decay ĐỂ NGUYÊN 0 (không khai). Thêm nó là biến thứ hai, và mọi mức tăng
+#    thu được sẽ không tách được phần nào do mở thị giác, phần nào do co chuẩn.
+#  · KHÔNG khai adapter_name_or_path. Khai vào là PEFT đọc lại adapter_config.json cũ
+#    và NUỐT lora_target mới trong im lặng; lượt train vẫn chạy trơn, tầng thị giác
+#    không hề được học, không có lỗi nào báo.
+#  · lora_target GIỮ NGUYÊN bảy khối. MLP thị giác của Qwen2.5-VL dùng
+#    gate_proj/up_proj/down_proj, đã có sẵn trong danh sách, nên chỉ riêng cờ
+#    freeze_vision_tower: false là 32 tầng MLP thị giác được học.
+#    ⛔ Đừng thêm qkv,proj,fc1,fc2: fc1/fc2 là tên Qwen2-VL đời cũ nên khớp rỗng,
+#    còn chuỗi trần "proj" khớp cả q_proj/o_proj/gate_proj theo hậu tố.
+#  · dataset_dir trỏ vào branches_tru_val, KHÔNG phải branches. Bộ tru_val đã trừ
+#    1.567 bước val (63.000 so với 64.567). Trỏ nhầm là huấn luyện trên chính tập val,
+#    mọi số val sau đó đẹp một cách vô nghĩa và chỉ lộ ra khi chấm test.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# train_config.yaml — LLaMA-Factory · Qwen2.5-VL-3B QLoRA
+# Viết lại 5/8/2026 cho thiết kế đã khoá ở report/106. Bản cũ theo khung Faithful
+# Distillation (Student / Student-RAW) đã bỏ.
+#
+# MỘT FILE DÙNG CHO MỌI NHÁNH — chỉ đổi ba dòng, không đổi gì khác. Đó là điều
+# kiện để chênh lệch điểm quy được về can thiệp:
+#     dataset      gui_s1 · gui_s2 · gui_s2r · gui_s2_nopoint
+#     seed         101 (hạt giống 1) · 202 (hạt giống 2) · 303 (chỉ khi cổng ở
+#                  report/106 mục 2 kích hoạt)
+#     output_dir   .../<nhánh>_seed<seed>
+#
+# Trình tự bắt buộc (report/106 mục 5): chạy đủ s1 hai hạt giống, chấm, đo MDE
+# thật, khoá ngưỡng — RỒI MỚI chạy s2. Không đảo.
+#
+# Máy (chốt 11/8/2026, thay dòng "vast.ai A100-80GB" cũ): Google Colab. Chọn giữa
+# L4 (24 GB, 1,54 đơn vị/giờ) và A100-SXM4-40GB (5,3 đơn vị/giờ) bằng ô A.3 — đo
+# giây-mỗi-bước trên cả hai rồi khoá MỘT loại cho cả tám lượt, không trộn. Cả hai
+# đều có bf16 thật. Card Turing đời cũ không có bf16 thì đổi bf16→false, fp16→true
+# và ghi vào mục sửa đổi của report/106, vì đổi độ chính xác số học giữa các nhánh
+# là làm hỏng phép so.
+
+model_name_or_path: Qwen/Qwen2.5-VL-3B-Instruct
+trust_remote_code: true
+image_min_pixels: 200704          # 256 * 28^2
+image_max_pixels: 1003520         # 1280 * 28^2 — hạ xuống 602112 nếu thiếu bộ nhớ
+
+### ── nhánh: BA DÒNG DUY NHẤT ĐƯỢC PHÉP ĐỔI ───────────────────────────────────
+dataset: gui_s1
+seed: 101
+output_dir: /content/drive/MyDrive/thesis/ckpt/vissft_seed101   # ghi thẳng ra Drive
+dataset_dir: /content/thesis/harness/dg1_cache/train_ac/branches_tru_val   # ⛔ bộ ĐÃ TRỪ VAL
+# 63.000 mẫu = 64.567 − 1.567 bước val mở rộng. Trỏ vào `branches` (64.567) là huấn luyện
+# trên chính tập val dùng để chọn điểm lưu, và không có gì báo lỗi.
+### ───────────────────────────────────────────────────────────────────────────
+
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_rank: 8
+lora_alpha: 16
+lora_dropout: 0.05
+lora_target: q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+freeze_vision_tower: false        # ⭐⭐ CAN THIỆP DUY NHẤT của lượt này
+freeze_multi_modal_projector: true
+quantization_bit: 4               # QLoRA 4-bit NF4
+quantization_method: bnb
+
+template: qwen2_vl                # dùng chung Qwen2-VL và Qwen2.5-VL
+cutoff_len: 2560                  # nâng từ 2048 ngày 11/8, TRƯỚC lượt train đầu tiên
+# Lý do, đo trên đủ 64.567 mẫu (không cần ảnh — lấy kích thước từ train.jsonl rồi tính
+# token thị giác bằng smart_resize): ảnh chiếm 1.272 token, tổng dài nhất của nhánh s2 là
+# 2.017 — dư đúng 31 token so với trần 2.048 cũ. Biên đó mỏng hơn cả sai số của phép đếm
+# (phần khung hội thoại là số ƯỚC, không đo).
+#
+# Cắt cụt ở đây là loại hỏng không có tiếng động: LLaMA-Factory cắt từ ĐUÔI, mà đuôi là
+# đích sinh — mất phần <desc> hoặc mất luôn câu. Mẫu vẫn vào huấn luyện, loss vẫn tính,
+# log không báo gì. Tệ hơn: đích của s2 dài hơn s1 (thêm dòng khai báo) nên s2 bị cắt
+# nhiều hơn, tức phép so S2−S1 thiên vị đúng chiều làm s2 trông kém đi.
+#
+# Nâng trần KHÔNG tốn thêm gì: đệm là theo mẫu dài nhất trong từng lô, không đệm tới
+# cutoff_len. Dữ liệu không dài ra thì bộ nhớ và thời gian không đổi.
+train_on_prompt: false            # chỉ tính mất mát trên lượt trợ lý
+
+per_device_train_batch_size: 4    # ⚠ ĐỔI SỐ NÀY LÀ ĐỔI CHO CẢ SÁU NHÁNH, KHÔNG ĐỔI
+                                  # GIỮA CHỪNG. Cỡ lô hiệu dụng khác nhau giữa hai nhánh
+                                  # thì hiệu số S2−S1 lẫn cả phần do cỡ lô, và nhìn bảng
+                                  # kết quả không tách ra được. Nếu card thiếu bộ nhớ,
+                                  # hạ TRƯỚC lượt đầu tiên rồi giữ nguyên, hoặc hạ rồi
+                                  # chạy lại từ đầu tất cả các nhánh — không có đường thứ ba.
+gradient_accumulation_steps: 4    # cỡ lô hiệu dụng = 16, giữ nguyên cho mọi nhánh
+learning_rate: 1.0e-4
+num_train_epochs: 2.0             # 2 lượt duyệt, khoá trong report/106
+lr_scheduler_type: cosine
+warmup_ratio: 0.05
+bf16: true
+fp16: false
+gradient_checkpointing: true
+
+save_steps: 100                   # hạ từ 200 ngày 9/9: lượt ~38,5 h nên mất máy là chắc;
+                                  # 100 bước ≈ 25 phút thiệt hại mỗi lần thay vì ~50 phút.
+                                  # ⚠️ KHÔNG đụng kết quả train, chỉ đổi tần suất lưu.
+save_total_limit: 2
+# KHÔNG khai resume_from_checkpoint. Đây là bẫy ngược: LLaMA-Factory chỉ tự dò
+# checkpoint gần nhất trong output_dir KHI trường này còn bỏ trống
+# (hparams/parser.py — điều kiện `resume_from_checkpoint is None`). Điền bất cứ
+# giá trị nào, kể cả "auto", sẽ tắt đúng cái nó định bật, rồi ném thẳng chuỗi đó
+# cho Trainer như một đường dẫn thư mục và làm hỏng lượt chạy lại. Bỏ trống =
+# tự động chạy tiếp. Cũng vì vậy không được bật overwrite_output_dir.
+logging_steps: 20
+report_to: none
+
+# Tập kiểm chia theo ỨNG DỤNG, không phải chia ngẫu nhiên theo dòng: màn hình cùng
+# một app na ná nhau nên chia ngẫu nhiên sẽ rò rỉ và cho điểm ảo. Việc chia làm
+# ở khâu dựng dữ liệu; ở đây tắt hẳn phần tự chia của LLaMA-Factory.
+val_size: 0.0
+do_eval: false
