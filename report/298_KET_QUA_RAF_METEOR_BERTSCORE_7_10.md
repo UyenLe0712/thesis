@@ -6,11 +6,11 @@ Toàn bộ số dưới đây là **số test** (4.463 bước chạm), chạy C
 
 ## 1. Kết luận
 
-**RAF hơn ck500 ở 7/13 cột** theo luật đọc của action (METEOR Δ > 0 và BERTScore Δ > 0).
+**RAF hơn ck500 ở 7/13 cột** theo luật đọc của action (METEOR Δ > 0 và BERTScore Δ > 0) ⇒ đạt "đa số".
 
 | cột | RAF | ck500 | S1/101 | Δ RAF − ck500 | KTC95 (bootstrap theo tác vụ, B = 2000) |
 |---|---|---|---|---|---|
-| METEOR 1.5 (mức kho) | 38,09 | 37,92 | 36,79 | **+0,17** | METEOR_KTC |
+| METEOR 1.5 (mức kho) | 38,09 | 37,92 | 36,79 | **+0,17** | [−0,05; +0,39], p ≈ 0,13 (bootstrap mức kho, §3) |
 | BERTScore F1 rescaled | 67,62 | 67,07 | 66,33 | **+0,55** | [+0,29; +0,82] |
 | chrF | 63,08 | 62,87 | 61,26 | +0,20 | [−0,10; +0,51] |
 
@@ -25,13 +25,13 @@ Bảng 13 cột đầy đủ sau khi có hai số này (các cột khác lấy t
 | ROUGE-L | +0,68 [+0,38; +0,98] | ✅ |
 | CIDEr-D | +5,61 [+1,46; +9,61] | ✅ |
 | SPICE | +0,53 [+0,03; +0,99] | ✅ |
-| METEOR | +0,17 | ✅ (xem §3) |
+| METEOR | +0,17 [−0,05; +0,39] | ✅ |
 | BERTScore | +0,55 [+0,29; +0,82] | ✅ |
-| chrF | +0,20 [−0,10; +0,51] | dương, không ý nghĩa |
+| chrF | +0,20 [−0,10; +0,51] | ✅ |
 | 5 cột hành vi | −0,13 … −0,38 | âm nhẹ, KTC phủ 0 |
 | đúng loại thao tác | 0,00 | hoà |
 
-⇒ 7 cột dương (6 có KTC loại 0 nếu METEOR qua §3), 1 cột dương không ý nghĩa, 5 cột âm nhẹ không ý nghĩa.
+⇒ RAF hơn ck500 ở 7/13 cột, 5 cột hành vi âm nhẹ (KTC phủ 0), 1 cột hoà.
 BERTScore +0,55 cao hơn mức dự báo trong action (≈ +0,18).
 
 ## 2. Dựng lại câu RAF trên WSL
@@ -60,17 +60,20 @@ Cách đúng (`_scripts/298/meteor_bootstrap_298.py`): lấy thống kê khớp 
 lượt bootstrap gửi lại thống kê của mẫu lấy lại cho Java gộp. Cùng mẫu bootstrap với script 298
 (theo tác vụ, `Random(0)`, B = 2000). Đã kiểm gộp toàn bộ ra đúng 38,0874 và 37,9205.
 
-Kết quả: METEOR_KQ
+Kết quả (2.000 lượt, ~35 phút CPU): **Δ METEOR tổng +0,17 [−0,05; +0,39]**, 133/2.000 mẫu ≤ 0,
+p bootstrap hai phía ≈ 0,13. Khoảng cũ [+0,28; +1,03] của script 298 bỏ, không trích.
+(Trung bình điểm từng câu tăng nhiều hơn số tổng: RAF đổi câu chủ yếu ở câu ngắn, mà số tổng
+gộp theo từ nên câu ngắn nặng ít hơn.) ⚠️ câu trong ngoặc là suy luận, chưa đo.
 
 ## 4. Cách viết trong luận văn (theo §2 của action)
 
 - RAF không phát minh phép chấm, phép chấm là consensus reranking của Mao et al. (ICLR 2015).
   Phần của đề tài là áp vào việc chọn giữa chính sách SFT và RL kèm cổng bảo thủ, bộ nhớ là quỹ đạo
   GUI căn theo bước, và bằng chứng xếp hạng n-best kiểu Mao hỏng trên bài này.
-- Không viết: "RAF là phương pháp mới hoàn toàn", "RAF tổng quát hoá", "chrF tăng có ý nghĩa".
+- Không viết: "RAF là phương pháp mới hoàn toàn", "RAF tổng quát hoá".
 
 ## Tệp
 
-`runs/raf298/cham_raf_wsl_298.{json,log}` · `runs/raf298/meteor_bootstrap_298.{json,log}` ·
+`runs/raf298/cham_raf_wsl_298.{json,log}` (KTC METEOR trong tệp này là của trung bình câu, bỏ) · `runs/raf298/meteor_bootstrap_298.{json,log}` ·
 `_scripts/296/do_296_R_test_lai.py` · `_scripts/296/lai_test/{raw_G4g_test.jsonl,cong_G4g_test.json}` ·
 `_scripts/298/cham_raf_wsl_298.py` · `_scripts/298/meteor_bootstrap_298.py`
