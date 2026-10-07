@@ -1,0 +1,42 @@
+PTBTokenizer tokenized 41033 tokens at 228667.60 tokens per second.
+PTBTokenizer tokenized 41471 tokens at 213161.47 tokens per second.
+PTBTokenizer tokenized 41674 tokens at 284291.31 tokens per second.
+PTBTokenizer tokenized 41102 tokens at 259231.11 tokens per second.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/389 [00:00<?, ?it/s]Loading weights:  34%|███▍      | 134/389 [00:00<00:00, 1328.06it/s]Loading weights: 100%|██████████| 389/389 [00:00<00:00, 2599.87it/s]
+[transformers] [1mRobertaModel LOAD REPORT[0m from: roberta-large
+Key                       | Status     | 
+--------------------------+------------+-
+lm_head.layer_norm.weight | UNEXPECTED | 
+lm_head.bias              | UNEXPECTED | 
+lm_head.dense.weight      | UNEXPECTED | 
+lm_head.layer_norm.bias   | UNEXPECTED | 
+lm_head.dense.bias        | UNEXPECTED | 
+pooler.dense.weight       | MISSING    | 
+pooler.dense.bias         | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Warning: Empty candidate sentence detected; setting raw BERTscores to 0.
+Warning: Empty reference sentence detected; setting raw BERTScores to 0.
+Warning: Empty candidate sentence detected; setting raw BERTscores to 0.
+Warning: Empty reference sentence detected; setting raw BERTScores to 0.
+Warning: Empty candidate sentence detected; setting raw BERTscores to 0.
+Warning: Empty reference sentence detected; setting raw BERTScores to 0.
+Warning: Empty candidate sentence detected; setting raw BERTscores to 0.
+Warning: Empty reference sentence detected; setting raw BERTScores to 0.
+Warning: Empty candidate sentence detected; setting raw BERTscores to 0.
+Warning: Empty reference sentence detected; setting raw BERTScores to 0.
+Warning: Empty candidate sentence detected; setting raw BERTscores to 0.
+Warning: Empty reference sentence detected; setting raw BERTScores to 0.
+RAF {'chrf': 63.08, 'meteor': 38.09, 'bertscore': 67.62}
+ck500 {'chrf': 62.87, 'meteor': 37.92, 'bertscore': 67.07}
+S1 {'chrf': 61.26, 'meteor': 36.79, 'bertscore': 66.33}
+đối chiếu số công bố: S1 METEOR 36,79 · BERTScore 66,33 · chrF 61,26 | ck500 METEOR 37,92 · BERTScore 67,07 · chrF 62,87
+
+RAF − ck500 (KTC95 bootstrap theo tác vụ; METEOR/BERTScore: Δ số tổng, KTC trên trung bình câu):
+  meteor     +0.17 [+0.28; +1.03]
+  bertscore  +0.55 [+0.29; +0.82]
+  chrf       +0.20 [-0.10; +0.51]
+→ runs/raf298/cham_raf_wsl_298.json
