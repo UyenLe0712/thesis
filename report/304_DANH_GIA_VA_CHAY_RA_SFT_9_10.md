@@ -96,5 +96,80 @@ mà ck500 không thấy nhưng S1 đã thấy. ⇒ Chỉ coi là ứng viên, ph
 
 ### 3.4 Việc kế (đề xuất)
 
+(Đã làm bước 1 ngày 10/10 — kết quả ở §4; bước 2 đang chạy — §4.4.)
+
 1. Notebook G rút gọn: chỉ sinh `ra_k4` trên test (bỏ `ra_rong`, `cont` vì cả hai đã không đạt ở val), ~3,6 h, rồi chấm `ra_k4` và `ghep` 7 thước trên WSL.
 2. Nếu muốn thử thêm theo bảng §7.1 action: cả hai nhánh thấp hơn ck500 ở 4/5 thước ⇒ hạ LR xuống `1e-5` chạy lại notebook T (~8,5 h). Ưu tiên sau bước 1 vì bước 1 rẻ hơn và trả lời luôn câu hỏi luật ghép có đứng trên test không.
+
+## 4. Kết quả test (10/10) — số test, chấm một lần
+
+### 4.1 Sinh câu (notebook G, uyenle) [đo]
+
+`ra_k4` sinh đủ 4.463 câu click test, 0 rỗng, T4×2, 2,16 h cả notebook. Tệp `runs/ra304_G/pred_ra_k4_test.jsonl`.
+`ghep` dựng trên CPU bằng `_scripts/304/kiem/ghep_test_304.py` (luật §3.3, không đổi gì sau khi thấy val):
+→ `runs/ra304_G/pred_ghep_test.jsonl`. So từng byte với câu ck500: `ra_k4` khác ở 2.229 bước, `ghep` khác ở 453 bước
+(nằm trọn trong 2.229).
+`ra_k4` chép nguyên văn một ví dụ ở 19,1% bước, 43,5% số câu chép đúng câu chuẩn (val: 21,0% / 41,0%).
+Câu rỗng duy nhất là bước (18710, 1), vốn rỗng sẵn ở ck500.
+
+### 4.2 Bảy thước chữ (4.463 bước click) [đo]
+
+Chấm hai lần độc lập trên Kaggle — notebook GPU `ra-score-test-304` và notebook CPU `ra-cham-cpu-304` — ra trùng tuyệt đối
+(`runs/ra304_G/cham_test/diem_test_304.json`, `cham_cpu/diem_test_304_cpu.json`). Tự kiểm: ck500 khớp số đã công bố (lệch ≤ 0,02).
+Công cụ: pycocoevalcap (BLEU-4, METEOR, ROUGE-L, CIDEr-D, SPICE) · sacrebleu chrF · BERTScore roberta-large rescaled (câu rỗng = 0).
+
+| thước | ck500 | `ra_k4` | `ghep` |
+|---|---:|---:|---:|
+| BLEU-4 | 52,36 | 53,47 (+1,11) | 53,47 (+1,11) |
+| METEOR | 37,91 | 37,79 (−0,12) | 38,33 (+0,42) |
+| ROUGE-L | 68,34 | 68,67 (+0,33) | 68,97 (+0,63) |
+| CIDEr-D | 430,04 | 437,54 (+7,50) | 441,53 (+11,49) |
+| SPICE | 45,79 | 46,79 (+1,00) | 47,12 (+1,33) |
+| chrF | 62,86 | 62,65 (−0,21) | 63,39 (+0,53) |
+| BERTScore | 67,07 | 67,52 (+0,45) | 67,66 (+0,59) |
+
+- `ra_k4` cao hơn ck500 ở **5/7** thước ⇒ ĐẠT tiêu chí chính của action (≥ 4/7). Trên val nó chỉ đạt 1/5 —
+  test và val không cùng chiều ở BLEU-4/ROUGE-L.
+- `ghep` cao hơn ck500 ở **7/7** thước. Luật ghép đặt ra sau khi thấy val nhưng chưa nhìn test ⇒ test là lần xác nhận đầu.
+- Chưa có KTC cho thước chữ (BLEU-4/CIDEr-D/SPICE là thước mức tập hợp).
+
+### 4.3 Thước hành vi — exec · D.3 · AitW (UGround) [đo]
+
+Notebook `uyenle0712/ra-exec-test-304` (T4×2, 85 phút): chỉ chấm UGround các bước có câu **khác** ck500
+(453 của `ghep` + 1.776 còn lại của `ra_k4`), bước còn lại lấy nguyên dòng của `runs/grpo_spice/score_ck500_test_raw.jsonl`
+— cùng cách đã làm với TAGE test. Đọc bằng `_scripts/304/kiem/doc_exec_304.py` (KTC cụm theo app, McNemar ghép cặp).
+Tệp: `runs/ra304_G/exec_out/exec_out/` (tệp thô từng phần, tệp gộp `score_{ra_k4,ghep}_gop_raw.jsonl`, `doc_exec_304.json`).
+
+Tự kiểm đạt cả ba: 40 câu ck500 không đổi (chọn ngẫu nhiên, seed 20261010) chấm lại cho toạ độ và exec **trùng 40/40** với tệp
+thô cũ · câu trong tệp thô trùng tệp pred · ck500 tái lập exec 60,65.
+
+| nhánh | exec | D.3 | AitW |
+|---|---|---|---|
+| ck500 | 60,65 [58,90; 62,38] | 67,02 [65,28; 68,70] | 76,25 [74,73; 77,70] |
+| `ghep` | 60,54 [58,79; 62,26] | 67,00 [65,31; 68,67] | 76,11 [74,62; 77,57] |
+| `ra_k4` | 59,40 [57,65; 61,14] | 65,81 [64,09; 67,48] | 75,02 [73,52; 76,45] |
+| S1/101 | 59,11 [57,33; 60,83] | 65,49 [63,76; 67,18] | 74,37 [72,83; 75,83] |
+
+| phép so | exec | D.3 | AitW |
+|---|---|---|---|
+| `ghep` − ck500 | −0,11 [−0,44; +0,22] · cứu 24 phá 29 · p=0,58 | −0,02 [−0,35; +0,32] · p=1 | −0,13 [−0,45; +0,19] · p=0,49 |
+| `ra_k4` − ck500 | **−1,25 [−2,06; −0,44]** · cứu 124 phá 180 · p=0,002 | **−1,21 [−2,00; −0,40]** · p=0,003 | **−1,23 [−2,00; −0,44]** · p=0,002 |
+| `ghep` − S1/101 | **+1,43 [+0,72; +2,15]** · cứu 155 phá 91 · p=6e−5 | **+1,50 [+0,78; +2,24]** · p=4e−5 | **+1,75 [+1,07; +2,46]** · p=1e−6 |
+| `ra_k4` − S1/101 | +0,29 [−0,45; +1,04] · p=0,47 | +0,31 [−0,42; +1,03] · p=0,44 | +0,65 [−0,07; +1,38] · p=0,09 |
+
+Đọc:
+- **`ra_k4` làm giảm định vị có ý nghĩa** dưới cả ba luật (KTC nằm hẳn dưới 0): thước chữ lên nhưng UGround trỏ trúng kém hơn ck500,
+  gần như mất toàn bộ phần ck500 hơn S1.
+- **`ghep` không đổi thước hành vi** so ck500 (|Δ| ≤ 0,13, KTC hẹp quanh 0): chép câu mẫu làm câu giống câu chuẩn hơn về chữ
+  nhưng không giúp bộ trỏ tìm đúng phần tử hơn. `ghep` vẫn hơn S1/101 có ý nghĩa dưới cả ba luật, ngang mức ck500 − S1.
+- [suy] Phần lợi của RA-SFT nằm ở bề mặt câu (trùng n-gram với câu chuẩn), không ở thông tin nhận diện phần tử —
+  khớp mẫu hình của các lượt train thêm sau ck500.
+
+### 4.4 Tóm tắt và việc đang chạy
+
+- Nếu báo một nhánh: **`ghep`** — 7/7 thước chữ cao hơn ck500, thước hành vi ngang ck500 (không hại), hơn S1/101 có ý nghĩa.
+  Phải khai: luật ghép đặt sau khi thấy val, và exec/D.3/AitW **không tăng** so với ck500.
+- `ra_k4` đứng một mình: ĐẠT 5/7 thước chữ nhưng **giảm exec −1,25** có ý nghĩa ⇒ không dùng làm mô hình tiêu đề.
+- ▶️ Đang chạy (10/10, từ 07:23): notebook T với LR `1e-5` (bước 2 của §3.4), tài khoản trang,
+  `https://www.kaggle.com/code/trangphngngc/ra-sft-t-lr1e5-304`; chỉ đổi LR và tên zip (`ket_qua_304_T_lr1e5.zip`), tự cắt ở 11 h.
+  Kỳ vọng [suy]: có thể cải thiện thước chữ, khó kéo exec lên.

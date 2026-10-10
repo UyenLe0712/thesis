@@ -8,7 +8,7 @@ So mọi nhánh với nhánh gốc (mặc định ck500). --check: ck500 phải 
       --pred ra_rong=pred_ra_rong.jsonl --pred cont=pred_cont.jsonl --ra ra_k4=ex_test_k4.jsonl --check --out diem.json
   python ra_score.py ... --no-bert --no-spice    # nhanh, khi chỉ cần xem chiều
 """
-import os, re, sys, json, argparse, warnings
+import os, re, sys, json, time, argparse, warnings
 
 warnings.filterwarnings("ignore")
 TAPT = ("click", "long_press")
@@ -72,22 +72,26 @@ def main():
     tk = PTBTokenizer()
     G = tk.tokenize({i: [{"caption": r}] for i, r in enumerate(REF)})
     SC = None if a.no_bert else bert_scorer()
+    BC, T0 = {}, time.time()  # BERTScore nhớ theo cặp (câu, câu chuẩn): nhánh trùng câu không chấm lại
     out = {}
     for ten, H in P.items():
         C = tk.tokenize({i: [{"caption": h}] for i, h in enumerate(H)})
         b, _ = Bleu(4).compute_score(G, C, verbose=0)
         o = dict(bleu4=100 * b[3], meteor=100 * Meteor().compute_score(G, C)[0],
                  rougeL=100 * Rouge().compute_score(G, C)[0], cider_d=100 * Cider().compute_score(G, C)[0])
+        print(f"  [{ten}] 4 thước COCO xong · {(time.time()-T0)/60:.1f} phút", flush=True)
         if not a.no_spice:
             from pycocoevalcap.spice.spice import Spice
             o["spice"] = 100 * Spice().compute_score(G, C)[0]
+            print(f"  [{ten}] SPICE xong · {(time.time()-T0)/60:.1f} phút", flush=True)
         o["chrf"] = sacrebleu.CHRF().corpus_score(H, [REF]).score
         if SC is not None:
-            _, _, f2 = SC.score(H, REF)
-            for i, h in enumerate(H):
-                if not h:
-                    f2[i] = 0.0
-            o["bertscore"] = 100 * f2.mean().item()
+            moi = sorted({(h, r) for h, r in zip(H, REF) if h and (h, r) not in BC})
+            if moi:
+                _, _, f2 = SC.score([h for h, _ in moi], [r for _, r in moi])
+                BC.update(zip(moi, f2.tolist()))
+            print(f"  [bert] {ten}: chấm mới {len(moi)} cặp · {(time.time()-T0)/60:.1f} phút", flush=True)
+            o["bertscore"] = 100 * sum(BC[(h, r)] if h else 0.0 for h, r in zip(H, REF)) / len(H)
         o = {k: round(v, 2) for k, v in o.items()}
         o["rong"] = sum(not h for h in H)
         o["doi_cau_so_goc_pct"] = round(100 * sum(tokw(h) != tokw(g) for h, g in zip(H, P[a.base])) / len(H), 1)
