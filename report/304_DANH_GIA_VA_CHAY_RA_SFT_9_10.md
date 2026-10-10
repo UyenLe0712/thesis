@@ -170,6 +170,114 @@ thô cũ · câu trong tệp thô trùng tệp pred · ck500 tái lập exec 60,
 - Nếu báo một nhánh: **`ghep`** — 7/7 thước chữ cao hơn ck500, thước hành vi ngang ck500 (không hại), hơn S1/101 có ý nghĩa.
   Phải khai: luật ghép đặt sau khi thấy val, và exec/D.3/AitW **không tăng** so với ck500.
 - `ra_k4` đứng một mình: ĐẠT 5/7 thước chữ nhưng **giảm exec −1,25** có ý nghĩa ⇒ không dùng làm mô hình tiêu đề.
-- ▶️ Đang chạy (10/10, từ 07:23): notebook T với LR `1e-5` (bước 2 của §3.4), tài khoản trang,
+- (cập nhật: luật ghép mới R3 ở §5 thay `ghep`; LR 1e-5 xong, KHÔNG đạt — §5.4.)
+- ▶️ Đã chạy (10/10, từ 07:23): notebook T với LR `1e-5` (bước 2 của §3.4), tài khoản trang,
   `https://www.kaggle.com/code/trangphngngc/ra-sft-t-lr1e5-304`; chỉ đổi LR và tên zip (`ket_qua_304_T_lr1e5.zip`), tự cắt ở 11 h.
   Kỳ vọng [suy]: có thể cải thiện thước chữ, khó kéo exec lên.
+- ✅ **Kết quả LR `1e-5` (10/10):** train và val chạy xong; notebook báo ERROR chỉ vì ô đóng gói.
+  `shutil.make_archive(f"{W}/ket_qua…", "zip", W, ".")` ghi tệp zip vào chính thư mục đang nén, nên zip tự nén lại
+  chính nó tới khi đầy đĩa 20 GB (lượt 2e-5 thoát được vì zip lọt vào danh sách lúc còn 1,6 KB).
+  Output tải về (`runs/ra304_T_lr1e5/`) chỉ còn `cont_sft/`, `diem_val_304.json/.log` và một zip 0 byte;
+  `ra_sft/`, log train, pred val bị mất. Val 1.002 click (số val, cấm trích), so ck500:
+
+  | thước | ck500 | ra_k4 1e-5 (2e-5) | cont 1e-5 (2e-5) |
+  |---|---:|---:|---:|
+  | BLEU-4 | 54,81 | 54,20 (53,95) | 54,71 (54,35) |
+  | METEOR | 39,25 | 38,69 (38,47) | 38,94 (38,72) |
+  | ROUGE-L | 70,52 | 70,16 (69,79) | 70,40 (70,12) |
+  | CIDEr-D | 448,95 | 461,47 (459,31) | 459,26 (453,59) |
+  | chrF | 64,50 | 63,50 (63,23) | 64,04 (63,80) |
+
+  Hạ LR làm cả hai nhánh nhích lên ở mọi thước nhưng vẫn chỉ hơn ck500 ở CIDEr-D (1/5) ⇒ **không đạt**, không chạy
+  notebook G cho LR `1e-5`. Sửa cho lần sau: ghi zip ra `/tmp` rồi chuyển vào `W`, hoặc dùng `zip -r … -x '*.zip'`.
+
+## 5. Sửa luật ghép: chọn trên val, áp lên test một lần (10/10)
+
+Lý do: `ghep` (R0) tăng 7/7 thước chữ nhưng exec test −0,11 so ck500. Có sẵn tệp thô UGround cho cả câu ck500 lẫn câu `ra_k4`
+trên test nên thử luật trên test là 0 GPU — chính vì thế **không** chọn luật trên test. Thủ tục:
+1. Viết các luật và tiêu chí chọn (`_scripts/304/kiem/luat_ghep_304.py`) **trước** khi có exec val của `ra_k4`.
+2. Chấm UGround câu `ra_k4` trên val lớn (Kaggle `uyenle0712/ra-val-luat-304`; 366 câu mới, còn lại chép từ tệp thô 289).
+3. Chọn luật trên val (`_scripts/304/kiem/doc_luat_304.py val` → `runs/ra304_luat/luat_chon.json`, không cho chọn lại).
+4. Áp luật đã chọn lên test đúng một lần (`doc_luat_304.py test` → `runs/ra304_luat/test_R3.json`, không cho chạy lại).
+
+### 5.1 Luật ứng viên (chỉ dùng chữ — không bộ trỏ, không câu chuẩn)
+
+Lấy câu `ra_k4` khi…, còn lại giữ câu ck500:
+
+| luật | điều kiện | val: câu đổi | test: câu đổi |
+|---|---|---:|---:|
+| R0 | câu trùng (sau tách từ) một ví dụ của khối — `ghep` cũ | 118 | 453 |
+| R1 | R0 ∧ câu đó ở ≥ 2/4 ví dụ — **loại**: khối đã khử trùng, lấy 0 bước | 0 | 0 |
+| R2 | R0 ∧ phần lõi (bỏ động từ, hư từ, chữ vị trí/kiểu nút) giao câu ck500 với Jaccard ≥ 0,5 | 84 | 311 |
+| R3 | R0 ∧ lớp động từ đầu câu (chạm · nhấn giữ · gõ · cuộn · mở · quay lại) trùng câu ck500 | 106 | 402 |
+| R4 | R2 ∧ R3 | 80 | 299 |
+
+Tiêu chí (khoá trước): trong các luật hơn ck500 ở ≥ 4/5 thước chữ val, chọn exec val cao nhất; hoà thì đổi ít câu hơn.
+
+### 5.2 Val lớn (1.002 click) [đo] — số val, chỉ để chọn, cấm trích
+
+Hiệu chuẩn: 20 câu ck500 chấm lại trùng tệp thô 289, lệch 0 (lần đầu notebook quên `--n 20` cho tệp hiệu chuẩn, chạy lại riêng phần đó).
+
+| luật | BLEU-4 | METEOR | ROUGE-L | CIDEr-D | chrF | exec | Δexec so ck500 | cứu / phá |
+|---|---:|---:|---:|---:|---:|---:|---|---|
+| ck500 | 54,81 | 39,25 | 70,52 | 448,95 | 64,50 | 63,37 | | |
+| R0 | 55,39 | 39,47 | 70,97 | 462,90 | 64,59 | 63,07 | −0,30 [−1,18; +0,51] | 9 / 12 |
+| R2 | 55,49 | 39,63 | 71,22 | 460,94 | 64,95 | 63,47 | +0,10 [−0,31; +0,52] | 3 / 2 |
+| **R3** | 55,38 | 39,55 | 71,17 | 461,98 | 64,72 | **63,57** | +0,20 [−0,49; +0,88] | 9 / 7 |
+| R4 | 55,19 | 39,49 | 71,10 | 458,90 | 64,76 | 63,47 | +0,10 [−0,31; +0,52] | 3 / 2 |
+
+Cả bốn đủ 5/5 thước chữ ⇒ chọn theo exec ⇒ **R3**.
+
+### 5.3 R3 trên test (4.463 click) [đo]
+
+Bảy thước chữ — Kaggle CPU `uyenle0712/ra-cham-r3-304`, tự kiểm ck500 KHỚP (`runs/ra304_luat/cham_r3/diem_test_R3.json`):
+
+| thước | ck500 | R0 `ghep` | **R3** |
+|---|---:|---:|---:|
+| BLEU-4 | 52,36 | 53,47 | **53,47 (+1,11)** |
+| METEOR | 37,91 | 38,33 | **38,37 (+0,46)** |
+| ROUGE-L | 68,34 | 68,97 | **69,08 (+0,74)** |
+| CIDEr-D | 430,04 | 441,53 | **442,02 (+11,98)** |
+| SPICE | 45,79 | 47,12 | **47,13 (+1,34)** |
+| chrF | 62,86 | 63,39 | **63,44 (+0,58)** |
+| BERTScore | 67,07 | 67,66 | **67,73 (+0,66)** |
+
+R3 cao hơn ck500 ở **7/7** thước, và ≥ R0 ở cả 7. Chép nguyên văn 19,1% bước, 44,4% số câu chép đúng câu chuẩn. Câu rỗng 1 (bước 18710/1, rỗng sẵn ở ck500).
+
+Thước hành vi (UGround, từ tệp thô có sẵn, 0 GPU — `runs/ra304_luat/test_R3.json`, `score_R3_test_raw.jsonl`):
+
+| nhánh | exec | D.3 | AitW |
+|---|---|---|---|
+| ck500 | 60,65 [58,90; 62,38] | 67,02 [65,28; 68,70] | 76,25 [74,73; 77,70] |
+| **R3** | **60,68 [58,93; 62,40]** | **67,11 [65,39; 68,79]** | **76,32 [74,81; 77,77]** |
+| R0 `ghep` | 60,54 | 67,00 | 76,11 |
+| S1/101 | 59,11 | 65,49 | 74,37 |
+
+| phép so | exec | D.3 | AitW |
+|---|---|---|---|
+| R3 − ck500 | +0,02 [−0,21; +0,26] · cứu 15 phá 14 · p=1 | +0,09 [−0,15; +0,33] · p=0,58 | +0,07 [−0,15; +0,29] · p=0,69 |
+| R3 − S1/101 | **+1,57 [+0,86; +2,31]** · cứu 158 phá 88 · p=1e−5 | **+1,61 [+0,88; +2,35]** · p=8e−6 | **+1,95 [+1,27; +2,66]** · p=6e−8 |
+| R3 − R0 | +0,13 [−0,09; +0,36] · p=0,31 | +0,11 · p=0,44 | +0,20 [−0,02; +0,44] · p=0,12 |
+
+Đọc:
+- **R3 là nhánh tốt nhất của 304:** 7/7 thước chữ hơn ck500, ba thước hành vi nhỉnh hơn ck500 (KTC phủ 0 ⇒ viết "ngang ck500, không hại"),
+  hơn S1/101 có ý nghĩa ở cả ba luật (nhỉnh hơn ck500 − S1 = +1,55).
+- Điều kiện "cùng loại thao tác" chặn kiểu lỗi chép câu của bước khác loại (bước chạm mà câu chép bảo gõ/mở app) — đúng chỗ R0 mất exec.
+- Phải khai: R0 đặt sau khi thấy val; R3 chọn trên val trong 4 ứng viên (khoá trước exec val), áp test một lần; một hạt giống;
+  các thước chữ chưa có KTC.
+
+### 5.4 Notebook T, LR 1e-5 (tài khoản trang) [đo] — KHÔNG ĐẠT
+
+`trangphngngc/ra-sft-t-lr1e5-304`: train + val xong; Kaggle báo ERROR ở khâu đóng zip cuối [suy, không tải được log đầy đủ — tệp zip lớn].
+Điểm val (`runs/ra304_T_lr1e5/diem_val_304.log`):
+
+| thước | ck500 | `ra_k4` | `cont` |
+|---|---:|---:|---:|
+| BLEU-4 | 54,81 | 54,20 (−0,61) | 54,71 (−0,10) |
+| METEOR | 39,25 | 38,69 (−0,56) | 38,94 (−0,31) |
+| ROUGE-L | 70,52 | 70,16 (−0,36) | 70,40 (−0,12) |
+| CIDEr-D | 448,95 | 461,47 (+12,52) | 459,26 (+10,31) |
+| chrF | 64,50 | 63,50 (−1,00) | 64,04 (−0,46) |
+
+Cả hai nhánh 1/5 (chỉ CIDEr-D), cùng mẫu hình LR 2e-5, chỉ nhẹ hơn. Đề xuất dừng hướng train thêm; mô hình báo cáo của 304 là
+**ck500 + luật R3** (không cần train mới). Adapter `cont_sft` LR 1e-5 (344 MB) chỉ nằm trên máy, không vào git.
