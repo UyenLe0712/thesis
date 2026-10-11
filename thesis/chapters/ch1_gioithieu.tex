@@ -284,15 +284,17 @@ của chính mô hình ấy trước khi tinh chỉnh.
 Phương pháp đề xuất học tiếp từ S1 bằng học tăng cường theo nhóm, với phần thưởng là SPICE của câu
 sinh ra so với câu chuẩn, trừ đi một khoản phạt nhỏ khi câu dài quá mức. Vì không có mô hình định vị
 nào trong phần thưởng, thước executability vẫn độc lập với mục tiêu huấn luyện. Phương pháp đạt
-$60{,}6\%$ theo executability, cao nhất trong các mô hình đã đo. Mức hơn S1 là $1{,}55$ điểm, khoảng
+$60{,}6\%$ theo executability, cao nhất trong các mô hình đơn đã đo. Mức hơn S1 là $1{,}55$ điểm, khoảng
 tin cậy $[+0{,}80; +2{,}33]$, $p < 0{,}001$, và so với hạt giống thứ hai của S1, phương pháp vẫn hơn
 $1{,}03$ điểm ($p = 0{,}014$). Mức tăng xuất hiện ở cả mười ba thước được báo cáo, từ ba luật vị trí
 tới SPICE, BLEU-4 và BERTScore. Đây là mô hình đầu tiên của đề tài vượt mô hình tinh chỉnh có giám
 sát với ý nghĩa thống kê ngay dưới executability, và hơn một nửa mức tăng đến từ việc định vị đúng
 phần tử ở những bước mà cả hai mô hình đều đã gọi đúng loại thao tác. Đi kèm là một tác dụng phụ đo
 được: mô hình nghiêng nhiều hơn về câu chạm, nên ở bước cuộn, tỉ lệ gọi đúng loại thao tác giảm
-$6{,}23$ điểm. Một bộ sửa câu theo vùng cắt (TAGE) đặt sau phương pháp này chưa giúp thêm trên tập
-kiểm, và được trình bày như một phần mở rộng.
+$6{,}23$ điểm. Hai phần mở rộng đặt sau phương pháp này cho hai kết quả khác nhau. Bộ sửa câu theo
+vùng cắt (TAGE) chưa giúp thêm trên tập kiểm. Luật chép câu ví dụ truy hồi khi đồng thuận loại thao
+tác (ACE) nâng cả bảy thước so câu, CIDEr-D thêm $12{,}0$ và SPICE thêm $1{,}3$ điểm, mà không làm
+giảm executability.
 
 \paragraph{Đóng góp thứ ba, về chẩn đoán qua các hướng đã thử.} Trước khi đi tới phương pháp đề xuất,
 chúng tôi đã thử bốn hướng cùng tác động vào một tầng trung gian giữa ảnh và câu. Hướng đầu tiên, gọi

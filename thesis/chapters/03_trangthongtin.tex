@@ -46,12 +46,14 @@ cách $11{,}5$ điểm này giữ nguyên sau khi kiểm sáu cách giải thíc
 
 Phương pháp đề xuất học tiếp từ mô hình tinh chỉnh có giám sát bằng học tăng cường theo nhóm, với
 phần thưởng là SPICE của câu sinh ra so với câu chuẩn. Phương pháp đạt $60{,}6\%$ theo executability,
-cao nhất trong mọi mô hình đã đo, hơn mô hình tinh chỉnh có giám sát $1{,}55$ điểm với khoảng tin cậy
+cao nhất trong các mô hình đơn đã đo, hơn mô hình tinh chỉnh có giám sát $1{,}55$ điểm với khoảng tin cậy
 $[+0{,}80; +2{,}33]$ và $p < 0{,}001$, và cao hơn ở cả mười ba thước đã báo, từ các luật vị trí tới
 SPICE, BLEU-4 và BERTScore. Hơn một nửa mức tăng là định vị đúng phần tử ở những bước cả hai mô hình
 đã gọi đúng loại thao tác. Đi kèm là một tác dụng phụ đo được: mô hình nghiêng về câu chạm, nên ở bước
 cuộn tỉ lệ gọi đúng loại thao tác giảm $6{,}23$ điểm. Một bộ sửa câu đặt sau phương pháp này, xem phóng
-to vùng quanh điểm do một bộ định vị đoán rồi viết lại câu, chưa giúp thêm trên tập kiểm.
+to vùng quanh điểm do một bộ định vị đoán rồi viết lại câu, chưa giúp thêm trên tập kiểm. Một luật
+chỉ nhận câu ví dụ truy hồi khi câu ấy cùng loại thao tác với câu của phương pháp đề xuất (ACE) nâng
+cả bảy thước so câu mà giữ nguyên executability.
 
 Phương pháp ấy được chọn sau một chuỗi hướng thử, và chuỗi này là phần đóng góp cuối. Hướng đầu tiên
 buộc mô hình viết một dòng khai báo về phần tử cần chạm (vai trò, tên, toạ độ, dấu hiệu phân biệt)

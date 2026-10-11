@@ -72,7 +72,7 @@ là loại bỏ toàn bộ những câu mô hình chép lại nguyên văn câu 
 cách vẫn còn $8{,}4$ điểm. Ba khoảng tin cậy rời
 nhau, cho thấy dụng cụ đo thực sự tách được hai hệ thống.
 
-Phương pháp đề xuất đạt $60{,}6\%$ theo executability, cao nhất trong mọi mô hình đã đo, hơn S1
+Phương pháp đề xuất đạt $60{,}6\%$ theo executability, cao nhất trong các mô hình đơn đã đo, hơn S1
 $1{,}55$ điểm với khoảng tin cậy $[+0{,}80; +2{,}33]$ và $p < 0{,}001$, và hơn cả hạt giống thứ hai của
 S1 $1{,}03$ điểm. Đây là mô hình đầu tiên của đề tài hơn mô hình tinh chỉnh có giám sát với ý nghĩa
 thống kê dưới chính executability, và mức tăng xuất hiện ở cả mười ba thước đã báo, từ các luật vị
@@ -80,7 +80,11 @@ trí tới SPICE, BLEU-4 và BERTScore. Hơn một nửa mức tăng nằm ở c
 loại thao tác, tức là định vị thật. Đi kèm là một tác dụng phụ: mô hình nghiêng về câu chạm, nên ở
 bước cuộn tỉ lệ gọi đúng loại thao tác giảm $6{,}23$ điểm. Bộ sửa câu TAGE đặt sau phương pháp này
 chưa giúp thêm, thấp hơn câu nháp $0{,}43$ điểm executability, vì bộ chọn nhận câu sửa lại nhắm đúng
-những bước mà ô cắt sai chỗ.
+những bước mà ô cắt sai chỗ. ACE, luật chép câu ví dụ truy hồi khi câu chép cùng loại thao tác với
+câu nháp, thay $9{,}0\%$ số câu và nâng cả bảy thước so câu (CIDEr-D từ $430{,}0$ lên $442{,}0$, SPICE từ
+$45{,}8$ lên $47{,}1$) trong khi giữ nguyên executability ($60{,}7\%$, chênh $+0{,}02$ điểm). Bộ sinh có
+câu ví dụ khi đứng một mình lại làm executability giảm $1{,}25$ điểm, nên phần có ích của truy hồi
+chỉ giữ được nhờ luật đồng thuận.
 
 Các hướng thử trước phương pháp đề xuất đều là kết quả một hạt giống. Nhánh đích khai báo đạt
 $57{,}2\%$, thấp hơn S1 $1{,}93$ điểm với khoảng tin cậy nằm hẳn dưới $0$, và dấu giữ nguyên dưới mô
@@ -93,7 +97,7 @@ $202$ là $1{,}99$ điểm, nhưng toàn bộ mức chênh nằm ở các bướ
 
 Trên nhóm thước so với câu chuẩn, mức cao nhất của các nhánh đã tinh chỉnh là BLEU-4 $52{,}4$,
 ROUGE-L $68{,}6$, SPICE $45{,}8$ và BERTScore $67{,}1$, so với $15{,}3$, $42{,}3$, $18{,}5$ và $40{,}1$
-của mô hình chưa tinh chỉnh. Nhánh ứng viên, huấn luyện trong một điều kiện thí nghiệm khác, đạt
+của mô hình chưa tinh chỉnh. ACE nâng bốn con số đầu lên $53{,}5$, $69{,}1$, $47{,}1$ và $67{,}7$. Nhánh ứng viên, huấn luyện trong một điều kiện thí nghiệm khác, đạt
 $56{,}1\%$ và chỉ so được với mô hình chưa tinh chỉnh, hơn $8{,}54$ điểm.
 
 \subsection*{Về chẩn đoán}

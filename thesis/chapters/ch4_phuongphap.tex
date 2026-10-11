@@ -275,6 +275,53 @@ Câu ra khỏi bộ chọn mới là câu được chấm.}
 $249$ bước chạm, nên $\tau$ được chọn từ một mẫu rất nhỏ. Kết quả trên tập kiểm ở Mục~\ref{sec:tage}
 cho thấy đây chính là điểm yếu quyết định của thiết kế.
 
+\section{Mở rộng: chép câu ví dụ khi đồng thuận loại thao tác (ACE)}
+\label{sec:acethietke}
+
+\paragraph{Căn cứ.} Tập huấn luyện chứa hơn sáu mươi nghìn câu chuẩn, và nhiều bước của tập kiểm
+giống một bước nào đó đã có câu chuẩn: cùng loại mục tiêu, cùng ứng dụng, cùng vị trí trong tác vụ.
+Chúng tôi đo điều này trên CPU trước khi huấn luyện. Với mỗi bước chạm của tập kiểm, truy hồi bốn
+câu chuẩn của các bước giống nhất trong tập huấn luyện. Ở $15{,}8\%$ số bước, một trong bốn câu ấy
+trùng nguyên văn câu chuẩn của chính bước đang xét, và ở $9{,}8\%$ số bước điều đó xảy ra trong khi
+phương pháp đề xuất viết sai câu. Nếu biết chép đúng lúc, BLEU-4 mức kho tăng được khoảng $5$ điểm
+và CIDEr-D khoảng $65$ điểm. Ngược lại, luôn chép câu ví dụ đứng đầu thì BLEU-4 giảm từ $52{,}4$
+xuống $28{,}3$. Toàn bộ giá trị vì vậy nằm ở việc biết \emph{khi nào} nên chép. ACE (\emph{Action-Consistent
+Exemplar copying}) tách việc này làm hai phần: một mô hình học cách dùng câu ví dụ, và một luật
+đơn giản quyết định có nhận câu của mô hình ấy hay giữ câu của phương pháp đề xuất.
+
+\paragraph{Bộ sinh có câu ví dụ truy hồi.} Kho truy hồi là phần tập huấn luyện đã bỏ mọi tác vụ của
+tập kiểm định nội bộ, gồm $62.880$ bước thuộc $12.542$ tác vụ, không chứa tác vụ nào của tập kiểm.
+Truy hồi dùng TF-IDF trên văn bản, không dùng ảnh, theo hai khoá rồi hợp lại và khử trùng câu. Khoá
+mức bước so mục tiêu cùng câu lịch sử gần nhất, theo cách của SmallCap~\cite{smallcap}. Khoá mức
+quỹ đạo tìm tác vụ có mục tiêu gần nhất rồi căn bước theo câu lịch sử gần nhất. Bốn câu ví dụ
+được chèn vào câu nhắc ngay trước dòng yêu cầu viết câu. Bộ sinh học tiếp chính bộ chuyển đổi của
+phương pháp đề xuất bằng học có giám sát, $250$ bước, tốc độ học $2 \times 10^{-5}$, trên $3.991$
+bước của phần tập dạy có sẵn ảnh. Để mô hình không học chép mù, lúc huấn luyện số câu ví dụ lấy
+ngẫu nhiên từ $2$ đến $6$, thứ tự bị xáo, $15\%$ câu nhắc không có khối ví dụ và $10\%$ có khối lấy
+ngẫu nhiên, và chính tác vụ đang học bị loại khỏi kho. Một nhánh so sánh học cùng các bước, cùng
+đích và cùng siêu tham số nhưng câu nhắc không có khối ví dụ, để tách phần do truy hồi khỏi phần do
+học thêm.
+
+\paragraph{Luật đồng thuận.} Với mỗi bước, hệ có hai câu: câu nháp của phương pháp đề xuất và câu
+của bộ sinh. Câu của bộ sinh chỉ được nhận khi thoả cả hai điều kiện.
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.15em]
+\item \textbf{Chép nguyên văn.} Sau khi tách từ, câu trùng hẳn một trong bốn câu ví dụ của khối. Điều
+kiện này giữ lại đúng những bước bộ sinh quyết định dùng câu ví dụ, và bỏ những bước bộ sinh tự
+viết câu mới.
+\item \textbf{Đồng thuận loại thao tác.} Lớp động từ ở đầu câu (chạm, nhấn giữ, gõ, cuộn, mở ứng
+dụng, quay lại) trùng lớp động từ của câu nháp. Câu ví dụ đến từ một bước khác, nên có thể nói đúng
+phần tử nhưng sai thao tác, ví dụ bảo gõ chữ ở một bước cần chạm. Câu nháp, vốn được viết khi nhìn
+chính màn hình này, đóng vai người xác nhận thao tác.
+\end{enumerate}
+Không điều kiện nào dùng tới mô hình định vị hay câu chuẩn, nên luật chạy được lúc suy luận và không
+làm thước chấm mất độc lập.
+
+\paragraph{Cách chọn luật.} Luật trên được chọn trong bốn biến thể trên tập kiểm định nội bộ: chỉ
+điều kiện chép, chép kèm đồng thuận loại thao tác, chép kèm phần lõi của câu (bỏ động từ và hư từ)
+giao với câu nháp ít nhất một nửa, và cả hai điều kiện sau. Tiêu chí chọn được viết ra trước khi
+chấm executability trên tập ấy: trong các biến thể không thua câu nháp ở đa số thước so câu, chọn
+biến thể có executability cao nhất. Biến thể được chọn rồi áp lên tập kiểm đúng một lần.
+
 \section{Hướng thử đầu tiên: mô tả phân biệt trước, phát ngôn sau}
 \label{sec:motatruoc}
 

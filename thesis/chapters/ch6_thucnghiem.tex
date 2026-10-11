@@ -9,8 +9,9 @@ tinh chỉnh có giám sát S1 (Mục~\ref{sec:grpospicethietke}). Các hệ cò
 Nhóm mốc gồm mô hình gốc chưa tinh chỉnh (Base), S1 ở hai hạt giống (S1/101, S1/202) và câu chuẩn
 (Trần). Nhóm hướng đã thử gồm nhánh sinh khai báo trước rồi mới sinh câu (S2), chặng hai bằng mục
 tiêu ưu tiên ở tầng khai báo (MIN-DESC) cùng nhánh so sánh để tách công (CE2-S2), chặng ba bằng học
-tăng cường thưởng ô toạ độ, và nhánh ứng viên. Cuối cùng là TAGE, bộ sửa câu đặt sau phương pháp đề
-xuất. Trong $4.463$ bước, S1 trả về câu rỗng ở đúng một bước, và bước đó được tính là không đạt. Mọi
+tăng cường thưởng ô toạ độ, và nhánh ứng viên. Cuối cùng là hai phần mở rộng đặt sau phương pháp đề
+xuất: TAGE, bộ sửa câu theo vùng cắt, và ACE, luật chép câu ví dụ truy hồi khi đồng thuận loại thao
+tác. Trong $4.463$ bước, S1 trả về câu rỗng ở đúng một bước, và bước đó được tính là không đạt. Mọi
 điểm tuyệt đối và khoảng tin cậy trong chương này đo trên đủ $4.463$ bước, còn các phép so ghép cặp
 chạy trên tập bước mà cả hai nhánh cùng trả lời. Các quần thể chênh nhau nhiều nhất một bước nên
 không đại lượng nào đổi sau khi làm tròn tới một chữ số thập phân.
@@ -20,7 +21,7 @@ máy. Như đã nêu ở Mục~\ref{sec:dangky}, mọi kết quả một hạt g
 và chương này ghi rõ điều đó ở từng chỗ.
 
 Với các nhánh huấn luyện trên A100, khâu sinh câu chạy ngay sau khi huấn luyện, khi trọng số còn
-nằm sẵn trong bộ nhớ. Phương pháp đề xuất và TAGE sinh câu trên GPU T4 hoặc L4. Khâu chấm chạy trên
+nằm sẵn trong bộ nhớ. Phương pháp đề xuất, TAGE và ACE sinh câu trên GPU T4 hoặc L4. Khâu chấm chạy trên
 GPU T4 không thu phí, khoảng $5{,}6$ giờ cho mỗi nhánh.
 
 \subsection{Ghi nhận về lượt huấn luyện}
@@ -54,14 +55,15 @@ S1 (hạt giống $202$) & $59{,}6$ & $[57{,}9; 61{,}3]$ & $66{,}1$ & $75{,}3$ &
 \midrule
 \multicolumn{7}{@{}l}{\emph{Các hướng đã thử}}\\
 S2 (đích khai báo) & $57{,}2$ & $[55{,}4; 58{,}9]$ & $63{,}6$ & $73{,}4$ & $36{,}4$ & $65{,}9$ \\
-CE2-S2 (nhánh so sánh) & $59{,}4$ & $[57{,}7; 61{,}1]$ & $66{,}0$ & $76{,}1$ & $38{,}1$ & $\mathbf{68{,}6}$ \\
+CE2-S2 (nhánh so sánh) & $59{,}4$ & $[57{,}7; 61{,}1]$ & $66{,}0$ & $76{,}1$ & $38{,}1$ & $68{,}6$ \\
 MIN-DESC (mục tiêu ưu tiên) & $60{,}0$ & $[58{,}3; 61{,}8]$ & $66{,}5$ & $76{,}4$ & $37{,}9$ & $68{,}4$ \\
-Chặng ba (thưởng ô toạ độ) & $60{,}1$ & $[58{,}3; 61{,}8]$ & $\mathbf{67{,}0}$ & $\mathbf{77{,}3}$ & $37{,}8$ & $68{,}5$ \\
+Chặng ba (thưởng ô toạ độ) & $60{,}1$ & $[58{,}3; 61{,}8]$ & $67{,}0$ & $\mathbf{77{,}3}$ & $37{,}8$ & $68{,}5$ \\
 Nhánh ứng viên\textsuperscript{$\dagger$} & $56{,}1$ & $[54{,}2; 58{,}0]$ & $62{,}4$ & $71{,}2$ & $34{,}5$ & $63{,}0$ \\
 \midrule
 \multicolumn{7}{@{}l}{\emph{Phương pháp đề xuất}}\\
-\textbf{Thưởng SPICE} & $\mathbf{60{,}6}$ & $[58{,}9; 62{,}4]$ & $\mathbf{67{,}0}$ & $76{,}2$ & $\mathbf{40{,}1}$ & $68{,}3$ \\
-\quad $+$ TAGE (sửa câu) & $60{,}2$ & $[58{,}5; 62{,}0]$ & $66{,}4$ & $76{,}1$ & $\mathbf{40{,}1}$ & $68{,}4$ \\
+\textbf{Thưởng SPICE} & $60{,}6$ & $[58{,}9; 62{,}4]$ & $67{,}0$ & $76{,}2$ & $40{,}1$ & $68{,}3$ \\
+\quad $+$ TAGE (sửa câu) & $60{,}2$ & $[58{,}5; 62{,}0]$ & $66{,}4$ & $76{,}1$ & $40{,}1$ & $68{,}4$ \\
+\quad $+$ ACE (chép câu ví dụ) & $\mathbf{60{,}7}$ & $[58{,}9; 62{,}4]$ & $\mathbf{67{,}1}$ & $76{,}3$ & $\mathbf{41{,}2}$ & $\mathbf{69{,}1}$ \\
 \midrule
 \emph{Câu chuẩn (trần)} & $75{,}7$ & $[74{,}1; 77{,}3]$ & $83{,}8$ & $92{,}1$ & $96{,}1$ & $100{,}0$ \\
 \bottomrule
@@ -78,9 +80,11 @@ các nhánh $57$ đến $61$ thì không, xem Mục~\ref{sec:thamchieu}.
 \end{minipage}
 \end{table}
 
-Bảng~\ref{tab:chinh} cho kết quả chính. Phương pháp đề xuất đạt executability cao nhất, $60{,}6\%$,
+Bảng~\ref{tab:chinh} cho kết quả chính. Phương pháp đề xuất đạt executability $60{,}6\%$,
 hơn S1 hạt giống $101$ là $1{,}55$ điểm với khoảng tin cậy $[+0{,}80; +2{,}33]$, và bằng chặng ba
-dưới luật hộp phần tử. Chặng ba cao nhất dưới luật khớp chạm của AitW. Mục~\ref{sec:grpospice} phân
+dưới luật hộp phần tử. ACE, đặt sau phương pháp này, giữ nguyên mức ấy về vị trí ($60{,}7\%$, chênh
+$+0{,}02$ điểm, không phân biệt được) và là hệ cao nhất ở hai thước so câu của bảng. Chặng ba cao
+nhất dưới luật khớp chạm của AitW. Mục~\ref{sec:grpospice} phân
 tích chi tiết phương pháp đề xuất. Bảng~\ref{tab:phanra} tách điểm số thành ba điều kiện hợp thành của
 thước, để thấy mỗi điều kiện đóng góp bao nhiêu vào điểm cuối.
 
@@ -96,6 +100,7 @@ Nhánh & Executable & Chỉ ô Voronoi & Khớp thao tác & Cửa sổ dung sai 
 Trần (câu chuẩn) & $75{,}7$ & $75{,}8$ & $100{,}0$\textsuperscript{$*$} & $84{,}3$ \\
 \textbf{Thưởng SPICE} & $60{,}6$ & $61{,}4$ & $96{,}0$ & $70{,}3$ \\
 \quad $+$ TAGE & $60{,}2$ & $61{,}0$ & $96{,}6$ & $70{,}1$ \\
+\quad $+$ ACE & $60{,}7$ & $61{,}5$ & $96{,}0$ & $70{,}4$ \\
 Chặng ba & $60{,}1$ & $60{,}5$ & $98{,}9$ & $69{,}9$ \\
 MIN-DESC & $60{,}0$ & $60{,}4$ & $98{,}9$ & $69{,}2$ \\
 S1 (hạt giống $202$) & $59{,}6$ & $60{,}7$ & $94{,}6$ & $69{,}8$ \\
@@ -149,7 +154,7 @@ executability. Cột cuối cho thấy trên các bước chạm, hai nhánh ch�
 thao tác ở $98{,}9\%$ số bước. Con số này chỉ áp cho bước chạm và phải đọc cùng mức giảm ở bước
 không chạm nêu tại Mục~\ref{sec:khongcham}. Hai hàng cuối của nhóm mô hình là phương pháp đề xuất và
 TAGE, trình bày ở Mục~\ref{sec:grpospice} và Mục~\ref{sec:tage}. Phương pháp đề xuất cho điểm
-executability cao nhất, $60{,}6\%$, và bằng chặng ba dưới luật hộp phần tử.
+executability cao nhất trong các mô hình đơn, $60{,}6\%$, và bằng chặng ba dưới luật hộp phần tử.
 
 \paragraph{Sai số và phép so giữa các nhánh.} Bảng~\ref{tab:d3ktc} cho khoảng tin cậy của ba số
 chính, tính bằng cùng một thủ tục bootstrap gom cụm và cùng hạt giống, nên các cột so được với
@@ -252,6 +257,8 @@ SPICE $-$ S1/202 & $+1{,}03$ & $[+0{,}25; +1{,}83]$ & $145$ & $191$ & $0{,}014$ 
 SPICE $-$ MIN & $+0{,}60$ & $[-0{,}52; +1{,}73]$ & $304$ & $331$ & $0{,}30$ \\
 SPICE $-$ chặng ba & $+0{,}58$ & $[-0{,}50; +1{,}69]$ & $286$ & $312$ & $0{,}31$ \\
 TAGE $-$ SPICE & $-0{,}43$ & $[-0{,}87; +0{,}02]$ & $67$ & $48$ & $0{,}093$ \\
+ACE $-$ SPICE & $+0{,}02$ & $[-0{,}21; +0{,}26]$ & $14$ & $15$ & $1{,}00$ \\
+ACE $-$ S1/101 & $+1{,}57$ & $[+0{,}86; +2{,}31]$ & $88$ & $158$ & $<0{,}001$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -315,7 +322,8 @@ Bảng~\ref{tab:grpospice} cho kết quả. Nhánh thưởng SPICE cao hơn S1 �
 vị trí khoảng tin cậy đều nằm hẳn trên $0$. Theo executability, mức chênh là $+1{,}55$ điểm với $p =
 1{,}6 \times 10^{-5}$. Nhánh này là nhánh đầu tiên của đề tài hơn S1 có ý nghĩa thống kê dưới cả
 executability, luật chặt nhất trong các luật đã dùng, trong khi mọi nhánh trước chỉ có ý nghĩa dưới các luật
-lỏng hơn. Điểm $60{,}65$ cũng là điểm executability cao nhất của đề tài. Phần thưởng là SPICE, nhưng
+lỏng hơn. Điểm $60{,}65$ cũng là điểm executability cao nhất trong các mô hình đơn của đề tài; ACE,
+một hệ đặt sau mô hình này (Mục~\ref{sec:ace}), chỉ nhỉnh thêm $0{,}03$ điểm. Phần thưởng là SPICE, nhưng
 mức tăng không dừng ở SPICE, vì cả sáu thước vị trí, vốn đo bằng mô hình định vị không hề nằm trong
 phần thưởng, cùng tăng một cỡ.
 
@@ -468,6 +476,78 @@ tín hiệu không đi qua ô cắt, ví dụ so điểm mà mô hình định v
 vị, và $\tau$ phải chọn trên một mẫu lớn hơn nhiều so với $11$ câu. Con số ``chỉ nhận khi ô cắt đúng
 chỗ thì được thêm $39$ bước, khoảng $0{,}87$ điểm'' là một trần chẩn đoán dùng điểm chạm thật, không
 phải kết quả của một hệ đã chạy.
+
+\section{Mở rộng: chép câu ví dụ khi đồng thuận loại thao tác (ACE)}
+\label{sec:ace}
+
+ACE (Mục~\ref{sec:acethietke}) giữ câu nháp của phương pháp đề xuất ở mọi bước, trừ những bước bộ
+sinh có câu ví dụ chép nguyên văn một câu ví dụ và câu ấy cùng loại thao tác với câu nháp. Trên
+tập kiểm, luật đồng thuận thay $402$ trong $4.463$ câu, tức $9{,}0\%$. Bảng~\ref{tab:ace} đặt ACE
+cạnh câu nháp và cạnh chính bộ sinh khi đứng một mình, tức dùng câu của bộ sinh ở mọi bước.
+
+\begin{table}[t]
+\caption{ACE trên $4.463$ bước chạm của tập kiểm, so với câu nháp (nhánh thưởng SPICE) và với bộ sinh
+có câu ví dụ khi đứng một mình. Ba thước vị trí kèm khoảng tin cậy $95\%$ từ bootstrap gom cụm theo
+ứng dụng. Bảy thước so câu chấm trong cùng một lượt cho cả ba cột và chưa có khoảng tin cậy; cột câu
+nháp lệch tối đa $0{,}02$ so với Bảng~\ref{tab:grpospice} do chấm lại. Một hạt giống.}
+\label{tab:ace}
+\centering\small
+\renewcommand{\arraystretch}{1.2}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrrc@{}}
+\toprule
+Thước & Câu nháp & Bộ sinh một mình & ACE & ACE $-$ câu nháp \\
+\midrule
+Executability & $60{,}65$ & $59{,}40$ & $\mathbf{60{,}68}$ & $+0{,}02$ $[-0{,}21; +0{,}26]$ \\
+Hộp phần tử (D.3) & $67{,}02$ & $65{,}81$ & $\mathbf{67{,}11}$ & $+0{,}09$ $[-0{,}15; +0{,}33]$ \\
+Luật khớp chạm AitW & $76{,}25$ & $75{,}02$ & $\mathbf{76{,}32}$ & $+0{,}07$ $[-0{,}15; +0{,}29]$ \\
+\midrule
+BLEU-4 & $52{,}36$ & $\mathbf{53{,}47}$ & $\mathbf{53{,}47}$ & $+1{,}11$ \\
+METEOR & $37{,}91$ & $37{,}79$ & $\mathbf{38{,}37}$ & $+0{,}46$ \\
+ROUGE-L & $68{,}34$ & $68{,}67$ & $\mathbf{69{,}08}$ & $+0{,}74$ \\
+CIDEr-D & $430{,}04$ & $437{,}54$ & $\mathbf{442{,}02}$ & $+11{,}98$ \\
+SPICE & $45{,}79$ & $46{,}79$ & $\mathbf{47{,}13}$ & $+1{,}34$ \\
+chrF & $62{,}86$ & $62{,}65$ & $\mathbf{63{,}44}$ & $+0{,}58$ \\
+BERTScore & $67{,}07$ & $67{,}52$ & $\mathbf{67{,}73}$ & $+0{,}66$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Kết quả.} ACE cao hơn câu nháp ở cả bảy thước so câu, rõ nhất ở CIDEr-D ($+11{,}98$) và
+SPICE ($+1{,}34$). Ba thước vị trí nhỉnh hơn câu nháp rất ít, khoảng tin cậy đều phủ $0$, nên đọc
+đúng là ACE \emph{ngang} câu nháp về định vị: trong $402$ câu bị thay, $15$ bước được cứu và $14$
+bước bị phá theo executability ($p = 1{,}0$). So với S1 hạt giống $101$, ACE hơn $1{,}57$ điểm
+executability $[+0{,}86; +2{,}31]$, $1{,}61$ điểm theo luật hộp phần tử và $1{,}95$ điểm theo luật khớp
+chạm của AitW, đều với $p < 0{,}001$. Vì vậy ACE là hệ duy nhất của đề tài tăng được nhóm thước so
+câu so với phương pháp đề xuất mà không làm giảm thước vị trí nào.
+
+\paragraph{Vì sao không dùng bộ sinh một mình.} Bộ sinh có câu ví dụ đứng một mình cũng cao hơn câu
+nháp ở năm trong bảy thước so câu, nhưng thấp hơn $1{,}25$ điểm executability $[-2{,}06; -0{,}44]$,
+$p = 0{,}002$, và giảm một cỡ như vậy dưới cả luật hộp phần tử lẫn luật khớp chạm. Bộ sinh khác câu
+nháp ở gần một nửa số bước. Ở những bước nó chép một câu ví dụ, câu chép thường đúng: bộ sinh chép
+nguyên văn ở $19{,}1\%$ số bước, và $43{,}5\%$ số câu chép trùng câu chuẩn, gần gấp đôi tỉ lệ câu
+trùng câu chuẩn của câu nháp ($22{,}8\%$). Ở những bước nó tự viết câu mới, câu kém câu nháp, đúng
+mẫu hình đã gặp ở mọi lượt học thêm sau phương pháp đề xuất. Điều kiện chép nguyên văn giữ phần
+thứ nhất và bỏ phần thứ hai.
+
+\paragraph{Vai trò của điều kiện loại thao tác.} Nếu chỉ dùng điều kiện chép, hệ thay $453$ câu và
+cũng tăng cả bảy thước so câu, nhưng executability thấp hơn câu nháp $0{,}11$ điểm ($24$ bước cứu,
+$29$ bước phá). Điều kiện đồng thuận loại thao tác loại bớt $51$ câu, phần lớn là câu vuốt (``Swipe
+up''), câu quay lại hoặc câu gõ chữ được chép từ một bước khác vào chỗ câu nháp đang bảo chạm. Trên
+$51$ bước ấy, câu chép cứu $9$ bước và phá $15$ bước, còn với $402$ câu được giữ lại số bước cứu và
+phá gần cân bằng. So với
+biến thể chỉ có điều kiện chép, ACE cao hơn $0{,}13$ điểm executability và không thấp hơn ở thước
+nào trong mười thước của Bảng~\ref{tab:ace}.
+
+\paragraph{Giới hạn.} Kết quả của ACE đi kèm năm giới hạn. Thứ nhất, luật được chọn trong bốn biến thể trên tập kiểm
+định nội bộ, và chính các biến thể ấy được nghĩ ra sau khi đã thấy kết quả của bộ sinh trên tập đó;
+tập kiểm chỉ được dùng một lần, cho biến thể đã chọn. Thứ hai, mức tăng ở thước so câu chưa có
+khoảng tin cậy, và các mức dưới một điểm (METEOR, ROUGE-L, chrF, BERTScore) chưa đủ để nói là hơn
+thật. Thứ ba, trên tập kiểm định nội bộ bộ sinh không hơn nhánh so sánh học thêm không có khối ví
+dụ ở đa số thước, nên chưa tách được bao nhiêu phần lợi là của truy hồi; hạ tốc độ học xuống
+$10^{-5}$ cũng không đổi kết luận này. Thứ tư, đây là kết quả một hạt giống. Thứ năm, phần lợi nằm ở
+bề mặt câu, tức mức trùng từ với câu chuẩn, chứ không ở việc giúp mô hình định vị tìm đúng phần tử;
+ACE không thay đổi điểm nghẽn tri giác đã chỉ ra ở Mục~\ref{sec:haikenh}.
 
 \section{Nhiễu giữa hai hạt giống}
 \label{sec:haihatgiong}
@@ -1616,6 +1696,8 @@ Nhánh hoặc phép thử & Trạng thái & Ghi chú \\
 cùng tăng, bước cuộn giảm $6{,}23$ điểm, Mục~\ref{sec:grpospice} \\
 TAGE, mở rộng của phương pháp đề xuất & xong, đã chấm & $60{,}2$; thấp hơn câu nháp $0{,}43$, bộ chọn nhận đúng những câu có ô cắt sai,
 Mục~\ref{sec:tage} \\
+ACE, mở rộng của phương pháp đề xuất & xong, đã chấm & $60{,}7$; ngang câu nháp về vị trí, cao hơn ở cả bảy thước so câu (CIDEr-D
+$+12{,}0$), bộ sinh một mình thấp hơn $1{,}25$, Mục~\ref{sec:ace} \\
 \midrule
 S1 $\times 2$ hạt giống & xong, đã chấm & $59{,}1$ và $59{,}6$; nhiễu hạt giống $+0{,}52$ điểm,
 Mục~\ref{sec:haihatgiong} \\
