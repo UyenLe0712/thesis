@@ -302,7 +302,7 @@ Mỗi điểm lưu phải in dòng `[so với S1] x/N câu trùng greedy S1` và
 
 ### Ô P3-B — dựng dữ liệu chấm
 
-Dán **nguyên văn Ô 2 của file 251** (`harness/tai_lieu_2026-09-28/251_ACTION_GPU_EXEC_8_MAU_C1_28_9.md`, mục 4). Ô đó đọc lại `c1_mau.jsonl` vào biến `C1` và dựng `c1preds/k0.jsonl` (greedy S1). P3-A đã chạy xong nên việc ghi đè `C1` không ảnh hưởng. Phải thấy `bước C1: 400 | click: 249 … | ảnh thiếu: 0` và `cây trợ năng: 249/249 bước click · 0 bước rỗng nút`.
+Dán **nguyên văn Ô 2 của file 251** (`report/251_ACTION_GPU_EXEC_8_MAU_C1_28_9.md`, mục 4). Ô đó đọc lại `c1_mau.jsonl` vào biến `C1` và dựng `c1preds/k0.jsonl` (greedy S1). P3-A đã chạy xong nên việc ghi đè `C1` không ảnh hưởng. Phải thấy `bước C1: 400 | click: 249 … | ảnh thiếu: 0` và `cây trợ năng: 249/249 bước click · 0 bước rỗng nút`.
 
 ### Ô P3-C — chấm `exec`, kèm chấm lại greedy S1 làm phép kiểm
 

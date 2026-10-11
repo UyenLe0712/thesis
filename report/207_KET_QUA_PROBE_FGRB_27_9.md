@@ -3,7 +3,7 @@
 > ⚠️ Mục 1–7 dưới đây là lượt 27/9 (dừng ở P0 vì thiếu adapter S1/101 và ảnh train). Sau đó đã
 > kéo adapter về `runs/s1_seed101/adapter_s1_seed101/` và chạy P1 trên Kaggle T4. **Kết quả P1 ở §8.**
 
-Nguồn hướng dẫn: `harness/tai_lieu_2026-09-27/230_ACTION_PROBE_FGRB_CHO_CHAT_LAM_27_9.md` (chép từ
+Nguồn hướng dẫn: `report/230_ACTION_PROBE_FGRB_CHO_CHAT_LAM_27_9.md` (chép từ
 8 ảnh, đóng vai "chat kia" gọi trong tài liệu — tài liệu viết cho một clone khác vừa tải về, còn
 ở đây ta chạy thẳng trên kho làm việc thật). Đây là file kết quả bắt buộc theo mục 6 của tài liệu
 230, tự chứa đủ 7 mục yêu cầu.
@@ -127,7 +127,7 @@ cái mốc cần vượt (adapter S1/101) và thiếu phần lớn ảnh train �
    Release `data-train-ac-v1` (6 file zip, ~3,5 GB). `harness/keo_anh_val.py` chỉ kéo ảnh val, cần
    một script/tải khác cho ảnh train.
 3. Sau khi có đủ hai thứ trên, chạy lại P0 (đã đạt, không cần chạy lại) rồi P1 theo đúng khoá đã
-   ghi trong `harness/tai_lieu_2026-09-27/230_ACTION_PROBE_FGRB_CHO_CHAT_LAM_27_9.md` — không đổi
+   ghi trong `report/230_ACTION_PROBE_FGRB_CHO_CHAT_LAM_27_9.md` — không đổi
    ngưỡng, không đổi seed, không đổi cỡ mẫu 4.000.
 
 ---

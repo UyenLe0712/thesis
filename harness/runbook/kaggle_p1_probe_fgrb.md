@@ -1,6 +1,6 @@
 # P1 — probe action/role/zone từ hidden state đóng băng của S1 — Kaggle T4, 0 đồng — viết 27/9/2026
 
-Theo đúng tài liệu `harness/tai_lieu_2026-09-27/230_ACTION_PROBE_FGRB_CHO_CHAT_LAM_27_9.md`. Ba đầu
+Theo đúng tài liệu `report/230_ACTION_PROBE_FGRB_CHO_CHAT_LAM_27_9.md`. Ba đầu
 vào (adapter S1/101, ảnh train, OCR train) đã kiểm đủ, mẫu 4.000 (seed 101) và val 1.567 đã khoá
 trước (`report/207_KET_QUA_PROBE_FGRB_27_9.md`, cập nhật sau khi P1 chạy).
 

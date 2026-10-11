@@ -110,7 +110,7 @@ def build_pata(kind):
 
 
 def build_pata_p1():
-    """PATA C2 · P1 (harness/tai_lieu_2026-09-25/204 §4.2): mã + val400_trueD + p1_decision.json +
+    """PATA C2 · P1 (report/204 §4.2): mã + val400_trueD + p1_decision.json +
     crop G/D/R của pata_p1.py prep + ảnh full của đúng các cặp + OCR của đúng các ảnh đó. ~100 MB.
     ⛔ Từ chối nếu p1_decision.json ghi audit_dat=false (crop dựng thử bằng --chua-audit)."""
     pd = os.path.join(TRAIN, "pata")

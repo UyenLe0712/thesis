@@ -272,6 +272,6 @@ nguyên lên test; chỉ chấm UGround những câu cổng nhận sửa, phần
 
 - GRPO: `runs/grpo_spice/` · `report/254`, `259`, `261`, `262`.
 - TAGE: `runs/tage_val/that/` (score `*_raw.jsonl`, `pred_*_meta.jsonl`, `loc_val_*.jsonl`, log, `so_s1.json`)
-  · `report/266` · action `harness/tai_lieu_2026-10-02/`.
+  · `report/266` · action `report/`.
 - Adapter TAGE (`ed_gold`, `ed_none`, `loc_g`, `loc_d`) chỉ có trên Drive `MyDrive/thesis/tage/out/that/`.
 - Gói Colab: `_bundles/tage-val-script/` (zip `_bundles/tage_colab.zip` bị gitignore, md5 `36919554…`).

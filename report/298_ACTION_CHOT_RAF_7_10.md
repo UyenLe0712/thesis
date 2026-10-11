@@ -1,6 +1,6 @@
 # 298 — ACTION: chốt RAF (7/10/2026)
 
-> Chép từ 4 ảnh chụp màn hình Mac (`anh/`, gửi 7/10 dạng zip, zip đã xoá). Thứ tự ảnh theo chữ số
+> Chép từ 4 ảnh chụp màn hình Mac (`report/298_anh/`, gửi 7/10 dạng zip, zip đã xoá). Thứ tự ảnh theo chữ số
 > cuối tên: `…1.jpg` (§1–2) · `…2.jpg` (§2 cuối–§4) · `…3.jpg` + `…4.jpg` (§5). Chỗ ảnh bị khuất
 > hoặc nằm giữa hai ảnh ghi `[không đọc được]`. Script §5 đã chép ra
 > **`_scripts/298/cham_raf_wsl_298.py`** (kiểm cú pháp đạt).
@@ -137,7 +137,7 @@ Không có lệnh git nào được chạy, không commit. File này nằm ngoà
 
 ---
 
-## Phụ: dựng `raw_G4g_test.jsonl` trên WSL (script 296-R, ảnh `anh_2/`, nhận 7/10 17:42)
+## Phụ: dựng `raw_G4g_test.jsonl` trên WSL (script 296-R, ảnh `report/298_anh_2/`, nhận 7/10 17:42)
 
 `raw_G4g_test.jsonl` không có trên WSL; user gửi thêm 2 ảnh của `_scripts/296/do_296_R_test_lai.py`
 (script dựng tệp đó). Đã chép ra **`_scripts/296/do_296_R_test_lai.py`**, chạy CPU ~1 phút, ra

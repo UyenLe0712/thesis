@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """P1 — probe phân loại action/role/zone từ hidden state đóng băng của S1.
 
-Theo đúng khoá của harness/tai_lieu_2026-09-27/230_ACTION_PROBE_FGRB_CHO_CHAT_LAM_27_9.md.
+Theo đúng khoá của report/230_ACTION_PROBE_FGRB_CHO_CHAT_LAM_27_9.md.
 Chạy trên Kaggle T4 (không cần internet ngoài việc nạp Qwen2.5-VL-3B-Instruct từ HuggingFace,
 nếu dataset không kèm sẵn cache model).
 

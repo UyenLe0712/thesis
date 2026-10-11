@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-PATA C2 · P1 — likelihood 7 nhánh trên val400 (harness/tai_lieu_2026-09-25/204 §4.2).
+PATA C2 · P1 — likelihood 7 nhánh trên val400 (report/204 §4.2).
 
 Câu hỏi: speaker S (đóng băng) có dùng được thông tin VÙNG không, và thiếu ROUTING hay thiếu PIXEL?
 Cùng prompt, cùng câu vàng, chỉ đổi ảnh thứ hai:

@@ -1,6 +1,6 @@
 # TAGE — kiểm thử trên val C1 (file 265, 2/10/2026)
 
-Thiết kế, ngưỡng và lý do: `harness/tai_lieu_2026-10-02/265_ACTION_KIEM_THU_TAGE_VAL_2_10_checked.md`.
+Thiết kế, ngưỡng và lý do: `report/265_ACTION_KIEM_THU_TAGE_VAL_2_10_checked.md`.
 Runbook này chỉ là các ô chạy. ⚠️ Lượt 2/10 chạy bằng **`harness/runbook/colab_tage_val_l4.md`** (Kaggle hết hạn
 mức); bản này giữ cho lượt sau. **Số ra là số val — không trích vào luận văn.**
 

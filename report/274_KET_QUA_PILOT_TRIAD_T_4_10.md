@@ -3,7 +3,7 @@
 > **Bản bàn giao 4/10 tối:** POA xong · POB đã qua lượt thử (TEST=True) và đang/sắp chạy commit Kaggle ·
 > POC/P1 chưa chạy. Việc của phiên sau ở **§6b**.
 > Đọc một mình là đủ, không cần mở log. Mọi số ở đây là số **val C1** (249 click), cấm trích ra báo.
-> Action gốc: `harness/tai_lieu_2026-10-04/273_ACTION_PILOT_TRIAD_T_P0_P1_4_10.md`. Đường dẫn báo cáo trong action là máy Mac
+> Action gốc: `report/273_ACTION_PILOT_TRIAD_T_P0_P1_4_10.md`. Đường dẫn báo cáo trong action là máy Mac
 > (`/Users/P836901/...`); máy WSL không có, nên báo cáo nằm ở đây.
 
 ## 0. Tóm tắt một đoạn

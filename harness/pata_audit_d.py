@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-PATA C2 · P0 bước 5 — audit MÙ 100 cặp (G, D) thật (harness/tai_lieu_2026-09-25/204 §4.1). 0 GPU, WSL.
+PATA C2 · P0 bước 5 — audit MÙ 100 cặp (G, D) thật (report/204 §4.1). 0 GPU, WSL.
 
     ~/.venvs/thesis/bin/python harness/pata_audit_d.py build            # lần 1: dựng 100 mẫu + trang gán
     ~/.venvs/thesis/bin/python harness/pata_audit_d.py doc              # đọc nhãn, tính ba tỉ lệ, in cổng

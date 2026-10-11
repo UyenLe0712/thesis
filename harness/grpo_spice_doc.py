@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Đọc kết quả GRPO thưởng SPICE (Phụ lục B của harness/tai_lieu_2026-09-29/253_…md), 0 GPU.
+"""Đọc kết quả GRPO thưởng SPICE (Phụ lục B của report/253_…md), 0 GPU.
 
 Đặt pred_ck{250,500}.jsonl + score_ck{250,500}_raw.jsonl vào runs/grpo_spice/ rồi chạy
     ~/.venvs/thesis/bin/python harness/grpo_spice_doc.py

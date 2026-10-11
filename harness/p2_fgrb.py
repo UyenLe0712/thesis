@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """P2 — FGRB: bottleneck mềm action/role/zone tiêm vào S1/101 đóng băng, sinh câu trên val.
 
-Theo harness/tai_lieu_2026-09-27/230_ACTION_PROBE_FGRB_CHO_CHAT_LAM_27_9.md mục P2, với hai điểm
+Theo report/230_ACTION_PROBE_FGRB_CHO_CHAT_LAM_27_9.md mục P2, với hai điểm
 đã quyết SAU khi thấy số P1 (khai ở report/207 §9–10):
   · zone dùng lưới 3×3 (`zone_coarse`), không dùng 31 cách viết của regex gốc;
   · ba head khởi tạo từ head P1 đã khớp (harness/fgrb_p1_heads_zone3x3.pt), train tiếp ở lr 1e-4;

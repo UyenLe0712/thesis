@@ -1,6 +1,6 @@
 # P2 — FGRB sinh câu trên val — Kaggle T4 ×2, 0 đồng — viết 28/9/2026
 
-Tài liệu gốc: `harness/tai_lieu_2026-09-27/230_ACTION_PROBE_FGRB_CHO_CHAT_LAM_27_9.md` mục P2. Kết quả
+Tài liệu gốc: `report/230_ACTION_PROBE_FGRB_CHO_CHAT_LAM_27_9.md` mục P2. Kết quả
 P1 và hai quyết định sau P1 (zone lưới 3×3, head khởi tạo từ P1): `report/207` §9–10.
 
 **Lượt này làm gì:** train phần gắn thêm (ba head + codebook + W + cổng u) trên 4.000 bước P1,

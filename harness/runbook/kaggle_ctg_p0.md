@@ -1,6 +1,6 @@
 # CTG-GRPO — P0 trên Kaggle T4 (4/10/2026), chạy TRƯỚC khi thuê A100
 
-Thi hành 276 §4 bước 3 và §8 *P0* (`harness/tai_lieu_2026-10-04/276_ACTION_CTG_GRPO_4_10.md`).
+Thi hành 276 §4 bước 3 và §8 *P0* (`report/276_ACTION_CTG_GRPO_4_10.md`).
 Kaggle T4, **0 đồng**, khoảng **1,5–2 h** hạn mức. Hai phép kiểm:
 
 - **P0(a)** A3 chạy 20 bước: 10 bước → lưu `checkpoint-10` → **chạy tiếp** tới 20. Kiểm luôn việc

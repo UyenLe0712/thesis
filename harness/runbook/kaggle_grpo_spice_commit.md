@@ -1,6 +1,6 @@
 # Pha 2 GRPO SPICE — chạy bằng commit Kaggle, nối 3 lượt (29/9/2026)
 
-Runbook cho Pha 2 của `harness/tai_lieu_2026-09-29/253_ACTION_GRPO_SPICE_S1_29_9_checked.md`.
+Runbook cho Pha 2 của `report/253_ACTION_GRPO_SPICE_S1_29_9_checked.md`.
 Thiết kế lượt train giữ nguyên như 253 §1. Hai chỗ đổi so với bản 253 là cách lưu và cách chạy tiếp,
 không đổi thuật toán.
 

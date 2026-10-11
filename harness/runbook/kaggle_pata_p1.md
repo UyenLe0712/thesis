@@ -1,6 +1,6 @@
 # Runbook PATA C2 · P0 → P1 (0 đồng: WSL + Kaggle T4, ~1 h máy)
 
-Nguồn: `harness/tai_lieu_2026-09-25/204_…` §4.1–4.2. Mục đích: phân biệt **thiếu routing** hay **thiếu
+Nguồn: `report/204_…` §4.1–4.2. Mục đích: phân biệt **thiếu routing** hay **thiếu
 pixel** trước khi viết bất kỳ kiến trúc thay thế nào (RCA hay dual-view). ⛔ Không train, không A100, không
 val600, không mở test. Dừng ngay khi một cổng không đạt.
 

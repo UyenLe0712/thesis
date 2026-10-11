@@ -84,7 +84,7 @@ Phép kiểm toàn vẹn bắt buộc:
 - `loc_g` hit đĩa 193/249;
 - `loc_d` hit đĩa 190/249.
 
-Lưu ý: ảnh C1 có thể không nằm vật lý trong clone. Cách dựng ảnh/dữ liệu Kaggle nằm trong `harness/tai_lieu_2026-10-02/265_ACTION_KIEM_THU_TAGE_VAL_2_10_checked.md` và các runbook C1.
+Lưu ý: ảnh C1 có thể không nằm vật lý trong clone. Cách dựng ảnh/dữ liệu Kaggle nằm trong `report/265_ACTION_KIEM_THU_TAGE_VAL_2_10_checked.md` và các runbook C1.
 
 ### 3.2 ck500 và locator
 

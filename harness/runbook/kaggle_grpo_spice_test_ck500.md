@@ -1,6 +1,6 @@
 # Chấm TEST một lần cho `checkpoint-500` của GRPO SPICE (action 258, 1/10/2026)
 
-Bản chạy được của `harness/tai_lieu_2026-10-01/258_ACTION_CHAM_TEST_CK500_extracted.md` (chép từ 5 ảnh). Luật đọc giữ
+Bản chạy được của `report/258_ACTION_CHAM_TEST_CK500_extracted.md` (chép từ 5 ảnh). Luật đọc giữ
 nguyên **258 §0**, khoá trước khi có số. Mốc: S1/101 trên 4.463 bước click (exec 59,11 · SPICE 44,37 ·
 action_ok 94,35). ⛔ Chấm **một lần**: không xem số rồi sinh lại, đổi điểm lưu hay đổi nhiệt độ.
 

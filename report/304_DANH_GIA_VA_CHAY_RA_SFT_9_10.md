@@ -1,6 +1,6 @@
 # 304 — Đánh giá RA-SFT trước GPU + trạng thái lượt chạy (9/10/2026)
 
-Action: `304_ACTION_RA_SFT_TU_CK500_VA_KHO_RONG_9_10_double_checked.md` (gốc kho).
+Action: `report/304_ACTION_RA_SFT_TU_CK500_VA_KHO_RONG_9_10_double_checked.md`.
 Script chép từ Phụ lục A ra `_scripts/304/ra-sft-script/` (md5 `ra_*.py` khác bản Mac vì chép lại từ
 markdown; `grpo_spice.py`, `build_branch_data.py`, `train_tru_val.jsonl`, hai tệp pred ck500 trùng md5 của action).
 

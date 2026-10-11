@@ -14,7 +14,7 @@ Học viên: Lê Đoàn Phương Uyên · GVHD: TS. Nguyễn Hồng Bửu Long �
 
 | Thư mục | Chứa gì | Ghi chú |
 |---|---|---|
-| `harness/` | **Toàn bộ mã**: dựng dữ liệu, huấn luyện, sinh câu, chấm điểm. Runbook Colab/Kaggle nằm ở `harness/runbook/`; tài liệu action theo ngày ở `harness/tai_lieu_<ngày>/` | Script giải đường dẫn theo `__file__` nên di chuyển cả thư mục thì an toàn; **đừng đổi cấu trúc bên trong** |
+| `harness/` | **Toàn bộ mã**: dựng dữ liệu, huấn luyện, sinh câu, chấm điểm. Runbook Colab/Kaggle nằm ở `harness/runbook/`; tài liệu action/brief đánh số nằm chung trong `report/` | Script giải đường dẫn theo `__file__` nên di chuyển cả thư mục thì an toàn; **đừng đổi cấu trúc bên trong** |
 | `report/` | Báo cáo tiến độ, bản đăng ký trước, sổ kê khai, ghi chú tài liệu | Đánh số tăng dần; số lớn hơn = mới hơn |
 | `runs/` | Kết quả chấm điểm (`preds_*.jsonl`, `score_*.json`, `score_*_raw.jsonl`) | `runs/gate_a/` = kết quả cổng chặn bộ định vị |
 | `thesis/` | **Luận văn LaTeX** → `thesis/main.pdf` | `./build.sh` để biên dịch; xem `thesis/README.md` |

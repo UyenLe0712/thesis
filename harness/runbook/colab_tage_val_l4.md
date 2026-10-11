@@ -1,7 +1,7 @@
 # TAGE trên Colab L4 — kiểm thử val C1 (file 265, 2/10/2026)
 
 Thay cho `kaggle_tage_val.md` vì Kaggle T4 tuần này chỉ còn ~1 h. Thiết kế, ngưỡng, lý do:
-`harness/tai_lieu_2026-10-02/265_ACTION_KIEM_THU_TAGE_VAL_2_10_checked.md`. **Số val — không trích.**
+`report/265_ACTION_KIEM_THU_TAGE_VAL_2_10_checked.md`. **Số val — không trích.**
 
 Máy: **L4**, bf16. V1 ước lượng ~7 h (chưa đo; lượt `TEST` in `s/mẫu` thật). Một phiên chạy trọn V1, không
 phải tách commit như Kaggle. Đơn vị/giờ của L4: xem ở *Change runtime type* lúc bấm, đừng lấy số nhớ.

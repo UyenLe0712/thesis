@@ -2,7 +2,7 @@
 
 Nguồn: `runs/ctg/p0/p0b.json` (75 câu nhắc C1 có lớp vàng scroll/type/back, log P(token đầu là động từ
 chạm) và logp/token câu chuẩn, cho S1 · ck250 · ck500) · `runs/grpo_spice/pred_ck{250,500}.jsonl` ·
-`runs/c1/c1_mau.jsonl`. 0 GPU. **Số val, cấm trích.** Action gốc: `harness/tai_lieu_2026-10-04/276_…`.
+`runs/c1/c1_mau.jsonl`. 0 GPU. **Số val, cấm trích.** Action gốc: `report/276_…`.
 
 ## 1. Luật cũ trượt vì lấy trung bình của LOG
 

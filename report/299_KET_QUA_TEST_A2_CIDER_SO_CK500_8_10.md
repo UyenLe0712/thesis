@@ -1,6 +1,6 @@
 # 299 — Kết quả test: GRPO thưởng CIDEr-D (A2) so với ck500 (8/10/2026)
 
-Action gốc: `harness/tai_lieu_2026-10-07/299_ACTION_CHAM_TEST_A2_CIDER_SO_CK500_7_10.md`.
+Action gốc: `report/299_ACTION_CHAM_TEST_A2_CIDER_SO_CK500_7_10.md`.
 Số dưới đây là **số test** (4.463 bước chạm), trích được.
 
 ## 1. Kết luận

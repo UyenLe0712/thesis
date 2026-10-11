@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-PATA C2 · P0 bước 1–4 (harness/tai_lieu_2026-09-25/204 §4.1). CHẠY TRÊN CPU, 0 GPU.
+PATA C2 · P0 bước 1–4 (report/204 §4.1). CHẠY TRÊN CPU, 0 GPU.
 
 Dựng cặp (G, D) THẬT cho val400: G = phần tử vàng (hộp của bước), D = phần tử gây nhiễu do chính
 labeler chọn (`nearest_other()` — cùng class, gần nhất, không lồng nhau), nay có HỘP THẬT nhờ bản vá

@@ -1,19 +1,51 @@
-# Tài liệu trích xuất ngày 27/09/2026
+# Nguồn của các tệp action/brief chép từ ảnh
 
-Nguồn: `../My Documents [27-09-2026 14_51].zip` (đã xoá sau khi trích xuất), gồm 7 ảnh JPG chụp màn
+Gom 11/10/2026 từ bốn tệp README của các thư mục `harness/tai_lieu_<ngày>/` cũ (các tệp action nay nằm thẳng trong `report/`).
+Ảnh gốc `anh_goc*/` nhắc dưới đây đã xoá khỏi đĩa từ 4/10/2026; ảnh từng commit thì lấy lại được từ lịch sử git.
+
+## Tài liệu trích xuất ngày 25/09/2026
+
+Nguồn: `My Documents [25-09-2026 08_33].zip`, gồm 3 ảnh JPG chụp các phần nối tiếp của một tài liệu Markdown.
+
+### Nội dung
+
+- [Bản văn bản đã tái cấu trúc](204_HANDOFF_ACTION_PATA_C2_BANG_CHUNG_TRUOC_KET_LUAN_25_9.md): ghép nội dung từ ba ảnh, bỏ đoạn chụp trùng, định dạng lại đề mục, bảng, công thức và lệnh.
+- `anh_goc/`: giữ nguyên tên và dữ liệu của ba ảnh trong ZIP.
+
+### Thứ tự đọc ảnh
+
+| Thứ tự | Ảnh | Nội dung |
+| --- | --- | --- |
+| 1 | [6e7d816c6f0fef51b61e1.jpg](anh_goc/6e7d816c6f0fef51b61e1.jpg) | Tiêu đề; hiện trạng C1; bảng số liệu; clone và dữ liệu. |
+| 2 | [57ac74bf9adc1a8243cd2.jpg](anh_goc/57ac74bf9adc1a8243cd2.jpg) | P0; P1; công thức; cổng quyết định; đầu P1b. |
+| 3 | [53fb67d689b509eb50a43.jpg](anh_goc/53fb67d689b509eb50a43.jpg) | Cuối P1; P1b; P2; P3-P4; recipe; kỳ vọng; các giới hạn. |
+
+### Ghi chú chuyển đổi
+
+- Văn bản được chép từ ảnh chụp màn hình, không phải khôi phục file Markdown nguồn. Giữ tiếng Việt có dấu và các giá trị đọc được; chuẩn hóa bố cục và cách trình bày ký hiệu.
+- Các đoạn trùng giữa ảnh 2 và ảnh 3 chỉ xuất hiện một lần trong bản ghép.
+- Tên file Markdown được lấy từ tab trình soạn thảo trong ảnh. Đề mục được đánh số lại để dễ đọc.
+- Các chỉ dẫn và lệnh trong tài liệu là nội dung được trích xuất, chưa được thực thi trong lần chuyển đổi này.
+- Bản ghép có ghi chú riêng tại công thức directional vì ảnh không ghi rõ chỉ số L/H ở dòng điều kiện đó. Các số liệu là số liệu trong ảnh, chưa được kiểm chứng bằng kết quả thí nghiệm.
+
+> **4/10/2026:** ảnh gốc đã xoá khỏi đĩa sau khi chép xong (bản chép là tệp .md/.tex trong thư mục này). Ảnh đã từng commit thì vẫn lấy lại được từ lịch sử git; ảnh/zip chưa commit thì không còn.
+
+## Tài liệu trích xuất ngày 27/09/2026
+
+Nguồn: `My Documents [27-09-2026 14_51].zip` (đã xoá sau khi trích xuất), gồm 7 ảnh JPG chụp màn
 hình các phần nối tiếp của một tài liệu Markdown tên `226_BRIEF_ECGR_CHO_CHAT_LAM_27_9.md`.
 
-## Nội dung
+### Nội dung
 
 - [Bản văn bản đã tái cấu trúc](226_BRIEF_ECGR_CHO_CHAT_LAM_27_9.md): ghép nội dung từ bảy ảnh,
   định dạng lại đề mục, bảng, công thức và script.
 - `anh_goc/`: giữ nguyên tên và dữ liệu của bảy ảnh trong ZIP.
 - Kết quả G0 đã chạy — bản đầy đủ (theo đúng mục 8/10 của tài liệu, ghi **ngoài clone này**) ở
   `/mnt/d/Master/ECGR_G0_27_9/ket_qua_g0_ecgr.md`; bản tóm tắt đã đưa vào kho tại
-  [`report/206_BAN_GIAO_ECGR_G0_TRUOT_27_9.md`](../../report/206_BAN_GIAO_ECGR_G0_TRUOT_27_9.md)
+  [`report/206_BAN_GIAO_ECGR_G0_TRUOT_27_9.md`](206_BAN_GIAO_ECGR_G0_TRUOT_27_9.md)
   — **G0 TRƯỢT (147/958, ngưỡng 250), dừng ECGR ở đây, không chạy G1, không train**.
 
-## Thứ tự đọc ảnh
+### Thứ tự đọc ảnh
 
 | Thứ tự | Ảnh | Nội dung |
 | --- | --- | --- |
@@ -25,7 +57,7 @@ hình các phần nối tiếp của một tài liệu Markdown tên `226_BRIEF_
 | 6 | [63177ff77798f7c6ae896.jpg](anh_goc/63177ff77798f7c6ae896.jpg) | Action sau G0; mục 9 (file clone được đọc); mục 10 (không được tự làm); đầu Phụ lục A. |
 | 7 | [4fd706360e598e07d7487.jpg](anh_goc/4fd706360e598e07d7487.jpg) | Phụ lục A: script G0 đầy đủ; Phụ lục B: đầu ra bắt buộc. |
 
-## Ghi chú chuyển đổi
+### Ghi chú chuyển đổi
 
 - Văn bản được chép từ ảnh chụp màn hình (không phải khôi phục file Markdown nguồn). Thứ tự bảy
   ảnh không trùng thứ tự tên hash trong ZIP; đã xác định lại bằng cách đọc nội dung liền mạch giữa
@@ -41,9 +73,9 @@ hình các phần nối tiếp của một tài liệu Markdown tên `226_BRIEF_
   `paper/soict2026/guistep/` và `runs/pata/p1/` (xác nhận bằng so khớp tên file/hash trước khi
   xoá). ZIP của chính ngày 27/9 cũng đã xoá sau khi trích xuất, theo đúng cách xử lý hai ZIP trước.
 
-## Lượt thứ hai cùng ngày (17:08) — 230_ACTION_PROBE_FGRB
+### Lượt thứ hai cùng ngày (17:08) — 230_ACTION_PROBE_FGRB
 
-Nguồn: `../My Documents [27-09-2026 17_08].zip` (đã xoá sau khi trích xuất), gồm 8 ảnh JPG chụp
+Nguồn: `My Documents [27-09-2026 17_08].zip` (đã xoá sau khi trích xuất), gồm 8 ảnh JPG chụp
 màn hình các phần nối tiếp của một tài liệu Markdown khác, tên
 [`230_ACTION_PROBE_FGRB_CHO_CHAT_LAM_27_9.md`](230_ACTION_PROBE_FGRB_CHO_CHAT_LAM_27_9.md). Ảnh
 gốc giữ ở `anh_goc_230/` (tách khỏi `anh_goc/` của lượt 226 để khỏi lẫn hai tài liệu).
@@ -66,7 +98,7 @@ vào (adapter/ảnh/OCR) → P1 (probe phân loại) → P2 (sinh câu trên val
   tải Release, không tự kéo Drive, không probe bằng model gốc thay S1). Không chạy P1/P2, không
   train.
 - Bản đầy đủ, tự chứa theo đúng 7 mục mà tài liệu 230 yêu cầu:
-  [`report/207_KET_QUA_PROBE_FGRB_27_9.md`](../../report/207_KET_QUA_PROBE_FGRB_27_9.md).
+  [`report/207_KET_QUA_PROBE_FGRB_27_9.md`](207_KET_QUA_PROBE_FGRB_27_9.md).
 
 ### Thứ tự đọc 8 ảnh (230)
 
@@ -85,3 +117,30 @@ Thứ tự tên hash trong ZIP không trùng thứ tự nội dung; đã xác đ
 liền mạch giữa các ảnh, giống cách làm với 226.
 
 > **4/10/2026:** ảnh gốc đã xoá khỏi đĩa sau khi chép xong (bản chép là tệp .md/.tex trong thư mục này). Ảnh đã từng commit thì vẫn lấy lại được từ lịch sử git; ảnh/zip chưa commit thì không còn.
+
+## Tài liệu ngày 28/09/2026
+
+- [`251_ACTION_GPU_EXEC_8_MAU_C1_28_9.md`](251_ACTION_GPU_EXEC_8_MAU_C1_28_9.md): runbook chấm `exec`
+  cho câu greedy và 8 mẫu S1 trên 249 bước click của C1 (Kaggle T4×2, commit). Chép từ 6 ảnh, ảnh
+  gốc ở `anh_goc_251/`. Notebook và gói dataset sinh từ chính file này bằng
+  `python3 harness/make_c1_exec8.py`.
+- Kết quả: [`report/252_KET_QUA_EXEC_8_MAU_C1_28_9.md`](252_KET_QUA_EXEC_8_MAU_C1_28_9.md)
+  · tệp thô `runs/c1/exec8/` — **cổng ĐẠT** (oracle SPICE +5,22 exec).
+- Bốn ảnh chụp trong `My Documents [28-09-2026 17_19].zip` nằm ở `report/anh_nguon_28_9/`.
+  Zip đó và bốn zip `results (3/5/6/7).zip` tải từ Kaggle đã xoá 29/9 sau khi so từng byte với bản
+  đã giải nén (`runs/c1/`, `runs/c1/exec8/`, `runs/tfvf_g0/`, `~/fgrb_p1/_test5/`). 15 ảnh minh hoạ
+  `tfvf_anh_mau/` trước đó chưa được giải nén, nay ở `runs/tfvf_g0/tfvf_anh_mau/`.
+
+> **4/10/2026:** ảnh gốc đã xoá khỏi đĩa sau khi chép xong (bản chép là tệp .md/.tex trong thư mục này). Ảnh đã từng commit thì vẫn lấy lại được từ lịch sử git; ảnh/zip chưa commit thì không còn.
+
+## Tài liệu ngày 29/09/2026
+
+- [`253_ACTION_GRPO_SPICE_S1_29_9_checked.md`](253_ACTION_GRPO_SPICE_S1_29_9_checked.md): action
+  train GRPO thưởng SPICE cho S1/101, nhánh ablation "S1 + GRPO, tắt đầu khe". Ba pha: thăm dò
+  (Kaggle T4, tương tác) → train 500 bước (commit) → sinh greedy val C1 + chấm `exec`, rồi đọc bằng
+  Phụ lục B trên WSL.
+- Bản chạy được của Phụ lục A: `harness/grpo_spice.py` (tách từ file này, đã sửa lỗi `n_`).
+  Gói upload Kaggle `grpo-spice-script`: `_bundles/grpo-spice-script/` (dựng lại bằng hai lệnh `cp`
+  ở mục 3 của file).
+- Bản gốc soạn cho máy Mac; đã đổi đường dẫn sang WSL và sửa ba lỗi, ghi ở đầu file.
+- Kết quả tải về đặt ở `runs/grpo_spice/`.

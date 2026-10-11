@@ -1,7 +1,7 @@
 # 254 — Tình trạng GRPO thưởng SPICE cho S1/101 (30/9/2026, tối)
 
 Tệp bàn giao, đọc một mình là hiểu. Viết cho phiên chat kế tiếp.
-Nguồn gốc: action `harness/tai_lieu_2026-09-29/253_ACTION_GRPO_SPICE_S1_29_9_checked.md`.
+Nguồn gốc: action `report/253_ACTION_GRPO_SPICE_S1_29_9_checked.md`.
 Số trong tệp này đều là **số val C1, cấm trích ra báo**.
 
 ## 1. Đang làm gì

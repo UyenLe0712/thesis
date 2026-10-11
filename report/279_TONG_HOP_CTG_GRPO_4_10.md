@@ -1,7 +1,7 @@
 # 279 — Tổng hợp CTG-GRPO tới 4/10/2026: đã làm gì, ra số gì, làm gì tiếp
 
 File một chỗ cho toàn bộ nhánh CTG-GRPO. Chi tiết số đo ở `report/278`, đặc tả gốc ở
-`harness/tai_lieu_2026-10-04/276_ACTION_CTG_GRPO_4_10.md`. **Mọi số dưới đây là số val hoặc số thăm dò,
+`report/276_ACTION_CTG_GRPO_4_10.md`. **Mọi số dưới đây là số val hoặc số thăm dò,
 cấm trích vào luận văn.** Chưa có điểm test nào của CTG.
 
 ---
@@ -264,7 +264,7 @@ Mô hình chính giữ ck500, khai tác hại ở scroll/back. CTG vào luận v
 
 | loại | tệp |
 |---|---|
-| đặc tả | `harness/tai_lieu_2026-10-04/276_ACTION_CTG_GRPO_4_10.md` |
+| đặc tả | `report/276_ACTION_CTG_GRPO_4_10.md` |
 | mã | `harness/ctg_grpo.py` · `harness/ctg_doc.py` · `harness/kiem_tuong_duong_ctg.py` |
 | runbook | `harness/runbook/kaggle_ctg_p0.md` · `kaggle_ctg_dich.md` · `colab_ctg_toi_uu.md` · `colab_ctg_train.md` · `kaggle_ctg_val.md` |
 | phân tích | `report/278_PHAN_TICH_P0_CTG_4_10.md` |

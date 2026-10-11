@@ -1,7 +1,7 @@
 # 206 — Bàn giao: ECGR đề xuất 27/9 ⇒ G0 TRƯỢT, DỪNG ngay ở cổng đầu
 
-Nguồn: `harness/tai_lieu_2026-09-27/226_BRIEF_ECGR_CHO_CHAT_LAM_27_9.md` (chép từ 7 ảnh, ZIP nguồn
-đã xoá sau khi trích xuất — xem `harness/tai_lieu_2026-09-27/README.md`). Chi phí: 0 GPU, ~1 giây
+Nguồn: `report/226_BRIEF_ECGR_CHO_CHAT_LAM_27_9.md` (chép từ 7 ảnh, ZIP nguồn
+đã xoá sau khi trích xuất — xem `report/NGUON_TAI_LIEU_ACTION.md`). Chi phí: 0 GPU, ~1 giây
 CPU.
 
 ## 1. Đề xuất là gì
@@ -67,15 +67,15 @@ hướng đã cân nhắc và loại trước khi tốn GPU.
 
 | việc | đường dẫn |
 |---|---|
-| Brief gốc (chép từ 7 ảnh) | `harness/tai_lieu_2026-09-27/226_BRIEF_ECGR_CHO_CHAT_LAM_27_9.md` |
-| Ảnh gốc | `harness/tai_lieu_2026-09-27/anh_goc/` |
+| Brief gốc (chép từ 7 ảnh) | `report/226_BRIEF_ECGR_CHO_CHAT_LAM_27_9.md` |
+| Ảnh gốc | `harness/tai_lieu_2026-09-27/anh_goc/` (đã xoá) |
 | Kết quả G0 đầy đủ (bảng, phân rã, 20 ví dụ, script) | `/mnt/d/Master/ECGR_G0_27_9/ket_qua_g0_ecgr.md` (ngoài kho git, theo đúng mục 6/8 của brief gốc) |
 | Script G0 | verbatim trong hai file trên; không thêm bản thứ ba |
 
 ## 5. Dọn dẹp cùng lượt (không liên quan ECGR, gộp chung vì cùng phiên)
 
 - Xoá 4 ZIP "My Documents"/`p1_out.zip` đã xử lý xong: nội dung đã nằm ở
-  `harness/tai_lieu_2026-09-25/anh_goc/`, `paper/soict2026/guistep/`, `runs/pata/p1/`.
+  `harness/tai_lieu_2026-09-25/anh_goc/` (đã xoá), `paper/soict2026/guistep/`, `runs/pata/p1/`.
 - **Vá lỗi `.gitignore`:** dòng `runs/noisuy/*/adapter_model.safetensors   # ở GitHub Release …` có
   comment nối trực tiếp sau pattern trên cùng dòng — `.gitignore` không có cú pháp comment cuối
   dòng, nên toàn bộ chuỗi kể cả phần `# ở GitHub Release …` bị hiểu là một phần của pattern, và
