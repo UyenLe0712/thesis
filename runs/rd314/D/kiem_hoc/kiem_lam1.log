@@ -1,0 +1,40 @@
+[chia] 830 cặp → đã-thấy 200 · giữ-riêng 200 · cải thiện 100/100
+[cấu hình] epoch 5 · lr 5e-05 · β 0.1 · λ_nll 1.0 · accum 8 · đo ở epoch [1, 3, 5]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+  [ref] 100/400 · 2.6 phút
+  [ref] 200/400 · 5.3 phút
+  [ref] 300/400 · 7.9 phút
+  [ref] 400/400 · 10.5 phút
+[đo] epoch 0 · ĐÃ-THẤY acc 0.000 marg +0.000 lp_c -0.260 lp_r -0.367 · GIỮ-RIÊNG acc 0.000 marg +0.000 lp_c -0.261 · ‖B‖ 0.0000 · 22.2 phút
+[train] 125 bước optimizer
+  bước 5/125 · epoch 1 · loss 1.097 · marg cặp cuối +0.022 · 26.4 phút
+  bước 10/125 · epoch 1 · loss 0.762 · marg cặp cuối +0.144 · 30.5 phút
+  bước 15/125 · epoch 1 · loss 0.812 · marg cặp cuối -0.009 · 34.6 phút
+  bước 20/125 · epoch 1 · loss 0.849 · marg cặp cuối -0.157 · 38.7 phút
+  bước 25/125 · epoch 1 · loss 1.049 · marg cặp cuối +0.384 · 43.0 phút
+[đo] epoch 1 · ĐÃ-THẤY acc 0.910 marg +0.414 lp_c -0.230 lp_r -0.383 · GIỮ-RIÊNG acc 0.560 marg +0.009 lp_c -0.258 · ‖B‖ 0.6452 · 54.9 phút
+  bước 30/125 · epoch 2 · loss 0.884 · marg cặp cuối +0.363 · 59.1 phút
+  bước 35/125 · epoch 2 · loss 0.908 · marg cặp cuối +1.372 · 63.2 phút
+  bước 40/125 · epoch 2 · loss 0.722 · marg cặp cuối +0.922 · 67.4 phút
+  bước 45/125 · epoch 2 · loss 0.739 · marg cặp cuối +0.808 · 71.6 phút
+  bước 50/125 · epoch 2 · loss 1.033 · marg cặp cuối +0.242 · 75.7 phút
+  bước 55/125 · epoch 3 · loss 0.762 · marg cặp cuối +2.388 · 79.9 phút
+  bước 60/125 · epoch 3 · loss 0.711 · marg cặp cuối +0.122 · 84.1 phút
+  bước 65/125 · epoch 3 · loss 0.704 · marg cặp cuối +4.581 · 88.2 phút
+  bước 70/125 · epoch 3 · loss 0.243 · marg cặp cuối +15.286 · 92.4 phút
+  bước 75/125 · epoch 3 · loss 0.312 · marg cặp cuối +10.578 · 96.6 phút
+[đo] epoch 3 · ĐÃ-THẤY acc 0.990 marg +8.290 lp_c -0.072 lp_r -1.130 · GIỮ-RIÊNG acc 0.600 marg +1.130 lp_c -0.358 · ‖B‖ 1.4487 · 108.6 phút
+  bước 80/125 · epoch 4 · loss 0.521 · marg cặp cuối +4.452 · 112.8 phút
+  bước 85/125 · epoch 4 · loss 0.294 · marg cặp cuối +10.946 · 117.0 phút
+  bước 90/125 · epoch 4 · loss 0.360 · marg cặp cuối +9.560 · 121.2 phút
+  bước 95/125 · epoch 4 · loss 0.301 · marg cặp cuối +10.616 · 125.4 phút
+  bước 100/125 · epoch 4 · loss 0.203 · marg cặp cuối +17.115 · 129.6 phút
+  bước 105/125 · epoch 5 · loss 0.590 · marg cặp cuối +2.797 · 133.8 phút
+  bước 110/125 · epoch 5 · loss 0.486 · marg cặp cuối +4.791 · 137.9 phút
+  bước 115/125 · epoch 5 · loss 0.279 · marg cặp cuối +11.333 · 142.1 phút
+  bước 120/125 · epoch 5 · loss 0.332 · marg cặp cuối +9.404 · 146.3 phút
+  bước 125/125 · epoch 5 · loss 0.435 · marg cặp cuối +6.551 · 150.5 phút
+[đo] epoch 5 · ĐÃ-THẤY acc 1.000 marg +12.332 lp_c -0.041 lp_r -1.575 · GIỮ-RIÊNG acc 0.610 marg +1.602 lp_c -0.457 · ‖B‖ 1.5536 · 162.5 phút
+[kết luận] CẶP CÓ TÍN HIỆU: học thuộc được và tổng quát hoá (acc giữ-riêng ≥ 0,60) ⇒ lượt 52 bước cũ thiếu bước; đáng chạy GA-DPO đủ 830 cặp nhiều epoch rồi mới chấm

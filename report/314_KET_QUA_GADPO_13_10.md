@@ -54,5 +54,56 @@ Dòng kiểm token trả lời của lượt 2 đúng (`'Click on the search but
 | GA-DPO lượt 2 (lr 5e-5) | acc 0,544, dưới luật chấm, không chấm | — |
 
 ⇒ **Đóng action 314.** Mô hình giữ **ck500** (+ luật ghép R3/ACE khi cần số chữ, `report/304` §4–5).
+(Cập nhật 13/10 tối: phép kiểm ở §5 xác nhận hai lượt trên thiếu bước, nhưng cặp *cải thiện* không có tín hiệu chung ⇒ vẫn đóng.)
 Cùng mẫu hình với TAGE, CW-RA, RAFT: các cách train tiếp hoặc sửa câu trên ck500 đến nay chưa cách nào vượt ck500.
 Đối chứng `gold` (`ga_dpo.py --kieu gold`) mà action §7 đề xuất chỉ cần khi có nhánh thắng ⇒ không chạy.
+
+## 5. Phép kiểm "thiếu bước hay cặp không có tín hiệu" (13/10 tối, Colab L4, 164 phút)
+
+Runbook `harness/runbook/colab_kiem_hoc_dpo_314.md`, notebook `_scripts/314/colab_gadpo/kiem_hoc_dpo_314_colab.ipynb`,
+script `_scripts/314/ds_gadpo314/kiem_hoc_dpo.py`. Tách 830 cặp theo câu nhắc thành 200 cặp **đã thấy** (train) + 200
+cặp **giữ riêng** (không train), mỗi tập 100 cải thiện + 100 giữ. Train 5 epoch trên 200 cặp, lr 5e-5, accum 8
+⇒ 125 bước, β 0,1, λ_nll 1,0, nền và LoRA như `ga_dpo.py`. Đo ở chế độ eval. Luật đọc viết trước khi chạy (runbook §0).
+
+| epoch | đã thấy: acc | margin | lp chosen | lp rejected | giữ riêng: acc | margin | lp chosen | ‖B‖ |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 0,000* | +0,000 | −0,260 | −0,367 | 0,000* | +0,000 | −0,261 | 0,0000 |
+| 1 | 0,910 | +0,414 | −0,230 | −0,383 | 0,560 | +0,009 | −0,258 | 0,6452 |
+| 3 | 0,990 | +8,290 | −0,072 | −1,130 | 0,600 | +1,130 | −0,358 | 1,4487 |
+| 5 | **1,000** | +12,332 | −0,041 | −1,575 | **0,610** | +1,602 | **−0,457** | 1,5536 |
+
+\* Epoch 0 policy trùng ref (‖B‖ = 0) nên margin đúng bằng 0, acc tính theo margin > 0 nên ra 0. Đây là phép kiểm nạp đúng, đạt.
+
+Dòng `[kết luận]` của script: **CẶP CÓ TÍN HIỆU** (acc đã thấy ≥ 0,80, acc giữ riêng ≥ 0,60).
+
+Đọc:
+- **Khâu train không lỗi.** Học thuộc 200/200 cặp đã thấy. Hai lượt ở §2 (52 bước, mỗi cặp thấy một lần) không học
+  là do **thiếu bước**, không phải do mã.
+- **Tín hiệu chung có nhưng yếu.** Giữ riêng 0,610 = 122/200: hơn đoán mò (p ≈ 0,002, kiểm nhị thức một phía so 0,5)
+  nhưng KTC95 ≈ [0,54; 0,68] nên không tách được khỏi mốc 0,60 của luật. Acc giữ riêng chững lại từ epoch 3
+  (0,56 → 0,60 → 0,61) trong khi tập đã thấy lên 1,00 ⇒ phần lớn những gì học thêm sau epoch 3 là học thuộc.
+- **Dấu hiệu bất lợi:** trên câu nhắc giữ riêng, log-p/token của câu chosen **giảm đều** −0,261 → −0,457. Margin dương
+  lên chủ yếu nhờ đẩy câu rejected xuống mạnh hơn, NLL λ 1,0 không chặn được. Mô hình ít muốn viết câu chosen trên câu
+  nhắc mới hơn trước khi train, nên greedy có thể trôi; chỉ chấm test mới biết.
+- **Tách theo loại cặp (tập giữ riêng, mỗi loại n = 100):**
+
+| epoch | cặp *cải thiện* (chosen = mẫu trội greedy) | cặp *giữ* (chosen = greedy, rejected = mẫu thua) |
+|---|---|---|
+| 1 | 0,46 | 0,66 |
+| 3 | 0,47 | 0,73 |
+| 5 | **0,46** [~0,36; 0,56] | **0,76** [~0,68; 0,84] |
+
+  Toàn bộ 0,61 đến từ cặp *giữ*. Trên cặp *cải thiện*, mô hình **không đoán đúng hơn tung đồng xu** ở epoch nào,
+  dù đã học thuộc 100/100 cặp cải thiện của tập đã thấy.
+
+**Kết luận (theo câu đọc phụ đã viết trong runbook §0 trước khi chạy):** mô hình chỉ học "tránh mẫu thua", không học
+"viết hơn greedy". Tránh mẫu thua không đổi được câu greedy theo hướng tốt, còn log-p câu greedy trên câu nhắc mới lại
+giảm. Mẫu "trội greedy" mà ck500 tự sinh không chứa quy luật chung nào: chúng thắng nhờ dao động lấy mẫu so với một câu
+chuẩn duy nhất. Đây là bằng chứng trực tiếp cho giả thuyết đã nêu ở §3 và ở `report/314_KET_QUA_RAFT_12_10.md` §4,
+nay đã kiểm: cả RAFT lẫn GA-DPO hỏng vì **nguồn cặp**, không vì cách train.
+
+⇒ **Không chạy GA-DPO đủ 830 cặp, không chấm test. Đóng action 314, giữ ck500** (+ R3/ACE khi cần số chữ).
+Hệ quả cho các hướng sau: mọi cách tự cải thiện ck500 bằng chọn mẫu của chính ck500 theo thước câu (RAFT, DPO, best-of-n
+làm đích) đều dùng chung nguồn tín hiệu này, nên không nên mở lại nếu không đổi cách lấy đích.
+
+Tệp: `runs/rd314/D/kiem_hoc/` (`kiem_lam1/kiem_hoc_dpo.jsonl`, `ket_luan.json`, `kiem_lam1.log`, zip gốc).
