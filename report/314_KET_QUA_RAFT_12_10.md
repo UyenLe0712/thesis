@@ -63,3 +63,5 @@ Kaggle chỉ gọi UGround ở 710 bước câu khác ck500 (mỗi GPU 355); bư
 - Lượt 2: chỉ đổi lr lên **5e-5** (đổi sau khi thấy log lượt 1 — phải khai). Ô D-7/D-8/D-9 trong
   `_scripts/314/colab_gadpo/gadpo_314_colab.ipynb`, ghi ra Drive `gadpo314/lr5e5/` và dataset `gadpo-314-adapter-lr5e5`.
   Chỉ chấm trên Kaggle nếu log cho thấy margin dương và tăng, acc > 0,6 từ khoảng bước 20.
+- **Cập nhật 13/10:** lượt 2 acc cao nhất 0,544, margin ≤ +0,064 ⇒ không đạt luật chấm, không chấm.
+  Chi tiết và tổng kết action ở `report/314_KET_QUA_GADPO_13_10.md`.

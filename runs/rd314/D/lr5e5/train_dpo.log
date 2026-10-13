@@ -1,0 +1,11 @@
+[train] kiểu dpo · 830 cặp · β 0.1 · λ_nll 1.0 · lr 5e-05
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+[kiểm] token trả lời: 'Click on the search button.<|im_end|>' (phải là câu chosen + <|im_end|>)
+  bước 10/52 · marg 0.002 · acc 0.444 · lp_c -0.265 · loss 0.958 · 20.6 phút
+  bước 20/52 · marg 0.002 · acc 0.431 · lp_c -0.256 · loss 0.949 · 41.2 phút
+  bước 30/52 · marg -0.012 · acc 0.500 · lp_c -0.271 · loss 0.965 · 61.8 phút
+  bước 40/52 · marg 0.064 · acc 0.512 · lp_c -0.244 · loss 0.934 · 82.4 phút
+  bước 50/52 · marg 0.033 · acc 0.525 · lp_c -0.276 · loss 0.968 · 103.2 phút
+  bước 51/52 · marg 0.050 · acc 0.544 · lp_c -0.275 · loss 0.965 · 107.1 phút
+[xong] /content/dpo_lr5e5/final · log-p/token câu chosen: đầu -0.269 → cuối -0.272
