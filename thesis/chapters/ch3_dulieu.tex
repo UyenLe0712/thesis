@@ -1,7 +1,7 @@
 \chapter{Xây dựng bộ dữ liệu}
 \label{chap:3}
 
-Hiện chưa có bộ dữ liệu công khai nào được dựng sẵn cho tác vụ “nhìn một màn hình rồi viết một câu hướng dẫn cho người đọc”. Chương này trình bày cách chuyển bộ dữ liệu AndroidControl thành tập dữ liệu có nhãn để huấn luyện có giám sát cho tác vụ này. Toàn bộ quá trình được tự động hoá. Chúng tôi không thuê người gán nhãn thêm, và cũng không đưa vào huấn luyện nhãn do một mô hình ngôn ngữ khác sinh ra.
+Hiện chưa có bộ dữ liệu công khai nào được dựng sẵn cho tác vụ “nhìn một màn hình rồi viết một câu hướng dẫn cho người đọc”. Chương này trình bày cách chuyển bộ dữ liệu AndroidControl thành tập dữ liệu có nhãn để huấn luyện có giám sát cho tác vụ này. Toàn bộ quá trình được tự động hoá, không thuê người gán nhãn thêm và cũng không đưa vào huấn luyện nhãn do một mô hình ngôn ngữ khác sinh ra.
 
 Để các chương sau có thể dùng thẳng tên gọi kỹ thuật mà người đọc vẫn dễ theo dõi, Bảng~\ref{tab:3.1} nối ba khái niệm ở tên đề tài với các đối tượng cụ thể được dùng trong chương này.
 
@@ -19,7 +19,7 @@ Hướng dẫn sử dụng & Câu hướng dẫn cho bước kế tiếp; các c
 \end{tabularx}
 \end{table}
 
-Mô hình sinh câu và được chấm điểm dựa trên từng bước riêng lẻ, thay vì tạo một tài liệu hướng dẫn hoàn chỉnh. Cách thiết lập này có hai lý do. Thứ nhất, nhãn tham chiếu của AndroidControl vốn được viết theo từng bước, nên việc đối chiếu với câu chuẩn chỉ khả thi ở phạm vi này. Thứ hai, độ đo ở Chương~\ref{chap:5} đánh giá khả năng của mỗi câu trong việc dẫn dắt một mô hình định vị độc lập tìm ra đúng phần tử cần chạm. Vì tài liệu hướng dẫn cho cả tác vụ được ghép lại từ các câu này (Bảng~\ref{tab:3.1}), chất lượng tổng thể phụ thuộc trực tiếp vào độ chính xác của từng câu riêng biệt.
+Mô hình sinh câu và được chấm điểm dựa trên từng bước riêng lẻ, thay vì tạo một tài liệu hướng dẫn hoàn chỉnh, vì hai lý do. Thứ nhất, nhãn tham chiếu của AndroidControl vốn được viết theo từng bước, nên việc đối chiếu với câu chuẩn chỉ khả thi ở phạm vi này. Thứ hai, độ đo ở Chương~\ref{chap:5} đánh giá khả năng của mỗi câu trong việc dẫn dắt một mô hình định vị độc lập tìm ra đúng phần tử cần chạm. Vì tài liệu hướng dẫn cho cả tác vụ được ghép lại từ các câu này (Bảng~\ref{tab:3.1}), chất lượng tổng thể phụ thuộc trực tiếp vào độ chính xác của từng câu riêng biệt.
 
 Phương pháp đề xuất (Mục~\ref{sec:4.4}) sử dụng ba phần của dữ liệu được chuẩn bị ở chương này. Phần thứ nhất là tập giám sát 64.567 bước, dùng để huấn luyện mô hình tinh chỉnh có giám sát (S1), tức điểm xuất phát của phương pháp. Ở tập này, mô hình chỉ tập trung học cách sinh câu hướng dẫn. Phần thứ hai là các câu nhắc được lấy từ tập huấn luyện sau khi đã loại bỏ tập kiểm định nội bộ (Mục~\ref{sec:3.3}), dùng để dạy tăng cường cho mô hình học với thưởng SPICE. Phần thứ ba là câu chuẩn thuộc cùng tập huấn luyện trên, đóng vai trò như một kho truy hồi câu ví dụ cho ACE, tức thành phần có luật sao chép câu ví dụ khi đồng thuận loại thao tác. Nhãn mô tả, tập cặp và danh sách ứng viên, trình bày từ Mục~\ref{sec:3.5} trở đi, là phần dữ liệu phục vụ cho các hướng đã thử và chỉ được dùng trong Phụ lục A.
 

@@ -161,7 +161,7 @@ Lê Đoàn Phương Uyên
 Đóng góp chính của đề tài, gồm hai thành phần nối tiếp. Thành phần thứ nhất viết câu nháp, sau đó ACE quyết định giữ câu nháp hay thay bằng một câu ví dụ truy hồi được (Mục 4.4).
 
 **Mô hình học với thưởng SPICE**  
-Thành phần thứ nhất của phương pháp đề xuất. Mô hình tinh chỉnh có giám sát (S1) được học tiếp bằng học tăng cường theo nhóm, với phần thưởng là điểm SPICE của câu sinh ra so với câu chuẩn (Mục 4.5).
+Đây là thành phần thứ nhất của phương pháp đề xuất, trong đó mô hình tinh chỉnh có giám sát (S1) được học tiếp bằng học tăng cường theo nhóm, với phần thưởng là điểm SPICE của câu sinh ra so với câu chuẩn (Mục 4.5).
 
 **Câu nháp**  
 Câu mà mô hình học với thưởng SPICE viết cho bước đang xét bằng giải mã tham lam. Câu này được giữ nguyên, trừ khi luật đồng thuận của ACE cho phép thay.
@@ -190,16 +190,16 @@ Nút, ô nhập hoặc mục danh sách mà người dùng đã chạm ở bư�
 Vùng trên màn hình gồm những điểm nằm gần phần tử cần chạm hơn bất kỳ phần tử nào khác. Chúng tôi dùng vùng này để xác định thế nào là trỏ trúng, thay cho một dung sai cố định.
 
 **Tập bước được chấm**  
-Gồm 4.463 bước chạm của tập kiểm tra. Mọi mô hình đều được chấm trên cùng tập này, nên hai mô hình bất kỳ luôn so được với nhau trên đúng những bước như nhau.
+Tập này gồm 4.463 bước chạm của tập kiểm tra và được dùng chung để chấm mọi mô hình, nên hai mô hình bất kỳ luôn so được với nhau trên đúng những bước như nhau.
 
 **Ngưỡng tối đa và ngưỡng tối thiểu của độ đo**  
 Ngưỡng tối đa là điểm mà câu chuẩn đạt được khi đưa đi chấm, dùng làm mốc trên khi đọc điểm của các mô hình. Ngưỡng tối thiểu là điểm mà một câu không mang thông tin gì vẫn đạt được. Mọi điểm số nên được đọc trong khoảng giữa hai mức này.
 
 **Mô hình gốc (Base)**  
-Mô hình Qwen2.5-VL-3B-Instruct khi chưa tinh chỉnh, dùng làm một mốc so sánh. Trong các bảng gọi là Base (Mục 4.7).
+Đây là mô hình Qwen2.5-VL-3B-Instruct khi chưa tinh chỉnh, được dùng làm một mốc so sánh và trong các bảng được gọi là Base (Mục 4.7).
 
 **Mô hình tinh chỉnh có giám sát (S1)**  
-Mô hình gốc được tinh chỉnh có giám sát để sinh thẳng câu hướng dẫn từ câu nhắc, không qua bước trung gian nào. Mô hình này được huấn luyện hai lần với hai hạt giống, 101 và 202; thành phần thứ nhất của phương pháp đề xuất học tiếp từ hạt giống 101. Trong các bảng gọi là S1 (Mục 4.7).
+Mô hình gốc được tinh chỉnh có giám sát để sinh thẳng câu hướng dẫn từ câu nhắc, không qua bước trung gian nào. Mô hình này được huấn luyện hai lần với hai hạt giống, 101 và 202; thành phần thứ nhất của phương pháp đề xuất học tiếp từ hạt giống 101. Trong các bảng, mô hình này được gọi là S1 (Mục 4.7).
 
 **Mốc so sánh và mô hình có can thiệp**  
 Khi đánh giá một can thiệp, mốc so sánh là mô hình không có can thiệp đó, thường là mô hình tinh chỉnh có giám sát, còn mô hình có can thiệp là mô hình được thêm đúng can thiệp ấy. Đại lượng cần đo là chênh lệch điểm giữa hai mô hình.
@@ -222,34 +222,34 @@ Tập 1.567 bước tách từ tập huấn luyện theo tác vụ, chỉ dùng 
 ## Thuật ngữ riêng của đề tài: các hướng đã thử (Phụ lục A)
 
 **Dòng mô tả phần tử (descriptor)**  
-Một dòng có cấu trúc gồm bốn phần, `[vai trò | tên | tọa độ | dấu hiệu phân biệt]`, mà mô hình phải viết ra trước khi viết câu hướng dẫn, gọi tắt là dòng mô tả. Dòng này bị cắt bỏ trước khi chấm. Chỉ các hướng đã thử dùng dòng này, phương pháp đề xuất thì không.
+Đây là một dòng có cấu trúc gồm bốn phần, `[vai trò | tên | tọa độ | dấu hiệu phân biệt]`, mà mô hình phải viết ra trước câu hướng dẫn, gọi tắt là dòng mô tả. Dòng này bị cắt bỏ trước khi chấm và chỉ xuất hiện ở các hướng đã thử, không có trong phương pháp đề xuất.
 
 **Mô hình mô tả phần tử (S2)**  
-Hướng đã thử đầu tiên. Mô hình gốc được tinh chỉnh có giám sát để viết dòng mô tả phần tử rồi mới viết câu, theo nguyên tắc mô tả phân biệt trước, phát ngôn sau (Mục A.1.1).
+Đây là hướng đã thử đầu tiên, trong đó mô hình gốc được tinh chỉnh có giám sát để viết dòng mô tả phần tử rồi mới viết câu, theo nguyên tắc mô tả phân biệt trước, phát ngôn sau (Mục A.1.1).
 
 **Cấu hình mô tả giả và cấu hình mô tả không có tọa độ (S2r, S2-nopoint)**  
-Hai cấu hình đối chứng đã thiết kế cho mô hình mô tả phần tử nhưng không chạy. Cấu hình thứ nhất thay dòng mô tả thật bằng một dòng mô tả giả có cùng độ dài, cấu hình thứ hai bỏ tọa độ khỏi dòng mô tả (Mục A.1.2).
+Đây là hai cấu hình đối chứng được thiết kế cho mô hình mô tả phần tử nhưng chưa được chạy. Cấu hình thứ nhất thay dòng mô tả thật bằng một dòng mô tả giả có cùng độ dài, cấu hình thứ hai bỏ tọa độ khỏi dòng mô tả (Mục A.1.2).
 
 **Giai đoạn học ưu tiên trên dòng mô tả (MIN-DESC)**  
-Giai đoạn huấn luyện thứ hai, học tiếp từ mô hình mô tả phần tử, gọi tắt là giai đoạn học ưu tiên. Mô hình học từ những cặp chuỗi chỉ khác nhau ở dòng mô tả, còn câu hướng dẫn thì giống hệt nhau (Mục A.2.1).
+Đây là giai đoạn huấn luyện thứ hai, học tiếp từ mô hình mô tả phần tử và gọi tắt là giai đoạn học ưu tiên; ở giai đoạn này, mô hình học từ những cặp chuỗi chỉ khác nhau ở dòng mô tả, còn câu hướng dẫn thì giống hệt nhau (Mục A.2.1).
 
 **Mô hình học thêm có giám sát (CE2-S2)**  
-Mô hình dùng để so với giai đoạn học ưu tiên, chỉ học thêm có giám sát với cùng số bước. Mô hình này giúp tách phần cải thiện do mục tiêu ưu tiên mang lại khỏi phần chỉ do mô hình được huấn luyện thêm (Mục A.2.1).
+Đây là mô hình dùng để so với giai đoạn học ưu tiên, chỉ học thêm có giám sát với cùng số bước, nhờ đó tách được phần cải thiện do mục tiêu ưu tiên mang lại khỏi phần chỉ do mô hình được huấn luyện thêm (Mục A.2.1).
 
 **Danh sách ứng viên**  
 Danh sách tối đa 40 phần tử của một màn hình, mỗi dòng gồm tên và tọa độ, dựng sẵn từ cây trợ năng và chữ đọc được trên màn hình, rồi đưa vào câu nhắc của mô hình chọn ứng viên (Mục 3.8).
 
 **Mô hình chọn ứng viên**  
-Hướng đã thử trong đó mô hình chọn phần tử cần chạm từ danh sách ứng viên thay vì tự viết dòng mô tả. Thẻ ghi phần tử được chọn bị cắt bỏ trước khi chấm (Mục A.3.1).
+Đây là hướng đã thử trong đó mô hình chọn phần tử cần chạm từ danh sách ứng viên thay vì tự viết dòng mô tả; thẻ ghi phần tử được chọn bị cắt bỏ trước khi chấm (Mục A.3.1).
 
 **Từ chối chọn**  
-Trường hợp mô hình chọn ứng viên phát thẻ `none` thay vì chọn một phần tử. Từ chối chọn là đúng khi danh sách không chứa phần tử cần chạm, và là sai khi danh sách có chứa phần tử đó.
+Đây là trường hợp mô hình chọn ứng viên phát thẻ `none` thay vì chọn một phần tử; việc từ chối là đúng khi danh sách không chứa phần tử cần chạm, và là sai khi danh sách có chứa phần tử đó.
 
 **Giai đoạn thưởng tọa độ (giai đoạn ba)**  
-Giai đoạn huấn luyện thứ ba, học tiếp từ giai đoạn học ưu tiên bằng học tăng cường. Phần thưởng chủ yếu đặt trên tọa độ ghi trong dòng mô tả chứ không đặt trên câu (Mục A.4.1).
+Đây là giai đoạn huấn luyện thứ ba, học tiếp từ giai đoạn học ưu tiên bằng học tăng cường, với phần thưởng chủ yếu đặt trên tọa độ ghi trong dòng mô tả chứ không đặt trên câu (Mục A.4.1).
 
 **Bộ sửa câu theo vùng cắt (TAGE)**  
-Bộ sửa câu đã thử ở cùng vị trí với ACE nhưng không được giữ lại trong phương pháp đề xuất. Bộ này gồm một bộ định vị đoán điểm cần chạm, một bộ biên tập xem phóng to vùng quanh điểm ấy rồi viết lại câu nháp, và một bộ chọn quyết định có nhận câu sửa hay không (Mục A.7.1).
+Đây là bộ sửa câu đã thử ở cùng vị trí với ACE nhưng không được giữ lại trong phương pháp đề xuất. Bộ này gồm một bộ định vị đoán điểm cần chạm, một bộ biên tập xem phóng to vùng quanh điểm ấy rồi viết lại câu nháp, và một bộ chọn quyết định có nhận câu sửa hay không (Mục A.7.1).
 
 # Trang thông tin luận văn
 
@@ -265,11 +265,11 @@ Cơ sở đào tạo: Trường ĐH Khoa học Tự nhiên, ĐHQG-HCM
 
 ## 1. Tóm tắt nội dung luận văn
 
-Các hệ thống tác tử giao diện hiện nay nhìn ảnh màn hình rồi sinh ra tọa độ để phần mềm tự thao tác. Đề tài này thay đổi mục tiêu đầu ra. Thay vì sinh ra tọa độ cho máy, mô hình sinh ra câu hướng dẫn sử dụng cho người dùng, nói rõ cần chạm vào phần tử nào trên màn hình. Đầu vào vẫn giữ nguyên, gồm trường hợp sử dụng (mục tiêu người dùng đang thực hiện cùng các bước đã làm) và giao diện người dùng (ảnh màn hình đang mở cùng chữ đọc được trên đó).
+Các hệ thống tác tử giao diện hiện nay nhìn ảnh màn hình rồi sinh ra tọa độ để phần mềm tự thao tác, còn đề tài này thay đổi mục tiêu đầu ra: thay vì sinh ra tọa độ cho máy, mô hình sinh ra câu hướng dẫn sử dụng cho người dùng, nói rõ cần chạm vào phần tử nào trên màn hình. Đầu vào vẫn giữ nguyên, gồm trường hợp sử dụng (mục tiêu người dùng đang thực hiện cùng các bước đã làm) và giao diện người dùng (ảnh màn hình đang mở cùng chữ đọc được trên đó).
 
 Đóng góp chính của đề tài là một phương pháp gồm hai thành phần nối tiếp. Thành phần thứ nhất học tiếp từ mô hình Qwen2.5-VL-3B tinh chỉnh có giám sát bằng học tăng cường theo nhóm, với phần thưởng là điểm SPICE của câu sinh ra so với câu chuẩn (SPICE so hai câu theo các đối tượng, thuộc tính và quan hệ mà hai câu cùng nêu ra). Mô hình thu được viết câu nháp cho mỗi bước. Thành phần thứ hai (ACE) cho mô hình tham khảo thêm bốn câu chuẩn từ các bước tương tự nhất trong tập huấn luyện, gọi là câu ví dụ. Câu nháp chỉ được thay bằng câu của bộ sinh khi câu này chép nguyên văn một câu ví dụ và cùng loại thao tác với câu nháp.
 
-Phương pháp đề xuất đạt 60,7% theo executability, độ đo của đề tài được mô tả ở đoạn sau. Mức này hơn mô hình tinh chỉnh có giám sát 1,57 điểm (khoảng tin cậy 95% [+0,86; +2,31]). Riêng thành phần thứ nhất đạt 60,6%, cao nhất trong các mô hình đã đo khi đứng một mình. Thành phần này hơn mô hình tinh chỉnh có giám sát 1,55 điểm ([+0,80; +2,33], p < 0,001) và cũng cao hơn ở cả mười ba độ đo được trình bày. So với riêng thành phần thứ nhất, ACE giữ nguyên executability và nâng cả bảy độ đo so câu, rõ nhất ở CIDEr-D (tăng 12,0 điểm) và SPICE (tăng 1,3 điểm). Thành phần thứ nhất có một tác dụng phụ đo được. Mô hình có xu hướng sinh ra câu yêu cầu chạm, nên ở các bước cuộn, tỉ lệ gọi đúng loại thao tác giảm 6,23 điểm. Mọi mô hình được huấn luyện thêm, kể cả phương pháp đề xuất, mới chỉ có kết quả của một hạt giống.
+Phương pháp đề xuất đạt 60,7% theo executability, độ đo của đề tài được mô tả ở đoạn sau. Mức này hơn mô hình tinh chỉnh có giám sát 1,57 điểm (khoảng tin cậy 95% [+0,86; +2,31]). Riêng thành phần thứ nhất đạt 60,6%, cao nhất trong các mô hình đã đo khi đứng một mình. Thành phần này hơn mô hình tinh chỉnh có giám sát 1,55 điểm ([+0,80; +2,33], p < 0,001) và cũng cao hơn ở cả mười ba độ đo được trình bày. So với riêng thành phần thứ nhất, ACE giữ nguyên executability và nâng cả bảy độ đo so câu, rõ nhất ở CIDEr-D (tăng 12,0 điểm) và SPICE (tăng 1,3 điểm).
 
 Để chấm được phương pháp, chúng tôi xây dựng và kiểm chứng độ đo executability. Câu hướng dẫn khó chấm vì cùng một nút có nhiều cách gọi tên đều đúng, ví dụ như “thanh tìm kiếm” và “biểu tượng kính lúp”, nên không thể lấy một câu chuẩn duy nhất làm đáp án. Vì vậy câu do mô hình sinh ra được đưa cho một mô hình định vị phần tử độc lập, và mô hình này không được cung cấp đáp án. Bước được tính là đúng khi mô hình định vị trỏ trúng phần tử mà người dùng đã chạm, đồng thời câu gọi đúng loại thao tác. Trước khi dùng độ đo để rút ra kết luận, chúng tôi kiểm chứng chính độ đo này. Đưa chính câu chuẩn đi chấm thì được 75,7%, và mọi điểm số khác phải được đọc trên nền ngưỡng tối đa này. Thứ tự giữa các hệ thống vẫn giữ nguyên khi chấm lại bằng hai công cụ đo khác. Công cụ thứ nhất là một mô hình định vị thứ hai, vốn không được huấn luyện trên bộ dữ liệu của đề tài. Công cụ thứ hai là một người nghe trắc nghiệm, nghĩa là một mô hình khác họ đọc câu rồi chọn phần tử đúng trong danh sách các phần tử được đánh số.
 
@@ -279,7 +279,7 @@ Phương pháp đề xuất được chọn sau một chuỗi hướng đã th�
 
 ## 2. Những kết quả mới của luận văn
 
-- **Một phương pháp hai thành phần vượt mô hình tinh chỉnh có giám sát theo executability.** Thành phần thứ nhất học tăng cường với phần thưởng SPICE để viết câu nháp, thành phần thứ hai (ACE) sao chép một câu ví dụ lấy từ tập huấn luyện khi câu ấy cùng loại thao tác với câu nháp. Phương pháp cho executability cao hơn mô hình tinh chỉnh có giám sát với ý nghĩa thống kê, dù mô hình định vị dùng để chấm không nằm trong phần thưởng. ACE nâng cả bảy độ đo so câu mà không làm giảm executability. Tác dụng phụ ở bước cuộn được đo và nêu kèm.
+- **Một phương pháp hai thành phần vượt mô hình tinh chỉnh có giám sát theo executability.** Thành phần thứ nhất học tăng cường với phần thưởng SPICE để viết câu nháp, thành phần thứ hai (ACE) sao chép một câu ví dụ lấy từ tập huấn luyện khi câu ấy cùng loại thao tác với câu nháp. Phương pháp cho executability cao hơn mô hình tinh chỉnh có giám sát với ý nghĩa thống kê, dù mô hình định vị dùng để chấm không nằm trong phần thưởng. ACE nâng cả bảy độ đo so câu mà không làm giảm executability.
 - **Một độ đo không cần câu chuẩn làm đáp án, dùng để chấm phương pháp.** Luật xác định thế nào là trỏ trúng được chọn bằng phép đo thay vì theo một dung sai quy ước, theo đó luật nào chấm đúng cho nhiều câu thực ra chỉ tới một nút khác thì bị loại. Thứ tự giữa các hệ thống không đổi khi chấm lại bằng năm luật khác nhau.
 - **Ngưỡng tối đa và ngưỡng tối thiểu của độ đo đều được đo trực tiếp.** Ngoài ngưỡng tối đa nêu ở mục 1, câu chung chung không nói phần tử nào chỉ được 12,0%, còn câu thật nhưng của một màn hình khác chỉ được 6,1%, thấp nhất trong mọi phép đo. Như vậy độ đo chấm theo nội dung của câu, và câu đúng văn phong mà sai nội dung không được cho điểm.
 - **Một quy trình dựng dữ liệu chạy hoàn toàn tự động.** Quy trình này chuyển AndroidControl thành tập huấn luyện cho tác vụ mới, ghép hai bản phát hành công khai (một bản có câu hướng dẫn, một bản có ảnh) và kiểm tra tính chính xác của quá trình này bằng cách so với dữ liệu có ý làm lệch một bước.
@@ -306,13 +306,13 @@ At: VNUHCM – University of Science
 
 ## 1. Summary
 
-GUI agent systems look at a screenshot and produce a coordinate for the software to click. We keep that input but change the output. Instead of a coordinate for a machine, the model writes a short English sentence for a person, telling them which element on the screen to touch. The input consists of the use case, that is, the goal the user is pursuing together with the steps already taken, and the user interface, that is, the open screenshot together with the text readable on it.
+GUI agent systems look at a screenshot and produce a coordinate for the software to click. We keep that input but change the output: instead of a coordinate for a machine, the model writes a short English sentence for a person, telling them which element on the screen to touch. The input consists of the use case, that is, the goal the user is pursuing together with the steps already taken, and the user interface, that is, the open screenshot together with the text readable on it.
 
 The main contribution is a method with two stages in sequence. The first stage continues from the supervised Qwen2.5-VL-3B model with group-relative reinforcement learning, using the SPICE score of the generated sentence against the reference as its reward (SPICE compares two sentences by the objects, attributes and relations they both mention), and writes a draft sentence for each step. The second stage (ACE, Action-Consistent Exemplar copying) lets a generator see the reference sentences of the four training steps most similar to the current step, called exemplars, and replaces the draft with the generator's output only when that output copies one exemplar verbatim and names the same action type as the draft.
 
-The proposed method reaches 60.7% executability, the measure described in the next paragraph, which is 1.57 points above the supervised baseline (95% CI [+0.86, +2.31]). The first stage alone reaches 60.6%, the highest of any single model measured, 1.55 points above the supervised baseline (95% CI [+0.80, +2.33], p < 0.001), and it improves all thirteen reported measures. Relative to the first stage alone, ACE keeps executability unchanged and raises all seven reference-based text measures, most clearly CIDEr-D (+12.0) and SPICE (+1.3). The measured cost of the first stage is a drift towards tap sentences, which lowers action-type accuracy on scroll steps by 6.23 points. Every result for a further-trained model, including the proposed method, is a single-seed result.
+The proposed method reaches 60.7% executability, the measure described in the next paragraph, which is 1.57 points above the supervised baseline (95% CI [+0.86, +2.31]). The first stage alone reaches 60.6%, the highest of any single model measured, 1.55 points above the supervised baseline (95% CI [+0.80, +2.33], p < 0.001), and it improves all thirteen reported measures. Relative to the first stage alone, ACE keeps executability unchanged and raises all seven reference-based text measures, most clearly CIDEr-D (+12.0) and SPICE (+1.3).
 
-To score the method, we build and validate a measure called executability. Such sentences are hard to score because the same button can be named correctly in several ways, for instance “the search bar” and “the magnifying glass”, so no single reference sentence can serve as the answer key. The generated sentence is therefore handed to a separate GUI grounding model that never sees the correct coordinate, and the step counts as correct when that model points at the element the user actually touched and the sentence names the right action type. The metric itself is measured before it is used. Scoring the human-written references gives 75.7%, the ceiling against which every other score must be read. Re-scoring with a second grounding model not trained on this corpus, and with a multiple-choice listener from a different model family (a model that reads the sentence and picks the right element from a numbered list), preserves the ordering of systems.
+To score the method, we build and validate a measure called executability. Such sentences are hard to score because the same button can be named correctly in several ways, for instance “the search bar” and “the magnifying glass”, so no single reference sentence can serve as the answer key. The generated sentence is therefore handed to a separate GUI grounding model that never sees the correct coordinate, and the step counts as correct when that model points at the element the user actually touched and the sentence names the right action type. The metric itself is validated before it is used: scoring the human-written references gives 75.7%, the ceiling against which every other score must be read. Re-scoring with a second grounding model not trained on this corpus, and with a multiple-choice listener from a different model family (a model that reads the sentence and picks the right element from a numbered list), preserves the ordering of systems.
 
 A fully automatic pipeline turns AndroidControl into 64,567 training steps. Over 4,463 held-out touch steps, the supervised Qwen2.5-VL-3B, which is the starting point of the proposed method, reaches 59.1% against 47.6% for the same model untuned. Under AndroidControl's own element-box rule, which counts a hit when the predicted point falls inside the box of the target element, the two figures are 65.5% and 53.6%. Of seven alternative explanations checked for this gap, six are ruled out.
 
@@ -320,7 +320,7 @@ The method was chosen after a sequence of attempts (detailed in Appendix A), mos
 
 ## 2. Novelty of thesis
 
-- **A two-stage method**, reinforcement learning rewarded by SPICE followed by action-consistent exemplar copying (ACE), that beats the supervised baseline with statistical significance under the strict executability rule, although the grounding model used for scoring plays no part in the reward. ACE raises all seven reference-based text measures without lowering executability. The measured side effect on scroll steps is reported with it.
+- **A two-stage method**, reinforcement learning rewarded by SPICE followed by action-consistent exemplar copying (ACE), that beats the supervised baseline with statistical significance under the strict executability rule, although the grounding model used for scoring plays no part in the reward. ACE raises all seven reference-based text measures without lowering executability.
 - **A metric for element identification in generated GUI instructions that needs no reference sentence as the answer key**, used to score the method, with the hit rule selected from measured behaviour on wrong-element inputs rather than from a tolerance convention, and shown to preserve system ordering under five different rules.
 - **A measured ceiling and floor.** Beyond the ceiling given in Section 1, one generic sentence that names no element scores 12.0%, and a real sentence describing a different screen scores 6.1%, the lowest of anything measured, so the metric responds to what a sentence says, not to how it is phrased.
 - **A fully automatic pipeline converting AndroidControl into supervision for this task**, joining two public releases (one with the instructions, one with the screenshots) and validating the join against a deliberately shifted control.
@@ -345,13 +345,13 @@ Những năm gần đây, dòng nghiên cứu về tác tử giao diện (GUI ag
 
 Tên đề tài gọi hai thành phần của đầu vào là *trường hợp sử dụng* và *giao diện người dùng*. Trường hợp sử dụng ở đây là mục tiêu người dùng đang theo đuổi, ví dụ như đặt vé xem phim cho tối nay hay tắt thông báo của một ứng dụng, cùng với các bước đã làm trước đó. Giao diện người dùng là ảnh chụp màn hình đang mở cùng chữ đọc được trên màn; ở khâu dựng dữ liệu, chúng tôi còn dùng thêm cây trợ năng của chính màn hình ấy. Mô hình ngôn ngữ lớn được dùng là một mô hình thị giác và ngôn ngữ cỡ ba tỉ tham số, nhận hai thành phần trên và viết ra câu hướng dẫn cho bước kế tiếp.
 
-Vấn đề thứ nhất là đánh giá. Một tọa độ dự đoán có thể đem so trực tiếp với tọa độ mà người dùng đã chạm, nhưng một câu thì khó so với một câu chuẩn duy nhất, bởi cùng một nút thường có nhiều cách gọi đều đúng. Ví dụ như “Click on the search bar” và “Tap the magnifying glass at the top” cùng chỉ về một phần tử, trong khi không bộ dữ liệu nào liệt kê được hết các cách diễn đạt hợp lệ.
+Vấn đề thứ nhất nằm ở khâu đánh giá: một tọa độ dự đoán có thể đem so trực tiếp với tọa độ mà người dùng đã chạm, nhưng một câu thì khó so với một câu chuẩn duy nhất, bởi cùng một nút thường có nhiều cách gọi đều đúng. Ví dụ như “Click on the search bar” và “Tap the magnifying glass at the top” cùng chỉ về một phần tử, trong khi không bộ dữ liệu nào liệt kê được hết các cách diễn đạt hợp lệ.
 
-Các độ đo quen dùng đều gặp khó ở điểm này, và chúng tôi đã đo mức hạn chế của từng độ đo. So khớp chuỗi ký tự loại nhầm tới 97,5% số câu diễn đạt khác đi. So vector ngữ nghĩa cũng không khá hơn: trên 51 trường hợp viết tay, diện tích dưới đường ROC (AUC) chỉ đạt 0,336, tức còn thấp hơn đoán ngẫu nhiên. Nguyên nhân là vector ngữ nghĩa đo độ gần về chủ đề, trong khi điều cần biết là hai câu có cùng nói về một phần tử hay không. Trong phép thử này, cặp `inbox` và `outbox` được chấm 0,76, cao hơn khá nhiều so với cặp `search` và `magnifying glass` (0,55), dù chỉ cặp sau mới cùng chỉ một nút. Mục 2.6 trình bày chi tiết hơn.
+Các độ đo quen dùng đều gặp khó ở điểm này, và chúng tôi đã đo mức hạn chế của từng độ đo. So khớp chuỗi ký tự loại nhầm tới 97,5% số câu diễn đạt khác đi. So vector ngữ nghĩa cũng không khá hơn: trên 51 trường hợp viết tay, diện tích dưới đường ROC (AUC) chỉ đạt 0,336, tức còn thấp hơn đoán ngẫu nhiên. Nguyên nhân là vector ngữ nghĩa đo độ gần về chủ đề, trong khi điều cần biết là hai câu có cùng nói về một phần tử hay không. Trong phép thử này, cặp `inbox` và `outbox` được chấm 0,76, cao hơn khá nhiều so với cặp `search` và `magnifying glass` (0,55), dù chỉ cặp sau mới cùng chỉ một nút (chi tiết ở Mục 2.6).
 
-> **Vấn đề thứ hai nằm ở dạng lỗi mà mô hình sinh câu hay mắc.** Khi đọc thủ công 40 trường hợp sinh sai, chúng tôi thấy trường hợp mô hình nêu một nút không có trên màn hình chỉ chiếm khoảng 0 đến 2%. Phần lớn lỗi còn lại là câu mơ hồ, ví dụ mô hình viết “biểu tượng tìm kiếm” trong khi màn hình có tới hai biểu tượng như vậy. Câu ấy không sai về mặt sự thật, nhưng người đọc khó dùng được, vì câu không giúp phân biệt phần tử cần chạm với những phần tử giống nó ở bên cạnh. Vì vậy, điều cần cải thiện là tính phân biệt của câu, tức câu phải giúp người đọc nhận ra đúng phần tử cần chạm giữa những phần tử trông giống nó. Còn lỗi nêu một phần tử không có trên màn hình vốn đã rất hiếm, nên dù giảm thêm thì chất lượng câu cũng không tăng được bao nhiêu.
+**Vấn đề thứ hai nằm ở dạng lỗi mà mô hình sinh câu hay mắc.** Khi đọc thủ công 40 trường hợp sinh sai, chúng tôi thấy trường hợp mô hình nêu một nút không có trên màn hình chỉ chiếm khoảng 0 đến 2%. Phần lớn lỗi còn lại là câu mơ hồ, ví dụ mô hình viết “biểu tượng tìm kiếm” trong khi màn hình có tới hai biểu tượng như vậy. Câu ấy không sai về mặt sự thật, nhưng người đọc khó dùng được, vì câu không giúp phân biệt phần tử cần chạm với những phần tử giống nó ở bên cạnh. Vì vậy, điều cần cải thiện là tính phân biệt của câu, tức câu phải giúp người đọc nhận ra đúng phần tử cần chạm giữa những phần tử trông giống nó. Còn lỗi nêu một phần tử không có trên màn hình vốn đã rất hiếm, nên dù giảm thêm thì chất lượng câu cũng không tăng được bao nhiêu.
 
-Công việc của đề tài được chia theo hai vấn đề trên. Phần thứ nhất xây dựng và kiểm chứng một độ đo dùng được cho câu hướng dẫn. Phần thứ hai thiết kế và huấn luyện một mô hình viết ra những câu ít mơ hồ hơn. Đóng góp chính của đề tài là phương pháp đề xuất ở phần thứ hai, còn độ đo ở phần thứ nhất là công cụ để đánh giá phương pháp ấy. Phương pháp gồm hai thành phần nối tiếp, trong đó thành phần thứ nhất học tăng cường với phần thưởng SPICE (một độ đo so câu sinh ra với câu chuẩn) để viết câu nháp, còn thành phần thứ hai, gọi là ACE (luật chép câu ví dụ khi đồng thuận loại thao tác), chỉ thay câu nháp bằng câu chuẩn của một bước tương tự trong tập huấn luyện khi câu ấy cùng loại thao tác với câu nháp.
+Công việc của đề tài được chia theo hai vấn đề trên. Phần thứ nhất xây dựng và kiểm chứng một độ đo dùng được cho câu hướng dẫn. Phần thứ hai thiết kế và huấn luyện một mô hình viết ra những câu ít mơ hồ hơn. Đóng góp chính của đề tài là phương pháp đề xuất ở phần thứ hai, còn độ đo ở phần thứ nhất là công cụ để đánh giá phương pháp ấy. Mục 1.6 tóm tắt cả hai phần cùng các kết quả chính.
 
 ## 1.2 Động lực nghiên cứu
 
@@ -367,7 +367,7 @@ Jandial và cộng sự [18] đưa ra một cảnh báo liên quan trực tiếp
 
 ### 1.2.2 Động lực ứng dụng
 
-Tác vụ này đã có nhu cầu thực tế. GuideMe [19] là một hệ thống giúp người cao tuổi tự học dùng điện thoại thông minh: người dùng đặt câu hỏi, hệ thống nhìn màn hình rồi trả về hướng dẫn từng bước. Hệ thống gọi một mô hình thương mại cỡ lớn qua mạng, không huấn luyện thêm mô hình nào, và chất lượng được đánh giá qua một nghiên cứu người dùng với 18 người, chưa có độ đo định lượng đi kèm.
+Tác vụ này đã có nhu cầu thực tế, chẳng hạn GuideMe [19] là một hệ thống giúp người cao tuổi tự học dùng điện thoại thông minh: người dùng đặt câu hỏi, hệ thống nhìn màn hình rồi trả về hướng dẫn từng bước. Hệ thống gọi một mô hình thương mại cỡ lớn qua mạng, không huấn luyện thêm mô hình nào, và chất lượng được đánh giá qua một nghiên cứu người dùng với 18 người, chưa có độ đo định lượng đi kèm.
 
 Ví dụ này cho thấy hai điều còn thiếu ở phía ứng dụng. Trước hết, hiện chưa có độ đo định lượng nào cho phép so sánh hai hệ thống sinh hướng dẫn giao diện một cách tái lập được. Ngoài ra, việc phải gửi ảnh màn hình lên dịch vụ bên ngoài là một rào cản thực tế, vì ảnh màn hình điện thoại thường chứa tin nhắn, số dư tài khoản hay danh bạ. Một mô hình cỡ ba tỉ tham số chạy được ngay trên máy người dùng giúp tránh rào cản ấy, nên chúng tôi chọn kích cỡ này thay vì mô hình lớn nhất có thể.
 
@@ -383,7 +383,7 @@ Ví dụ này cho thấy hai điều còn thiếu ở phía ứng dụng. Trư�
 
 ### 1.4.1 Định vị phần tử giao diện và tác tử giao diện
 
-AndroidControl [1] là nguồn dữ liệu của đề tài, trong đó mỗi bước có một câu hướng dẫn do chính người thao tác viết. AndroidInTheWild [2] là nguồn gốc của dung sai 0,14 trên tọa độ chuẩn hoá, vốn được dùng rộng rãi để xét một dự đoán tọa độ là trúng hay trượt. Chương 2 giới thiệu chi tiết cả hai.
+AndroidControl [1] là nguồn dữ liệu của đề tài, trong đó mỗi bước có một câu hướng dẫn do chính người thao tác viết. AndroidInTheWild [2] là nguồn gốc của dung sai 0,14 trên tọa độ chuẩn hoá, vốn được dùng rộng rãi để xét một dự đoán tọa độ là trúng hay trượt; cả hai được giới thiệu chi tiết ở Chương 2.
 
 Các mô hình định vị phần tử như SeeClick [3], OS-Atlas [4] và UGround [5] ánh xạ một biểu thức văn bản thành một điểm trên màn hình. Chúng tôi dùng một mô hình thuộc nhóm này làm công cụ đo, chứ không làm đường cơ sở để so sánh. Vì thế, trước khi dựa vào công cụ này, chúng tôi trình bày sai số đo được cùng thành phần dữ liệu huấn luyện của mô hình ấy (Mục 5.4 và Mục 7.2).
 
@@ -441,21 +441,18 @@ Sai và cộng sự [15] hệ thống hoá việc kiểm chứng một độ đo
 
 ## 1.6 Đóng góp của luận văn
 
-Đề tài có ba đóng góp. Đóng góp chính là phương pháp đề xuất, xây dựng trên một quy trình dựng dữ liệu hoàn toàn tự động và gồm hai thành phần nối tiếp, một là mô hình học với thưởng SPICE, hai là ACE. Hai đóng góp còn lại hỗ trợ cho phương pháp này. Đóng góp thứ hai thuộc về đo lường, gồm độ đo dùng để chấm phương pháp đề xuất cùng mọi mô hình khác và việc kiểm chứng chính độ đo đó. Đóng góp thứ ba là chuỗi phân tích rút ra từ những hướng đã thử trước phương pháp đề xuất; các phân tích này làm rõ nguyên nhân chính cản trở điểm số và là căn cứ để chọn phương pháp.
+Đề tài có ba đóng góp, trong đó đóng góp chính là phương pháp đề xuất, xây dựng trên một quy trình dựng dữ liệu hoàn toàn tự động và gồm hai thành phần nối tiếp, một là mô hình học với thưởng SPICE, hai là ACE. Hai đóng góp còn lại hỗ trợ cho phương pháp này. Đóng góp thứ hai thuộc về đo lường, gồm độ đo dùng để chấm phương pháp đề xuất cùng mọi mô hình khác và việc kiểm chứng chính độ đo đó. Đóng góp thứ ba là chuỗi phân tích rút ra từ những hướng đã thử trước phương pháp đề xuất; các phân tích này làm rõ nguyên nhân chính cản trở điểm số và là căn cứ để chọn phương pháp.
 
-**Đóng góp thứ nhất, về phương pháp.** Ý tưởng của phương pháp đề xuất là tác động thẳng vào câu ở đầu ra, thay vì vào một bước trung gian giữa ảnh và câu như các hướng đã thử trước đó. Phương pháp được xây dựng trên mô hình Qwen2.5-VL-3B tinh chỉnh có giám sát (S1). Mô hình này học từ một tập giám sát 64.567 bước do chúng tôi dựng hoàn toàn tự động, có kiểm tra độ chính xác của dữ liệu đa nguồn và kiểm tra trùng lặp dữ liệu đánh giá giữa tập huấn luyện và tập kiểm tra (Chương 3). Trừ khi nói khác, các con số dưới đây đo bằng executability, độ đo của đề tài trình bày ở đóng góp thứ hai. Theo độ đo này, câu sinh ra được đưa cho một mô hình định vị phần tử độc lập, và bước được tính là đúng khi mô hình ấy trỏ trúng phần tử mà người dùng đã chạm và câu gọi đúng loại thao tác. Mô hình tinh chỉnh có giám sát đạt 59,1% theo executability, so với 47,6% của mô hình gốc (chưa tinh chỉnh).
+**Đóng góp thứ nhất, về phương pháp.** Ý tưởng của phương pháp đề xuất là tác động thẳng vào câu ở đầu ra, thay vì vào một bước trung gian giữa ảnh và câu như các hướng đã thử trước đó. Phương pháp được xây dựng trên mô hình Qwen2.5-VL-3B tinh chỉnh có giám sát (S1). Mô hình này học từ một tập giám sát 64.567 bước do chúng tôi dựng hoàn toàn tự động, có kiểm tra độ chính xác của dữ liệu đa nguồn và kiểm tra trùng lặp dữ liệu đánh giá giữa tập huấn luyện và tập kiểm tra (Chương 3). Trừ khi nói khác, các con số dưới đây đo bằng executability, độ đo của đề tài trình bày ở đóng góp thứ hai. Mô hình tinh chỉnh có giám sát đạt 59,1% theo executability, so với 47,6% của mô hình gốc (chưa tinh chỉnh).
 
-Phương pháp gồm hai thành phần nối tiếp vì mỗi thành phần tận dụng một nguồn thông tin khác nhau. Thành phần thứ nhất viết câu nháp từ chính màn hình đang xét. Thành phần thứ hai tận dụng hơn sáu mươi nghìn câu chuẩn của tập huấn luyện, vì nhiều bước của tập kiểm tra giống một bước nào đó trong tập này. Trước khi nhận một câu chuẩn như vậy, thành phần này dùng câu nháp để kiểm lại loại thao tác.
+Mỗi thành phần tận dụng một nguồn thông tin khác nhau. Thành phần thứ nhất, gọi là mô hình học với thưởng SPICE, học tiếp từ mô hình tinh chỉnh có giám sát bằng học tăng cường theo nhóm (GRPO), với phần thưởng là SPICE của câu sinh ra so với câu chuẩn. Riêng thành phần này đạt 60,6% theo executability, cao nhất trong số các cách làm chỉ dùng một mô hình sinh câu, và hơn mô hình tinh chỉnh có giám sát 1,55 điểm, với khoảng tin cậy 95% là [+0,80; +2,33]. Mức hơn vẫn đứng khi so với cả hai hạt giống của mô hình tinh chỉnh có giám sát, và xuất hiện ở cả mười ba độ đo đã dùng (sáu độ đo vị trí và bảy độ đo so câu). Các hướng đã thử trước đó chỉ hơn mô hình tinh chỉnh có giám sát có ý nghĩa thống kê dưới những luật chấm lỏng hơn, còn thành phần thứ nhất thì hơn có ý nghĩa ngay theo executability, luật chấm chặt nhất. Hơn một nửa mức tăng đến từ việc định vị đúng phần tử ở những bước cả hai mô hình đều đã gọi đúng loại thao tác.
 
-Thành phần thứ nhất, gọi là mô hình học với thưởng SPICE, học tiếp từ mô hình tinh chỉnh có giám sát bằng học tăng cường theo nhóm (GRPO), với phần thưởng là SPICE của câu sinh ra so với câu chuẩn. Riêng thành phần này đạt 60,6% theo executability, cao nhất trong số các cách làm chỉ dùng một mô hình sinh câu, và hơn mô hình tinh chỉnh có giám sát 1,55 điểm, với khoảng tin cậy 95% là [+0,80; +2,33]. Mức hơn vẫn đứng khi so với cả hai hạt giống của mô hình tinh chỉnh có giám sát, và xuất hiện ở cả mười ba độ đo đã dùng (sáu độ đo vị trí và bảy độ đo so câu). Các hướng đã thử trước đó chỉ hơn mô hình tinh chỉnh có giám sát có ý nghĩa thống kê dưới những luật chấm lỏng hơn, còn thành phần thứ nhất thì hơn có ý nghĩa ngay theo executability, luật chấm chặt nhất. Hơn một nửa mức tăng đến từ việc định vị đúng phần tử ở những bước cả hai mô hình đều đã gọi đúng loại thao tác. Thành phần này cũng có một tác dụng phụ đo được. Mô hình nghiêng về câu yêu cầu chạm, kể cả ở những bước cần cuộn, nên trên các bước cuộn, tỉ lệ gọi đúng loại thao tác giảm 6,23 điểm so với mô hình tinh chỉnh có giám sát (Mục 6.3).
-
-Thành phần thứ hai, ACE (luật chép câu ví dụ khi đồng thuận loại thao tác), dùng thêm một bộ sinh câu được cho xem bốn câu chuẩn của những bước giống nhất trong tập huấn luyện, gọi là câu ví dụ. Câu của bộ sinh chỉ thay câu nháp khi câu ấy chép nguyên văn một trong bốn câu ví dụ và cùng loại thao tác với câu nháp; ở các bước còn lại, câu nháp được giữ nguyên. Với cả hai thành phần, phương pháp đề xuất đạt 60,7% theo executability, hơn mô hình tinh chỉnh có giám sát 1,57 điểm [+0,86; +2,31]. So với câu nháp, phương pháp giữ nguyên mức của ba độ đo vị trí (executability, luật hộp phần tử và luật khoảng cách Euclid của AndroidInTheWild) và nâng cả bảy độ đo so câu, rõ nhất ở CIDEr-D (+11,98) và SPICE (+1,34). Điều kiện đồng thuận về loại thao tác là cần thiết, vì nếu dùng câu của bộ sinh ở mọi bước thì executability giảm có ý nghĩa (Mục 6.4). Bộ sửa câu theo vùng cắt (TAGE), một cách sửa câu khác ở cùng khâu này, cho điểm thấp hơn câu nháp trên tập kiểm tra nên không được giữ (Mục A.7.2).
+Thành phần thứ hai, ACE (luật chép câu ví dụ khi đồng thuận loại thao tác), tận dụng hơn sáu mươi nghìn câu chuẩn của tập huấn luyện: một bộ sinh câu được cho xem bốn câu chuẩn của những bước giống nhất, gọi là câu ví dụ. Câu của bộ sinh chỉ thay câu nháp khi câu ấy chép nguyên văn một trong bốn câu ví dụ và cùng loại thao tác với câu nháp; ở các bước còn lại, câu nháp được giữ nguyên. Với cả hai thành phần, phương pháp đề xuất đạt 60,7% theo executability, hơn mô hình tinh chỉnh có giám sát 1,57 điểm [+0,86; +2,31]. So với câu nháp, phương pháp giữ nguyên mức của ba độ đo vị trí (executability, luật hộp phần tử và luật khoảng cách Euclid của AndroidInTheWild) và nâng cả bảy độ đo so câu, rõ nhất ở CIDEr-D (+11,98) và SPICE (+1,34). Điều kiện đồng thuận về loại thao tác là cần thiết, vì nếu dùng câu của bộ sinh ở mọi bước thì executability giảm có ý nghĩa (Mục 6.4). Bộ sửa câu theo vùng cắt (TAGE), một cách sửa câu khác ở cùng khâu này, cho điểm thấp hơn câu nháp trên tập kiểm tra nên không được giữ (Mục A.7.2).
 
 **Đóng góp thứ hai, về độ đo.** Để đánh giá phương pháp đề xuất cùng mọi mô hình khác, chúng tôi đề xuất và kiểm chứng executability, một độ đo khả năng xác định phần tử của câu hướng dẫn giao diện. Phần kiểm chứng gồm sáu phép đo ở Chương 5. Sai số của mô hình định vị nhỏ hơn nhiều so với khoảng cách giữa các phần tử trên màn (Mục 5.4), và luật xác định trúng được chọn theo ngưỡng tối thiểu đo được, tức số điểm một câu sai vẫn nhận được (Mục 5.2). Ở hai đầu của dải điểm, câu chuẩn (ngưỡng tối đa) đạt 75,7%, còn câu chung chung hay câu của một màn hình khác chỉ đạt ngưỡng tối thiểu thấp (Mục 5.5 và Mục 5.6). Độ đo còn được kiểm bằng mười kiểu cố ý chèn lỗi vào câu theo phương pháp của Sai và cộng sự (Mục 5.7). Khi câu chuẩn được viết lại, độ đo giữ ổn định trước việc đổi động từ hay đảo trật tự câu nhưng vẫn giảm điểm khi mệnh đề vị trí bị lược bỏ (Mục 5.8). Khi chấm lại bằng một mô hình định vị thứ hai không dùng AndroidControl khi huấn luyện, chênh lệch giữa mô hình tinh chỉnh có giám sát và mô hình gốc vẫn giữ gần nguyên độ lớn (Mục 5.9). Ngoài ra, khi chấm bằng một mô hình ngoài họ Qwen-VL (họ của mô hình được chấm và của cả hai mô hình định vị) làm người nghe, tức đọc câu rồi chọn phần tử đúng trong một danh sách ứng viên đánh số, thứ tự xếp hạng các mô hình được chấm vẫn giữ nguyên (Mục 5.10).
 
-**Đóng góp thứ ba, về phân tích các hướng đã thử.** Trước khi đi tới phương pháp đề xuất, chúng tôi đã thử nhiều hướng, phần lớn tác động vào một bước trung gian giữa ảnh và câu. Hướng thứ nhất là mô hình mô tả phần tử, tức cho mô hình viết một dòng mô tả phần tử cần chạm rồi mới viết câu hướng dẫn. Hai giai đoạn huấn luyện tiếp theo được xây trên mô hình này. Ở giai đoạn học ưu tiên trên dòng mô tả, mô hình học từ những cặp chuỗi chỉ khác nhau ở dòng mô tả. Ở giai đoạn thưởng tọa độ (giai đoạn ba), mô hình học tăng cường với phần thưởng đặt chủ yếu vào tọa độ ghi trong dòng mô tả. Ngoài ra còn có mô hình chọn ứng viên, tức chọn phần tử cần chạm trong một danh sách dựng sẵn từ màn hình, và bốn cách đưa thêm thông tin vị trí vào bộ sinh câu. Phân tích các hướng này cho ba kết luận. Thứ nhất, những thay đổi ở bước trung gian chỉ chuyển sang câu ở đầu ra rất ít. Khi dòng mô tả do mô hình viết trỏ đúng phần tử thì câu tốt hơn rõ so với mô hình tinh chỉnh có giám sát, còn khi dòng mô tả trỏ sai thì câu kém hơn nhiều, và hai phần này gần như triệt tiêu nhau. Thứ hai, phần lớn khoảng cách executability còn lại giữa mô hình và câu chuẩn dồn vào khoảng một phần ba số bước, là những bước mà mô hình đã chọn sai phần tử ngay trong dòng mô tả, nên khâu nhận ra phần tử chính là rào cản lớn nhất. Khi gắn thêm thông tin vị trí vào bộ sinh câu, thông tin ấy được học và đọc lại được từ trạng thái ẩn của mô hình, nhưng phần sinh câu bỏ qua thông tin ấy. Thứ ba, khi ước lượng mức tăng tối đa (ngưỡng tối đa) của một can thiệp trên một nhóm bước được chọn theo hành vi của chính mô hình đang đo, cần kiểm lại với ít nhất một cách chọn nhóm khác, vì trong đề tài đã có một ngưỡng tối đa như vậy đổi dấu khi đổi cách chọn nhóm. Các kết luận này là căn cứ để phương pháp đề xuất tác động thẳng vào câu ở đầu ra. Mục 6.10 tóm tắt các hướng này trong một bảng, còn Phụ lục A trình bày thiết kế và kết quả chi tiết của từng hướng.
+**Đóng góp thứ ba, về phân tích các hướng đã thử.** Trước khi đi tới phương pháp đề xuất, chúng tôi đã thử nhiều hướng, phần lớn tác động vào một bước trung gian giữa ảnh và câu. Hướng thứ nhất là mô hình mô tả phần tử, tức cho mô hình viết một dòng mô tả phần tử cần chạm rồi mới viết câu hướng dẫn. Hai giai đoạn huấn luyện tiếp theo được xây trên mô hình này. Ở giai đoạn học ưu tiên trên dòng mô tả, mô hình học từ những cặp chuỗi chỉ khác nhau ở dòng mô tả. Ở giai đoạn thưởng tọa độ (giai đoạn ba), mô hình học tăng cường với phần thưởng đặt chủ yếu vào tọa độ ghi trong dòng mô tả. Ngoài ra còn có mô hình chọn ứng viên, tức chọn phần tử cần chạm trong một danh sách dựng sẵn từ màn hình, và bốn cách đưa thêm thông tin vị trí vào bộ sinh câu. Từ phân tích các hướng này, chúng tôi rút ra ba kết luận. Thứ nhất, những thay đổi ở bước trung gian chỉ chuyển sang câu ở đầu ra rất ít. Khi dòng mô tả do mô hình viết trỏ đúng phần tử thì câu tốt hơn rõ so với mô hình tinh chỉnh có giám sát, còn khi dòng mô tả trỏ sai thì câu kém hơn nhiều, và hai phần này gần như triệt tiêu nhau. Thứ hai, phần lớn khoảng cách executability còn lại giữa mô hình và câu chuẩn dồn vào khoảng một phần ba số bước, là những bước mà mô hình đã chọn sai phần tử ngay trong dòng mô tả, nên khâu nhận ra phần tử chính là rào cản lớn nhất. Khi gắn thêm thông tin vị trí vào bộ sinh câu, thông tin ấy được học và đọc lại được từ trạng thái ẩn của mô hình, nhưng phần sinh câu bỏ qua thông tin ấy. Thứ ba, khi ước lượng mức tăng tối đa (ngưỡng tối đa) của một can thiệp trên một nhóm bước được chọn theo hành vi của chính mô hình đang đo, cần kiểm lại với ít nhất một cách chọn nhóm khác, vì trong đề tài đã có một ngưỡng tối đa như vậy đổi dấu khi đổi cách chọn nhóm. Các kết luận này là căn cứ để phương pháp đề xuất tác động thẳng vào câu ở đầu ra. Mục 6.10 tóm tắt các hướng này trong một bảng, còn Phụ lục A trình bày thiết kế và kết quả chi tiết của từng hướng.
 
-**Về mức độ hoàn thành.** Mô hình tinh chỉnh có giám sát có hai hạt giống, nhưng mọi mô hình đem ra so với mô hình này, kể cả phương pháp đề xuất, chỉ được huấn luyện với một hạt giống. Vì vậy chúng tôi không khẳng định mức tăng của phương pháp đề xuất sẽ lặp lại ở mọi hạt giống, và ghi rõ đây là kết quả một hạt giống ở mỗi chỗ con số xuất hiện. Bảng 6.13 ghi trạng thái cuối cùng của từng mô hình và cấu hình, kèm lý do với những cấu hình không chạy hoặc dừng giữa chừng.
 
 # Chương 2. Tổng quan
 
@@ -486,7 +483,7 @@ Với cấu hình ở Bảng 4.1, các bộ chuyển đổi LoRA được gắn 
 
 ## 2.3 Học tăng cường với phần thưởng tính bằng luật
 
-Học có giám sát dạy mô hình chép lại một chuỗi đích cho trước, tức đầu ra mẫu đã có sẵn, nhưng không cho mô hình biết câu nào tốt hơn trong số những câu mà chính mô hình có thể viết ra. Học tăng cường bổ sung phần còn thiếu này. Mô hình tự sinh câu trả lời, một hàm thưởng chấm từng câu, và trọng số được điều chỉnh dần về phía những câu được thưởng cao. Khi hàm thưởng là một luật tính được, chẳng hạn như so một tọa độ với đáp án hay tính một độ đo so câu, cách làm này thường được gọi là học tăng cường với phần thưởng kiểm chứng được. Công trình DeepSeek-R1 trên *Nature* [42] là bản mô tả đầy đủ nhất của hướng này đối với mô hình ngôn ngữ lớn.
+Học có giám sát dạy mô hình chép lại một chuỗi đích cho trước, tức đầu ra mẫu đã có sẵn, nhưng không cho mô hình biết câu nào tốt hơn trong số những câu mà chính mô hình có thể viết ra. Học tăng cường bổ sung phần còn thiếu này: mô hình tự sinh câu trả lời, một hàm thưởng chấm từng câu, và trọng số được điều chỉnh dần về phía những câu được thưởng cao. Khi hàm thưởng là một luật tính được, chẳng hạn như so một tọa độ với đáp án hay tính một độ đo so câu, cách làm này thường được gọi là học tăng cường với phần thưởng kiểm chứng được. Công trình DeepSeek-R1 trên *Nature* [42] là bản mô tả đầy đủ nhất của hướng này đối với mô hình ngôn ngữ lớn.
 
 Thuật toán học tăng cường dùng trong đề tài, kể cả ở thành phần thứ nhất của phương pháp đề xuất, là tối ưu chính sách tương đối theo nhóm (GRPO), do công trình DeepSeekMath [43] giới thiệu. Với mỗi câu nhắc $x$, mô hình sinh một nhóm $G$ câu trả lời $y_1, \ldots, y_G$ và nhận các điểm thưởng $r_1, \ldots, r_G$. Lợi thế của câu thứ $i$ được tính bằng cách chuẩn hoá trong nhóm,
 
@@ -532,7 +529,7 @@ Vì vậy, các độ đo dựa trên tiêu chí “câu sinh ra giống câu ch
 
 # Chương 3. Xây dựng bộ dữ liệu
 
-Hiện chưa có bộ dữ liệu công khai nào được dựng sẵn cho tác vụ “nhìn một màn hình rồi viết một câu hướng dẫn cho người đọc”. Chương này trình bày cách chuyển bộ dữ liệu AndroidControl thành tập dữ liệu có nhãn để huấn luyện có giám sát cho tác vụ này. Toàn bộ quá trình được tự động hoá. Chúng tôi không thuê người gán nhãn thêm, và cũng không đưa vào huấn luyện nhãn do một mô hình ngôn ngữ khác sinh ra.
+Hiện chưa có bộ dữ liệu công khai nào được dựng sẵn cho tác vụ “nhìn một màn hình rồi viết một câu hướng dẫn cho người đọc”. Chương này trình bày cách chuyển bộ dữ liệu AndroidControl thành tập dữ liệu có nhãn để huấn luyện có giám sát cho tác vụ này. Toàn bộ quá trình được tự động hoá, không thuê người gán nhãn thêm và cũng không đưa vào huấn luyện nhãn do một mô hình ngôn ngữ khác sinh ra.
 
 Để các chương sau có thể dùng thẳng tên gọi kỹ thuật mà người đọc vẫn dễ theo dõi, Bảng 3.1 nối ba khái niệm ở tên đề tài với các đối tượng cụ thể được dùng trong chương này.
 
@@ -544,7 +541,7 @@ Hiện chưa có bộ dữ liệu công khai nào được dựng sẵn cho tác
 | Giao diện người dùng | Ảnh chụp màn hình đang mở, chuỗi chữ đọc được trên màn, và ở khâu dựng dữ liệu còn có cây trợ năng của chính màn hình ấy |
 | Hướng dẫn sử dụng | Câu hướng dẫn cho bước kế tiếp; các câu của cùng một tác vụ nối lại theo thứ tự bước thành hướng dẫn đầy đủ cho tác vụ đó |
 
-Mô hình sinh câu và được chấm điểm dựa trên từng bước riêng lẻ, thay vì tạo một tài liệu hướng dẫn hoàn chỉnh. Cách thiết lập này có hai lý do. Thứ nhất, nhãn tham chiếu của AndroidControl vốn được viết theo từng bước, nên việc đối chiếu với câu chuẩn chỉ khả thi ở phạm vi này. Thứ hai, độ đo ở Chương 5 đánh giá khả năng của mỗi câu trong việc dẫn dắt một mô hình định vị độc lập tìm ra đúng phần tử cần chạm. Vì tài liệu hướng dẫn cho cả tác vụ được ghép lại từ các câu này (Bảng 3.1), chất lượng tổng thể phụ thuộc trực tiếp vào độ chính xác của từng câu riêng biệt.
+Mô hình sinh câu và được chấm điểm dựa trên từng bước riêng lẻ, thay vì tạo một tài liệu hướng dẫn hoàn chỉnh, vì hai lý do. Thứ nhất, nhãn tham chiếu của AndroidControl vốn được viết theo từng bước, nên việc đối chiếu với câu chuẩn chỉ khả thi ở phạm vi này. Thứ hai, độ đo ở Chương 5 đánh giá khả năng của mỗi câu trong việc dẫn dắt một mô hình định vị độc lập tìm ra đúng phần tử cần chạm. Vì tài liệu hướng dẫn cho cả tác vụ được ghép lại từ các câu này (Bảng 3.1), chất lượng tổng thể phụ thuộc trực tiếp vào độ chính xác của từng câu riêng biệt.
 
 Phương pháp đề xuất (Mục 4.4) sử dụng ba phần của dữ liệu được chuẩn bị ở chương này. Phần thứ nhất là tập giám sát 64.567 bước, dùng để huấn luyện mô hình tinh chỉnh có giám sát (S1), tức điểm xuất phát của phương pháp. Ở tập này, mô hình chỉ tập trung học cách sinh câu hướng dẫn. Phần thứ hai là các câu nhắc được lấy từ tập huấn luyện sau khi đã loại bỏ tập kiểm định nội bộ (Mục 3.3), dùng để dạy tăng cường cho mô hình học với thưởng SPICE. Phần thứ ba là câu chuẩn thuộc cùng tập huấn luyện trên, đóng vai trò như một kho truy hồi câu ví dụ cho ACE, tức thành phần có luật sao chép câu ví dụ khi đồng thuận loại thao tác. Nhãn mô tả, tập cặp và danh sách ứng viên, trình bày từ Mục 3.5 trở đi, là phần dữ liệu phục vụ cho các hướng đã thử và chỉ được dùng trong Phụ lục A.
 
@@ -739,16 +736,16 @@ Mọi mô hình được huấn luyện trong đề tài đều tinh chỉnh Qwe
 | Phần cứng | một GPU A100 |
 | Tham số huấn luyện được | 14.966.784 (0,48% phần ngôn ngữ) |
 
-**Độ dài ngữ cảnh.** được đặt ở 2560 token để chừa biên cho mẫu dài nhất (2.017 token, thuộc mô hình mô tả phần tử ở Phụ lục A, tức mô hình viết một dòng mô tả phần tử cần chạm trước câu hướng dẫn). Chuỗi vượt giới hạn sẽ bị cắt ở cuối, mà phần cuối lại là câu mô hình cần học sinh ra.
+**Độ dài ngữ cảnh.** Độ dài ngữ cảnh được đặt ở 2560 token để chừa biên cho mẫu dài nhất (2.017 token, thuộc mô hình mô tả phần tử ở Phụ lục A, tức mô hình viết một dòng mô tả phần tử cần chạm trước câu hướng dẫn). Chuỗi vượt giới hạn sẽ bị cắt ở cuối, mà phần cuối lại là câu mô hình cần học sinh ra.
 
 ## 4.4 Tổng quan phương pháp đề xuất
 
-Độ đo executability chỉ chấm câu hướng dẫn ở đầu ra. Vì vậy phương pháp đề xuất tác động thẳng vào câu, chứ không vào một bước trung gian trước câu như dòng mô tả phần tử, thẻ chọn hay tọa độ ghi trong dòng mô tả, là những chỗ các hướng đã thử nhắm vào (Phụ lục A). Phương pháp dựa trên hai nguồn có thể cho câu tốt hơn. Nguồn thứ nhất là chính mô hình. Với cùng một bước, mô hình tinh chỉnh có giám sát (S1) có thể viết nhiều câu khác nhau, và câu sinh bằng giải mã tham lam không phải lúc nào cũng là câu giúp mô hình định vị tìm đúng phần tử. Nguồn thứ hai là hơn sáu mươi nghìn câu chuẩn có sẵn trong tập huấn luyện. Khi bước đang xét giống một bước đã có câu chuẩn, câu chuẩn cũ có thể đúng hơn câu mô hình tự viết. Mỗi nguồn được khai thác bằng một thành phần, và hai thành phần chạy nối tiếp.
+Độ đo executability chỉ chấm câu hướng dẫn ở đầu ra. Vì vậy phương pháp đề xuất tác động thẳng vào câu, chứ không vào một bước trung gian trước câu như dòng mô tả phần tử, thẻ chọn hay tọa độ ghi trong dòng mô tả, là những chỗ các hướng đã thử nhắm vào (Phụ lục A). Phương pháp dựa trên hai nguồn có thể cho câu tốt hơn. Nguồn thứ nhất là chính mô hình, vì với cùng một bước, mô hình tinh chỉnh có giám sát (S1) có thể viết nhiều câu khác nhau, và câu sinh bằng giải mã tham lam không phải lúc nào cũng là câu giúp mô hình định vị tìm đúng phần tử. Nguồn thứ hai là hơn sáu mươi nghìn câu chuẩn có sẵn trong tập huấn luyện. Khi bước đang xét giống một bước đã có câu chuẩn, câu chuẩn cũ có thể đúng hơn câu mô hình tự viết. Mỗi nguồn được khai thác bằng một thành phần, và hai thành phần chạy nối tiếp.
 
 1. **Thành phần thứ nhất, học tăng cường thưởng SPICE (Mục 4.5).** Thành phần này dạy mô hình tự viết câu tốt hơn. Mô hình tinh chỉnh có giám sát được học tiếp bằng GRPO, một thuật toán học tăng cường so điểm thưởng giữa nhiều câu sinh cho cùng một câu nhắc (Mục 2.3). Phần thưởng là SPICE của câu sinh ra so với câu chuẩn; SPICE chấm mức trùng khớp giữa hai câu về các đối tượng, thuộc tính và quan hệ được nhắc tới. Một thử nghiệm trước khi huấn luyện cho thấy câu có SPICE cao hơn thường cũng dẫn mô hình định vị tới đúng phần tử hơn. Lúc suy luận, mô hình này viết một câu nháp bằng giải mã tham lam.
 2. **Thành phần thứ hai, ACE (Mục 4.6).** Thành phần này dùng lại câu chuẩn có sẵn mà không sao chép một cách máy móc. Việc luôn sao chép câu chuẩn của bước giống nhất lại làm giảm mạnh điểm số so khớp văn bản, nên điều cần giải quyết là biết khi nào nên chép. Một bộ sinh, học tiếp từ mô hình của thành phần thứ nhất, được xem thêm bốn câu chuẩn của các bước giống nhất trong tập huấn luyện, gọi là câu ví dụ. Câu của bộ sinh chỉ thay câu nháp khi câu ấy chép nguyên văn một trong bốn câu ví dụ và cùng loại thao tác với câu nháp; ngược lại câu nháp được giữ.
 
-Hai thành phần bổ sung cho nhau. Thành phần thứ nhất viết câu từ đầu nên không dùng được các câu chuẩn có sẵn. Thành phần thứ hai chỉ thay câu nháp khi thoả cả hai điều kiện trên, nên ở phần lớn các bước câu được chấm vẫn là câu nháp. Câu nháp còn được dùng để kiếm câu ví dụ. Vì câu nháp được viết khi nhìn chính màn hình đang xét, loại thao tác của câu nháp giúp loại những câu ví dụ nói đúng phần tử nhưng sai thao tác.
+Hai thành phần bổ sung cho nhau: thành phần thứ nhất viết câu từ đầu nên không dùng được các câu chuẩn có sẵn. Thành phần thứ hai chỉ thay câu nháp khi thoả cả hai điều kiện trên, nên ở phần lớn các bước câu được chấm vẫn là câu nháp. Ngoài ra, câu nháp được viết khi nhìn chính màn hình đang xét, nên loại thao tác của câu nháp giúp loại những câu ví dụ nói đúng phần tử nhưng sai thao tác.
 
 Câu ra khỏi thành phần thứ hai là câu được chấm. Mô hình định vị dùng để chấm không xuất hiện trong phần thưởng của thành phần thứ nhất, cũng không xuất hiện trong luật chọn câu của thành phần thứ hai (gọi là luật đồng thuận). Lúc suy luận, không thành phần nào được xem trước câu chuẩn của bước đang xét. Vì vậy độ đo executability vẫn độc lập với phương pháp. Từ đây trở đi, *mô hình học với thưởng SPICE* chỉ thành phần thứ nhất chạy một mình, còn *phương pháp đề xuất* chỉ cả hai thành phần nối tiếp.
 
@@ -756,7 +753,7 @@ Câu ra khỏi thành phần thứ hai là câu được chấm. Mô hình đị
 
 **Căn cứ.** Độ đo chấm câu ở đầu ra, trong khi các hướng đã thử trước (Phụ lục A, từ Mục A.1.1 đến Mục A.4.1) đều tác động vào một bước trung gian trước câu, như dòng mô tả, thẻ chọn hoặc tọa độ ghi trong dòng mô tả. Kết quả ở phụ lục này cho thấy thay đổi ở những bước ấy chỉ ảnh hưởng khá yếu tới câu (Mục A.4.2 và Mục A.5), còn thông tin vị trí gắn thêm vào bộ sinh câu thì bị bộ sinh bỏ qua (Mục A.6). Từ đó, thành phần thứ nhất đặt phần thưởng thẳng lên câu, giống cách các công trình sinh chú thích ảnh đã dùng CIDEr và SPIDEr làm phần thưởng [46, 48].
 
-Trước khi huấn luyện, chúng tôi thử nghiệm không cần huấn luyện trên tập kiểm định nội bộ (Mục 3.3). Với mỗi bước, mô hình tinh chỉnh có giám sát (S1) sinh một câu bằng giải mã tham lam và tám câu bằng lấy mẫu; câu có SPICE cao nhất so với câu chuẩn được đưa đi chấm. Cách chọn này nâng executability rõ rệt so với câu giải mã tham lam, trong khi chọn ngẫu nhiên một câu lấy mẫu thì không. Executability cũng giảm dần theo hạng SPICE của câu trong cùng một bước. Hai quan sát này cho thấy trong số những câu mô hình có thể viết, câu có SPICE cao hơn thường cũng là câu dẫn mô hình định vị tới đúng phần tử hơn. Thử nghiệm này cũng báo trước hai giới hạn. Thứ nhất, ở khoảng một phần ba số cặp gồm một câu dẫn mô hình định vị tới đúng phần tử và một câu không, SPICE cho hai câu điểm bằng nhau, nên phần thưởng không phân biệt được hai câu ấy; theo công thức (2.2), một nhóm mà mọi câu bằng điểm thì không đóng góp gradient. Thứ hai, mức tăng có được khi chọn câu nhờ biết trước câu chuẩn chỉ là ngưỡng tối đa; mô hình học tăng cường không thấy câu chuẩn lúc suy luận nên thường chỉ đạt được một phần mức ấy.
+Trước khi huấn luyện, chúng tôi thử nghiệm không cần huấn luyện trên tập kiểm định nội bộ (Mục 3.3). Với mỗi bước, mô hình tinh chỉnh có giám sát (S1) sinh một câu bằng giải mã tham lam và tám câu bằng lấy mẫu; câu có SPICE cao nhất so với câu chuẩn được đưa đi chấm. Cách chọn này nâng executability rõ rệt so với câu giải mã tham lam, trong khi chọn ngẫu nhiên một câu lấy mẫu thì không. Executability cũng giảm dần theo hạng SPICE của câu trong cùng một bước. Hai quan sát này cho thấy trong số những câu mô hình có thể viết, câu có SPICE cao hơn thường cũng là câu dẫn mô hình định vị tới đúng phần tử hơn. Dù vậy, thử nghiệm này cũng báo trước hai giới hạn. Thứ nhất, ở khoảng một phần ba số cặp gồm một câu dẫn mô hình định vị tới đúng phần tử và một câu không, SPICE cho hai câu điểm bằng nhau, nên phần thưởng không phân biệt được hai câu ấy; theo công thức (2.2), một nhóm mà mọi câu bằng điểm thì không đóng góp gradient. Thứ hai, mức tăng có được khi chọn câu nhờ biết trước câu chuẩn chỉ là ngưỡng tối đa; mô hình học tăng cường không thấy câu chuẩn lúc suy luận nên thường chỉ đạt được một phần mức ấy.
 
 **Thiết kế.** Thành phần thứ nhất xuất phát từ mô hình tinh chỉnh có giám sát, hạt giống 101, chứ không từ các giai đoạn học tiếp trên mô hình mô tả phần tử, để khi so với mô hình xuất phát, hai bên chỉ còn khác nhau ở bước học tăng cường. Bộ chuyển đổi LoRA của mô hình xuất phát được hoà vào trọng số gốc, tức phần cập nhật hạng thấp được cộng thẳng vào ma trận trọng số để thu một mô hình duy nhất. Sau đó một bộ chuyển đổi LoRA mới, cùng hạng và cùng các mô-đun, được gắn lên trên với ma trận B (một trong hai ma trận hạng thấp của LoRA) khởi tạo bằng không. Nhờ vậy, ở bước đầu tiên mô hình đang học trùng với mô hình tinh chỉnh có giám sát. Bản đóng băng của mô hình tinh chỉnh có giám sát làm mô hình tham chiếu cho số hạng KL, tức độ lệch Kullback–Leibler giữ mô hình đang học không đi quá xa mô hình tham chiếu. Phần thưởng của một câu s so với câu chuẩn là
 
@@ -767,7 +764,7 @@ r(s) = \operatorname{SPICE}(s,g) - 0,02 \cdot \max(0,\ |s|-|g|-3),
 
 trong đó `|·|` là số từ, và câu rỗng nhận 0 điểm. Số hạng thứ hai chỉ phạt những câu dài hơn câu chuẩn quá ba từ, để mô hình không tăng SPICE bằng cách liệt kê thêm chi tiết.
 
-Mỗi bước cập nhật lấy hai câu nhắc, và mỗi câu nhắc sinh `G = 8` câu ở nhiệt độ 1,0, tối đa 96 token. Lượt huấn luyện kéo dài 500 bước, tương ứng một lượt duyệt qua 1.000 câu nhắc lấy từ phần tập dạy đã loại tập kiểm định nội bộ. Các câu nhắc gồm mọi loại thao tác, trong đó khoảng hai phần ba là bước chạm. Tốc độ học là `10^-5` và hệ số KL là `β = 0,04`. Hình 4.2 tóm tắt vòng huấn luyện.
+Mỗi bước cập nhật lấy hai câu nhắc, và mỗi câu nhắc sinh `G = 8` câu ở nhiệt độ 1,0, tối đa 96 token. Lượt huấn luyện kéo dài 500 bước, tương ứng một lượt duyệt qua 1.000 câu nhắc lấy từ phần tập dạy đã loại tập kiểm định nội bộ. Các câu nhắc gồm mọi loại thao tác, trong đó khoảng hai phần ba là bước chạm. Tốc độ học là `10^-5` và hệ số KL là `β = 0,04`; vòng huấn luyện được tóm tắt ở Hình 4.2.
 
 *(Sơ đồ vẽ bằng TikZ, chỉ xem được trong bản PDF.)*
 
@@ -775,7 +772,7 @@ Mỗi bước cập nhật lấy hai câu nhắc, và mỗi câu nhắc sinh `G 
 
 **Cách chọn điểm lưu.** Điểm lưu là bản trọng số được lưu lại tại một bước huấn luyện. Chúng tôi dùng hai điểm lưu ở bước 250 và bước 500 để sinh câu bằng giải mã tham lam trên tập kiểm định nội bộ. Trên tập này, mức tăng SPICE của cả hai đều nhỏ, nhưng executability tăng theo số bước. Mọi bước mà điểm lưu 250 làm đúng còn mô hình tinh chỉnh có giám sát làm sai (gọi là bước được cứu) cũng được điểm lưu 500 làm đúng. Vì vậy chúng tôi chọn điểm lưu 500, rồi sinh câu và chấm trên tập kiểm tra đúng một lần; sau khi đã thấy điểm, chúng tôi không sinh lại và không đổi điểm lưu.
 
-**Ba giới hạn của thiết kế.** Thứ nhất, hai mô hình được so không sinh câu theo cùng một cách. Câu của mô hình tinh chỉnh có giám sát trong các bảng kết quả được sinh với bộ chuyển đổi để riêng và theo lô, còn câu của mô hình học với thưởng SPICE được sinh sau khi đã hoà bộ chuyển đổi vào trọng số, ở độ chính xác fp16 và từng câu một. Trong một đánh giá, chỉ riêng khác biệt này đã làm 4 trong 20 câu của bước chạm khác đi (ở 20 bước không chạm thì không câu nào đổi), nên một phần nhỏ của chênh lệch giữa hai mô hình có thể đến từ cách sinh câu thay vì từ học tăng cường. Thứ hai, chưa chạy cấu hình đối chứng học có giám sát thêm cùng số bước từ cùng điểm xuất phát, nên chưa tách được phần do học tăng cường khỏi phần do học thêm. Thứ ba, mô hình học với thưởng SPICE mới chỉ được huấn luyện với một hạt giống.
+**Hai giới hạn của thiết kế.** Thứ nhất, hai mô hình được so không sinh câu theo cùng một cách. Câu của mô hình tinh chỉnh có giám sát trong các bảng kết quả được sinh với bộ chuyển đổi để riêng và theo lô, còn câu của mô hình học với thưởng SPICE được sinh sau khi đã hoà bộ chuyển đổi vào trọng số, ở độ chính xác fp16 và từng câu một. Trong một đánh giá, chỉ riêng khác biệt này đã làm 4 trong 20 câu của bước chạm khác đi (ở 20 bước không chạm thì không câu nào đổi), nên một phần nhỏ của chênh lệch giữa hai mô hình có thể đến từ cách sinh câu thay vì từ học tăng cường. Thứ hai, chưa chạy cấu hình đối chứng học có giám sát thêm cùng số bước từ cùng điểm xuất phát, nên chưa tách được phần do học tăng cường khỏi phần do học thêm.
 
 ## 4.6 Thành phần thứ hai: chép câu ví dụ khi đồng thuận loại thao tác (ACE)
 
@@ -802,9 +799,7 @@ Trước khi đi tới phương pháp đề xuất, đề tài đã thử nhiề
 
 Mọi phép so giữa hai mô hình trong đề tài, mà thường là một mô hình có can thiệp đặt cạnh mốc so sánh của nó, đều là phép so ghép cặp trên cùng 4.463 bước chạm của tập kiểm tra. Mỗi phép so được trình bày bằng ba con số đi cùng nhau: mức chênh Δ, khoảng tin cậy 95% lấy từ bootstrap gom cụm theo ứng dụng (lấy mẫu lại theo cụm ứng dụng thay vì theo từng bước, vì các bước trong cùng một ứng dụng thường giống nhau), và giá trị p của kiểm định McNemar, một kiểm định thống kê dành cho hai mô hình chấm trên cùng tập bước và chỉ dựa vào những bước mà đúng một trong hai mô hình làm đúng (Mục 5.13). Mô hình có can thiệp chỉ được coi là hơn hay kém mốc so sánh khi khoảng tin cậy nằm hoàn toàn về một phía của 0; khi khoảng tin cậy phủ 0, kết quả được ghi là chưa kết luận được, kể cả khi Δ dương.
 
-Ngoài ba con số trên, hai đại lượng nữa được trình bày kèm để người đọc tự đánh giá độ lớn của mức chênh. Đại lượng đầu tiên là chênh lệch giữa hai hạt giống, tức độ lệch giữa hai lượt huấn luyện mô hình tinh chỉnh có giám sát chỉ khác nhau ở hạt giống, bằng 0,52 điểm (Mục 6.7). Khi mô hình có can thiệp chỉ được huấn luyện với một hạt giống, một phần mức chênh có thể chỉ do dao động ngẫu nhiên như vậy, nên những trường hợp như vậy đều được ghi rõ tại chỗ. Đại lượng thứ hai là sai số chuẩn của hiệu ghép cặp, 0,79 điểm, cho biết một mức chênh cần lớn cỡ nào thì mới phân biệt được với sai số đo (Mục 5.13). Một mức chênh nhỏ nhưng có ý nghĩa thống kê vẫn là kết quả thật; tuy nhiên, khi chỉ có một hạt giống thì chưa biết mức chênh ấy có lặp lại ở hạt giống khác hay không.
-
-**Riêng với mô hình mô tả phần tử.** Mô hình này (Phụ lục A) chỉ được huấn luyện với một hạt giống, nên không tính được mức chênh trung bình trên hai hạt giống so với mô hình tinh chỉnh có giám sát như dự định ban đầu (Mục A.1.2). Vì vậy mô hình này được so riêng với từng hạt giống của mô hình tinh chỉnh có giám sát, và mức chênh được đọc như bằng chứng ở một hạt giống (Mục A.1.3).
+Ngoài ba con số trên, hai đại lượng nữa được trình bày kèm để người đọc tự đánh giá độ lớn của mức chênh. Đại lượng đầu tiên là chênh lệch giữa hai hạt giống, tức độ lệch giữa hai lượt huấn luyện mô hình tinh chỉnh có giám sát chỉ khác nhau ở hạt giống, bằng 0,52 điểm (Mục 6.7). Đại lượng thứ hai là sai số chuẩn của hiệu ghép cặp, 0,79 điểm, cho biết một mức chênh cần lớn cỡ nào thì mới phân biệt được với sai số đo (Mục 5.13).
 
 Ngoài kết quả trên toàn tập, chúng tôi còn đọc kết quả riêng trên từng nhóm con theo ba cách chia nhóm chính, là theo độ dài câu, theo độ khó của màn hình và theo nguồn của tên phần tử. Những cách chia nhóm khác được đặt ra sau khi đã có điểm số là phân tích hậu kiểm, và được ghi rõ như vậy tại chỗ chúng xuất hiện.
 
@@ -852,7 +847,7 @@ Hai chi tiết của điều kiện (iii) dễ bị hiểu nhầm. Vùng dung sa
 
 Luật dung sai quy ước vẫn cho điểm phần lớn các câu gọi sai tên nút, vì 63,2% số bước có ít nhất một phần tử khác nằm trong vùng dung sai của phần tử cần chạm. Khoảng cách giữa ngưỡng tối đa và mức sàn vì thế quá hẹp để phân biệt câu tốt với câu kém. Luật ô Voronoi hạ ngưỡng tối thiểu gần về không mà vẫn giữ ngưỡng tối đa, nên được chọn.
 
-Kết quả này có hai lưu ý. Ngưỡng tối thiểu 2,8% chỉ đúng với câu chỉ sang một phần tử khác, không đúng với điểm dịch nhẹ nhưng vẫn nằm trong ô của phần tử cần chạm (Mục 5.7). Ngoài ra, phép gộp phần tử quyết định thế nào là hai phần tử khác nhau: phép gộp xoá ít nhất một tâm ở 96,3% số bước, phần lớn là tâm trùng của cùng một phần tử, nhưng ở 8,2% số bước lại xoá nhầm một phần tử khác có thật. Vì vậy điểm theo luật dung sai luôn được trình bày kèm, nhưng không dùng làm điểm chính.
+Kết quả này cần đọc kèm hai lưu ý. Thứ nhất, ngưỡng tối thiểu 2,8% chỉ đúng với câu chỉ sang một phần tử khác, không đúng với điểm dịch nhẹ nhưng vẫn nằm trong ô của phần tử cần chạm (Mục 5.7). Thứ hai, phép gộp phần tử quyết định thế nào là hai phần tử khác nhau: phép gộp xoá ít nhất một tâm ở 96,3% số bước, phần lớn là tâm trùng của cùng một phần tử, nhưng ở 8,2% số bước lại xoá nhầm một phần tử khác có thật. Vì vậy điểm theo luật dung sai luôn được trình bày kèm, nhưng không dùng làm điểm chính.
 
 **Hình 5.1.** Một bước mà hai luật chấm cho hai kết quả khác nhau. Người dùng chạm dòng *Birthday*. Câu của S1 dẫn mô hình định vị tới đúng dòng đó. Câu của mô hình gốc tả dòng *Gender* ngay phía trên, nên điểm trả về lệch 128 điểm ảnh, vẫn trong vùng dung sai quy ước. Luật dung sai cho là trúng; chỉ luật ô Voronoi phát hiện câu đang chỉ sang một dòng khác.
 
@@ -860,13 +855,13 @@ Kết luận này vẫn đúng với điểm do mô hình định vị thật tr
 
 ## 5.3 Mô hình định vị dùng làm công cụ đo
 
-Chúng tôi chọn UGround-V1-2B [5] làm công cụ đo. Một công cụ đo phù hợp cần:
+Chúng tôi chọn UGround-V1-2B [5] làm công cụ đo. Theo chúng tôi, một công cụ đo phù hợp cần thoả ba điều kiện:
 
 1. khác họ với mô hình bị chấm, để độ đo không thiên vị;
 2. không được huấn luyện trên AndroidControl, tức chính bộ dữ liệu dùng để chấm;
 3. sai số định vị đủ nhỏ so với khoảng cách giữa các phần tử (Mục 5.4).
 
-Chỉ điều kiện thứ ba được đáp ứng. UGround-V1-2B dựng trên Qwen2-VL, cùng dòng với Qwen2.5-VL-3B đang được chấm, và được huấn luyện trên 47 nghìn phần tử do người gán nhãn lấy từ phần huấn luyện chính thức của AndroidControl, phần chứa 90% tác vụ trong tập kiểm tra (Mục 3.3). Vì vậy công cụ đo có thể đã gặp một phần màn hình của tập kiểm tra, và gần như chắc chắn đã quen văn phong chú thích của bộ dữ liệu.
+Trong ba điều kiện này, UGround-V1-2B chỉ đáp ứng điều kiện thứ ba, vì mô hình này dựng trên Qwen2-VL, cùng dòng với Qwen2.5-VL-3B đang được chấm, và được huấn luyện trên 47 nghìn phần tử do người gán nhãn lấy từ phần huấn luyện chính thức của AndroidControl, phần chứa 90% tác vụ trong tập kiểm tra (Mục 3.3). Vì vậy công cụ đo có thể đã gặp một phần màn hình của tập kiểm tra, và gần như chắc chắn đã quen văn phong chú thích của bộ dữ liệu.
 
 Đo trực tiếp cho thấy việc trùng dữ liệu huấn luyện không làm lệch điểm. Tách 4.463 bước chạm theo phần chia chính thức (3.994 bước thuộc phần huấn luyện, 469 bước thuộc phần kiểm tra và kiểm định), câu chuẩn đạt 75,9% và 74,0%, S1 đạt 59,1% và 59,3%, mô hình gốc đạt 47,7% và 46,7%. Khoảng tin cậy của hai phần chồng nhau ở cả ba loại câu, và không loại câu nào cao hơn ở phần công cụ có thể đã học. Với 469 bước, phép đo loại được độ lệch từ năm điểm trở lên, chưa loại được độ lệch một đến hai điểm.
 
@@ -1003,7 +998,7 @@ Hai mô hình định vị ở các mục trên đều thuộc họ Qwen-VL, cù
 | Mô hình gốc (Base, 3.566 bước) | 38,6 | [36,7; 40,4] |
 | Câu chung chung “*Tap the button.*” | 15,9 | [14,7; 17,0] |
 
-Thứ tự trong Bảng 5.5 trùng với thứ tự dưới executability, luật hộp phần tử và luật khớp chạm (Mục 5.12). Trên dải từ mô hình gốc tới câu chuẩn, mô hình sau giai đoạn thưởng tọa độ nằm ở khoảng 45 đến 48% dải dưới cả bốn cách chấm. Mức hơn của mô hình này so với S1 hạt giống 101 dưới người nghe là +1,14 điểm [+0,23; +2,10], p = 0,020, nằm giữa +0,96 của executability và +1,55 của luật hộp phần tử.
+Thứ tự trong Bảng 5.5 trùng với thứ tự dưới executability, luật hộp phần tử và luật khoảng cách Euclid (Mục 5.12). Trên dải từ mô hình gốc tới câu chuẩn, mô hình sau giai đoạn thưởng tọa độ nằm ở khoảng 45 đến 48% dải dưới cả bốn cách chấm. Mức hơn của mô hình này so với S1 hạt giống 101 dưới người nghe là +1,14 điểm [+0,23; +2,10], p = 0,020, nằm giữa +0,96 của executability và +1,55 của luật hộp phần tử.
 
 Người nghe cho kết quả tất định (chấm lại 200 bước cho câu trả lời trùng ở mọi bước). Mức đồng thuận từng bước với UGround chỉ vừa phải, hệ số κ (mức đồng thuận đã trừ phần trùng do ngẫu nhiên) từ 0,25 đến 0,44 tuỳ mô hình, nên hai công cụ sai ở những bước khác nhau nhưng vẫn xếp cùng một thứ tự.
 
@@ -1030,7 +1025,7 @@ Luật chấm là một lựa chọn của người nghiên cứu. Chấm lại 
 | Ngưỡng tối đa | 80,2 | 82,2 | 74,2 | 56,6 | 82,2 |
 | S1 - mô hình gốc (Base) | +12,6 | +13,0 | +11,7 | +9,5 | +13,0 |
 
-**Ảnh hưởng lên kiểm định ý nghĩa thống kê. Đổi luật có thể đổi cả kết luận thống kê.** Bảng dưới đây so mô hình sau giai đoạn thưởng tọa độ (một hướng đã thử, Phụ lục A) với S1 hạt giống 101 trên 4.463 bước, dưới ba luật cùng đòi đúng loại thao tác; giá trị p được hiệu chỉnh Holm cho ba kiểm định.
+**Ảnh hưởng lên kết luận thống kê.** Đổi luật có thể đổi cả kết luận thống kê. Bảng dưới đây so mô hình sau giai đoạn thưởng tọa độ (một hướng đã thử, Phụ lục A) với S1 hạt giống 101 trên 4.463 bước, dưới ba luật cùng đòi đúng loại thao tác; giá trị p được hiệu chỉnh Holm cho ba kiểm định.
 
 | Luật | Δ | p | Sau hiệu chỉnh Holm |
 |---|---:|---:|---|
@@ -1040,7 +1035,7 @@ Luật chấm là một lựa chọn của người nghiên cứu. Chấm lại 
 
 Kết luận khác nhau vì executability đòi câu dẫn tới đúng phần tử giữa các phần tử lân cận, còn luật dung sai nhận mọi điểm đủ gần đáp án nên có ngưỡng tối thiểu cao hơn (câu chung chung “*Tap the button.*” đạt 12,00 dưới executability, 20,50 dưới luật dung sai). Vì vậy chúng tôi đặt kết quả dưới nhiều luật cạnh nhau, với hai luật đã có tiền lệ dưới đây làm số chính bên cạnh executability.
 
-**Luật hộp phần tử của AndroidControl.** Phụ lục D.3 của bài gốc AndroidControl [1] coi một lần chạm là trúng khi tọa độ dự đoán nằm trong hộp bao của phần tử cần chạm, vì chạm vào đâu trong phần tử thì phần tử cũng kích hoạt. Chúng tôi gọi đây là luật hộp phần tử. Hộp bao có sẵn trong nhãn của tập kiểm tra, nên luật này tính được từ các điểm mô hình định vị đã trả về (Bảng 5.7).
+**Luật hộp phần tử của AndroidControl.** Phụ lục D.3 của bài gốc AndroidControl [1] coi một lần chạm là trúng khi tọa độ dự đoán nằm trong hộp bao của phần tử cần chạm, vì chạm vào đâu trong phần tử thì phần tử cũng kích hoạt; chúng tôi gọi đây là luật hộp phần tử. Hộp bao có sẵn trong nhãn của tập kiểm tra, nên luật này tính được từ các điểm mô hình định vị đã trả về (Bảng 5.7).
 
 **Bảng 5.7.** Điểm theo luật hộp phần tử (Phụ lục D.3 của AndroidControl) trên 4.463 bước, tính sau khi đã có mọi điểm. Giai đoạn học ưu tiên và mô hình chọn ứng viên là hai hướng đã thử (Phụ lục A). Cột cuối đòi thêm điểm dự đoán nằm trong cửa sổ dung sai 14%. Hai hàng ngưỡng tối thiểu đo trên mẫu 800 bước.
 
@@ -1064,15 +1059,15 @@ Con số 83,8 của câu chuẩn cần đọc kèm ba lưu ý. Hộp do chúng t
 
 ## 5.13 Thống kê
 
-**Ước lượng điểm.** tính theo cách vi mô, tức tổng số bước đúng chia tổng số bước, không lấy trung bình theo ứng dụng.
+**Ước lượng điểm.** Điểm được tính theo cách vi mô, tức tổng số bước đúng chia tổng số bước, không lấy trung bình theo ứng dụng.
 
-**Khoảng tin cậy.** dùng bootstrap phi tham số 10.000 lần, gom cụm theo ứng dụng: mỗi lần rút lại nguyên cả cụm có hoàn lại rồi tính lại điểm, và khoảng tin cậy là khoảng giữa hai phân vị của các giá trị thu được. Cameron và cộng sự [27] cho thấy cách tính này có độ phủ thấp hơn mức danh nghĩa khi số cụm ít, nên chúng tôi ghi số cụm cạnh mọi khoảng tin cậy.
+**Khoảng tin cậy.** Khoảng tin cậy dùng bootstrap phi tham số 10.000 lần, gom cụm theo ứng dụng: mỗi lần rút lại nguyên cả cụm có hoàn lại rồi tính lại điểm, và khoảng tin cậy là khoảng giữa hai phân vị của các giá trị thu được. Cameron và cộng sự [27] cho thấy cách tính này có độ phủ thấp hơn mức danh nghĩa khi số cụm ít, nên chúng tôi ghi số cụm cạnh mọi khoảng tin cậy.
 
-**Luật gom cụm.** Bước không quy được về ứng dụng thì mỗi tác vụ là một cụm riêng, để không gộp các tác vụ không liên quan chỉ vì cùng thiếu nhãn ứng dụng. Tổng cộng có 1.091 cụm, cụm lớn nhất gồm 58 bước; vì cỡ cụm rất khác nhau, số cụm hiệu dụng theo công thức Kish [28] (số cụm có đều cho cùng độ chính xác) chỉ là 454,3. Kết luận không phụ thuộc vào lựa chọn này. Khoảng tin cậy của mức hơn giữa S1 và mô hình gốc là [+10,0; +13,1], giống hệt khi gom mọi bước theo tác vụ (1.345 cụm), và là [+10,2; +13,8] khi dồn mọi bước không nhãn vào một cụm (260 cụm). Nếu chỉ giữ 40,7% số bước quy được ứng dụng, số cụm hiệu dụng còn 107 và lực thống kê giảm mạnh.
+**Luật gom cụm.** Bước không quy được về ứng dụng thì mỗi tác vụ là một cụm riêng, để không gộp các tác vụ không liên quan chỉ vì cùng thiếu nhãn ứng dụng. Tổng cộng có 1.091 cụm, cụm lớn nhất gồm 58 bước; vì cỡ cụm rất khác nhau, số cụm hiệu dụng theo công thức Kish [28] (số cụm có đều cho cùng độ chính xác) chỉ là 454,3. Cách gom cụm này không làm thay đổi kết luận: khoảng tin cậy của mức hơn giữa S1 và mô hình gốc là [+10,0; +13,1], giống hệt khi gom mọi bước theo tác vụ (1.345 cụm), và là [+10,2; +13,8] khi dồn mọi bước không nhãn vào một cụm (260 cụm). Nếu chỉ giữ 40,7% số bước quy được ứng dụng, số cụm hiệu dụng còn 107 và lực thống kê giảm mạnh.
 
 **Sai số chuẩn ghép cặp.** Mọi mô hình được chấm trên cùng 4.463 bước nên phân tích phải ghép cặp. Hệ số nở do gom cụm (mức phóng to độ bất định do các bước cùng cụm tương quan) chỉ là 1,10. Sai số chuẩn của hiệu ghép cặp giữa S1 và mô hình gốc là 0,79 điểm, so với 1,05 điểm nếu tính như hai tỉ lệ độc lập; các cặp mô hình gần nhau hơn thường có sai số nhỏ hơn. Mỗi cặp mô hình được so bằng khoảng tin cậy ghép cặp và giá trị p của kiểm định McNemar (Mục 4.8), chỉ dựa trên các bước hai mô hình cho kết quả khác nhau, với `b` là số bước mô hình thứ nhất trúng còn mô hình thứ hai trượt và `c` là chiều ngược lại. Mức dao động khi chỉ huấn luyện lại với hạt giống khác không thuộc sai số của độ đo và được đo riêng ở Mục 6.7.
 
-**Đánh giá ở bước không chạm.** Executability chỉ chấm bước chạm, trong khi 35,9% số bước của tập kiểm tra là bước không chạm (cuộn, chờ, gõ, mở ứng dụng, quay lại). Một mô hình có thể tăng điểm ở bước chạm nhờ thiên về câu mô tả thao tác chạm rồi kém đi ở các bước còn lại mà độ đo chính không thấy. Vì vậy các mô hình huấn luyện thêm được kiểm ở nhóm bước này bằng mức khớp loại thao tác, tính bằng chính hàm chuẩn hoá của độ đo chính. Kết quả cho mô hình học với thưởng SPICE, thành phần thứ nhất của phương pháp đề xuất, nằm ở Mục 6.3; kết quả cho các hướng đã thử ở Mục A.2.2.4.
+**Đánh giá ở bước không chạm.** Executability chỉ chấm bước chạm, trong khi 35,9% số bước của tập kiểm tra là bước không chạm (cuộn, chờ, gõ, mở ứng dụng, quay lại). Một mô hình có thể tăng điểm ở bước chạm nhờ thiên về câu mô tả thao tác chạm rồi kém đi ở các bước còn lại mà độ đo chính không thấy. Vì vậy các mô hình huấn luyện thêm được kiểm ở nhóm bước này bằng mức khớp loại thao tác, tính bằng chính hàm chuẩn hoá của độ đo chính. Kết quả cho các hướng đã thử nằm ở Mục A.2.2.4.
 
 # Chương 6. Thực nghiệm và kết quả
 
@@ -1080,15 +1075,13 @@ Chương này trình bày kết quả của phương pháp đề xuất trên t�
 
 ## 6.1 Thiết lập thực nghiệm
 
-Mọi mô hình được chấm trên cùng 4.463 bước chạm của tập kiểm tra, bằng cùng một bản mã chấm. **Phương pháp đề xuất** (Mục 4.4) gồm hai thành phần nối tiếp. Thành phần thứ nhất là **mô hình học với thưởng SPICE**: mô hình tinh chỉnh có giám sát được học tiếp bằng GRPO với phần thưởng SPICE, và viết ra câu nháp. Thành phần thứ hai là **ACE**: một bộ sinh câu được xem bốn câu chuẩn truy hồi từ tập huấn luyện làm câu ví dụ, và câu của bộ sinh chỉ thay câu nháp khi nó chép nguyên văn một câu ví dụ và gọi cùng loại thao tác với câu nháp.
+Mọi mô hình được chấm trên cùng 4.463 bước chạm của tập kiểm tra, bằng cùng một bản mã chấm. Phương pháp đề xuất gồm mô hình học với thưởng SPICE, viết câu nháp, và ACE, quyết định có thay câu nháp bằng câu ví dụ hay không (Mục 4.4 đến Mục 4.6).
 
 Ba mốc so sánh (Mục 4.7) là mô hình gốc (**Base** trong các bảng), mô hình tinh chỉnh có giám sát ở hai hạt giống 101 và 202 (**S1** trong các bảng) và câu chuẩn đưa thẳng tới chấm, cho mức ngưỡng tối đa của độ đo. Ở một bước, S1 trả về câu rỗng; bước này được tính là không đạt và vẫn nằm trong mẫu số 4.463. Các phép so ghép cặp bỏ bước ấy, và không số nào đổi sau khi làm tròn tới một chữ số thập phân.
 
-**Số hạt giống của từng mô hình.** Do giới hạn tài nguyên tính toán, chỉ S1 có hai hạt giống; mọi mô hình khác, kể cả hai thành phần của phương pháp đề xuất, chỉ có một. Kết quả một hạt giống cần được đặt cạnh mức chênh 0,52 điểm executability giữa hai hạt giống của S1 (Mục 4.8).
-
 ## 6.2 Kết quả chính
 
-**Bảng 6.1.** Kết quả chính trên 4.463 bước chạm của tập kiểm tra. **Exec.** là executability, **KTC 95%** là khoảng tin cậy 95% của executability. **Hộp phần tử** là luật của AndroidControl, **khoảng cách Euclid** là luật của AndroidInTheWild. **BLEU-4** là trung bình theo câu, **ROUGE-L** theo F1. Trừ S1, mọi mô hình chỉ có một hạt giống. Số in đậm là số cao nhất của cột, không tính hàng câu chuẩn.
+**Bảng 6.1.** Kết quả chính trên 4.463 bước chạm của tập kiểm tra. **Exec.** là executability, **KTC 95%** là khoảng tin cậy 95% của executability. **Hộp phần tử** là luật của AndroidControl, **khoảng cách Euclid** là luật của AndroidInTheWild. **BLEU-4** là trung bình theo câu, **ROUGE-L** theo F1. Số in đậm là số cao nhất của cột, không tính hàng câu chuẩn.
 
 | Mô hình | Exec. | KTC 95% | Hộp phần tử | Khoảng cách Euclid | BLEU-4 | ROUGE-L |
 |---|---:|---:|---:|---:|---:|---:|
@@ -1110,7 +1103,7 @@ Ba mốc so sánh (Mục 4.7) là mô hình gốc (**Base** trong các bảng), 
 
 † Mô hình chọn ứng viên khác các mô hình còn lại ở ba yếu tố của thiết lập (Mục A.3.1), nên chỉ so được với mô hình gốc (Mục A.3.2). Các hướng đã thử khác (mô-đun định vị, đưa vai trò và vùng của phần tử vào mô hình, làm nét ảnh, mở khoá phần thị giác) không có trong bảng vì chỉ được chấm trên tập kiểm định nội bộ (Mục A.6).
 
-Theo Bảng 6.1, phương pháp đề xuất đạt **executability 60,7%**: ở 60,7% số bước chạm, câu viết ra gọi đúng loại thao tác và dẫn mô hình định vị tới đúng phần tử cần chạm. Mức này hơn S1, hạt giống 101, là **1,57 điểm**, với khoảng tin cậy **[+0,86; +2,31]** nằm hoàn toàn trên 0. Phương pháp cũng cao nhất bảng dưới luật hộp phần tử và ở cả hai độ đo so câu; riêng dưới luật khớp chạm, giai đoạn thưởng tọa độ cao hơn.
+Theo Bảng 6.1, phương pháp đề xuất đạt **executability 60,7%**: ở 60,7% số bước chạm, câu viết ra gọi đúng loại thao tác và dẫn mô hình định vị tới đúng phần tử cần chạm. Mức này hơn S1, hạt giống 101, là **1,57 điểm**, với khoảng tin cậy **[+0,86; +2,31]** nằm hoàn toàn trên 0. Phương pháp cũng cao nhất bảng dưới luật hộp phần tử và ở cả hai độ đo so câu; riêng dưới luật khoảng cách Euclid, giai đoạn thưởng tọa độ cao hơn.
 
 Phần lớn mức hơn theo executability đến từ thành phần thứ nhất; riêng mô hình học với thưởng SPICE đã đạt **60,6%** (Mục 6.3). ACE giữ nguyên executability và nâng nhóm độ đo so câu (Mục 6.4). Bảng 6.2 tách executability thành ba điều kiện (đúng ô Voronoi, đúng loại thao tác, trong cửa sổ dung sai) để thấy mức hơn của mỗi mô hình nằm ở điều kiện nào.
 
@@ -1131,7 +1124,7 @@ Phần lớn mức hơn theo executability đến từ thành phần thứ nhấ
 | Chọn ứng viên† | 56,1 | 57,4 | 90,9 | 66,3 |
 | Mô hình gốc (Base) | 47,6 | 48,9 | 96,5 | 57,6 |
 
-Câu dự đoán chính là câu chuẩn nên điều kiện khớp thao tác luôn thoả. Mức khớp thao tác 98,9% của giai đoạn học ưu tiên, mô hình học thêm có giám sát và giai đoạn thưởng tọa độ chỉ đo trên bước chạm; cần đặt cạnh mức giảm ở bước không chạm (Mục A.2.2.4). Chỉ so được với mô hình gốc (Mục A.3.2); mức khớp thao tác thấp nhất bảng là do mô hình hay viết câu không chạm ở những bước không chọn phần tử nào trong danh sách ứng viên.
+Ở hàng câu chuẩn, câu được chấm chính là câu chuẩn nên điều kiện khớp thao tác luôn thoả. Mức khớp thao tác 98,9% của giai đoạn học ưu tiên, mô hình học thêm có giám sát và giai đoạn thưởng tọa độ chỉ đo trên bước chạm, nên cần đặt cạnh mức giảm ở bước không chạm (Mục A.2.2.4). Mô hình chọn ứng viên (†) chỉ so được với mô hình gốc (Mục A.3.2); mức khớp thao tác của mô hình này thấp nhất bảng vì mô hình hay viết câu không chạm ở những bước không chọn phần tử nào trong danh sách ứng viên.
 
 **Khoảng cách giữa các mốc.** Khoảng tin cậy của mô hình gốc, S1 và câu chuẩn không chồng lên nhau, nên độ đo phân biệt được cả ba mốc. S1 còn cách ngưỡng tối đa khá xa (Mục 5.5, Mục 6.9.4), và mọi mô hình đều nằm xa ngưỡng tối thiểu (Mục 6.6).
 
@@ -1141,7 +1134,7 @@ Mục này xét thành phần thứ nhất khi đứng một mình (thiết kế
 
 ### 6.3.1 Kết quả trên bước chạm
 
-**Bảng 6.3.** Mô hình học với thưởng SPICE (một hạt giống) so với S1, hạt giống 101, trên 4.463 bước chạm, ghép cặp theo bước. Sáu hàng trên là độ đo theo vị trí (gồm cả tỉ lệ đúng loại thao tác), bảy hàng dưới là độ đo so với câu chuẩn. Δ là điểm của mô hình học với thưởng SPICE trừ điểm của S1; KTC 95% từ bootstrap gom cụm theo ứng dụng (Mục 5.13). Cứu là số bước mô hình mới đúng còn S1 sai; phá là chiều ngược lại.
+**Bảng 6.3.** Mô hình học với thưởng SPICE so với S1, hạt giống 101, trên 4.463 bước chạm, ghép cặp theo bước. Sáu hàng trên là độ đo theo vị trí (gồm cả tỉ lệ đúng loại thao tác), bảy hàng dưới là độ đo so với câu chuẩn. Δ là điểm của mô hình học với thưởng SPICE trừ điểm của S1; KTC 95% từ bootstrap gom cụm theo ứng dụng (Mục 5.13). Cứu là số bước mô hình mới đúng còn S1 sai; phá là chiều ngược lại.
 
 | Độ đo | S1 | Thưởng SPICE | Δ | KTC 95% | cứu / phá |
 |---|---:|---:|---:|---:|---:|
@@ -1161,33 +1154,23 @@ Mục này xét thành phần thứ nhất khi đứng một mình (thiết kế
 
 Mô hình học với thưởng SPICE cao hơn S1 ở cả mười ba độ đo của Bảng 6.3; ở sáu độ đo vị trí, khoảng tin cậy đều nằm trên 0. Theo executability, **p = 1,6 × 10^-5** (kiểm định McNemar, Mục 6.6). Đây là mô hình đầu tiên của đề tài hơn S1 có ý nghĩa thống kê theo executability, luật chặt nhất đã dùng; các hướng đã thử trước đó chỉ hơn có ý nghĩa dưới luật lỏng hơn. Phần thưởng chỉ dùng SPICE, một độ đo so câu, và mô hình định vị không tham gia vào phần thưởng, nhưng các độ đo vị trí vẫn tăng một cỡ tương tự.
 
-**Mức tăng đến từ đâu.** Có 36 trong 159 bước được cứu là do S1 viết sai loại thao tác, còn chỉ 8 trong 90 bước bị phá là do mô hình mới viết sai loại thao tác; phần sửa loại thao tác góp ròng 28 bước (+0,63 điểm). Phần còn lại, 41 bước (+0,92 điểm), nằm ở 4.200 bước mà cả hai mô hình đều gọi đúng loại thao tác, nơi executability đi từ 62,62 lên 63,60. Vậy hơn một nửa mức tăng đến từ việc câu chỉ đúng phần tử cần chạm hơn, khác với giai đoạn tọa độ, vốn có toàn bộ mức hơn nằm ở các bước S1 viết sai loại thao tác (Mục 6.5).
+**Mức tăng đến từ đâu.** Có 36 trong 159 bước được cứu là do S1 viết sai loại thao tác, còn chỉ 8 trong 90 bước bị phá là do mô hình mới viết sai loại thao tác; phần sửa loại thao tác góp ròng 28 bước (+0,63 điểm). Phần còn lại, 41 bước (+0,92 điểm), nằm ở 4.200 bước mà cả hai mô hình đều gọi đúng loại thao tác, nơi executability đi từ 62,62 lên 63,60. Vậy hơn một nửa mức tăng đến từ việc câu chỉ đúng phần tử cần chạm hơn, khác với giai đoạn thưởng tọa độ, vốn có toàn bộ mức hơn nằm ở các bước S1 viết sai loại thao tác (Mục 6.5).
 
-Câu của mô hình thay đổi ít so với S1: 2.795 trong 4.463 câu trùng đến từng ký tự, và số từ trung bình chỉ đi từ 7,83 lên 7,96, nên mức tăng không đến từ việc viết câu dài hơn. Hình 6.1 là một bước được cứu.
+Câu của mô hình thay đổi ít so với S1: 2.795 trong 4.463 câu trùng đến từng ký tự, và số từ trung bình chỉ đi từ 7,83 lên 7,96, nên mức tăng không đến từ việc viết câu dài hơn (Hình 6.1 minh hoạ một bước được cứu).
 
 **Hình 6.1.** Một bước được mô hình học với thưởng SPICE sửa đúng (ảnh chỉ giữ phần dưới màn hình). Cần chạm nút *Not now* ở cuối màn, trong khi một hộp thoại hỏi quyền gửi thông báo đang che màn hình. S1 gọi nút *Allow* trong hộp thoại nên mô hình định vị trượt; mô hình học với thưởng SPICE gọi đúng nút *Not now* kèm vị trí, và mô hình định vị trỏ trúng.
 
-**So với các mô hình khác.** Mô hình vẫn hơn S1 hạt giống 202 có ý nghĩa (**p = 0,014**), nên mức hơn không phải do may rủi của riêng hạt giống 101. So với giai đoạn thưởng tọa độ và giai đoạn học ưu tiên, hai hướng đã thử có executability cao nhất, mức hơn chỉ khoảng 0,6 điểm và chưa phân biệt được với 0 (Bảng 6.8). Giai đoạn thưởng tọa độ cao hơn ở tỉ lệ đúng loại thao tác và ở ba luật vị trí lỏng hơn executability; mô hình học với thưởng SPICE cao hơn ở executability và sáu trong bảy độ đo so câu (Hình 6.3).
+**So với các mô hình khác.** Mô hình vẫn hơn S1 hạt giống 202 có ý nghĩa (**p = 0,014**), nên mức hơn không phải do may rủi của riêng hạt giống 101. So với giai đoạn thưởng tọa độ và giai đoạn học ưu tiên, hai hướng đã thử có executability cao nhất, mức hơn chỉ khoảng 0,6 điểm và chưa phân biệt được với 0 (Bảng 6.8). Giai đoạn thưởng tọa độ cao hơn ở tỉ lệ đúng loại thao tác và ở ba luật vị trí lỏng hơn executability; mô hình học với thưởng SPICE cao hơn ở executability và sáu trong bảy độ đo so câu (Hình 6.2).
 
-### 6.3.2 Tác dụng phụ ở bước không chạm
+### 6.3.2 Giới hạn của kết quả
 
-Tập câu nhắc huấn luyện có đủ mọi loại thao tác, nên khác với giai đoạn học ưu tiên, mô hình không bị đẩy lệch trực tiếp về bước chạm. Dù vậy, trên 2.495 bước không chạm của tập kiểm tra, tỉ lệ gọi đúng loại thao tác giảm từ **85,97** xuống **84,29**, tức **-1,68 điểm** **[-2,76; -0,62]** (Hình 6.2). Mức giảm dồn vào bước cuộn (**-6,23 điểm**, **[-8,30; -4,31]**) và bước quay lại (**-5,93 điểm**).
-
-**Hình 6.2.** Mức thay đổi tỉ lệ gọi đúng loại thao tác của mô hình học với thưởng SPICE so với S1 trên 2.495 bước không chạm, theo loại thao tác, kèm khoảng tin cậy 95%. Bước cuộn và quay lại giảm, bước chờ và mở ứng dụng tăng.
-
-Mức tăng ở bước chạm và mức giảm ở bước không chạm cùng một nguyên nhân: mô hình nghiêng về viết câu chạm. Trong 51 bước cuộn bị phá, 47 bước có câu đổi từ “*Swipe up*” sang “*Click on ...*”; và trên 755 bước cuộn, số câu bị xếp vào loại chạm tăng từ 117 lên 167; cả 19 bước quay lại bị phá cũng thành câu chạm. Ở bước chạm, chính xu hướng này tạo ra 28 bước sửa loại thao tác đã nêu (số câu mở đầu bằng “*swipe*” giảm từ 140 xuống 66). Trên toàn 6.958 bước của tập kiểm tra, mô hình gọi đúng loại thao tác thêm 72 bước ở bước chạm nhưng mất lại 42 bước ở bước không chạm.
-
-Có thể nghĩ SPICE chấm kém câu cuộn ngắn nên mô hình bớt cuộn. Cách giải thích này là không đủ: ở bước cuộn, mức giảm ở câu cuộn ngắn (**-7,9 điểm**) không khác nhiều câu dài hơn (**-6,0**), và tại bước cuộn SPICE cho câu cuộn điểm cao hơn hẳn câu chạm (**66,3** so với **14,0**). Các giải thích còn lại, chưa được kiểm trực tiếp, là phần lớn câu nhắc huấn luyện là bước chạm, ở đó đổi câu vuốt thành câu chạm được thưởng, và thói quen ấy lan sang mọi loại bước. Cách sửa trực tiếp là thêm vào phần thưởng một số hạng cho việc gọi đúng loại thao tác, nhưng chưa được chạy.
-
-### 6.3.3 Giới hạn của kết quả
-
-Kết quả của mục này có bốn giới hạn. Thứ nhất, đây là kết quả một hạt giống; mức hơn giữ dấu khi so với cả hai hạt giống của S1, nhưng chưa biết có lặp lại khi huấn luyện lại mô hình với hạt giống khác. Thứ hai, chưa có mô hình chỉ học thêm có giám sát cùng số bước để so, nên chưa biết bao nhiêu phần là do phần thưởng SPICE, bao nhiêu là do học thêm. Thứ ba, mô hình này sinh câu theo cách khác với S1 (Mục 4.5); trên 20 bước chạm dùng để kiểm, riêng việc đổi cách sinh đã làm 4 câu của S1 khác đi, nên một phần nhỏ của chênh lệch có thể đến từ cách sinh câu. Thứ tư, mức tăng ở bước chạm đi kèm mức giảm ở bước không chạm.
+Hai giới hạn của thiết kế đã nêu ở Mục 4.5 vẫn áp dụng cho kết quả trên: chưa có mô hình chỉ học thêm có giám sát cùng số bước để tách phần do phần thưởng SPICE, và hai mô hình sinh câu theo hai cách khác nhau. Mức hơn giữ dấu khi so với cả hai hạt giống của S1.
 
 ## 6.4 Thành phần thứ hai: chép câu ví dụ khi đồng thuận loại thao tác (ACE)
 
 Trên tập kiểm tra, luật đồng thuận của ACE (Mục 4.6) thay **402** trong **4.463** câu nháp (**9,0%**). Bảng 6.4 đặt ACE, tức phương pháp đề xuất, cạnh câu nháp và cạnh bộ sinh đứng một mình (dùng câu của bộ sinh ở mọi bước).
 
-**Bảng 6.4.** ACE trên 4.463 bước chạm, so với câu nháp (của mô hình học với thưởng SPICE) và với bộ sinh đứng một mình; cả ba cột là kết quả một hạt giống. Ba độ đo vị trí kèm khoảng tin cậy 95% từ bootstrap gom cụm theo ứng dụng. Bảy độ đo so câu chưa có khoảng tin cậy; cột **ACE - câu nháp** lệch tối đa 0,02 so với Bảng 6.3 do chấm lại.
+**Bảng 6.4.** ACE trên 4.463 bước chạm, so với câu nháp (của mô hình học với thưởng SPICE) và với bộ sinh đứng một mình. Ba độ đo vị trí kèm khoảng tin cậy 95% từ bootstrap gom cụm theo ứng dụng. Bảy độ đo so câu chưa có khoảng tin cậy; cột **ACE - câu nháp** lệch tối đa 0,02 so với Bảng 6.3 do chấm lại.
 
 | Độ đo | Câu nháp | Bộ sinh một mình | ACE | ACE - câu nháp |
 |---|---:|---:|---:|---:|
@@ -1208,7 +1191,7 @@ Trên tập kiểm tra, luật đồng thuận của ACE (Mục 4.6) thay **402*
 
 **Vì sao cần điều kiện loại thao tác.** Nếu chỉ dùng điều kiện chép, luật thay **453** câu, vẫn tăng cả bảy độ đo so câu, nhưng executability thấp hơn câu nháp **0,11 điểm** (24 bước cứu, 29 bước phá). Điều kiện loại bớt **51** câu, phần lớn là câu vuốt, quay lại hoặc gõ chữ bị chép vào bước mà câu nháp dẫn tới thao tác chạm; trên 51 bước ấy, câu chép cứu 9 bước và phá 15 bước. Nhờ vậy ACE cao hơn biến thể chỉ có điều kiện chép **0,13 điểm executability** và không thấp hơn ở độ đo nào của Bảng 6.4.
 
-**Giới hạn.** Kết quả của ACE có năm giới hạn. Thứ nhất, luật được chọn trong bốn biến thể trên tập kiểm định nội bộ, và các biến thể ấy được nghĩ ra sau khi đã thấy kết quả của bộ sinh trên tập đó; tập kiểm tra chỉ được dùng một lần, cho biến thể đã chọn. Thứ hai, mức tăng ở độ đo so câu chưa có khoảng tin cậy, và các mức dưới một điểm (METEOR, ROUGE-L, chrF, BERTScore) chưa đủ để kết luận. Thứ ba, chưa rõ truy hồi câu ví dụ giúp được bao nhiêu, vì trên tập kiểm định nội bộ, ở đa số độ đo, bộ sinh không hơn mô hình học thêm cùng số bước mà không xem câu ví dụ. Thứ tư, đây là kết quả một hạt giống. Thứ năm, phần lỗi nằm ở bề mặt câu (mức trùng từ với câu chuẩn), chưa giúp mô hình định vị tìm đúng phần tử hơn, nên ACE không khắc phục được nhược điểm đó ở khâu nhận ra phần tử (Mục A.5).
+**Giới hạn.** Kết quả của ACE cần được đọc kèm bốn giới hạn. Thứ nhất, luật được chọn trong bốn biến thể trên tập kiểm định nội bộ, và các biến thể ấy được nghĩ ra sau khi đã thấy kết quả của bộ sinh trên tập đó; tập kiểm tra chỉ được dùng một lần, cho biến thể đã chọn. Thứ hai, mức tăng ở độ đo so câu chưa có khoảng tin cậy, và các mức dưới một điểm (METEOR, ROUGE-L, chrF, BERTScore) chưa đủ để kết luận. Thứ ba, chưa rõ truy hồi câu ví dụ giúp được bao nhiêu, vì trên tập kiểm định nội bộ, ở đa số độ đo, bộ sinh không hơn mô hình học thêm cùng số bước mà không xem câu ví dụ. Thứ tư, phần lỗi nằm ở bề mặt câu (mức trùng từ với câu chuẩn), chưa giúp mô hình định vị tìm đúng phần tử hơn, nên ACE không khắc phục được nhược điểm đó ở khâu nhận ra phần tử (Mục A.5).
 
 ## 6.5 Kết quả trên nhiều độ đo
 
@@ -1280,12 +1263,12 @@ Ngoài executability, chúng tôi trình bày nhóm độ đo theo vị trí và
 |  | Hộp phần tử | +0,49 | [-0,13; +1,10] | 0,149 |
 |  | Exec. | +0,02 | [-0,57; +0,61] | 1,000 |
 
-**Hình 6.3.** Các mô hình chính dưới ba luật chấm trên 4.463 bước chạm. Cột nền xám là mốc câu chuẩn. Thứ tự gần như giữ nguyên qua ba luật; riêng giai đoạn thưởng tọa độ (giai đoạn ba) cao hơn dưới luật khoảng cách Euclid, còn mô hình học với thưởng SPICE cao hơn dưới executability.
+**Hình 6.2.** Các mô hình chính dưới ba luật chấm trên 4.463 bước chạm. Cột nền xám là mốc câu chuẩn. Thứ tự gần như giữ nguyên qua ba luật; riêng giai đoạn thưởng tọa độ (giai đoạn ba) cao hơn dưới luật khoảng cách Euclid, còn mô hình học với thưởng SPICE cao hơn dưới executability.
 **Nhóm độ đo theo vị trí.** Bảng 6.5 đặt cạnh nhau ba luật chấm chính (luật khoảng cách Euclid, luật hộp phần tử và executability) cùng hai biến thể ở Mục 5.12. Phương pháp đề xuất đạt 76,3% theo luật khoảng cách Euclid, so với 74,4% của S1 hạt giống 101. Trong các hướng đã thử, giai đoạn thưởng tọa độ cao nhất theo luật khoảng cách Euclid, 77,3%. Thứ tự các mô hình dưới hai luật vị trí gần như trùng với thứ tự dưới executability.
 
 **Sai số và kết luận dưới ba luật.** Bảng 6.7 cho khoảng tin cậy dưới ba luật, tính trên cùng các mẫu bootstrap nên các cột so sánh được với nhau. Chênh lệch giữa S1 hạt giống 101 và mô hình gốc giữ gần nguyên qua ba luật, đều với p < 0,001, và phương pháp đề xuất hơn S1 có ý nghĩa dưới cả ba luật (Mục 6.4). Với các hướng đã thử, kết luận đổi tùy luật. Mô hình mô tả phần tử thấp hơn S1 có ý nghĩa theo executability (Mục A.1.3) nhưng không theo luật khoảng cách Euclid. Theo luật khoảng cách Euclid, phần lớn mức hơn của giai đoạn học ưu tiên và giai đoạn thưởng tọa độ so với mô hình mô tả phần tử có được chỉ nhờ học tiếp, vì mô hình chỉ học thêm có giám sát với cùng số bước cũng đạt phần lớn mức hơn ấy. Giai đoạn thưởng tọa độ hơn S1 có ý nghĩa theo hai luật vị trí, nhưng không theo executability.
 
-> Toàn bộ mức hơn theo luật khoảng cách Euclid ấy nằm ở 256 bước (5,7%) mà S1 viết sai loại thao tác, chẳng hạn viết vuốt hay cuộn khi cần chạm. Nhóm này góp +3,11 điểm theo luật khoảng cách Euclid và +1,97 theo executability; so với hạt giống 202, nhóm này góp +3,09 điểm. Ở 4.189 bước cả hai cùng gọi đúng loại thao tác, tỉ lệ trúng gần như bằng nhau (79,04% so với 78,92%). Luật khoảng cách Euclid cũng không phạt những lần chạm rơi vào phần tử sát bên, còn executability thì phạt; giai đoạn thưởng tọa độ mắc lỗi này nhiều hơn, nên trên nhóm bước cùng gọi đúng loại thao tác, giai đoạn này thấp hơn S1 0,81 điểm theo executability. Vậy đóng góp của hai giai đoạn này nằm ở việc gọi đúng loại thao tác, chưa nằm ở việc định vị phần tử tốt hơn. Mọi con số trên là của một hạt giống.
+> Toàn bộ mức hơn theo luật khoảng cách Euclid ấy nằm ở 256 bước (5,7%) mà S1 viết sai loại thao tác, chẳng hạn viết vuốt hay cuộn khi cần chạm. Nhóm này góp +3,11 điểm theo luật khoảng cách Euclid và +1,97 theo executability; so với hạt giống 202, nhóm này góp +3,09 điểm. Ở 4.189 bước cả hai cùng gọi đúng loại thao tác, tỉ lệ trúng gần như bằng nhau (79,04% so với 78,92%). Luật khoảng cách Euclid cũng không phạt những lần chạm rơi vào phần tử sát bên, còn executability thì phạt; giai đoạn thưởng tọa độ mắc lỗi này nhiều hơn, nên trên nhóm bước cùng gọi đúng loại thao tác, giai đoạn này thấp hơn S1 0,81 điểm theo executability. Vậy đóng góp của hai giai đoạn này nằm ở việc gọi đúng loại thao tác, chưa nằm ở việc định vị phần tử tốt hơn.
 
 **Nhóm độ đo so với câu chuẩn.** Bảng 6.6 dùng các độ đo của Widget Captioning [9] và Screen2Words [10], gồm BLEU [20], METEOR [22], ROUGE-L [21], CIDEr [23] và SPICE [24], cùng chrF [25] và BERTScore [26]. BLEU-4 ở bảng này tính trên toàn tập theo bộ chấm của COCO Captions, nên khác BLEU-4 trung bình theo câu ở Bảng 6.1. Tinh chỉnh có giám sát nâng mọi độ đo trong nhóm; chẳng hạn SPICE, độ đo mà Zhao và cộng sự [37] khuyên dùng để xếp hạng các mô hình sinh chỉ dẫn khi có câu tham chiếu, tăng từ 18,5 ở mô hình gốc lên 44,4 ở S1 hạt giống 101. Phương pháp đề xuất nâng tiếp các độ đo này (Bảng 6.4). BERTScore dùng bản đã co giãn theo mức điểm nền (*baseline rescaling*), vì ở bản chưa co giãn, mọi mô hình đã tinh chỉnh đều nằm trong khoảng 93,5 đến 94,4. Câu rỗng được tính 0 điểm và vẫn nằm trong mẫu số, giống quy ước của executability.
 
@@ -1293,7 +1276,7 @@ Khi đọc nhóm độ đo này cần lưu ý hai điểm. Thứ nhất, CIDEr-D
 
 ## 6.6 So sánh ghép cặp
 
-Mọi mô hình được chấm trên cùng một tập bước, nên chúng tôi so sánh hai mô hình theo từng cặp bước (kiểm định McNemar, Mục 5.13). Bảng 6.8 gom các so sánh dùng trong chương.
+Mọi mô hình được chấm trên cùng một tập bước, nên chúng tôi so sánh hai mô hình theo từng cặp bước (kiểm định McNemar, Mục 5.13); Bảng 6.8 gom các phép so sánh dùng trong chương.
 
 **Bảng 6.8.** So sánh ghép cặp trên 4.463 bước. `b` là số bước mà mô hình sau dấu trừ đạt còn mô hình trước dấu trừ không đạt, `c` là chiều ngược lại, nên Δ = (c-b)/n. Khoảng tin cậy từ bootstrap gom cụm theo tác vụ (Mục 5.13), trừ nhóm có dấu *. Base là mô hình gốc; S1/101 và S1/202 là mô hình tinh chỉnh có giám sát với hạt giống 101 và 202. Hai hàng có câu chuẩn dùng n = 4.462 vì bỏ một bước mà mô hình được đánh giá sinh câu rỗng. Thưởng SPICE là thành phần thứ nhất của phương pháp đề xuất; học ưu tiên là MIN-DESC; học thêm là mô hình chỉ học thêm có giám sát (CE2-S2); TAGE là bộ sửa câu theo vùng cắt. *Ở nhóm này, chỉ hàng thưởng SPICE - S1/101 gom cụm theo tác vụ, các hàng khác gom cụm theo ứng dụng; gom cụm theo ứng dụng cho hàng ấy khoảng gần như trùng ([+0,80; +2,33]).
 
@@ -1304,7 +1287,7 @@ Mọi mô hình được chấm trên cùng một tập bước, nên chúng tô
 | Câu chuẩn - S1 | +16,6 | – | 102 | 843 | <0,001 |
 | Câu chuẩn - Base | +28,1 | – | 102 | 1.357 | <0,001 |
 | S1/202 - S1/101 (hai hạt giống) | +0,52 | [-0,22; +1,26] | 132 | 155 | 0,194 |
-| **Phương pháp đề xuất và các so sánh liên quan, một hạt giống*** ||||||
+| **Phương pháp đề xuất và các so sánh liên quan*** ||||||
 | Phương pháp đề xuất - S1/101 | +1,57 | [+0,86; +2,31] | 88 | 158 | <0,001 |
 | Phương pháp đề xuất - thưởng SPICE | +0,02 | [-0,21; +0,26] | 14 | 15 | 1,00 |
 | Thưởng SPICE - S1/101 | +1,55 | [+0,82; +2,28] | 90 | 159 | <0,001 |
@@ -1312,7 +1295,7 @@ Mọi mô hình được chấm trên cùng một tập bước, nên chúng tô
 | Thưởng SPICE - học ưu tiên | +0,60 | [-0,52; +1,73] | 304 | 331 | 0,30 |
 | Thưởng SPICE - thưởng tọa độ | +0,58 | [-0,50; +1,69] | 286 | 312 | 0,31 |
 | TAGE - thưởng SPICE | -0,43 | [-0,87; +0,02] | 67 | 48 | 0,093 |
-| **Hướng đã thử (Phụ lục A), một hạt giống** ||||||
+| **Hướng đã thử (Phụ lục A)** ||||||
 | Mô tả phần tử (S2) - S1/101 | -1,93 | [-3,06; -0,75] | 340 | 254 | 0,0005 |
 | S2 - S1/202 | -2,44 | [-3,53; -1,34] | 353 | 244 | <0,001 |
 | S2 - Base | +9,59 | [+8,16; +11,06] | 324 | 752 | <0,001 |
@@ -1369,7 +1352,7 @@ Mục này trình bày bốn quan sát rút từ bản ghi từng bước của 
 
 ### 6.9.1 Ảnh hưởng của việc trùng ứng dụng giữa tập huấn luyện và tập kiểm tra
 
-Trong các bước của tập kiểm tra gán được tên ứng dụng, 95,6% thuộc về ứng dụng cũng có trong tập huấn luyện (Mục 3.3), nên điểm số có thể cao hơn năng lực thực chất. Bảng 6.11 đo ảnh hưởng đó.
+Trong các bước của tập kiểm tra gán được tên ứng dụng, 95,6% thuộc về ứng dụng cũng có trong tập huấn luyện (Mục 3.3), nên điểm số có thể cao hơn năng lực thực chất, và Bảng 6.11 đo ảnh hưởng ấy.
 
 **Bảng 6.11.** Điểm của S1 chia theo việc ứng dụng của bước đã xuất hiện trong tập huấn luyện hay chưa.
 
@@ -1379,7 +1362,7 @@ Trong các bước của tập kiểm tra gán được tên ứng dụng, 95,6%
 | Ứng dụng chưa thấy | 59,0% | 78 |
 | Không quy được về ứng dụng | 59,1% | 2.648 |
 
-Ba con số gần như trùng nhau. Nhóm ứng dụng chưa thấy chỉ có 78 bước nên khoảng tin cậy rất rộng; chúng tôi chỉ nói được là chưa phát hiện ảnh hưởng của việc trùng ứng dụng, chưa thể nói đã loại trừ được ảnh hưởng ấy.
+Ba con số gần như trùng nhau, nhưng nhóm ứng dụng chưa thấy chỉ có 78 bước nên khoảng tin cậy rất rộng; chúng tôi chỉ nói được là chưa phát hiện ảnh hưởng của việc trùng ứng dụng, chưa thể nói đã loại trừ được ảnh hưởng ấy.
 
 ### 6.9.2 Phân loại lỗi còn lại
 
@@ -1414,7 +1397,7 @@ Ngay cả câu chuẩn cũng không đạt ở khoảng một phần tư số b�
 
 ## 6.10 Các hướng đã thử trước phương pháp đề xuất
 
-Bảng 6.12 tóm tắt các hướng đã thử trước phương pháp đề xuất, mỗi hướng một hạt giống; chi tiết nằm ở Phụ lục A.
+Bảng 6.12 tóm tắt các hướng đã thử trước phương pháp đề xuất; chi tiết nằm ở Phụ lục A.
 
 **Bảng 6.12.** Các hướng đã thử trước phương pháp đề xuất. Điểm là executability trên 4.463 bước chạm của tập kiểm tra, trừ khi ghi khác.
 
@@ -1444,7 +1427,7 @@ Bảng 6.13 ghi trạng thái cuối của từng mô hình và phép thử, kè
 | Mô hình hoặc phép thử | Trạng thái | Ghi chú |
 |---|---|---|
 | Phương pháp đề xuất (thưởng SPICE + ACE) | Hoàn tất, đã đánh giá | 60,7; hơn S1/101 +1,57 có ý nghĩa; ngang thành phần thứ nhất về vị trí, cao hơn ở cả bảy độ đo so câu (CIDEr-D +12,0); Mục 6.4 |
-| Thành phần thứ nhất (thưởng SPICE) | Hoàn tất, đã đánh giá | 60,6; hơn S1/101 +1,55 có ý nghĩa, tăng ở cả mười ba độ đo; bước cuộn giảm 6,23 điểm; Mục 6.3 |
+| Thành phần thứ nhất (thưởng SPICE) | Hoàn tất, đã đánh giá | 60,6; hơn S1/101 +1,55 có ý nghĩa, tăng ở cả mười ba độ đo; Mục 6.3 |
 | Mô hình tinh chỉnh có giám sát (S1), hai hạt giống | Hoàn tất, đã đánh giá | 59,1 và 59,6; chênh lệch giữa hai hạt giống +0,52 điểm; Mục 6.7 |
 | Mô tả phần tử (S2), hạt giống 101 | Hoàn tất, đã đánh giá | 57,2; thấp hơn S1/101 có ý nghĩa; Mục A.1.3 |
 | Mô tả phần tử (S2), hạt giống 202 | Đã hủy bỏ | giới hạn tài nguyên tính toán |
@@ -1458,7 +1441,7 @@ Bảng 6.13 ghi trạng thái cuối của từng mô hình và phép thử, kè
 | Bước không chạm sau giai đoạn học ưu tiên | Đã đánh giá | giảm 19,75 điểm; Mục A.2.2.4 |
 | Chọn ứng viên, hạt giống 101 | Hoàn tất, đã đánh giá | 56,1; độ chính xác chọn 57,5%, thấp hơn khi tự viết dòng mô tả; Mục A.3.2 |
 | Năm lượt còn lại của mô hình chọn ứng viên | Đã hủy bỏ | độ chính xác chọn không vượt dòng mô tả tự viết |
-| Hiệu chỉnh ngưỡng từ chối chọn | Hoàn tất | tốt nhất thêm **8 bước đúng** trên **1.400 bước** |
+| Hiệu chỉnh ngưỡng từ chối chọn | Hoàn tất | tốt nhất thêm 8 bước đúng trên 1.400 bước |
 | Mở khoá phần thị giác để cùng huấn luyện | Dừng giữa chừng | bản lưu sau 41% số bước kém giai đoạn học ưu tiên rõ trên tập kiểm định nội bộ |
 | Mô-đun định vị và cầu nối | Dừng sau một lượt | cầu nối không làm câu thay đổi; Mục A.6 |
 | Vùng cắt làm ảnh thứ hai | Dừng ở khâu đánh giá | không phân biệt phần tử đúng với phần tử lân cận |
@@ -1470,25 +1453,22 @@ Bảng 6.13 ghi trạng thái cuối của từng mô hình và phép thử, kè
 | Người nghe trắc nghiệm (Phi-4) | Hoàn tất một phần | đã chấm câu chuẩn, giai đoạn thưởng tọa độ, S1/101 và 3.566 bước của mô hình gốc; Mục 5.10 |
 | Chấm tay 100 câu bởi hai người | Không thực hiện | còn là một hạn chế; Mục 7.2 |
 
-**Phần còn thiếu so với thiết kế.** Đại lượng chính của thiết kế ban đầu, hiệu giữa trung bình hai hạt giống của mỗi mô hình, không hoàn tất vì mọi mô hình có can thiệp chỉ có một hạt giống (Mục 4.8). Phần thiếu này không làm mất giá trị của phương pháp đề xuất, vì mức hơn S1 chủ yếu đến từ thành phần thứ nhất, và thành phần này hơn cả hai hạt giống của S1 có ý nghĩa thống kê. Nó cũng không ảnh hưởng tới việc hiệu chuẩn độ đo ở ngưỡng tối thiểu và ngưỡng tối đa (Chương 7).
 
 # Chương 7. Kết luận
 
 ## 7.1 Đóng góp của luận văn
 
-Đề tài xuất phát từ quan sát rằng, với cùng một ảnh màn hình và cùng một mục tiêu, dòng nghiên cứu tác tử giao diện sinh ra tọa độ để máy tự bấm, trong khi người dùng đang đứng lại giữa chúng thì cần một câu chỉ dẫn bằng tiếng Anh cho biết phải chạm vào đâu. **Đóng góp chính của đề tài là một phương pháp sinh câu chỉ dẫn như vậy, gồm hai thành phần nối tiếp.** Hai đóng góp còn lại hỗ trợ cho phương pháp. Đóng góp thứ hai là **độ đo executability**, dùng để chấm phương pháp cùng mọi mô hình khác trong đề tài. Đóng góp thứ ba là **chuỗi phân tích rút từ các hướng đã thử**, cũng là căn cứ để chọn phương pháp.
+Đề tài xuất phát từ quan sát rằng, với cùng một ảnh màn hình và cùng một mục tiêu, dòng nghiên cứu tác tử giao diện sinh ra tọa độ để máy tự bấm, trong khi người dùng đang dừng lại giữa chừng thì cần một câu chỉ dẫn bằng tiếng Anh cho biết phải chạm vào đâu. **Đóng góp chính của đề tài là một phương pháp sinh câu chỉ dẫn như vậy, gồm hai thành phần nối tiếp.** Hai đóng góp còn lại hỗ trợ cho phương pháp. Đóng góp thứ hai là **độ đo executability**, dùng để chấm phương pháp cùng mọi mô hình khác trong đề tài. Đóng góp thứ ba là **chuỗi phân tích rút từ các hướng đã thử**, cũng là căn cứ để chọn phương pháp.
 
 **Về phương pháp đề xuất**
 
-Phương pháp đề xuất (Mục 4.4) xây dựng trên mô hình tinh chỉnh có giám sát, tức Qwen2.5-VL-3B tinh chỉnh QLoRA trên tập dữ liệu của đề tài, và tác động thẳng vào câu ở đầu ra. Thành phần thứ nhất là mô hình học với thưởng SPICE, tức mô hình tinh chỉnh có giám sát được huấn luyện tiếp bằng học tăng cường theo nhóm (GRPO), với phần thưởng là SPICE của câu sinh ra so với câu chuẩn. Câu do thành phần này viết được gọi là câu nháp. Thành phần thứ hai, ACE (luật chép câu ví dụ khi đồng thuận loại thao tác), dùng thêm một bộ sinh câu được xem bốn câu chuẩn truy hồi từ tập huấn luyện. Câu của bộ sinh chỉ thay câu nháp khi chép nguyên văn một câu ví dụ và có cùng loại thao tác với câu nháp (luật đồng thuận); ở các bước còn lại, câu nháp được giữ nguyên. Mô hình định vị dùng để chấm không tham gia vào phần thưởng lẫn luật đồng thuận, nên phép đo ở đầu ra vẫn độc lập với phương pháp.
+Phương pháp đề xuất (Mục 4.4) xây dựng trên mô hình tinh chỉnh có giám sát và tác động thẳng vào câu ở đầu ra: mô hình học với thưởng SPICE viết câu nháp, rồi ACE chỉ thay câu nháp bằng một câu ví dụ truy hồi từ tập huấn luyện khi câu ấy được chép nguyên văn và cùng loại thao tác với câu nháp. Mô hình định vị dùng để chấm không tham gia vào phần thưởng lẫn luật đồng thuận, nên phép đo ở đầu ra vẫn độc lập với phương pháp.
 
 Với cả hai thành phần, phương pháp đề xuất đạt **60,7% theo executability**, so với **59,1%** của mô hình tinh chỉnh có giám sát, tức hơn **1,57 điểm** với khoảng tin cậy **[+0,86; +2,31]** và **p < 0,001**. Mức hơn này về executability đến từ thành phần thứ nhất, vì khi đứng một mình, mô hình học với thưởng SPICE đã đạt **60,6%**, cao nhất trong số các mô hình chỉ dùng một bộ sinh câu, và hơn mô hình tinh chỉnh có giám sát **1,55 điểm [+0,80; +2,33]**. Đây là mô hình đầu tiên của đề tài hơn mô hình tinh chỉnh có giám sát với ý nghĩa thống kê theo executability. Mức tăng xuất hiện ở cả mười ba độ đo được trình bày, và hơn một nửa mức tăng đến từ việc định vị phần tử tốt hơn (Mục 6.3). ACE nâng thêm cả bảy độ đo so câu sinh ra với câu chuẩn, rõ nhất ở CIDEr-D (+12,0) và SPICE (+1,3), mà không làm giảm độ đo vị trí nào. Bộ sinh có câu ví dụ khi đứng một mình lại làm executability giảm, nên phần có ích của truy hồi chỉ giữ được nhờ luật đồng thuận (Mục 6.4).
 
-Phương pháp có một tác dụng phụ đo được. Mô hình học với thưởng SPICE có xu hướng sinh câu yêu cầu chạm, nên ở bước cuộn, tỉ lệ gọi đúng loại thao tác giảm 6,23 điểm so với mô hình tinh chỉnh có giám sát.
-
 **Về độ đo**
 
-Khi đầu ra là câu thay vì tọa độ, việc chấm trở nên khó, vì cùng một nút có nhiều tên gọi đều đúng và không bộ dữ liệu nào liệt kê hết. Độ đo **executability** đưa câu sinh ra cho một mô hình định vị phần tử độc lập, không được cung cấp tọa độ đáp án, rồi kiểm xem điểm mà mô hình định vị trả về có rơi vào ô Voronoi của phần tử người dùng đã chạm hay không. Ý tưởng này có gốc từ dòng sinh biểu thức quy chiếu; phần đóng góp của đề tài nằm ở loạt phép đo dùng để kiểm chứng độ đo (Chương 5). Sai số của công cụ đo nhỏ hơn nhiều so với khoảng cách từ phần tử cần chạm tới phần tử lân cận gần nhất (Mục 5.4), và luật ô Voronoi được chọn vì gần như không cho điểm một câu gọi sai tên nút (Mục 5.2). Hai đầu của dải điểm đều đã được đo. Khi chấm chính câu chuẩn, điểm đạt ngưỡng tối đa 75,7% (Mục 5.5), còn câu đúng văn phong nhưng sai nội dung nhận điểm thấp nhất trong mọi phép đo, cho thấy công cụ đo chấm theo nội dung câu chứ không theo văn phong (Mục 5.6). Trong mười phép cố ý chèn một lỗi đã biết để xem luật chấm có bắt được không, chỉ bốn phép (đặt điểm lên một phần tử kề và phủ định câu) thực sự kiểm được luật chấm, còn các phép khác cho kết quả tốt do chính cách dựng. Hai trong bốn phép ấy có tỉ lệ bắt lỗi thấp (Mục 5.7).
+Khi đầu ra là câu thay vì tọa độ, việc chấm trở nên khó, vì cùng một nút có nhiều tên gọi đều đúng và không bộ dữ liệu nào liệt kê hết. Độ đo **executability** đưa câu sinh ra cho một mô hình định vị phần tử độc lập, không được cung cấp tọa độ đáp án, rồi kiểm xem điểm mà mô hình định vị trả về có rơi vào ô Voronoi của phần tử người dùng đã chạm hay không. Ý tưởng này có gốc từ dòng sinh biểu thức quy chiếu; phần đóng góp của đề tài nằm ở loạt phép đo dùng để kiểm chứng độ đo (Chương 5). Sai số của công cụ đo nhỏ hơn nhiều so với khoảng cách từ phần tử cần chạm tới phần tử lân cận gần nhất (Mục 5.4), và luật ô Voronoi được chọn vì gần như không cho điểm một câu gọi sai tên nút (Mục 5.2). Hai đầu của dải điểm cũng đã được đo: khi chấm chính câu chuẩn, điểm đạt ngưỡng tối đa 75,7% (Mục 5.5), còn câu đúng văn phong nhưng sai nội dung nhận điểm thấp nhất trong mọi phép đo, cho thấy công cụ đo chấm theo nội dung câu chứ không theo văn phong (Mục 5.6). Trong mười phép cố ý chèn một lỗi đã biết để xem luật chấm có bắt được không, chỉ bốn phép (đặt điểm lên một phần tử kề và phủ định câu) thực sự kiểm được luật chấm, còn các phép khác cho kết quả tốt do chính cách dựng. Hai trong bốn phép ấy có tỉ lệ bắt lỗi thấp (Mục 5.7).
 
 Thứ tự giữa câu chuẩn, mô hình tinh chỉnh có giám sát và mô hình gốc giữ nguyên dưới năm luật chấm khác nhau (Mục 5.12), và độ đo giữ ổn định khi câu chuẩn được viết lại bằng cách đổi động từ hay đảo trật tự câu (Mục 5.8). Khi chấm lại bằng một mô hình định vị thứ hai không dùng AndroidControl khi huấn luyện, chênh lệch giữa mô hình tinh chỉnh có giám sát và mô hình gốc, dùng làm phép so sánh kiểm chứng, vẫn giữ được 94% độ lớn (Mục 5.9). Khi chấm bằng Phi-4, một mô hình không thuộc họ Qwen làm người nghe trắc nghiệm, tức đọc câu rồi chọn phần tử đúng trong một danh sách ứng viên đánh số, thứ tự giữa các mô hình cũng giữ nguyên (Mục 5.10).
 
@@ -1500,7 +1480,7 @@ Trên 4.463 bước chạm của tập kiểm tra, mô hình tinh chỉnh có gi
 
 **Về phân tích các hướng đã thử**
 
-Đóng góp thứ ba là chuỗi phân tích ở mức từng bước, rút từ các hướng đã thử trước phương pháp đề xuất. Các hướng này đều chỉ có một hạt giống. Mục 6.10 tóm tắt chúng, còn thiết kế và kết quả chi tiết nằm ở Phụ lục A.
+Đóng góp thứ ba là chuỗi phân tích ở mức từng bước, rút từ các hướng đã thử trước phương pháp đề xuất. Mục 6.10 tóm tắt chúng, còn thiết kế và kết quả chi tiết nằm ở Phụ lục A.
 
 Hướng thử đầu tiên dạy mô hình viết một dòng mô tả phần tử cần chạm trước, rồi mới viết câu hướng dẫn. Mô hình này, gọi là **mô hình mô tả phần tử**, đạt điểm thấp hơn mô hình tinh chỉnh có giám sát (Mục A.1.3). Hai giai đoạn học tiếp theo có nâng điểm lên, nhưng phần lớn mức tăng ở giai đoạn học ưu tiên thực ra đến từ việc mô hình được học thêm có giám sát (Mục A.2.2). Ở giai đoạn thưởng tọa độ, phần hơn mô hình tinh chỉnh có giám sát, tính theo luật khoảng cách Euclid của AndroidInTheWild, nằm trọn ở những bước mà mô hình tinh chỉnh có giám sát gọi sai loại thao tác (Mục 6.5). Khi chia các bước theo dòng mô tả do chính mô hình viết ra, mô hình mô tả phần tử hơn hẳn mô hình tinh chỉnh có giám sát ở những bước dòng mô tả trỏ đúng phần tử, và kém hơn ở những bước dòng mô tả trỏ sai. Như vậy việc viết dòng mô tả trước vẫn có tác dụng, chỉ là tác dụng ấy không thể vượt qua độ chính xác của chính dòng mô tả (Mục A.2.3).
 
@@ -1508,17 +1488,13 @@ Hai phân tích tiếp theo tìm xem nguyên nhân sai tập trung ở khâu nà
 
 Ở **mô hình chọn ứng viên**, dòng mô tả không còn được sinh tự do mà được chọn trong danh sách phần tử của chính màn hình. Bản thân việc chọn hoạt động đúng, nhưng phát sinh một rào cản mới là mô hình từ chối chọn quá nhiều, tức trả lời rằng danh sách không chứa phần tử cần chạm dù thực ra có. Yếu tố liên quan gần nhất đo được là tỉ lệ mẫu huấn luyện được gán nhãn từ chối chọn, nhưng đây mới là quan sát tương quan, chưa được xác lập thành quan hệ nhân quả (Mục A.3.2).
 
-**Về mức độ hoàn thành**
-
-Đại lượng chính của thiết kế ban đầu là Δ = S2 - S1, tức chênh lệch giữa mô hình mô tả phần tử (S2) và mô hình tinh chỉnh có giám sát (S1), lấy trung bình trên hai hạt giống cho mỗi mô hình. Đại lượng này không tính được vì hạt giống thứ hai của chính mô hình mô tả phần tử không được chạy do giới hạn tài nguyên tính toán (Mục A.1.2). Phép so mô hình tinh chỉnh có giám sát với mô hình gốc, tuy đã có số, không được dùng để thay thế đại lượng ấy. Bảng 6.13 ghi trạng thái cuối và lý do của từng mô hình và cấu hình. Các phần còn thiếu khác, gồm việc mọi mô hình được huấn luyện, trừ mô hình tinh chỉnh có giám sát, chỉ có một hạt giống và mức giảm ở bước không chạm, được nêu ở Mục 7.2.
-
 ## 7.2 Hạn chế
 
 Phần này liệt kê những chỗ mà kết luận của đề tài còn để ngỏ, kèm số đo cho từng chỗ khi có thể đo được.
 
 ### 7.2.1 Hạn chế của công cụ đo
 
-- **Khả năng mô hình định vị thiên vị theo văn phong của AndroidControl đã được loại trừ; khả năng thiên vị do cùng họ mô hình mới được loại trừ một phần.** Dụng cụ chính, UGround-V1-2B, được huấn luyện trên dữ liệu có 47 nghìn phần tử do người gắn nhãn, lấy từ phần huấn luyện chính thức của AndroidControl, trong khi 90% tác vụ trong tập kiểm tra của đề tài cũng thuộc phần ấy. Tách điểm theo phần chia chính thức của AndroidControl không cho thấy chênh lệch nào giữa phần mô hình định vị có thể đã học và phần còn lại (Mục 5.3), và phép chấm lại bằng UI-Venus-Ground-7B, một mô hình không học AndroidControl, giữ được 94% độ lớn của phép so sánh kiểm chứng (Mục 5.9). Cả hai mô hình định vị đều thuộc họ Qwen-VL, cùng dòng với mô hình được chấm. Người nghe trắc nghiệm Phi-4, ngoại họ Qwen, giữ nguyên thứ tự giữa các mô hình (Mục 5.10). Tuy vậy, người nghe này mới chấm bốn mô hình, mô hình gốc chưa được chấm hết tập kiểm tra, và dải điểm của người nghe, từ câu chung chung tới câu chuẩn, hẹp hơn nhiều so với giữa executability. Vì vậy mới nói được rằng thứ tự giữa các mô hình giữ nguyên dưới một người nghe ngoài họ Qwen, chưa nói được rằng mọi phép so đã được kiểm chéo qua hai mô hình.
+- **Khả năng mô hình định vị thiên vị theo văn phong của AndroidControl đã được loại trừ; khả năng thiên vị do cùng họ mô hình mới được loại trừ một phần.** Công cụ đo chính, UGround-V1-2B, được huấn luyện trên dữ liệu có 47 nghìn phần tử do người gắn nhãn, lấy từ phần huấn luyện chính thức của AndroidControl, trong khi 90% tác vụ trong tập kiểm tra của đề tài cũng thuộc phần ấy. Tách điểm theo phần chia chính thức của AndroidControl không cho thấy chênh lệch nào giữa phần mô hình định vị có thể đã học và phần còn lại (Mục 5.3), và phép chấm lại bằng UI-Venus-Ground-7B, một mô hình không học AndroidControl, giữ được 94% độ lớn của phép so sánh kiểm chứng (Mục 5.9). Cả hai mô hình định vị đều thuộc họ Qwen-VL, cùng dòng với mô hình được chấm. Người nghe trắc nghiệm Phi-4, ngoại họ Qwen, giữ nguyên thứ tự giữa các mô hình (Mục 5.10). Tuy vậy, người nghe này mới chấm bốn mô hình, mô hình gốc chưa được chấm hết tập kiểm tra, và dải điểm của người nghe, từ câu chung chung tới câu chuẩn, hẹp hơn nhiều so với dải của executability. Vì vậy mới nói được rằng thứ tự giữa các mô hình giữ nguyên dưới một người nghe ngoài họ Qwen, chưa nói được rằng mọi phép so đã được kiểm chéo qua hai mô hình.
 - **Độ bền trước cách diễn đạt khác mới chỉ được kiểm một phần.** Phép viết lại ở Mục 5.8 cho thấy độ bền trước việc đổi động từ và đảo trật tự câu (+0,35 điểm trên 1.139 câu, khoảng tin cậy loại được mọi mức giảm lớn hơn 0,6 điểm). Nhưng phép biến đổi đó không tác động đến cách mô tả phần tử, vốn là phần nặng nhất trong cảnh báo của Jandial và cộng sự [18]. Chúng tôi chưa đo trường hợp viết lại chính tên gọi và cách mô tả phần tử, nên chưa biết khi ấy mô hình định vị có còn trỏ trúng phần tử hay không. Các phép cố ý chèn lỗi (Mục 5.7) không thay được phép đo ấy, vì chúng đưa thẳng một điểm tổng hợp vào luật xác định trúng và không gọi mô hình định vị lần nào.
 - **Độ đo bỏ sót lỗi theo cả hai chiều.** Theo chiều thứ nhất, độ đo bỏ qua sai lệch nhỏ. Một điểm trỏ lệch dưới khoảng 63 điểm ảnh, tức bán kính dùng để gộp các phần tử trùng nhau, thường vẫn nằm trong ô của chính phần tử cần chạm, nên độ đo bắt được việc gọi sai tên phần tử nhưng không bắt được việc trỏ hơi lệch bên trong cùng phần tử. Theo chiều thứ hai, độ đo có thể chấm trượt cả câu đúng. Trong 1.083 bước mà câu chuẩn cũng trượt, phần lớn là do giới hạn của công cụ đo, và có 935 bước (21% tổng số bước) mà cả mô hình gốc, mô hình tinh chỉnh có giám sát lẫn câu chuẩn đều trượt. Vì vậy ngưỡng tối đa 75,7% phản ánh giới hạn của công cụ đo nhiều hơn là giới hạn của bản thân câu hướng dẫn.
 - **Luật ô Voronoi chỉ chặt bằng độ đầy đủ của bộ liệt kê phần tử.** Nếu cây trợ năng bỏ sót một nút biểu tượng cạnh phần tử cần chạm thì một câu sai vẫn được tính là đúng. Tương tự, phép gộp các hộp trùng lặp theo bán kính xóa nhầm một phần tử riêng biệt có thật ở 8,2% số bước. Ở chiều ngược lại, luật chặt hơn mức cần thiết trên các hàng của danh sách, vì một mảnh chữ OCR trên cùng hàng có thể bị coi là một nút riêng. Trong số bước mà câu chuẩn trượt ô Voronoi nhưng trúng luật hộp phần tử của AndroidControl (Mục 5.12), khoảng một nửa trượt chỉ vì lý do này, nên ngưỡng tối đa 75,7% đánh giá thấp năng lực của công cụ đo trên các hàng danh sách.
@@ -1526,11 +1502,9 @@ Phần này liệt kê những chỗ mà kết luận của đề tài còn đ�
 
 ### 7.2.2 Hạn chế của kết quả về mô hình
 
-- **Phương pháp đề xuất mới có một hạt giống.** Đây là hạn chế nặng nhất của phần mô hình. Mô hình tinh chỉnh có giám sát có hai hạt giống nên đo được mức chênh giữa hai lần huấn luyện là 0,52 điểm. Chênh lệch +1,55 điểm của mô hình học với thưởng SPICE so với mô hình tinh chỉnh có giám sát có ý nghĩa thống kê và vẫn dương khi so với cả hạt giống thứ hai của mô hình tinh chỉnh có giám sát, nhưng bản thân mô hình học với thưởng SPICE chưa được huấn luyện lại với hạt giống khác, nên chưa biết mức tăng có lặp lại hay không. Bộ sinh của ACE cũng chỉ có một hạt giống.
-- **Phương pháp đề xuất kém đi ở bước không chạm.** Trên toàn nhóm bước không chạm, tỉ lệ gọi đúng loại thao tác của mô hình học với thưởng SPICE giảm ít hơn nhiều so với giai đoạn học ưu tiên, vốn giảm 19,75 điểm so với mô hình mô tả phần tử (Mục A.2.2.4). Dù vậy, tỉ lệ này của mô hình học với thưởng SPICE vẫn giảm 6,23 điểm ở bước cuộn và 5,93 điểm ở bước quay lại (Mục 6.3). Phương pháp đề xuất khi có thêm ACE chưa được chấm ở nhóm bước này. Executability chỉ chấm trên bước chạm nên điểm chính không bị ảnh hưởng, nhưng mọi phát biểu về “mô hình cuối tốt hơn” đều phải kèm rằng phạm vi ấy chỉ là bước chạm.
-- **Mô hình học với thưởng SPICE chưa có cấu hình đối chứng học thêm cùng số bước.** Vì vậy chưa tách được phần thuộc về thuật toán học tăng cường khỏi phần thuộc về việc học thêm. Ngoài ra, câu của mô hình này được sinh theo một quy trình khác với quy trình của mô hình tinh chỉnh có giám sát, và trên 20 bước chạm dùng để kiểm, riêng việc đổi quy trình sinh đã làm 4 câu khác đi (Mục 4.5).
+- **Mô hình học với thưởng SPICE chưa có cấu hình đối chứng học thêm cùng số bước.** Vì vậy chúng tôi chưa tách được phần thuộc về thuật toán học tăng cường khỏi phần thuộc về việc học thêm. Ngoài ra, câu của mô hình này được sinh theo một quy trình khác với quy trình của mô hình tinh chỉnh có giám sát, và trên 20 bước chạm dùng để kiểm, riêng việc đổi quy trình sinh đã làm 4 câu khác đi (Mục 4.5).
 - **ACE chưa tách được phần của truy hồi.** Trên tập kiểm định nội bộ, bộ sinh có câu ví dụ không hơn một mô hình học thêm như vậy nhưng không có câu ví dụ trong đầu vào ở đa số độ đo, nên chưa biết bao nhiêu phần lợi của ACE đến từ truy hồi. Luật đồng thuận được chọn trong bốn biến thể nghĩ ra sau khi đã thấy kết quả của bộ sinh trên tập ấy. Mức tăng ở nhóm độ đo so câu chưa có khoảng tin cậy, và nằm ở bề mặt câu, chưa giúp mô hình định vị tìm đúng phần tử hơn (Mục 6.4).
-- **Các hướng đã thử thiếu hạt giống và cấu hình đối chứng.** Mỗi hướng đã thử chỉ có một hạt giống, và chênh lệch +0,63 điểm của giai đoạn học ưu tiên chỉ bằng 1,4 lần độ lệch chuẩn giữa hạt giống. Nhiều hướng cũng thiếu cấu hình đối chứng cần để quy công cho từng thành phần. Cụ thể, chưa chạy cấu hình học thêm cùng số bước với giai đoạn thưởng tọa độ, ba cấu hình đối chứng của thiết kế ban đầu (Bảng 6.13), và cấu hình đối chứng có cùng đầu vào với mô hình chọn ứng viên. Giai đoạn thưởng tọa độ cũng chưa được chấm ở bước không chạm. Giới hạn riêng của từng hướng được nêu ở Phụ lục A, còn hạn chế của tập cặp dùng cho giai đoạn học ưu tiên được nêu ở Chương 3.
+- **Các hướng đã thử thiếu cấu hình đối chứng.** Nhiều hướng thiếu cấu hình đối chứng cần để quy công cho từng thành phần. Cụ thể, chưa chạy cấu hình học thêm cùng số bước với giai đoạn thưởng tọa độ, ba cấu hình đối chứng của thiết kế ban đầu (Bảng 6.13), và cấu hình đối chứng có cùng đầu vào với mô hình chọn ứng viên. Giai đoạn thưởng tọa độ cũng chưa được chấm ở bước không chạm. Giới hạn riêng của từng hướng được nêu ở Phụ lục A, còn hạn chế của tập cặp dùng cho giai đoạn học ưu tiên được nêu ở Chương 3.
 - **Phân tích nguyên nhân lỗi là hậu kiểm.** Cách chia nhóm ở Mục A.2.3 dùng chính hành vi của mô hình được đo và chỉ được xác định sau khi đã có điểm. Vì vậy con số +5,4 điểm, tức mức tăng nếu tránh được phần điểm sụt giảm ở những bước dòng mô tả trỏ sai phần tử, là một ngưỡng tối đa lý thuyết, không phải kết quả của một mô hình đã chạy. Điều tương tự cũng đúng với con số +9,3 điểm của mô hình chọn ứng viên nếu tránh được các lần từ chối chọn sai (Mục A.3.2).
 
 ### 7.2.3 Hạn chế của dữ liệu và thiết kế
@@ -1546,8 +1520,7 @@ Phần này liệt kê những chỗ mà kết luận của đề tài còn đ�
 
 Các hướng dưới đây xếp theo mức độ cần thiết đối với độ tin cậy của kết luận.
 
-- **Hoàn tất đánh giá phương pháp đề xuất.** Với mô hình học với thưởng SPICE còn thiếu ba việc: một hạt giống thứ hai, một cấu hình đối chứng được học có giám sát thêm cùng số bước trên cùng tập câu nhắc, và sinh lại câu của mô hình tinh chỉnh có giám sát theo cùng quy trình sinh đã dùng cho mô hình học với thưởng SPICE để hai bên chỉ còn khác nhau một yếu tố. Với ACE, cần khoảng tin cậy cho nhóm độ đo so câu và một lượt chấm phương pháp đề xuất (gồm cả ACE) ở bước không chạm.
-- **Sửa tác dụng phụ ở bước không chạm.** Mức giảm ở bước cuộn và bước quay lại có thể sửa trực tiếp bằng cách cộng vào phần thưởng một số hạng thưởng việc gọi đúng loại thao tác, hoặc cân lại tỉ lệ câu nhắc theo loại thao tác.
+- **Hoàn tất đánh giá phương pháp đề xuất.** Với mô hình học với thưởng SPICE còn thiếu hai việc: một cấu hình đối chứng được học có giám sát thêm cùng số bước trên cùng tập câu nhắc, và sinh lại câu của mô hình tinh chỉnh có giám sát theo cùng quy trình sinh đã dùng cho mô hình học với thưởng SPICE để hai bên chỉ còn khác nhau một yếu tố. Với ACE, cần khoảng tin cậy cho nhóm độ đo so câu.
 - **Một bộ chọn độc lập cho bộ sửa câu theo vùng cắt.** Bộ sửa câu theo vùng cắt (TAGE), một hướng đã thử ở cùng vị trí với ACE, cho executability thấp hơn câu nháp. Khi vùng cắt chứa đúng phần tử, bộ sửa câu có lợi nhiều hơn có hại, nhưng bộ chọn dựa trên xác suất do chính bộ sửa câu đưa ra hay nhận câu sửa ở những bước vùng cắt sai (Mục A.7.2). Bước thử rẻ nhất là một bộ chọn so điểm mà mô hình định vị trỏ tới khi đọc câu nháp với điểm dùng để đặt vùng cắt.
 - **Học thông tin vị trí cùng lúc với phần sinh câu.** Bốn phép thử ở Mục A.6 đều gắn thêm thông tin vị trí vào một bộ sinh câu đã học xong, và lần nào phần sinh câu cũng bỏ qua thông tin ấy. Phép thử còn thiếu là học cả hai từ đầu, trên dữ liệu mà mô hình chưa thấy, để phần sinh câu không có sẵn một lời giải không cần tới vị trí.
 - **Mở phần thị giác của mô hình nền.** Mục A.5 quy 91% khoảng cách tới câu chuẩn về nhóm bước mà mô hình nhìn sai phần tử, trong khi mọi lượt huấn luyện đều đóng băng phần thị giác. Một lượt mở phần thị giác đã dừng ở 41% số bước, khi điểm lưu còn thấp hơn giai đoạn học ưu tiên trên tập kiểm định nội bộ (Bảng 6.13). Phép so này bất lợi cho mô hình mới, vì giai đoạn học ưu tiên đã học chính tập kiểm định, nên hướng này chưa có kết luận. Kỳ vọng cần giữ ở mức khiêm tốn, vì theo phép đo đã có, mỗi điểm cải thiện ở khâu nhận ra phần tử chỉ chuyển thành khoảng 0,028 điểm executability.
@@ -1561,7 +1534,7 @@ Các hướng dưới đây xếp theo mức độ cần thiết đối với đ
 
 Toàn bộ số liệu trong đề tài tái tạo được từ mã nguồn và tệp kết quả thô đi kèm.
 
-**Dữ liệu nguồn** là AndroidControl [1], giấy phép CC0, lấy qua hai bản phân phối công khai trên Hugging Face đã nêu ở Bảng 3.2. Ảnh màn hình không được phân phối lại.
+**Dữ liệu nguồn** là AndroidControl [1], giấy phép CC0, lấy qua hai bản phân phối công khai trên Hugging Face đã nêu ở Bảng 3.2; ảnh màn hình không được phân phối lại.
 
 **Mã nguồn** gồm các bước dựng dữ liệu (ghép nguồn, OCR, dựng nhãn mô tả, dựng dữ liệu cho bốn cấu hình), tệp cấu hình huấn luyện dùng chung cho mọi mô hình, chương trình sinh câu, và chương trình chấm điểm cùng phần tự kiểm chạy được của luật chấm.
 
@@ -1577,7 +1550,7 @@ Bài viết bằng tiếng Việt, nộp ngày 30 tháng 8 năm 2026 và đã đ
 
 > Lê Đoàn Phương Uyên, TS. Nguyễn Hồng Bửu Long. “Separating the Action Gate from Geometry in Execution-Based Evaluation for GUI Instruction Generation”.
 
-Bài viết bằng tiếng Anh, nộp ngày 21 tháng 9 năm 2026 tới hội nghị **SOICT 2026 (mã bài 5577)** và đang chờ kết quả bình duyệt. Kỷ yếu của hội nghị dự kiến thuộc tùng thư CCIS. Đóng góp chính của bài thuộc về đo lường. Bài chỉ ra rằng khi chấm câu hướng dẫn bằng độ đo dựa trên thực thi, cần tách phần điểm do điều kiện đúng loại thao tác mang lại khỏi phần điểm do định vị phần tử. Lý do là dưới luật khoảng cách Euclid của AndroidInTheWild, phần điểm mà giai đoạn thưởng tọa độ (một hướng đã thử) hơn mô hình tinh chỉnh có giám sát (S1) gần như hoàn toàn đến từ nhóm bước mà S1 gọi sai loại thao tác (Mục 6.5).
+Bài viết bằng tiếng Anh, nộp ngày 21 tháng 9 năm 2026 tới hội nghị **SOICT 2026 (mã bài 5577)** và đang chờ kết quả bình duyệt. Kỷ yếu của hội nghị dự kiến thuộc tùng thư CCIS. Đóng góp chính của bài thuộc về đo lường, cụ thể bài chỉ ra rằng khi chấm câu hướng dẫn bằng độ đo dựa trên thực thi, cần tách phần điểm do điều kiện đúng loại thao tác mang lại khỏi phần điểm do định vị phần tử. Lý do là dưới luật khoảng cách Euclid của AndroidInTheWild, phần điểm mà giai đoạn thưởng tọa độ (một hướng đã thử) hơn mô hình tinh chỉnh có giám sát (S1) gần như hoàn toàn đến từ nhóm bước mà S1 gọi sai loại thao tác (Mục 6.5).
 
 Hai bài không chồng lấn về đóng góp, vì bài thứ nhất thuộc về dữ liệu còn bài thứ hai thuộc về đo lường. **Phương pháp đề xuất (Chương 4)** được thực hiện sau ngày nộp của cả hai bài, nên không thuộc bài nào.
 
@@ -1681,7 +1654,7 @@ Hai bài không chồng lấn về đóng góp, vì bài thứ nhất thuộc v�
 
 # Phụ lục A. Các hướng đã thử
 
-Phụ lục này trình bày, theo thứ tự thực hiện, các hướng đã thử trước khi chọn phương pháp đề xuất, với phần tóm tắt ở Mục 6.10. Mỗi mô hình chỉ có một hạt giống, trừ khi ghi khác. Trong các bảng, S1 là mô hình tinh chỉnh có giám sát, dùng làm mốc so sánh; S2 là mô hình mô tả phần tử; CE2-S2 là mô hình học thêm có giám sát; MIN-DESC (MIN) là mô hình sau giai đoạn học ưu tiên; Base là mô hình gốc và Trần là câu chuẩn.
+Phụ lục này trình bày, theo thứ tự thực hiện, các hướng đã thử trước khi chọn phương pháp đề xuất, với phần tóm tắt ở Mục 6.10. Trong các bảng, S1 là mô hình tinh chỉnh có giám sát, dùng làm mốc so sánh; S2 là mô hình mô tả phần tử; CE2-S2 là mô hình học thêm có giám sát; MIN-DESC (MIN) là mô hình sau giai đoạn học ưu tiên; Base là mô hình gốc và Trần là câu chuẩn.
 
 ## A.1 Mô tả phần tử trước khi viết câu
 
@@ -1695,7 +1668,7 @@ dòng mô tả phần tử <desc> vai trò | tên | <point>x,y</point>
 phần câu câu hướng dẫn
 ```
 
-Lúc chấm, dòng mô tả bị cắt bỏ và mô hình định vị chỉ nhận câu hướng dẫn, nên nếu điểm tăng thì lý do nằm ở hành vi của mô hình sinh câu. Thiết kế dựa trên ba căn cứ. Dạng lỗi đã đo được chủ yếu là câu mơ hồ (Chương 1), nên dòng mô tả có một ô ghi dấu hiệu phân biệt. Hai dòng Shikra trong Bảng 1.1 cho kết quả âm khi bước trung gian là văn xuôi và dương khi bước trung gian có tọa độ, nên dòng mô tả gồm bốn ô cố định và bắt buộc có tọa độ. Tọa độ chạm của người thật có sẵn trong dữ liệu, nên nhãn tọa độ sạch 100% mà không tốn chi phí dựng. Thiết kế còn có mục thứ hai, tức phạt mô hình khi xác suất của dòng mô tả trỏ đúng phần tử không vượt xác suất của dòng mô tả trỏ sang phần tử lân cận ít nhất một khoảng lề, là phần mà Widget Captioning [9] chưa xử lý. Mục này chưa được thực hiện vì mục thứ nhất, tức bản thân dòng mô tả, chưa cho thấy tác dụng (Mục A.1.3).
+Lúc chấm, dòng mô tả bị cắt bỏ và mô hình định vị chỉ nhận câu hướng dẫn, nên nếu điểm tăng thì lý do nằm ở hành vi của mô hình sinh câu. Thiết kế dựa trên ba căn cứ. Thứ nhất, dạng lỗi đã đo được chủ yếu là câu mơ hồ (Chương 1), nên dòng mô tả có một ô ghi dấu hiệu phân biệt. Thứ hai, hai dòng Shikra trong Bảng 1.1 cho kết quả âm khi bước trung gian là văn xuôi và dương khi bước trung gian có tọa độ, nên dòng mô tả gồm bốn ô cố định và bắt buộc có tọa độ. Thứ ba, tọa độ chạm của người thật có sẵn trong dữ liệu, nên nhãn tọa độ sạch 100% mà không tốn chi phí dựng. Thiết kế còn có mục thứ hai, tức phạt mô hình khi xác suất của dòng mô tả trỏ đúng phần tử không vượt xác suất của dòng mô tả trỏ sang phần tử lân cận ít nhất một khoảng lề, là phần mà Widget Captioning [9] chưa xử lý. Mục này chưa được thực hiện vì mục thứ nhất, tức bản thân dòng mô tả, chưa cho thấy tác dụng (Mục A.1.3).
 
 ### A.1.2 Các cấu hình của thiết kế so sánh ban đầu
 
@@ -1717,7 +1690,7 @@ Thiết kế so sánh ban đầu gồm bảy cấu hình, dùng chung dữ liệ
 
 ### A.1.3 Kết quả
 
-Mô hình mô tả phần tử chỉ chạy được một hạt giống do giới hạn tài nguyên tính toán (Mục 6.12). Mô hình đạt 57,2%, thấp hơn mô hình tinh chỉnh có giám sát 1,93 điểm ở hạt giống 101 và 2,44 điểm ở hạt giống 202 (Bảng 6.8); khoảng tin cậy của cả hai chênh lệch đều nằm dưới 0. Theo tiêu chí ở Mục 4.8, đây là kết quả âm trên một hạt giống, chưa đủ để kết luận rằng việc mô tả phần tử trước luôn gây hại. Kết quả âm này giữ nguyên khi chấm lại bằng mô hình định vị thứ hai (Mục 5.9). Mô hình vẫn hơn mô hình gốc 9,59 điểm, nên việc thêm dòng mô tả không làm mất tác dụng của việc tinh chỉnh.
+Mô hình mô tả phần tử đạt 57,2%, thấp hơn mô hình tinh chỉnh có giám sát 1,93 điểm ở hạt giống 101 và 2,44 điểm ở hạt giống 202 (Bảng 6.8); khoảng tin cậy của cả hai chênh lệch đều nằm dưới 0. Theo tiêu chí ở Mục 4.8, đây là kết quả âm, dù chưa đủ để kết luận rằng việc mô tả phần tử trước luôn gây hại. Kết quả âm này giữ nguyên khi chấm lại bằng mô hình định vị thứ hai (Mục 5.9). Mô hình vẫn hơn mô hình gốc 9,59 điểm, nên việc thêm dòng mô tả không làm mất tác dụng của việc tinh chỉnh.
 
 Chúng tôi đã kiểm bốn cách giải thích thay thế và không cách nào giải thích được chênh lệch. Bốn cách đó là độ dài câu, nhóm ứng dụng, việc phép chuẩn hoá loại thao tác của độ đo xếp cụm *go back* vào lớp chạm, và tên ghi trong dòng mô tả bị sai do lỗi nhận dạng chữ.
 
@@ -1759,7 +1732,7 @@ vế bị loại    <desc>mô tả trỏ sai phần tử</desc> + \\ n + đúng 
 
 Hai vế chỉ khác nhau ở dòng mô tả, nên số hạng ưu tiên chỉ giảm được khi mô hình chọn đúng phần tử. Dòng mô tả trỏ sai là mô tả của một phần tử có thật, cùng vai trò, nằm gần phần tử cần chạm; cách dựng 22.854 cặp nằm ở Mục 3.7. Hàm mục tiêu thuộc họ tối ưu theo ưu tiên dạng tỉ số odds (ORPO), không cần mô hình tham chiếu đóng băng.
 
-Để tách phần của mục tiêu ưu tiên khỏi phần của việc học thêm, mô hình học thêm có giám sát (CE2-S2) học có giám sát thuần trên vế được chọn của các cặp ấy, cùng điểm xuất phát và số bước. Đại lượng chính là hiệu ghép cặp Δ_thành phần = MIN-DESC − CE2-S2, tính trên cùng các bước của tập kiểm tra (Mục 4.8). Tập cặp chỉ chứa bước chạm, nên thiệt hại ở bước không chạm được đo riêng (Mục A.2.2.4). Giai đoạn này chỉ có một hạt giống.
+Để tách phần của mục tiêu ưu tiên khỏi phần của việc học thêm, mô hình học thêm có giám sát (CE2-S2) học có giám sát thuần trên vế được chọn của các cặp ấy, cùng điểm xuất phát và số bước. Đại lượng chính là hiệu ghép cặp Δ_thành phần = MIN-DESC − CE2-S2, tính trên cùng các bước của tập kiểm tra (Mục 4.8). Tập cặp chỉ chứa bước chạm, nên thiệt hại ở bước không chạm được đo riêng (Mục A.2.2.4).
 
 ### A.2.2 Kết quả
 
@@ -1795,7 +1768,7 @@ Ngoài nguồn dựng bằng luật (cửa sổ 80 đến 350 điểm ảnh quan
 | Học thêm có giám sát (CE2-S2) | 63,0% | -20,50 |
 | Học ưu tiên (MIN-DESC) | 63,8% | -19,75 |
 
-Đánh giá ở bước không chạm (Mục 5.13) cho thấy sau giai đoạn học ưu tiên, mô hình kém đi rất nhiều ở nhóm bước này (Bảng A.5). Mức giảm tập trung ở cuộn (-43,8), quay lại (-36,4) và gõ chữ (-29,2), ba loại thao tác mà câu chuẩn không nhắc tên phần tử nào; hai loại chờ và mở ứng dụng không giảm, nhưng chỉ vì phép chuẩn hoá loại thao tác xếp động từ “mở” vào lớp chạm. Mô hình học thêm có giám sát giảm gần như ngang bảng (-20,50 so với -19,75), nên mức giảm gắn với việc học thêm trên dữ liệu chỉ gồm bước chạm, không phải với mục tiêu ưu tiên. Executability chỉ chấm bước chạm nên không thấy mức giảm này. Mô hình học với thưởng SPICE giảm ít hơn nhiều nhưng vẫn giảm ở bước cuộn và quay lại (Mục 6.3).
+Đánh giá ở bước không chạm (Mục 5.13) cho thấy sau giai đoạn học ưu tiên, mô hình kém đi rất nhiều ở nhóm bước này (Bảng A.5). Mức giảm tập trung ở cuộn (-43,8), quay lại (-36,4) và gõ chữ (-29,2), ba loại thao tác mà câu chuẩn không nhắc tên phần tử nào; hai loại chờ và mở ứng dụng không giảm, nhưng chỉ vì phép chuẩn hoá loại thao tác xếp động từ “mở” vào lớp chạm. Mô hình học thêm có giám sát giảm gần như ngang bảng (-20,50 so với -19,75), nên mức giảm gắn với việc học thêm trên dữ liệu chỉ gồm bước chạm, không phải với mục tiêu ưu tiên. Executability chỉ chấm bước chạm nên không thấy mức giảm này.
 
 ### A.2.3 Tìm chỗ nghẽn của cách mô tả phần tử trước
 
@@ -1834,15 +1807,15 @@ Phân tích ở Mục A.2.3 cho thấy phần lớn dư địa còn lại của 
 
 **Cách làm.** Câu nhắc thay 24 dòng OCR bằng danh sách ứng viên ở Mục 3.8. Chuỗi đích mở đầu bằng một thẻ chọn, là bản chép nguyên văn một dòng trong danh sách hoặc thẻ `none`, rồi mới tới câu; thẻ này được cắt bỏ trước khi chấm. Việc đưa danh sách phần tử vào đầu vào không được tính là đóng góp, vì lý do đã nêu cho danh sách chữ OCR ở Chương 4. Phần được đo là việc chọn tường minh, tức mô hình ghi rõ ứng viên mình chọn ngay trong chuỗi đích.
 
-**Điều kiện thí nghiệm.** Mô hình chọn ứng viên khác mô hình tinh chỉnh có giám sát (S1) và MIN-DESC ở ba biến. Ngữ cảnh dài 3072 thay vì 2560 token để chứa danh sách ứng viên (mẫu dài nhất 2.017 token cộng danh sách dài nhất 1.012 token), số lượt duyệt chỉ còn một (4.036 bước) do giới hạn tài nguyên, và đầu vào có thêm danh sách ứng viên. Vì vậy không được lấy điểm của mô hình này trừ thẳng cho điểm của hai mô hình kia. Đại lượng hợp lệ là hiệu ghép cặp Δ_chọn với một cấu hình đối chứng nhận cùng danh sách ứng viên ở đầu vào nhưng chuỗi đích chỉ có câu. Các tham số khác giữ như Bảng 4.1. Thiết kế ban đầu gồm sáu lượt huấn luyện (ba cấu hình, mỗi cấu hình hai hạt giống), nhưng năm lượt sau chỉ được chạy nếu lượt đầu cho độ chính xác chọn hơn rõ tỉ lệ 60,6% dòng mô tả trỏ đúng phần tử của MIN-DESC. Độ chính xác chọn là tỉ lệ thẻ chọn trúng phần tử cần chạm (tên khớp, tọa độ trong dung sai 14%) trên những bước mà danh sách có chứa phần tử ấy, tức có ứng viên đúng, đo trên 1.400 bước chạm đầu của tập kiểm tra.
+**Điều kiện thí nghiệm.** Mô hình chọn ứng viên khác mô hình tinh chỉnh có giám sát (S1) và MIN-DESC ở ba biến. Ngữ cảnh dài 3072 thay vì 2560 token để chứa danh sách ứng viên (mẫu dài nhất 2.017 token cộng danh sách dài nhất 1.012 token), số lượt duyệt chỉ còn một (4.036 bước) do giới hạn tài nguyên, và đầu vào có thêm danh sách ứng viên. Vì vậy điểm của mô hình này không thể đem trừ thẳng cho điểm của hai mô hình kia. Đại lượng hợp lệ là hiệu ghép cặp Δ_chọn với một cấu hình đối chứng nhận cùng danh sách ứng viên ở đầu vào nhưng chuỗi đích chỉ có câu, còn các tham số khác giữ như Bảng 4.1. Thiết kế ban đầu gồm sáu lượt huấn luyện (ba cấu hình, mỗi cấu hình hai hạt giống), nhưng năm lượt sau chỉ được chạy nếu lượt đầu cho độ chính xác chọn hơn rõ tỉ lệ 60,6% dòng mô tả trỏ đúng phần tử của MIN-DESC. Độ chính xác chọn là tỉ lệ thẻ chọn trúng phần tử cần chạm (tên khớp, tọa độ trong dung sai 14%) trên những bước mà danh sách có chứa phần tử ấy, tức có ứng viên đúng, đo trên 1.400 bước chạm đầu của tập kiểm tra.
 
 ### A.3.2 Kết quả
 
-Mô hình chọn ứng viên được huấn luyện với hạt giống 101 trên 64.567 mẫu của Mục 3.8; mọi con số dưới đây là kết quả một hạt giống.
+Mô hình chọn ứng viên được huấn luyện với hạt giống 101 trên 64.567 mẫu của Mục 3.8.
 
 #### A.3.2.1 Độ chính xác chọn và executability
 
-Trên 1.400 bước dùng làm tiêu chí, 1.008 bước có ứng viên đúng và thẻ chọn trúng ở 580 bước, cho độ chính xác chọn 57,54%, thấp hơn mức 60,6% của MIN-DESC. Năm lượt còn lại vì vậy không được chạy. Từ đây, 1.400 bước này gọi là *mẫu phát triển*, còn 3.062 bước còn lại chỉ dùng để đọc kết quả. Độ chính xác chọn cũng không phải đại lượng tốt để ra quyết định, vì cũng như cột “có đáp án” của SQuAD 2.0 [39], đại lượng này chỉ đếm những bước có đáp án. Khi ép mô hình luôn chọn, độ chính xác chọn lên 69,05%, nhưng tỉ lệ thẻ đúng trên cả mẫu phát triển giảm từ 63,43% xuống 49,71%.
+Trên 1.400 bước dùng làm tiêu chí, 1.008 bước có ứng viên đúng và thẻ chọn trúng ở 580 bước, cho độ chính xác chọn 57,54%, thấp hơn mức 60,6% của MIN-DESC, nên năm lượt còn lại không được chạy. Từ đây, 1.400 bước này được gọi là *mẫu phát triển*, còn 3.062 bước còn lại chỉ dùng để đọc kết quả. Độ chính xác chọn cũng không phải đại lượng tốt để ra quyết định, vì cũng như cột “có đáp án” của SQuAD 2.0 [39], đại lượng này chỉ đếm những bước có đáp án. Khi ép mô hình luôn chọn, độ chính xác chọn lên 69,05%, nhưng tỉ lệ thẻ đúng trên cả mẫu phát triển giảm từ 63,43% xuống 49,71%.
 
 Trên 4.463 bước chạm, mô hình chọn ứng viên đạt 56,1%, khoảng tin cậy [54,2; 58,0] (bootstrap theo 1.091 cụm), với tỉ lệ khớp loại thao tác 90,9% và tỉ lệ trúng ô Voronoi thuần 57,4%. Điểm trên mẫu phát triển (55,4%) và trên phần còn lại (56,5%) gần nhau. Mô hình hơn mô hình gốc (chưa tinh chỉnh) 8,54 điểm (731 bước chỉ mô hình chọn ứng viên đúng, 350 bước chỉ mô hình gốc đúng, kiểm định McNemar cho p < 0,001), và chỉ phép so sánh này đọc được thành kết luận. Cấu hình đối chứng nhận cùng danh sách ứng viên nằm trong năm lượt không được chạy, nên không tính được Δ_chọn, và chúng tôi không phát biểu gì về đóng góp của việc chọn tường minh hay của danh sách ứng viên.
 
@@ -1886,7 +1859,7 @@ Tỉ lệ từ chối chọn cũng cao hơn khi ứng viên đúng nằm giữa 
 
 Tỉ lệ mô hình phát ra nằm giữa tỉ lệ đúng trên bước chạm và tỉ lệ trên toàn tập huấn luyện, và gần tỉ lệ toàn tập hơn. Vì mọi bước không chạm đều mang thẻ `none` (Mục 3.8), hơn một nửa số mẫu dạy mô hình phát thẻ này. Cách giải thích của chúng tôi là mô hình học tỉ lệ nền ấy, tức tiên nghiệm của nhãn, rồi mang sang bước chạm, là loại bước duy nhất được chấm. Rajpurkar và cộng sự [39] nêu hiện tượng tương tự cho SQuAD 2.0, còn Menon và cộng sự [40] chứng minh rằng dưới dạng lệch phân bố nhãn, sửa tiên nghiệm lúc huấn luyện tương đương với sửa sau huấn luyện. Tỉ lệ đúng trên bước chạm của tập huấn luyện (29,12%) và của tập kiểm tra (28,34%) chỉ chênh 0,8 điểm, nên mô hình không bị dạy sai tỉ lệ trên bước chạm; quan hệ nhân quả giữa tiên nghiệm toàn tập và mức từ chối chọn thì chưa được chứng minh.
 
-Ba hướng sửa khác đã được đo và loại. Sửa hết lỗi loại thao tác chỉ thêm 1,21 điểm. Rút danh sách còn mười dòng hạ độ phủ ứng viên đúng từ 71,7% xuống nhiều nhất 51,7%. Nới dung sai tọa độ chỉ nâng độ phủ lên 76,0% mà lại đổi nhãn huấn luyện. Hướng còn lại là huấn luyện lại chỉ trên 41.191 bước chạm để đưa tiên nghiệm về 29,12%.
+Chúng tôi cũng đã đo và loại ba hướng sửa khác. Sửa hết lỗi loại thao tác chỉ thêm 1,21 điểm. Rút danh sách còn mười dòng hạ độ phủ ứng viên đúng từ 71,7% xuống nhiều nhất 51,7%. Nới dung sai tọa độ chỉ nâng độ phủ lên 76,0% mà lại đổi nhãn huấn luyện. Hướng còn lại là huấn luyện lại chỉ trên 41.191 bước chạm để đưa tiên nghiệm về 29,12%.
 
 #### A.3.2.4 Ghép với giai đoạn học ưu tiên và hiệu chỉnh mức từ chối chọn
 
@@ -1902,7 +1875,7 @@ Khâu xếp hạng ứng viên không sai, vì theo tổng log-xác suất, ứn
 
 **Căn cứ và phần thưởng.** Hai giai đoạn trước chỉ học từ những chuỗi đúng sẵn. Giai đoạn thưởng tọa độ (giai đoạn ba) dùng học tăng cường theo GRPO (Mục 2.3), trong đó mô hình tự sinh nhiều câu trả lời cho một câu nhắc, mỗi câu trả lời nhận một điểm thưởng tính bằng luật, và mô hình được đẩy về phía những câu trả lời trên trung bình của nhóm. Điểm thưởng gồm 1,0 nếu tọa độ trong thẻ `<point>` nằm trong cửa sổ ±14% quanh tọa độ chuẩn, 0,2 nếu sinh đủ và đúng thứ tự các ô của dòng mô tả, và 0,1 nếu tên ghi trong dòng mô tả khớp tên chuẩn. Phần thưởng không gọi mô hình định vị nào, nên độ đo vẫn độc lập với mục tiêu huấn luyện.
 
-**Cấu hình và giới hạn.** Giai đoạn này học tiếp từ điểm lưu của MIN-DESC với cùng lượng tử hoá bốn bit và phần thị giác đóng băng. Mỗi câu nhắc sinh bốn câu trả lời ở nhiệt độ 1,0; mô hình tham chiếu cho số hạng ràng buộc độ lệch là bản sao đóng băng của điểm lưu xuất phát. Tập thưởng gồm 2.000 bước chạm của tập huấn luyện, duyệt một lượt (500 bước cập nhật). Tập này chỉ gồm bước chạm vì chỉ bước chạm có tọa độ chuẩn; ảnh hưởng lên các bước còn lại được đo ở Mục A.2.2.4. Giai đoạn này chỉ chạy một hạt giống.
+**Cấu hình và giới hạn.** Giai đoạn này học tiếp từ điểm lưu của MIN-DESC với cùng lượng tử hoá bốn bit và phần thị giác đóng băng. Mỗi câu nhắc sinh bốn câu trả lời ở nhiệt độ 1,0; mô hình tham chiếu cho số hạng ràng buộc độ lệch là bản sao đóng băng của điểm lưu xuất phát. Tập thưởng gồm 2.000 bước chạm của tập huấn luyện, duyệt một lượt (500 bước cập nhật). Tập này chỉ gồm bước chạm vì chỉ bước chạm có tọa độ chuẩn; ảnh hưởng lên các bước còn lại được đo ở Mục A.2.2.4.
 
 ### A.4.2 Kết quả
 
@@ -1990,7 +1963,7 @@ Mục A.5 cho thấy chỗ nghẽn nằm ở khâu nhận ra phần tử. Chúng
 
 **Căn cứ.** Mục A.5 cho thấy phần lớn khoảng cách tới câu chuẩn nằm ở những bước mô hình nhìn sai phần tử. Bộ sửa câu theo vùng cắt (TAGE, *Type-Aware Grounded Editor*) thử tách việc nhìn khỏi việc viết. Một mô hình chỉ đoán vị trí phần tử, rồi một mô hình khác viết lại câu sau khi xem vùng ảnh quanh vị trí ấy ở dạng phóng to. Bộ sửa câu nhận câu nháp của mô hình học với thưởng SPICE và đứng ở cùng vị trí với ACE (luật chép câu ví dụ khi đồng thuận loại thao tác, Mục 4.6), nên mốc so sánh trực tiếp là chính mô hình học với thưởng SPICE. Vì cho điểm thấp hơn câu nháp trên tập kiểm tra (Mục A.7.2), bộ sửa câu không được giữ trong phương pháp đề xuất.
 
-**Ba thành phần.** Hình A.1 vẽ đường đi của một bước.
+**Ba thành phần.** TAGE gồm ba thành phần, và Hình A.1 vẽ đường đi của một bước qua cả ba.
 
 1. **Bộ định vị** nhận ảnh và mục tiêu rồi viết ra một điểm (x, y) trên thang 0 đến 1000. Quanh điểm ấy, một ô vuông có cạnh bằng 40% bề ngang màn hình được cắt ra và phóng lên 448 × 448 điểm ảnh.
 2. **Bộ biên tập** nhận ảnh gốc, ô cắt và câu nháp rồi viết lại câu. Lúc huấn luyện, ô cắt đặt quanh điểm chạm thật, và hàm mất mát gồm entropy chéo của câu chuẩn cộng một số hạng lề
@@ -2015,7 +1988,7 @@ Bộ định vị và bộ biên tập là hai bộ chuyển đổi LoRA hạng 
 
 Trên tập kiểm định nội bộ, câu sửa tốt hơn câu nháp rõ rệt khi ô cắt đặt quanh điểm chạm đúng và kém đi rõ khi ô cắt cố ý đặt quanh một phần tử lân cận, nên bộ biên tập thật sự dựa vào nội dung vùng cắt. Bộ sửa câu hoàn chỉnh cũng nhỉnh hơn câu nháp trên tập ấy, nên được chấm một lần trên tập kiểm tra.
 
-**Bảng A.15.** Bộ sửa câu theo vùng cắt (TAGE) trên 4.463 bước chạm của tập kiểm tra, so với câu nháp của mô hình học với thưởng SPICE và với S1. Luật hộp phần tử là luật của AndroidControl, luật khoảng cách Euclid là luật của AndroidInTheWild. Ghép cặp theo bước, một hạt giống.
+**Bảng A.15.** Bộ sửa câu theo vùng cắt (TAGE) trên 4.463 bước chạm của tập kiểm tra, so với câu nháp của mô hình học với thưởng SPICE và với S1. Luật hộp phần tử là luật của AndroidControl, luật khoảng cách Euclid là luật của AndroidInTheWild. Ghép cặp theo bước.
 
 | Độ đo | S1 | Câu nháp | TAGE | TAGE - câu nháp | p |
 |---|---:|---:|---:|---:|---:|

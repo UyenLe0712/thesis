@@ -33,7 +33,7 @@ SPICE & Semantic Propositional Image Caption Evaluation & Độ đo so câu theo
 \multicolumn{2}{@{}p{8.2cm}}{Phương pháp đề xuất}
 & Đóng góp chính của đề tài, gồm hai thành phần nối tiếp. Thành phần thứ nhất viết câu nháp, sau đó ACE quyết định giữ câu nháp hay thay bằng một câu ví dụ truy hồi được (Mục~\ref{sec:4.4}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Mô hình học với thưởng SPICE}
-& Thành phần thứ nhất của phương pháp đề xuất. Mô hình tinh chỉnh có giám sát (S1) được học tiếp bằng học tăng cường theo nhóm, với phần thưởng là điểm SPICE của câu sinh ra so với câu chuẩn (Mục~\ref{sec:4.5}). \\
+& Đây là thành phần thứ nhất của phương pháp đề xuất, trong đó mô hình tinh chỉnh có giám sát (S1) được học tiếp bằng học tăng cường theo nhóm, với phần thưởng là điểm SPICE của câu sinh ra so với câu chuẩn (Mục~\ref{sec:4.5}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Câu nháp}
 & Câu mà mô hình học với thưởng SPICE viết cho bước đang xét bằng giải mã tham lam. Câu này được giữ nguyên, trừ khi luật đồng thuận của ACE cho phép thay. \\
 \multicolumn{2}{@{}p{8.2cm}}{ACE (chép câu ví dụ khi đồng thuận loại thao tác)}
@@ -54,13 +54,13 @@ SPICE & Semantic Propositional Image Caption Evaluation & Độ đo so câu theo
 \multicolumn{2}{@{}p{8.2cm}}{Ô Voronoi}
 & Vùng trên màn hình gồm những điểm nằm gần phần tử cần chạm hơn bất kỳ phần tử nào khác. Chúng tôi dùng vùng này để xác định thế nào là trỏ trúng, thay cho một dung sai cố định. \\
 \multicolumn{2}{@{}p{8.2cm}}{Tập bước được chấm}
-& Gồm 4.463 bước chạm của tập kiểm tra. Mọi mô hình đều được chấm trên cùng tập này, nên hai mô hình bất kỳ luôn so được với nhau trên đúng những bước như nhau. \\
+& Tập này gồm 4.463 bước chạm của tập kiểm tra và được dùng chung để chấm mọi mô hình, nên hai mô hình bất kỳ luôn so được với nhau trên đúng những bước như nhau. \\
 \multicolumn{2}{@{}p{8.2cm}}{Ngưỡng tối đa và ngưỡng tối thiểu của độ đo}
 & Ngưỡng tối đa là điểm mà câu chuẩn đạt được khi đưa đi chấm, dùng làm mốc trên khi đọc điểm của các mô hình. Ngưỡng tối thiểu là điểm mà một câu không mang thông tin gì vẫn đạt được. Mọi điểm số nên được đọc trong khoảng giữa hai mức này. \\
 \multicolumn{2}{@{}p{8.2cm}}{Mô hình gốc (Base)}
-& Mô hình Qwen2.5-VL-3B-Instruct khi chưa tinh chỉnh, dùng làm một mốc so sánh. Trong các bảng gọi là Base (Mục~\ref{sec:4.7}). \\
+& Đây là mô hình Qwen2.5-VL-3B-Instruct khi chưa tinh chỉnh, được dùng làm một mốc so sánh và trong các bảng được gọi là Base (Mục~\ref{sec:4.7}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Mô hình tinh chỉnh có giám sát (S1)}
-& Mô hình gốc được tinh chỉnh có giám sát để sinh thẳng câu hướng dẫn từ câu nhắc, không qua bước trung gian nào. Mô hình này được huấn luyện hai lần với hai hạt giống, 101 và 202; thành phần thứ nhất của phương pháp đề xuất học tiếp từ hạt giống 101. Trong các bảng gọi là S1 (Mục~\ref{sec:4.7}). \\
+& Mô hình gốc được tinh chỉnh có giám sát để sinh thẳng câu hướng dẫn từ câu nhắc, không qua bước trung gian nào. Mô hình này được huấn luyện hai lần với hai hạt giống, 101 và 202; thành phần thứ nhất của phương pháp đề xuất học tiếp từ hạt giống 101. Trong các bảng, mô hình này được gọi là S1 (Mục~\ref{sec:4.7}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Mốc so sánh và mô hình có can thiệp}
 & Khi đánh giá một can thiệp, mốc so sánh là mô hình không có can thiệp đó, thường là mô hình tinh chỉnh có giám sát, còn mô hình có can thiệp là mô hình được thêm đúng can thiệp ấy. Đại lượng cần đo là chênh lệch điểm giữa hai mô hình. \\
 \multicolumn{2}{@{}p{8.2cm}}{Hạt giống}
@@ -77,25 +77,25 @@ SPICE & Semantic Propositional Image Caption Evaluation & Độ đo so câu theo
 \multicolumn{3}{@{}l@{}}{\textit{Thuật ngữ riêng của đề tài: các hướng đã thử (Phụ lục~\ref{app:A})}} \\
 \midrule
 \multicolumn{2}{@{}p{8.2cm}}{Dòng mô tả phần tử (descriptor)}
-& Một dòng có cấu trúc gồm bốn phần, \code{[vai trò | tên | tọa độ | dấu hiệu phân biệt]}, mà mô hình phải viết ra trước khi viết câu hướng dẫn, gọi tắt là dòng mô tả. Dòng này bị cắt bỏ trước khi chấm. Chỉ các hướng đã thử dùng dòng này, phương pháp đề xuất thì không. \\
+& Đây là một dòng có cấu trúc gồm bốn phần, \code{[vai trò | tên | tọa độ | dấu hiệu phân biệt]}, mà mô hình phải viết ra trước câu hướng dẫn, gọi tắt là dòng mô tả. Dòng này bị cắt bỏ trước khi chấm và chỉ xuất hiện ở các hướng đã thử, không có trong phương pháp đề xuất. \\
 \multicolumn{2}{@{}p{8.2cm}}{Mô hình mô tả phần tử (S2)}
-& Hướng đã thử đầu tiên. Mô hình gốc được tinh chỉnh có giám sát để viết dòng mô tả phần tử rồi mới viết câu, theo nguyên tắc mô tả phân biệt trước, phát ngôn sau (Mục~\ref{sec:A.1.1}). \\
+& Đây là hướng đã thử đầu tiên, trong đó mô hình gốc được tinh chỉnh có giám sát để viết dòng mô tả phần tử rồi mới viết câu, theo nguyên tắc mô tả phân biệt trước, phát ngôn sau (Mục~\ref{sec:A.1.1}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Cấu hình mô tả giả và cấu hình mô tả không có tọa độ (S2r, S2-nopoint)}
-& Hai cấu hình đối chứng đã thiết kế cho mô hình mô tả phần tử nhưng không chạy. Cấu hình thứ nhất thay dòng mô tả thật bằng một dòng mô tả giả có cùng độ dài, cấu hình thứ hai bỏ tọa độ khỏi dòng mô tả (Mục~\ref{sec:A.1.2}). \\
+& Đây là hai cấu hình đối chứng được thiết kế cho mô hình mô tả phần tử nhưng chưa được chạy. Cấu hình thứ nhất thay dòng mô tả thật bằng một dòng mô tả giả có cùng độ dài, cấu hình thứ hai bỏ tọa độ khỏi dòng mô tả (Mục~\ref{sec:A.1.2}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Giai đoạn học ưu tiên trên dòng mô tả (MIN-DESC)}
-& Giai đoạn huấn luyện thứ hai, học tiếp từ mô hình mô tả phần tử, gọi tắt là giai đoạn học ưu tiên. Mô hình học từ những cặp chuỗi chỉ khác nhau ở dòng mô tả, còn câu hướng dẫn thì giống hệt nhau (Mục~\ref{sec:A.2.1}). \\
+& Đây là giai đoạn huấn luyện thứ hai, học tiếp từ mô hình mô tả phần tử và gọi tắt là giai đoạn học ưu tiên; ở giai đoạn này, mô hình học từ những cặp chuỗi chỉ khác nhau ở dòng mô tả, còn câu hướng dẫn thì giống hệt nhau (Mục~\ref{sec:A.2.1}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Mô hình học thêm có giám sát (CE2-S2)}
-& Mô hình dùng để so với giai đoạn học ưu tiên, chỉ học thêm có giám sát với cùng số bước. Mô hình này giúp tách phần cải thiện do mục tiêu ưu tiên mang lại khỏi phần chỉ do mô hình được huấn luyện thêm (Mục~\ref{sec:A.2.1}). \\
+& Đây là mô hình dùng để so với giai đoạn học ưu tiên, chỉ học thêm có giám sát với cùng số bước, nhờ đó tách được phần cải thiện do mục tiêu ưu tiên mang lại khỏi phần chỉ do mô hình được huấn luyện thêm (Mục~\ref{sec:A.2.1}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Danh sách ứng viên}
 & Danh sách tối đa 40 phần tử của một màn hình, mỗi dòng gồm tên và tọa độ, dựng sẵn từ cây trợ năng và chữ đọc được trên màn hình, rồi đưa vào câu nhắc của mô hình chọn ứng viên (Mục~\ref{sec:3.8}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Mô hình chọn ứng viên}
-& Hướng đã thử trong đó mô hình chọn phần tử cần chạm từ danh sách ứng viên thay vì tự viết dòng mô tả. Thẻ ghi phần tử được chọn bị cắt bỏ trước khi chấm (Mục~\ref{sec:A.3.1}). \\
+& Đây là hướng đã thử trong đó mô hình chọn phần tử cần chạm từ danh sách ứng viên thay vì tự viết dòng mô tả; thẻ ghi phần tử được chọn bị cắt bỏ trước khi chấm (Mục~\ref{sec:A.3.1}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Từ chối chọn}
-& Trường hợp mô hình chọn ứng viên phát thẻ \code{none} thay vì chọn một phần tử. Từ chối chọn là đúng khi danh sách không chứa phần tử cần chạm, và là sai khi danh sách có chứa phần tử đó. \\
+& Đây là trường hợp mô hình chọn ứng viên phát thẻ \code{none} thay vì chọn một phần tử; việc từ chối là đúng khi danh sách không chứa phần tử cần chạm, và là sai khi danh sách có chứa phần tử đó. \\
 \multicolumn{2}{@{}p{8.2cm}}{Giai đoạn thưởng tọa độ (giai đoạn ba)}
-& Giai đoạn huấn luyện thứ ba, học tiếp từ giai đoạn học ưu tiên bằng học tăng cường. Phần thưởng chủ yếu đặt trên tọa độ ghi trong dòng mô tả chứ không đặt trên câu (Mục~\ref{sec:A.4.1}). \\
+& Đây là giai đoạn huấn luyện thứ ba, học tiếp từ giai đoạn học ưu tiên bằng học tăng cường, với phần thưởng chủ yếu đặt trên tọa độ ghi trong dòng mô tả chứ không đặt trên câu (Mục~\ref{sec:A.4.1}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Bộ sửa câu theo vùng cắt (TAGE)}
-& Bộ sửa câu đã thử ở cùng vị trí với ACE nhưng không được giữ lại trong phương pháp đề xuất. Bộ này gồm một bộ định vị đoán điểm cần chạm, một bộ biên tập xem phóng to vùng quanh điểm ấy rồi viết lại câu nháp, và một bộ chọn quyết định có nhận câu sửa hay không (Mục~\ref{sec:A.7.1}). \\
+& Đây là bộ sửa câu đã thử ở cùng vị trí với ACE nhưng không được giữ lại trong phương pháp đề xuất. Bộ này gồm một bộ định vị đoán điểm cần chạm, một bộ biên tập xem phóng to vùng quanh điểm ấy rồi viết lại câu nháp, và một bộ chọn quyết định có nhận câu sửa hay không (Mục~\ref{sec:A.7.1}). \\
 \bottomrule
 \end{longtable}
 \clearpage
