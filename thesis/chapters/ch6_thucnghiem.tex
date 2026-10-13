@@ -1,711 +1,418 @@
 \chapter{Thực nghiệm và kết quả}
-\label{ch:thucnghiem}
+\label{chap:6}
 
-\section{Thiết lập thực nghiệm}
+Chương này trình bày kết quả của phương pháp đề xuất trên tập kiểm tra: kết quả chính, rồi từng thành phần (Mục~\ref{sec:6.3} và Mục~\ref{sec:6.4}), rồi các phần kiểm độ vững của kết quả. Các hướng đã thử trước đó được tóm tắt ở Mục~\ref{sec:6.10} và trình bày chi tiết ở Phụ lục A.
 
-Mọi hệ thống trong chương này được chấm trên cùng một quần thể $4.463$ bước chạm của tập kiểm,
-bằng cùng một bản mã chấm. Phương pháp đề xuất là học tăng cường thưởng SPICE, học tiếp từ mô hình
-tinh chỉnh có giám sát S1 (Mục~\ref{sec:grpospicethietke}). Các hệ còn lại chia thành ba nhóm.
-Nhóm mốc gồm mô hình gốc chưa tinh chỉnh (Base), S1 ở hai hạt giống (S1/101, S1/202) và câu chuẩn
-(Trần). Nhóm hướng đã thử gồm nhánh sinh khai báo trước rồi mới sinh câu (S2), chặng hai bằng mục
-tiêu ưu tiên ở tầng khai báo (MIN-DESC) cùng nhánh so sánh để tách công (CE2-S2), chặng ba bằng học
-tăng cường thưởng ô toạ độ, và nhánh ứng viên. Cuối cùng là hai phần mở rộng đặt sau phương pháp đề
-xuất: TAGE, bộ sửa câu theo vùng cắt, và ACE, luật chép câu ví dụ truy hồi khi đồng thuận loại thao
-tác. Trong $4.463$ bước, S1 trả về câu rỗng ở đúng một bước, và bước đó được tính là không đạt. Mọi
-điểm tuyệt đối và khoảng tin cậy trong chương này đo trên đủ $4.463$ bước, còn các phép so ghép cặp
-chạy trên tập bước mà cả hai nhánh cùng trả lời. Các quần thể chênh nhau nhiều nhất một bước nên
-không đại lượng nào đổi sau khi làm tròn tới một chữ số thập phân.
+\section{Thiết lập thực nghiệm}\label{sec:6.1}
 
-\paragraph{Số hạt giống của từng nhánh.} S1 có hai hạt giống, mọi nhánh khác chỉ có một vì ngân sách
-máy. Như đã nêu ở Mục~\ref{sec:dangky}, mọi kết quả một hạt giống phải đọc kèm nhiễu giữa hạt giống,
-và chương này ghi rõ điều đó ở từng chỗ.
+Mọi mô hình được chấm trên cùng 4.463 bước chạm của tập kiểm tra, bằng cùng một bản mã chấm. Phương pháp đề xuất gồm mô hình học với thưởng SPICE, viết câu nháp, và ACE, quyết định có thay câu nháp bằng câu ví dụ hay không (Mục~\ref{sec:4.4} đến Mục~\ref{sec:4.6}).
 
-Với các nhánh huấn luyện trên A100, khâu sinh câu chạy ngay sau khi huấn luyện, khi trọng số còn
-nằm sẵn trong bộ nhớ. Phương pháp đề xuất, TAGE và ACE sinh câu trên GPU T4 hoặc L4. Khâu chấm chạy trên
-GPU T4 không thu phí, khoảng $5{,}6$ giờ cho mỗi nhánh.
+Ba mốc so sánh (Mục~\ref{sec:4.7}) là mô hình gốc (Base trong các bảng), mô hình tinh chỉnh có giám sát ở hai hạt giống 101 và 202 (S1 trong các bảng) và câu chuẩn đưa thẳng tới chấm, cho mức ngưỡng tối đa của độ đo. Ở một bước, S1 trả về câu rỗng; bước này được tính là không đạt và vẫn nằm trong mẫu số 4.463. Các phép so ghép cặp bỏ bước ấy, và không số nào đổi sau khi làm tròn tới một chữ số thập phân.
 
-\subsection{Ghi nhận về lượt huấn luyện}
+\textbf{Số hạt giống của từng mô hình.} Do giới hạn tài nguyên tính toán, chỉ S1 có hai hạt giống; mọi mô hình khác, kể cả hai thành phần của phương pháp đề xuất, chỉ có một. Kết quả một hạt giống cần được đặt cạnh mức chênh 0,52 điểm executability giữa hai hạt giống của S1 (Mục~\ref{sec:4.8}).
 
-Lượt S1 hạt giống $101$ chạy đủ $8.072$ bước, tương ứng hai lượt duyệt toàn bộ $64.567$
-mẫu. Đường mất mát gộp theo $200$ bước đi từ $1{,}103$ ở giai đoạn đầu, khi mô hình học
-định dạng đầu ra, xuống $0{,}611$ ở bước $2.000$, giảm một nhịp tại ranh giới lượt duyệt thứ
-hai ở bước $4.036$, và phẳng ở mức $0{,}455$ về cuối khi tốc độ học đã về gần không theo lịch
-cosine. Hai lượt hạt giống $101$ và $202$ có khối lượng tính toán trên mỗi bước khớp nhau
-trong $0{,}013\%$, xác nhận hai lượt chạy cùng một cấu hình.
+\section{Kết quả chính}\label{sec:6.2}
 
-\section{Kết quả chính}
-
-\begin{table}[t]
-\caption{Kết quả chính trên quần thể $4.463$ bước chạm. Exec.\ là executability, kèm khoảng tin cậy
-$95\%$. D.3 là luật hộp phần tử gốc của AndroidControl, AitW là luật khớp chạm của
-AndroidInTheWild. BLEU-4 lấy trung bình mức câu, ROUGE-L là F1. Mọi nhánh trừ S1 chỉ có một hạt
-giống. Số in đậm là số cao nhất trong các nhánh mô hình ở cột đó.}
-\label{tab:chinh}
+\begin{table}[htbp]
 \centering\small
-\renewcommand{\arraystretch}{1.2}
+\caption[Kết quả chính trên 4.463 bước chạm của tập kiểm tra.]{Kết quả chính trên 4.463 bước chạm của tập kiểm tra. Exec. là executability, KTC 95\% là khoảng tin cậy 95\% của executability. Hộp phần tử là luật của AndroidControl, khoảng cách Euclid là luật của AndroidInTheWild. BLEU-4 là trung bình theo câu, ROUGE-L theo F1. Trừ S1, mọi mô hình chỉ có một hạt giống. Số in đậm là số cao nhất của cột, không tính hàng câu chuẩn.}\label{tab:6.1}
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash\hsize=1.00\hsize}Xrrrrrr@{}}
+\toprule
+\textbf{Mô hình} & \textbf{Exec.} & \textbf{KTC 95\%} & \begin{tabular}[b]{@{}r@{}}\textbf{Hộp}\\\textbf{phần tử}\end{tabular} & \begin{tabular}[b]{@{}r@{}}\textbf{Khoảng}\\\textbf{cách Euclid}\end{tabular} & \textbf{BLEU-4} & \textbf{ROUGE-L} \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Mốc so sánh}} \\
+Mô hình gốc (Base) & 47,6 & [45,9; 49,3] & 53,6 & 63,4 & 9,9 & 40,4 \\
+Tinh chỉnh có giám sát (S1), hạt giống 101 & 59,1 & [57,3; 60,8] & 65,5 & 74,4 & 38,7 & 67,3 \\
+Tinh chỉnh có giám sát (S1), hạt giống 202 & 59,6 & [57,9; 61,3] & 66,1 & 75,3 & 39,0 & 67,6 \\
+\multicolumn{7}{@{}l}{\textit{Phương pháp đề xuất}} \\
+Thành phần thứ nhất (học với thưởng SPICE) & 60,6 & [58,9; 62,4] & 67,0 & 76,2 & 40,1 & 68,3 \\
+Cả hai thành phần (thưởng SPICE + ACE) & \textbf{60,7} & [58,9; 62,4] & \textbf{67,1} & 76,3 & \textbf{41,2} & \textbf{69,1} \\
+\multicolumn{7}{@{}l}{\textit{Các hướng đã thử (Phụ lục~\ref{app:A})}} \\
+Mô tả phần tử (S2) & 57,2 & [55,4; 58,9] & 63,6 & 73,4 & 36,4 & 65,9 \\
+Học thêm có giám sát (CE2-S2) & 59,4 & [57,7; 61,1] & 66,0 & 76,1 & 38,1 & 68,6 \\
+Học ưu tiên trên dòng mô tả (MIN-DESC) & 60,0 & [58,3; 61,8] & 66,5 & 76,4 & 37,9 & 68,4 \\
+Thưởng tọa độ (giai đoạn ba) & 60,1 & [58,3; 61,8] & 67,0 & \textbf{77,3} & 37,8 & 68,5 \\
+Chọn ứng viên† & 56,1 & [54,2; 58,0] & 62,4 & 71,2 & 34,5 & 63,0 \\
+Sửa câu theo vùng cắt (TAGE) & 60,2 & [58,5; 62,0] & 66,4 & 76,1 & 40,1 & 68,4 \\
+Câu chuẩn (ngưỡng tối đa) & 75,7 & [74,1; 77,3] & 83,8 & 92,1 & 96,1 & 100,0 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+† Mô hình chọn ứng viên khác các mô hình còn lại ở ba yếu tố của thiết lập (Mục~\ref{sec:A.3.1}), nên chỉ so được với mô hình gốc (Mục~\ref{sec:A.3.2}). Các hướng đã thử khác (mô-đun định vị, đưa vai trò và vùng của phần tử vào mô hình, làm nét ảnh, mở khoá phần thị giác) không có trong bảng vì chỉ được chấm trên tập kiểm định nội bộ (Mục~\ref{sec:A.6}).
+
+Theo Bảng~\ref{tab:6.1}, phương pháp đề xuất đạt executability 60,7\%: ở 60,7\% số bước chạm, câu viết ra gọi đúng loại thao tác và dẫn mô hình định vị tới đúng phần tử cần chạm. Mức này hơn S1, hạt giống 101, là 1,57 điểm, với khoảng tin cậy [+0,86; +2,31] nằm hoàn toàn trên 0. Phương pháp cũng cao nhất bảng dưới luật hộp phần tử và ở cả hai độ đo so câu; riêng dưới luật khoảng cách Euclid, giai đoạn thưởng tọa độ cao hơn.
+
+Phần lớn mức hơn theo executability đến từ thành phần thứ nhất; riêng mô hình học với thưởng SPICE đã đạt 60,6\% (Mục~\ref{sec:6.3}). ACE giữ nguyên executability và nâng nhóm độ đo so câu (Mục~\ref{sec:6.4}). Bảng~\ref{tab:6.2} tách executability thành ba điều kiện (đúng ô Voronoi, đúng loại thao tác, trong cửa sổ dung sai) để thấy mức hơn của mỗi mô hình nằm ở điều kiện nào.
+
+\begin{table}[htbp]
+\centering\small
+\caption[Phân rã executability theo từng điều kiện hợp thành (tỉ lệ bước, \%).]{Phân rã executability theo từng điều kiện hợp thành (tỉ lệ bước, \%). Executable: thoả mọi điều kiện. Chỉ ô Voronoi: điểm định vị nằm trong cửa sổ dung sai và trong ô Voronoi của phần tử cần chạm, chưa xét loại thao tác. Khớp thao tác: câu gọi đúng loại thao tác. Cửa sổ dung sai: điểm định vị nằm trong cửa sổ $\pm$14\% theo từng trục quanh điểm chạm chuẩn.}\label{tab:6.2}
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}lcccccc@{}}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash\hsize=1.00\hsize}Xrrrr@{}}
 \toprule
-Nhánh & Exec. & KTC 95\% & D.3 & AitW & BLEU-4 & ROUGE-L \\
+\textbf{Mô hình} & \textbf{Executable} & \textbf{Chỉ ô Voronoi} & \textbf{Khớp thao tác} & \textbf{Cửa sổ dung sai} \\
 \midrule
-\multicolumn{7}{@{}l}{\emph{Mốc so sánh}}\\
-Base (chưa tinh chỉnh) & $47{,}6$ & $[45{,}9; 49{,}3]$ & $53{,}6$ & $63{,}4$ & $9{,}9$ & $40{,}4$ \\
-S1 (hạt giống $101$) & $59{,}1$ & $[57{,}3; 60{,}8]$ & $65{,}5$ & $74{,}4$ & $38{,}7$ & $67{,}3$ \\
-S1 (hạt giống $202$) & $59{,}6$ & $[57{,}9; 61{,}3]$ & $66{,}1$ & $75{,}3$ & $39{,}0$ & $67{,}6$ \\
-\midrule
-\multicolumn{7}{@{}l}{\emph{Các hướng đã thử}}\\
-S2 (đích khai báo) & $57{,}2$ & $[55{,}4; 58{,}9]$ & $63{,}6$ & $73{,}4$ & $36{,}4$ & $65{,}9$ \\
-CE2-S2 (nhánh so sánh) & $59{,}4$ & $[57{,}7; 61{,}1]$ & $66{,}0$ & $76{,}1$ & $38{,}1$ & $68{,}6$ \\
-MIN-DESC (mục tiêu ưu tiên) & $60{,}0$ & $[58{,}3; 61{,}8]$ & $66{,}5$ & $76{,}4$ & $37{,}9$ & $68{,}4$ \\
-Chặng ba (thưởng ô toạ độ) & $60{,}1$ & $[58{,}3; 61{,}8]$ & $67{,}0$ & $\mathbf{77{,}3}$ & $37{,}8$ & $68{,}5$ \\
-Nhánh ứng viên\textsuperscript{$\dagger$} & $56{,}1$ & $[54{,}2; 58{,}0]$ & $62{,}4$ & $71{,}2$ & $34{,}5$ & $63{,}0$ \\
-\midrule
-\multicolumn{7}{@{}l}{\emph{Phương pháp đề xuất}}\\
-\textbf{Thưởng SPICE} & $60{,}6$ & $[58{,}9; 62{,}4]$ & $67{,}0$ & $76{,}2$ & $40{,}1$ & $68{,}3$ \\
-\quad $+$ TAGE (sửa câu) & $60{,}2$ & $[58{,}5; 62{,}0]$ & $66{,}4$ & $76{,}1$ & $40{,}1$ & $68{,}4$ \\
-\quad $+$ ACE (chép câu ví dụ) & $\mathbf{60{,}7}$ & $[58{,}9; 62{,}4]$ & $\mathbf{67{,}1}$ & $76{,}3$ & $\mathbf{41{,}2}$ & $\mathbf{69{,}1}$ \\
-\midrule
-\emph{Câu chuẩn (trần)} & $75{,}7$ & $[74{,}1; 77{,}3]$ & $83{,}8$ & $92{,}1$ & $96{,}1$ & $100{,}0$ \\
+Câu chuẩn (ngưỡng tối đa) & 75,7 & 75,8 & 100,0 & 84,3 \\
+Phương pháp đề xuất & 60,7 & 61,5 & 96,0 & 70,4 \\
+Thành phần thứ nhất & 60,6 & 61,4 & 96,0 & 70,3 \\
+Sửa câu theo vùng cắt (TAGE) & 60,2 & 61,0 & 96,6 & 70,1 \\
+Thưởng tọa độ (giai đoạn ba) & 60,1 & 60,5 & 98,9 & 69,9 \\
+Học ưu tiên trên dòng mô tả (MIN-DESC) & 60,0 & 60,4 & 98,9 & 69,2 \\
+S1 (hạt giống 202) & 59,6 & 60,7 & 94,6 & 69,8 \\
+Học thêm có giám sát (CE2-S2) & 59,4 & 59,8 & 98,9 & 68,9 \\
+S1 (hạt giống 101) & 59,1 & 60,2 & 94,4 & 69,2 \\
+Mô tả phần tử (S2) & 57,2 & 58,1 & 94,8 & 67,4 \\
+Chọn ứng viên† & 56,1 & 57,4 & 90,9 & 66,3 \\
+Mô hình gốc (Base) & 47,6 & 48,9 & 96,5 & 57,6 \\
 \bottomrule
-\end{tabular}
-
-\vspace{0.4em}
-\begin{minipage}{0.95\columnwidth}\footnotesize
-\textsuperscript{$\dagger$}Nhánh ứng viên lệch ba biến so với các nhánh khác (độ dài ngữ cảnh, số
-lượt duyệt, đầu vào) nên chỉ đọc được so với Base, chi tiết ở Mục~\ref{sec:nhanhungvien}. Các hướng
-thử khác chưa có điểm trên tập kiểm (mô-đun định vị, kênh tiêm vai trò và vùng, làm nét ảnh, mở phần
-thị giác) không có mặt trong bảng, vì chúng dừng ở tập kiểm định nội bộ (Mục~\ref{sec:kenhvitri}).
-Hai thước dựa trên câu chuẩn xếp Base, S1 và câu chuẩn cùng thứ tự với executability, nhưng trong cụm
-các nhánh $57$ đến $61$ thì không, xem Mục~\ref{sec:thamchieu}.
-\end{minipage}
+\end{tabularx}
 \end{table}
 
-Bảng~\ref{tab:chinh} cho kết quả chính. Phương pháp đề xuất đạt executability $60{,}6\%$,
-hơn S1 hạt giống $101$ là $1{,}55$ điểm với khoảng tin cậy $[+0{,}80; +2{,}33]$, và bằng chặng ba
-dưới luật hộp phần tử. ACE, đặt sau phương pháp này, giữ nguyên mức ấy về vị trí ($60{,}7\%$, chênh
-$+0{,}02$ điểm, không phân biệt được) và là hệ cao nhất ở hai thước so câu của bảng. Chặng ba cao
-nhất dưới luật khớp chạm của AitW. Mục~\ref{sec:grpospice} phân
-tích chi tiết phương pháp đề xuất. Bảng~\ref{tab:phanra} tách điểm số thành ba điều kiện hợp thành của
-thước, để thấy mỗi điều kiện đóng góp bao nhiêu vào điểm cuối.
+Ở hàng câu chuẩn, câu được chấm chính là câu chuẩn nên điều kiện khớp thao tác luôn thoả. Mức khớp thao tác 98,9\% của giai đoạn học ưu tiên, mô hình học thêm có giám sát và giai đoạn thưởng tọa độ chỉ đo trên bước chạm, nên cần đặt cạnh mức giảm ở bước không chạm (Mục~\ref{sec:A.2.2.4}). Mô hình chọn ứng viên (†) chỉ so được với mô hình gốc (Mục~\ref{sec:A.3.2}); mức khớp thao tác của mô hình này thấp nhất bảng vì mô hình hay viết câu không chạm ở những bước không chọn phần tử nào trong danh sách ứng viên.
 
-\begin{table}[t]
-\caption{Phân rã điểm số theo từng điều kiện của thước.}
-\label{tab:phanra}
+\textbf{Khoảng cách giữa các mốc.} Khoảng tin cậy của mô hình gốc, S1 và câu chuẩn không chồng lên nhau, nên độ đo phân biệt được cả ba mốc. S1 còn cách ngưỡng tối đa khá xa (Mục~\ref{sec:5.5}, Mục~\ref{sec:6.9.4}), và mọi mô hình đều nằm xa ngưỡng tối thiểu (Mục~\ref{sec:6.6}).
+
+\section{Thành phần thứ nhất: học tăng cường thưởng SPICE}\label{sec:6.3}
+
+Mục này xét thành phần thứ nhất khi đứng một mình (thiết kế ở Mục~\ref{sec:4.5}). Mô hình học với thưởng SPICE học tiếp từ S1, hạt giống 101, nên được so với chính mô hình ấy.
+
+\subsection{Kết quả trên bước chạm}\label{sec:6.3.1}
+
+\begin{table}[htbp]
 \centering\small
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}lrrrr@{}}
+\caption[Mô hình học với thưởng SPICE (một hạt giống) so với S1, hạt giống 101, trên 4.463 bước chạm, ghép cặp theo bước.]{Mô hình học với thưởng SPICE (một hạt giống) so với S1, hạt giống 101, trên 4.463 bước chạm, ghép cặp theo bước. Sáu hàng trên là độ đo theo vị trí (gồm cả tỉ lệ đúng loại thao tác), bảy hàng dưới là độ đo so với câu chuẩn. $\Delta$ là điểm của mô hình học với thưởng SPICE trừ điểm của S1; KTC 95\% từ bootstrap gom cụm theo ứng dụng (Mục~\ref{sec:5.13}). Cứu là số bước mô hình mới đúng còn S1 sai; phá là chiều ngược lại.}\label{tab:6.3}
+\begin{tabular}{@{}lrrrrr@{}}
 \toprule
-Nhánh & Executable & Chỉ ô Voronoi & Khớp thao tác & Cửa sổ dung sai \\
+\textbf{Độ đo} & \textbf{S1} & \textbf{Thưởng SPICE} & \textbf{$\Delta$} & \textbf{KTC 95\%} & \textbf{cứu / phá} \\
 \midrule
-Trần (câu chuẩn) & $75{,}7$ & $75{,}8$ & $100{,}0$\textsuperscript{$*$} & $84{,}3$ \\
-\textbf{Thưởng SPICE} & $60{,}6$ & $61{,}4$ & $96{,}0$ & $70{,}3$ \\
-\quad $+$ TAGE & $60{,}2$ & $61{,}0$ & $96{,}6$ & $70{,}1$ \\
-\quad $+$ ACE & $60{,}7$ & $61{,}5$ & $96{,}0$ & $70{,}4$ \\
-Chặng ba & $60{,}1$ & $60{,}5$ & $98{,}9$ & $69{,}9$ \\
-MIN-DESC & $60{,}0$ & $60{,}4$ & $98{,}9$ & $69{,}2$ \\
-S1 (hạt giống $202$) & $59{,}6$ & $60{,}7$ & $94{,}6$ & $69{,}8$ \\
-CE2-S2 & $59{,}4$ & $59{,}8$ & $98{,}9$ & $68{,}9$ \\
-S1 (hạt giống $101$) & $59{,}1$ & $60{,}2$ & $94{,}4$ & $69{,}2$ \\
-S2 (hạt giống $101$) & $57{,}2$ & $58{,}1$ & $94{,}8$ & $67{,}4$ \\
-Nhánh ứng viên\textsuperscript{$\dagger$} & $56{,}1$ & $57{,}4$ & $90{,}9$ & $66{,}3$ \\
-Base & $47{,}6$ & $48{,}9$ & $96{,}5$ & $57{,}6$ \\
-\bottomrule
-\multicolumn{5}{@{}p{12.4cm}@{}}{\footnotesize \textsuperscript{$*$}Vì câu dự đoán chính
-là câu chuẩn nên điều kiện khớp thao tác đúng theo định nghĩa, và điểm của mốc trần vì vậy
-chỉ phản ánh phần định vị. Con số khớp thao tác $98{,}9\%$ của hai nhánh chặng hai và của chặng ba
-chỉ đúng trên bước chạm và phải đọc kèm mức giảm đo được ở bước không chạm, xem
-Mục~\ref{sec:khongcham}. \textsuperscript{$\dagger$}Nhánh ứng viên lệch ba biến so với các
-nhánh còn lại nên chỉ đọc được so với Base (Mục~\ref{sec:nhanhungvien}). Mức khớp thao tác
-$90{,}9$ thấp nhất bảng là dấu vết của việc bỏ cuộc bằng động từ không chạm.}
-\end{tabular}
-\end{table}
-
-\paragraph{Khoảng trống giữa nhánh nền và trần.} Nếu nhánh nền đã đạt sát mức câu chuẩn thì không còn
-khoảng trống cho bất kỳ can thiệp nào. Kết quả đo cho thấy điều đó không xảy ra. Khoảng tin cậy của ba nhánh Base, S1 và trần rời nhau hoàn toàn, tức thước tách được cả ba. Thước cũng không rơi về phía ngược lại, tức không dồn mọi nhánh xuống sát sàn
-$12{,}0\%$ đo được ở Mục~\ref{sec:san}.
-
-\section{Kết quả trên nhiều thước}
-\label{sec:nhieuthuoc}
-
-Ngoài executability, chúng tôi báo song song hai nhóm thước. Cả hai nhóm được tính lại từ bản ghi
-từng bước của chính các lượt chấm ở Bảng~\ref{tab:chinh}, không gọi lại mô hình sinh câu hay mô
-hình định vị lần nào.
-
-\input{chapters/bang_nhieu_thuoc}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/fig_ba_luat.png}
-\caption[Các nhánh chính dưới ba luật chấm]{Các nhánh chính dưới ba luật chấm trên $4.463$ bước
-chạm. Cột nền xám là mốc câu chuẩn. Thứ tự các nhánh gần như giữ nguyên qua ba luật, nhưng hai nhánh
-mạnh nhất đổi chỗ: chặng ba cao hơn dưới luật khớp chạm của AitW, nhánh thưởng SPICE cao hơn dưới
-executability.}
-\label{fig:baluat}
-\end{figure}
-
-\paragraph{Nhóm thước theo vị trí.} Bảng~\ref{tab:nhieuthuoc_vitri} đặt ba luật chấm chính
-cạnh nhau: luật khớp chạm của AndroidInTheWild, luật hộp phần tử gốc của AndroidControl và
-executability, cùng hai luật dung sai ở Mục~\ref{sec:donhay}. Theo luật khớp chạm của
-AndroidInTheWild, chặng ba đạt $77{,}3\%$ (cận trên $85{,}0\%$ khi xét mọi khung phần tử, Mục~\ref{sec:donhay}),
-S1 hạt giống $101$ đạt $74{,}4\%$ và Base đạt $63{,}4\%$,
-trong khi câu chuẩn đạt $92{,}1\%$. Theo luật hộp phần tử, bốn con số tương ứng là $67{,}0\%$,
-$65{,}5\%$, $53{,}6\%$ và $83{,}8\%$. Thứ tự các nhánh dưới cả hai luật trùng với thứ tự dưới
-executability. Cột cuối cho thấy trên các bước chạm, hai nhánh chặng hai và chặng ba gọi đúng loại
-thao tác ở $98{,}9\%$ số bước. Con số này chỉ áp cho bước chạm và phải đọc cùng mức giảm ở bước
-không chạm nêu tại Mục~\ref{sec:khongcham}. Hai hàng cuối của nhóm mô hình là phương pháp đề xuất và
-TAGE, trình bày ở Mục~\ref{sec:grpospice} và Mục~\ref{sec:tage}. Phương pháp đề xuất cho điểm
-executability cao nhất trong các mô hình đơn, $60{,}6\%$, và bằng chặng ba dưới luật hộp phần tử.
-
-\paragraph{Sai số và phép so giữa các nhánh.} Bảng~\ref{tab:d3ktc} cho khoảng tin cậy của ba số
-chính, tính bằng cùng một thủ tục bootstrap gom cụm và cùng hạt giống, nên các cột so được với
-nhau. Chặng ba đạt $77{,}3\%$ $[75{,}8; 78{,}8]$ theo luật khớp chạm của AndroidInTheWild và
-$67{,}0\%$ $[65{,}3; 68{,}7]$ theo luật hộp phần tử. Khoảng tin cậy của nhánh này tách hẳn khỏi Base
-lẫn câu chuẩn dưới cả ba luật. Chênh lệch S1 trên Base giữ gần nguyên độ lớn qua ba luật, từ
-$+10{,}98$ đến $+11{,}90$ điểm, đều với $p < 0{,}001$.
-
-Phép so giữa các nhánh đã tinh chỉnh cho kết quả khác nhau theo luật. Nhánh khai báo trước S2,
-nền của hai chặng học tiếp, thấp hơn S1 hạt giống $101$ là $1{,}93$ điểm theo executability với
-$p < 0{,}001$, nhưng chỉ thấp hơn $0{,}96$ điểm theo luật khớp chạm của AndroidInTheWild với
-$p = 0{,}100$. Hai chặng học tiếp trên nền S2 nâng nhánh này lên rõ rệt: chặng ba hơn S2 là
-$+3{,}90$ điểm $[+2{,}90; +4{,}90]$ theo luật khớp chạm của AndroidInTheWild và $+2{,}89$ điểm theo
-executability, đều với $p < 0{,}001$. Phần lớn mức nâng này đến từ việc học tiếp có giám sát, vì
-nhánh so sánh CE2-S2 đã hơn S2 $2{,}69$ điểm theo luật khớp chạm của AndroidInTheWild. Theo luật khớp chạm của
-AndroidInTheWild, chặng ba hơn S1 hạt giống $101$ là $+2{,}94$ điểm $[+1{,}77; +4{,}08]$ và hơn S1
-hạt giống $202$ là $+1{,}99$ điểm $[+0{,}84; +3{,}13]$, cả hai với $p < 0{,}001$. Cũng theo luật này, MIN-DESC hơn
-S1 là $+2{,}04$ điểm với $p < 0{,}001$, và chặng ba hơn MIN-DESC là $+0{,}90$ điểm với $p = 0{,}007$.
-Theo luật hộp phần tử, chặng ba hơn S1 hạt giống $101$ là $+1{,}55$ điểm với $p = 0{,}008$. Theo
-executability, cùng phép so chỉ còn $+0{,}96$ điểm với $p = 0{,}090$. Phân rã theo từng bước cho thấy nguồn
-của mức chênh. Chia quần thể theo việc S1 hạt giống $101$ có gọi đúng loại thao tác hay không, mức
-hơn $+2{,}94$ điểm theo luật khớp chạm của AndroidInTheWild gồm $+3{,}11$ điểm từ $256$ bước
-($5{,}7\%$) mà S1 viết sai loại thao tác, chẳng hạn như viết vuốt hay cuộn khi cần chạm, và chỉ
-$+0{,}11$ điểm từ $4.189$ bước mà cả hai nhánh đều gọi đúng loại thao tác. Trên nhóm bước sau, tỉ
-lệ trúng của hai nhánh gần như bằng nhau ($79{,}04\%$ so với $78{,}92\%$), và so với S1 hạt giống
-$202$, nhóm này còn nghiêng về S1 ($-0{,}67$ điểm), trong khi nhóm bước S1 sai loại thao tác vẫn
-cho $+3{,}09$ điểm. Ba luật cho ba mức chênh khác nhau vì hai lý do. Luật lỏng cho thêm điểm trên
-chính nhóm bước S1 sai loại thao tác ($+1{,}97$ theo executability, $+3{,}11$ theo luật khớp chạm
-của AndroidInTheWild). Luật lỏng cũng không phạt những lần chạm rơi sát bên phần tử cần chạm,
-loại lỗi mà chặng ba mắc nhiều hơn S1: trên nhóm bước cả hai gọi đúng loại thao tác, chặng ba
-thấp hơn S1 $0{,}81$ điểm theo executability. Đóng góp của chặng hai và chặng ba vì vậy nằm ở
-việc câu gọi đúng loại thao tác, chưa nằm ở việc định vị phần tử tốt hơn. Mọi con số trên là của
-một hạt giống cho nhánh xử lý.
-
-\paragraph{Nhóm thước so với câu chuẩn.} Bảng~\ref{tab:nhieuthuoc_vanban} dùng các thước mà Widget
-Captioning~\cite{widgetcap} và Screen2Words~\cite{screen2words} báo cho bài toán sinh mô tả giao
-diện: BLEU~\cite{bleu}, METEOR~\cite{meteor}, ROUGE-L~\cite{rouge}, CIDEr~\cite{cider} và
-SPICE~\cite{spice}, cùng chrF~\cite{chrf} và BERTScore~\cite{bertscore}. BLEU-4 ở bảng này tính
-trên toàn tập theo bộ chấm của COCO Captions, nên khác con số BLEU-4 trung bình theo câu ở
-Bảng~\ref{tab:chinh}. Các nhánh đã tinh chỉnh đạt BLEU-4 từ $46{,}9$ đến $51{,}7$ và ROUGE-L tới
-$68{,}6$, so với $15{,}3$ và $42{,}3$ của Base. SPICE, thước mà Zhao và cộng sự~\cite{zhao2021}
-khuyên dùng để xếp hạng các hệ sinh chỉ dẫn khi có câu tham chiếu, tăng từ $18{,}5$ ở Base lên
-$44{,}4$ ở S1. BERTScore, thước so nghĩa bằng biểu diễn ngữ cảnh thay vì so từ, tăng từ $40{,}1$
-lên $66{,}8$ ở chặng ba, và chrF tăng từ $40{,}2$ lên $61{,}9$. BERTScore trong bảng là bản đã
-hiệu chỉnh theo đường cơ sở, còn bản chưa hiệu chỉnh nằm trong khoảng $93{,}5$ đến $94{,}4$ với mọi
-nhánh đã tinh chỉnh nên không tách được các nhánh. Câu rỗng được tính $0$ điểm ở mọi thước và
-vẫn nằm trong quần thể, giống quy ước của executability.
-
-Có hai điểm cần lưu ý khi đọc nhóm thước này. Thứ nhất, CIDEr-D vượt quá $100$ vì mỗi bước chỉ có
-một câu chuẩn và trọng số tần suất nghịch được ước từ chính tập câu chuẩn, nên con số chỉ so được
-giữa các hàng trong cùng bảng. Thứ hai, nhóm thước này xếp hai hạt giống của S1 trên MIN-DESC và
-chặng ba (BLEU-4 $51{,}6$ và $51{,}7$ so với $49{,}9$, SPICE $44{,}4$ và $44{,}2$ so với $42{,}2$ và $42{,}5$), ngược
-chiều với executability, đúng hiện tượng đã nêu ở Mục~\ref{sec:thamchieu}. Vì vậy chúng tôi dùng
-nhóm thước này để đặt kết quả cạnh các công trình cùng mảng, còn các phép so giữa các nhánh vẫn
-đọc trên executability.
-
-\section{So sánh ghép cặp}
-\label{sec:ghepcap}
-
-Vì mọi nhánh được chấm trên cùng một tập bước, phép so đúng là phép so ghép cặp (McNemar).
-Bảng~\ref{tab:mcnemar} gom toàn bộ các phép so được dùng về sau trong chương.
-
-\begin{table}[t]
-\caption{So sánh ghép cặp trên $4.463$ bước. Trong bảng, MIN viết tắt cho
-nhánh MIN-DESC và CE2 viết tắt cho nhánh so sánh CE2-S2. $b$ là số bước nhánh dưới giải
-được mà nhánh trên không giải được, $c$ là chiều ngược lại, nên $\Delta = (c-b)/n$ ở mọi hàng. Khoảng tin cậy lấy từ bootstrap
-gom cụm theo tác vụ. Hai hàng có mốc trần dùng $n = 4.462$ vì bỏ một bước mà nhánh so sánh
-sinh câu rỗng. SPICE viết tắt cho phương pháp đề xuất. \textsuperscript{$\ddagger$}Ở nhóm này chỉ
-hàng đầu có khoảng tin cậy gom cụm theo tác vụ; các hàng còn lại gom cụm theo ứng dụng, cho khoảng
-gần như trùng ở hàng đầu ($[+0{,}80; +2{,}33]$).}
-\label{tab:mcnemar}
-\centering\small
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}lrcrrr@{}}
-\toprule
-Phép so & $\Delta$ & KTC 95\% & $b$ & $c$ & $p$ \\
-\midrule
-\multicolumn{6}{@{}l}{\emph{Hai hạt giống ở nhánh nền}}\\
-S1 $-$ Base & $+11{,}5$ & $[+10{,}0; +13{,}1]$ & $284$ & $798$ & $<0{,}001$ \\
-Trần $-$ S1 & $+16{,}6$ & - & $102$ & $843$ & $<0{,}001$ \\
-Trần $-$ Base & $+28{,}1$ & - & $102$ & $1.357$ & $<0{,}001$ \\
-S1/202 $-$ S1/101 \emph{(nhiễu)} & $+0{,}52$ & $[-0{,}22; +1{,}26]$ & $132$ & $155$ & $0{,}194$ \\
-\midrule
-\multicolumn{6}{@{}l}{\emph{Một hạt giống ở nhánh xử lý}}\\
-S2 $-$ S1/101 & $-1{,}93$ & $[-3{,}06; -0{,}75]$ & $340$ & $254$ & $0{,}0005$ \\
-S2 $-$ S1/202 & $-2{,}44$ & $[-3{,}53; -1{,}34]$ & $353$ & $244$ & $<0{,}001$ \\
-S2 $-$ Base & $+9{,}59$ & $[+8{,}16; +11{,}06]$ & $324$ & $752$ & $<0{,}001$ \\
-CE2 $-$ S2 & $+2{,}24$ & $[+1{,}41; +3{,}11]$ & $127$ & $227$ & $<0{,}001$ \\
-MIN $-$ S2 & $+2{,}87$ & $[+2{,}03; +3{,}76]$ & $130$ & $258$ & $<0{,}001$ \\
-\textbf{MIN $-$ CE2} $= \Delta_{\text{thành phần}}$ & $\mathbf{+0{,}63}$ & $[+0{,}16; +1{,}10]$ & $42$ & $70$ & $0{,}011$ \\
-MIN $-$ S1/101 & $+0{,}94$ & $[-0{,}09; +2{,}05]$ & $300$ & $342$ & $0{,}11$ \\
-CE2 $-$ S1/101 & $+0{,}31$ & $[-0{,}76; +1{,}45]$ & $312$ & $326$ & $0{,}61$ \\
-\midrule
-\multicolumn{6}{@{}l}{\emph{Nhánh ứng viên, một hạt giống, chỉ so được với Base}}\\
-Ứng viên $-$ Base & $+8{,}54$ & - & $350$ & $731$ & $<0{,}001$ \\
-\midrule
-\multicolumn{6}{@{}l}{\emph{Phương pháp đề xuất, một hạt giống}\textsuperscript{$\ddagger$}}\\
-\textbf{SPICE $-$ S1/101} & $\mathbf{+1{,}55}$ & $[+0{,}82; +2{,}28]$ & $90$ & $159$ & $<0{,}001$ \\
-SPICE $-$ S1/202 & $+1{,}03$ & $[+0{,}25; +1{,}83]$ & $145$ & $191$ & $0{,}014$ \\
-SPICE $-$ MIN & $+0{,}60$ & $[-0{,}52; +1{,}73]$ & $304$ & $331$ & $0{,}30$ \\
-SPICE $-$ chặng ba & $+0{,}58$ & $[-0{,}50; +1{,}69]$ & $286$ & $312$ & $0{,}31$ \\
-TAGE $-$ SPICE & $-0{,}43$ & $[-0{,}87; +0{,}02]$ & $67$ & $48$ & $0{,}093$ \\
-ACE $-$ SPICE & $+0{,}02$ & $[-0{,}21; +0{,}26]$ & $14$ & $15$ & $1{,}00$ \\
-ACE $-$ S1/101 & $+1{,}57$ & $[+0{,}86; +2{,}31]$ & $88$ & $158$ & $<0{,}001$ \\
+Executability & 59,11 & 60,65 & +1,55 & [+0,80; +2,33] & 159 / 90 \\
+Luật hộp phần tử & 65,49 & 67,02 & +1,52 & [+0,77; +2,29] & 165 / 97 \\
+Luật khoảng cách Euclid & 74,37 & 76,25 & +1,88 & [+1,17; +2,63] & 172 / 88 \\
+Euclid cận trên & 81,04 & 82,90 & +1,86 & [+1,17; +2,60] & 163 / 80 \\
+$\pm$14\% theo trục & 67,24 & 68,90 & +1,66 & [+0,90; +2,46] & 172 / 98 \\
+Đúng loại thao tác & 94,35 & 95,97 & +1,61 & [+1,17; +2,08] & 83 / 11 \\
+SPICE & 44,37 & 45,79 & +1,42 &  &  \\
+BLEU-4 & 51,56 & 52,36 & +0,80 &  &  \\
+METEOR & 36,79 & 37,92 & +1,13 &  &  \\
+ROUGE-L & 67,35 & 68,36 & +1,01 &  &  \\
+CIDEr-D & 416,12 & 430,05 & +13,93 &  &  \\
+chrF & 61,26 & 62,87 & +1,61 &  &  \\
+BERTScore & 66,33 & 67,07 & +0,74 &  &  \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Dòng \emph{Trần $-$ S1} là dòng quan trọng nhất về mặt thiết kế, vì có $843$ bước mà
-câu chuẩn định vị được còn S1 thì không. Đây là vùng mà nhánh khai báo nhắm tới, và
-cũng là dạng ghép cặp của con số ``dư địa'' ở Mục~\ref{sec:dudia}.
+Mô hình học với thưởng SPICE cao hơn S1 ở cả mười ba độ đo của Bảng~\ref{tab:6.3}; ở sáu độ đo vị trí, khoảng tin cậy đều nằm trên 0. Theo executability, p = $1{,}6 \times 10^{-5}$ (kiểm định McNemar, Mục~\ref{sec:6.6}). Đây là mô hình đầu tiên của đề tài hơn S1 có ý nghĩa thống kê theo executability, luật chặt nhất đã dùng; các hướng đã thử trước đó chỉ hơn có ý nghĩa dưới luật lỏng hơn. Phần thưởng chỉ dùng SPICE, một độ đo so câu, và mô hình định vị không tham gia vào phần thưởng, nhưng các độ đo vị trí vẫn tăng một cỡ tương tự.
 
-Sai số chuẩn của hiệu ghép cặp là $0{,}79$ điểm dưới bootstrap gom cụm, so với $1{,}05$
-điểm nếu tính như hai tỉ lệ độc lập.
+\textbf{Mức tăng đến từ đâu.} Có 36 trong 159 bước được cứu là do S1 viết sai loại thao tác, còn chỉ 8 trong 90 bước bị phá là do mô hình mới viết sai loại thao tác; phần sửa loại thao tác góp ròng 28 bước (+0,63 điểm). Phần còn lại, 41 bước (+0,92 điểm), nằm ở 4.200 bước mà cả hai mô hình đều gọi đúng loại thao tác, nơi executability đi từ 62,62 lên 63,60. Vậy hơn một nửa mức tăng đến từ việc câu chỉ đúng phần tử cần chạm hơn, khác với giai đoạn thưởng tọa độ, vốn có toàn bộ mức hơn nằm ở các bước S1 viết sai loại thao tác (Mục~\ref{sec:6.5}).
 
-Với lượt huấn luyện này, tinh chỉnh trên tập giám sát dựng tự động đem lại $11{,}5$ điểm và thu
-hẹp được $41\%$ khoảng cách giữa mô hình chưa tinh chỉnh và mức câu chuẩn. Tỉ lệ đó \emph{cao
-hơn thực chất} do một phần tư số bước mà S1 chép lại câu chuẩn. Trên $3.367$ bước mà mô hình tự
-viết ra câu của mình, ba nhánh đạt lần lượt $44{,}7$, $53{,}1$ và $75{,}0$, và phần khoảng cách
-thu hẹp được chỉ là $28\%$.
-
-\paragraph{Ý nghĩa của mức câu chuẩn.} Hợp của ba nhánh giải được $3.527$ bước, tức $79{,}1\%$,
-và trong số các bước mà câu chuẩn không đạt có $148$ bước được một mô hình giải đúng. Con số
-$75{,}7\%$ vì vậy đo mức mà một lớp câu cụ thể đạt tới với dụng cụ này.
-
-\section{Phương pháp đề xuất: học tăng cường thưởng SPICE}
-\label{sec:grpospice}
-
-Phương pháp đề xuất (Mục~\ref{sec:grpospicethietke}) học tiếp từ S1 hạt giống $101$ bằng GRPO với
-phần thưởng SPICE. Điểm lưu ở bước $500$ được sinh câu và chấm đúng một lần trên tập kiểm. Trong mục
-này, ``nhánh thưởng SPICE'' và ``phương pháp đề xuất'' chỉ cùng một mô hình.
-
-\subsection{Kết quả trên bước chạm}
-
-\begin{table}[t]
-\caption{Nhánh thưởng SPICE so với S1 hạt giống $101$ trên $4.463$ bước chạm, ghép cặp theo bước.
-Khoảng tin cậy lấy từ bootstrap gom cụm theo ứng dụng. Cột cứu và phá đếm số bước nhánh mới đúng mà
-S1 sai và ngược lại. Một hạt giống.}
-\label{tab:grpospice}
-\centering\small
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}lrrrcr@{}}
-\toprule
-Thước & S1 & Thưởng SPICE & $\Delta$ & KTC $95\%$ & cứu / phá \\
-\midrule
-\textbf{Executability} & $59{,}11$ & $\mathbf{60{,}65}$ & $\mathbf{+1{,}55}$ & $[+0{,}80; +2{,}33]$ & $159$ / $90$ \\
-Hộp phần tử (D.3) & $65{,}49$ & $67{,}02$ & $+1{,}52$ & $[+0{,}77; +2{,}29]$ & $165$ / $97$ \\
-Luật khớp chạm AitW & $74{,}37$ & $76{,}25$ & $+1{,}88$ & $[+1{,}17; +2{,}63]$ & $172$ / $88$ \\
-AitW cận trên & $81{,}04$ & $82{,}90$ & $+1{,}86$ & $[+1{,}17; +2{,}60]$ & $163$ / $80$ \\
-$\pm 14\%$ theo trục & $67{,}24$ & $68{,}90$ & $+1{,}66$ & $[+0{,}90; +2{,}46]$ & $172$ / $98$ \\
-Đúng loại thao tác & $94{,}35$ & $95{,}97$ & $+1{,}61$ & $[+1{,}17; +2{,}08]$ & $83$ / $11$ \\
-\midrule
-SPICE & $44{,}37$ & $45{,}79$ & $+1{,}42$ & $[+0{,}69; +2{,}16]$ & \\
-BLEU-4 & $51{,}56$ & $52{,}36$ & $+0{,}80$ & & \\
-METEOR & $36{,}79$ & $37{,}92$ & $+1{,}13$ & & \\
-ROUGE-L & $67{,}35$ & $68{,}36$ & $+1{,}01$ & & \\
-CIDEr-D & $416{,}12$ & $430{,}05$ & $+13{,}93$ & & \\
-chrF & $61{,}26$ & $62{,}87$ & $+1{,}61$ & & \\
-BERTScore & $66{,}33$ & $67{,}07$ & $+0{,}74$ & & \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Bảng~\ref{tab:grpospice} cho kết quả. Nhánh thưởng SPICE cao hơn S1 ở cả mười ba cột, và ở sáu cột
-vị trí khoảng tin cậy đều nằm hẳn trên $0$. Theo executability, mức chênh là $+1{,}55$ điểm với $p =
-1{,}6 \times 10^{-5}$. Nhánh này là nhánh đầu tiên của đề tài hơn S1 có ý nghĩa thống kê dưới cả
-executability, luật chặt nhất trong các luật đã dùng, trong khi mọi nhánh trước chỉ có ý nghĩa dưới các luật
-lỏng hơn. Điểm $60{,}65$ cũng là điểm executability cao nhất trong các mô hình đơn của đề tài; ACE,
-một hệ đặt sau mô hình này (Mục~\ref{sec:ace}), chỉ nhỉnh thêm $0{,}03$ điểm. Phần thưởng là SPICE, nhưng
-mức tăng không dừng ở SPICE, vì cả sáu thước vị trí, vốn đo bằng mô hình định vị không hề nằm trong
-phần thưởng, cùng tăng một cỡ.
-
-\paragraph{Nguồn của mức tăng.} Trong $159$ bước được cứu, $36$ bước là bước S1 viết sai loại thao
-tác, còn trong $90$ bước bị phá chỉ $8$ bước như vậy. Tính ròng, sửa loại thao tác đóng góp $28$
-bước, tức $+0{,}63$ điểm, và đổi sang đúng phần tử ở những bước cả hai nhánh cùng đúng loại thao tác
-đóng góp $41$ bước, tức $+0{,}92$ điểm. Trên $4.200$ bước cả hai nhánh cùng đúng loại thao tác,
-executability đi từ $62{,}62$ lên $63{,}60$. Ở chặng ba, toàn bộ mức hơn S1 đến từ nhóm
-bước S1 sai loại thao tác (Mục~\ref{sec:nhieuthuoc}), còn ở đây hơn một nửa mức tăng là định vị thật.
-Câu không đổi nhiều: $2.795/4.463$ câu trùng S1 từng ký tự, và số từ trung bình chỉ đi từ $7{,}83$ lên
-$7{,}96$, nên mức tăng không đến từ việc kéo dài câu. Hình~\ref{fig:viduspice} là một bước được cứu.
+Câu của mô hình thay đổi ít so với S1: 2.795 trong 4.463 câu trùng đến từng ký tự, và số từ trung bình chỉ đi từ 7,83 lên 7,96, nên mức tăng không đến từ việc viết câu dài hơn. Hình~\ref{fig:6.1} là một bước được cứu.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.78\textwidth]{figures/fig_vidu_spice.png}
-\caption[Một bước được nhánh thưởng SPICE sửa đúng]{Một bước được nhánh thưởng SPICE sửa đúng,
-cắt phần dưới màn hình. Hộp thoại hỏi quyền gửi thông báo che màn hình, còn người dùng cần đóng màn
-nhắc nhở bằng nút \emph{Not now} ở cuối màn. S1 gọi nút \emph{Allow} trong hộp thoại, mô hình định vị
-trỏ theo câu đó và trượt. Nhánh thưởng SPICE gọi đúng nút \emph{Not Now} kèm vị trí, và mô hình định
-vị trỏ trúng.}
-\label{fig:viduspice}
+\caption[Một bước được mô hình học với thưởng SPICE sửa đúng (ảnh chỉ giữ phần dưới màn hình).]{Một bước được mô hình học với thưởng SPICE sửa đúng (ảnh chỉ giữ phần dưới màn hình). Cần chạm nút \emph{Not now} ở cuối màn, trong khi một hộp thoại hỏi quyền gửi thông báo đang che màn hình. S1 gọi nút \emph{Allow} trong hộp thoại nên mô hình định vị trượt; mô hình học với thưởng SPICE gọi đúng nút \emph{Not now} kèm vị trí, và mô hình định vị trỏ trúng.}
+\label{fig:6.1}
 \end{figure}
 
-\paragraph{So với các nhánh khác.} So với S1 hạt giống $202$, nhánh mới hơn $1{,}03$ điểm
-$[+0{,}25; +1{,}83]$ với $p = 0{,}014$, nên mức hơn không chỉ là may rủi của một hạt giống S1. So với
-chặng ba, nhánh mới hơn $0{,}58$ điểm $[-0{,}50; +1{,}69]$ với $p = 0{,}31$, so với MIN-DESC hơn
-$0{,}60$ điểm với $p = 0{,}30$, tức không phân biệt được. Hai nhánh có điểm cao nhất của đề tài hơn nhau ở
-những thước khác nhau. Chặng ba cao hơn ở bốn luật vị trí lỏng và ở tỉ lệ đúng loại thao tác. Nhánh thưởng
-SPICE cao hơn ở executability và ở sáu thước so câu. Dưới luật hộp phần tử hai nhánh bằng nhau
-($67{,}0$). Hình~\ref{fig:baluat} đặt các nhánh chính cạnh nhau dưới ba luật.
+\textbf{So với các mô hình khác.} Mô hình vẫn hơn S1 hạt giống 202 có ý nghĩa (p = 0,014), nên mức hơn không phải do may rủi của riêng hạt giống 101. So với giai đoạn thưởng tọa độ và giai đoạn học ưu tiên, hai hướng đã thử có executability cao nhất, mức hơn chỉ khoảng 0,6 điểm và chưa phân biệt được với 0 (Bảng~\ref{tab:6.8}). Giai đoạn thưởng tọa độ cao hơn ở tỉ lệ đúng loại thao tác và ở ba luật vị trí lỏng hơn executability; mô hình học với thưởng SPICE cao hơn ở executability và sáu trong bảy độ đo so câu (Hình~\ref{fig:6.3}).
 
-\subsection{Tác dụng phụ ở bước không chạm}
+\subsection{Tác dụng phụ ở bước không chạm}\label{sec:6.3.2}
 
-Tập câu nhắc của nhánh này gồm đủ mọi loại thao tác, nên khác với chặng hai, nhánh không bị dạy lệch
-về bước chạm một cách trực tiếp. Phép kiểm trên $2.495$ bước không chạm của tập kiểm vẫn cho thấy một
-tác dụng phụ rõ (Hình~\ref{fig:khongcham}). Trên toàn nhóm, mức khớp loại thao tác giảm $1{,}68$ điểm
-$[-2{,}76; -0{,}62]$, từ $85{,}97$ xuống $84{,}29$. Mức giảm dồn vào bước cuộn, $-6{,}23$ điểm
-$[-8{,}30; -4{,}31]$, và bước quay lại, $-5{,}93$ điểm. Bước chờ và bước mở ứng dụng thì tăng.
+Tập câu nhắc huấn luyện có đủ mọi loại thao tác, nên khác với giai đoạn học ưu tiên, mô hình không bị đẩy lệch trực tiếp về bước chạm. Dù vậy, trên 2.495 bước không chạm của tập kiểm tra, tỉ lệ gọi đúng loại thao tác giảm từ 85,97 xuống 84,29, tức -1,68 điểm [$-$2,76; $-$0,62] (Hình~\ref{fig:6.2}). Mức giảm dồn vào bước cuộn (-6,23 điểm, [$-$8,30; $-$4,31]) và bước quay lại (-5,93 điểm).
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.86\textwidth]{figures/fig_khongcham.png}
-\caption[Tác dụng phụ của nhánh thưởng SPICE ở bước không chạm]{Mức thay đổi tỉ lệ gọi đúng loại thao
-tác của nhánh thưởng SPICE so với S1 trên $2.495$ bước không chạm, chia theo loại thao tác của bước,
-kèm khoảng tin cậy $95\%$. Bước cuộn và quay lại giảm, bước chờ và mở ứng dụng tăng.}
-\label{fig:khongcham}
+\caption[Mức thay đổi tỉ lệ gọi đúng loại thao tác của mô hình học với thưởng SPICE so với S1 trên 2.495 bước không chạm, theo loại thao tác, kèm khoảng tin cậy 95\%.]{Mức thay đổi tỉ lệ gọi đúng loại thao tác của mô hình học với thưởng SPICE so với S1 trên 2.495 bước không chạm, theo loại thao tác, kèm khoảng tin cậy 95\%. Bước cuộn và quay lại giảm, bước chờ và mở ứng dụng tăng.}
+\label{fig:6.2}
 \end{figure}
 
-Mức tăng và mức giảm có chung một cơ chế, là nhánh mới nghiêng về câu chạm. Trong $51$ bước
-cuộn bị phá, $47$ bước câu đổi từ dạng ``Swipe up'' sang dạng ``Click on \ldots'', và trên $755$ bước
-cuộn, số câu quy về lớp chạm đi từ $117$ lên $167$. Cả $19$ bước quay lại bị phá đều thành câu chạm,
-phần lớn dạng ``Open the \ldots{} app''. Bước chờ tăng vì cùng lý do, bởi câu chuẩn ở bước chờ phần lớn
-được viết thành câu chạm. Ở chính bước chạm, dịch chuyển này là phần $+28$ bước sửa loại thao tác
-đã nêu: số câu mở đầu bằng ``swipe'' ở bước chạm giảm từ $140$ xuống $66$. Tính trên toàn $6.958$ bước
-của tập kiểm, nhánh mới đúng loại thao tác thêm $72$ bước ở bước chạm và mất $42$ bước ở bước không
-chạm, tức gần một nửa phần được ở bước chạm bị trả lại.
+Mức tăng ở bước chạm và mức giảm ở bước không chạm cùng một nguyên nhân: mô hình nghiêng về viết câu chạm. Trong 51 bước cuộn bị phá, 47 bước có câu đổi từ “\emph{Swipe up}” sang “\emph{Click on \ldots{}}”; và trên 755 bước cuộn, số câu bị xếp vào loại chạm tăng từ 117 lên 167; cả 19 bước quay lại bị phá cũng thành câu chạm. Ở bước chạm, chính xu hướng này tạo ra 28 bước sửa loại thao tác đã nêu (số câu mở đầu bằng “\emph{swipe}” giảm từ 140 xuống 66). Trên toàn 6.958 bước của tập kiểm tra, mô hình gọi đúng loại thao tác thêm 72 bước ở bước chạm nhưng mất lại 42 bước ở bước không chạm.
 
-Chúng tôi đã kiểm và loại cách giải thích cho rằng SPICE không phân biệt được các câu cuộn ngắn. Đúng
-là SPICE của câu chuẩn tự so với chính câu ấy ở các câu cuộn từ ba từ trở xuống chỉ $6{,}9$, nhưng mức giảm không dồn vào
-nhóm câu ngắn ấy ($-7{,}9$ so với $-6{,}0$ ở câu dài hơn). Hơn nữa, tại bước cuộn, SPICE thưởng câu cuộn
-cao hơn nhiều so với câu chạm ($66{,}3$ so với $14{,}0$), nên phần thưởng tại chính bước cuộn không đẩy mô hình
-về câu chạm. Cách đọc còn lại, chưa kiểm trực tiếp, là thiên hướng được học ở phần lớn câu nhắc là bước
-chạm, vì ở những câu nhắc ấy việc đổi câu vuốt thành câu chạm được thưởng, rồi lan sang thiên hướng chung của mô
-hình. Một phần thưởng có thêm số hạng đúng loại thao tác là cách sửa trực tiếp, chưa được chạy.
+Có thể nghĩ SPICE chấm kém câu cuộn ngắn nên mô hình bớt cuộn. Cách giải thích này là không đủ: ở bước cuộn, mức giảm ở câu cuộn ngắn (-7,9 điểm) không khác nhiều câu dài hơn (-6,0), và tại bước cuộn SPICE cho câu cuộn điểm cao hơn hẳn câu chạm (66,3 so với 14,0). Các giải thích còn lại, chưa được kiểm trực tiếp, là phần lớn câu nhắc huấn luyện là bước chạm, ở đó đổi câu vuốt thành câu chạm được thưởng, và thói quen ấy lan sang mọi loại bước. Cách sửa trực tiếp là thêm vào phần thưởng một số hạng cho việc gọi đúng loại thao tác, nhưng chưa được chạy.
 
-\subsection{Giới hạn của kết quả}
+\subsection{Giới hạn của kết quả}\label{sec:6.3.3}
 
-Mọi con số của mục này đi kèm bốn giới hạn. Thứ nhất, đây là kết quả một hạt giống. Mức hơn giữ
-dấu khi so với cả hai hạt giống của S1, nhưng chưa biết mức tăng có lặp lại khi huấn luyện lại
-nhánh này với hạt giống khác hay không. Thứ hai, chưa có nhánh so sánh học có giám sát thêm cùng số bước. Thứ
-ba, đường sinh câu khác S1 công bố (Mục~\ref{sec:grpospicethietke}), và ở $2$ trong $4$ câu đổi do
-đường sinh, nhánh mới ra đúng câu của S1 đã hoà, nên một phần nhỏ của chênh lệch có thể là chênh lệch
-đường sinh. Thứ tư, tác dụng phụ ở bước không chạm đã đo được và phải báo cạnh mọi số trên bước chạm.
+Ba giới hạn của thiết kế đã nêu ở Mục~\ref{sec:4.5} vẫn áp dụng cho kết quả trên: đây là kết quả một hạt giống, chưa có mô hình chỉ học thêm có giám sát cùng số bước để tách phần do phần thưởng SPICE, và hai mô hình sinh câu theo hai cách khác nhau. Mức hơn giữ dấu khi so với cả hai hạt giống của S1, nhưng chưa biết có lặp lại khi huấn luyện lại với hạt giống khác. Ngoài ra, mức tăng ở bước chạm đi kèm mức giảm ở bước không chạm (Mục~\ref{sec:6.3.2}).
 
-\section{Mở rộng: bộ sửa câu theo vùng cắt (TAGE)}
-\label{sec:tage}
+\section{Thành phần thứ hai: chép câu ví dụ khi đồng thuận loại thao tác (ACE)}\label{sec:6.4}
 
-TAGE (Mục~\ref{sec:tagethietke}) nhận câu nháp của phương pháp đề xuất và chỉ thay câu khi bộ chọn
-nhận câu sửa. Trên tập kiểm định nội bộ, các phép thử thành phần cho thấy bộ biên tập thật sự đọc vùng
-cắt: khi ô cắt đặt đúng quanh điểm chạm thật, câu sửa cải thiện rõ rệt so với câu nháp, còn khi ô cắt
-cố ý đặt quanh một phần tử lân cận thì câu sửa kém đi rõ, đúng chiều mong đợi. Hệ hoàn chỉnh, với ô cắt
-do bộ định vị đoán và $\tau$ đã chọn, cũng nhỉnh hơn câu nháp trên tập ấy. Hệ được chạy một lần
-trên tập kiểm.
+Trên tập kiểm tra, luật đồng thuận của ACE (Mục~\ref{sec:4.6}) thay 402 trong 4.463 câu nháp (9,0\%). Bảng~\ref{tab:6.4} đặt ACE, tức phương pháp đề xuất, cạnh câu nháp và cạnh bộ sinh đứng một mình (dùng câu của bộ sinh ở mọi bước).
 
-\begin{table}[t]
-\caption{TAGE trên $4.463$ bước chạm của tập kiểm, so với câu nháp của chính hệ (nhánh thưởng SPICE)
-và với S1. Ghép cặp theo bước, một hạt giống.}
-\label{tab:tage}
+\begin{table}[htbp]
 \centering\small
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}lrrrcc@{}}
-\toprule
-Thước & S1 & Câu nháp & TAGE & TAGE $-$ câu nháp & $p$ \\
-\midrule
-Executability & $59{,}11$ & $60{,}65$ & $60{,}23$ & $-0{,}43$ $[-0{,}87; +0{,}02]$ & $0{,}093$ \\
-Hộp phần tử (D.3) & $65{,}49$ & $67{,}02$ & $66{,}44$ & $-0{,}58$ $[-1{,}07; -0{,}09]$ & $0{,}027$ \\
-Luật khớp chạm AitW & $74{,}37$ & $76{,}25$ & $76{,}07$ & $-0{,}18$ $[-0{,}66; +0{,}32]$ & $0{,}55$ \\
-Đúng loại thao tác & $94{,}35$ & $95{,}97$ & $96{,}64$ & $+0{,}67$ $[+0{,}44; +0{,}92]$ & $<0{,}001$ \\
-SPICE & $44{,}37$ & $45{,}79$ & $45{,}74$ & $-0{,}05$ $[-0{,}38; +0{,}27]$ & - \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\paragraph{Kết quả.} Bảng~\ref{tab:tage} cho thấy khâu sửa câu không giúp được trên tập kiểm.
-TAGE thấp hơn câu nháp $0{,}43$ điểm executability, chưa có ý nghĩa ($p = 0{,}093$), và thấp hơn
-$0{,}58$ điểm theo luật hộp phần tử, có ý nghĩa ($p = 0{,}027$). So với S1, TAGE vẫn hơn $1{,}12$ điểm
-$[+0{,}31; +1{,}94]$, nhưng toàn bộ phần hơn ấy thuộc về câu nháp, còn khâu sửa lấy bớt đi. Chỉ tỉ lệ đúng
-loại thao tác tăng, vì bộ biên tập luôn viết câu chạm: $30$ câu nháp mở đầu bằng vuốt, quay lại hay
-gõ chữ được đổi thành câu chạm, đúng ở cả $30$ bước.
-
-\paragraph{Nguồn của mức giảm.} Các thành phần chạy đúng như thiết kế. Bộ định vị trỏ trúng
-$69{,}5\%$ số bước, bộ biên tập đổi câu ở $70{,}8\%$ số bước, và bộ chọn nhận $219$ câu sửa, tức $4{,}9\%$.
-Bộ chọn có nhắm đúng những bước câu nháp yếu: trên $219$ bước ấy câu nháp chỉ đúng $34{,}7\%$. Nhưng câu
-sửa còn đúng ít hơn, $26{,}0\%$. Tách $219$ bước theo việc ô cắt có đúng chỗ hay không cho thấy nguồn của
-mức giảm. Ở $80$ bước ô cắt đúng chỗ, câu sửa cứu $46$ bước và phá $7$. Ở $139$ bước ô cắt sai chỗ,
-câu sửa cứu $2$ và phá $60$, vì bộ biên tập mô tả phần tử nằm trong ô cắt sai, thay một câu nháp vốn
-đúng bằng một câu đúng ngữ pháp về phần tử khác (Hình~\ref{fig:vidutage}).
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/fig_vidu_tage.png}
-\caption[Hai bước mà bộ chọn của TAGE nhận câu sửa]{Hai bước mà bộ chọn của TAGE nhận câu sửa, cắt phần
-dưới màn hình. (a) Ô cắt đúng chỗ: câu nháp gọi nút \emph{Always}, câu sửa gọi đúng \emph{Just once}.
-(b) Ô cắt rơi vào thanh điều hướng ở góc dưới bên trái: câu nháp \emph{Get help} vốn đúng bị thay bằng
-câu về thẻ \emph{Home} nằm trong ô cắt.}
-\label{fig:vidutage}
-\end{figure}
-
-\paragraph{Tín hiệu của bộ chọn.} Hình~\ref{fig:tagecong} chia các câu bị đổi theo mức chênh
-log-xác suất $\Delta\mathrm{lp}$ mà bộ chọn dùng để quyết định. Tỉ lệ ô cắt đúng chỗ giảm đều khi
-$\Delta\mathrm{lp}$ tăng, từ $74{,}0\%$ ở nhóm thấp nhất xuống $36{,}5\%$ ở nhóm được nhận. Cách đọc
-khả dĩ là khi ô cắt rơi vào một phần tử khác, bộ biên tập viết một câu rất chắc chắn về phần tử
-\emph{trong ô}, còn câu nháp nói về phần tử ngoài ô nên bị chấm thấp. Hiệu $\Delta\mathrm{lp}$ vì vậy đo
-mức lệch giữa câu nháp và ô cắt, chứ không đo câu nào đúng hơn. Trên tập kiểm định nội bộ, ba nhóm
-dưới cũng giảm theo đúng xu hướng này, chỉ có nhóm trên cùng, gồm $11$ câu, tình cờ có $8$ ô cắt đúng
-chỗ, và $\tau$ được chọn từ chính $11$ câu ấy.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.82\textwidth]{figures/fig_tage_cong.png}
-\caption[Tín hiệu bộ chọn của TAGE và độ đúng của ô cắt]{Tỉ lệ ô cắt đúng chỗ (bộ định vị trỏ trong
-dung sai $14\%$) theo nhóm $\Delta\mathrm{lp}$, trên các câu mà bộ biên tập đã đổi ở tập kiểm. Cột cam
-là nhóm được nhận. Bộ chọn càng tự tin nhận câu sửa thì ô cắt càng hay sai.}
-\label{fig:tagecong}
-\end{figure}
-
-\paragraph{Hệ quả cho thiết kế.} Một bộ chọn dựa trên xác suất của chính bộ biên tập không độc lập với ô cắt, nên
-không bắt được loại lỗi nguy hiểm nhất của hệ là ô cắt sai. Muốn khâu sửa có ích, bộ chọn cần một
-tín hiệu không đi qua ô cắt, ví dụ so điểm mà mô hình định vị trỏ theo câu nháp với điểm của bộ định
-vị, và $\tau$ phải chọn trên một mẫu lớn hơn nhiều so với $11$ câu. Con số ``chỉ nhận khi ô cắt đúng
-chỗ thì được thêm $39$ bước, khoảng $0{,}87$ điểm'' là một trần chẩn đoán dùng điểm chạm thật, không
-phải kết quả của một hệ đã chạy.
-
-\section{Mở rộng: chép câu ví dụ khi đồng thuận loại thao tác (ACE)}
-\label{sec:ace}
-
-ACE (Mục~\ref{sec:acethietke}) giữ câu nháp của phương pháp đề xuất ở mọi bước, trừ những bước bộ
-sinh có câu ví dụ chép nguyên văn một câu ví dụ và câu ấy cùng loại thao tác với câu nháp. Trên
-tập kiểm, luật đồng thuận thay $402$ trong $4.463$ câu, tức $9{,}0\%$. Bảng~\ref{tab:ace} đặt ACE
-cạnh câu nháp và cạnh chính bộ sinh khi đứng một mình, tức dùng câu của bộ sinh ở mọi bước.
-
-\begin{table}[t]
-\caption{ACE trên $4.463$ bước chạm của tập kiểm, so với câu nháp (nhánh thưởng SPICE) và với bộ sinh
-có câu ví dụ khi đứng một mình. Ba thước vị trí kèm khoảng tin cậy $95\%$ từ bootstrap gom cụm theo
-ứng dụng. Bảy thước so câu chấm trong cùng một lượt cho cả ba cột và chưa có khoảng tin cậy; cột câu
-nháp lệch tối đa $0{,}02$ so với Bảng~\ref{tab:grpospice} do chấm lại. Một hạt giống.}
-\label{tab:ace}
-\centering\small
-\renewcommand{\arraystretch}{1.2}
+\caption[ACE trên 4.463 bước chạm, so với câu nháp (của mô hình học với thưởng SPICE) và với bộ sinh đứng một mình; cả ba cột là kết quả một hạt giống.]{ACE trên 4.463 bước chạm, so với câu nháp (của mô hình học với thưởng SPICE) và với bộ sinh đứng một mình; cả ba cột là kết quả một hạt giống. Ba độ đo vị trí kèm khoảng tin cậy 95\% từ bootstrap gom cụm theo ứng dụng. Bảy độ đo so câu chưa có khoảng tin cậy; cột ACE $-$ câu nháp lệch tối đa 0,02 so với Bảng~\ref{tab:6.3} do chấm lại.}\label{tab:6.4}
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}lrrrc@{}}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash\hsize=1.00\hsize}Xrrrr@{}}
 \toprule
-Thước & Câu nháp & Bộ sinh một mình & ACE & ACE $-$ câu nháp \\
+\textbf{Độ đo} & \textbf{Câu nháp} & \textbf{Bộ sinh một mình} & \textbf{ACE} & \textbf{ACE $-$ câu nháp} \\
 \midrule
-Executability & $60{,}65$ & $59{,}40$ & $\mathbf{60{,}68}$ & $+0{,}02$ $[-0{,}21; +0{,}26]$ \\
-Hộp phần tử (D.3) & $67{,}02$ & $65{,}81$ & $\mathbf{67{,}11}$ & $+0{,}09$ $[-0{,}15; +0{,}33]$ \\
-Luật khớp chạm AitW & $76{,}25$ & $75{,}02$ & $\mathbf{76{,}32}$ & $+0{,}07$ $[-0{,}15; +0{,}29]$ \\
+Executability & 60,65 & 59,40 & 60,68 & +0,02 [$-$0,21; +0,26] \\
+Luật hộp phần tử & 67,02 & 65,81 & 67,11 & +0,09 [$-$0,15; +0,33] \\
+Luật khoảng cách Euclid & 76,25 & 75,02 & 76,32 & +0,07 [$-$0,15; +0,29] \\
+BLEU-4 & 52,36 & 53,47 & 53,47 & +1,11 \\
+METEOR & 37,91 & 37,79 & 38,37 & +0,46 \\
+ROUGE-L & 68,34 & 68,67 & 69,08 & +0,74 \\
+CIDEr-D & 430,04 & 437,54 & 442,02 & +11,98 \\
+SPICE & 45,79 & 46,79 & 47,13 & +1,34 \\
+chrF & 62,86 & 62,65 & 63,44 & +0,58 \\
+BERTScore & 67,07 & 67,52 & 67,73 & +0,66 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Kết quả.} ACE cao hơn câu nháp ở cả bảy độ đo so câu, rõ nhất ở CIDEr-D và SPICE. Ở ba độ đo vị trí, khoảng tin cậy đều phủ 0, nên về định vị ACE ngang câu nháp; trong 402 câu bị thay, 15 bước được cứu và 14 bước bị phá (p = 1,0). Vì vậy phương pháp đề xuất giữ gần nguyên mức hơn S1 của câu nháp; theo luật hộp phần tử và luật khoảng cách Euclid, mức hơn là 1,61 và 1,95 điểm, đều với p < 0,001. Trong các cách làm của đề tài, chỉ ACE nâng được nhóm độ đo so câu so với thành phần thứ nhất mà không làm giảm độ đo vị trí nào, nên ACE được giữ làm thành phần thứ hai.
+
+\textbf{Vì sao không dùng bộ sinh một mình.} Bộ sinh đứng một mình cao hơn câu nháp ở năm trong bảy độ đo so câu, nhưng thấp hơn 1,25 điểm executability [$-$2,06; $-$0,44] (p = 0,002) và giảm tương tự dưới hai luật vị trí còn lại, vì hai loại bước cho kết quả trái ngược nhau. Ở 19,1\% số bước, bộ sinh chép nguyên văn một câu ví dụ, và 43,5\% số câu chép ấy trùng câu chuẩn, gần gấp đôi tỉ lệ của câu nháp (22,8\%). Ở những bước bộ sinh tự viết câu mới, câu viết ra kém câu nháp, như ở mọi lượt học thêm sau mô hình học với thưởng SPICE (Phụ lục~\ref{app:A}).
+
+\textbf{Vì sao cần điều kiện loại thao tác.} Nếu chỉ dùng điều kiện chép, luật thay 453 câu, vẫn tăng cả bảy độ đo so câu, nhưng executability thấp hơn câu nháp 0,11 điểm (24 bước cứu, 29 bước phá). Điều kiện loại bớt 51 câu, phần lớn là câu vuốt, quay lại hoặc gõ chữ bị chép vào bước mà câu nháp dẫn tới thao tác chạm; trên 51 bước ấy, câu chép cứu 9 bước và phá 15 bước. Nhờ vậy ACE cao hơn biến thể chỉ có điều kiện chép 0,13 điểm executability và không thấp hơn ở độ đo nào của Bảng~\ref{tab:6.4}.
+
+\textbf{Giới hạn.} Kết quả của ACE có năm giới hạn. Thứ nhất, luật được chọn trong bốn biến thể trên tập kiểm định nội bộ, và các biến thể ấy được nghĩ ra sau khi đã thấy kết quả của bộ sinh trên tập đó; tập kiểm tra chỉ được dùng một lần, cho biến thể đã chọn. Thứ hai, mức tăng ở độ đo so câu chưa có khoảng tin cậy, và các mức dưới một điểm (METEOR, ROUGE-L, chrF, BERTScore) chưa đủ để kết luận. Thứ ba, chưa rõ truy hồi câu ví dụ giúp được bao nhiêu, vì trên tập kiểm định nội bộ, ở đa số độ đo, bộ sinh không hơn mô hình học thêm cùng số bước mà không xem câu ví dụ. Thứ tư, đây là kết quả một hạt giống. Thứ năm, phần lỗi nằm ở bề mặt câu (mức trùng từ với câu chuẩn), chưa giúp mô hình định vị tìm đúng phần tử hơn, nên ACE không khắc phục được nhược điểm đó ở khâu nhận ra phần tử (Mục~\ref{sec:A.5}).
+
+\section{Kết quả trên nhiều độ đo}\label{sec:6.5}
+
+Ngoài executability, chúng tôi trình bày nhóm độ đo theo vị trí và nhóm độ đo so với câu chuẩn, cả hai tính lại từ bản ghi từng bước của các lượt chấm ở Bảng~\ref{tab:6.1}. Hai bảng của mục này chưa có hàng của phương pháp đề xuất; số của phương pháp nằm ở Bảng~\ref{tab:6.1} và Bảng~\ref{tab:6.4}.
+
+\begin{table}[htbp]
+\centering\small
+\caption[Nhóm độ đo theo vị trí trên đủ 4.463 bước chạm, tính lại từ bản ghi từng bước, không gọi lại mô hình định vị.]{Nhóm độ đo theo vị trí trên đủ 4.463 bước chạm, tính lại từ bản ghi từng bước, không gọi lại mô hình định vị. Khoảng cách Euclid là luật khoảng cách Euclid trong mã chấm gốc của AndroidInTheWild; khoảng cách Euclid cận trên là biến thể của luật ấy khi vẽ khung xét mọi phần tử bấm được trên màn (Mục~\ref{sec:5.12}). Hộp phần tử là luật khớp gốc của AndroidControl. Exec. là executability (Mục~\ref{sec:5.12}). Thao tác là tỉ lệ gọi đúng loại thao tác. Số in đậm là số cao nhất trong các mô hình ở cột đó. *Thưởng SPICE là thành phần thứ nhất của phương pháp đề xuất, học tiếp từ S1 (101) bằng GRPO với phần thưởng SPICE, TAGE là bộ sửa câu đã thử đặt sau thành phần đó (Mục~\ref{sec:6.3} và \ref{sec:A.7.2}). Bảng chưa có hàng của phương pháp đề xuất; số của phương pháp này ở Bảng~\ref{tab:6.4}. †Mô hình chọn ứng viên lệch ba biến so với các mô hình còn lại nên chỉ đọc được so với Base.}\label{tab:6.5}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+\textbf{Mô hình} & \textbf{Euclid} & \begin{tabular}[b]{@{}r@{}}\textbf{Hộp}\\\textbf{phần tử}\end{tabular} & \textbf{Exec.} & \textbf{$\pm$14\% trục} & \begin{tabular}[b]{@{}r@{}}\textbf{Euclid}\\\textbf{cận trên}\end{tabular} & \textbf{Thao tác} \\
 \midrule
-BLEU-4 & $52{,}36$ & $\mathbf{53{,}47}$ & $\mathbf{53{,}47}$ & $+1{,}11$ \\
-METEOR & $37{,}91$ & $37{,}79$ & $\mathbf{38{,}37}$ & $+0{,}46$ \\
-ROUGE-L & $68{,}34$ & $68{,}67$ & $\mathbf{69{,}08}$ & $+0{,}74$ \\
-CIDEr-D & $430{,}04$ & $437{,}54$ & $\mathbf{442{,}02}$ & $+11{,}98$ \\
-SPICE & $45{,}79$ & $46{,}79$ & $\mathbf{47{,}13}$ & $+1{,}34$ \\
-chrF & $62{,}86$ & $62{,}65$ & $\mathbf{63{,}44}$ & $+0{,}58$ \\
-BERTScore & $67{,}07$ & $67{,}52$ & $\mathbf{67{,}73}$ & $+0{,}66$ \\
+Base & 63,4 & 53,6 & 47,6 & 55,9 & 73,4 & 96,5 \\
+S1 (101) & 74,4 & 65,5 & 59,1 & 67,2 & 81,0 & 94,3 \\
+S1 (202) & 75,3 & 66,1 & 59,6 & 67,9 & 81,9 & 94,6 \\
+S2 & 73,4 & 63,6 & 57,2 & 65,7 & 80,8 & 94,8 \\
+CE2-S2 & 76,1 & 66,0 & 59,4 & 68,5 & 83,9 & \textbf{98,9} \\
+MIN-DESC & 76,4 & 66,5 & 60,0 & 68,7 & 84,4 & \textbf{98,9} \\
+Giai đoạn ba & \textbf{77,3} & \textbf{67,0} & 60,1 & \textbf{69,4} & \textbf{85,0} & \textbf{98,9} \\
+Thưởng SPICE* & 76,2 & \textbf{67,0} & \textbf{60,6} & 68,9 & 82,9 & 96,0 \\
+TAGE & 76,1 & 66,4 & 60,2 & 68,7 & 82,7 & 96,6 \\
+Chọn ứng viên† & 71,2 & 62,4 & 56,1 & 63,9 & 77,9 & 90,9 \\
+Câu chuẩn & 92,1 & 83,8 & 75,7 & 84,2 & 96,2 & 100,0 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\paragraph{Kết quả.} ACE cao hơn câu nháp ở cả bảy thước so câu, rõ nhất ở CIDEr-D ($+11{,}98$) và
-SPICE ($+1{,}34$). Ba thước vị trí nhỉnh hơn câu nháp rất ít, khoảng tin cậy đều phủ $0$, nên đọc
-đúng là ACE \emph{ngang} câu nháp về định vị: trong $402$ câu bị thay, $15$ bước được cứu và $14$
-bước bị phá theo executability ($p = 1{,}0$). So với S1 hạt giống $101$, ACE hơn $1{,}57$ điểm
-executability $[+0{,}86; +2{,}31]$, $1{,}61$ điểm theo luật hộp phần tử và $1{,}95$ điểm theo luật khớp
-chạm của AitW, đều với $p < 0{,}001$. Vì vậy ACE là hệ duy nhất của đề tài tăng được nhóm thước so
-câu so với phương pháp đề xuất mà không làm giảm thước vị trí nào.
-
-\paragraph{Vì sao không dùng bộ sinh một mình.} Bộ sinh có câu ví dụ đứng một mình cũng cao hơn câu
-nháp ở năm trong bảy thước so câu, nhưng thấp hơn $1{,}25$ điểm executability $[-2{,}06; -0{,}44]$,
-$p = 0{,}002$, và giảm một cỡ như vậy dưới cả luật hộp phần tử lẫn luật khớp chạm. Bộ sinh khác câu
-nháp ở gần một nửa số bước. Ở những bước nó chép một câu ví dụ, câu chép thường đúng: bộ sinh chép
-nguyên văn ở $19{,}1\%$ số bước, và $43{,}5\%$ số câu chép trùng câu chuẩn, gần gấp đôi tỉ lệ câu
-trùng câu chuẩn của câu nháp ($22{,}8\%$). Ở những bước nó tự viết câu mới, câu kém câu nháp, đúng
-mẫu hình đã gặp ở mọi lượt học thêm sau phương pháp đề xuất. Điều kiện chép nguyên văn giữ phần
-thứ nhất và bỏ phần thứ hai.
-
-\paragraph{Vai trò của điều kiện loại thao tác.} Nếu chỉ dùng điều kiện chép, hệ thay $453$ câu và
-cũng tăng cả bảy thước so câu, nhưng executability thấp hơn câu nháp $0{,}11$ điểm ($24$ bước cứu,
-$29$ bước phá). Điều kiện đồng thuận loại thao tác loại bớt $51$ câu, phần lớn là câu vuốt (``Swipe
-up''), câu quay lại hoặc câu gõ chữ được chép từ một bước khác vào chỗ câu nháp đang bảo chạm. Trên
-$51$ bước ấy, câu chép cứu $9$ bước và phá $15$ bước, còn với $402$ câu được giữ lại số bước cứu và
-phá gần cân bằng. So với
-biến thể chỉ có điều kiện chép, ACE cao hơn $0{,}13$ điểm executability và không thấp hơn ở thước
-nào trong mười thước của Bảng~\ref{tab:ace}.
-
-\paragraph{Giới hạn.} Kết quả của ACE đi kèm năm giới hạn. Thứ nhất, luật được chọn trong bốn biến thể trên tập kiểm
-định nội bộ, và chính các biến thể ấy được nghĩ ra sau khi đã thấy kết quả của bộ sinh trên tập đó;
-tập kiểm chỉ được dùng một lần, cho biến thể đã chọn. Thứ hai, mức tăng ở thước so câu chưa có
-khoảng tin cậy, và các mức dưới một điểm (METEOR, ROUGE-L, chrF, BERTScore) chưa đủ để nói là hơn
-thật. Thứ ba, trên tập kiểm định nội bộ bộ sinh không hơn nhánh so sánh học thêm không có khối ví
-dụ ở đa số thước, nên chưa tách được bao nhiêu phần lợi là của truy hồi; hạ tốc độ học xuống
-$10^{-5}$ cũng không đổi kết luận này. Thứ tư, đây là kết quả một hạt giống. Thứ năm, phần lợi nằm ở
-bề mặt câu, tức mức trùng từ với câu chuẩn, chứ không ở việc giúp mô hình định vị tìm đúng phần tử;
-ACE không thay đổi điểm nghẽn tri giác đã chỉ ra ở Mục~\ref{sec:haikenh}.
-
-\section{Nhiễu giữa hai hạt giống}
-\label{sec:haihatgiong}
-
-Một chênh lệch chỉ đáng tin nếu chênh lệch ấy lớn hơn mức dao động điểm số khi \emph{huấn luyện
-lại chính hệ thống đó}. Chúng tôi huấn luyện S1 lần thứ hai với hạt giống khác, mọi khoá cấu
-hình còn lại kiểm khớp $38/38$.
-
-\begin{table}[t]
-\caption{Hai lượt huấn luyện chỉ khác hạt giống, chấm trên cùng $4.463$ bước.}
-\label{tab:haihatgiong}
+\begin{table}[htbp]
 \centering\small
-\renewcommand{\arraystretch}{1.2}
+\caption[Nhóm độ đo so với câu chuẩn trên đủ 4.463 bước chạm.]{Nhóm độ đo so với câu chuẩn trên đủ 4.463 bước chạm. BLEU-4, METEOR 1.5, ROUGE-L, CIDEr-D và SPICE tính mức cho bằng bộ chấm chính thức của COCO Captions, sau khi tách từ bằng PTBTokenizer. chrF tính bằng sacreBLEU. BERTScore là F1 với roberta-large tầng 17, đã hiệu chỉnh theo đường cơ sở. Mỗi bước chỉ có một câu chuẩn. Số in đậm là số cao nhất trong các mô hình ở cột đó. Giai đoạn ba là giai đoạn thưởng tọa độ, học tiếp từ MIN-DESC với phần thưởng đặt trên tọa độ trong dòng mô tả. *Thành phần thứ nhất của phương pháp đề xuất; số của phương pháp đề xuất ở Bảng~\ref{tab:6.4}. Với TAGE mới tính SPICE. †Mô hình chọn ứng viên chỉ đọc được so với Base.}\label{tab:6.6}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lrrrrrrr@{}}
+\toprule
+\textbf{Mô hình} & \textbf{BLEU-4} & \textbf{METEOR} & \textbf{ROUGE-L} & \textbf{CIDEr-D} & \textbf{SPICE} & \textbf{chrF} & \textbf{BERTScore} \\
+\midrule
+Base & 15,3 & 24,6 & 42,3 & 88,0 & 18,5 & 40,2 & 40,1 \\
+S1 (101) & 51,6 & 36,8 & 67,3 & 416,1 & 44,4 & 61,3 & 66,3 \\
+S1 (202) & 51,7 & 37,2 & 67,7 & 419,2 & 44,2 & 61,9 & 66,8 \\
+S2 & 48,7 & 35,8 & 66,0 & 387,7 & 41,3 & 59,9 & 65,1 \\
+CE2-S2 & 50,1 & 37,3 & \textbf{68,6} & 402,2 & 42,3 & 61,9 & 66,8 \\
+MIN-DESC & 49,9 & 37,3 & 68,5 & 401,0 & 42,2 & 61,8 & 66,7 \\
+Giai đoạn ba & 49,9 & 37,3 & 68,5 & 402,9 & 42,5 & 61,9 & 66,8 \\
+Thưởng SPICE* & \textbf{52,4} & \textbf{37,9} & 68,4 & \textbf{430,1} & \textbf{45,8} & \textbf{62,9} & \textbf{67,1} \\
+TAGE & – & – & – & – & 45,7 & – & – \\
+Chọn ứng viên† & 46,9 & 34,2 & 63,3 & 370,6 & 39,3 & 57,7 & 62,8 \\
+Câu chuẩn & 100,0 & 100,0 & 100,0 & 988,7 & 98,6 & 100,0 & 100,0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering\small
+\caption[Khoảng tin cậy 95\% của ba số chính trên 4.463 bước (trên) và phép so ghép cặp (dưới).]{Khoảng tin cậy 95\% của ba số chính trên 4.463 bước (trên) và phép so ghép cặp (dưới). Khoảng tin cậy lấy từ bootstrap 10.000 lần gom cụm theo ứng dụng (G = 1.091), giá trị p của kiểm định McNemar. MIN là MIN-DESC.}\label{tab:6.7}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Mô hình} & \textbf{Euclid} & \textbf{Hộp phần tử} & \textbf{Executability} \\
+\midrule
+Base & 63,4 [61,8; 65,0] & 53,6 [51,9; 55,3] & 47,6 [45,9; 49,3] \\
+S1 (101) & 74,4 [72,8; 75,8] & 65,5 [63,8; 67,2] & 59,1 [57,3; 60,8] \\
+S1 (202) & 75,3 [73,8; 76,7] & 66,1 [64,4; 67,7] & 59,6 [57,9; 61,3] \\
+MIN & 76,4 [74,9; 77,8] & 66,5 [64,9; 68,2] & 60,0 [58,3; 61,8] \\
+Giai đoạn ba & 77,3 [75,8; 78,8] & 67,0 [65,3; 68,7] & 60,1 [58,3; 61,8] \\
+Câu chuẩn & 92,1 [91,1; 93,1] & 83,8 [82,5; 85,1] & 75,7 [74,1; 77,3] \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.8em}
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+\textbf{Phép so} & \textbf{Luật} & \textbf{$\Delta$} & \textbf{KTC 95\%} & \textbf{p} \\
+\midrule
+S1 (101) $-$ Base & Euclid & +10,98 & [+9,44; +12,56] & <0,001 \\
+ & Hộp phần tử & +11,90 & [+10,36; +13,47] & <0,001 \\
+ & Exec. & +11,52 & [+10,02; +13,07] & <0,001 \\
+S2 $-$ S1 (101) & Euclid & -0,96 & [$-$2,18; +0,29] & 0,100 \\
+ & Hộp phần tử & -1,86 & [$-$3,04; $-$0,67] & <0,001 \\
+ & Exec. & -1,93 & [$-$3,06; $-$0,75] & <0,001 \\
+Giai đoạn ba $-$ S2 & Euclid & +3,90 & [+2,90; +4,90] & <0,001 \\
+ & Hộp phần tử & +3,41 & [+2,37; +4,41] & <0,001 \\
+ & Exec. & +2,89 & [+1,91; +3,84] & <0,001 \\
+Giai đoạn ba $-$ S1 (101) & Euclid & +2,94 & [+1,77; +4,08] & <0,001 \\
+ & Hộp phần tử & +1,55 & [+0,40; +2,69] & 0,008 \\
+ & Exec. & +0,96 & [$-$0,16; +2,11] & 0,090 \\
+Giai đoạn ba $-$ S1 (202) & Euclid & +1,99 & [+0,84; +3,13] & <0,001 \\
+ & Hộp phần tử & +0,94 & [$-$0,17; +2,04] & 0,109 \\
+ & Exec. & +0,45 & [$-$0,67; +1,54] & 0,450 \\
+MIN $-$ S1 (101) & Euclid & +2,04 & [+0,89; +3,20] & <0,001 \\
+ & Hộp phần tử & +1,05 & [$-$0,11; +2,20] & 0,078 \\
+Giai đoạn ba $-$ MIN & Euclid & +0,90 & [+0,27; +1,52] & 0,007 \\
+ & Hộp phần tử & +0,49 & [$-$0,13; +1,10] & 0,149 \\
+ & Exec. & +0,02 & [$-$0,57; +0,61] & 1,000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_ba_luat.png}
+\caption[Các mô hình chính dưới ba luật chấm trên 4.463 bước chạm.]{Các mô hình chính dưới ba luật chấm trên 4.463 bước chạm. Cột nền xám là mốc câu chuẩn. Thứ tự gần như giữ nguyên qua ba luật; riêng giai đoạn thưởng tọa độ (giai đoạn ba) cao hơn dưới luật khoảng cách Euclid, còn mô hình học với thưởng SPICE cao hơn dưới executability.}
+\label{fig:6.3}
+\end{figure}
+
+\textbf{Nhóm độ đo theo vị trí.} Bảng~\ref{tab:6.5} đặt cạnh nhau ba luật chấm chính (luật khoảng cách Euclid, luật hộp phần tử và executability) cùng hai biến thể ở Mục~\ref{sec:5.12}. Phương pháp đề xuất đạt 76,3\% theo luật khoảng cách Euclid, so với 74,4\% của S1 hạt giống 101. Trong các hướng đã thử, giai đoạn thưởng tọa độ cao nhất theo luật khoảng cách Euclid, 77,3\%. Thứ tự các mô hình dưới hai luật vị trí gần như trùng với thứ tự dưới executability.
+
+\textbf{Sai số và kết luận dưới ba luật.} Bảng~\ref{tab:6.7} cho khoảng tin cậy dưới ba luật, tính trên cùng các mẫu bootstrap nên các cột so sánh được với nhau. Chênh lệch giữa S1 hạt giống 101 và mô hình gốc giữ gần nguyên qua ba luật, đều với p < 0,001, và phương pháp đề xuất hơn S1 có ý nghĩa dưới cả ba luật (Mục~\ref{sec:6.4}). Với các hướng đã thử, kết luận đổi tùy luật. Mô hình mô tả phần tử thấp hơn S1 có ý nghĩa theo executability (Mục~\ref{sec:A.1.3}) nhưng không theo luật khoảng cách Euclid. Theo luật khoảng cách Euclid, phần lớn mức hơn của giai đoạn học ưu tiên và giai đoạn thưởng tọa độ so với mô hình mô tả phần tử có được chỉ nhờ học tiếp, vì mô hình chỉ học thêm có giám sát với cùng số bước cũng đạt phần lớn mức hơn ấy. Giai đoạn thưởng tọa độ hơn S1 có ý nghĩa theo hai luật vị trí, nhưng không theo executability.
+
+\begin{quote}
+Toàn bộ mức hơn theo luật khoảng cách Euclid ấy nằm ở 256 bước (5,7\%) mà S1 viết sai loại thao tác, chẳng hạn viết vuốt hay cuộn khi cần chạm. Nhóm này góp +3,11 điểm theo luật khoảng cách Euclid và +1,97 theo executability; so với hạt giống 202, nhóm này góp +3,09 điểm. Ở 4.189 bước cả hai cùng gọi đúng loại thao tác, tỉ lệ trúng gần như bằng nhau (79,04\% so với 78,92\%). Luật khoảng cách Euclid cũng không phạt những lần chạm rơi vào phần tử sát bên, còn executability thì phạt; giai đoạn thưởng tọa độ mắc lỗi này nhiều hơn, nên trên nhóm bước cùng gọi đúng loại thao tác, giai đoạn này thấp hơn S1 0,81 điểm theo executability. Vậy đóng góp của hai giai đoạn này nằm ở việc gọi đúng loại thao tác, chưa nằm ở việc định vị phần tử tốt hơn. Mọi con số trên là của một hạt giống.
+\end{quote}
+
+\textbf{Nhóm độ đo so với câu chuẩn.} Bảng~\ref{tab:6.6} dùng các độ đo của Widget Captioning~\cite{widgetcap} và Screen2Words~\cite{screen2words}, gồm BLEU~\cite{bleu}, METEOR~\cite{meteor}, ROUGE-L~\cite{rouge}, CIDEr~\cite{cider} và SPICE~\cite{spice}, cùng chrF~\cite{chrf} và BERTScore~\cite{bertscore}. BLEU-4 ở bảng này tính trên toàn tập theo bộ chấm của COCO Captions, nên khác BLEU-4 trung bình theo câu ở Bảng~\ref{tab:6.1}. Tinh chỉnh có giám sát nâng mọi độ đo trong nhóm; chẳng hạn SPICE, độ đo mà Zhao và cộng sự~\cite{zhao2021} khuyên dùng để xếp hạng các mô hình sinh chỉ dẫn khi có câu tham chiếu, tăng từ 18,5 ở mô hình gốc lên 44,4 ở S1 hạt giống 101. Phương pháp đề xuất nâng tiếp các độ đo này (Bảng~\ref{tab:6.4}). BERTScore dùng bản đã co giãn theo mức điểm nền (\emph{baseline rescaling}), vì ở bản chưa co giãn, mọi mô hình đã tinh chỉnh đều nằm trong khoảng 93,5 đến 94,4. Câu rỗng được tính 0 điểm và vẫn nằm trong mẫu số, giống quy ước của executability.
+
+Khi đọc nhóm độ đo này cần lưu ý hai điểm. Thứ nhất, CIDEr-D vượt quá 100 vì mỗi bước chỉ có một câu chuẩn và trọng số nghịch đảo tần suất văn bản (IDF) được ước lượng từ chính tập câu chuẩn, nên chỉ so sánh được giữa các hàng trong cùng bảng. Thứ hai, nhóm độ đo này xếp giai đoạn học ưu tiên cao hơn giai đoạn thưởng tọa độ, ngược với executability, đúng như Mục~\ref{sec:5.11} đã chỉ ra cho những mô hình chênh nhau dưới hai điểm. Vì vậy nhóm độ đo này chỉ dùng để đặt kết quả cạnh các công trình cùng mảng; so sánh giữa các mô hình vẫn dựa trên executability.
+
+\section{So sánh ghép cặp}\label{sec:6.6}
+
+Mọi mô hình được chấm trên cùng một tập bước, nên chúng tôi so sánh hai mô hình theo từng cặp bước (kiểm định McNemar, Mục~\ref{sec:5.13}). Bảng~\ref{tab:6.8} gom các so sánh dùng trong chương.
+
+{\small
+\begin{longtable}{@{}lrrrrr@{}}
+\caption[So sánh ghép cặp trên 4.463 bước.]{So sánh ghép cặp trên 4.463 bước. $b$ là số bước mà mô hình sau dấu trừ đạt còn mô hình trước dấu trừ không đạt, $c$ là chiều ngược lại, nên $\Delta$ = (c-b)/n. Khoảng tin cậy từ bootstrap gom cụm theo tác vụ (Mục~\ref{sec:5.13}), trừ nhóm có dấu *. Base là mô hình gốc; S1/101 và S1/202 là mô hình tinh chỉnh có giám sát với hạt giống 101 và 202. Hai hàng có câu chuẩn dùng n = 4.462 vì bỏ một bước mà mô hình được đánh giá sinh câu rỗng. Thưởng SPICE là thành phần thứ nhất của phương pháp đề xuất; học ưu tiên là MIN-DESC; học thêm là mô hình chỉ học thêm có giám sát (CE2-S2); TAGE là bộ sửa câu theo vùng cắt. *Ở nhóm này, chỉ hàng thưởng SPICE $-$ S1/101 gom cụm theo tác vụ, các hàng khác gom cụm theo ứng dụng; gom cụm theo ứng dụng cho hàng ấy khoảng gần như trùng ([+0,80; +2,33]).}\label{tab:6.8}\\
+\toprule
+\textbf{So sánh} & \textbf{$\Delta$} & \textbf{KTC 95\%} & \textbf{b} & \textbf{c} & \textbf{p} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{So sánh} & \textbf{$\Delta$} & \textbf{KTC 95\%} & \textbf{b} & \textbf{c} & \textbf{p} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\multicolumn{6}{@{}l}{\textit{Mốc so sánh (S1 có hai hạt giống)}} \\
+S1 $-$ Base & +11,5 & [+10,0; +13,1] & 284 & 798 & <0,001 \\
+Câu chuẩn $-$ S1 & +16,6 & – & 102 & 843 & <0,001 \\
+Câu chuẩn $-$ Base & +28,1 & – & 102 & 1.357 & <0,001 \\
+S1/202 $-$ S1/101 (hai hạt giống) & +0,52 & [$-$0,22; +1,26] & 132 & 155 & 0,194 \\
+\multicolumn{6}{@{}l}{\textit{Phương pháp đề xuất và các so sánh liên quan, một hạt giống}} \\
+Phương pháp đề xuất $-$ S1/101 & +1,57 & [+0,86; +2,31] & 88 & 158 & <0,001 \\
+Phương pháp đề xuất $-$ thưởng SPICE & +0,02 & [$-$0,21; +0,26] & 14 & 15 & 1,00 \\
+Thưởng SPICE $-$ S1/101 & +1,55 & [+0,82; +2,28] & 90 & 159 & <0,001 \\
+Thưởng SPICE $-$ S1/202 & +1,03 & [+0,25; +1,83] & 145 & 191 & 0,014 \\
+Thưởng SPICE $-$ học ưu tiên & +0,60 & [$-$0,52; +1,73] & 304 & 331 & 0,30 \\
+Thưởng SPICE $-$ thưởng tọa độ & +0,58 & [$-$0,50; +1,69] & 286 & 312 & 0,31 \\
+TAGE $-$ thưởng SPICE & -0,43 & [$-$0,87; +0,02] & 67 & 48 & 0,093 \\
+\multicolumn{6}{@{}l}{\textit{Hướng đã thử (Phụ lục~\ref{app:A}), một hạt giống}} \\
+Mô tả phần tử (S2) $-$ S1/101 & -1,93 & [$-$3,06; $-$0,75] & 340 & 254 & 0,0005 \\
+S2 $-$ S1/202 & -2,44 & [$-$3,53; $-$1,34] & 353 & 244 & <0,001 \\
+S2 $-$ Base & +9,59 & [+8,16; +11,06] & 324 & 752 & <0,001 \\
+Học thêm $-$ S2 & +2,24 & [+1,41; +3,11] & 127 & 227 & <0,001 \\
+Học ưu tiên $-$ S2 & +2,87 & [+2,03; +3,76] & 130 & 258 & <0,001 \\
+Học ưu tiên $-$ học thêm & +0,63 & [+0,16; +1,10] & 42 & 70 & 0,011 \\
+Học ưu tiên $-$ S1/101 & +0,94 & [$-$0,09; +2,05] & 300 & 342 & 0,11 \\
+Học thêm $-$ S1/101 & +0,31 & [$-$0,76; +1,45] & 312 & 326 & 0,61 \\
+Chọn ứng viên $-$ Base & +8,54 & – & 350 & 731 & <0,001 \\
+\end{longtable}
+}
+
+Với hạt giống 101, tinh chỉnh có giám sát trên tập dữ liệu dựng tự động đem lại 11,5 điểm, thu hẹp 41\% khoảng cách giữa mô hình gốc và câu chuẩn; phần còn lại là dư địa cải thiện bàn ở Mục~\ref{sec:6.9.4}. Tỉ lệ này cao hơn mức cải thiện thực chất, vì ở khoảng một phần tư số bước, S1 chép lại câu chuẩn. Chỉ tính 3.367 bước mà mô hình tự viết câu, mô hình gốc, S1 và câu chuẩn đạt lần lượt 44,7, 53,1 và 75,0, và phần khoảng cách thu hẹp được còn 28\%.
+
+\section{Chênh lệch giữa hai hạt giống}\label{sec:6.7}
+
+Để đo mức dao động của điểm số khi huấn luyện lại, mô hình tinh chỉnh có giám sát (S1) được huấn luyện lần thứ hai, chỉ đổi hạt giống và giữ nguyên mọi tham số cấu hình khác (Mục~\ref{sec:A.1.2}).
+
+\begin{table}[htbp]
+\centering\small
+\caption{Hai lượt huấn luyện chỉ khác hạt giống, chấm trên cùng 4.463 bước.}\label{tab:6.9}
 \begin{tabular}{@{}lrrr@{}}
 \toprule
-& Điểm & $\Delta$ ghép cặp & Bước bất đồng \\
+ & \textbf{Điểm} & \textbf{$\Delta$ ghép cặp} & \textbf{Bước bất đồng} \\
 \midrule
-S1 hạt giống $101$ & $59{,}11\%$ & \multirow{2}{*}{$+0{,}52$ pp} & \multirow{2}{*}{$287 = 6{,}4\%$} \\
-S1 hạt giống $202$ & $59{,}62\%$ & & \\
-\midrule
-\emph{Phép so đối chiếu} S1 $-$ Base & & $+11{,}5$ pp & $1.082 = 24{,}2\%$ \\
+S1 hạt giống 101 & 59,11\% & +0,52 pp & 287 = 6,4\% \\
+S1 hạt giống 202 & 59,62\% &  &  \\
+Phép so sánh kiểm chứng S1 $-$ Base &  & +11,5 pp & 1.082 = 24,2\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-KTC 95\% của chênh lệch giữa hai hạt giống là $[-0{,}21; +1{,}28]$, tức \emph{chứa số không},
-và McNemar không loại bỏ được giả thuyết không ($b = 132$, $c = 155$, $p = 0{,}194$). Hai lượt chạy
-chỉ khác nhau ở hạt giống thì phải cho đúng kết quả này, nghĩa là không phân biệt được với
-nhau.
+Chênh lệch 0,52 điểm giữa hai hạt giống không có ý nghĩa thống kê (khoảng tin cậy 95\% chứa 0, p = 0,194, Bảng~\ref{tab:6.8}). Hai lượt cho kết quả khác nhau ở 6,4\% số bước, so với 24,2\% giữa S1 và mô hình gốc; xét độ lớn của điểm, chênh lệch giữa S1 và mô hình gốc lớn gấp 22 lần chênh lệch giữa hai hạt giống, và gấp 3,8 lần nếu xét tỉ lệ bước đổi kết quả.
 
-\paragraph{Tỉ lệ bước bất đồng.} Hai lượt chỉ khác hạt giống bất đồng ở $6{,}4\%$ số bước, còn
-một can thiệp thật làm bất đồng $24{,}2\%$. Chênh lệch $11{,}5$ điểm vì vậy lớn gấp
-$22$ lần nhiễu huấn luyện lại về độ lớn, và gấp $3{,}8$ lần về tỉ lệ xáo trộn.
+Mức dao động này đến hoàn toàn từ mô hình sinh câu, không đến từ công cụ đo: trên 2.810 bước mà hai lượt viết ra hai câu giống hệt nhau, kết quả chấm trùng nhau ở mọi bước. Mức đồng thuận từng bước trên toàn tập là 93,6\% ($\kappa$ = 0,867, hệ số đồng thuận đã trừ phần trùng do ngẫu nhiên), nhưng con số này bị các bước viết trùng câu kéo lên; trên 1.652 bước hai lượt viết câu khác nhau, mức đồng thuận là 82,6\% ($\kappa$ = 0,650).
 
-\paragraph{Nguồn của nhiễu.} Trên $2.810$ bước mà hai lượt
-viết ra câu \emph{trùng nhau từng byte}, mô hình định vị trả về toạ độ giống hệt và phán
-quyết giống hệt, $2.810/2.810$. Toàn bộ biến thiên quan sát được là biến thiên của
-\emph{hệ thống được đo}, không phải của \emph{dụng cụ đo}.
+Trên hạt giống thứ hai, cả sáu cách chia nhóm ở Mục~\ref{sec:6.9} cho chênh lệch cùng dấu với hạt giống thứ nhất và lệch nhau nhiều nhất 0,9 điểm. Trong 1.091 cụm (Mục~\ref{sec:5.13}), số cụm mà S1 hơn, bằng và kém mô hình gốc là 395/565/131 ở hạt giống 101 và 406/572/113 ở hạt giống 202.
 
-\paragraph{Độ tin cậy lặp lại.} Mức đồng thuận từng bước giữa hai lượt là $93{,}6\%$ ($\kappa =
-0{,}867$). Trên $1.652$ bước hai lượt thật sự viết khác nhau, con số là $82{,}6\%$ ($\kappa =
-0{,}650$), và con số có điều kiện này mới là số cần trích dẫn.
+\section{Bảy cách giải thích thay thế}\label{sec:6.8}
 
-\paragraph{Độ lặp lại của các lát cắt.} Sáu lát cắt ở Mục~\ref{sec:latcat} được tính lại trên
-hạt giống thứ hai, và cả sáu cùng dấu, lệch nhau nhiều nhất $0{,}9$ điểm. Riêng lát cắt ``ứng
-dụng chưa thấy lúc huấn luyện'' trùng khít ở $+14{,}1$ và $+14{,}1$. Số cụm mà S1 hơn, bằng và
-kém cũng ổn định tương tự, lần lượt là $395/565/131$ và $406/572/113$ trên $1.091$ cụm.
+Chênh lệch 11,5 điểm giữa S1 và mô hình gốc có thể có cách giải thích khác ngoài tác dụng của tinh chỉnh. Chúng tôi kiểm bảy cách như vậy trên bản ghi từng bước (Bảng~\ref{tab:6.10}): sáu cách bị loại, riêng cách cho rằng S1 chỉ bắt chước văn phong của người chú thích thì chưa loại được.
 
-\section{Bảy cách giải thích thay thế}
-\label{sec:phanbien}
-
-Chênh lệch $11{,}5$ điểm cho phép nhiều cách đọc khác nhau. Bảy cách đọc thay thế được xem xét
-trên bản ghi từng bước. Sáu cách bị loại, và cách còn lại được giữ nguyên trong bảng thay vì bỏ
-đi (Bảng~\ref{tab:phanbien}). Cách đọc thứ sáu, rằng dụng cụ đo đã tiếp xúc với văn phong, là
-cách mạnh nhất, và cách đọc ấy chỉ loại được sau khi đo lại bằng một mô hình định vị thứ hai
-(Mục~\ref{sec:phepB}). Trước khi có phép đo ấy, bảng này còn hai dòng chưa kết luận được.
-
-\begin{table}[t]
-\caption{Bảy cách giải thích thay thế cho chênh lệch S1 trên Base, và kết quả kiểm.
-Sáu cách bị loại. Cách ``bắt chước văn phong'' không loại được theo hướng này.}
-\label{tab:phanbien}
+\begin{table}[htbp]
 \centering\small
-\renewcommand{\arraystretch}{1.25}
-\begin{tabular}{@{}p{3.2cm}p{9.2cm}@{}}
+\caption{Bảy cách giải thích thay thế cho chênh lệch giữa S1 và Base, kèm kết quả kiểm tra.}\label{tab:6.10}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash\hsize=0.40\hsize}X>{\raggedright\arraybackslash\hsize=1.60\hsize}X@{}}
 \toprule
-Cách đọc thay thế & Kết quả kiểm \\
+\textbf{Cách đọc thay thế} & \textbf{Kết quả kiểm} \\
 \midrule
-Do điều kiện khớp thao tác chi phối &
-bỏ hẳn điều kiện đó, chấm riêng phần định vị, vẫn còn $+11{,}3$ điểm ($b=272$, $c=777$).
-Hơn nữa Base gọi \emph{đúng} loại thao tác nhiều hơn ($96{,}5\%$ so với $94{,}4\%$) \\[0.3em]
-
-Chỉ hơn ở một vị trí bước &
-bước mở đầu tác vụ $+15{,}0$ ($n=593$, $[+11{,}0; +19{,}1]$), các bước sau $+11{,}0$
-($[+9{,}4; +12{,}6]$). Hai khoảng giao nhau nên không kết luận được thứ tự theo vị trí,
-nhưng cả hai đều dương \\[0.3em]
-
-Chỉ hơn ở màn dễ &
-chia ba theo số phần tử trên màn cho $+12{,}6$, $+9{,}5$ và $+12{,}4$. Các khoảng giao nhau,
-không tầng nào đảo chiều \\[0.3em]
-
-Vài ứng dụng chi phối cả bảng &
-trên $1.091$ cụm, S1 hơn ở $395$, bằng ở $565$, kém ở $131$ \\[0.3em]
-
-Chỉ là bắt chước văn phong &
-\textbf{không loại được theo cách này}, vì S1 mở đầu bằng động từ chạm nhiều hơn Base
-($91{,}0\%$ so với $86{,}1\%$, câu chuẩn $95{,}1\%$), tức S1 thực sự nằm gần văn
-phong người chú thích hơn \\[0.3em]
-
-Do dụng cụ đo đã tiếp xúc với văn phong &
-\textbf{đã kiểm và loại}, bằng cách chấm lại với UI-Venus-Ground-7B, mô hình không dùng
-AndroidControl khi huấn luyện, chênh lệch chỉ đi từ $+10{,}35$ xuống $+9{,}68$ điểm, tức
-giữ $94\%$ (Mục~\ref{sec:phepB}) \\[0.3em]
-
-Do chép lại câu chuẩn &
-$1.095$ trong $4.462$ câu không rỗng của S1 lặp đúng các từ nội dung của câu chuẩn. Chấm riêng
-$3.367$ bước mà mô hình tự viết, S1 vẫn hơn $+8{,}4$ điểm ($b=264$, $c=547$,
-$\chi^2 = 98{,}1$, $p<0{,}001$) \\
+Do điều kiện khớp thao tác chi phối & bỏ điều kiện đó, chấm riêng phần định vị, vẫn còn +11,3 điểm (b=272, c=777). Hơn nữa Base gọi đúng loại thao tác nhiều hơn (96,5\% so với 94,4\%) \\
+Chỉ hơn ở một vị trí bước & bước mở đầu tác vụ +15,0 (n=593, [+11,0; +19,1]), các bước sau +11,0 ([+9,4; +12,6]). Hai khoảng giao nhau, cả hai đều dương \\
+Chỉ hơn ở màn dễ & chia ba theo số phần tử trên màn cho +12,6, +9,5 và +12,4. Các khoảng giao nhau, không tầng nào đảo chiều \\
+Vài ứng dụng chi phối cả bảng & trên 1.091 cụm, S1 hơn ở 395, bằng ở 565, kém ở 131 \\
+Chỉ là bắt chước văn phong & không loại được, vì S1 mở đầu bằng động từ chạm nhiều hơn Base (91,0\% so với 86,1\%, câu chuẩn 95,1\%), tức văn phong của S1 gần văn phong người chú thích hơn \\
+Do công cụ đo đã quen văn phong chú thích & đã loại, vì khi chấm lại bằng UI-Venus-Ground-7B, một mô hình định vị không học AndroidControl, chênh lệch vẫn giữ 94\% (Mục~\ref{sec:5.9}) \\
+Do chép lại câu chuẩn & 1.095 trong 4.462 câu không rỗng của S1 lặp đúng các từ nội dung của câu chuẩn. Chấm riêng 3.367 bước mà mô hình tự viết, S1 vẫn hơn +8,4 điểm (b=264, c=547, p<0,001) \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
-Dòng cuối là dòng quan trọng nhất, và cũng là dòng mà một thước dựa trên câu chuẩn không
-tự kiểm được. Lợi thế của S1 lớn hơn nhiều trên nhóm bước chép lại ($+21{,}1$ điểm), nên một
-phần những gì tinh chỉnh đem lại đúng là cách diễn đạt nguyên văn của người chú thích. Nhưng
-thứ tự giữa hai nhánh không dựa vào phần đó.
+Dòng cuối của bảng quan trọng nhất, vì một độ đo dựa trên câu chuẩn không tự phát hiện được việc mô hình chép lại câu chuẩn. Trên nhóm bước chép lại, S1 hơn mô hình gốc tới 21,1 điểm, nên một phần mức tăng do tinh chỉnh là việc lặp lại nguyên văn cách diễn đạt của người chú thích. Tuy vậy, trên các bước tự viết S1 vẫn hơn, nên thứ tự giữa hai mô hình không phụ thuộc vào phần chép lại.
 
-Riêng lập luận về \emph{độ dài câu} cần được bàn tách ra, vì thước có thiên vị đối với câu dài.
-Chia đôi ở độ dài trung vị $33$ ký tự thì nhóm câu dài đạt $61{,}9\%$ so với $56{,}5\%$ của
-nhóm câu ngắn, và trên nhóm bước mà S1 tự viết thì chênh lệch là $9{,}6$ điểm. Tuy nhiên, thiên
-vị đó \emph{nghiêng về phía Base}, bởi độ dài trung vị câu của Base là khoảng $70$ ký tự, của
-S1 là $33$, còn của câu chuẩn là $34$. S1 vẫn hơn \emph{dù chịu bất lợi} về độ dài, nên kết
-luận càng vững. Thiên vị này không phải quy luật chung của thước, vì trong nội bộ nhánh Base
-câu dài lại kém hơn $1{,}4$ điểm, nên thiên vị này phải được đo riêng cho từng nhánh.
+Độ đo thiên vị câu dài: chia đôi câu của S1 ở độ dài trung vị 33 ký tự thì nhóm câu dài đạt 61,9\%, nhóm câu ngắn đạt 56,5\%. Thiên vị này có lợi cho mô hình gốc, vốn viết câu dài khoảng 70 ký tự (trung vị), nên việc S1 vẫn hơn mô hình gốc càng vững. Mức thiên vị khác nhau giữa các mô hình (ở mô hình gốc, câu dài lại kém câu ngắn 1,4 điểm), nên phải đo riêng cho từng mô hình.
 
-\section{Phân bố lỗi của nhánh nền}
-\label{sec:latcat}
+\section{Phân bố lỗi của mô hình tinh chỉnh có giám sát}\label{sec:6.9}
 
-Bốn quan sát từ bản ghi từng bước ràng buộc cách đọc nhánh xử lý về sau.
+Mục này trình bày bốn quan sát rút từ bản ghi từng bước của S1.
 
-\subsection{Ảnh hưởng của việc trùng ứng dụng giữa tập huấn luyện và tập kiểm}
+\subsection{Ảnh hưởng của việc trùng ứng dụng giữa tập huấn luyện và tập kiểm tra}\label{sec:6.9.1}
 
-Đây là phản biện nặng nhất mà chúng tôi tự nêu ra. Nếu $95{,}6\%$ số bước quy được tên của
-tập kiểm thuộc về ứng dụng cũng xuất hiện trong tập huấn luyện, thì điểm số có thể cao hơn thực
-chất chỉ vì mô hình đã gặp các ứng dụng ấy khi huấn luyện. Bảng~\ref{tab:sannha} đo trực tiếp ảnh hưởng
-đó.
+Trong các bước của tập kiểm tra gán được tên ứng dụng, 95,6\% thuộc về ứng dụng cũng có trong tập huấn luyện (Mục~\ref{sec:3.3}), nên điểm số có thể cao hơn năng lực thực chất. Bảng~\ref{tab:6.11} đo ảnh hưởng đó.
 
-\begin{table}[t]
-\caption{Điểm S1 theo tình trạng ứng dụng của bước.}
-\label{tab:sannha}
+\begin{table}[htbp]
 \centering\small
+\caption{Điểm của S1 chia theo việc ứng dụng của bước đã xuất hiện trong tập huấn luyện hay chưa.}\label{tab:6.11}
 \begin{tabular}{@{}lrr@{}}
 \toprule
-Nhóm & S1 & $n$ \\
+\textbf{Nhóm} & \textbf{S1} & \textbf{n} \\
 \midrule
-Ứng dụng đã thấy lúc huấn luyện & $59{,}1\%$ & $1.737$ \\
-Ứng dụng \emph{chưa} thấy & $59{,}0\%$ & $78$ \\
-Không quy được về ứng dụng & $59{,}1\%$ & $2.648$ \\
+Ứng dụng đã thấy lúc huấn luyện & 59,1\% & 1.737 \\
+Ứng dụng chưa thấy & 59,0\% & 78 \\
+Không quy được về ứng dụng & 59,1\% & 2.648 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Ba con số trong bảng gần như trùng nhau. Với $78$ bước thì khoảng tin cậy của nhóm chưa thấy rất
-rộng, nên phát biểu đúng là \emph{không phát hiện được ảnh hưởng}, chứ không phải \emph{đã
-chặn được ảnh hưởng}. Dù vậy, đây là một giới hạn được nêu kèm số đo. Nếu chỉ đọc con số $95{,}6\%$ mà không
-có bảng này bên cạnh thì rất dễ đánh giá quá mức ảnh hưởng của việc trùng ứng dụng.
+Ba con số gần như trùng nhau. Nhóm ứng dụng chưa thấy chỉ có 78 bước nên khoảng tin cậy rất rộng; chúng tôi chỉ nói được là chưa phát hiện ảnh hưởng của việc trùng ứng dụng, chưa thể nói đã loại trừ được ảnh hưởng ấy.
 
-\subsection{Phân loại lỗi còn lại}
+\subsection{Phân loại lỗi còn lại}\label{sec:6.9.2}
 
-Mô hình gọi đúng loại thao tác ở $94{,}4\%$ số bước. Trong $1.824$ bước không đạt, chỉ $251$
-bước sai loại thao tác. Còn lại $1.573$ bước, tức $86\%$, có loại thao tác đúng và một cách
-diễn đạt mà mô hình định vị không xác định được phần tử. Dưới đây là một số ví dụ lấy nguyên
-văn từ bản ghi từng bước.
+Trong 1.824 bước S1 không đạt, chỉ 251 bước sai loại thao tác. 1.573 bước còn lại (86\%) đúng loại thao tác, nhưng từ câu S1 viết, mô hình định vị không tìm ra phần tử cần chạm, như các ví dụ nguyên văn dưới đây.
 
-\begin{center}\footnotesize\ttfamily
-\setlength{\tabcolsep}{4pt}
+\begin{center}\small
 \begin{tabular}{@{}ll@{}}
 \toprule
-\rmfamily câu chuẩn & \rmfamily câu S1 sinh ra \\
+\textbf{câu chuẩn} & \textbf{câu S1 sinh ra} \\
 \midrule
 click on the OK option & select minutes 00 \\
 Click on the Sort filter & Click on the Air India flight option \\
@@ -714,1044 +421,108 @@ Click on the share icon & Open Recorder app \\
 \end{tabular}
 \end{center}
 
-Phần lỗi còn lại nằm đúng ở khâu \emph{gọi tên và mô tả phần tử}, tức đúng phần mà một
-đích huấn luyện có tầng khai báo nhắm tới. Khác với phép thử ban đầu dùng để tạo động lực
-cho thiết kế, quan sát này được đo trên mô hình đã huấn luyện thật và trên toàn bộ quần
-thể.
+Phần lỗi còn lại của S1 vì vậy nằm ở khâu gọi tên và mô tả phần tử.
 
-\subsection{Khác biệt hành vi giữa mô hình gốc và mô hình đã tinh chỉnh}
+\subsection{Khác biệt hành vi giữa mô hình gốc và mô hình đã tinh chỉnh}\label{sec:6.9.3}
 
-Trên $798$ bước mà S1 đúng còn Base sai, hai dạng lỗi của Base hiện ra rõ.
+Trên 798 bước mà S1 đúng còn mô hình gốc sai, lỗi của mô hình gốc có hai dạng.
 
 \begin{center}\small
-\renewcommand{\arraystretch}{1.15}
-\begin{tabularx}{0.95\textwidth}{@{}lX@{}}
+\begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash\hsize=1.00\hsize}X@{}}
 \toprule
-chuẩn & \ttfamily Click on the profile icon at the top right of the screen \\
-S1 & \ttfamily Click on the profile icon at the top right corner of the screen \\
-Base & \ttfamily To set YouTube video downloads over Wi-Fi only, tap on your profile
-icon at the top right corner of the screen and select ``Settings.'' Then navigate to the
-``Downloads'' section and choose ``Wi-Fi Only.'' \\
+ & \textbf{Câu} \\
 \midrule
-chuẩn & \ttfamily Click on Knoxville \\
-S1 & \ttfamily Click on Knoxville \\
-Base & \ttfamily Click on the three dots next to Knoxville to access more options and
-proceed with reading the local news. \\
+chuẩn & Click on the profile icon at the top right of the screen \\
+S1 & Click on the profile icon at the top right corner of the screen \\
+Base & To set YouTube video downloads over Wi-Fi only, tap on your profile icon at the top right corner of the screen and select “Settings.” Then navigate to the “Downloads” section and choose “Wi-Fi Only.” \\
+chuẩn & Click on Knoxville \\
+S1 & Click on Knoxville \\
+Base & Click on the three dots next to Knoxville to access more options and proceed with reading the local news. \\
 \bottomrule
 \end{tabularx}
 \end{center}
 
-Dạng thứ nhất là trả lời cả kế hoạch thay vì một bước. Dạng thứ hai là lạc sang một bước khác.
-Cả hai đều không phải lỗi về khả năng viết tiếng Anh, vì Base viết câu trôi chảy, đúng khuôn và
-gọi tên nút cụ thể. Điều tinh chỉnh dạy được cho mô hình là việc bám đúng bước hiện
-tại. Điều này làm cho Base trở thành một mốc so sánh rõ ràng, không lẫn với hiện tượng ``mô
-hình không theo khuôn định dạng''.
+Ở dạng thứ nhất, mô hình gốc viết cả một kế hoạch nhiều bước thay vì chỉ bước hiện tại. Ở dạng thứ hai, mô hình gốc mô tả một bước khác với bước cần làm. Câu của mô hình gốc vẫn trôi chảy, đúng khuôn và gọi tên nút cụ thể; câu này nhận điểm thấp vì không bám sát bước hiện tại chứ không vì viết sai định dạng. Điều tinh chỉnh dạy được cho mô hình chính là bám sát bước hiện tại.
 
-\subsection{Ước lượng dư địa cải thiện còn lại}
-\label{sec:dudia}
+\subsection{Ước lượng dư địa cải thiện còn lại}\label{sec:6.9.4}
 
-Câu chuẩn cũng không đạt ở $1.083$ trong số các bước này, và như Mục~\ref{sec:vungmu} cho thấy,
-phần lớn là giới hạn của dụng cụ. Dư địa quy được về cách diễn đạt chưa tốt vào khoảng $741$
-bước, tức $16{,}6$ điểm. Dạng ghép cặp của dư địa này là $843$ bước mà câu chuẩn giải được còn
-S1 thì không.
+Ngay cả câu chuẩn cũng không đạt ở khoảng một phần tư số bước, phần lớn do giới hạn của công cụ đo (Mục~\ref{sec:6.11}). Phần dư địa nằm ở cách diễn đạt của S1 là khoảng 16,6 điểm (741 bước) giữa câu chuẩn và S1 (Mục~\ref{sec:5.5}), lớn so với sai số chuẩn 0,79 điểm của hiệu ghép cặp. Một can thiệp chỉ cần sửa được khoảng 13\% dư địa này là đã tăng hơn hai điểm, cỡ mức hiệu ứng trung vị mà các công trình đã công bố ghi nhận cho những can thiệp tương tự. Theo executability, chưa can thiệp nào của đề tài đạt tới mức đó; phương pháp đề xuất tiến gần nhất (Bảng~\ref{tab:6.1}).
 
-Dư địa này rộng so với sai số chuẩn ghép cặp $0{,}79$ điểm: một can thiệp sửa được khoảng
-$13\%$ dư địa đã cho mức tăng hơn hai điểm. Mức hiệu ứng trung vị mà văn liệu báo cáo cho các
-can thiệp tương đương cũng ở cỡ này. Ba mục tiếp theo cho thấy các can thiệp đã thử chưa đạt
-tới mức đó, và chỉ ra tương đối chính xác nguyên nhân.
+\section{Các hướng đã thử trước phương pháp đề xuất}\label{sec:6.10}
 
-\section{Nhánh khai báo và một kết quả âm ở một hạt giống}
-\label{sec:nhanhs2}
+Bảng~\ref{tab:6.12} tóm tắt các hướng đã thử trước phương pháp đề xuất, mỗi hướng một hạt giống; chi tiết nằm ở Phụ lục A.
 
-Các mục từ đây tới Mục~\ref{sec:kenhvitri} trình bày kết quả của những hướng đã thử trước phương pháp
-đề xuất, theo thứ tự thực hiện. Mỗi hướng để lại một chẩn đoán, và chuỗi chẩn đoán ấy dẫn tới quyết
-định đặt phần thưởng thẳng lên câu.
-
-Nhánh S2 là nhánh mang phép so chính của thiết kế ban đầu. Chuỗi mà mô hình phải sinh ra bắt đầu
-bằng bốn ô khai báo gồm vai trò, tên, toạ độ và dấu hiệu phân biệt, rồi mới tới câu. Ô
-khai báo bị cắt bỏ trước khi chấm. Nhánh chạy được \emph{một} hạt giống. Hạt giống thứ hai bị huỷ vì ngân sách
-máy (Mục~\ref{sec:trangthai}).
-
-\paragraph{Điểm số.} S2/101 đạt $57{,}2\%$, tức thấp hơn S1/101 $1{,}93$ điểm
-($[-3{,}06; -0{,}75]$, $b = 340$, $c = 254$, $p = 0{,}0005$) và thấp hơn S1/202 $2{,}44$
-điểm. So với trung bình hai hạt giống của nhánh nền ($59{,}36\%$) thì chênh lệch là
-$-2{,}19$ điểm.
-
-\paragraph{Cách đọc kết cục.} So với cả hai hạt giống của nhánh nền, khoảng tin cậy của S2 đều nằm
-hẳn dưới $0$. Đọc theo cách ở Mục~\ref{sec:dangky}, ở hạt giống này đích có khai báo dạng sinh tự do
-làm câu kém đi so với học có giám sát thuần. Phát biểu ấy có giới hạn: hạt giống thứ hai của S2
-không chạy, nên đây là kết quả âm \emph{một hạt giống}, chưa đủ để kết luận rằng đích khai báo
-luôn gây hại. Kết quả âm này cũng đứng được dưới
-mô hình định vị thứ hai (Mục~\ref{sec:phepB}).
-
-\paragraph{Hai kết quả không phụ thuộc vào hạt giống.} Thứ nhất, nhánh vẫn hơn mô hình chưa
-tinh chỉnh $9{,}59$ điểm $[+8{,}16; +11{,}06]$, nên đích có khai báo \emph{không} làm mất tác
-dụng của việc tinh chỉnh. Thứ hai, ô toạ độ mà nhánh sinh ra tương đối chính xác, vì khoảng
-$71\%$ số điểm tự sinh rơi vào vùng dung sai $14\%$ quanh điểm chạm thật, với sai số ngang
-trung vị $0{,}8\%$ bề ngang màn. Khả năng trỏ vì vậy không phải là phần mà nhánh này bị mất đi.
-
-\paragraph{Bốn cách giải thích thay thế.} Cách thứ nhất quy chênh lệch cho \emph{độ dài
-câu}, nhưng chênh lệch âm ở cả câu dài ($-1{,}85$) lẫn câu ngắn ($-2{,}00$), và phân bố độ
-dài của hai nhánh gần trùng nhau (trung vị $33$ và $34$ ký tự). Cách thứ hai quy cho
-\emph{lát cắt ứng dụng}, nhưng chênh lệch âm ở cả ba nhóm, gồm đã thấy ($-2{,}25$), chưa
-thấy ($-6{,}41$) và không quy được ($-1{,}59$). Cách thứ ba quy cho \emph{lỗi chuẩn hoá
-cụm \emph{go back}}. Phép quy \emph{go back} về lớp chạm che đúng dạng lỗi này, nên phép
-so được chạy lại với biến thể nghiêm ngặt của điều kiện khớp thao tác, và chênh lệch đi
-từ $-1{,}93$ sang $-1{,}86$, cả bốn nhánh cùng giảm $0{,}20$ đến $0{,}31$ điểm, thứ tự không
-đổi. Cách thứ tư quy cho \emph{nhãn khai báo lỗi}, nhưng trên $26$ bước có nhãn lỗi do lỗi
-trích chữ, chênh lệch là $+7{,}69$ ($p = 0{,}63$), tức ngược chiều.
-
-\subsection{Lát cắt theo việc có sinh ô khai báo}
-\label{sec:latkichhoat}
-
-Lát cắt này tách bước mà nhánh có sinh ô khai báo khỏi bước mà nhánh không sinh gì.
-
-\begin{table}[t]
-\caption{Lát cắt theo việc nhánh S2 có sinh ô khai báo hay không.}
-\label{tab:kichhoat}
+\begin{table}[htbp]
 \centering\small
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}lrrrr@{}}
+\caption[Các hướng đã thử trước phương pháp đề xuất.]{Các hướng đã thử trước phương pháp đề xuất. Điểm là executability trên 4.463 bước chạm của tập kiểm tra, trừ khi ghi khác.}\label{tab:6.12}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash\hsize=0.70\hsize}X>{\raggedright\arraybackslash\hsize=1.13\hsize}X>{\raggedright\arraybackslash\hsize=1.18\hsize}X>{\raggedright\arraybackslash\hsize=1.00\hsize}X@{}}
 \toprule
-Nhóm & $n$ & S1 & S2 & $\Delta$ \\
+\textbf{Hướng} & \textbf{Ý tưởng} & \textbf{Kết quả} & \textbf{Điều rút ra} \\
 \midrule
-\textbf{Có} sinh khai báo & $4.138$ & $62{,}2$ & $60{,}8$ & $-1{,}38\;[-2{,}54; -0{,}19]$ \\
-\textbf{Không} sinh khai báo & $325$ & $19{,}7$ & $10{,}8$ & $-8{,}92\;[-12{,}57; -5{,}25]$ \\
+Mô tả phần tử (S2), Mục~\ref{sec:A.1.3} & viết một dòng mô tả phần tử cần chạm trước câu hướng dẫn & 57,2\%, thấp hơn S1/101 1,93 điểm & mô tả trỏ đúng thì câu tốt hơn, trỏ sai thì câu kém hơn nhiều \\
+Giai đoạn học ưu tiên (MIN-DESC), Mục~\ref{sec:A.2.2} & học ưu tiên trên cặp đầu ra chỉ khác ở dòng mô tả & 60,0\%; 78\% mức tăng so với S2 cũng có ở mô hình chỉ học thêm có giám sát & phần lớn mức tăng đến từ việc học thêm \\
+Chọn ứng viên, Mục~\ref{sec:A.3.2} & chọn phần tử cần chạm trong danh sách dựng sẵn & 56,1\%, chỉ so được với mô hình gốc & khi có chọn thì chọn tốt, nhưng từ chối quá nhiều \\
+Giai đoạn thưởng tọa độ, Mục~\ref{sec:A.4.2} & học tăng cường, thưởng khi tọa độ trong dòng mô tả gần điểm chạm đúng & 60,1\% (77,3\% theo luật khoảng cách Euclid) & tọa độ chính xác hơn, nhưng câu gần như không đổi \\
+Đưa thêm thông tin vị trí, Mục~\ref{sec:A.6} & cho bộ sinh câu nhận thêm thông tin vị trí (bốn cách) & dừng ở tập kiểm định nội bộ & bộ sinh câu bỏ qua thông tin này \\
+Sửa câu theo vùng cắt (TAGE), Mục~\ref{sec:A.7.2} & viết lại câu nháp sau khi xem ảnh phóng to quanh phần tử & 60,2\%, thấp hơn câu nháp 0,43 điểm & bộ chọn lại chủ yếu nhận câu sửa dựa trên vùng cắt sai \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
-Nhóm $7{,}3\%$ số bước mà nhánh không sinh gì chiếm $34\%$ toàn bộ chênh lệch. Ở đó mô hình
-đoán sai \emph{loại thao tác}, chẳng hạn như câu chuẩn nói \emph{Click on the close icon} còn
-nhánh này viết \emph{Swipe up}. Câu chuẩn đạt $68{,}3\%$ trên chính nhóm này, nên bước giải
-được và thước vẫn phân biệt được ở đó.
+Ba điều rút ra dẫn tới phương pháp đề xuất. Thứ nhất, tác động vào phần nằm giữa ảnh và câu, như dòng mô tả phần tử hay tọa độ trong dòng mô tả, chỉ làm câu ở đầu ra thay đổi rất ít (Mục~\ref{sec:A.5}). Thứ hai, phần lớn khoảng cách còn lại nằm ở những bước mô hình nhìn sai phần tử ngay từ đầu, và gắn thêm thông tin vị trí vào bộ sinh câu đã học xong không làm câu thay đổi. Thứ ba, học thêm trên câu chuẩn hay câu viết lại đều có nguy cơ làm câu kém đi. Vì vậy phương pháp đề xuất đặt phần thưởng thẳng lên câu ở đầu ra, và chỉ chép câu ví dụ khi loại thao tác đồng thuận.
 
-Quan sát quan trọng hơn là lỗi này \emph{không} do ô khai báo sinh ra. Mô hình chưa tinh chỉnh
-gọi đúng loại thao tác ở $83{,}4\%$ số bước trong nhóm, so với $55{,}1\%$ của S1 và $38{,}8\%$
-của S2. Nghĩa là tinh chỉnh làm lệch tiên nghiệm về loại thao tác, còn đích có khai báo chỉ
-khuếch đại thêm. Cơ chế bị nghi ngờ là một lối tắt học được từ dữ liệu. Tập huấn luyện chỉ gắn
-khai báo cho bước chạm nên mô hình học quy tắc tắt ``có khai báo thì là chạm'', và khi không
-chắc thì mô hình bỏ khai báo rồi chọn hẳn một câu không phải chạm. Cơ chế này \emph{chưa
-kiểm được}, vì nhánh thiết kế để kiểm cơ chế này (S2-nopoint) nằm trong số các lượt đã huỷ.
+\section{Giới hạn của độ đo trên tập kiểm tra}\label{sec:6.11}
 
-Lát cắt này đi kèm một giới hạn, vì nhóm $325$ bước đó được định nghĩa
-bằng \emph{hành vi của chính nhánh S2}, nên câu ``S2 kém ở đó'' có phần đúng theo định nghĩa.
-Phần không phụ thuộc vào định nghĩa đó là nhánh so sánh cũng chỉ đạt $19{,}7\%$ trên
-cùng nhóm bước.
+Câu chuẩn không đạt ở 1.083 bước. Ở 64,8\% số bước ấy, mô hình định vị gần như không tìm ra phần tử: điểm trả về nằm xa ngoài vùng dung sai (sai số trung vị 26,2\% bề ngang màn, so với 0,4\% ở bước đạt). 381 bước còn lại nằm trong vùng dung sai nhưng bị luật ô Voronoi loại; 208 bước trong số đó có điểm trả về nằm ngay trong hộp nhỏ nhất chứa điểm chạm, vì trên một phần tử lớn, phần tử con có thể cạnh tranh với chính phần tử cha. Luật ô Voronoi loại 10,1\% số bước nằm trong vùng dung sai với câu chuẩn, 13,0\% với S1 và 15,2\% với mô hình gốc. Có 935 bước (21\%) mà cả câu chuẩn, S1 và mô hình gốc đều không đạt, nên ngưỡng tối đa 75,7\% chủ yếu phản ánh giới hạn của công cụ đo, chưa phải giới hạn của cách diễn đạt.
 
-\subsection{Ảnh hưởng hai chiều của ô khai báo}
-\label{sec:o2x2s2}
+Chúng tôi cũng kiểm khả năng mô hình viết cho công cụ đo thay vì cho người đọc (Mục~\ref{sec:5.5}). Câu nêu tên một vùng trên màn đạt 89,5\% khi vùng đó đúng, 3,3\% khi vùng đó sai và 54,8\% khi không nêu vùng nào, nên độ đo thưởng việc nói đúng vị trí chứ không thưởng việc nói vị trí sai. S1 dùng từ chỉ vị trí 26,8\% số câu, gần bằng 26,4\% của câu chuẩn, và chỉ để lại chuỗi tọa độ vào 3 trong 6.958 câu. S1 chỉ khác câu chuẩn rõ ở việc lặp khuôn câu nhiều hơn: hai mẫu câu phổ biến nhất chiếm 10,4\% số bước, so với 6,5\% ở câu chuẩn.
 
-Cắt quần thể theo việc ô khai báo \emph{do chính S2 sinh ra} có đúng tên và đúng toạ độ
-hay không cho thấy cơ chế của nhánh này không trung tính, mà khuếch đại cả hai chiều.
+\section{Trạng thái các mô hình và phép thử}\label{sec:6.12}
 
-\begin{table}[t]
-\caption{Điểm theo trạng thái ô khai báo do S2 tự sinh. Cột trần là điểm của câu chuẩn
-trên chính nhóm đó, để tách phần thuộc về độ khó của bước.}
-\label{tab:o2x2s2}
-\centering\small
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}llrrrrr@{}}
+Bảng~\ref{tab:6.13} ghi trạng thái cuối của từng mô hình và phép thử, kèm lý do với những cấu hình không chạy hoặc dừng giữa chừng.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.267\textwidth}>{\raggedright\arraybackslash}p{0.098\textwidth}>{\raggedright\arraybackslash}p{0.535\textwidth}@{}}
+\caption[Trạng thái cuối của các mô hình, cấu hình và phép thử.]{Trạng thái cuối của các mô hình, cấu hình và phép thử. Điểm trong cột ghi chú là executability trên tập kiểm tra, trừ khi ghi khác.}\label{tab:6.13}\\
 \toprule
-Ô tên & Ô toạ độ & $n$ & Base & S1 & S2 & Trần \\
-\midrule
-đúng & trúng & $1.871$ & $69{,}0$ & $81{,}4$ & $\mathbf{87{,}1}$ & $86{,}6$ \\
-đúng & trượt & $184$ & $23{,}4$ & $25{,}5$ & $26{,}1$ & $31{,}0$ \\
-sai & trúng & $452$ & $41{,}4$ & $56{,}4$ & $57{,}5$ & $72{,}8$ \\
-sai & trượt & $738$ & $24{,}4$ & $30{,}8$ & $\mathbf{5{,}6}$ & $66{,}3$ \\
-\multicolumn{2}{@{}l}{không sinh khai báo} & $228$ & $25{,}9$ & $20{,}6$ & $9{,}6$ & $70{,}6$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Khi khai báo đúng cả tên lẫn toạ độ, S2 đạt $87{,}1\%$, hơn nhánh so sánh $5{,}7$ điểm và
-\emph{vượt cả câu chuẩn} trên chính nhóm đó. Khi sai cả hai, S2 giảm xuống $5{,}6\%$, tức dưới
-cả sàn của thước, trong khi câu chuẩn vẫn giải được $66{,}3\%$ số bước ấy, nên $738$ bước
-đó vẫn giải được. Mô hình đã tự chọn một phần tử sai rồi viết một câu khẳng định về phần tử
-đó, còn nhánh chỉ sinh câu viết chung chung nên vẫn còn cơ hội trúng. Quan sát này dẫn thẳng
-tới chặng huấn luyện tiếp theo.
-
-\section{Chặng hai với mục tiêu ưu tiên ở tầng khai báo}
-\label{sec:mindesc}
-
-Nếu điểm nghẽn nằm ở \emph{độ chính xác của khai báo} chứ không ở việc có khai báo hay không,
-thì can thiệp đúng phải tác động thẳng vào việc chọn phần tử. Nhánh MIN-DESC mô tả ở
-Mục~\ref{sec:mindescthietke} là can thiệp theo hướng đó. Nhánh này xuất phát từ chính điểm lưu
-của nhánh S2 rồi huấn luyện thêm $800$ bước cập nhật trên các cặp quy chiếu tối thiểu, vế được
-chọn là khai báo đúng kèm câu, vế bị loại là khai báo sai kèm \emph{đúng câu đó, từng chữ một}.
-Nhánh so sánh để tách công CE2-S2 học có giám sát thuần trên riêng vế được chọn, với cùng điểm
-lưu, cùng $800$ bước và cùng lịch tốc độ học, chỉ khác là không có số hạng ưu tiên nào.
-
-\subsection{Độ chính xác của ô khai báo}
-\label{sec:congcohoc}
-
-Trước khi dùng tới hạn mức máy của khâu chấm, ô khai báo do mô hình tự sinh được đối chiếu
-thẳng với nhãn vàng của tập kiểm. Phép đo này không gọi mô hình định vị, không đòi hỏi tài
-nguyên tính toán đáng kể, và đo đúng đại lượng mà chặng hai nhắm sửa.
-
-\begin{table}[t]
-\caption{Độ chính xác ô khai báo trên $3.473$ bước có tên vàng, chấm trên đúng giao của ba
-tệp kết quả. Cột cuối là đại lượng theo dõi chính.}
-\label{tab:congcohoc}
-\centering\small
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}lrrrr@{}}
-\toprule
-Nhánh & Sinh khai báo & Tên đúng & Toạ độ đúng & \textbf{Cả hai đúng} \\
-\midrule
-S2 & $93{,}4\%$ & $59{,}2\%$ & $66{,}9\%$ & $\mathbf{53{,}9\%}$ \\
-CE2-S2 & $99{,}6\%$ & $66{,}2\%$ & $71{,}2\%$ & $\mathbf{59{,}8\%}$ \\
-MIN-DESC & $99{,}6\%$ & $67{,}0\%$ & $71{,}8\%$ & $\mathbf{60{,}6\%}$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Chặng hai nâng độ chính xác khai báo $6{,}77$ điểm so với mốc S2. Nhưng phép tách công ngay tại
-tầng này cho thấy kết quả quan trọng nhất của mục. Có $5{,}93$ điểm trong số đó thuộc về
-\emph{nhánh so sánh}, tức chỉ do huấn luyện thêm có giám sát trên bước chạm, và chỉ $0{,}84$
-điểm là phần riêng của mục tiêu ưu tiên. Vậy $87{,}7\%$ mức tăng ở tầng khai báo không phải công
-của mục tiêu ưu tiên.
-
-\subsection{Executability và đại lượng chính}
-
-Trên $4.463$ bước, MIN-DESC đạt $60{,}0\%$ $[58{,}3; 61{,}8]$ và CE2-S2 đạt $59{,}4\%$
-$[57{,}7; 61{,}1]$. Đại lượng chính của chặng này là hiệu ghép cặp giữa hai nhánh.
-
-\[
-\Delta_{\text{thành phần}} = \text{MIN} - \text{CE2} = +0{,}63 \text{ điểm},\quad
-[+0{,}16; +1{,}10],\quad p = 0{,}011 .
-\]
-
-\paragraph{Cách đọc giá trị $p$.}
-Khoảng tin cậy trên chỉ mang nhiễu của \emph{dụng cụ đo} (sai số chuẩn $0{,}38$ điểm). Mức
-$+0{,}63$ chỉ bằng $1{,}4$ lần độ lệch chuẩn giữa hai hạt giống, $0{,}46$ điểm đo ở
-Mục~\ref{sec:haihatgiong}. Chênh lệch này vì vậy \emph{tách được khỏi nhiễu đo} nhưng
-\emph{không tách được khỏi nhiễu huấn luyện}. Vì vậy chúng tôi không gọi đây là tác dụng của mục tiêu ưu tiên.
-
-\paragraph{Phép tách công.} Nhánh ưu tiên đứng trên S2 $2{,}87$ điểm $[+2{,}03; +3{,}76]$.
-Nhưng $2{,}24$ điểm $[+1{,}41; +3{,}11]$ trong số đó thuộc về nhánh so sánh, tức $800$ bước học
-có giám sát không kèm số hạng ưu tiên nào, và chỉ $0{,}63$ điểm nằm bên trên. $78\%$
-mức tăng thuộc về nhánh so sánh. Trình bày $+2{,}87$ như tác dụng của mục tiêu ưu tiên là
-phóng đại hơn bốn lần so với thực chất. Tầng khai báo cho kết luận cùng chiều với một tỉ lệ còn
-nghiêng hơn, $87{,}7\%$ so với $12{,}3\%$, nên hai phép đo độc lập đều đặt phần lớn mức tăng về phía
-nhánh so sánh.
-
-Chặng này cũng không vượt được học có giám sát thuần. Hiệu MIN $-$ S1/101 là $+0{,}94$ điểm
-$[-0{,}09; +2{,}05]$ với $p = 0{,}11$, còn CE2 $-$ S1/101 là $+0{,}31$ điểm với $p = 0{,}61$.
-Cách đọc đúng là chặng hai \emph{sửa lại phần thiệt hại mà chính đích khai báo gây ra}, rồi
-tăng thêm một mức nhỏ so với mức đó.
-
-\paragraph{Dự báo trước khi chạy.} Hệ số chuyển đổi từ ``đúng khai báo'' sang
-``đúng executability'', đo trên chính dữ liệu này, là $0{,}42$, vì cặp MIN và S2 cho
-$+6{,}77$ điểm ở tầng khai báo và $+2{,}87$ điểm ở executability. Áp hệ số đó cho phần $+0{,}84$ điểm
-thuộc riêng mục tiêu ưu tiên, chúng tôi dự báo $\approx +0{,}35$ điểm executability trước
-khi chạy. Phép đo trả về $+0{,}63$. Dự báo và kết quả cùng bậc độ lớn.
-
-\subsection{Biến thể lấy vế bị loại theo chính sách}
-\label{sec:onpolicy}
-
-Vế bị loại của cặp quy chiếu cần một nguồn, và hai nguồn đã được thiết kế. Nguồn thứ nhất
-khởi tạo bằng luật, lấy phần tử cùng vai trò gần nhất cách điểm chạm $80$ đến $350$ điểm
-ảnh. Nguồn thứ hai là nguồn \emph{theo chính sách}, tức lấy đúng phần tử mà mô hình gọi nhầm ở những bước mô hình gọi sai.
-
-Nguồn thứ hai dừng lại \emph{trước khi} bước vào huấn luyện, vì không dựng được đủ cặp. Cho mô hình sinh khai báo trên $14.000$ màn của tập huấn luyện chỉ dựng được $459$ cặp
-hợp lệ, tức $3{,}3\%$. Với tỉ lệ ấy, muốn có cỡ tập cặp như nguồn dựng bằng luật thì phải sinh trên
-gần toàn bộ tập huấn luyện, và tập thu được vẫn chỉ là một mẫu lệch của số bước gọi sai. Lượt sinh
-chiếm $4{,}5$ giờ máy, và lượt huấn luyện không được thực hiện.
-
-Nguyên nhân của tỉ lệ thấp này đo được, và chính nguyên nhân này là phần cần báo cáo. Trên
-$3.246$ bước mà nhánh gọi sai tên, khoảng cách từ phần tử bị gọi nhầm tới phần tử cần chạm có
-tứ phân vị $70$, $351$ và $748$ điểm ảnh, nên cửa sổ $80$ đến $350$ loại mất $76{,}5\%$. Nghĩa
-là lỗi khai báo của mô hình lưỡng cực, tức là mô hình hoặc gọi đúng phần tử bằng một
-tên khác, hoặc nhìn sang một vùng khác của màn hình. Lỗi này \emph{không} phải dạng lẫn
-giữa hai nút cạnh nhau, mà dạng lẫn ấy lại chính là tiền đề của vế âm theo chính sách. Hệ quả
-theo chiều ngược lại cũng cần được nêu, vì nguồn dựng bằng luật không lấy mẫu dạng lẫn ấy mà
-\emph{tạo ra} dạng lẫn ấy, do dữ liệu thật gần như không có.
-
-Cả ba nguồn đều được báo cáo ở đây, gồm nguồn dựng bằng luật, nguồn theo chính sách (dừng ở
-bước dựng dữ liệu, kèm lý do) và nhánh so sánh có giám sát, vì nguồn dùng thật là nguồn còn lại sau phép
-đo chứ không phải một lựa chọn thiết kế.
-
-\subsection{Thiệt hại đo được ở bước không chạm}
-\label{sec:khongcham}
-
-Nhóm bước \emph{không chạm} nằm ngoài quần thể chấm, nên một nhánh có thể tốt lên ở bước chạm mà
-kém đi ở nhóm này mà thước chính không thấy. Ở chặng hai, mức kém đi ấy rất lớn.
-
-\begin{table}[t]
-\caption{Khớp loại thao tác trên mẫu $400$ bước không chạm (cuộn $96$, chờ $86$, gõ chữ
-$82$, mở ứng dụng $81$, quay lại $55$), chấm với biến thể nghiêm ngặt của điều kiện (i).}
-\label{tab:khongcham}
-\centering\small
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}lrr@{}}
-\toprule
-Nhánh & Khớp loại thao tác & $\Delta$ so S2 \\
-\midrule
-S2 & $83{,}5\%$ & - \\
-CE2-S2 & $63{,}0\%$ & $-20{,}50$ \\
-MIN-DESC & $63{,}8\%$ & $-19{,}75$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Mức giảm tập trung ở đúng ba loại thao tác mà câu đúng \emph{không nhắc tên phần tử nào},
-là cuộn với $-43{,}8$, quay lại với $-36{,}4$ và gõ chữ với $-29{,}2$. Hai loại không giảm (chờ, mở ứng dụng)
-chỉ vì phép chuẩn hoá quy ``mở'' về lớp chạm, nên một câu dạng chạm vô tình khớp, chứ không
-phải vì mô hình làm đúng.
-
-Trách nhiệm quy được rõ ràng, và không thuộc về mục tiêu ưu tiên. Hai nhánh suy giảm như nhau
-($-20{,}50$ so với $-19{,}75$), mà chúng chỉ giống nhau ở một điểm duy nhất là cả hai đều huấn
-luyện thêm trên dữ liệu \emph{chỉ có bước chạm}. Hệ quả cho cách đọc số là executability chỉ chấm trên $4.463$ bước chạm nên điểm chính không bị
-ảnh hưởng, nhưng không được viết ``mô hình cuối tốt hơn'' mà bỏ qua mức giảm này. Nhánh
-thưởng SPICE, có câu nhắc gồm mọi loại thao tác, giảm ít hơn nhiều nhưng vẫn giảm ở bước cuộn và
-quay lại (Mục~\ref{sec:grpospice}). Cách sửa đã biết là nhánh MIX (Mục~\ref{sec:huongpt}), theo hướng
-trộn bước không chạm dạng entropy chéo thuần vào chặng hai.
-
-\section{Định vị điểm nghẽn của đích khai báo}
-\label{sec:chonghen}
-
-Mục này là \emph{phân tích hậu kiểm}, vì cách chia nhóm dưới đây được xây dựng sau khi đã có
-điểm số. Mục vẫn được trình bày vì cơ chế mà mục này chỉ ra là điểm mà mọi can thiệp tiếp theo
-phải tác động vào.
-
-Bảng dưới đây chia $3.473$ bước có tên vàng theo việc ô khai báo \emph{của chính MIN-DESC}
-có đúng hay không, trong đó đúng nghĩa là tên khớp \emph{và} toạ độ nằm trong dung sai
-$14\%$.
-
-\begin{table}[t]
-\caption{Bảng chẩn đoán ở mức từng bước. Cột trần là điểm của câu chuẩn trên chính
-nhóm đó.}
-\label{tab:2x2min}
-\centering\small
-\renewcommand{\arraystretch}{1.25}
-\begin{tabular}{@{}lrrrrr@{}}
-\toprule
-Nhóm & $n$ & MIN-DESC & S1 & $\Delta$ ghép cặp & Trần \\
-\midrule
-Khai báo \textbf{đúng} & $2.106$ ($60{,}6\%$) & $\mathbf{87{,}1}$ & $78{,}3$ & $\mathbf{+8{,}83}$ & $86{,}3$ \\
-Khai báo \textbf{sai} & $1.367$ ($39{,}4\%$) & $\mathbf{21{,}8}$ & $32{,}9$ & $\mathbf{-11{,}12}$ & $61{,}4$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\paragraph{Hai chiều tác động của ô khai báo.} Khi mô hình vừa
-viết đúng tên và đúng điểm, mô hình hơn nhánh chỉ sinh câu $8{,}83$ điểm và vượt cả trần câu chuẩn của nhóm đó. Khi viết sai, mô hình thấp hơn $11{,}12$ điểm. Hai chiều gần như triệt tiêu
-nhau, và tổng của chúng là con số $+0{,}94$ điểm không có ý nghĩa thống kê ở
-Mục~\ref{sec:mindesc}. Đích khai báo vì vậy \emph{có} tác dụng đúng như giả thuyết,
-nhưng chỉ trên $60{,}6\%$ số bước mà khai báo nhắm trúng, còn ở phần còn lại thì tự làm giảm kết quả.
-
-\paragraph{Trần lý thuyết khi chặn được vế âm.} Nếu mỗi lần khai báo sai mà mô hình lùi về đúng
-hành vi của nhánh chỉ sinh câu, điểm trên mẫu này sẽ là $65{,}8\%$ so với $61{,}4\%$ thực đo,
-tức $+5{,}4$ điểm so với nhánh nền. Vì vậy hướng đi tiếp được đặt ở việc \emph{sửa cách nhắm} và \emph{hạn chế thiệt hại khi
-nhắm sai}, chứ không ở việc tinh chỉnh thêm tương phản.
-
-Tuy nhiên, việc ``lùi về'' này không thực hiện được ở khâu suy luận. Một bộ định tuyến
-\emph{hoàn hảo}, biết trước khai báo đúng hay sai và bỏ khai báo khi sai, cũng chỉ cho
-$63{,}5\%$ trên toàn quần thể, và bảy bộ định tuyến thật đã thử đều nằm trong khoảng $60{,}0$
-đến $60{,}3\%$, tức trong nhiễu. Vì vậy điểm nghẽn này phải được sửa ở khâu huấn luyện, và
-không thể tránh bằng cách can thiệp ở khâu suy luận.
-
-\begin{table}[t]
-\caption{Phân rã toàn bộ $4.463$ bước theo trạng thái ô khai báo của MIN-DESC. Cột cuối là
-phần dư địa tới mức câu chuẩn mà mỗi ô đóng góp, tính theo điểm trên toàn quần thể.}
-\label{tab:phanrao}
-\centering\small
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}lrrrrrr@{}}
-\toprule
-Ô & $n$ & \% & MIN & S1 & Trần & Dư địa \\
-\midrule
-tên đúng, toạ độ đúng & $2.082$ & $46{,}7$ & $87{,}1$ & $78{,}2$ & $86{,}3$ & $-0{,}36$ \\
-tên đúng, toạ độ sai & $220$ & $4{,}9$ & $26{,}4$ & $27{,}7$ & $32{,}3$ & $+0{,}29$ \\
-tên sai, toạ độ đúng & $411$ & $9{,}2$ & $57{,}2$ & $53{,}0$ & $73{,}0$ & $+1{,}46$ \\
-không sinh khai báo & $15$ & $0{,}3$ & $0{,}0$ & $0{,}0$ & $60{,}0$ & $+0{,}20$ \\
-\textbf{tên sai, toạ độ sai} & $\mathbf{745}$ & $\mathbf{16{,}7}$ & $\mathbf{3{,}6}$ & $25{,}8$ & $64{,}4$ & $\mathbf{+10{,}15}$ \\
-không có tên vàng & $990$ & $22{,}2$ & $55{,}3$ & $54{,}4$ & $73{,}0$ & $+3{,}94$ \\
-\midrule
-\textbf{Tổng} & $4.463$ & & $\mathbf{60{,}0}$ & $59{,}1$ & $75{,}7$ & $+15{,}7$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Bảng~\ref{tab:phanrao} cho thấy ba điều ràng buộc mọi thiết kế tiếp theo. Thứ nhất, ô ``đúng cả
-hai'' không còn dư địa, vì mô hình vượt trần câu chuẩn trên $46{,}7\%$ số bước. Thứ hai,
-$63\%$ dư địa còn lại nằm trọn trong một ô duy nhất, là ô sai cả tên lẫn toạ độ, trong
-đó mô hình chỉ đạt $3{,}6\%$ còn nhánh nền đạt $25{,}8\%$. Khai báo sai không chỉ vô ích mà còn
-làm sai câu nặng hơn so với việc không khai báo. Thứ ba, câu chuẩn đạt $64{,}4\%$ ngay trong ô
-đó, nên đây không phải nhóm bước bất khả thi.
-
-\paragraph{Giới hạn của cách chia nhóm này.} Biến chia nhóm là hành vi của chính mô hình được
-đo, và hai nhóm khác nhau nhiều về độ khó. Phép so MIN với S1 \emph{bên trong} một nhóm là hợp lệ
-vì ghép cặp trên cùng bước. Phép so nhóm trên với nhóm dưới thì không hợp lệ.
-
-\section{Nhánh ứng viên}
-\label{sec:nhanhungvien}
-
-Nhánh ứng viên (Mục~\ref{sec:ungvienthietke}) là lượt huấn luyện cuối cùng của đề tài,
-chạy đầu tháng $9$ với hạt giống $101$ trên $64.567$ mẫu của Mục~\ref{sec:khoiungvien}.
-Mọi con số trong mục này là kết quả một hạt giống, và nhánh so sánh cùng đầu
-vào không được huấn luyện. Hệ quả của điều thứ hai được nêu ở
-cuối mục.
-
-\subsection{Độ chính xác chọn}
-
-Trên lát $1.400$ bước chạm đầu tiên của tập kiểm, $1.008$ bước có ứng viên vàng trong khối. Thẻ
-chọn trúng ở $580$ bước, cho độ chính xác chọn (\code{sel\_acc}) bằng $57{,}54\%$, thấp hơn cả mức
-khai báo đúng $60{,}6\%$ của MIN-DESC (Mục~\ref{sec:ungvienthietke}), nên năm lượt huấn luyện còn
-lại của kế hoạch sáu lượt không chạy.
-Lát $1.400$ bước này từ đây là \emph{lát phát triển}. Phần còn lại của tập kiểm, $3.062$ bước,
-chỉ được dùng để đọc kết quả.
-
-Một phép chẩn đoán ép chọn cho thấy độ chính xác chọn không phải đại lượng quyết định phù hợp.
-Ép mô hình luôn chọn một ứng viên, không bao giờ phát \code{none}, nâng độ chính xác chọn từ
-$57{,}54$ lên $69{,}05\%$, nhưng độ đúng của thẻ trên \emph{toàn bộ} $1.400$ bước giảm từ
-$63{,}43$ xuống $49{,}71\%$, vì độ chính xác chọn chỉ đếm nhóm có ứng viên vàng, giống cột ``có
-đáp án'' của SQuAD~2.0~\cite{rajpurkar2018} khi báo một mình. Đại lượng quyết định của nhánh
-này vì vậy là executability trên $4.463$ bước, đúng thước dùng cho mọi nhánh khác.
-
-\subsection{Điểm executability}
-
-Trên $4.463$ bước chạm, nhánh ứng viên đạt $56{,}1\%$, KTC $[54{,}2; 58{,}0]$, với
-$1.091$ cụm như mọi nhánh khác. Ba điều kiện hợp thành lần lượt là khớp loại thao tác
-$90{,}9\%$, không đảo nghĩa $99{,}7\%$ và ô Voronoi thuần $57{,}4\%$. Có $11$ bước câu rỗng
-được tính là không đạt. Dưới hai luật chấm báo kèm, điểm là $63{,}5$ theo khoảng cách chuẩn hoá
-và $63{,}9$ theo cửa sổ dung sai hình chữ nhật. Lát phát triển đạt $55{,}4\%$ và phần còn lại
-đạt $56{,}5\%$, chênh nhau một điểm, nên việc đã đọc số trên lát phát triển không làm lệch phần
-chưa được xem xét.
-
-So với mô hình chưa tinh chỉnh, nhánh này hơn $8{,}54$ điểm ($b = 731$, $c = 350$, $p <
-0{,}001$), và đó là phép so duy nhất trong bảng ghép cặp được phép đọc. Đặt điểm này cạnh S1
-hay MIN-DESC rồi tính hiệu là không hợp lệ, vì nhánh lệch cùng lúc ba biến so với các nhánh ấy:
-độ dài ngữ cảnh, số lượt duyệt và đầu vào. Nhánh so sánh hợp lệ duy nhất là nhánh học có giám
-sát cùng khối ứng viên nhưng không có đầu chọn (gui\_sft\_match), và nhánh đó không
-được huấn luyện theo quyết định ngân sách ngày $5$ tháng $9$. Vì vậy $\Delta_{\text{chọn}}$
-không tồn tại, và chúng tôi không phát biểu gì về công của đầu chọn tường minh cũng như của khối
-ứng viên. Bất kỳ mức tăng nào so với Base đều có thể do đầu vào giàu hơn, và không có phép đo
-nào ở đây tách được điều đó.
-
-\subsection{Hành vi chọn và bỏ cuộc}
-
-Cắt quần thể theo hai biến, có ứng viên vàng trong khối hay không và mô hình có phát một
-thẻ chọn hay phát \code{none}, cho Bảng~\ref{tab:bocuoc}.
-
-\begin{table}[t]
-\caption{Nhánh ứng viên chia theo việc khối có ứng viên vàng và mô hình có đưa ra lựa chọn
-hay không. Hai
-ô chéo trên là hành vi đúng. Hai ô còn lại là hai dạng lỗi.}
-\label{tab:bocuoc}
-\centering\small
-\renewcommand{\arraystretch}{1.25}
-\begin{tabular}{@{}llrrrr@{}}
-\toprule
-Khối có ứng viên vàng & Mô hình & $n$ & \% tập & Exec. & Khớp thao tác \\
-\midrule
-có & \textbf{chọn} & $2.326$ & $52{,}1$ & $\mathbf{71{,}4}$ $[69{,}5; 73{,}2]$ & $99{,}1$ \\
-có & \textbf{bỏ cuộc} (sai) & $872$ & $19{,}5$ & $\mathbf{23{,}7}$ $[21{,}0; 26{,}7]$ & $71{,}2$ \\
-không & chọn (sai) & $264$ & $5{,}9$ & $37{,}5$ & $99{,}6$ \\
-không & bỏ cuộc (đúng) & $1.001$ & $22{,}4$ & $53{,}8$ & $86{,}6$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Khi khối có ứng viên vàng và mô hình đưa ra lựa chọn, mô hình đạt $71{,}4\%$, cao hơn mọi nhánh
-đã huấn luyện và chỉ kém câu chuẩn $4{,}3$ điểm. Cơ chế chọn vì vậy hoạt động đúng như thiết
-kế. Thiệt hại nằm ở ô thứ hai, gồm $872$ bước, tức $27{,}3\%$ số bước có ứng viên vàng, bị mô
-hình bỏ cuộc dù đáp án nằm sẵn trong danh sách, và ở đó mô hình chỉ đạt $23{,}7\%$. Tỉ lệ bỏ
-cuộc sai này \emph{tái lập} mức $27{,}1\%$ đo trên lát phát triển sau lượt huấn luyện đầu, bằng
-hai phép đo độc lập với mẫu chênh nhau ba lần. Trên toàn tập, mô hình bỏ cuộc ở $41{,}97\%$ số
-bước, và nhóm đó đạt $39{,}8\%$ so với $68{,}0\%$ của nhóm đưa ra lựa chọn. Nếu nhóm bỏ cuộc
-sai đạt được mức của nhóm đưa ra lựa chọn, điểm toàn tập sẽ là $65{,}4\%$, tức $+9{,}3$ điểm.
-Đây là một trần ước lượng, cùng dạng với con số $+5{,}4$ ở Mục~\ref{sec:chonghen}, không phải
-kết quả của một hệ thống đã chạy.
-
-\paragraph{Bốn dấu hiệu đi kèm việc bỏ cuộc.} Dấu hiệu thứ nhất là lẫn loại thao tác, vì câu
-mang động từ không phải chạm xuất hiện ở $28{,}3\%$ số bước bỏ cuộc so với $0{,}97\%$ số bước
-đưa ra lựa chọn, gấp $29$ lần, và khớp loại thao tác của nhóm bỏ cuộc sai chỉ $71{,}2\%$. Hiện
-tượng này đã được ghi nhận hai lần trước đó, ở lát $7{,}3\%$ của Mục~\ref{sec:latkichhoat} và ở
-phép đo trên lát phát triển. Dấu hiệu thứ hai là mô hình nhìn sang vùng khác của màn, vì sai số
-mô hình định vị có trung vị $19{,}9\%$ bề ngang ở nhóm bỏ cuộc so với $0{,}78\%$ ở nhóm đưa ra
-lựa chọn, và phân vị $90$ của nhóm bỏ cuộc vượt quá bề ngang màn hình, đúng dạng lỗi lưỡng cực
-đã thấy ở Mục~\ref{sec:onpolicy}. Thứ ba, khối càng đông thì càng hay bỏ cuộc, và quan hệ này
-đơn điệu (Bảng~\ref{tab:cokhoi}). Nhóm chạm trần $40$ dòng chiếm $17{,}8\%$ tập kiểm và là nhóm
-kém nhất. Đây là tương quan trên một lát cắt hậu kiểm, vì màn nhiều phần tử cũng là màn khó
-hơn, nên không đọc thành quan hệ nhân quả. Thứ tư, ở $78$ bước thuộc ứng dụng chưa thấy lúc
-huấn luyện, tỉ lệ bỏ cuộc là $51{,}3\%$ so với $41{,}8\%$, nhưng mẫu quá nhỏ nên con số này chỉ
-có giá trị gợi ý. Cách giải thích bằng \emph{độ dài câu} bị loại vì trung vị độ dài là $33$ ký
-tự ở cả hai nhóm.
-
-\begin{table}[t]
-\caption{Tỉ lệ bỏ cuộc và executability theo số dòng trong khối, chỉ tính bước có ứng viên
-vàng. Lát cắt hậu kiểm.}
-\label{tab:cokhoi}
-\centering\small
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}lrrr@{}}
-\toprule
-Số dòng trong khối & $n$ & Bỏ cuộc & Exec. \\
-\midrule
-$1$ đến $5$ & $178$ & $18{,}5\%$ & $70{,}8$ \\
-$6$ đến $10$ & $363$ & $15{,}7\%$ & $70{,}5$ \\
-$11$ đến $20$ & $826$ & $25{,}9\%$ & $60{,}3$ \\
-$21$ đến $39$ & $1.036$ & $29{,}3\%$ & $55{,}6$ \\
-$40$ (chạm trần) & $795$ & $33{,}2\%$ & $51{,}8$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Một quan sát hậu kiểm nữa liên quan tới \emph{vị trí} của ứng viên vàng trong khối. Chia
-$3.198$ bước có ứng viên vàng theo tam phân vị của vị trí, tỉ lệ bỏ cuộc là $27{,}2\%$ khi đáp
-án ở phần đầu danh sách, $31{,}4\%$ ở phần giữa và $24{,}3\%$ ở phần cuối. Riêng các khối $30$
-đến $40$ dòng, ba con số là $29{,}1$, $40{,}1$ và $35{,}1\%$. Dạng chữ U này khớp với hiện
-tượng mà Liu và cộng sự~\cite{liu2024lost} mô tả cho ngữ cảnh dài, theo đó thông tin nằm giữa
-được khai thác kém hơn thông tin ở hai đầu. Ở đây dạng chữ U là một quan sát mô tả, chưa qua
-kiểm định thống kê, và vị trí có tương quan với cỡ khối.
-
-\subsection{Tiên nghiệm của nhãn bỏ cuộc trong tập huấn luyện}
-
-Bảng~\ref{tab:prior} đặt cạnh nhau bốn tỉ lệ của thẻ \code{none}.
-
-\begin{table}[t]
-\caption{Tỉ lệ thẻ \code{none} theo bốn mẫu số. Mô hình phát \code{none} nhiều hơn tỉ lệ
-đúng trên loại bước bị chấm, và ít hơn tỉ lệ gặp trên toàn tập huấn luyện.}
-\label{tab:prior}
-\centering\small
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}lr@{}}
-\toprule
-Mẫu số & Tỉ lệ \code{none} \\
-\midrule
-Toàn bộ tập huấn luyện ($64.567$ mẫu) & $54{,}78\%$ \\
-Chỉ bước chạm của tập huấn luyện ($41.191$) & $29{,}12\%$ \\
-Bước chạm của tập kiểm, tỉ lệ đúng ($4.463$) & $28{,}34\%$ \\
-\textbf{Mô hình thật sự phát ra trên tập kiểm} & $\mathbf{41{,}97\%}$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Bốn con số xếp theo một thứ tự nhất quán, trong đó tỉ lệ mô hình phát ra nằm giữa tỉ lệ đúng
-trên bước chạm và tỉ lệ trên toàn tập huấn luyện, nghiêng về phía toàn tập. Cơ chế được đề xuất
-là mọi bước không chạm, chiếm $36{,}2\%$ tập huấn luyện, đều mang thẻ \code{none} theo thiết kế
-dữ liệu, nên hơn một nửa số mẫu dạy mô hình phát thẻ này. Mô hình học tiên nghiệm đó rồi mang
-sang bước chạm, loại bước duy nhất được chấm. Đây đúng là hiện tượng mà Rajpurkar và cộng
-sự~\cite{rajpurkar2018} nêu cho SQuAD~2.0, theo đó tỉ lệ ví dụ không có đáp án khác nhau giữa
-lúc huấn luyện và lúc kiểm làm lệch quyết định bỏ cuộc, và Menon và cộng sự~\cite{menon2021}
-chứng minh rằng sửa tiên nghiệm nhãn lúc huấn luyện tương đương với sửa sau huấn luyện dưới
-dạng lệch phân bố nhãn. Ba con số trên loại được giả thuyết ``mô hình bị dạy sai tỉ lệ trên
-bước chạm'', vì $29{,}12$ và $28{,}34$ chỉ chênh nhau $0{,}8$ điểm, nhưng chưa chứng minh được
-quan hệ nhân quả. Quan hệ này chỉ có thể được kiểm bằng một lượt huấn luyện mới.
-
-Ba hướng khắc phục khác đã được đo và loại. Sửa hết lỗi loại thao tác chỉ đem lại $1{,}21$
-điểm, vì trong $406$ bước sai loại thao tác chỉ $54$ bước có mô hình định vị trúng. Thu nhỏ
-khối còn mười dòng làm mất độ phủ, vì mười dòng đầu theo thứ tự đọc chỉ chứa ứng viên vàng ở
-$42{,}9\%$ số bước, xếp lại theo mức khớp chữ với mục tiêu cũng chỉ $51{,}7\%$, so với
-$71{,}7\%$ ở trần $40$. Nới dung sai toạ độ khi định nghĩa ứng viên vàng chỉ nâng độ phủ tới
-$76{,}0\%$ ngay cả khi bỏ hẳn ràng buộc toạ độ, và đổi định nghĩa ấy là đổi nhãn huấn luyện,
-phải huấn luyện lại.
-
-Hướng còn lại, huấn luyện lại trên riêng $41.191$ bước chạm để đưa tiên nghiệm về $29{,}12\%$,
-đã có dữ liệu dựng sẵn (Mục~\ref{sec:khoiungvien}). Các con số sau chỉ là ước lượng. Nếu một nửa trong $872$ bước bỏ cuộc sai chuyển sang đưa ra lựa chọn và đạt mức của nhóm
-đưa ra lựa chọn thì điểm toàn tập lên $60{,}8\%$, còn nếu hai phần ba thì lên $62{,}3\%$. Mô
-hình huấn luyện theo cách này không còn thấy bước không chạm, nên hành vi của mô hình trên
-$2.495$ bước không chạm của tập kiểm sẽ đổi, và điều đó phải khai kèm mọi con số nếu lượt ấy
-chạy.
-
-\subsection{Ghép với chặng hai và hiệu chỉnh mức bỏ cuộc}
-
-Ghép hai hệ thống đã có theo luật ``bước nào nhánh ứng viên bỏ cuộc thì lấy câu của MIN-DESC''
-cho $60{,}7\%$ trên $4.463$ bước, hơn MIN-DESC $0{,}67$ điểm. Mọi luật ghép tinh vi hơn theo cỡ
-khối hay độ dài câu đều cho thấp hơn, và một bộ chọn biết trước nhánh nào đúng cũng chỉ cho
-$66{,}1\%$. Trong nhóm đưa ra lựa chọn, nhánh ứng viên đạt $68{,}0$ so với $66{,}8$ của
-MIN-DESC và $67{,}4$ của S1, nghĩa là khi đưa ra lựa chọn thì nhánh ứng viên là nhánh tốt nhất
-trong các nhánh đã huấn luyện. Toàn bộ thiệt hại nằm ở việc bỏ cuộc. Con số $60{,}7$ là kết quả của một hệ thống hai mô hình, luật ghép được chọn sau khi thấy
-điểm, và mức hơn MIN-DESC nhỏ hơn nhiễu giữa hai hạt giống.
-
-Thủ tục hiệu chỉnh mức bỏ cuộc ở Mục~\ref{sec:ungvienthietke} đã được tính trọn trên lát phát
-triển $1.400$ bước, và phương án giữ nguyên hành vi hiện tại là phương án tốt nhất.
-Hành vi hiện tại đúng $888$ trên $1.400$ bước ($63{,}4\%$). Nhánh chính theo điểm chia số token
-giảm $360$ bước. Ba biến thể phụ cho $+1$, $-52$ và $+8$ bước, và khoảng tin cậy của biến thể tốt nhất phủ $0$, từ
-$-11$ đến $+27$. Mốc tiên nghiệm $\tau_0 = -0{,}633$ suy từ tỉ lệ nhãn cho $-143$ và $+1$ bước. Mức
-tốt nhất chỉ là $+0{,}6$ điểm.
-
-Nguyên nhân đọc được từ chính $1.400$ bước ấy. Phần xếp hạng ứng viên không sai. Xếp theo tổng
-log-xác suất đặt ứng viên vàng lên đầu ở $67{,}5\%$ bước có vàng và trùng với ứng viên mô hình
-tự chọn ở $701$ trên $814$ bước, trong khi phép chia số token chỉ đạt $38{,}3\%$ vì ưu ái thẻ
-dài mà từng token dễ đoán. Điểm nghẽn nằm ở khâu bỏ cuộc. Trong $583$ bước mô hình phát
-\code{none}, điểm của thẻ \code{none} ở $275$ bước có vàng (trung vị $-1{,}71$) trùng với điểm
-ở $308$ bước không có vàng (trung vị $-1{,}71$), và diện tích dưới đường ROC của biên khi tách
-hai nhóm này chỉ đạt $0{,}69$ đến $0{,}72$. Mọi giá trị $\tau$ vì thế lật gần một bước sai cho mỗi bước
-cứu được. Nếu quyết định bỏ cuộc hoàn hảo thì độ đúng trên lát đạt $78{,}0\%$, nên khoảng $14{,}6$
-điểm còn lại nằm trọn ở khâu ấy và không đọc được từ xác suất của chính mô hình. Trong $120$
-bước cứu được về mặt chọn, $32{,}5\%$ câu vẫn mang động từ không chạm, nên executability cũng
-không tăng theo. Mô hình bỏ cuộc theo độ đông của khối, với tỉ lệ \code{none} tăng từ
-$30{,}6\%$ ở khối $6$ đến $10$ dòng lên $50{,}2\%$ ở khối $31$ đến $40$ dòng, trong khi tỉ lệ
-bước có vàng gần như phẳng. Vì thủ tục hiệu chỉnh, vốn gần tương đương với việc cân lại tỉ lệ nhãn,
-không cứu được các bước bỏ cuộc sai, lượt huấn luyện lại trên riêng bước chạm không chạy, và
-nhánh ứng viên dừng ở phần chẩn đoán.
-
-\section{Chặng ba với phần thưởng đặt trên ô toạ độ}
-\label{sec:grpo}
-
-Chặng ba, mô tả ở Mục~\ref{sec:grpothietke}, học tiếp từ điểm lưu của chặng hai bằng một mục
-tiêu học tăng cường thưởng cho ô toạ độ. Kết quả trên cùng $4.463$ bước chạm:
-
-\begin{center}\small
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}lcc@{}}
-\toprule
-Nhánh & Điểm thực thi & KTC$95\%$ \\
-\midrule
-Chặng hai (MIN-DESC/$101$) & $60{,}05$ & $[58{,}35; 61{,}79]$ \\
-Chặng ba (thưởng ô toạ độ) & $60{,}07$ & $[58{,}32; 61{,}83]$ \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-Mức chênh ghép cặp là $+0{,}02$ điểm, với $98$ bước chặng hai đúng mà chặng ba sai và $99$ bước
-theo chiều ngược lại, $\chi^2 = 0{,}00$, $p = 1$, khoảng tin cậy $[-0{,}59; +0{,}64]$. Hai nhánh
-không phân biệt được, và khoảng tin cậy hẹp tới mức loại được mọi mức tăng từ $0{,}64$ điểm trở
-lên. Các thước phụ không đổi theo bất kỳ chiều nào đáng kể: tỉ lệ khớp loại thao tác
-$98{,}88$ so với $98{,}86$, luật hộp phần tử $66{,}55$ so với $67{,}04$.
-
-\paragraph{Một dự báo bị phép đo bác.} Trước khi chấm, mức tăng ở tầng khai báo được quy thành
-dự báo cho điểm đầu ra bằng hệ số chuyển đổi $0{,}43$ đo ở chặng hai, cho $+1{,}10$ điểm với dải
-$[+0{,}59; +1{,}49]$. Giá trị đo được là $+0{,}02$, nghĩa là cận trên của khoảng tin cậy thật nằm
-ngay tại cận dưới của dự báo. Hệ số chuyển đổi thực tế của chặng ba xấp xỉ $0{,}01$. Kết luận rút
-ra được là hệ số ấy phụ thuộc dạng can thiệp, không phải một hằng số của bài toán.
-
-\paragraph{Hai chiều tác động triệt tiêu nhau.} Hạch toán từng bước cho thấy liên hệ giữa tầng
-khai báo và điểm đầu ra rất mạnh theo cả hai chiều. Ở $164$ bước mà chặng ba sửa được ô khai báo,
-điểm thực thi đi từ $32{,}9$ lên $70{,}7$, còn ở $75$ bước mà chặng ba làm sai ô ấy thì điểm rơi từ
-$69{,}3$ xuống $29{,}3$. Hai chiều gần đối xứng. Phần lợi và phần thiệt gần bằng nhau:
-
-\begin{center}\small
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}p{6.2cm}rrrr@{}}
-\toprule
-Nhóm & $n$ & $b$ & $c$ & ròng \\
-\midrule
-khai báo được sửa đúng & $164$ & $2$ & $64$ & $+62$ \\
-khai báo bị làm sai & $75$ & $30$ & $0$ & $-30$ \\
-khai báo giữ nguyên trạng thái & $3.234$ & $31$ & $17$ & $-14$ \\
-bước không có tên đối chiếu & $990$ & $35$ & $18$ & $-17$ \\
-\midrule
-cộng & $4.463$ & $98$ & $99$ & $+1$ \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\paragraph{Thay đổi ở tầng khai báo và câu ở đầu ra.} Trong $1.950$ bước mà ô khai báo thay đổi,
-có $1.300$ bước, tức $66{,}7\%$, mà câu ở đầu ra không đổi một ký tự. Thước chấm trên câu và
-thước là hàm tất định, nên ở những bước ấy điểm không thể đổi. Toàn bộ $197$ lần đổi chiều của
-điểm thực thi nằm gọn trong $961$ bước có câu thay đổi.
-
-\paragraph{Hệ quả về phương pháp.} Phần thưởng đặt ở tầng biểu diễn trung gian nâng đúng tầng đó,
-mức tăng $2{,}56$ điểm ở ô khai báo với $p = 1{,}3 \times 10^{-8}$. Nhưng không số hạng nào trong
-phần thưởng ràng buộc tầng đầu ra. Khi trọng số dịch chuyển, câu ở đầu ra đổi theo cả tại những
-bước mà phần thưởng không có tín hiệu, và mức thiệt ở đó vừa đủ xoá phần lợi. Đây là dạng thất
-bại khác với việc cơ chế yếu, và dạng thất bại này chỉ đọc được khi hạch toán ở mức từng bước.
-
-\paragraph{Điều chưa tách được.} Chặng ba không có nhánh so sánh học thêm cùng lượng dữ liệu, nên
-phần thuộc về thuật toán và phần thuộc về việc học thêm $2.000$ câu nhắc chưa tách được. Với mức
-chênh gần bằng không, nhánh so sánh ấy không được chạy. Vì vậy con số
-$2{,}56$ điểm ở tầng khai báo phải đọc là mức chênh so với điểm dừng của chặng hai, không phải
-công riêng của thuật toán. Ngoài ra cửa sổ dung sai của phép đo tầng khai báo trùng khít cửa sổ
-trong phần thưởng, nên phép đo ấy đang đo lại chính đại lượng đã được tối ưu, và đại lượng độc lập
-duy nhất là điểm thực thi.
-
-\section{Ghép hai điểm lưu trong không gian trọng số}
-\label{sec:noisuy}
-
-Chặng ba nối tiếp chặng hai, nên hai bộ trọng số chỉ khác nhau một bước đi ngắn. Điều đó cho phép
-một phép thử không cần thêm lượt huấn luyện nào: dựng các điểm nằm giữa hai bộ trọng số ấy và
-chấm chúng. Giả thuyết là phần chặng ba làm sai và phần chặng ba sửa được có thể không đáp ứng
-giống nhau theo độ dài bước đi, nên một điểm ở giữa giữ được phần sửa mà tránh bớt phần sai.
-
-Phép ghép phải làm ở mức từng module và theo cách nối các ma trận hạng thấp, vì lượng hiệu chỉnh
-của một bộ thích ứng là \emph{tích} của hai ma trận chứ không phải tổng. Bình quân riêng từng ma
-trận cho một kết quả khác, và hai đầu mút vẫn đúng tuyệt đối dưới cách sai ấy,
-nên phép kiểm ở hai đầu mút không phát hiện được. Năm điểm được dựng, ứng với năm mức pha trộn từ
-$0$ đến $1$, và được chấm trên tập kiểm định nội bộ tách từ dữ liệu huấn luyện.
-
-\paragraph{Kết quả.} Đường cong đơn điệu, cực đại nằm đúng tại đầu mút ứng với chặng ba.
-Không điểm giữa nào vượt được đầu mút, điểm giữa tốt nhất còn thấp hơn $0{,}38$ điểm, và mọi phép
-so ghép cặp giữa các mức đều có khoảng tin cậy phủ $0$. Điểm tốt nhất trên tập kiểm định là chính
-chặng ba, vốn đã có điểm trên tập kiểm, nên không cấu hình mới nào được đưa lên tập kiểm.
-
-\paragraph{Dư địa trước khi chạy.} Một phép đo trên chính hai bộ trọng số đã cho thấy
-trước khi chạy rằng dư địa rất hẹp: chặng ba chỉ dịch chuyển hai ma trận hạng thấp lần lượt
-$1{,}39\%$ và $6{,}87\%$ so với chặng hai, nên hai đầu mút vốn rất gần nhau và đường cong gần như
-phẳng.
-
-\paragraph{Điều phép thử này xác nhận.} Số bước mà câu ở đầu ra khác nhau giữa hai đầu mút là
-$155$ trên $407$, và số ấy tăng đều theo mức pha trộn với các giá trị $53$, $95$, $127$ và $155$.
-Phép ghép vì vậy hoạt động đúng như thiết kế và tạo ra một dãy mô hình chuyển dần giữa hai bộ
-trọng số. Kết quả bằng không ở đây là kết quả thật, không do lỗi ở khâu dựng.
-
-\paragraph{Lý do không trích con số tuyệt đối của tập kiểm định nội bộ.} Tập này tách từ dữ liệu
-huấn luyện, mà cả hai điểm lưu đều đã học trên đó, nên điểm ở đây là điểm trên dữ liệu đã thấy.
-Mức chênh giữa hai nhánh trên tập ấy lớn gần bốn mươi lần mức chênh thật đo trên tập kiểm, còn
-điểm tuyệt đối thì cao hơn khoảng bảy điểm rưỡi. Tập này vì vậy chỉ dùng để xếp hạng các ứng viên
-trong cùng một họ, và không con số tuyệt đối nào của tập này được đưa vào phần kết quả.
-
-\section{Phân tách kênh tri giác và kênh diễn đạt}
-\label{sec:haikenh}
-
-Năm can thiệp từ Mục~\ref{sec:nhanhs2} tới đây đều chưa cho mức tăng rõ ràng so với S1 dưới
-executability. Mục này đo xem giới hạn ấy nằm ở đâu, bằng cách tách đường đi từ ảnh màn hình tới câu thành hai kênh quan sát
-được riêng rẽ.
-
-Kênh thứ nhất, gọi là kênh tri giác, là ô toạ độ mà chính mô hình viết ra trong khối khai báo.
-Ô này cho biết mô hình đang nhìn vào phần tử nào trước khi đặt bút viết câu. Kênh thứ hai, gọi
-là kênh diễn đạt, là điểm mà mô hình định vị độc lập trả về sau khi đọc câu đã sinh. Kênh thứ
-hai chính là đại lượng đi vào điểm thực thi. Hai kênh dùng chung một luật phán đúng sai, là cửa
-sổ dung sai $14\%$ quanh điểm chạm vàng, nên số của chúng so được với nhau. Trên $4.442$ bước có
-khối khai báo đọc được, kênh tri giác đạt $70{,}10\%$ và kênh diễn đạt đạt $69{,}36\%$.
-
-\begin{table}[t]
-\caption{Điểm thực thi tách theo trạng thái của kênh tri giác. Cột câu chuẩn là điểm mà chính
-quy trình chấm đạt được khi nhận câu do người chú thích viết, đo trên cùng nhóm bước.}
-\label{tab:haikenh}
-\centering\small
-\renewcommand{\arraystretch}{1.25}
-\begin{tabular}{@{}lrrrr@{}}
-\toprule
-Nhóm & $n$ & MIN-DESC & S1 & Câu chuẩn \\
-\midrule
-Kênh tri giác \textbf{đúng} & $3.114$ ($70{,}1\%$) & $\mathbf{82{,}37}$ & $74{,}18$ & $84{,}36$ \\
-Kênh tri giác \textbf{sai}  & $1.328$ ($29{,}9\%$) & $\mathbf{8{,}43}$  & $24{,}47$ & $55{,}72$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\paragraph{Chín phần mười khoảng cách nằm trên một phần ba số bước.} Khoảng cách giữa câu chuẩn
-và MIN-DESC trên toàn quần thể là $15{,}53$ điểm. Nhóm có kênh tri giác đúng chiếm $70{,}1\%$ số
-bước nhưng chỉ đóng góp $1{,}40$ điểm, tức $9{,}0\%$ khoảng cách ấy. Nhóm có kênh tri giác sai
-chiếm $29{,}9\%$ số bước và đóng góp $14{,}14$ điểm, tức $91{,}0\%$. Dư địa cải thiện vì vậy tập
-trung gần như trọn vẹn vào những bước mà mô hình nhìn sai phần tử ngay từ đầu.
-
-\paragraph{Phần thiếu hụt thuộc riêng về mô hình.} Nhóm có kênh tri giác sai khó hơn nhóm còn
-lại, kể cả với câu chuẩn, nên không thể quy toàn bộ $14{,}14$ điểm cho mô hình. Câu chuẩn cũng giảm
-từ $84{,}36$ xuống $55{,}72$ khi đi từ nhóm này sang nhóm kia, tức giảm $28{,}64$ điểm. Cùng phép
-so ấy, MIN-DESC giảm từ $82{,}37$ xuống $8{,}43$, tức $73{,}94$ điểm. Hiệu của hai mức giảm là
-$45{,}30$ điểm, là phần thiếu hụt không giải thích được bằng độ khó của nhóm
-bước. Con số này nói rằng khi mô hình đã nhìn sai phần tử thì câu sinh ra hầu như không còn giá
-trị, trong khi câu chuẩn vẫn giữ được hơn một nửa.
-
-\paragraph{Mức truyền từ kênh tri giác sang điểm thực thi.} Sửa được kênh tri giác chưa đủ, vì
-phần sửa còn phải đi qua tầng sinh câu. Chặng ba cho phép đo trực tiếp mức truyền ấy, do chặng
-này là can thiệp duy nhất đặt phần thưởng thẳng lên ô toạ độ. Trên $4.437$ bước ghép cặp được,
-chặng ba nâng kênh tri giác thêm $1{,}60$ điểm nhưng chỉ nâng điểm thực thi thêm $0{,}045$ điểm.
-Tỉ số của hai mức ấy là $0{,}028$.
-
-\begin{table}[t]
-\caption{Bảng chéo trạng thái kênh tri giác giữa chặng hai và chặng ba, kèm điểm thực thi của
-mỗi nhánh trên từng ô.}
-\label{tab:ocheokenh}
-\centering\small
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{@{}lrrrr@{}}
-\toprule
-Ô & $n$ & MIN-DESC & Chặng ba & Chênh \\
-\midrule
-giữ đúng & $2.997$ & $83{,}08$ & $82{,}95$ & $-0{,}13$ \\
-giữ sai & $1.143$ & $6{,}91$ & $6{,}30$ & $-0{,}61$ \\
-sai chuyển thành đúng & $184$ & $17{,}93$ & $58{,}15$ & $+40{,}22$ \\
-\textbf{đúng chuyển thành sai} & $\mathbf{113}$ & $62{,}83$ & $8{,}85$ & $\mathbf{-53{,}98}$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Bảng~\ref{tab:ocheokenh} cho biết lý do mức truyền nhỏ như vậy. Chặng ba sửa được $184$
-bước với mức lợi $40{,}22$ điểm mỗi bước, nhưng đồng thời làm sai $113$ bước với mức thiệt
-$53{,}98$ điểm mỗi bước. Hai chiều gần như triệt tiêu nhau. Theo tỉ lệ ấy, muốn điểm thực thi
-tăng khoảng hai điểm thì cần khoảng $243$ bước chuyển từ sai sang đúng mà không kèm bước nào
-chuyển ngược, tức $18{,}3\%$ toàn bộ nhóm có kênh tri giác sai. Chặng ba đạt $184$ bước, bằng
-$13{,}9\%$ nhóm ấy, nhưng kèm $113$ bước theo chiều ngược lại.
-
-\paragraph{Một cách đọc sai cần tránh.} Trên lát cắt ngang giữa các nhánh đã huấn luyện, kênh
-tri giác và điểm thực thi tương quan ở mức $0{,}739$. Con số ấy dễ bị dùng như hệ số quy đổi,
-theo lối ước rằng nâng kênh tri giác thêm mười điểm sẽ nâng điểm thực thi thêm bảy điểm. Phép đo
-can thiệp ở trên bác cách đọc đó: mức truyền thật là $0{,}028$, nhỏ hơn $26$ lần. Tương quan
-giữa các nhánh phản ánh việc mọi nhánh mạnh đều mạnh ở cả hai kênh cùng lúc, chứ không đo được
-điều gì xảy ra khi can thiệp vào riêng một kênh.
-
-\paragraph{Giới hạn của mục này.} Cách chia nhóm được xây dựng sau khi đã có mọi điểm số, nên
-đây là phân tích hậu kiểm. Biến chia nhóm lại là hành vi của chính mô hình được đo, vì vậy phép
-so MIN-DESC với S1 bên trong một nhóm là hợp lệ do ghép cặp trên cùng bước, còn phép so giữa hai
-nhóm thì không. Mẫu số $4.442$ nhỏ hơn $4.463$ của bảng chính, chênh $21$ bước là những bước có
-khối khai báo thiếu hoặc sai định dạng nên không đọc được ô toạ độ. Cuối cùng, ô toạ độ trong
-khối khai báo dùng thang $0$ đến $1000$ chứ không phải đơn vị điểm ảnh, và đọc nhầm thang này làm
-sai số chuẩn hoá trung vị lệch mười tám lần.
-
-\section{Độ tin cậy của ước lượng trần trên lát cắt}
-\label{sec:tranlat}
-
-Bảng~\ref{tab:haikenh} gợi ra ngay một hướng can thiệp, và cũng gợi ra một con số hấp dẫn để
-biện minh cho hướng ấy. Trên nhóm có kênh tri giác sai, nếu thay câu của MIN-DESC bằng câu của
-S1 thì điểm toàn quần thể lên $65{,}04$, tức thêm $4{,}80$ điểm, còn nếu thay bằng câu chuẩn thì lên
-$74{,}40$, tức thêm $14{,}14$ điểm. Đọc thẳng, hai con số ấy nói rằng một cơ chế biết lùi về cách
-viết khác khi tri giác sai sẽ thu thêm từ vài điểm tới hơn mười điểm.
-
-Mục này kiểm con số $4{,}80$ và kết luận rằng không dùng được. Lý do nằm ở cách định nghĩa nhóm.
-Nhóm được định nghĩa bằng kênh tri giác \emph{của chính MIN-DESC}, mà kênh ấy và câu của
-MIN-DESC đến từ cùng một lượt sinh, nên chúng chia nhiều thành phần nhiễu chung. Chọn những bước
-có kênh tri giác của MIN-DESC sai là chọn đúng những bước mà lượt sinh ấy gặp bất lợi, và trên
-nhóm được chọn như vậy thì MIN-DESC bị thiệt một cách hệ thống khi đặt cạnh bất kỳ nhánh nào
-khác. Phần chênh thu được vì thế phản ánh cách chọn nhóm chứ không phản ánh một cơ chế có thật.
-
-\begin{table}[t]
-\caption{Ước lượng trần cho một can thiệp ở tầng câu, dưới bốn cách định nghĩa nhóm khác nhau.
-Cột cuối là mức chênh so với điểm toàn quần thể của MIN-DESC khi thay câu trên nhóm đó bằng câu
-của S1. Đo trên $4.437$ bước ghép cặp được.}
-\label{tab:tranlat}
-\centering\small
-\renewcommand{\arraystretch}{1.25}
-\begin{tabular}{@{}lrrrrr@{}}
-\toprule
-Cách định nghĩa nhóm & $n$ & MIN & S1 & Câu chuẩn & Trần \\
-\midrule
-kênh tri giác của MIN sai & $1.327$ & $8{,}44$ & $24{,}49$ & $55{,}69$ & $\mathbf{+4{,}80}$ \\
-kênh tri giác của chặng ba sai & $1.256$ & $11{,}94$ & $22{,}13$ & $54{,}70$ & $+2{,}88$ \\
-chặng ba sai mà MIN đúng & $113$ & $62{,}83$ & $34{,}51$ & $60{,}18$ & $-0{,}72$ \\
-\textbf{$30\%$ màn đông nút nhất} & $1.331$ & $58{,}53$ & $56{,}35$ & $73{,}55$ & $\mathbf{-0{,}65}$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Bảng~\ref{tab:tranlat} thay biến định nghĩa nhóm ba lần trong khi giữ nguyên mọi thứ khác. Hàng
-thứ hai chuyển sang kênh tri giác của chặng ba, tức vẫn là hành vi của một mô hình nhưng không
-phải mô hình đang được đo, và trần giảm còn $2{,}88$. Hàng thứ ba lấy phần mà chặng ba sai còn
-MIN-DESC đúng, tức bỏ hẳn việc chọn theo lỗi của MIN-DESC, và trần đổi dấu. Hàng cuối định nghĩa
-nhóm bằng độ khó đọc được từ chính màn hình, là số phần tử có thể chạm, nên không dùng hành vi
-của mô hình nào, và trần ở đó là $-0{,}65$.
-
-\paragraph{Dấu hiệu nhận ra hiệu ứng chọn nhóm.} Cột câu chuẩn gần như không đổi qua ba hàng đầu,
-lần lượt $55{,}69$, $54{,}70$ và $60{,}18$, còn hàng cuối cao hơn rõ vì nhóm ấy dễ hơn thật. Trong
-khi đó cột trần đi từ $+4{,}80$ xuống $-0{,}65$. Đại lượng trôi theo cách định nghĩa nhóm là
-\emph{ưu thế giữa hai mô hình cùng họ}, còn khoảng cách tới câu chuẩn thì đứng yên. Đó là dấu
-hiệu phân biệt hiệu ứng chọn nhóm với một cơ chế thật.
-
-\paragraph{Hệ quả cho cách đọc chương này.} Mọi ước lượng trần suy từ một nhóm được định nghĩa
-bằng hành vi của chính mô hình được đo phải được kiểm lại với ít nhất một cách định nghĩa nhóm
-khác trước khi dùng làm căn cứ cho một lượt huấn luyện. Luật này áp cho cả những con số thuận
-lợi ở Mục~\ref{sec:chonghen}, vốn cũng chia nhóm theo hành vi của MIN-DESC. Trong dự án này,
-phép kiểm ấy đã ngăn một lượt huấn luyện được đề xuất trên căn cứ $4{,}80$ điểm.
-
-\section{Đưa thêm thông tin vị trí vào bộ sinh câu}
-\label{sec:kenhvitri}
-
-Mục~\ref{sec:haikenh} định vị điểm nghẽn ở tầng tri giác: khi mô hình nhìn sai phần tử thì câu
-sinh ra gần như mất giá trị. Từ cuối tháng $9$, chúng tôi thử bốn cách đưa thêm thông tin vị trí
-vào mô hình sinh câu, cùng hai cách sàng lọc ý tưởng không cần GPU. Phần lớn các phép đo trong mục này chạy trên
-tập kiểm định nội bộ (Mục~\ref{sec:chiatap}). Vì tập ấy là dữ liệu S1 đã học, mục này chỉ báo
-\emph{hiệu số} giữa các biến thể và các đại lượng cơ chế, không báo điểm tuyệt đối. Bảng~\ref{tab:kenhvitri}
-tóm tắt cả chuỗi.
-
-\begin{table}[t]
-\caption{Bốn cách đưa thông tin vị trí vào mô hình sinh câu và hai phép sàng lọc không cần GPU. Cột cuối là đại
-lượng quyết định. Các phép đo có đánh dấu $^{\ast}$ chạy trên tập kiểm định nội bộ.}
-\label{tab:kenhvitri}
-\centering\footnotesize
-\renewcommand{\arraystretch}{1.25}
-\begin{tabular}{@{}p{2.3cm}p{5.0cm}p{5.6cm}@{}}
-\toprule
-Hướng & Cách làm & Kết quả \\
-\midrule
-Mô-đun định vị và cầu nối$^{\ast}$ & một bộ chú ý học vị trí phần tử trên các mảnh ảnh, rồi cộng
-đặc trưng vùng đó vào trạng thái ẩn giữa mô hình & bộ chú ý học được vị trí (trúng hộp $52{,}0\%$
-so với $5{,}3\%$ của tiên nghiệm), nhưng tắt cầu nối chỉ đổi $15\%$ số câu và executability chỉ
-lệch $+0{,}17$ điểm $[-1{,}03; +1{,}33]$ \\
-Vùng cắt làm ảnh thứ hai$^{\ast}$ & đo xác suất câu chuẩn khi cho thêm ảnh cắt quanh phần tử đúng,
-quanh phần tử lân cận cùng loại, hoặc quanh một vùng ngẫu nhiên & tách được vùng đúng khỏi vùng ngẫu
-nhiên, nhưng gần như không tách được khỏi phần tử lân cận ($+0{,}004$ nat mỗi token) \\
-Tiêm vai trò, vùng, thao tác$^{\ast}$ & đọc vai trò, vùng màn và loại thao tác từ trạng thái ẩn,
-rồi tiêm lại qua một hệ số trộn học được & đọc được (vai trò $51{,}5\%$, thao tác $82{,}8\%$), nhưng hệ số
-trộn tự về gần không, chỉ $4\%$ số câu đổi, và hoán vị thông tin giữa các bước không làm điểm giảm \\
-Làm nét ảnh quanh đích$^{\ast}$ & giữ S1 đóng băng, đưa ảnh được làm nét quanh đích thật, quanh
-chỗ đối diện, hoặc quanh tâm màn & S1 đổi câu ở $16{,}9\%$ số bước, nhưng làm nét đúng đích không
-tốt hơn làm nét chỗ đối diện \\
-\midrule
-Hai lượt viết lại có chọn lọc & sàng lọc trên tập kiểm: đếm trong $958$ câu của S1 chỉ lệch câu chuẩn một
-cụm từ số câu làm mô hình định vị trỏ sai & $147/958$ ($15{,}3\%$), tức phần lớn lỗi sát nghĩa
-chỉ là khác cách nói, không phải chỉ sai phần tử \\
-Bộ xếp hạng câu biết màn sau$^{\ast}$ & học chọn trong chín câu của S1 bằng đặc trưng nhẹ, có thầy
-được xem màn kế tiếp & thua câu tham lam ở cả BLEU-4, CIDEr-D và SPICE, kể cả bản có thầy \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\paragraph{Mô-đun định vị và cầu nối.} Một token đích được chèn trước câu. Sau tầng thứ $17$ trên
-$36$ tầng của phần ngôn ngữ, trạng thái ẩn của token ấy dùng làm truy vấn cho một lớp chú ý trên các
-mảnh ảnh, lớp này được học với một số hạng KL kéo phân bố chú ý về hộp của phần tử cần chạm. Đặc
-trưng vùng thu được nhân với một hệ số trộn rồi cộng ngược vào trạng thái ẩn của token đích, và các tầng sau
-chạy tiếp như bình thường. Huấn luyện chia ba chặng: học câu, học riêng lớp định vị, rồi học cả hai.
-Phần định vị hoạt động đúng, vì khối lượng chú ý rơi vào hộp đúng tăng từ $0{,}18$ lên $0{,}28$ qua
-hai chặng cuối và giảm còn $0{,}12$ khi xáo trộn câu nhắc giữa các bước. Phần cầu nối thì không đưa
-được thông tin ấy vào câu, và hệ số trộn gần như đứng yên suốt lượt học ($0{,}119$ lên $0{,}120$). Ép lớp chú ý về phía một phần tử gây nhiễu
-thay vì về một vùng ngẫu nhiên không làm câu nghiêng về phía phần tử gây nhiễu ($-0{,}37$ điểm, ngược
-chiều mong đợi). Dưới luật hộp phần tử, bật và tắt cầu nối cho điểm bằng nhau tuyệt đối. Mức hơn nhỏ
-của biến thể này so với nhánh chỉ học câu phần lớn vẫn còn nguyên khi tắt cầu nối, nên mức đó đến
-từ một lượt duyệt học thêm chứ không từ thông tin vị trí.
-
-\paragraph{Vùng cắt làm ảnh thứ hai.} Phép đo này kiểm trực tiếp khả năng mô hình \emph{dùng} thông
-tin vùng, trước khi huấn luyện bất cứ gì. Với $231$ cặp phần tử đích và phần tử lân cận cùng
-loại, trong đó $93$ trên $100$ cặp kiểm tay là đúng, mô hình đóng băng tính xác suất của câu chuẩn
-khi nhận thêm một ảnh cắt quanh phần tử đích, quanh phần tử lân cận, hoặc quanh một vùng ngẫu nhiên.
-Vùng đích cho xác suất cao hơn vùng ngẫu nhiên ($+0{,}012$ nat mỗi token, cận dưới dương), nhưng gần
-như bằng vùng lân cận ($+0{,}004$). Cắt từ ảnh gốc độ phân giải cao cũng không cho thêm gì so với cắt
-từ ảnh đã thu nhỏ. Mô hình vì vậy nhận ra \emph{vùng có liên quan}, nhưng không phân biệt được phần tử cần chạm
-với phần tử bên cạnh, trong khi đó lại là khác biệt mà bài toán cần.
-
-\paragraph{Tiêm vai trò, vùng và thao tác.} Bộ phân loại tuyến tính trên trạng thái ẩn cuối của S1
-đọc được vai trò phần tử ở $51{,}5\%$ số bước và loại thao tác ở $82{,}8\%$, trong khi xáo nhãn chỉ
-cho khoảng $9\%$. Vùng màn hình thì khó đọc hơn, quanh $30\%$ và lên xuống theo hạt giống. Ba thông
-tin ấy được tiêm lại vào trạng thái ẩn qua một hệ số trộn học được, huấn luyện $500$ bước trên S1 đóng
-băng. Hệ số trộn tự giảm trong khi học, từ $0{,}50$ xuống khoảng $0{,}03$ đến $0{,}12$, phần tiêm vào chỉ bằng
-$0{,}06$ đến $0{,}14\%$ độ lớn trạng thái ẩn. Chỉ $62$ trong $1.567$ câu đổi, phần lớn ở bề mặt như
-``search box'' thành ``search bar''. Hoán vị vai trò và vùng giữa các bước không làm điểm giảm, tức nội
-dung tiêm vào không đi tới câu.
-
-\paragraph{Làm nét ảnh quanh đích.} Phép thử cuối giữ nguyên S1 và chỉ đổi ảnh: làm nét quanh điểm
-chạm thật, quanh điểm đối xứng qua tâm màn, hoặc quanh tâm màn, phần còn lại làm mờ. S1 đổi câu ở
-$16{,}9\%$ số bước, nên kênh ảnh có tới được câu. Nhưng làm nét đúng đích và làm nét chỗ đối diện cho
-điểm gần như bằng nhau ($-1{,}82$ CIDEr-D), và làm nét đúng đích cũng không hơn ảnh gốc. S1 phản ứng
-với việc ảnh bị biến đổi, không phản ứng với \emph{chỗ} được làm nét.
-
-\paragraph{Hai phép sàng lọc không cần GPU.} Ý tưởng hai lượt viết lại có chọn lọc giả định rằng nhiều
-câu sai của S1 là câu ``gần đúng'' gọi lệch sang phần tử khác, và chỉ những câu ấy được viết
-lại. Trên tập kiểm, trong $958$ câu của S1 chỉ lệch câu chuẩn đúng một cụm từ, chỉ $147$ câu
-($15{,}3\%$, KTC $[13{,}1; 17{,}7]$) làm mô hình định vị trỏ sai, còn phần lớn vẫn trỏ đúng, tức lỗi
-nằm ở cách nói chứ không ở phần tử, nên ý tưởng này không được huấn luyện. Ý tưởng bộ xếp hạng câu dùng
-thông tin của màn kế tiếp cũng dừng ở bước thử trên CPU: bộ xếp hạng thua câu tham lam ở cả ba thước, và
-chính bản ``thầy'' được xem màn kế tiếp cũng thua, nên lỗi không nằm ở khâu chưng cất.
-
-\paragraph{Kết luận chung của chuỗi phép thử.} Thông tin vị trí \emph{học được} và \emph{đọc được} từ mô hình,
-nhưng một kênh gắn thêm vào một mô hình đã học sinh câu xong bị phần sinh câu bỏ qua. Ở cả bốn phép
-thử, câu không đổi theo vị trí được đưa vào. Hệ số trộn của mô-đun định vị đứng yên ở giá trị khởi
-tạo suốt lượt học, còn hệ số trộn của phép tiêm tự thu về gần không. Cả chuỗi có chung một giới hạn. Phép
-tiêm và phép làm nét gắn lên S1, mô hình đã học cả dữ liệu dùng để huấn luyện và đo chúng, còn mô-đun định vị được thêm vào sau khi phần sinh câu đã học xong một
-lượt, nên tín hiệu học cho phần gắn thêm đều yếu. Kết luận đúng là \emph{gắn thêm một kênh vị trí vào
-một bộ sinh câu đã học xong không đổi được câu}, chưa phải \emph{thông tin vị trí vô ích cho việc sinh
-câu}. Kết luận này là một căn cứ để phương pháp đề xuất (Mục~\ref{sec:grpospice}) tác động thẳng vào
-câu ở đầu ra.
-
-\section{Vùng mù của thước}
-\label{sec:vungmu}
-
-Câu chuẩn không đạt ở $1.083$ bước, và không phải tất cả đều do mô hình định vị.
-
-Ở $64{,}8\%$ số bước đó, điểm trả về nằm hẳn ngoài vùng dung sai, nghĩa là mô hình định vị
-gần như \emph{bỏ cuộc} thay vì chỉ trỏ lệch một chút. Sai số của mô hình định vị lưỡng cực rõ rệt, với trung vị
-$0{,}4\%$ ở những bước thành công so với $26{,}2\%$ ở những bước thất bại, gần như không có
-giá trị trung gian giữa hai mức.
-
-$381$ bước còn lại nằm trong vùng dung sai nhưng bị chính luật ô Voronoi loại. Ở $208$ bước
-trong số đó, điểm nằm ngay bên trong hộp nhỏ nhất chứa điểm chạm. Trên một phần tử lớn, một
-phần tử con cạnh tranh với chính phần tử cha của nó. Tính theo nhánh, luật ô Voronoi đảo phán
-quyết của $10{,}1\%$ số bước nằm trong vùng dung sai của câu chuẩn, $13{,}0\%$ của S1 và
-$15{,}2\%$ của Base.
-
-Theo chiều ngược lại, thước không phát hiện được các độ lệch dưới khoảng $63$ điểm ảnh
-(Mục~\ref{sec:bomloi}). Ngoài ra, ở $935$ bước, tức $21\%$ quần thể, cả ba nhánh đều không đạt.
-
-Từ đó, mọi con số trong chương này cần được đọc với lưu ý rằng trần $75{,}7\%$ chủ yếu phản ánh
-giới hạn của dụng cụ đo, chưa phải giới hạn của ngôn ngữ. Nghi ngờ
-rằng trần thấp là do câu chuẩn quá ngắn cũng đã được kiểm và loại, vì lọc riêng những bước có
-câu chuẩn từ ba từ trở xuống cho trần $77{,}0\%$, cao hơn không đáng kể.
-
-Chúng tôi cũng đã chạy một phép kiểm cho lo ngại rằng mô hình có thể tối ưu theo thước, tức viết
-cho dụng cụ đo thay vì viết cho người đọc. Câu nêu tên một vùng trên màn đạt $89{,}5\%$ khi
-vùng đó đúng và chỉ $3{,}3\%$ khi vùng đó sai, so với $54{,}8\%$ cho câu không nêu vùng nào.
-Như vậy thước thưởng cho việc \emph{nói đúng} vị trí, còn việc chỉ \emph{nhắc tới} vị trí thì
-không được thưởng. S1 dùng từ chỉ vị trí ở $26{,}8\%$ số câu so với $26{,}4\%$ của câu chuẩn, và
-chuỗi toạ độ chỉ xuất hiện ở $0{,}04\%$ số câu, đúng bằng tỉ lệ của câu chuẩn. Điểm mà S1 làm
-nhiều hơn rõ là lặp lại các khuôn câu, vì hai mươi câu phổ biến nhất của S1 phủ $10{,}4\%$
-quần thể, so với $6{,}5\%$ của câu chuẩn. Ở nhánh S2, vốn được huấn luyện để sinh toạ độ trong
-ô khai báo, điểm này cũng đã được kiểm. Ô khai báo bị cắt trước khi chấm, và trong câu còn lại
-chuỗi toạ độ xuất hiện ở $0{,}04\%$ số câu, đúng bằng tỉ lệ của S1 và của câu chuẩn ($3$, $3$
-và $2$ câu trên $6.958$).
-
-\section{Trạng thái các nhánh}
-\label{sec:trangthai}
-
-Bảng~\ref{tab:trangthai} ghi trạng thái cuối cùng của từng nhánh và từng phép thử đã nêu trong chương,
-kèm lý do cho những nhánh không chạy hoặc dừng giữa chừng, để người đọc kiểm được.
-
-{\footnotesize\renewcommand{\arraystretch}{1.18}
-\begin{longtable}{@{}p{3.3cm}p{2.6cm}p{6.6cm}@{}}
-\caption{Trạng thái cuối của các nhánh và phép thử. Điểm trong cột ghi chú là executability trên tập
-kiểm, trừ khi ghi khác.}
-\label{tab:trangthai}\\
-\toprule
-Nhánh hoặc phép thử & Trạng thái & Ghi chú \\
+\textbf{Mô hình hoặc phép thử} & \textbf{Trạng thái} & \textbf{Ghi chú} \\
 \midrule
 \endfirsthead
-\caption[]{Trạng thái cuối của các nhánh và phép thử (tiếp).}\\
 \toprule
-Nhánh hoặc phép thử & Trạng thái & Ghi chú \\
+\textbf{Mô hình hoặc phép thử} & \textbf{Trạng thái} & \textbf{Ghi chú} \\
 \midrule
 \endhead
-\textbf{Phương pháp đề xuất} (thưởng SPICE, điểm lưu $500$) & xong, đã chấm & $60{,}6$; hơn S1 $+1{,}55$ có ý nghĩa, mười ba cột
-cùng tăng, bước cuộn giảm $6{,}23$ điểm, Mục~\ref{sec:grpospice} \\
-TAGE, mở rộng của phương pháp đề xuất & xong, đã chấm & $60{,}2$; thấp hơn câu nháp $0{,}43$, bộ chọn nhận đúng những câu có ô cắt sai,
-Mục~\ref{sec:tage} \\
-ACE, mở rộng của phương pháp đề xuất & xong, đã chấm & $60{,}7$; ngang câu nháp về vị trí, cao hơn ở cả bảy thước so câu (CIDEr-D
-$+12{,}0$), bộ sinh một mình thấp hơn $1{,}25$, Mục~\ref{sec:ace} \\
-\midrule
-S1 $\times 2$ hạt giống & xong, đã chấm & $59{,}1$ và $59{,}6$; nhiễu hạt giống $+0{,}52$ điểm,
-Mục~\ref{sec:haihatgiong} \\
-S2 hạt giống $101$ & xong, đã chấm & $57{,}2$; thấp hơn S1 có ý nghĩa ở một hạt giống,
-Mục~\ref{sec:nhanhs2} \\
-S2 hạt giống $202$ & huỷ & ngân sách máy; đại lượng tính trên hai hạt giống không hoàn tất \\
-S2r, S2-nopoint & huỷ & S2r mất lý do tồn tại khi S2 không cho tín hiệu dương; ô toạ độ đo được là
-ô có ích ($+1{,}12$ điểm khi đứng một mình) nên giả thuyết của S2-nopoint yếu đi, và chi phí gấp đôi
-chặng hai \\
-B-infer; khoản phạt mức hai & không chạy & không chặn nhánh nào; mã hàm mất mát mức hai chưa viết \\
-\midrule
-CE2-S2, MIN-DESC & xong, đã chấm & $59{,}4$ và $60{,}0$; $78\%$ mức tăng thuộc nhánh so sánh,
-Mục~\ref{sec:mindesc} \\
-MIN-DESC theo chính sách & dừng ở bước dựng dữ liệu & chỉ $3{,}3\%$ cặp hợp lệ, Mục~\ref{sec:onpolicy} \\
-Chặng ba (thưởng ô toạ độ) & xong, đã chấm & $60{,}1$; $+0{,}02$ so với MIN-DESC, Mục~\ref{sec:grpo} \\
-Ghép trọng số chặng hai và ba & xong & đường cong đơn điệu, không cấu hình mới nào lên tập kiểm,
-Mục~\ref{sec:noisuy} \\
-Nhánh so sánh của chặng ba & không chạy & mức chênh gần bằng không nên không có gì để tách công \\
-Bước không chạm của chặng hai & đã đo & giảm $19{,}75$ điểm, Mục~\ref{sec:khongcham} \\
-\midrule
-Nhánh ứng viên, hạt giống $101$ & xong, đã chấm & $56{,}1$; độ chính xác chọn $57{,}5\%$, thấp hơn
-mức khai báo tự do, Mục~\ref{sec:nhanhungvien} \\
-Năm lượt còn lại của nhánh ứng viên & huỷ & độ chính xác chọn không vượt khai báo tự do; nhánh so
-sánh cùng khối không chạy nên công của đầu chọn chưa tách được \\
-Hiệu chỉnh mức bỏ cuộc & xong & tốt nhất $+8$ trên $1.400$ bước, không cứu được bỏ cuộc sai \\
-\midrule
-Mở phần thị giác (VIS-SFT) & dừng giữa lượt & điểm lưu ở $41\%$ lượt thấp hơn MIN-DESC rõ rệt trên
-tập kiểm định nội bộ, chưa có điểm trên tập kiểm \\
-Mô-đun định vị và cầu nối & dừng sau một lượt & cầu nối không đổi được câu, Mục~\ref{sec:kenhvitri} \\
-Vùng cắt làm ảnh thứ hai & dừng ở phép đo & không phân biệt phần tử đúng với phần tử lân cận \\
-Tiêm vai trò, vùng, thao tác & dừng sau một lượt & hệ số trộn tự về gần không, $4\%$ số câu đổi \\
-Làm nét ảnh quanh đích & dừng ở phép đo & làm nét đúng đích không hơn làm nét chỗ đối diện \\
-Hai lượt viết lại có chọn lọc; bộ xếp hạng biết màn sau & dừng ở sàng lọc CPU & không đủ lỗi để sửa;
-bộ xếp hạng thua câu tham lam \\
-\midrule
-Mô hình định vị thứ hai & xong & UI-Venus, Mục~\ref{sec:phepB} \\
-Người nghe trắc nghiệm Phi-4 & xong một phần & chấm câu chuẩn, chặng ba, S1/101 và $3.566$ bước Base,
-Mục~\ref{sec:phi4} \\
-Chấm tay $100$ câu, hai người & không chạy & hạn chế còn mở, Mục~\ref{sec:hanche} \\
 \bottomrule
-\end{longtable}}
+\endlastfoot
+Phương pháp đề xuất (thưởng SPICE + ACE) & Hoàn tất, đã đánh giá & 60,7; hơn S1/101 +1,57 có ý nghĩa; ngang thành phần thứ nhất về vị trí, cao hơn ở cả bảy độ đo so câu (CIDEr-D +12,0); Mục~\ref{sec:6.4} \\
+Thành phần thứ nhất (thưởng SPICE) & Hoàn tất, đã đánh giá & 60,6; hơn S1/101 +1,55 có ý nghĩa, tăng ở cả mười ba độ đo; bước cuộn giảm 6,23 điểm; Mục~\ref{sec:6.3} \\
+Mô hình tinh chỉnh có giám sát (S1), hai hạt giống & Hoàn tất, đã đánh giá & 59,1 và 59,6; chênh lệch giữa hai hạt giống +0,52 điểm; Mục~\ref{sec:6.7} \\
+Mô tả phần tử (S2), hạt giống 101 & Hoàn tất, đã đánh giá & 57,2; thấp hơn S1/101 có ý nghĩa; Mục~\ref{sec:A.1.3} \\
+Mô tả phần tử (S2), hạt giống 202 & Đã hủy bỏ & giới hạn tài nguyên tính toán \\
+Mô tả giả (S2r); mô tả không có tọa độ (S2-nopoint) & Đã hủy bỏ & mô tả giả chỉ cần khi S2 cho kết quả dương; tọa độ tự nó có ích (+1,12 điểm) \\
+Đưa danh sách phần tử vào S1 lúc suy luận & Không thực hiện & không mô hình nào cần tới \\
+Học thêm có giám sát (CE2-S2); giai đoạn học ưu tiên (MIN-DESC) & Hoàn tất, đã đánh giá & 59,4 và 60,0; 78\% mức tăng so với S2 cũng có ở mô hình học thêm; Mục~\ref{sec:A.2.2} \\
+Học ưu tiên với vế sai lấy từ lỗi của chính mô hình & Dừng ở khâu tạo dữ liệu & chỉ 3,3\% cặp hợp lệ; Mục~\ref{sec:A.2.2.3} \\
+Giai đoạn thưởng tọa độ & Hoàn tất, đã đánh giá & 60,1; +0,02 so với giai đoạn học ưu tiên; Mục~\ref{sec:A.4.2} \\
+Nội suy trọng số giữa hai giai đoạn trên & Hoàn tất & điểm đổi đơn điệu, không chấm cấu hình mới trên tập kiểm tra; Mục~\ref{sec:A.4.3} \\
+Cấu hình đối chứng của giai đoạn thưởng tọa độ & Không thực hiện & mức chênh gần bằng không \\
+Bước không chạm sau giai đoạn học ưu tiên & Đã đánh giá & giảm 19,75 điểm; Mục~\ref{sec:A.2.2.4} \\
+Chọn ứng viên, hạt giống 101 & Hoàn tất, đã đánh giá & 56,1; độ chính xác chọn 57,5\%, thấp hơn khi tự viết dòng mô tả; Mục~\ref{sec:A.3.2} \\
+Năm lượt còn lại của mô hình chọn ứng viên & Đã hủy bỏ & độ chính xác chọn không vượt dòng mô tả tự viết \\
+Hiệu chỉnh ngưỡng từ chối chọn & Hoàn tất & tốt nhất thêm 8 bước đúng trên 1.400 bước \\
+Mở khoá phần thị giác để cùng huấn luyện & Dừng giữa chừng & bản lưu sau 41\% số bước kém giai đoạn học ưu tiên rõ trên tập kiểm định nội bộ \\
+Mô-đun định vị và cầu nối & Dừng sau một lượt & cầu nối không làm câu thay đổi; Mục~\ref{sec:A.6} \\
+Vùng cắt làm ảnh thứ hai & Dừng ở khâu đánh giá & không phân biệt phần tử đúng với phần tử lân cận \\
+Đưa thêm vai trò, vùng và loại thao tác vào mô hình & Dừng sau một lượt & hệ số trộn tự giảm về gần không; chỉ 4\% số câu đổi \\
+Làm nét ảnh quanh phần tử & Dừng ở khâu đánh giá & không hơn làm nét ở vị trí đối diện \\
+Hai lượt viết lại có chọn lọc; bộ xếp hạng câu dùng màn kế tiếp & Dừng ở khâu sàng lọc & không đủ câu lỗi để sửa; bộ xếp hạng cho kết quả thấp hơn giải mã tham lam \\
+Sửa câu theo vùng cắt (TAGE) & Hoàn tất, đã đánh giá & 60,2; thấp hơn câu nháp 0,43; Mục~\ref{sec:A.7.2} \\
+Mô hình định vị thứ hai (UI-Venus) & Hoàn tất & chênh lệch S1 với mô hình gốc giữ 94\%; Mục~\ref{sec:5.9} \\
+Người nghe trắc nghiệm (Phi-4) & Hoàn tất một phần & đã chấm câu chuẩn, giai đoạn thưởng tọa độ, S1/101 và 3.566 bước của mô hình gốc; Mục~\ref{sec:5.10} \\
+Chấm tay 100 câu bởi hai người & Không thực hiện & còn là một hạn chế; Mục~\ref{sec:7.2} \\
+\end{longtable}
+}
 
-\paragraph{Phần còn thiếu so với thiết kế.} Đại lượng chính của thiết kế ban đầu được định nghĩa là
-hiệu của \emph{trung bình hai hạt giống} mỗi nhánh. Mọi nhánh xử lý chỉ có một hạt giống, nên chúng tôi
-không phát biểu rằng đích khai báo ``mô tả phân biệt trước, phát ngôn sau'' có tác dụng chung hay
-không, và mọi con số của các nhánh xử lý được ghi rõ là kết quả một hạt giống.
-
-Năm kết quả sau không bị phần còn thiếu ấy làm mất giá trị. Thứ nhất là phương pháp đề xuất, học tăng
-cường thưởng SPICE, nhánh đầu tiên hơn S1 có ý nghĩa dưới executability và hơn S1 ở cả mười ba thước,
-kèm tác dụng phụ đo được ở bước không chạm. Thứ hai là một dụng cụ đo đã hiệu chuẩn hai đầu thang và
-kiểm chéo qua hai mô hình định vị cùng một người nghe ngoài họ Qwen. Thứ ba là phép tách công cho thấy
-$78\%$ mức tăng của chặng hai thuộc về nhánh so sánh. Thứ tư là chẩn đoán ở mức từng bước, chỉ ra điểm
-nghẽn nằm ở tầng tri giác, cùng chuỗi phép thử cho thấy một kênh vị trí gắn thêm vào bộ sinh câu đã học
-xong bị bỏ qua, và đó là căn cứ để phương pháp đề xuất tác động thẳng vào câu. Thứ năm là chẩn đoán của
-nhánh ứng viên và của TAGE, cả hai đều chỉ ra một khâu quyết định (bỏ cuộc, chọn nhận câu sửa) không
-đọc được từ xác suất của chính mô hình.
+\textbf{Phần còn thiếu so với thiết kế.} Đại lượng chính của thiết kế ban đầu, hiệu giữa trung bình hai hạt giống của mỗi mô hình, không hoàn tất vì mọi mô hình có can thiệp chỉ có một hạt giống (Mục~\ref{sec:4.8}). Phần thiếu này không làm mất giá trị của phương pháp đề xuất, vì mức hơn S1 chủ yếu đến từ thành phần thứ nhất, và thành phần này hơn cả hai hạt giống của S1 có ý nghĩa thống kê. Nó cũng không ảnh hưởng tới việc hiệu chuẩn độ đo ở ngưỡng tối thiểu và ngưỡng tối đa (Chương~\ref{chap:7}).
 
