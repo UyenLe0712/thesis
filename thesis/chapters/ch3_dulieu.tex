@@ -1,9 +1,9 @@
 \chapter{Xây dựng bộ dữ liệu}
 \label{chap:3}
 
-Hiện chưa có bộ dữ liệu công khai nào được dựng sẵn cho tác vụ “nhìn một màn hình rồi viết một câu hướng dẫn cho người đọc”. Chương này trình bày cách chuyển bộ dữ liệu AndroidControl thành tập dữ liệu có nhãn để huấn luyện có giám sát cho tác vụ này. Toàn bộ quá trình được tự động hoá, không thuê người gán nhãn thêm và cũng không đưa vào huấn luyện nhãn do một mô hình ngôn ngữ khác sinh ra.
+Hiện chưa có bộ dữ liệu công khai nào được dựng sẵn cho tác vụ “nhìn một màn hình rồi viết một câu hướng dẫn cho người đọc”. Chương này trình bày cách chuyển bộ dữ liệu AndroidControl thành tập dữ liệu có nhãn để huấn luyện có giám sát cho tác vụ này. Toàn bộ quá trình được tự động hoá. Mọi nhãn đều lấy từ chính bộ dữ liệu gốc, không bổ sung nhãn mới và không dùng nhãn do một mô hình ngôn ngữ khác sinh ra.
 
-Để các chương sau có thể dùng thẳng tên gọi kỹ thuật mà người đọc vẫn dễ theo dõi, Bảng~\ref{tab:3.1} nối ba khái niệm ở tên đề tài với các đối tượng cụ thể được dùng trong chương này.
+Bảng~\ref{tab:3.1} cho biết dạng cụ thể của ba khái niệm trong tên đề tài khi triển khai.
 
 \begin{table}[htbp]
 \centering\small
@@ -14,7 +14,7 @@ Hiện chưa có bộ dữ liệu công khai nào được dựng sẵn cho tác
 \midrule
 Trường hợp sử dụng & Mục tiêu của cả tác vụ, ví dụ như đặt vé xem phim cho tối nay, cùng chuỗi các bước đã thực hiện trước bước đang xét \\
 Giao diện người dùng & Ảnh chụp màn hình đang mở, chuỗi chữ đọc được trên màn, và ở khâu dựng dữ liệu còn có cây trợ năng của chính màn hình ấy \\
-Hướng dẫn sử dụng & Câu hướng dẫn cho bước kế tiếp; các câu của cùng một tác vụ nối lại theo thứ tự bước thành hướng dẫn đầy đủ cho tác vụ đó \\
+Hướng dẫn sử dụng & Mỗi bước có một câu cho người dùng biết cần làm gì tiếp theo, ví dụ như chạm vào nút Đặt vé, và các câu này xếp theo thứ tự các bước chính là bản hướng dẫn cho cả tác vụ. \\
 \bottomrule
 \end{tabularx}
 \end{table}

@@ -19,7 +19,7 @@ Thứ tự giữa câu chuẩn, mô hình tinh chỉnh có giám sát và mô h�
 
 \subsection*{Về dữ liệu và mô hình tinh chỉnh có giám sát}
 
-Tập giám sát 64.567 bước được dựng hoàn toàn bằng máy, không thuê người gắn nhãn và không đưa nhãn do một mô hình ngôn ngữ khác sinh ra vào vòng huấn luyện. Các bài kiểm tra chất lượng dữ liệu, gồm việc đánh giá quá trình ghép hai kho dữ liệu nguồn, kiểm tra cấu trúc và kiểm tra rò rỉ giữa tập huấn luyện với tập kiểm tra, đều đạt (Chương~\ref{chap:3}).
+Tập giám sát 64.567 bước được dựng hoàn toàn tự động từ nhãn có sẵn của bộ dữ liệu gốc, không bổ sung nhãn mới và không đưa nhãn do một mô hình ngôn ngữ khác sinh ra vào vòng huấn luyện. Các bài kiểm tra chất lượng dữ liệu, gồm việc đánh giá quá trình ghép hai kho dữ liệu nguồn, kiểm tra cấu trúc và kiểm tra rò rỉ giữa tập huấn luyện với tập kiểm tra, đều đạt (Chương~\ref{chap:3}).
 
 Trên 4.463 bước chạm của tập kiểm tra, mô hình tinh chỉnh có giám sát đạt 59,1\%, trong khi chính mô hình đó khi chưa tinh chỉnh (mô hình gốc) chỉ đạt 47,6\%. Cả hai con số cần đọc cạnh ngưỡng tối đa 75,7\% của câu chuẩn. Theo luật hộp phần tử của AndroidControl, hai con số tương ứng là 65,5\% và 53,6\%, với ngưỡng tối đa 83,8\%. Khoảng tin cậy của mô hình gốc, mô hình tinh chỉnh có giám sát và câu chuẩn không chồng lên nhau, cho thấy công cụ đo phân biệt được hai mô hình. Chênh lệch giữa hai mô hình giữ nguyên trước các cách giải thích thay thế đã kiểm, kể cả khi bỏ những câu mà mô hình chép nguyên văn câu chuẩn. Riêng khả năng mô hình chỉ bắt chước văn phong người chú thích thì chưa loại được và vẫn được ghi lại trong bảng ở Mục~\ref{sec:6.8}.
 
