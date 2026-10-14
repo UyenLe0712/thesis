@@ -28,7 +28,7 @@ Với cấu hình ở Bảng~\ref{tab:4.1}, các bộ chuyển đổi LoRA đư�
 
 \section{Học tăng cường với phần thưởng tính bằng luật}\label{sec:2.3}
 
-Học có giám sát dạy mô hình chép lại một chuỗi đích cho trước, tức đầu ra mẫu đã có sẵn, nhưng không cho mô hình biết câu nào tốt hơn trong số những câu mà chính mô hình có thể viết ra. Học tăng cường bổ sung phần còn thiếu này: mô hình tự sinh câu trả lời, một hàm thưởng chấm từng câu, và trọng số được điều chỉnh dần về phía những câu được thưởng cao. Khi hàm thưởng là một luật tính được, chẳng hạn như so một tọa độ với đáp án hay tính một độ đo so câu, cách làm này thường được gọi là học tăng cường với phần thưởng kiểm chứng được. Công trình DeepSeek-R1 trên \emph{Nature}~\cite{guo2025r1} là bản mô tả đầy đủ nhất của hướng này đối với mô hình ngôn ngữ lớn.
+Học có giám sát dạy mô hình chép lại một chuỗi đích cho trước, tức đầu ra mẫu đã có sẵn, nhưng không cho mô hình biết câu nào tốt hơn trong số những câu mà chính mô hình có thể viết ra. Học tăng cường bổ sung phần còn thiếu này: mô hình tự sinh câu trả lời, một hàm thưởng đánh giá từng câu, và trọng số được điều chỉnh dần về phía những câu được thưởng cao. Khi hàm thưởng là một luật tính được, chẳng hạn như so một tọa độ với đáp án hay tính một độ đo so câu, cách làm này thường được gọi là học tăng cường với phần thưởng kiểm chứng được. Công trình DeepSeek-R1 trên \emph{Nature}~\cite{guo2025r1} là bản mô tả đầy đủ nhất của hướng này đối với mô hình ngôn ngữ lớn.
 
 Thuật toán học tăng cường dùng trong đề tài, kể cả ở thành phần thứ nhất của phương pháp đề xuất, là tối ưu chính sách tương đối theo nhóm (GRPO), do công trình DeepSeekMath~\cite{shao2024grpo} giới thiệu. Với mỗi câu nhắc $x$, mô hình sinh một nhóm $G$ câu trả lời $y_1, \ldots, y_G$ và nhận các điểm thưởng $r_1, \ldots, r_G$. Lợi thế của câu thứ $i$ được tính bằng cách chuẩn hoá trong nhóm,
 
@@ -45,7 +45,7 @@ sau đó mỗi token của $y_i$ được cập nhật theo $\hat{A}_i$, cùng v
 
 Bài toán định vị phần tử giao diện (\emph{GUI grounding}) nhận một ảnh màn hình và một biểu thức văn bản, rồi trả về vị trí của phần tử được mô tả, thường dưới dạng một điểm hoặc một khung bao. Các mô hình tiêu biểu gồm SeeClick~\cite{seeclick}, OS-Atlas~\cite{osatlas} và UGround~\cite{uground}.
 
-Quy ước chấm phổ biến bắt nguồn từ mã chấm gốc của AndroidInTheWild~\cite{aitw}. Theo mã ấy, một lần chạm dự đoán được coi là khớp với lần chạm đáp án khi khoảng cách giữa hai điểm, tính trên tọa độ đã chuẩn hoá theo kích thước màn hình, không vượt quá 0,14, hoặc khi cả hai điểm cùng nằm trong một khung phần tử đã được nới rộng. Chúng tôi gọi đây là \emph{luật khoảng cách Euclid của AndroidInTheWild}. Độ đo của đề tài dùng một biến thể đơn giản hơn, với cửa sổ $\pm$14\% theo từng trục (Mục~\ref{sec:5.1}), còn luật gốc được áp lại đầy đủ ở Mục~\ref{sec:5.12}. Mục~\ref{sec:5.2} cho thấy luật khoảng cách Euclid khá lỏng khi đối tượng được chấm là câu chữ, vì luật này vốn được đặt ra để chấm một bộ định vị.
+Quy ước đánh giá phổ biến bắt nguồn từ mã tính điểm gốc của AndroidInTheWild~\cite{aitw}. Theo mã ấy, một lần chạm dự đoán được coi là khớp với lần chạm đáp án khi khoảng cách giữa hai điểm, tính trên tọa độ đã chuẩn hoá theo kích thước màn hình, không vượt quá 0,14, hoặc khi cả hai điểm cùng nằm trong một khung phần tử đã được nới rộng. Chúng tôi gọi đây là \emph{luật khoảng cách Euclid của AndroidInTheWild}. Độ đo của đề tài dùng một biến thể đơn giản hơn, với cửa sổ $\pm$14\% theo từng trục (Mục~\ref{sec:5.1}), còn luật gốc được áp lại đầy đủ ở Mục~\ref{sec:5.12}. Mục~\ref{sec:5.2} cho thấy luật khoảng cách Euclid khá lỏng khi đối tượng được đánh giá là câu chữ, vì luật này vốn được đặt ra để đánh giá một bộ định vị.
 
 Trong đề tài, một mô hình thuộc nhóm này chỉ được dùng làm công cụ đo, không nằm trong số các mô hình được đánh giá (Mục~\ref{sec:5.3}).
 
@@ -54,7 +54,7 @@ Trong đề tài, một mô hình thuộc nhóm này chỉ được dùng làm c
 AndroidControl~\cite{androidcontrol} do nhóm Google DeepMind công bố tại NeurIPS 2024 theo giấy phép CC0, gồm 15.283 chuỗi thao tác do người thật thực hiện trên thiết bị Pixel trong khoảng một năm. Mỗi bước lưu ảnh màn hình, loại thao tác, tọa độ chạm nếu có, và quan trọng nhất đối với đề tài là trường \code{step\_instructions}, tức câu hướng dẫn do chính người thao tác viết cho bước đó.
 
 \begin{quote}
-\textbf{Vị trí của đề tài so với các công trình dùng bộ dữ liệu này.} Trong bài gốc AndroidControl cũng như trong các công trình dùng bộ dữ liệu này mà chúng tôi khảo sát (Aguvis~\cite{aguvis}, SeeClick~\cite{seeclick}), câu hướng dẫn từng bước nằm ở đầu vào, giúp tác tử suy ra thao tác cần thực hiện. Ở đề tài này, câu đó lại là đầu ra mà mô hình phải sinh, và chỉ câu này được chấm điểm, nên dữ liệu được dùng theo chiều ngược lại.
+\textbf{Vị trí của đề tài so với các công trình dùng bộ dữ liệu này.} Trong bài gốc AndroidControl cũng như trong các công trình dùng bộ dữ liệu này mà chúng tôi khảo sát (Aguvis~\cite{aguvis}, SeeClick~\cite{seeclick}), câu hướng dẫn từng bước nằm ở đầu vào, giúp tác tử suy ra thao tác cần thực hiện. Ở đề tài này, câu đó lại là đầu ra mà mô hình phải sinh, và chỉ câu này được tính điểm, nên dữ liệu được dùng theo chiều ngược lại.
 \end{quote}
 
 Câu chuẩn của bộ dữ liệu rất ngắn, trung vị chỉ khoảng sáu từ, có dạng như “click on OK” hay “Select the search result”. Câu càng ngắn thì mô hình định vị càng khó xác định phần tử, và đây là một lý do khiến ngưỡng tối đa đo được, tức executability của chính câu chuẩn, chỉ đạt 75,7\% (Mục~\ref{sec:5.5}). Mọi kết quả của đề tài đều chịu giới hạn của ngưỡng tối đa này.
@@ -65,13 +65,13 @@ Vì bài toán đã có sẵn câu chuẩn, cách làm trực tiếp nhất là 
 
 \begin{table}[htbp]
 \centering\small
-\caption{Hai cách chấm dựa trên câu chuẩn, và mức độ thất bại đo được trên dữ liệu thật của bài toán.}\label{tab:2.1}
+\caption{Hai cách đánh giá dựa trên câu chuẩn, và mức độ thất bại đo được trên dữ liệu thật của bài toán.}\label{tab:2.1}
 \setlength{\tabcolsep}{4pt}
 \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash\hsize=0.35\hsize}X>{\raggedright\arraybackslash\hsize=0.66\hsize}X>{\raggedright\arraybackslash\hsize=1.99\hsize}X@{}}
 \toprule
-\textbf{Cách chấm} & \textbf{Kết quả đo} & \textbf{Nguyên nhân thất bại} \\
+\textbf{Cách đánh giá} & \textbf{Kết quả đo} & \textbf{Nguyên nhân thất bại} \\
 \midrule
-So chuỗi & loại nhầm 97,5\% số câu diễn đạt khác & “search bar” và “magnifying glass” không chung từ nào \\
+So chuỗi & coi là sai 97,5\% số câu đúng nút nhưng dùng từ khác câu chuẩn & “search bar” và “magnifying glass” không chung từ nào \\
 So vector ngữ nghĩa & AUC 0,336 trên 51 ca viết tay & do độ gần chủ đề, nên cặp \code{inbox} và \code{outbox} được 0,76, cao hơn cặp \code{search} và \code{magnifying glass} chỉ 0,55 \\
 \bottomrule
 \end{tabularx}

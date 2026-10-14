@@ -95,7 +95,7 @@ def main():
           ("Thao tác", lambda h: T[h[1]]["action_ok"])]
     ra += [r"\begin{table}[t]",
            r"\caption{Nhóm thước theo vị trí trên đủ $4.463$ bước chạm, tính lại từ bản ghi từng bước,"
-           r" không gọi lại mô hình định vị. AitW là luật khớp chạm trong mã chấm gốc của"
+           r" không gọi lại mô hình định vị. AitW là luật khớp chạm trong mã tính điểm gốc của"
            r" AndroidInTheWild, AitW cận trên là biến thể của luật ấy khi vế khung xét mọi phần tử bấm được (sàn cao hơn, Mục~\ref{sec:donhay}). Hộp (D.3) là luật khớp gốc của"
            r" AndroidControl. Exec.\ là executability (Mục~\ref{sec:donhay}). Thao tác là tỉ lệ gọi đúng loại thao tác. Số in đậm"
            r" là số cao nhất trong các nhánh mô hình ở cột đó. \textsuperscript{$\ast$}Thưởng SPICE là phương pháp đề xuất, học tiếp từ S1 ($101$) bằng GRPO với phần thưởng SPICE, TAGE là bộ sửa câu đặt sau phương pháp đó (Mục~\ref{sec:grpospice} và~\ref{sec:tage}). \textsuperscript{$\dagger$}Nhánh ứng viên lệch ba"
@@ -113,7 +113,7 @@ def main():
           ("BERTScore", lambda h: M[h[1]]["bertscore_f1_rescaled"])]
     ra += [r"\begin{table}[t]",
            r"\caption{Nhóm thước so với câu chuẩn trên đủ $4.463$ bước chạm. BLEU-4, METEOR~1.5, ROUGE-L,"
-           r" CIDEr-D và SPICE tính mức kho bằng bộ chấm chính thức của COCO Captions, sau khi tách từ"
+           r" CIDEr-D và SPICE tính mức kho bằng bộ tính điểm chính thức của COCO Captions, sau khi tách từ"
            r" bằng PTBTokenizer. chrF tính bằng sacreBLEU. BERTScore là F1 với \texttt{roberta-large}"
            r" tầng $17$, đã hiệu chỉnh theo đường cơ sở. Mỗi bước chỉ có một câu chuẩn. Số in đậm là số"
            r" cao nhất trong các nhánh mô hình ở cột đó. Chặng ba là MIN-DESC học tiếp với phần thưởng"

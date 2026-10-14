@@ -1,7 +1,7 @@
 \chapter{Phương pháp tiếp cận}
 \label{chap:4}
 
-Chương này trình bày phương pháp đề xuất. Ba mục đầu mô tả phần dùng chung cho mọi mô hình trong đề tài: quy trình, đầu vào và cấu hình huấn luyện. Mục~\ref{sec:4.4} nêu ý tưởng của phương pháp, Mục~\ref{sec:4.5} và Mục~\ref{sec:4.6} trình bày chi tiết hai thành phần. Hai mục cuối nêu các mốc so sánh và cách đọc kết quả. Cách chấm điểm được trình bày ở Chương 5.
+Chương này trình bày phương pháp đề xuất. Ba mục đầu mô tả phần dùng chung cho mọi mô hình trong đề tài: quy trình, đầu vào và cấu hình huấn luyện. Mục~\ref{sec:4.4} nêu ý tưởng của phương pháp, Mục~\ref{sec:4.5} và Mục~\ref{sec:4.6} trình bày chi tiết hai thành phần. Hai mục cuối nêu các mốc so sánh và cách đọc kết quả. Cách tính điểm được trình bày ở Chương 5.
 
 \section{Toàn bộ quy trình}\label{sec:4.1}
 
@@ -11,10 +11,10 @@ Bài toán là: cho một màn hình điện thoại và mục tiêu của ngư�
 \item \textbf{Đầu vào:} ảnh màn hình, mục tiêu, các bước đã làm và chữ đọc được trên màn.
 \item \textbf{Mô hình sinh câu:} viết câu hướng dẫn. Đây là phần duy nhất được huấn luyện, và phương pháp đề xuất nằm ở khâu này.
 \item \textbf{Mô hình định vị phần tử:} một mô hình có sẵn, đọc câu vừa sinh và chỉ ra điểm trên màn hình mà câu ấy nói tới.
-\item \textbf{Luật chấm:} câu được tính là đúng khi điểm ấy rơi vào đúng phần tử cần chạm và câu nói đúng loại thao tác.
+\item \textbf{Luật tính điểm:} câu được tính là đúng khi điểm ấy rơi vào đúng phần tử cần chạm và câu nói đúng loại thao tác.
 \end{enumerate}
 
-Mô hình định vị và luật chấm chỉ phục vụ việc đánh giá; khi triển khai, hệ thống nhận đầu vào và trả về câu hướng dẫn do mô hình sinh câu viết ra.
+Mô hình định vị và luật tính điểm chỉ phục vụ việc đánh giá; khi triển khai, hệ thống nhận đầu vào và trả về câu hướng dẫn do mô hình sinh câu viết ra.
 
 \begin{figure}[t]
 \centering
@@ -36,7 +36,7 @@ Mô hình định vị và luật chấm chỉ phục vụ việc đánh giá; k
   {mô hình định vị phần tử độc lập\\ câu $\rightarrow$ toạ độ $(x, y)$\\[1pt]
    \textit{\footnotesize công cụ đo, không huấn luyện}};
 \node (cham) [blk, below=13mm of dinhvi]
-  {luật chấm\\ ô Voronoi $\wedge$ khớp loại thao tác $\wedge$ không đảo nghĩa};
+  {luật tính điểm\\ ô Voronoi $\wedge$ khớp loại thao tác $\wedge$ không đảo nghĩa};
 \node (ra) [dongoc, below=6mm of cham] {\code{executable} $\in \{0, 1\}$};
 
 \draw [mui] (vao) -- (sinh);
@@ -45,7 +45,7 @@ Mô hình định vị và luật chấm chỉ phục vụ việc đánh giá; k
 \draw [mui] (cham) -- (ra);
 
 \end{tikzpicture}
-\caption[Bốn khâu của hệ thống.]{Bốn khâu của hệ thống. Chỉ khối tô xám (phương pháp đề xuất) được huấn luyện; hai khối dưới là công cụ chấm.}
+\caption[Bốn khâu của hệ thống.]{Bốn khâu của hệ thống. Chỉ khối tô xám (phương pháp đề xuất) được huấn luyện; hai khối dưới là công cụ đánh giá.}
 \label{fig:4.1}
 \end{figure}
 
@@ -103,11 +103,11 @@ Tham số huấn luyện được & 14.966.784 (0,48\% phần ngôn ngữ) \\
 \item \textbf{Tái sử dụng câu chuẩn của các bước tương tự (Mục~\ref{sec:4.6}).} Tập huấn luyện có hơn sáu mươi nghìn câu chuẩn, và nhiều bước mới rất giống một bước đã có câu chuẩn. Thành phần thứ hai, ACE, tìm bốn câu chuẩn của các bước giống nhất, cho một bộ sinh xem chúng, rồi chỉ thay câu nháp bằng câu của bộ sinh khi câu ấy chép đúng một câu ví dụ và cùng loại thao tác với câu nháp.
 \end{enumerate}
 
-Câu cuối cùng sau ACE là câu được đem đi chấm. Ở phần lớn các bước, luật của ACE không nhận câu của bộ sinh, nên câu cuối cùng vẫn là câu nháp. Lúc sinh câu, không thành phần nào thấy câu chuẩn của bước đang xét, và mô hình định vị dùng để chấm không tham gia vào việc huấn luyện hay chọn câu. Trong các chương sau, \emph{mô hình học với thưởng SPICE} là thành phần thứ nhất chạy một mình, còn \emph{phương pháp đề xuất} là cả hai thành phần nối tiếp.
+Câu cuối cùng sau ACE là câu được đem đi đánh giá. Ở phần lớn các bước, luật của ACE không nhận câu của bộ sinh, nên câu cuối cùng vẫn là câu nháp. Lúc sinh câu, không thành phần nào thấy câu chuẩn của bước đang xét, và mô hình định vị dùng để đánh giá không tham gia vào việc huấn luyện hay chọn câu. Trong các chương sau, \emph{mô hình học với thưởng SPICE} là thành phần thứ nhất chạy một mình, còn \emph{phương pháp đề xuất} là cả hai thành phần nối tiếp.
 
 \section{Thành phần thứ nhất: học tăng cường thưởng SPICE}\label{sec:4.5}
 
-Học có giám sát dạy mô hình chép lại câu chuẩn, nhưng không cho mô hình biết trong những câu nó có thể viết, câu nào tốt hơn. Học tăng cường bổ sung điều này: mô hình tự viết nhiều câu, mỗi câu được chấm điểm, và mô hình được điều chỉnh để viết những câu điểm cao thường xuyên hơn. Cách làm này đã được dùng trong sinh chú thích ảnh, với CIDEr và SPIDEr làm điểm thưởng~\cite{scst,spider}. Thành phần thứ nhất áp dụng nó cho câu hướng dẫn giao diện, với điểm thưởng là SPICE.
+Học có giám sát dạy mô hình chép lại câu chuẩn, nhưng không cho mô hình biết trong những câu nó có thể viết, câu nào tốt hơn. Học tăng cường bổ sung điều này: mô hình tự viết nhiều câu, mỗi câu được tính điểm, và mô hình được điều chỉnh để viết những câu điểm cao thường xuyên hơn. Cách làm này đã được dùng trong sinh chú thích ảnh, với CIDEr và SPIDEr làm điểm thưởng~\cite{scst,spider}. Thành phần thứ nhất áp dụng nó cho câu hướng dẫn giao diện, với điểm thưởng là SPICE.
 
 \textbf{Điểm thưởng.} SPICE~\cite{spice} so câu sinh ra với câu chuẩn theo nội dung chứ không theo từng chữ: hai câu được tách thành các đối tượng, thuộc tính của đối tượng và quan hệ giữa chúng, rồi đếm mức trùng khớp. Vì vậy hai câu cùng nói tới một nút ở cùng một vị trí được điểm cao dù dùng từ khác nhau. Trên tập kiểm định nội bộ (Mục~\ref{sec:3.3}), khi S1 viết tám câu cho mỗi bước, câu có SPICE cao nhất dẫn mô hình định vị tới đúng phần tử thường xuyên hơn hẳn câu S1 viết ra mặc định, nên SPICE là một điểm thưởng phù hợp. Điểm thưởng của một câu $s$ so với câu chuẩn $g$ là
 
@@ -122,7 +122,7 @@ trong đó $|\cdot|$ là số từ, và câu rỗng nhận 0 điểm. Số hạn
 
 \begin{enumerate}
 \item Với mỗi câu nhắc, mô hình viết $G = 8$ câu bằng lấy mẫu ngẫu nhiên (nhiệt độ 1,0), nên tám câu thường khác nhau.
-\item Mỗi câu được chấm bằng công thức~\eqref{eq:4.1}.
+\item Mỗi câu được đánh giá bằng công thức~\eqref{eq:4.1}.
 \item Điểm của mỗi câu được so với trung bình của tám câu (công thức~\eqref{eq:2.2}). Câu cao hơn trung bình nhận lợi thế dương, câu thấp hơn nhận lợi thế âm.
 \item Mô hình được cập nhật để tăng xác suất viết các câu có lợi thế dương và giảm xác suất các câu có lợi thế âm. Một số hạng phạt độ lệch KL, với hệ số $\beta = 0{,}04$, giữ mô hình không đi quá xa S1, để câu vẫn đúng văn phong đã học.
 \end{enumerate}
@@ -209,11 +209,11 @@ Phương pháp đề xuất được so với ba mốc:
 \begin{itemize}
 \item \textbf{Base:} mô hình gốc Qwen2.5-VL-3B-Instruct, chưa tinh chỉnh.
 \item \textbf{S1:} mô hình tinh chỉnh có giám sát từ mô hình gốc theo Bảng~\ref{tab:4.1}. S1 được huấn luyện hai lần với hai hạt giống 101 và 202; chênh lệch giữa hai lần cho biết điểm dao động bao nhiêu khi chỉ huấn luyện lại. S1 hạt giống 101 là điểm xuất phát của phương pháp đề xuất, nên là mốc so trực tiếp.
-\item \textbf{Trần:} chính câu chuẩn được đưa đi chấm, cho biết mức điểm cao nhất mà công cụ chấm cho được.
+\item \textbf{Trần:} chính câu chuẩn được đưa đi đánh giá, cho biết mức điểm cao nhất mà công cụ đánh giá cho được.
 \end{itemize}
 
 \section{Cách đọc kết quả}\label{sec:4.8}
 
-Mọi mô hình được chấm trên cùng 4.463 bước chạm của tập kiểm tra, nên hai mô hình được so theo từng bước. Mỗi phép so có ba con số: mức chênh $\Delta$, khoảng tin cậy 95\% và giá trị p của kiểm định McNemar (Mục~\ref{sec:5.13}). Khoảng tin cậy được tính bằng bootstrap lấy mẫu lại theo ứng dụng, vì các bước trong cùng một ứng dụng thường giống nhau. Một mô hình được coi là hơn hay kém mốc so sánh khi khoảng tin cậy nằm hẳn về một phía của 0; nếu khoảng tin cậy chứa 0, kết quả là chưa kết luận được.
+Mọi mô hình được đánh giá trên cùng 4.463 bước chạm của tập kiểm tra, nên hai mô hình được so theo từng bước. Mỗi phép so có ba con số: mức chênh $\Delta$, khoảng tin cậy 95\% và giá trị p của kiểm định McNemar (Mục~\ref{sec:5.13}). Khoảng tin cậy được tính bằng bootstrap lấy mẫu lại theo ứng dụng, vì các bước trong cùng một ứng dụng thường giống nhau. Một mô hình được coi là hơn hay kém mốc so sánh khi khoảng tin cậy nằm hẳn về một phía của 0; nếu khoảng tin cậy chứa 0, kết quả là chưa kết luận được.
 
 Để hình dung độ lớn của một mức chênh, có thể đặt nó cạnh hai con số: chênh lệch giữa hai hạt giống của S1 là 0,52 điểm (Mục~\ref{sec:6.7}), và sai số chuẩn của hiệu ghép cặp là 0,79 điểm (Mục~\ref{sec:5.13}).

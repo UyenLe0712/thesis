@@ -3,11 +3,11 @@
 
 \section{Đóng góp của luận văn}\label{sec:7.1}
 
-Đề tài xuất phát từ một quan sát: các tác tử giao diện sinh ra tọa độ để máy tự bấm, nhưng người dùng đang dừng lại giữa chừng thì cần một câu chỉ dẫn bằng tiếng Anh cho biết phải chạm vào đâu. Đề tài có ba đóng góp. Đóng góp chính là một phương pháp sinh câu chỉ dẫn gồm hai thành phần nối tiếp. Đóng góp thứ hai là độ đo executability, dùng để chấm phương pháp và mọi mô hình khác. Đóng góp thứ ba là chuỗi phân tích rút ra từ các hướng đã thử, cũng là căn cứ để chọn phương pháp.
+Đề tài xuất phát từ một quan sát: các tác tử giao diện sinh ra tọa độ để máy tự bấm, nhưng người dùng đang dừng lại giữa chừng thì cần một câu chỉ dẫn bằng tiếng Anh cho biết phải chạm vào đâu. Đề tài có ba đóng góp. Đóng góp chính là một phương pháp sinh câu chỉ dẫn gồm hai thành phần nối tiếp. Đóng góp thứ hai là độ đo executability, dùng để đánh giá phương pháp và mọi mô hình khác. Đóng góp thứ ba là chuỗi phân tích rút ra từ các hướng đã thử, cũng là căn cứ để chọn phương pháp.
 
 \subsection*{Về phương pháp đề xuất}
 
-Phương pháp (Mục~\ref{sec:4.4}) xây dựng trên mô hình tinh chỉnh có giám sát S1 và tác động thẳng vào câu ở đầu ra. Thành phần thứ nhất học tiếp S1 bằng học tăng cường với phần thưởng SPICE và viết một câu nháp. Thành phần thứ hai, ACE, chỉ thay câu nháp bằng một câu ví dụ truy hồi từ tập huấn luyện khi câu ấy được chép nguyên văn và cùng loại thao tác với câu nháp. Mô hình định vị dùng để chấm không tham gia vào phần thưởng hay luật chọn câu, nên phép đo ở đầu ra vẫn độc lập với phương pháp.
+Phương pháp (Mục~\ref{sec:4.4}) xây dựng trên mô hình tinh chỉnh có giám sát S1 và tác động thẳng vào câu ở đầu ra. Thành phần thứ nhất học tiếp S1 bằng học tăng cường với phần thưởng SPICE và viết một câu nháp. Thành phần thứ hai, ACE, chỉ thay câu nháp bằng một câu ví dụ truy hồi từ tập huấn luyện khi câu ấy được chép nguyên văn và cùng loại thao tác với câu nháp. Mô hình định vị dùng để đánh giá không tham gia vào phần thưởng hay luật chọn câu, nên phép đo ở đầu ra vẫn độc lập với phương pháp.
 
 Kết quả trên 4.463 bước chạm của tập kiểm tra:
 
@@ -23,9 +23,9 @@ Executability đưa câu sinh ra cho một mô hình định vị phần tử đ
 
 \begin{itemize}
 \item Sai số của công cụ đo nhỏ hơn nhiều so với khoảng cách giữa các phần tử (Mục~\ref{sec:5.4}), và luật ô Voronoi gần như không cho điểm câu gọi sai tên nút (Mục~\ref{sec:5.2}).
-\item Câu chuẩn đạt 75,7\%; câu chung chung đạt 12,0\%; câu đúng văn phong nhưng sai nội dung chỉ đạt 6,1\%, nên công cụ đo chấm theo nội dung chứ không theo văn phong (Mục~\ref{sec:5.5} và Mục~\ref{sec:5.6}).
-\item Thứ tự giữa câu chuẩn, S1 và mô hình gốc không đổi dưới năm luật chấm khác nhau (Mục~\ref{sec:5.12}), và độ đo ổn định khi câu chuẩn được đổi động từ hay đảo trật tự (Mục~\ref{sec:5.8}).
-\item Khi chấm lại bằng một mô hình định vị thứ hai không học AndroidControl, chênh lệch giữa S1 và mô hình gốc giữ được 94\% (Mục~\ref{sec:5.9}). Khi chấm bằng Phi-4, một mô hình ngoài họ Qwen, thứ tự giữa các mô hình cũng giữ nguyên (Mục~\ref{sec:5.10}).
+\item Câu chuẩn đạt 75,7\%; câu chung chung đạt 12,0\%; câu đúng văn phong nhưng sai nội dung chỉ đạt 6,1\%, nên công cụ đo đánh giá theo nội dung chứ không theo văn phong (Mục~\ref{sec:5.5} và Mục~\ref{sec:5.6}).
+\item Thứ tự giữa câu chuẩn, S1 và mô hình gốc không đổi dưới năm luật tính điểm khác nhau (Mục~\ref{sec:5.12}), và độ đo ổn định khi câu chuẩn được đổi động từ hay đảo trật tự (Mục~\ref{sec:5.8}).
+\item Khi đánh giá lại bằng một mô hình định vị thứ hai không học AndroidControl, chênh lệch giữa S1 và mô hình gốc giữ được 94\% (Mục~\ref{sec:5.9}). Khi đánh giá bằng Phi-4, một mô hình ngoài họ Qwen, thứ tự giữa các mô hình cũng giữ nguyên (Mục~\ref{sec:5.10}).
 \end{itemize}
 
 \subsection*{Về dữ liệu và mô hình tinh chỉnh có giám sát}
@@ -49,9 +49,9 @@ Các hướng đã thử trước phương pháp đề xuất được tóm tắ
 \subsection{Hạn chế của công cụ đo}\label{sec:7.2.1}
 
 \begin{itemize}
-\item \textbf{Công cụ đo đã học một phần AndroidControl và cùng họ với mô hình được chấm.} UGround-V1-2B được huấn luyện trên 47 nghìn phần tử từ phần huấn luyện chính thức của AndroidControl, trong khi 90\% tác vụ của tập kiểm tra cũng nằm trong phần này. Tách điểm theo phần chia chính thức không cho thấy chênh lệch (Mục~\ref{sec:5.3}), và chấm lại bằng UI-Venus-Ground-7B, một mô hình không học AndroidControl, giữ được 94\% chênh lệch kiểm chứng (Mục~\ref{sec:5.9}). Cả hai mô hình định vị đều thuộc họ Qwen-VL. Người nghe Phi-4 ngoài họ Qwen giữ nguyên thứ tự giữa các mô hình, nhưng mới chấm bốn mô hình và dải điểm hẹp hơn nhiều so với executability (Mục~\ref{sec:5.10}).
+\item \textbf{Công cụ đo đã học một phần AndroidControl và cùng họ với mô hình được đánh giá.} UGround-V1-2B được huấn luyện trên 47 nghìn phần tử từ phần huấn luyện chính thức của AndroidControl, trong khi 90\% tác vụ của tập kiểm tra cũng nằm trong phần này. Tách điểm theo phần chia chính thức không cho thấy chênh lệch (Mục~\ref{sec:5.3}), và đánh giá lại bằng UI-Venus-Ground-7B, một mô hình không học AndroidControl, giữ được 94\% chênh lệch kiểm chứng (Mục~\ref{sec:5.9}). Cả hai mô hình định vị đều thuộc họ Qwen-VL. Người nghe Phi-4 ngoài họ Qwen giữ nguyên thứ tự giữa các mô hình, nhưng mới đánh giá bốn mô hình và dải điểm hẹp hơn nhiều so với executability (Mục~\ref{sec:5.10}).
 \item \textbf{Độ bền trước cách diễn đạt khác mới được kiểm một phần.} Phép viết lại ở Mục~\ref{sec:5.8} chỉ đổi động từ và trật tự câu. Việc viết lại chính tên gọi và cách mô tả phần tử, phần nặng nhất trong cảnh báo của Jandial và cộng sự~\cite{groundersunderstand}, chưa được đo.
-\item \textbf{Độ đo bỏ sót lỗi theo cả hai chiều.} Một điểm trỏ lệch dưới khoảng 63 điểm ảnh thường vẫn nằm trong ô của chính phần tử cần chạm, nên độ đo không bắt được việc trỏ hơi lệch trong cùng phần tử. Ở chiều ngược lại, độ đo có thể chấm trượt cả câu đúng: câu chuẩn trượt ở 1.083 bước, phần lớn do giới hạn của công cụ đo, và có 935 bước (21\%) mà cả mô hình gốc, S1 lẫn câu chuẩn đều trượt. Vì vậy ngưỡng tối đa 75,7\% phản ánh giới hạn của công cụ đo nhiều hơn giới hạn của câu hướng dẫn.
+\item \textbf{Độ đo bỏ sót lỗi theo cả hai chiều.} Một điểm trỏ lệch dưới khoảng 63 điểm ảnh thường vẫn nằm trong ô của chính phần tử cần chạm, nên độ đo không bắt được việc trỏ hơi lệch trong cùng phần tử. Ở chiều ngược lại, độ đo có thể coi sai cả câu đúng: câu chuẩn trượt ở 1.083 bước, phần lớn do giới hạn của công cụ đo, và có 935 bước (21\%) mà cả mô hình gốc, S1 lẫn câu chuẩn đều trượt. Vì vậy ngưỡng tối đa 75,7\% phản ánh giới hạn của công cụ đo nhiều hơn giới hạn của câu hướng dẫn.
 \item \textbf{Luật ô Voronoi phụ thuộc vào độ đầy đủ của danh sách phần tử.} Nếu cây trợ năng bỏ sót một nút cạnh phần tử cần chạm thì một câu sai vẫn được tính là đúng; phép gộp phần tử cũng xóa nhầm một phần tử thật ở 8,2\% số bước. Ngược lại, luật chặt quá mức ở các hàng danh sách, khi một mảnh chữ OCR cùng hàng bị coi là một nút riêng (Mục~\ref{sec:5.12}).
 \item \textbf{Độ đo đo một mô hình định vị, không phải một người.} Dòng sinh biểu thức quy chiếu vẫn coi thành công của người nghe là bằng chứng về chất lượng mô tả~\cite{mao2016,luo2017,yu2017}, nhưng mức đồng thuận giữa mô hình định vị và người chưa được đo (Mục~\ref{sec:7.3}).
 \end{itemize}
@@ -61,7 +61,7 @@ Các hướng đã thử trước phương pháp đề xuất được tóm tắ
 \begin{itemize}
 \item \textbf{Thành phần thứ nhất chưa có cấu hình đối chứng học thêm cùng số bước.} Vì vậy chưa tách được phần do học tăng cường khỏi phần do học thêm. Câu của mô hình này cũng được sinh theo một quy trình hơi khác với S1; trên 20 bước chạm dùng để kiểm, riêng khác biệt này làm 4 câu thay đổi (Mục~\ref{sec:6.3.2}).
 \item \textbf{ACE chưa tách được phần của truy hồi.} Trên tập kiểm định nội bộ, bộ sinh có câu ví dụ không hơn một mô hình học thêm không có câu ví dụ ở đa số độ đo. Mức tăng ở độ đo so câu chưa có khoảng tin cậy, và chỉ nằm ở bề mặt câu, chưa giúp mô hình định vị tìm đúng phần tử hơn (Mục~\ref{sec:6.4}).
-\item \textbf{Các hướng đã thử thiếu cấu hình đối chứng.} Chưa chạy cấu hình học thêm cùng số bước với giai đoạn thưởng tọa độ, ba cấu hình đối chứng của thiết kế ban đầu (Bảng~\ref{tab:6.13}) và cấu hình đối chứng của mô hình chọn ứng viên. Giai đoạn thưởng tọa độ cũng chưa được chấm ở bước không chạm.
+\item \textbf{Các hướng đã thử thiếu cấu hình đối chứng.} Chưa chạy cấu hình học thêm cùng số bước với giai đoạn thưởng tọa độ, ba cấu hình đối chứng của thiết kế ban đầu (Bảng~\ref{tab:6.13}) và cấu hình đối chứng của mô hình chọn ứng viên. Giai đoạn thưởng tọa độ cũng chưa được đánh giá ở bước không chạm.
 \item \textbf{Hai con số +5,4 và +9,3 điểm chỉ là ngưỡng lý thuyết.} +5,4 là mức tăng nếu tránh được phần điểm sụt khi dòng mô tả trỏ sai (Mục~\ref{sec:A.2.3}); +9,3 là mức tăng của mô hình chọn ứng viên nếu tránh được các lần từ chối chọn sai (Mục~\ref{sec:A.3.2}). Cả hai tính trên nhóm bước chia theo hành vi của chính mô hình, không phải kết quả của một mô hình đã chạy.
 \end{itemize}
 
@@ -82,16 +82,16 @@ Các hướng dưới đây xếp theo mức độ cần thiết đối với đ
 
 \begin{itemize}
 \item \textbf{Hoàn tất đánh giá phương pháp đề xuất.} Với thành phần thứ nhất cần thêm một cấu hình học có giám sát thêm cùng số bước trên cùng tập câu nhắc, và sinh lại câu của S1 theo cùng quy trình sinh để hai bên chỉ khác nhau một yếu tố. Với ACE cần khoảng tin cậy cho nhóm độ đo so câu.
-\item \textbf{Nối độ đo với đánh giá của người.} Hai người độc lập chấm tay 100 câu, rồi tính mức đồng thuận giữa điểm chấm tay và executability. Chỉ phép đo này kiểm được rủi ro do người nghe của độ đo là một mô hình.
+\item \textbf{Nối độ đo với đánh giá của người.} Hai người độc lập đánh giá thủ công 100 câu, rồi tính mức đồng thuận giữa điểm đánh giá thủ công và executability. Chỉ phép đo này kiểm được rủi ro do người nghe của độ đo là một mô hình.
 \item \textbf{Đo độ bền trước phép viết lại mạnh hơn.} Viết lại cả tên gọi và cách mô tả phần tử, ngoài động từ và trật tự câu, rồi chạy lại mô hình định vị.
 \item \textbf{Bộ chọn độc lập cho bộ sửa câu theo vùng cắt.} Bộ sửa câu theo vùng cắt (TAGE) cho executability thấp hơn câu nháp vì bộ chọn nhận câu sửa ở cả những bước vùng cắt sai (Mục~\ref{sec:A.7.2}). Bước thử rẻ nhất là một bộ chọn so điểm mô hình định vị trỏ tới khi đọc câu nháp với điểm dùng để đặt vùng cắt.
 \item \textbf{Học thông tin vị trí cùng lúc với phần sinh câu.} Cả bốn phép thử ở Mục~\ref{sec:A.6} đều gắn thông tin vị trí vào bộ sinh đã học xong và bị bỏ qua. Phép thử còn thiếu là học cả hai từ đầu.
 \item \textbf{Mở phần thị giác của mô hình nền.} Mục~\ref{sec:A.5} quy 91\% khoảng cách tới câu chuẩn về nhóm bước mô hình nhìn sai phần tử, trong khi mọi lượt huấn luyện đều đóng băng phần thị giác. Một lượt mở phần thị giác đã dừng ở 41\% số bước (Bảng~\ref{tab:6.13}), nên hướng này chưa có kết luận. Kỳ vọng nên khiêm tốn, vì mỗi điểm cải thiện ở khâu nhận ra phần tử chỉ chuyển thành khoảng 0,028 điểm executability.
 \item \textbf{Mô hình chọn ứng viên.} Cần một bộ phân loại riêng, đặt trước bước chọn, quyết định danh sách có chứa phần tử cần chạm hay không, và cần chạy cấu hình đối chứng có cùng danh sách ứng viên để biết bước chọn đóng góp bao nhiêu (Mục~\ref{sec:A.3.2}).
 \item \textbf{Cải thiện bộ liệt kê phần tử.} Ghép thêm một bộ phát hiện phần tử dựa trên ảnh bên cạnh cây trợ năng sẽ làm luật ô Voronoi chặt hơn, rõ nhất ở các nút chỉ có biểu tượng và ở hàng danh sách.
-\item \textbf{Mở rộng phạm vi.} Chấm trên phần kiểm chính thức của AndroidControl, xét chuỗi nhiều màn hình, xét giao diện tiếng Việt, và thêm một bộ dữ liệu thứ hai.
+\item \textbf{Mở rộng phạm vi.} Đánh giá trên phần kiểm chính thức của AndroidControl, xét chuỗi nhiều màn hình, xét giao diện tiếng Việt, và thêm một bộ dữ liệu thứ hai.
 \end{itemize}
 
 \section{Tính sẵn có của dữ liệu và mã nguồn}\label{sec:7.4}
 
-Dữ liệu nguồn là AndroidControl~\cite{androidcontrol}, giấy phép CC0, lấy qua hai bản phân phối công khai trên Hugging Face ở Bảng~\ref{tab:3.2}; ảnh màn hình không được phân phối lại. Mã nguồn gồm các bước dựng dữ liệu, tệp cấu hình huấn luyện dùng chung, chương trình sinh câu và chương trình chấm điểm. Kết quả thô được lưu ở mức từng bước: mỗi mô hình có một tệp câu sinh ra và một tệp ghi mỗi bước một dòng gồm tọa độ mô hình định vị trả về, tọa độ đáp án và giá trị của cả ba điều kiện chấm. Nhờ vậy, đổi luật chấm hay thêm một cách chia nhóm chỉ cần tính lại từ tệp này mà không gọi lại mô hình định vị.
+Dữ liệu nguồn là AndroidControl~\cite{androidcontrol}, giấy phép CC0, lấy qua hai bản phân phối công khai trên Hugging Face ở Bảng~\ref{tab:3.2}; ảnh màn hình không được phân phối lại. Mã nguồn gồm các bước dựng dữ liệu, tệp cấu hình huấn luyện dùng chung, chương trình sinh câu và chương trình tính điểm. Kết quả thô được lưu ở mức từng bước: mỗi mô hình có một tệp câu sinh ra và một tệp ghi mỗi bước một dòng gồm tọa độ mô hình định vị trả về, tọa độ đáp án và giá trị của cả ba điều kiện đánh giá. Nhờ vậy, đổi luật tính điểm hay thêm một cách chia nhóm chỉ cần tính lại từ tệp này mà không gọi lại mô hình định vị.
