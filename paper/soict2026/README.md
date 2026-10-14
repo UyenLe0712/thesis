@@ -73,7 +73,12 @@ Track: Multimedia Processing, Computer Vision, and Multimodal Intelligence. Ngư
 24C15039@student.hcmus.edu.vn. ⚠️ Mail xác nhận chỉ liệt kê MỘT tác giả (thiếu thầy Nguyen Hong Buu Long)
 và tên hiện "Uyen Le Doan Phuong" — cần sửa trên EasyChair trước 25/9. Báo kết quả 12/10.
 
-## ⭐ Bản GUIStep (chép từ 14 ảnh nhận 26/9) — `guistep/` — KHÁC bài đã nộp #5577
+## ⭐ Bản GUIStep (chép từ 14 ảnh nhận 26/9) — `guistep/`
+
+✅ **User xác nhận 14/10/2026: bài trên EasyChair #5577 mang nhan đề GUIStep** (*GUIStep: A Compact
+Vision-Language Model for GUI Step Instruction Generation*). Luận văn ch8 đã đổi theo. Ghi chú bên dưới
+nói "KHÁC bài đã nộp" là ghi chú 26/9, nay không còn đúng; `main.tex` ở gốc thư mục là bản 21/9 cũ.
+
 
 ⚠️ **Đây là bài khác**, không phải bản "strictness ladder" của `main.tex` (đã nộp 21/9). Khung mô hình
 trước: nhan đề *GUIStep: A Compact Vision–Language Model for GUI Step Instruction Generation*; ba
