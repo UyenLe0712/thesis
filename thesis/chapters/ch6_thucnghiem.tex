@@ -5,7 +5,7 @@ Chương này trình bày kết quả thực nghiệm của phương pháp đề
 
 \section{Thiết lập thực nghiệm}\label{sec:6.1}
 
-Mọi mô hình được đánh giá trên cùng 4.463 bước chạm của tập kiểm tra bằng cùng một quy trình đánh giá. Phương pháp đề xuất gồm mô hình học tăng cường với phần thưởng SPICE để sinh câu nháp và ACE để quyết định có hiệu chỉnh câu nháp bằng câu ví dụ hay không (Mục~\ref{sec:4.4} đến Mục~\ref{sec:4.6}).
+Mọi mô hình được đánh giá trên cùng 4.463 bước chạm của tập kiểm tra bằng cùng một quy trình đánh giá. Phương pháp đề xuất gồm mô hình học tăng cường với phần thưởng SPICE để sinh câu hướng dẫn ban đầu và ACE để quyết định có hiệu chỉnh câu hướng dẫn ban đầu bằng câu ví dụ hay không (Mục~\ref{sec:4.4} đến Mục~\ref{sec:4.6}).
 
 Ba mốc so sánh (Mục~\ref{sec:4.7}) gồm mô hình gốc (Base), mô hình tinh chỉnh có giám sát với hai seed 101 và 202 (S1), và câu tham chiếu được đưa trực tiếp vào quy trình đánh giá làm mốc tham chiếu trên của thang điểm. Ở một bước, S1 trả về câu rỗng; bước này được tính là không đạt và vẫn nằm trong mẫu số 4.463.
 
@@ -127,17 +127,17 @@ Mức cải thiện có cùng chiều trên toàn bộ các độ đo được b
 
 \section{Thành phần thứ hai: hiệu chỉnh bằng câu ví dụ với ràng buộc nhất quán thao tác (ACE)}\label{sec:6.4}
 
-Trên tập kiểm tra, quy tắc đồng thuận của ACE (Mục~\ref{sec:4.6}) thay thế 402 trong 4.463 câu nháp (9,0\%). Bảng~\ref{tab:6.4} so sánh ACE, tức phương pháp đề xuất, với câu nháp và với mô hình sinh câu độc lập, trong đó đầu ra của mô hình sinh được sử dụng ở mọi bước.
+Trên tập kiểm tra, quy tắc đồng thuận của ACE (Mục~\ref{sec:4.6}) thay thế 402 trong 4.463 câu hướng dẫn ban đầu (9,0\%). Bảng~\ref{tab:6.4} so sánh ACE, tức phương pháp đề xuất, với câu hướng dẫn ban đầu và với mô hình sinh câu độc lập, trong đó đầu ra của mô hình sinh được sử dụng ở mọi bước.
 
-\textbf{Khả năng của kho truy hồi.} Với mỗi bước chạm trong tập kiểm tra, bốn câu tham chiếu gần nhất được truy hồi từ tập huấn luyện theo quy trình ở Mục~\ref{sec:4.6}. Trong 15,8\% số bước, ít nhất một câu ví dụ trùng nguyên văn với câu tham chiếu của bước đang xét. Ở 9,8\% số bước, điều này xảy ra đồng thời với việc câu nháp của thành phần thứ nhất không đạt. Nếu luôn có thể nhận ra và chọn đúng câu ví dụ trong các trường hợp này, BLEU-4 tính trên toàn tập có thể tăng khoảng 5 điểm và CIDEr-D khoảng 65 điểm. Tuy nhiên, một chiến lược đơn giản như luôn lấy câu ví dụ đứng đầu lại làm BLEU-4 giảm từ 52,4 xuống 28,3. Kết quả này cho thấy kho truy hồi có chứa thông tin hữu ích, nhưng việc khai thác thông tin đó phụ thuộc vào cơ chế lựa chọn câu ví dụ. Phân tích này được dùng để giải thích vai trò của quy tắc đồng thuận, không thay thế kết quả đánh giá trực tiếp của ACE.
+\textbf{Khả năng của kho truy hồi.} Với mỗi bước chạm trong tập kiểm tra, bốn câu tham chiếu gần nhất được truy hồi từ tập huấn luyện theo quy trình ở Mục~\ref{sec:4.6}. Trong 15,8\% số bước, ít nhất một câu ví dụ trùng nguyên văn với câu tham chiếu của bước đang xét. Ở 9,8\% số bước, điều này xảy ra đồng thời với việc câu hướng dẫn ban đầu của thành phần thứ nhất không đạt. Nếu luôn có thể nhận ra và chọn đúng câu ví dụ trong các trường hợp này, BLEU-4 tính trên toàn tập có thể tăng khoảng 5 điểm và CIDEr-D khoảng 65 điểm. Tuy nhiên, một chiến lược đơn giản như luôn lấy câu ví dụ đứng đầu lại làm BLEU-4 giảm từ 52,4 xuống 28,3. Kết quả này cho thấy kho truy hồi có chứa thông tin hữu ích, nhưng việc khai thác thông tin đó phụ thuộc vào cơ chế lựa chọn câu ví dụ. Phân tích này được dùng để giải thích vai trò của quy tắc đồng thuận, không thay thế kết quả đánh giá trực tiếp của ACE.
 
 \begin{table}[htbp]
 \centering\small
-\caption[ACE trên 4.463 bước chạm, so với câu nháp (của mô hình học tăng cường với phần thưởng SPICE) và với mô hình sinh câu độc lập.]{ACE trên 4.463 bước chạm, so với câu nháp (của mô hình học tăng cường với phần thưởng SPICE) và với mô hình sinh câu độc lập. Ba độ đo vị trí kèm khoảng tin cậy 95\% từ bootstrap gom cụm theo ứng dụng. Bảy độ đo dựa trên câu tham chiếu chưa có khoảng tin cậy; cột ACE $-$ câu nháp lệch tối đa 0,02 so với Bảng~\ref{tab:6.3} do được đánh giá lại.}\label{tab:6.4}
+\caption[ACE trên 4.463 bước chạm, so với câu hướng dẫn ban đầu (của mô hình học tăng cường với phần thưởng SPICE) và với mô hình sinh câu độc lập.]{ACE trên 4.463 bước chạm, so với câu hướng dẫn ban đầu (của mô hình học tăng cường với phần thưởng SPICE) và với mô hình sinh câu độc lập. Ba độ đo vị trí kèm khoảng tin cậy 95\% từ bootstrap gom cụm theo ứng dụng. Bảy độ đo dựa trên câu tham chiếu chưa có khoảng tin cậy; cột ACE $-$ câu hướng dẫn ban đầu lệch tối đa 0,02 so với Bảng~\ref{tab:6.3} do được đánh giá lại.}\label{tab:6.4}
 \setlength{\tabcolsep}{4pt}
 \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash\hsize=1.00\hsize}Xrrrr@{}}
 \toprule
-\textbf{Độ đo} & \textbf{Câu nháp} & \textbf{Mô hình sinh độc lập} & \textbf{ACE} & \textbf{ACE $-$ câu nháp} \\
+\textbf{Độ đo} & \textbf{Câu ban đầu} & \textbf{Mô hình sinh độc lập} & \textbf{ACE} & \textbf{ACE $-$ câu ban đầu} \\
 \midrule
 Executability & 60,65 & 59,40 & 60,68 & +0,02 [$-$0,21; +0,26] \\
 Quy tắc hộp phần tử & 67,02 & 65,81 & 67,11 & +0,09 [$-$0,15; +0,33] \\
@@ -153,11 +153,11 @@ BERTScore & 67,07 & 67,52 & 67,73 & +0,66 \\
 \end{tabularx}
 \end{table}
 
-\textbf{Kết quả.} So với câu nháp, ACE làm tăng cả bảy độ đo dựa trên câu tham chiếu, trong đó mức tăng rõ nhất xuất hiện ở CIDEr-D (+11,98) và SPICE (+1,34). Ngược lại, ba độ đo dựa trên vị trí hầu như không thay đổi. Trong 402 câu được thay thế, có 15 bước chuyển từ sai sang đúng và 14 bước chuyển theo chiều ngược lại (p = 1,0). Vì vậy, ACE gần như giữ nguyên mức executability mà thành phần thứ nhất đã đạt được, đồng thời làm câu đầu ra gần hơn với câu tham chiếu theo các độ đo văn bản. Theo quy tắc hộp phần tử và quy tắc khoảng cách Euclid, phương pháp hoàn chỉnh cao hơn S1 lần lượt 1,61 và 1,95 điểm; cả hai chênh lệch đều có p < 0,001.
+\textbf{Kết quả.} So với câu hướng dẫn ban đầu, ACE làm tăng cả bảy độ đo dựa trên câu tham chiếu, trong đó mức tăng rõ nhất xuất hiện ở CIDEr-D (+11,98) và SPICE (+1,34). Ngược lại, ba độ đo dựa trên vị trí hầu như không thay đổi. Trong 402 câu được thay thế, có 15 bước chuyển từ sai sang đúng và 14 bước chuyển theo chiều ngược lại (p = 1,0). Vì vậy, ACE gần như giữ nguyên mức executability mà thành phần thứ nhất đã đạt được, đồng thời làm câu đầu ra gần hơn với câu tham chiếu theo các độ đo văn bản. Theo quy tắc hộp phần tử và quy tắc khoảng cách Euclid, phương pháp hoàn chỉnh cao hơn S1 lần lượt 1,61 và 1,95 điểm; cả hai chênh lệch đều có p < 0,001.
 
-\textbf{Ảnh hưởng khi sử dụng mô hình sinh câu độc lập.} Mô hình sinh câu độc lập đạt điểm cao hơn câu nháp trên năm trong bảy độ đo dựa trên câu tham chiếu, nhưng thấp hơn 1,25 điểm executability [$-$2,06; $-$0,44] (p = 0,002). Ở 19,1\% số bước, mô hình sao chép nguyên văn một câu ví dụ; 43,5\% số câu sao chép trùng câu tham chiếu, gần gấp đôi tỉ lệ của câu nháp (22,8\%). Ngược lại, ở những bước mô hình tự sinh câu mới, kết quả thấp hơn câu nháp. Kết quả này cho thấy truy hồi có ích khi mô hình lựa chọn đúng câu ví dụ, nhưng việc thay câu nháp cần đi kèm điều kiện lựa chọn.
+\textbf{Ảnh hưởng khi sử dụng mô hình sinh câu độc lập.} Mô hình sinh câu độc lập đạt điểm cao hơn câu hướng dẫn ban đầu trên năm trong bảy độ đo dựa trên câu tham chiếu, nhưng thấp hơn 1,25 điểm executability [$-$2,06; $-$0,44] (p = 0,002). Ở 19,1\% số bước, mô hình sao chép nguyên văn một câu ví dụ; 43,5\% số câu sao chép trùng câu tham chiếu, gần gấp đôi tỉ lệ của câu hướng dẫn ban đầu (22,8\%). Ngược lại, ở những bước mô hình tự sinh câu mới, kết quả thấp hơn câu hướng dẫn ban đầu. Kết quả này cho thấy truy hồi có ích khi mô hình lựa chọn đúng câu ví dụ, nhưng việc thay câu hướng dẫn ban đầu cần đi kèm điều kiện lựa chọn.
 
-\textbf{Đóng góp của ràng buộc nhất quán loại thao tác.} Nếu chỉ dùng điều kiện sao chép, quy tắc thay 453 câu và vẫn cải thiện cả bảy độ đo dựa trên câu tham chiếu, nhưng executability thấp hơn câu nháp 0,11 điểm (24 bước chuyển từ sai sang đúng và 29 bước chuyển từ đúng sang sai). Ràng buộc loại thao tác loại 51 câu không nhất quán, nhờ đó ACE cao hơn biến thể chỉ dùng điều kiện sao chép 0,13 điểm executability và không thấp hơn ở độ đo nào trong Bảng~\ref{tab:6.4}.
+\textbf{Đóng góp của ràng buộc nhất quán loại thao tác.} Nếu chỉ dùng điều kiện sao chép, quy tắc thay 453 câu và vẫn cải thiện cả bảy độ đo dựa trên câu tham chiếu, nhưng executability thấp hơn câu hướng dẫn ban đầu 0,11 điểm (24 bước chuyển từ sai sang đúng và 29 bước chuyển từ đúng sang sai). Ràng buộc loại thao tác loại 51 câu không nhất quán, nhờ đó ACE cao hơn biến thể chỉ dùng điều kiện sao chép 0,13 điểm executability và không thấp hơn ở độ đo nào trong Bảng~\ref{tab:6.4}.
 
 \textbf{Phạm vi cải thiện.} Lợi ích của ACE tập trung ở các độ đo văn bản: cả bảy độ đo dựa trên câu tham chiếu đều tăng, trong khi executability được duy trì gần như không đổi. Kết quả này cho thấy ACE đóng vai trò bổ sung cho thành phần học tăng cường, cải thiện mức tương đồng với câu tham chiếu mà không đánh đổi khả năng định vị. Khoảng tin cậy của nhóm độ đo văn bản chưa được ước lượng; đây là nội dung cần bổ sung trong các phân tích tiếp theo.
 
@@ -454,7 +454,7 @@ Học theo cặp ưu tiên (MIN-DESC), Mục~\ref{sec:A.2.2} & học theo cặp 
 Chọn ứng viên, Mục~\ref{sec:A.3.2} & chọn phần tử cần chạm trong danh sách được xây dựng sẵn & 56,1\%, chỉ có thể so sánh trực tiếp với mô hình gốc & khi đưa ra lựa chọn, độ chính xác cao, nhưng tần suất từ chối chọn lớn \\
 Giai đoạn thưởng tọa độ, Mục~\ref{sec:A.4.2} & học tăng cường với phần thưởng dựa trên độ chính xác của tọa độ trong dòng mô tả & 60,1\% (77,3\% theo quy tắc khoảng cách Euclid) & độ chính xác tọa độ tăng nhưng thay đổi ở câu đầu ra còn hạn chế \\
 Đưa thêm thông tin vị trí, Mục~\ref{sec:A.6} & bổ sung thông tin vị trí cho mô hình sinh câu (bốn cách) & dừng ở tập kiểm định nội bộ & thông tin này chưa được phản ánh rõ trong đầu ra của mô hình sinh câu \\
-Hiệu chỉnh câu theo vùng ảnh cục bộ (TAGE), Mục~\ref{sec:A.7.2} & viết lại câu nháp sau khi xem ảnh phóng to quanh phần tử & 60,2\%, thấp hơn câu nháp 0,43 điểm & bộ chọn có xu hướng chấp nhận câu hiệu chỉnh ngay cả khi vùng ảnh cục bộ chưa đúng \\
+Hiệu chỉnh câu theo vùng ảnh cục bộ (TAGE), Mục~\ref{sec:A.7.2} & viết lại câu hướng dẫn ban đầu sau khi xem ảnh phóng to quanh phần tử & 60,2\%, thấp hơn câu hướng dẫn ban đầu 0,43 điểm & bộ chọn có xu hướng chấp nhận câu hiệu chỉnh ngay cả khi vùng ảnh cục bộ chưa đúng \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -506,7 +506,7 @@ Vùng cắt làm ảnh thứ hai & Dừng ở khâu đánh giá & không phân b
 Đưa thêm vai trò, vùng và loại thao tác vào mô hình & Dừng sau một lượt & hệ số trộn tự giảm về gần không; chỉ 4\% số câu đổi \\
 Làm nét ảnh quanh phần tử & Dừng ở khâu đánh giá & không cải thiện so với làm nét ở vị trí đối diện \\
 Hai lượt viết lại có chọn lọc; bộ xếp hạng câu dùng màn kế tiếp & Dừng ở khâu sàng lọc & số câu lỗi đủ điều kiện hiệu chỉnh còn ít; bộ xếp hạng cho kết quả thấp hơn giải mã tham lam \\
-Hiệu chỉnh câu theo vùng ảnh cục bộ (TAGE) & Hoàn tất, đã đánh giá & 60,2; thấp hơn câu nháp 0,43; Mục~\ref{sec:A.7.2} \\
+Hiệu chỉnh câu theo vùng ảnh cục bộ (TAGE) & Hoàn tất, đã đánh giá & 60,2; thấp hơn câu hướng dẫn ban đầu 0,43; Mục~\ref{sec:A.7.2} \\
 Mô hình định vị thứ hai (UI-Venus) & Hoàn tất & chênh lệch S1 với mô hình gốc giữ 94\%; Mục~\ref{sec:5.9} \\
 Mô hình listener dạng lựa chọn (Phi-4) & Hoàn tất một phần & đã đánh giá câu tham chiếu, giai đoạn thưởng tọa độ, S1/101 và 3.566 bước của mô hình gốc; Mục~\ref{sec:5.10} \\
 Đánh giá thủ công 100 câu bởi hai người & Không thực hiện & còn là một hạn chế; Mục~\ref{sec:7.2} \\

@@ -31,13 +31,13 @@ SPICE & Semantic Propositional Image Caption Evaluation & Độ đo dựa trên 
 \multicolumn{3}{@{}l@{}}{\textit{Thuật ngữ riêng của đề tài: phương pháp đề xuất}} \\
 \midrule
 \multicolumn{2}{@{}p{8.2cm}}{Phương pháp đề xuất}
-& Đóng góp chính của đề tài, gồm hai thành phần nối tiếp. Thành phần thứ nhất viết câu nháp, sau đó ACE quyết định giữ câu nháp hay thay bằng một câu ví dụ truy hồi được (Mục~\ref{sec:4.4}). \\
+& Đóng góp chính của đề tài, gồm hai thành phần nối tiếp. Thành phần thứ nhất viết câu hướng dẫn ban đầu, sau đó ACE quyết định giữ câu hướng dẫn ban đầu hay thay bằng một câu ví dụ truy hồi được (Mục~\ref{sec:4.4}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Mô hình học tăng cường với phần thưởng SPICE}
 & Đây là thành phần thứ nhất của phương pháp đề xuất, trong đó mô hình tinh chỉnh có giám sát (S1) được học tiếp bằng học tăng cường theo nhóm, với phần thưởng là điểm SPICE giữa câu sinh và câu tham chiếu (Mục~\ref{sec:4.5}). \\
-\multicolumn{2}{@{}p{8.2cm}}{Câu nháp}
+\multicolumn{2}{@{}p{8.2cm}}{Câu hướng dẫn ban đầu}
 & Câu mà mô hình học tăng cường với phần thưởng SPICE sinh cho bước đang xét bằng giải mã tham lam. Câu này được giữ nguyên, trừ khi quy tắc đồng thuận của ACE cho phép hiệu chỉnh. \\
 \multicolumn{2}{@{}p{8.2cm}}{ACE (hiệu chỉnh bằng câu ví dụ với ràng buộc nhất quán thao tác)}
-& \emph{Action-Consistent Exemplar copying}, thành phần thứ hai của phương pháp đề xuất. Một mô hình sinh câu nhận thêm bốn câu tham chiếu của các bước tương tự nhất trong tập huấn luyện. Câu sinh chỉ được dùng để thay câu nháp khi sao chép nguyên văn một câu ví dụ và cùng loại thao tác với câu nháp; điều kiện này được gọi là quy tắc đồng thuận (Mục~\ref{sec:4.6}). \\
+& \emph{Action-Consistent Exemplar copying}, thành phần thứ hai của phương pháp đề xuất. Một mô hình sinh câu nhận thêm bốn câu tham chiếu của các bước tương tự nhất trong tập huấn luyện. Câu sinh chỉ được dùng để thay câu hướng dẫn ban đầu khi sao chép nguyên văn một câu ví dụ và cùng loại thao tác với câu hướng dẫn ban đầu; điều kiện này được gọi là quy tắc đồng thuận (Mục~\ref{sec:4.6}). \\
 \midrule
 \multicolumn{3}{@{}l@{}}{\textit{Thuật ngữ riêng của đề tài: độ đo và thực nghiệm}} \\
 \midrule
@@ -95,7 +95,7 @@ SPICE & Semantic Propositional Image Caption Evaluation & Độ đo dựa trên 
 \multicolumn{2}{@{}p{8.2cm}}{Huấn luyện tăng cường với phần thưởng tọa độ}
 & Giai đoạn học tiếp từ MIN-DESC bằng GRPO, trong đó phần thưởng chủ yếu được tính từ tọa độ ghi trong dòng mô tả thay vì từ câu hướng dẫn (Mục~\ref{sec:A.4.1}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Mô-đun hiệu chỉnh câu dựa trên vùng ảnh cục bộ (TAGE)}
-& Biến thể hậu xử lý được khảo sát ở cùng vị trí với ACE. TAGE gồm mô-đun định vị, mô-đun biên tập nhận vùng ảnh cục bộ và câu nháp, cùng một bộ chọn quyết định có sử dụng câu đã hiệu chỉnh hay không (Mục~\ref{sec:A.7.1}). \\
+& Biến thể hậu xử lý được khảo sát ở cùng vị trí với ACE. TAGE gồm mô-đun định vị, mô-đun biên tập nhận vùng ảnh cục bộ và câu hướng dẫn ban đầu, cùng một bộ chọn quyết định có sử dụng câu đã hiệu chỉnh hay không (Mục~\ref{sec:A.7.1}). \\
 \bottomrule
 \end{longtable}
 \clearpage

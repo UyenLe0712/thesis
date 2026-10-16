@@ -426,13 +426,13 @@ Bộ xếp hạng câu biết màn sau* & học chọn một trong chín câu do
 
 \subsection{Thiết kế}\label{sec:A.7.1}
 
-\textbf{Căn cứ.} TAGE (\emph{Type-Aware Grounded Editor}) được xây dựng để kiểm tra khả năng hiệu chỉnh câu sau khi tập trung vào một vùng ảnh cục bộ quanh phần tử dự đoán. Mô-đun nhận câu nháp từ mô hình học tăng cường với phần thưởng SPICE, định vị vùng cần xem và sinh lại câu từ ảnh gốc cùng vùng cắt. TAGE nằm ở cùng vị trí hậu xử lý với ACE, nên mốc so sánh trực tiếp là câu nháp của thành phần thứ nhất.
+\textbf{Căn cứ.} TAGE (\emph{Type-Aware Grounded Editor}) được xây dựng để kiểm tra khả năng hiệu chỉnh câu sau khi tập trung vào một vùng ảnh cục bộ quanh phần tử dự đoán. Mô-đun nhận câu hướng dẫn ban đầu từ mô hình học tăng cường với phần thưởng SPICE, định vị vùng cần xem và sinh lại câu từ ảnh gốc cùng vùng cắt. TAGE nằm ở cùng vị trí hậu xử lý với ACE, nên mốc so sánh trực tiếp là câu hướng dẫn ban đầu của thành phần thứ nhất.
 
 \textbf{Ba thành phần.} TAGE gồm ba thành phần, và Hình~\ref{fig:A.1} vẽ đường đi của một bước qua cả ba.
 
 \begin{enumerate}
 \item Bộ định vị nhận ảnh và mục tiêu rồi viết ra một điểm (x, y) trên thang 0 đến 1000. Quanh điểm ấy, một ô vuông có cạnh bằng 40\% bề ngang màn hình được cắt ra và phóng lên 448 $\times$ 448 điểm ảnh.
-\item Bộ biên tập nhận ảnh gốc, ô cắt và câu nháp rồi viết lại câu. Lúc huấn luyện, ô cắt đặt quanh điểm chạm thật, và hàm mất mát gồm entropy chéo của câu tham chiếu cộng một số hạng lề
+\item Bộ biên tập nhận ảnh gốc, ô cắt và câu hướng dẫn ban đầu rồi viết lại câu. Lúc huấn luyện, ô cắt đặt quanh điểm chạm thật, và hàm mất mát gồm entropy chéo của câu tham chiếu cộng một số hạng lề
 \end{enumerate}
 
 \begin{equation}
@@ -440,10 +440,10 @@ Bộ xếp hạng câu biết màn sau* & học chọn một trong chín câu do
 \label{eq:A.1}
 \end{equation}
 \noindent
-trong đó $\mathrm{nll}_{\text{đúng}}$ và $\mathrm{nll}_{\text{lân cận}}$ là log-xác suất âm của câu tham chiếu khi ô cắt đặt quanh phần tử đúng và quanh một phần tử lân cận cùng vai trò. Số hạng này buộc bộ biên tập dựa vào nội dung ô cắt thay vì chép lại câu nháp. Câu nháp lúc huấn luyện lấy từ mô hình học tăng cường với phần thưởng SPICE, và 30\% số câu nháp này bị thay tên phần tử bằng tên phần tử lân cận.
+trong đó $\mathrm{nll}_{\text{đúng}}$ và $\mathrm{nll}_{\text{lân cận}}$ là log-xác suất âm của câu tham chiếu khi ô cắt đặt quanh phần tử đúng và quanh một phần tử lân cận cùng vai trò. Số hạng này buộc bộ biên tập dựa vào nội dung ô cắt thay vì chép lại câu hướng dẫn ban đầu. Câu hướng dẫn ban đầu lúc huấn luyện lấy từ mô hình học tăng cường với phần thưởng SPICE, và 30\% số câu hướng dẫn ban đầu này bị thay tên phần tử bằng tên phần tử lân cận.
 
 \begin{enumerate}
-\item Bộ chọn nhận câu sửa khi $\Delta$lp = lp(sửa) $-$ lp(nháp), tức hiệu log-xác suất trung bình theo token do bộ biên tập tính, lớn hơn một hằng số $\tau$; ngược lại giữ câu nháp. Giá trị $\tau$ = 0,738 được chọn chéo trên tập kiểm định nội bộ, bằng cách chọn trên một nửa số tác vụ rồi áp lên nửa kia.
+\item Bộ chọn nhận câu sửa khi $\Delta$lp = lp(sửa) $-$ lp(ban đầu), tức hiệu log-xác suất trung bình theo token do bộ biên tập tính, lớn hơn một hằng số $\tau$; ngược lại giữ câu hướng dẫn ban đầu. Giá trị $\tau$ = 0,738 được chọn chéo trên tập kiểm định nội bộ, bằng cách chọn trên một nửa số tác vụ rồi áp lên nửa kia.
 \end{enumerate}
 
 Bộ định vị và bộ biên tập là hai bộ chuyển đổi LoRA hạng 16 ở phần ngôn ngữ, gắn trên mô hình tinh chỉnh có giám sát (S1) sau khi đã cộng hẳn trọng số bộ chuyển đổi của S1 vào mô hình gốc. Mỗi bộ học một lượt trên 2.554 bước chạm của tập huấn luyện không chứa tác vụ nào của tập kiểm định nội bộ.
@@ -458,11 +458,11 @@ Bộ định vị và bộ biên tập là hai bộ chuyển đổi LoRA hạng 
   nh/.style={font=\footnotesize, inner sep=1.5pt}
 ]
 \node (vao) [blk, text width=2.6cm] {ảnh $+$ mục tiêu};
-\node (nhap) [blk, right=7mm of vao, text width=3.0cm] {nhánh thưởng SPICE\\viết \textbf{câu nháp}};
+\node (nhap) [blk, right=7mm of vao, text width=3.0cm] {nhánh thưởng SPICE\\viết \textbf{câu hướng dẫn ban đầu}};
 \node (loc) [hl, below=8mm of vao, text width=2.6cm] {\textbf{bộ định vị}\\điểm $(x, y)$};
 \node (cat) [blk, right=7mm of loc, text width=3.0cm] {cắt ô $40\%$ bề ngang\\quanh $(x, y)$};
 \node (ed) [hl, right=7mm of cat, text width=3.0cm] {\textbf{bộ biên tập}\\viết \textbf{câu sửa}};
-\node (cong) [blk, above=8mm of ed, text width=3.0cm] {\textbf{bộ chọn}: $\Delta\mathrm{lp} > \tau$\\nhận câu sửa, không thì giữ nháp};
+\node (cong) [blk, above=8mm of ed, text width=3.0cm] {\textbf{bộ chọn}: $\Delta\mathrm{lp} > \tau$\\nhận câu sửa, không thì giữ câu ban đầu};
 \draw [mui] (vao) -- (nhap);
 \draw [mui] (vao) -- (loc);
 \draw [mui] (loc) -- (cat);
@@ -479,14 +479,14 @@ Bộ định vị và bộ biên tập là hai bộ chuyển đổi LoRA hạng 
 
 \subsection{Kết quả}\label{sec:A.7.2}
 
-Trên tập kiểm định nội bộ, câu sửa tốt hơn câu nháp rõ rệt khi ô cắt đặt quanh điểm chạm đúng và kém đi rõ khi ô cắt cố ý đặt quanh một phần tử lân cận, cho thấy bộ biên tập thực sự khai thác nội dung vùng cắt. Mô-đun hiệu chỉnh câu hoàn chỉnh cũng cao hơn nhẹ so với câu nháp trên tập ấy, nên được chấm một lần trên tập kiểm tra.
+Trên tập kiểm định nội bộ, câu sửa tốt hơn câu hướng dẫn ban đầu rõ rệt khi ô cắt đặt quanh điểm chạm đúng và kém đi rõ khi ô cắt cố ý đặt quanh một phần tử lân cận, cho thấy bộ biên tập thực sự khai thác nội dung vùng cắt. Mô-đun hiệu chỉnh câu hoàn chỉnh cũng cao hơn nhẹ so với câu hướng dẫn ban đầu trên tập ấy, nên được chấm một lần trên tập kiểm tra.
 
 \begin{table}[htbp]
 \centering\small
-\caption[Mô-đun hiệu chỉnh câu theo vùng cắt (TAGE) trên 4.463 bước chạm của tập kiểm tra, so với câu nháp của mô hình học tăng cường với phần thưởng SPICE và với S1.]{Mô-đun hiệu chỉnh câu theo vùng cắt (TAGE) trên 4.463 bước chạm của tập kiểm tra, so với câu nháp của mô hình học tăng cường với phần thưởng SPICE và với S1. Quy tắc hộp phần tử lấy từ AndroidControl, còn quy tắc khoảng cách Euclid lấy từ AndroidInTheWild. Ghép cặp theo bước.}\label{tab:A.15}
+\caption[Mô-đun hiệu chỉnh câu theo vùng cắt (TAGE) trên 4.463 bước chạm của tập kiểm tra, so với câu hướng dẫn ban đầu của mô hình học tăng cường với phần thưởng SPICE và với S1.]{Mô-đun hiệu chỉnh câu theo vùng cắt (TAGE) trên 4.463 bước chạm của tập kiểm tra, so với câu hướng dẫn ban đầu của mô hình học tăng cường với phần thưởng SPICE và với S1. Quy tắc hộp phần tử lấy từ AndroidControl, còn quy tắc khoảng cách Euclid lấy từ AndroidInTheWild. Ghép cặp theo bước.}\label{tab:A.15}
 \begin{tabular}{@{}lrrrrr@{}}
 \toprule
-\textbf{Độ đo} & \textbf{S1} & \textbf{Câu nháp} & \textbf{TAGE} & \textbf{TAGE $-$ câu nháp} & \textbf{p} \\
+\textbf{Độ đo} & \textbf{S1} & \shortstack{\textbf{Câu}\\\textbf{ban đầu}} & \textbf{TAGE} & \shortstack{\textbf{TAGE $-$}\\\textbf{câu ban đầu}} & \textbf{p} \\
 \midrule
 Executability & 59,11 & 60,65 & 60,23 & -0,43 [$-$0,87; +0,02] & 0,093 \\
 Quy tắc hộp phần tử & 65,49 & 67,02 & 66,44 & -0,58 [$-$1,07; $-$0,09] & 0,027 \\
@@ -497,18 +497,18 @@ SPICE & 44,37 & 45,79 & 45,74 & -0,05 [$-$0,38; +0,27] & – \\
 \end{tabular}
 \end{table}
 
-\textbf{Kết quả trên tập kiểm tra.} TAGE đạt executability thấp hơn câu nháp 0,43 điểm (p = 0,093) và thấp hơn 0,58 điểm theo quy tắc hộp phần tử (p = 0,027). TAGE vẫn cao hơn S1 1,12 điểm [+0,31; +1,94], nhưng mức này được kế thừa từ câu nháp. Do đó, biến thể hiện tại chưa bổ sung lợi ích so với thành phần thứ nhất và không được đưa vào phương pháp đề xuất.
+\textbf{Kết quả trên tập kiểm tra.} TAGE đạt executability thấp hơn câu hướng dẫn ban đầu 0,43 điểm (p = 0,093) và thấp hơn 0,58 điểm theo quy tắc hộp phần tử (p = 0,027). TAGE vẫn cao hơn S1 1,12 điểm [+0,31; +1,94], nhưng mức này được kế thừa từ câu hướng dẫn ban đầu. Do đó, biến thể hiện tại chưa bổ sung lợi ích so với thành phần thứ nhất và không được đưa vào phương pháp đề xuất.
 
-\textbf{Nguồn của mức giảm.} Mô hình định vị xác định đúng phần tử 69,5\% số bước, bộ biên tập đổi câu ở 70,8\% số bước, và bộ chọn nhận 219 câu sửa (4,9\%). Trên 219 bước ấy, câu nháp chỉ đúng 34,7\%, cho thấy bộ chọn tập trung vào các bước mà câu nháp có chất lượng thấp; tuy nhiên câu sửa còn đạt tỉ lệ đúng thấp hơn (26,0\%). Ở 80 bước có ô cắt chứa đúng phần tử mục tiêu, câu sửa chuyển 46 bước từ sai sang đúng và 7 bước theo chiều ngược lại. Ở 139 bước có ô cắt không chứa đúng phần tử mục tiêu, câu sửa chuyển 2 bước từ sai sang đúng và 60 bước theo chiều ngược lại, vì bộ biên tập mô tả phần tử nằm trong ô cắt và thay một câu nháp vốn đúng bằng câu về phần tử khác (Hình~\ref{fig:A.2}).
+\textbf{Nguồn của mức giảm.} Mô hình định vị xác định đúng phần tử 69,5\% số bước, bộ biên tập đổi câu ở 70,8\% số bước, và bộ chọn nhận 219 câu sửa (4,9\%). Trên 219 bước ấy, câu hướng dẫn ban đầu chỉ đúng 34,7\%, cho thấy bộ chọn tập trung vào các bước mà câu hướng dẫn ban đầu có chất lượng thấp; tuy nhiên câu sửa còn đạt tỉ lệ đúng thấp hơn (26,0\%). Ở 80 bước có ô cắt chứa đúng phần tử mục tiêu, câu sửa chuyển 46 bước từ sai sang đúng và 7 bước theo chiều ngược lại. Ở 139 bước có ô cắt không chứa đúng phần tử mục tiêu, câu sửa chuyển 2 bước từ sai sang đúng và 60 bước theo chiều ngược lại, vì bộ biên tập mô tả phần tử nằm trong ô cắt và thay một câu hướng dẫn ban đầu vốn đúng bằng câu về phần tử khác (Hình~\ref{fig:A.2}).
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_vidu_tage.png}
-\caption[Hai bước mà bộ chọn của TAGE nhận câu sửa, cắt phần dưới màn hình.]{Hai bước mà bộ chọn của TAGE nhận câu sửa, cắt phần dưới màn hình. (a) Ô cắt chứa đúng phần tử mục tiêu: câu nháp gọi nút \emph{Always}, câu sửa gọi đúng \emph{Just once}. (b) Ô cắt rơi vào thanh điều hướng ở góc dưới bên trái: câu nháp \emph{Get help} vốn đúng bị thay bằng câu về thẻ \emph{Home} nằm trong ô cắt.}
+\caption[Hai bước mà bộ chọn của TAGE nhận câu sửa, cắt phần dưới màn hình.]{Hai bước mà bộ chọn của TAGE nhận câu sửa, cắt phần dưới màn hình. (a) Ô cắt chứa đúng phần tử mục tiêu: câu hướng dẫn ban đầu gọi nút \emph{Always}, câu sửa gọi đúng \emph{Just once}. (b) Ô cắt rơi vào thanh điều hướng ở góc dưới bên trái: câu hướng dẫn ban đầu \emph{Get help} vốn đúng bị thay bằng câu về thẻ \emph{Home} nằm trong ô cắt.}
 \label{fig:A.2}
 \end{figure}
 
-\textbf{Tín hiệu của bộ chọn.} Theo Hình~\ref{fig:A.3}, tỉ lệ ô cắt chứa đúng phần tử mục tiêu giảm đều khi $\Delta$lp tăng, từ 74,0\% ở nhóm thấp nhất xuống 36,5\% ở nhóm được nhận. Một cách giải thích phù hợp với quan sát này là khi ô cắt rơi vào phần tử khác, mô-đun biên tập tạo câu có xác suất cao đối với nội dung trong ô, trong khi câu nháp mô tả phần tử ngoài ô nên nhận log-xác suất thấp. Hiệu $\Delta$lp vì vậy đo mức lệch giữa câu nháp và ô cắt, và không cho biết câu nào đúng hơn. Trên tập kiểm định nội bộ, nhóm trên cùng chỉ có 11 câu, trong đó 8 câu có ô cắt chứa đúng phần tử mục tiêu, và $\tau$ lại được chọn từ chính 11 câu ấy.
+\textbf{Tín hiệu của bộ chọn.} Theo Hình~\ref{fig:A.3}, tỉ lệ ô cắt chứa đúng phần tử mục tiêu giảm đều khi $\Delta$lp tăng, từ 74,0\% ở nhóm thấp nhất xuống 36,5\% ở nhóm được nhận. Một cách giải thích phù hợp với quan sát này là khi ô cắt rơi vào phần tử khác, mô-đun biên tập tạo câu có xác suất cao đối với nội dung trong ô, trong khi câu hướng dẫn ban đầu mô tả phần tử ngoài ô nên nhận log-xác suất thấp. Hiệu $\Delta$lp vì vậy đo mức lệch giữa câu hướng dẫn ban đầu và ô cắt, và không cho biết câu nào đúng hơn. Trên tập kiểm định nội bộ, nhóm trên cùng chỉ có 11 câu, trong đó 8 câu có ô cắt chứa đúng phần tử mục tiêu, và $\tau$ lại được chọn từ chính 11 câu ấy.
 
 \begin{figure}[t]
 \centering
@@ -517,5 +517,5 @@ SPICE & 44,37 & 45,79 & 45,74 & -0,05 [$-$0,38; +0,27] & – \\
 \label{fig:A.3}
 \end{figure}
 
-\textbf{Hệ quả cho thiết kế.} Bộ chọn dựa trên xác suất của chính bộ biên tập không độc lập với ô cắt, nên không phát hiện được lỗi chính của mô-đun hiệu chỉnh câu là vùng cắt không chứa phần tử mục tiêu. Bộ chọn cần một tín hiệu không phụ thuộc trực tiếp vào vùng cắt, ví dụ so điểm mà mô hình định vị suy ra từ câu nháp với điểm của bộ định vị, và $\tau$ cần được chọn trên mẫu lớn hơn nhiều so với 11 câu. Nếu bộ chọn chỉ nhận câu sửa khi ô cắt chứa đúng phần tử mục tiêu, mô-đun hiệu chỉnh câu tăng thêm 39 bước đạt, tương đương khoảng 0,87 điểm. Đây là ngưỡng tối đa ước lượng bằng điểm chạm đúng của bước, không phải kết quả của một cấu hình đã chạy.
+\textbf{Hệ quả cho thiết kế.} Bộ chọn dựa trên xác suất của chính bộ biên tập không độc lập với ô cắt, nên không phát hiện được lỗi chính của mô-đun hiệu chỉnh câu là vùng cắt không chứa phần tử mục tiêu. Bộ chọn cần một tín hiệu không phụ thuộc trực tiếp vào vùng cắt, ví dụ so điểm mà mô hình định vị suy ra từ câu hướng dẫn ban đầu với điểm của bộ định vị, và $\tau$ cần được chọn trên mẫu lớn hơn nhiều so với 11 câu. Nếu bộ chọn chỉ nhận câu sửa khi ô cắt chứa đúng phần tử mục tiêu, mô-đun hiệu chỉnh câu tăng thêm 39 bước đạt, tương đương khoảng 0,87 điểm. Đây là ngưỡng tối đa ước lượng bằng điểm chạm đúng của bước, không phải kết quả của một cấu hình đã chạy.
 

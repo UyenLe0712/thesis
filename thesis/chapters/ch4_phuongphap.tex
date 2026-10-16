@@ -1,7 +1,7 @@
 \chapter{Phương pháp đề xuất}
 \label{chap:4}
 
-Chương này trình bày phương pháp đề xuất của luận văn. Phương pháp gồm hai thành phần được áp dụng nối tiếp (Mục~\ref{sec:4.4}). Thành phần thứ nhất tiếp tục tối ưu mô hình bằng học tăng cường với phần thưởng SPICE để tạo câu nháp (Mục~\ref{sec:4.5}). Thành phần thứ hai, ACE, sử dụng các câu ví dụ được truy hồi để hiệu chỉnh câu nháp dưới ràng buộc nhất quán về loại thao tác (Mục~\ref{sec:4.6}). Trước khi đi vào từng thành phần, chương mô tả quy trình tổng thể, cấu trúc đầu vào và cấu hình huấn luyện. Phần cuối trình bày các mốc so sánh và nguyên tắc diễn giải kết quả. Những hướng đã được khảo sát trước khi hình thành phương pháp cuối cùng được trình bày ở Phụ lục A; độ đo đánh giá được trình bày riêng ở Chương 5.
+Chương này trình bày phương pháp đề xuất của luận văn. Phương pháp gồm hai thành phần được áp dụng nối tiếp (Mục~\ref{sec:4.4}). Thành phần thứ nhất tiếp tục tối ưu mô hình bằng học tăng cường với phần thưởng SPICE để tạo câu hướng dẫn ban đầu (Mục~\ref{sec:4.5}). Thành phần thứ hai, ACE, sử dụng các câu ví dụ được truy hồi để hiệu chỉnh câu hướng dẫn ban đầu dưới ràng buộc nhất quán về loại thao tác (Mục~\ref{sec:4.6}). Trước khi đi vào từng thành phần, chương mô tả quy trình tổng thể, cấu trúc đầu vào và cấu hình huấn luyện. Phần cuối trình bày các mốc so sánh và nguyên tắc diễn giải kết quả. Những hướng đã được khảo sát trước khi hình thành phương pháp cuối cùng được trình bày ở Phụ lục A; độ đo đánh giá được trình bày riêng ở Chương 5.
 
 \section{Quy trình tổng thể}\label{sec:4.1}
 
@@ -20,7 +20,7 @@ Chương này trình bày phương pháp đề xuất của luận văn. Phươn
 ]
 \node (vao) [dongoc] {ảnh màn hình\ \ $+$\ \ mục tiêu\ \ $+$\ \ lịch sử tham chiếu\ \ $+$\ \ văn bản OCR};
 \node (draft) [huanluyen, below=6mm of vao]
-  {thành phần thứ nhất: S1 học tiếp bằng GRPO với phần thưởng SPICE\\ sinh \textbf{câu nháp} bằng giải mã tham lam};
+  {thành phần thứ nhất: S1 học tiếp bằng GRPO với phần thưởng SPICE\\ sinh \textbf{câu hướng dẫn ban đầu} bằng giải mã tham lam};
 \node (ace) [huanluyen, below=7mm of draft]
   {ACE: truy hồi câu ví dụ $+$ mô hình sinh câu $+$ quy tắc đồng thuận};
 \node (ra) [dongoc, below=6mm of ace] {câu hướng dẫn cuối};
@@ -93,11 +93,11 @@ Tham số huấn luyện được & 14.966.784 (0,48\% phần ngôn ngữ) \\
 
 \section{Tổng quan phương pháp đề xuất}\label{sec:4.4}
 
-Phương pháp đề xuất sử dụng S1 làm điểm khởi đầu và gồm hai thành phần nối tiếp. Ở thành phần thứ nhất, S1 được học tiếp bằng GRPO với phần thưởng SPICE. Khi suy luận, mô hình sau giai đoạn này sinh một câu nháp bằng giải mã tham lam.
+Phương pháp đề xuất sử dụng S1 làm điểm khởi đầu và gồm hai thành phần nối tiếp. Ở thành phần thứ nhất, S1 được học tiếp bằng GRPO với phần thưởng SPICE. Khi suy luận, mô hình sau giai đoạn này sinh một câu hướng dẫn ban đầu bằng giải mã tham lam.
 
-Thành phần thứ hai, ACE, khai thác các câu tham chiếu trong tập huấn luyện như nguồn ví dụ. Với mỗi bước, bốn câu gần nhất được truy hồi và đưa vào mô hình sinh cùng đầu vào hiện tại để tạo một câu ứng viên. Một quy tắc đồng thuận sau đó quyết định có thay câu nháp bằng câu ứng viên hay không. Việc thay thế chỉ xảy ra khi câu ứng viên trùng nguyên văn với một câu ví dụ và đồng thời nhất quán với câu nháp về loại thao tác; trong các trường hợp còn lại, câu nháp được giữ nguyên. Kết quả sau bước lựa chọn này là câu hướng dẫn cuối cùng.
+Thành phần thứ hai, ACE, khai thác các câu tham chiếu trong tập huấn luyện như nguồn ví dụ. Với mỗi bước, bốn câu gần nhất được truy hồi và đưa vào mô hình sinh cùng đầu vào hiện tại để tạo một câu ứng viên. Một quy tắc đồng thuận sau đó quyết định có thay câu hướng dẫn ban đầu bằng câu ứng viên hay không. Việc thay thế chỉ xảy ra khi câu ứng viên trùng nguyên văn với một câu ví dụ và đồng thời nhất quán với câu hướng dẫn ban đầu về loại thao tác; trong các trường hợp còn lại, câu hướng dẫn ban đầu được giữ nguyên. Kết quả sau bước lựa chọn này là câu hướng dẫn cuối cùng.
 
-Hai thành phần tác động trực tiếp lên câu đầu ra nhưng sử dụng hai nguồn tín hiệu khác nhau. Thành phần thứ nhất tối ưu mô hình sinh bằng phần thưởng văn bản trên các đầu ra được lấy mẫu. ACE bổ sung thông tin từ các câu tham chiếu truy hồi và chỉ cho phép thay câu nháp khi thỏa các ràng buộc lựa chọn. Chi tiết huấn luyện của hai thành phần lần lượt được trình bày ở Mục~\ref{sec:4.5} và Mục~\ref{sec:4.6}.
+Hai thành phần tác động trực tiếp lên câu đầu ra nhưng sử dụng hai nguồn tín hiệu khác nhau. Thành phần thứ nhất tối ưu mô hình sinh bằng phần thưởng văn bản trên các đầu ra được lấy mẫu. ACE bổ sung thông tin từ các câu tham chiếu truy hồi và chỉ cho phép thay câu hướng dẫn ban đầu khi thỏa các ràng buộc lựa chọn. Chi tiết huấn luyện của hai thành phần lần lượt được trình bày ở Mục~\ref{sec:4.5} và Mục~\ref{sec:4.6}.
 
 Mô hình định vị dùng trong executability không tham gia vào phần thưởng của thành phần thứ nhất hoặc quy tắc đồng thuận của ACE. Ở giai đoạn suy luận, phương pháp cũng không truy cập câu tham chiếu của chính bước đang xét. Trong các phần sau, thuật ngữ \emph{mô hình học tăng cường với phần thưởng SPICE} dùng để chỉ riêng thành phần thứ nhất, còn \emph{phương pháp đề xuất} dùng để chỉ toàn bộ quy trình sau khi áp dụng ACE.
 
@@ -149,20 +149,20 @@ Mỗi bước cập nhật sử dụng hai prompt; với mỗi prompt, mô hình
 
 \section{Thành phần thứ hai: hiệu chỉnh bằng câu ví dụ với ràng buộc nhất quán thao tác (ACE)}\label{sec:4.6}
 
-\textbf{Cơ sở lựa chọn.} ACE (\emph{Action-Consistent Exemplar copying}) sử dụng các câu tham chiếu trong tập huấn luyện làm nguồn ví dụ cho bước hiện tại. Do các câu được truy hồi đến từ những bước khác, việc dùng chúng trực tiếp có thể dẫn tới sai phần tử hoặc sai loại thao tác. Vì vậy, ACE tách quá trình thành hai giai đoạn: trước hết, mô hình sinh tạo một câu ứng viên từ đầu vào hiện tại và các ví dụ truy hồi; sau đó, quy tắc đồng thuận quyết định có thay câu nháp của thành phần thứ nhất bằng câu ứng viên hay không. Mức độ hữu ích và những giới hạn của kho truy hồi trên tập kiểm tra được phân tích ở Mục~\ref{sec:6.4}.
+\textbf{Cơ sở lựa chọn.} ACE (\emph{Action-Consistent Exemplar copying}) sử dụng các câu tham chiếu trong tập huấn luyện làm nguồn ví dụ cho bước hiện tại. Do các câu được truy hồi đến từ những bước khác, việc dùng chúng trực tiếp có thể dẫn tới sai phần tử hoặc sai loại thao tác. Vì vậy, ACE tách quá trình thành hai giai đoạn: trước hết, mô hình sinh tạo một câu ứng viên từ đầu vào hiện tại và các ví dụ truy hồi; sau đó, quy tắc đồng thuận quyết định có thay câu hướng dẫn ban đầu của thành phần thứ nhất bằng câu ứng viên hay không. Mức độ hữu ích và những giới hạn của kho truy hồi trên tập kiểm tra được phân tích ở Mục~\ref{sec:6.4}.
 
 \textbf{Mô hình sinh câu với ví dụ truy hồi.} Kho truy hồi là phần tập huấn luyện đã bỏ mọi tác vụ của tập kiểm định nội bộ, gồm 62.880 bước thuộc 12.542 tác vụ, không chứa tác vụ nào của tập kiểm tra. Phép truy hồi chỉ dùng văn bản, không dùng ảnh, và so khớp bằng TF-IDF, tức cách đánh trọng số từ theo tần suất trong câu và độ hiếm trong kho. Việc truy hồi dùng hai cách tìm, rồi gộp kết quả và bỏ các câu trùng nhau. Cách thứ nhất, theo SmallCap~\cite{smallcap}, truy hồi trực tiếp những bước có mục tiêu và câu gần nhất trong lịch sử thao tác tương tự bước đang xét. Cách thứ hai tìm trước những tác vụ có mục tiêu giống nhất, rồi trong mỗi tác vụ ấy chọn bước tương ứng dựa trên câu gần nhất trong lịch sử. Bốn câu ví dụ được chèn vào prompt ngay trước dòng yêu cầu viết câu.
 
 Mô hình sinh câu được tạo bằng cách tiếp tục tinh chỉnh có giám sát bộ chuyển đổi của thành phần thứ nhất thêm 250 bước với tốc độ học $2 \times 10^{-5}$, trên 3.991 bước thuộc phần tập huấn luyện có sẵn ảnh. Để hạn chế việc mô hình phụ thuộc quá mức vào câu ví dụ, khối ví dụ trong quá trình huấn luyện được biến đổi ngẫu nhiên. Số câu ví dụ được lấy ngẫu nhiên từ 2 đến 6 và thứ tự các câu bị xáo trộn; 15\% prompt không có khối ví dụ và 10\% prompt có khối ví dụ lấy ngẫu nhiên; tác vụ đang học cũng bị loại khỏi kho truy hồi. Để tách phần do truy hồi khỏi phần do học thêm, chúng tôi huấn luyện thêm một mô hình để so sánh trên cùng các bước, cùng chuỗi đích và cùng siêu tham số, chỉ khác ở chỗ prompt không có khối ví dụ.
 
-\textbf{Quy tắc đồng thuận.} Ở mỗi bước có hai câu: câu nháp của thành phần thứ nhất và câu do mô hình sinh với các ví dụ truy hồi tạo ra. Câu thứ hai chỉ được chọn khi thỏa đồng thời hai điều kiện.
+\textbf{Quy tắc đồng thuận.} Ở mỗi bước có hai câu: câu hướng dẫn ban đầu của thành phần thứ nhất và câu do mô hình sinh với các ví dụ truy hồi tạo ra. Câu thứ hai chỉ được chọn khi thỏa đồng thời hai điều kiện.
 
 \begin{enumerate}
 \item \textbf{Khớp nguyên văn với câu ví dụ.} Sau khi tách từ, câu của mô hình sinh trùng hoàn toàn với một trong bốn câu ví dụ của khối. Điều kiện này chỉ giữ lại những bước mà mô hình sinh lựa chọn đúng câu ví dụ, và bỏ những bước mô hình sinh tự tạo câu mới.
-\item \textbf{Đồng thuận loại thao tác.} Động từ ở đầu câu của mô hình sinh và động từ ở đầu câu nháp thuộc cùng một lớp thao tác (chạm, nhấn giữ, gõ, cuộn, mở ứng dụng, quay lại). Câu ví dụ đến từ một bước khác, nên có thể nói đúng phần tử nhưng sai thao tác, ví dụ sinh thao tác gõ ở một bước yêu cầu chạm. Câu nháp được sinh từ chính màn hình hiện tại và được sử dụng làm tín hiệu kiểm tra loại thao tác.
+\item \textbf{Đồng thuận loại thao tác.} Động từ ở đầu câu của mô hình sinh và động từ ở đầu câu hướng dẫn ban đầu thuộc cùng một lớp thao tác (chạm, nhấn giữ, gõ, cuộn, mở ứng dụng, quay lại). Câu ví dụ đến từ một bước khác, nên có thể nói đúng phần tử nhưng sai thao tác, ví dụ sinh thao tác gõ ở một bước yêu cầu chạm. Câu hướng dẫn ban đầu được sinh từ chính màn hình hiện tại và được sử dụng làm tín hiệu kiểm tra loại thao tác.
 \end{enumerate}
 
-\textbf{Lựa chọn quy tắc.} Quy tắc trên được lựa chọn trên tập kiểm định nội bộ từ bốn biến thể: chỉ dùng điều kiện chép; chép kèm đồng thuận loại thao tác; chép kèm điều kiện phần lõi của câu (phần còn lại sau khi bỏ động từ và hư từ) trùng với câu nháp ít nhất một nửa; và chép kèm cả hai điều kiện. Tiêu chí lựa chọn được xác định trước khi tính executability trên tập này. Theo tiêu chí đó, chỉ những biến thể không kém hơn câu nháp trên đa số độ đo dựa trên câu tham chiếu mới được xem xét; trong số này, biến thể có executability cao nhất được lựa chọn. Quy tắc đã chọn sau đó chỉ được áp dụng một lần trên tập kiểm tra.
+\textbf{Lựa chọn quy tắc.} Quy tắc trên được lựa chọn trên tập kiểm định nội bộ từ bốn biến thể: chỉ dùng điều kiện chép; chép kèm đồng thuận loại thao tác; chép kèm điều kiện phần lõi của câu (phần còn lại sau khi bỏ động từ và hư từ) trùng với câu hướng dẫn ban đầu ít nhất một nửa; và chép kèm cả hai điều kiện. Tiêu chí lựa chọn được xác định trước khi tính executability trên tập này. Theo tiêu chí đó, chỉ những biến thể không kém hơn câu hướng dẫn ban đầu trên đa số độ đo dựa trên câu tham chiếu mới được xem xét; trong số này, biến thể có executability cao nhất được lựa chọn. Quy tắc đã chọn sau đó chỉ được áp dụng một lần trên tập kiểm tra.
 
 \section{Mô hình và thiết lập so sánh}\label{sec:4.7}
 
