@@ -7,7 +7,7 @@ Chương này xây dựng và kiểm chứng độ đo khả năng thực hiện
 
 Với mỗi bước chạm, độ đo sử dụng năm đại lượng. $s$ là câu hướng dẫn cần đánh giá; nếu một phương án đã thử sinh thêm dòng mô tả phần tử trước câu (Phụ lục~\ref{app:A}), phần này được loại bỏ trước khi tính điểm. $I$ là ảnh màn hình và $g$ là tọa độ chạm của người dùng. $E$ là tập phần tử trên màn hình, được lấy từ cây trợ năng; các phần tử có tâm cách nhau dưới 24 dp được gộp thành một (dp là đơn vị độ dài của Android, không phụ thuộc mật độ điểm ảnh; trên thiết bị được sử dụng, 24 dp tương ứng 63 điểm ảnh). $G$ là mô hình định vị phần tử: mô hình nhận ảnh cùng câu hướng dẫn và trả về tọa độ $p = G(I,s)$ của phần tử được câu quy chiếu tới. $G$ tách biệt với mô hình sinh đang được đánh giá và không nhận $g$ làm đầu vào.
 
-Một bước được tính là đúng khi thoả đồng thời ba điều kiện.
+Một bước được tính là đúng khi thoả cả ba điều kiện:
 
 \begin{itemize}
 \item \textbf{(i) Khớp loại thao tác.} Loại thao tác của $s$, sau khi chuẩn hoá, phải trùng với của câu tham chiếu. Có năm loại: chạm, gõ, cuộn, nhấn giữ và quay lại; mười hai động từ (\emph{tap, click, press, select, choose, touch, open, launch, go, navigate, visit, view}) được xếp vào loại chạm.
@@ -22,7 +22,7 @@ Cách chuẩn hoá này có một lỗi đã biết: động từ được dò t
 \label{eq:5.1}
 \end{equation}
 \noindent
-với $c(e)$ là tâm của phần tử $e$. Vùng gồm mọi điểm như vậy là ô Voronoi của phần tử cần chạm (Hình~\ref{fig:5.1}).
+với $c(e)$ là tâm của phần tử $e$. Vùng gồm mọi điểm thoả điều kiện này gọi là ô Voronoi của phần tử cần chạm (Hình~\ref{fig:5.1}). Như vậy, điểm mô hình định vị chỉ ra phải rơi vào phần tử cần chạm chứ không rơi sang phần tử bên cạnh.
 
 Điểm executability là tỉ lệ bước chạm thoả cả ba điều kiện.
 
@@ -79,7 +79,7 @@ Phép tách trên không đánh giá được thiên lệch do văn phong, vì h
 
 \section{Mốc tham chiếu của thang điểm}\label{sec:5.5}
 
-Để có cơ sở diễn giải điểm executability, cùng một quy trình đánh giá được áp dụng cho một số loại câu có vai trò tham chiếu khác nhau. \textbf{Mốc tham chiếu trên} được xác định bằng câu hướng dẫn do người chú thích viết cho chính bước đang xét. Trên toàn bộ 4.463 bước chạm, các câu này đạt 75,7\% executability, với khoảng tin cậy 95\% [74,1; 77,3] (Mục~\ref{sec:5.13}); nếu dùng quy tắc dung sai, điểm tương ứng là 84,3\% [82,9; 85,6].
+Để có cơ sở diễn giải điểm executability, cùng một quy trình đánh giá được áp dụng cho một số loại câu có vai trò tham chiếu khác nhau. \textbf{Mốc tham chiếu} được xác định bằng câu hướng dẫn do người chú thích viết cho chính bước đang xét. Trên toàn bộ 4.463 bước chạm, các câu này đạt 75,7\% executability, với khoảng tin cậy 95\% [74,1; 77,3] (Mục~\ref{sec:5.13}); nếu dùng quy tắc dung sai, điểm tương ứng là 84,3\% [82,9; 85,6].
 
 Điểm 75,7\% không phải là giới hạn tối đa của độ đo. Có 148 bước mà câu tham chiếu không đạt nhưng câu của mô hình gốc hoặc S1 lại đạt; nếu xét cả ba loại câu, 3.527 bước, tương ứng 79,1\%, đạt theo ít nhất một loại câu. Vì thế, 75,7\% chỉ nên được hiểu là điểm của câu do người chú thích viết khi đi qua cùng quy trình đánh giá, chứ không phải một trần lý thuyết hay mức tối đa mà mô hình có thể đạt. Mốc này được dùng để đặt kết quả của các mô hình vào bối cảnh; chẳng hạn S1 đạt 59,1\%, thấp hơn câu tham chiếu 16,6 điểm (Mục~\ref{sec:6.9.4}). Cách đối chiếu kết quả hệ thống với một mốc từ con người cũng được sử dụng trong nghiên cứu sinh chỉ dẫn điều hướng của Zhao và cộng sự~\cite{zhao2021}.
 
@@ -101,7 +101,7 @@ Câu của màn hình khác & câu tham chiếu của một bước khác & 6,1 
 
 Hai mức 12,0\% và 6,1\% là các mốc thực nghiệm chứ không phải sàn toán học. Chúng cũng cho thấy tỉ lệ 40,0\% số bước mà câu tham chiếu, S1 và Base cùng đạt không thể được dùng để suy ra một mức điểm nền: khi nội dung quy chiếu bị loại bỏ hoặc thay bằng nội dung của màn hình khác, điểm giảm rõ rệt. Nếu dùng 12,0\% như một mốc thực hành để chuẩn hoá dải 74,9--12,0 trên mẫu 800 bước, Base nằm ở 58,3\% và S1 ở 74,4\% dải này; phép chuẩn hoá này chỉ phục vụ diễn giải và không thay đổi điểm executability gốc.
 
-Mốc tham chiếu trên cũng không thay thế đánh giá chất lượng câu bởi người dùng. Một mô hình được tối ưu trực tiếp theo công cụ đo có thể học cách diễn đạt phù hợp với mô hình định vị nhưng chưa chắc thuận tiện cho người đọc. Vì vậy, ngay cả khi điểm tiến gần mốc câu tham chiếu, vẫn cần đánh giá thêm các khía cạnh ngôn ngữ và khả năng sử dụng mà executability không đo trực tiếp.
+Mốc tham chiếu cũng không thay thế đánh giá chất lượng câu bởi người dùng. Một mô hình được tối ưu trực tiếp theo công cụ đo có thể học cách diễn đạt phù hợp với mô hình định vị nhưng chưa chắc thuận tiện cho người đọc. Vì vậy, ngay cả khi điểm tiến gần mốc câu tham chiếu, vẫn cần đánh giá thêm các khía cạnh ngôn ngữ và khả năng sử dụng mà executability không đo trực tiếp.
 
 \section{Độ nhạy với thông tin quy chiếu}\label{sec:5.6}
 
@@ -128,7 +128,7 @@ Với phép bỏ tên, $b = 58$ bước chuyển từ đạt sang không đạt 
 
 \section{Kiểm chứng bằng biến đổi lỗi có kiểm soát}\label{sec:5.7}
 
-Theo cách của Sai và cộng sự~\cite{sai2021}, chúng tôi cố ý chèn mười loại lỗi đã biết vào 398 bước chạm của tập kiểm tra. Ba dòng đầu của Bảng~\ref{tab:5.2} là tỉ lệ độ đo loại nhầm một câu đúng, bảy dòng sau là tỉ lệ độ đo bắt được một câu sai.
+Một cách kiểm độ đo là cố ý làm hỏng câu theo những cách đã biết rồi xem độ đo có bắt được không~\cite{sai2021}. Chúng tôi chèn mười loại lỗi vào 398 bước chạm (Bảng~\ref{tab:5.2}). Ba dòng đầu kiểm độ đo có loại nhầm câu đúng không, bảy dòng sau kiểm độ đo có bắt được câu sai không.
 
 \begin{table}[htbp]
 \centering\small
@@ -313,7 +313,7 @@ Thứ hạng giữa các mô hình không thay đổi, và chênh lệch giữa 
 
 \section{Phương pháp phân tích thống kê}\label{sec:5.13}
 
-\textbf{Ước lượng điểm.} Điểm được tính theo cách vi mô, tức tổng số bước đúng chia tổng số bước, không lấy trung bình theo ứng dụng.
+\textbf{Điểm.} Điểm là tổng số bước đúng chia tổng số bước.
 
 \textbf{Khoảng tin cậy.} Khoảng tin cậy được ước lượng bằng bootstrap phi tham số với 10.000 lần lấy mẫu, trong đó đơn vị lấy mẫu là cụm ứng dụng. Ở mỗi lần lặp, các cụm được lấy mẫu lại có hoàn lại, sau đó điểm số được tính lại; khoảng tin cậy được xác định từ các phân vị của phân bố thu được. Cameron và cộng sự~\cite{cameron2008} cho thấy cách tính này có thể có độ phủ thấp hơn mức danh nghĩa khi số cụm ít, nên số cụm được báo cáo cùng các khoảng tin cậy.
 

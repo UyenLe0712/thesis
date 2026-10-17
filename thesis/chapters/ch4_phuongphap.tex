@@ -5,6 +5,17 @@ Chương này trình bày phương pháp đề xuất của luận văn. Phươn
 
 \section{Quy trình tổng thể}\label{sec:4.1}
 
+Bài toán là: cho một màn hình điện thoại và mục tiêu của người dùng, viết một câu tiếng Anh nói người dùng cần làm gì ở bước tiếp theo, chẳng hạn ``Click on the search icon''. Hệ thống gồm bốn khâu (Hình~\ref{fig:4.1}).
+
+\begin{enumerate}
+\item \textbf{Đầu vào:} ảnh màn hình, mục tiêu, các bước đã làm và chữ đọc được trên màn.
+\item \textbf{Mô hình sinh câu:} viết câu hướng dẫn. Đây là phần duy nhất được huấn luyện, và phương pháp đề xuất nằm ở khâu này.
+\item \textbf{Mô hình định vị phần tử:} một mô hình có sẵn, đọc câu vừa sinh và chỉ ra điểm trên màn hình mà câu ấy nói tới.
+\item \textbf{Luật tính điểm:} câu được tính là đúng khi điểm ấy rơi vào đúng phần tử cần chạm và câu nói đúng loại thao tác.
+\end{enumerate}
+
+Mô hình định vị và luật tính điểm chỉ phục vụ việc đánh giá; khi triển khai, hệ thống nhận đầu vào và trả về câu hướng dẫn do mô hình sinh câu viết ra.
+
 \begin{figure}[t]
 \centering
 \begin{tikzpicture}[
@@ -61,7 +72,7 @@ Trường “Đã làm” chứa câu tham chiếu của các bước trước, 
 
 \section{Cấu hình huấn luyện}\label{sec:4.3}
 
-Mọi mô hình được huấn luyện trong đề tài đều tinh chỉnh Qwen2.5-VL-3B-Instruct~\cite{qwen25vl} bằng QLoRA~\cite{lora,qlora} trên LLaMA-Factory~\cite{llamafactory}. Bảng~\ref{tab:4.1} ghi cấu hình của bước tinh chỉnh có giám sát từ mô hình gốc.
+Mọi mô hình trong đề tài đều được tinh chỉnh từ Qwen2.5-VL-3B-Instruct~\cite{qwen25vl}, một mô hình ngôn ngữ thị giác 3 tỉ tham số, bằng QLoRA~\cite{lora,qlora} trên thư viện LLaMA-Factory~\cite{llamafactory}. QLoRA giữ nguyên trọng số gốc ở dạng nén 4 bit và chỉ học thêm các ma trận nhỏ gắn vào từng tầng (gọi là bộ chuyển đổi LoRA). Nhờ vậy, số tham số cần học chỉ khoảng 15 triệu và việc huấn luyện vừa trên một GPU. Bảng~\ref{tab:4.1} ghi cấu hình tinh chỉnh có giám sát từ mô hình gốc.
 
 \begin{table}[htbp]
 \centering\small
@@ -80,8 +91,6 @@ Cỡ lô mỗi thiết bị / tích luỹ gradient & 4 / 4 (hiệu dụng 16) \\
 Tốc độ học / lịch / tỉ lệ khởi động & $1 \times 10^{-4}$ / cosine / 0,05 \\
 Số lượt duyệt & 2 (=8.072 bước) \\
 Độ chính xác & bf16, có gradient checkpointing \\
-Nhân tính toán hợp nhất (giảm bộ nhớ) & có bật \\
-Tiến trình tiền xử lý & 8 \\
 Hạt giống & 101 và 202 \\
 Phần cứng & một GPU A100 \\
 Tham số huấn luyện được & 14.966.784 (0,48\% phần ngôn ngữ) \\
@@ -166,7 +175,7 @@ Mô hình sinh câu được tạo bằng cách tiếp tục tinh chỉnh có gi
 
 \section{Mô hình và thiết lập so sánh}\label{sec:4.7}
 
-Kết quả của phương pháp đề xuất được so sánh với ba mốc chính. Mốc thứ nhất là mô hình gốc Qwen2.5-VL-3B-Instruct khi chưa tinh chỉnh, được ký hiệu là Base trong các bảng. Mốc thứ hai là mô hình tinh chỉnh có giám sát, ký hiệu S1. Mô hình này được tinh chỉnh từ mô hình gốc với cấu hình ở Bảng~\ref{tab:4.1} để sinh trực tiếp câu hướng dẫn từ prompt, không qua bước trung gian, và được huấn luyện hai lần với seed 101 và 202. Vì hai lượt huấn luyện chỉ khác seed, chênh lệch giữa chúng được dùng để đánh giá độ ổn định khi lặp lại cùng một cấu hình. Thành phần thứ nhất của phương pháp đề xuất học tiếp từ lượt seed 101, nên lượt này đồng thời là mốc so sánh trực tiếp. Mốc thứ ba là câu tham chiếu được đưa trực tiếp vào quy trình đánh giá. Điểm của câu tham chiếu được sử dụng như một mốc hỗ trợ diễn giải kết quả của các mô hình; trong một số bảng, mốc này được ghi ngắn gọn là Trần.
+Kết quả của phương pháp đề xuất được so sánh với ba mốc chính. Mốc thứ nhất là mô hình gốc Qwen2.5-VL-3B-Instruct khi chưa tinh chỉnh, được ký hiệu là Base trong các bảng. Mốc thứ hai là mô hình tinh chỉnh có giám sát, ký hiệu S1. Mô hình này được tinh chỉnh từ mô hình gốc với cấu hình ở Bảng~\ref{tab:4.1} để sinh trực tiếp câu hướng dẫn từ prompt, không qua bước trung gian, và được huấn luyện hai lần với seed 101 và 202. Vì hai lượt huấn luyện chỉ khác seed, chênh lệch giữa chúng được dùng để đánh giá độ ổn định khi lặp lại cùng một cấu hình. Thành phần thứ nhất của phương pháp đề xuất học tiếp từ lượt seed 101, nên lượt này đồng thời là mốc so sánh trực tiếp. Mốc thứ ba là câu tham chiếu được đưa trực tiếp vào quy trình đánh giá. Điểm của câu tham chiếu được sử dụng như một mốc tham chiếu để hỗ trợ diễn giải kết quả của các mô hình.
 
 Trước khi hình thành phương pháp đề xuất, đề tài đã khảo sát nhiều phương án khác, gồm viết trước câu một dòng mô tả phần tử cần chạm, học theo cặp ưu tiên trên dòng mô tả, chọn phần tử trong một danh sách ứng viên, thưởng cho tọa độ ghi trong dòng mô tả và hiệu chỉnh câu dựa trên vùng ảnh cục bộ. Kết quả của các hướng này là căn cứ để chọn phương pháp và được tóm tắt ở Mục~\ref{sec:6.10}; thiết kế và số liệu chi tiết nằm ở Phụ lục A.
 

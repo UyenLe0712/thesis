@@ -1,7 +1,7 @@
 \chapter{Các phương án thiết kế đã khảo sát}
 \label{app:A}
 
-Phụ lục này trình bày, theo thứ tự thực hiện, các hướng đã thử trước khi chọn phương pháp đề xuất, với phần tóm tắt ở Mục~\ref{sec:6.10}. Trong các bảng, S1 là mô hình tinh chỉnh có giám sát, dùng làm mốc so sánh; S2 là mô hình mô tả phần tử; CE2-S2 là mô hình học thêm có giám sát; MIN-DESC (MIN) là mô hình sau giai đoạn học theo cặp ưu tiên; Base là mô hình gốc và Trần là câu tham chiếu.
+Phụ lục này trình bày, theo thứ tự thực hiện, các hướng đã thử trước khi chọn phương pháp đề xuất, với phần tóm tắt ở Mục~\ref{sec:6.10}. Trong các bảng, S1 là mô hình tinh chỉnh có giám sát, dùng làm mốc so sánh; S2 là mô hình mô tả phần tử; CE2-S2 là mô hình học thêm có giám sát; MIN-DESC (MIN) là mô hình sau giai đoạn học theo cặp ưu tiên; Base là mô hình gốc; câu tham chiếu là câu hướng dẫn do người chú thích viết cho bước tương ứng.
 
 \section{Sinh mô tả phần tử trước câu hướng dẫn}\label{sec:A.1}
 
@@ -59,7 +59,7 @@ Mô tả giả (S2r) & dòng mô tả giả khớp độ dài + câu & loại tr
 Mô tả không có tọa độ (S2-nopoint) & dòng mô tả bỏ tọa độ + câu & tách phần đóng góp của tọa độ \\
 Danh sách phần tử lúc chạy (B-infer) & trọng số S1, danh sách phần tử đưa vào đầu vào lúc chạy & so huấn luyện với việc chỉ cung cấp thông tin lúc chạy \\
 Mô hình gốc (Base) & mô hình gốc, không tinh chỉnh & đo phần cải thiện do bản thân việc tinh chỉnh \\
-Câu tham chiếu (Trần) & câu tham chiếu được đưa trực tiếp vào quy trình đánh giá & mốc tham chiếu của độ đo \\
+Câu tham chiếu & câu tham chiếu được đưa trực tiếp vào quy trình đánh giá & mốc tham chiếu của độ đo \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -70,7 +70,7 @@ Câu tham chiếu (Trần) & câu tham chiếu được đưa trực tiếp vào
 
 Mô hình mô tả phần tử đạt 57,2\%, thấp hơn mô hình tinh chỉnh có giám sát 1,93 điểm ở seed 101 và 2,44 điểm ở seed 202 (Bảng~\ref{tab:6.8}); khoảng tin cậy của cả hai chênh lệch đều nằm dưới 0. Theo tiêu chí ở Mục~\ref{sec:4.8}, đây là kết quả âm, dù chưa đủ để kết luận rằng việc mô tả phần tử trước luôn gây hại. Kết quả âm này giữ nguyên khi chấm lại bằng mô hình định vị thứ hai (Mục~\ref{sec:5.9}). Mô hình vẫn hơn mô hình gốc 9,59 điểm, nên việc thêm dòng mô tả không làm mất tác dụng của việc tinh chỉnh.
 
-Chúng tôi đã kiểm bốn cách giải thích thay thế và không cách nào giải thích được chênh lệch. Bốn cách đó là độ dài câu, nhóm ứng dụng, việc phép chuẩn hoá loại thao tác của độ đo xếp cụm \emph{go back} vào lớp chạm, và tên ghi trong dòng mô tả bị sai do lỗi nhận dạng chữ.
+Chúng tôi đã kiểm ba cách giải thích thay thế và không cách nào giải thích được chênh lệch. Ba cách đó là độ dài câu, nhóm ứng dụng, và tên ghi trong dòng mô tả bị sai do lỗi nhận dạng chữ.
 
 \subsubsection{Chia nhóm theo việc có sinh dòng mô tả hay không}\label{sec:A.1.3.1}
 
@@ -93,11 +93,11 @@ Theo Bảng~\ref{tab:A.2}, nhóm 325 bước mà mô hình mô tả phần tử 
 
 \begin{table}[htbp]
 \centering\small
-\caption[Điểm theo trạng thái dòng mô tả do mô hình mô tả phần tử (S2) tự sinh.]{Điểm theo trạng thái dòng mô tả do mô hình mô tả phần tử (S2) tự sinh. Cột Trần là điểm của câu tham chiếu trên chính nhóm đó.}\label{tab:A.3}
+\caption[Điểm theo trạng thái dòng mô tả do mô hình mô tả phần tử (S2) tự sinh.]{Điểm theo trạng thái dòng mô tả do mô hình mô tả phần tử (S2) tự sinh. Cột Tham chiếu là điểm của câu tham chiếu trên chính nhóm đó.}\label{tab:A.3}
 \setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}llrrrrr@{}}
 \toprule
-\textbf{Tên} & \textbf{Tọa độ} & \textbf{n} & \textbf{Base} & \textbf{S1} & \textbf{S2} & \textbf{Trần} \\
+\textbf{Tên} & \textbf{Tọa độ} & \textbf{n} & \textbf{Base} & \textbf{S1} & \textbf{S2} & \textbf{Tham chiếu} \\
 \midrule
 đúng & đạt & 1.871 & 69,0 & 81,4 & 87,1 & 86,6 \\
 đúng & không đạt & 184 & 23,4 & 25,5 & 26,1 & 31,0 \\
@@ -164,7 +164,7 @@ Ngoài nguồn cặp được xây dựng bằng quy tắc (cửa sổ 80--350 �
 
 \begin{table}[htbp]
 \centering\small
-\caption{Khớp loại thao tác trên mẫu 400 bước không chạm (cuộn 96, chờ 86, gõ chữ 82, mở ứng dụng 81, quay lại 55), chấm với biến thể nghiêm ngặt của điều kiện khớp loại thao tác.}\label{tab:A.5}
+\caption{Khớp loại thao tác trên mẫu 400 bước không chạm (cuộn 96, chờ 86, gõ chữ 82, mở ứng dụng 81, quay lại 55), đánh giá với biến thể nghiêm ngặt của điều kiện khớp loại thao tác.}\label{tab:A.5}
 \begin{tabular}{@{}lrr@{}}
 \toprule
 \textbf{Mô hình} & \textbf{Khớp loại thao tác} & \textbf{$\Delta$ so với S2} \\
@@ -184,10 +184,10 @@ Cách chia nhóm dựa trên hành vi của chính mô hình được đo. Hai n
 
 \begin{table}[htbp]
 \centering\small
-\caption[Điểm của mô hình sau giai đoạn học theo cặp ưu tiên (MIN-DESC) và mô hình tinh chỉnh có giám sát (S1) trên 3.473 bước có tên đúng để đối chiếu, chia theo việc dòng mô tả của MIN-DESC trỏ đúng hay trỏ sai phần tử.]{Điểm của mô hình sau giai đoạn học theo cặp ưu tiên (MIN-DESC) và mô hình tinh chỉnh có giám sát (S1) trên 3.473 bước có tên đúng để đối chiếu, chia theo việc dòng mô tả của MIN-DESC trỏ đúng hay trỏ sai phần tử. Cột Trần là điểm của câu tham chiếu trên chính nhóm đó.}\label{tab:A.6}
+\caption[Điểm của mô hình sau giai đoạn học theo cặp ưu tiên (MIN-DESC) và mô hình tinh chỉnh có giám sát (S1) trên 3.473 bước có tên đúng để đối chiếu, chia theo việc dòng mô tả của MIN-DESC trỏ đúng hay trỏ sai phần tử.]{Điểm của mô hình sau giai đoạn học theo cặp ưu tiên (MIN-DESC) và mô hình tinh chỉnh có giám sát (S1) trên 3.473 bước có tên đúng để đối chiếu, chia theo việc dòng mô tả của MIN-DESC trỏ đúng hay trỏ sai phần tử. Cột Tham chiếu là điểm của câu tham chiếu trên chính nhóm đó.}\label{tab:A.6}
 \begin{tabular}{@{}lrrrrr@{}}
 \toprule
-\textbf{Nhóm} & \textbf{n} & \textbf{MIN-DESC} & \textbf{S1} & \textbf{$\Delta$ ghép cặp} & \textbf{Trần} \\
+\textbf{Nhóm} & \textbf{n} & \textbf{MIN-DESC} & \textbf{S1} & \textbf{$\Delta$ ghép cặp} & \textbf{Tham chiếu} \\
 \midrule
 Trỏ đúng phần tử & 2.106 (60,6\%) & 87,1 & 78,3 & +8,83 & 86,3 \\
 Trỏ sai phần tử & 1.367 (39,4\%) & 21,8 & 32,9 & -11,12 & 61,4 \\
@@ -205,7 +205,7 @@ Khi dòng mô tả xác định đúng phần tử, MIN-DESC hơn mô hình tinh
 \setlength{\tabcolsep}{3pt}
 \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash\hsize=1.00\hsize}Xrrrrrr@{}}
 \toprule
-\textbf{Nhóm} & \textbf{n} & \textbf{\%} & \textbf{MIN} & \textbf{S1} & \textbf{Trần} & \textbf{Dư địa} \\
+\textbf{Nhóm} & \textbf{n} & \textbf{\%} & \textbf{MIN} & \textbf{S1} & \textbf{Tham chiếu} & \textbf{Dư địa} \\
 \midrule
 tên đúng, tọa độ đúng & 2.082 & 46,7 & 87,1 & 78,2 & 86,3 & -0,36 \\
 tên đúng, tọa độ sai & 220 & 4,9 & 26,4 & 27,7 & 32,3 & +0,29 \\
@@ -284,7 +284,7 @@ Tỉ lệ từ chối chọn cũng cao hơn khi ứng viên đúng nằm giữa 
 
 \begin{table}[htbp]
 \centering\small
-\caption[Tỉ lệ thẻ \code{none} theo bốn mẫu số.]{Tỉ lệ thẻ \code{none} theo bốn mẫu số. Mô hình phát \code{none} nhiều hơn tỉ lệ đúng trên loại bước bị chấm, và ít hơn tỉ lệ gặp trên toàn tập huấn luyện.}\label{tab:A.10}
+\caption[Tỉ lệ thẻ \code{none} theo bốn mẫu số.]{Tỉ lệ thẻ \code{none} theo bốn mẫu số. Mô hình phát \code{none} nhiều hơn tỉ lệ đúng trên loại bước bị đánh giá, và ít hơn tỉ lệ gặp trên toàn tập huấn luyện.}\label{tab:A.10}
 \begin{tabular}{@{}lr@{}}
 \toprule
 \textbf{Mẫu số} & \textbf{Tỉ lệ \code{none}} \\
@@ -384,7 +384,7 @@ Bảng~\ref{tab:A.11} gợi ra một can thiệp chỉ thay câu. Trên nhóm m�
 \caption[Ngưỡng tối đa của một can thiệp chỉ thay câu, dưới bốn cách định nghĩa nhóm (4.437 bước ghép cặp được).]{Ngưỡng tối đa của một can thiệp chỉ thay câu, dưới bốn cách định nghĩa nhóm (4.437 bước ghép cặp được). Cột cuối là mức tăng trên toàn tập bước được chấm khi thay câu của MIN-DESC (cột MIN) trên nhóm đó bằng câu của S1.}\label{tab:A.13}
 \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}Xrrrrr@{}}
 \toprule
-\textbf{Cách định nghĩa nhóm} & \textbf{n} & \textbf{MIN} & \textbf{S1} & \textbf{Câu tham chiếu} & \textbf{Trần} \\
+\textbf{Cách định nghĩa nhóm} & \textbf{n} & \textbf{MIN} & \textbf{S1} & \textbf{Câu tham chiếu} & \textbf{Dư địa} \\
 \midrule
 MIN-DESC nhận ra sai phần tử & 1.327 & 8,44 & 24,49 & 55,69 & +4,80 \\
 giai đoạn ba nhận ra sai phần tử & 1.256 & 11,94 & 22,13 & 54,70 & +2,88 \\

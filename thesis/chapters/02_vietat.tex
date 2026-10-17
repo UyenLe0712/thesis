@@ -55,8 +55,8 @@ SPICE & Semantic Propositional Image Caption Evaluation & Độ đo dựa trên 
 & Vùng trên màn hình gồm những điểm nằm gần phần tử cần chạm hơn bất kỳ phần tử nào khác. Chúng tôi dùng vùng này để xác định một dự đoán đúng, thay cho một dung sai cố định. \\
 \multicolumn{2}{@{}p{8.2cm}}{Tập bước được chấm}
 & Tập này gồm 4.463 bước chạm của tập kiểm tra và được dùng chung để chấm mọi mô hình, nên hai mô hình bất kỳ luôn so được với nhau trên đúng những bước như nhau. \\
-\multicolumn{2}{@{}p{8.2cm}}{Mốc tham chiếu trên và dưới của độ đo}
-& Mốc tham chiếu trên là điểm executability của chính câu tham chiếu, dùng để hỗ trợ diễn giải điểm của các mô hình. Mốc tham chiếu dưới được ước lượng bằng các câu mang rất ít hoặc không mang thông tin quy chiếu. Hai mức này là các mốc thực nghiệm, không phải giới hạn toán học tuyệt đối của độ đo. \\
+\multicolumn{2}{@{}p{8.2cm}}{Các mốc tham chiếu của độ đo}
+& Điểm executability của chính câu tham chiếu được dùng làm mốc để hỗ trợ diễn giải điểm của các mô hình. Mốc tham chiếu dưới được ước lượng bằng các câu mang rất ít hoặc không mang thông tin quy chiếu. Hai mức này là các mốc thực nghiệm, không phải giới hạn toán học tuyệt đối của độ đo. \\
 \multicolumn{2}{@{}p{8.2cm}}{Mô hình gốc (Base)}
 & Đây là mô hình Qwen2.5-VL-3B-Instruct khi chưa tinh chỉnh, được dùng làm một mốc so sánh và trong các bảng được gọi là Base (Mục~\ref{sec:4.7}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Mô hình tinh chỉnh có giám sát (S1)}
@@ -68,7 +68,7 @@ SPICE & Semantic Propositional Image Caption Evaluation & Độ đo dựa trên 
 \multicolumn{2}{@{}p{8.2cm}}{Checkpoint (bản lưu trọng số)}
 & Bản trọng số mô hình được ghi ra đĩa tại một thời điểm của lượt huấn luyện. \\
 \multicolumn{2}{@{}p{8.2cm}}{Cách chia nhóm, nhóm con}
-& Tập bước được chấm có thể chia thành các nhóm con, ví dụ theo độ dài câu hoặc theo số phần tử trên màn hình, để xem kết quả riêng trên từng nhóm. \\
+& Tập bước được đánh giá có thể chia thành các nhóm con, ví dụ theo độ dài câu hoặc theo số phần tử trên màn hình, để xem kết quả riêng trên từng nhóm. \\
 \multicolumn{2}{@{}p{8.2cm}}{Phép so sánh kiểm chứng}
 & Phép so sánh có chênh lệch đủ rõ, được dùng để kiểm tra liệu một công cụ đánh giá khác có bảo toàn chiều và độ lớn tương đối của kết quả hay không. \\
 \multicolumn{2}{@{}p{8.2cm}}{Tập kiểm định nội bộ}
@@ -77,7 +77,7 @@ SPICE & Semantic Propositional Image Caption Evaluation & Độ đo dựa trên 
 \multicolumn{3}{@{}l@{}}{\textit{Thuật ngữ riêng của đề tài: các hướng đã thử (Phụ lục~\ref{app:A})}} \\
 \midrule
 \multicolumn{2}{@{}p{8.2cm}}{Dòng mô tả phần tử (descriptor)}
-& Đây là một dòng có cấu trúc gồm bốn phần, \code{[vai trò | tên | tọa độ | dấu hiệu phân biệt]}, mà mô hình phải viết ra trước câu hướng dẫn, gọi tắt là dòng mô tả. Dòng này bị cắt bỏ trước khi chấm và chỉ xuất hiện ở các hướng đã thử, không có trong phương pháp đề xuất. \\
+& Đây là một dòng có cấu trúc gồm bốn phần, \code{[vai trò | tên | tọa độ | dấu hiệu phân biệt]}, mà mô hình phải viết ra trước câu hướng dẫn, gọi tắt là dòng mô tả. Dòng này bị cắt bỏ trước khi đánh giá và chỉ xuất hiện ở các hướng đã thử, không có trong phương pháp đề xuất. \\
 \multicolumn{2}{@{}p{8.2cm}}{Mô hình mô tả phần tử (S2)}
 & Đây là hướng đã thử đầu tiên, trong đó mô hình gốc được tinh chỉnh có giám sát để viết dòng mô tả phần tử rồi mới viết câu, theo nguyên tắc mô tả phân biệt trước, phát ngôn sau (Mục~\ref{sec:A.1.1}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Cấu hình mô tả giả và cấu hình mô tả không có tọa độ (S2r, S2-nopoint)}
@@ -89,7 +89,7 @@ SPICE & Semantic Propositional Image Caption Evaluation & Độ đo dựa trên 
 \multicolumn{2}{@{}p{8.2cm}}{Danh sách ứng viên}
 & Danh sách tối đa 40 phần tử của một màn hình, mỗi dòng gồm tên và tọa độ, được xây dựng từ cây trợ năng và văn bản trích xuất trên màn hình, rồi đưa vào prompt của mô hình chọn ứng viên (Mục~\ref{sec:3.8}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Mô hình chọn ứng viên}
-& Đây là hướng đã thử trong đó mô hình chọn phần tử cần chạm từ danh sách ứng viên thay vì tự viết dòng mô tả; thẻ ghi phần tử được chọn bị cắt bỏ trước khi chấm (Mục~\ref{sec:A.3.1}). \\
+& Đây là hướng đã thử trong đó mô hình chọn phần tử cần chạm từ danh sách ứng viên thay vì tự viết dòng mô tả; thẻ ghi phần tử được chọn bị cắt bỏ trước khi đánh giá (Mục~\ref{sec:A.3.1}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Từ chối chọn}
 & Đây là trường hợp mô hình chọn ứng viên phát thẻ \code{none} thay vì chọn một phần tử; việc từ chối là đúng khi danh sách không chứa phần tử cần chạm, và là sai khi danh sách có chứa phần tử đó. \\
 \multicolumn{2}{@{}p{8.2cm}}{Huấn luyện tăng cường với phần thưởng tọa độ}

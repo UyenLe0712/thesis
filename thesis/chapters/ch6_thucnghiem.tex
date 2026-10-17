@@ -7,7 +7,7 @@ Chương này trình bày kết quả thực nghiệm của phương pháp đề
 
 Mọi mô hình được đánh giá trên cùng 4.463 bước chạm của tập kiểm tra bằng cùng một quy trình đánh giá. Phương pháp đề xuất gồm mô hình học tăng cường với phần thưởng SPICE để sinh câu hướng dẫn ban đầu và ACE để quyết định có hiệu chỉnh câu hướng dẫn ban đầu bằng câu ví dụ hay không (Mục~\ref{sec:4.4} đến Mục~\ref{sec:4.6}).
 
-Ba mốc so sánh (Mục~\ref{sec:4.7}) gồm mô hình gốc (Base), mô hình tinh chỉnh có giám sát với hai seed 101 và 202 (S1), và câu tham chiếu được đưa trực tiếp vào quy trình đánh giá làm mốc tham chiếu trên của thang điểm. Ở một bước, S1 trả về câu rỗng; bước này được tính là không đạt và vẫn nằm trong mẫu số 4.463.
+Ba mốc so sánh (Mục~\ref{sec:4.7}) gồm mô hình gốc (Base), mô hình tinh chỉnh có giám sát với hai seed 101 và 202 (S1), và câu tham chiếu được đưa trực tiếp vào quy trình đánh giá làm mốc tham chiếu để diễn giải thang điểm. Ở một bước, S1 trả về câu rỗng; bước này được tính là không đạt và vẫn nằm trong mẫu số 4.463.
 
 \section{Kết quả chính}\label{sec:6.2}
 
@@ -211,9 +211,11 @@ Câu tham chiếu & 100,0 & 100,0 & 100,0 & 988,7 & 98,6 & 100,0 & 100,0 \\
 \end{tabular}
 \end{table}
 
+\textbf{Nhóm độ đo theo vị trí.} Thứ tự các mô hình dưới luật khoảng cách Euclid và luật hộp phần tử gần như trùng với thứ tự dưới executability (Bảng~\ref{tab:6.5}, Hình~\ref{fig:6.2}). Phương pháp đề xuất đạt 76,3\% theo luật khoảng cách Euclid và 67,1\% theo luật hộp phần tử, so với 74,4\% và 65,5\% của S1 hạt giống 101; mức hơn có ý nghĩa dưới cả hai luật (p < 0,001). Giai đoạn thưởng tọa độ cao nhất theo luật khoảng cách Euclid (77,3\%), nhưng mức hơn này đến từ việc gọi đúng loại thao tác chứ không từ việc chỉ đúng phần tử (Mục~\ref{sec:A.4.2}). Bảng~\ref{tab:6.7} cho khoảng tin cậy của các mốc dưới ba luật: chênh lệch giữa S1 và mô hình gốc giữ gần nguyên ở cả ba luật.
+
 \begin{table}[htbp]
 \centering\small
-\caption[Khoảng tin cậy 95\% của ba số chính trên 4.463 bước (trên) và phép so ghép cặp (dưới).]{Khoảng tin cậy 95\% của ba số chính trên 4.463 bước (trên) và phép so ghép cặp (dưới). Khoảng tin cậy lấy từ bootstrap 10.000 lần gom cụm theo ứng dụng (G = 1.091), giá trị p của kiểm định McNemar. MIN là MIN-DESC.}\label{tab:6.7}
+\caption[Khoảng tin cậy 95\% của ba số chính trên 4.463 bước (trên) và phép so ghép cặp (dưới).]{Khoảng tin cậy 95\% của ba số chính trên 4.463 bước (trên) và phép so ghép cặp (dưới). Khoảng tin cậy lấy từ bootstrap 10.000 lần gom cụm theo ứng dụng (G = 1.091), giá trị p của kiểm định McNemar. MIN là MIN-DESC; giai đoạn ba là giai đoạn thưởng tọa độ (Phụ lục~\ref{sec:A.4}).}\label{tab:6.7}
 \begin{tabular}{@{}llll@{}}
 \toprule
 \textbf{Mô hình} & \textbf{Euclid} & \textbf{Hộp phần tử} & \textbf{Executability} \\
@@ -238,20 +240,6 @@ S1 (101) $-$ Base & Euclid & +10,98 & [+9,44; +12,56] & <0,001 \\
 S2 $-$ S1 (101) & Euclid & -0,96 & [$-$2,18; +0,29] & 0,100 \\
  & Hộp phần tử & -1,86 & [$-$3,04; $-$0,67] & <0,001 \\
  & Exec. & -1,93 & [$-$3,06; $-$0,75] & <0,001 \\
-Giai đoạn ba $-$ S2 & Euclid & +3,90 & [+2,90; +4,90] & <0,001 \\
- & Hộp phần tử & +3,41 & [+2,37; +4,41] & <0,001 \\
- & Exec. & +2,89 & [+1,91; +3,84] & <0,001 \\
-Giai đoạn ba $-$ S1 (101) & Euclid & +2,94 & [+1,77; +4,08] & <0,001 \\
- & Hộp phần tử & +1,55 & [+0,40; +2,69] & 0,008 \\
- & Exec. & +0,96 & [$-$0,16; +2,11] & 0,090 \\
-Giai đoạn ba $-$ S1 (202) & Euclid & +1,99 & [+0,84; +3,13] & <0,001 \\
- & Hộp phần tử & +0,94 & [$-$0,17; +2,04] & 0,109 \\
- & Exec. & +0,45 & [$-$0,67; +1,54] & 0,450 \\
-MIN $-$ S1 (101) & Euclid & +2,04 & [+0,89; +3,20] & <0,001 \\
- & Hộp phần tử & +1,05 & [$-$0,11; +2,20] & 0,078 \\
-Giai đoạn ba $-$ MIN & Euclid & +0,90 & [+0,27; +1,52] & 0,007 \\
- & Hộp phần tử & +0,49 & [$-$0,13; +1,10] & 0,149 \\
- & Exec. & +0,02 & [$-$0,57; +0,61] & 1,000 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -372,7 +360,7 @@ Dòng cuối của bảng cho thấy một độ đo dựa trên câu tham chi�
 
 \section{Phân bố lỗi của mô hình tinh chỉnh có giám sát}\label{sec:6.9}
 
-Mục này trình bày bốn quan sát rút từ bản ghi từng bước của S1.
+Mục này phân tích lỗi của S1, để thấy tinh chỉnh đã sửa được gì và còn thiếu gì.
 
 \subsection{Ảnh hưởng của việc trùng ứng dụng giữa tập huấn luyện và tập kiểm tra}\label{sec:6.9.1}
 
@@ -414,7 +402,7 @@ Vì vậy, nhóm lỗi còn lại của S1 chủ yếu liên quan đến việc 
 
 \subsection{Khác biệt hành vi giữa mô hình gốc và mô hình đã tinh chỉnh}\label{sec:6.9.3}
 
-Trên 798 bước mà S1 đúng còn mô hình gốc sai, lỗi của mô hình gốc có hai dạng.
+Ở 798 bước mà S1 đúng còn mô hình gốc sai, mô hình gốc thường mắc một trong hai lỗi: viết cả một kế hoạch nhiều bước thay vì chỉ bước hiện tại, hoặc mô tả một bước khác với bước cần làm.
 
 \begin{center}\small
 \begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash\hsize=1.00\hsize}X@{}}
@@ -512,4 +500,3 @@ Mô hình listener dạng lựa chọn (Phi-4) & Hoàn tất một phần & đã
 Đánh giá thủ công 100 câu bởi hai người & Không thực hiện & còn là một hạn chế; Mục~\ref{sec:7.2} \\
 \end{longtable}
 }
-
