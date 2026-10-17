@@ -1,9 +1,9 @@
 \chapter{Xây dựng bộ dữ liệu}
 \label{chap:3}
 
-Chưa có bộ dữ liệu công khai nào dành sẵn cho tác vụ “nhìn một màn hình rồi viết một câu hướng dẫn cho người dùng”. Chương này trình bày cách chuyển bộ dữ liệu AndroidControl~\cite{androidcontrol} thành dữ liệu huấn luyện cho tác vụ này. Toàn bộ quá trình được tự động hoá, và mọi nhãn đều lấy từ chính bộ dữ liệu gốc, không gán nhãn mới và không dùng nhãn do mô hình ngôn ngữ khác sinh ra.
+Không có một bản phân phối AndroidControl nào được sử dụng trong đề tài chứa đầy đủ mọi thành phần cần thiết cho bài toán sinh hướng dẫn ở từng bước. Vì vậy, chương này trình bày cách hợp nhất các nguồn dữ liệu, xây dựng đầu vào từ giao diện và tổ chức dữ liệu cho huấn luyện, lựa chọn mô hình và đánh giá. Toàn bộ quy trình được tự động hóa, không cần gán nhãn thủ công bổ sung và không dùng nhãn do một mô hình ngôn ngữ khác sinh ra làm mục tiêu huấn luyện.
 
-Bảng~\ref{tab:3.1} cho biết ba khái niệm trong tên đề tài ứng với gì trong dữ liệu.
+Bảng~\ref{tab:3.1} ánh xạ ba khái niệm trong tên đề tài sang các thành phần dữ liệu cụ thể được sử dụng trong luận văn.
 
 \begin{table}[htbp]
 \centering\small
@@ -13,19 +13,19 @@ Bảng~\ref{tab:3.1} cho biết ba khái niệm trong tên đề tài ứng vớ
 \textbf{Khái niệm} & \textbf{Dạng cụ thể trong đề tài} \\
 \midrule
 Trường hợp sử dụng & Mục tiêu của cả tác vụ, ví dụ như đặt vé xem phim cho tối nay, cùng chuỗi các bước đã thực hiện trước bước đang xét \\
-Giao diện người dùng & Ảnh chụp màn hình đang mở, chuỗi chữ đọc được trên màn, và ở khâu dựng dữ liệu còn có cây trợ năng của chính màn hình ấy \\
-Hướng dẫn sử dụng & Mỗi bước có một câu cho người dùng biết cần làm gì tiếp theo, ví dụ như chạm vào nút Đặt vé, và các câu này xếp theo thứ tự các bước chính là bản hướng dẫn cho cả tác vụ. \\
+Giao diện người dùng & Ảnh chụp màn hình đang mở, văn bản hiển thị trên màn, và trong giai đoạn xây dựng dữ liệu còn có cây trợ năng của chính màn hình ấy \\
+Hướng dẫn sử dụng & Câu hướng dẫn cho bước kế tiếp; các câu của cùng một tác vụ nối lại theo thứ tự bước thành hướng dẫn đầy đủ cho tác vụ đó \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Mô hình sinh và được đánh giá theo từng bước, vì câu chuẩn của AndroidControl được viết theo từng bước, và bản hướng dẫn cho cả tác vụ chỉ là các câu ấy xếp nối nhau. Câu của từng bước đúng thì cả bản hướng dẫn đúng.
+Dữ liệu được tổ chức ở mức từng bước thay vì yêu cầu mô hình sinh toàn bộ hướng dẫn trong một lần. Cách tổ chức này phù hợp với cấu trúc nhãn của AndroidControl, trong đó mỗi bước có một câu tham chiếu riêng, đồng thời tương thích với executability ở Chương~\ref{chap:5}, vốn đánh giá khả năng từng câu dẫn tới đúng phần tử cần thao tác. Hướng dẫn đầy đủ cho một tác vụ có thể được hình thành bằng cách ghép các câu theo thứ tự bước.
 
-Phương pháp đề xuất (Mục~\ref{sec:4.4}) dùng ba phần dữ liệu của chương này: tập giám sát 64.567 bước để huấn luyện mô hình tinh chỉnh có giám sát (S1); các câu nhắc của tập huấn luyện để học tăng cường với thưởng SPICE; và các câu chuẩn của tập huấn luyện làm kho truy hồi câu ví dụ cho ACE. Mục~\ref{sec:3.1} đến Mục~\ref{sec:3.4} trình bày các phần này. Mục~\ref{sec:3.5} đến Mục~\ref{sec:3.8} trình bày dữ liệu chỉ dùng cho các hướng đã thử ở Phụ lục A.
+Các mục đầu của chương mô tả dữ liệu dùng trong phương pháp đề xuất và những đặc điểm cần lưu ý khi diễn giải kết quả. Hai mục cuối trình bày riêng các cấu trúc dữ liệu chỉ phục vụ những phương án thiết kế được phân tích trong Phụ lục~\ref{app:A}.
 
-\section{Nguồn dữ liệu và quá trình ghép đa nguồn}\label{sec:3.1}
+\section{Nguồn dữ liệu và quy trình hợp nhất dữ liệu đa nguồn}\label{sec:3.1}
 
-Mỗi bước cần ba thứ: câu hướng dẫn do người chú thích viết, ảnh màn hình và cây trợ năng (cấu trúc các phần tử giao diện của màn hình). Không bản phân phối công khai nào của AndroidControl có đủ cả ba, nên chúng tôi ghép hai bản trên Hugging Face lại với nhau (Bảng~\ref{tab:3.2}).
+Để xây dựng một mẫu đầy đủ cho mỗi bước, cần ba thành phần: câu hướng dẫn do người chú thích viết, ảnh chụp màn hình và cây trợ năng. Tuy nhiên, không có bản phân phối công khai nào của AndroidControl cung cấp đồng thời cả ba thành phần này. Vì vậy, luận văn hợp nhất hai bản phân phối như trình bày ở Bảng~\ref{tab:3.2}.
 
 \begin{table}[htbp]
 \centering\small
@@ -43,11 +43,13 @@ Mỗi bước cần ba thứ: câu hướng dẫn do người chú thích viết
 
 Hai bản được ghép theo cặp mã tác vụ và số thứ tự bước, \code{(episode\_id, step\_id)}. Cây trợ năng của 99.131 màn được lấy từ bản phát hành gốc.
 
-Chuỗi mục tiêu của tác vụ đã bị cắt ngay từ nguồn: 99,0\% số chuỗi dừng giữa chừng, ví dụ \code{...look for Calvin Kle}. Mọi mô hình đều đọc cùng chuỗi bị cắt nên điều này không ảnh hưởng tới phép so giữa các mô hình, nhưng có thể làm điểm của mọi mô hình thấp hơn đôi chút so với câu chuẩn.
+Một đặc điểm của nguồn dữ liệu là 99,0\% chuỗi mô tả mục tiêu chung của tác vụ kết thúc giữa một cụm từ. Ảnh hưởng của đặc điểm này tới phạm vi diễn giải kết quả được trình bày cùng các tính chất khác của dữ liệu ở Mục~\ref{sec:3.6}.
 
-\section{Kiểm tra tính chính xác của quá trình ghép dữ liệu}\label{sec:3.2}
+\section{Kiểm chứng độ chính xác của quy trình hợp nhất}\label{sec:3.2}
 
-Lỗi nguy hiểm nhất khi ghép là lệch một bước, khiến mô hình học ảnh của bước này với câu của bước khác. Lỗi này không gây báo lỗi nào, vì số dòng vẫn đủ và huấn luyện vẫn hội tụ. Để kiểm, chúng tôi đọc chữ ngay tại điểm chạm bằng nhận dạng chữ quang học (OCR) rồi xem chữ ấy có xuất hiện trong câu hướng dẫn không. Nếu ghép đúng, tỉ lệ này phải cao hơn hẳn so với khi cố ý ghép lệch một bước. Trên 400 bước lấy mẫu:
+Rủi ro chính của quy trình hợp nhất dữ liệu là ghép lệch bước giữa ảnh và câu hướng dẫn. Lỗi này khó phát hiện chỉ bằng số lượng bản ghi hoặc quá trình hội tụ của mô hình, nên cần một phép kiểm tra trực tiếp dựa trên nội dung.
+
+Phép kiểm tra sử dụng văn bản OCR tại vị trí chạm. Với dữ liệu ghép đúng, chuỗi văn bản tại vị trí này được kỳ vọng xuất hiện trong câu hướng dẫn thường xuyên hơn so với một đối chứng được cố ý dịch lệch một bước. Trên mẫu 400 bước, tỉ lệ khớp của dữ liệu ghép đúng là 48\%, so với 20\% ở đối chứng lệch bước.
 
 \begin{center}\small
 \begin{tabular}{@{}lrr@{}}
@@ -60,13 +62,13 @@ Tỉ số & 2,4$\times$ &  \\
 \end{tabular}
 \end{center}
 
-Tỉ lệ khi ghép đúng cao gấp 2,4 lần khi ghép lệch, và hai khoảng tin cậy không giao nhau, nên quá trình ghép là đúng.
+Tỉ lệ khớp của dữ liệu ghép đúng cao gấp 2,4 lần đối chứng bị dịch lệch một bước. Kết quả này cho thấy khóa ghép giữ được mối liên hệ giữa ảnh và câu hướng dẫn tốt hơn rõ rệt so với trường hợp ghép sai bước. Phép kiểm tra tương tự được áp dụng cho các lần xây dựng dữ liệu sau đó.
 
-\section{Quy mô, cách chia tập và kiểm tra dữ liệu đánh giá}\label{sec:3.3}
+\section{Quy mô và phân chia dữ liệu}\label{sec:3.3}
 
 \begin{table}[htbp]
 \centering\small
-\caption{Quy mô hai tập sau khi dựng.}\label{tab:3.3}
+\caption{Quy mô hai tập dữ liệu sau khi xây dựng.}\label{tab:3.3}
 \begin{tabular}{@{}lrr@{}}
 \toprule
  & \textbf{Tập huấn luyện} & \textbf{Tập kiểm tra} \\
@@ -80,19 +82,49 @@ Số tác vụ & 12.895 & 1.432 \\
 \end{tabular}
 \end{table}
 
-\textbf{Chia theo tác vụ.} Tập huấn luyện và tập kiểm tra được chia theo tác vụ: mọi bước của một tác vụ nằm trọn trong một tập. Các màn hình trong cùng tác vụ thường rất giống nhau, nên chia ngẫu nhiên theo bước sẽ làm điểm cao hơn thực tế. Hai tập không có tác vụ nào trùng nhau. Cách chia này lấy từ bản phân phối có ảnh của \code{ckg} và khác với cách chia chính thức của AndroidControl: khoảng 90\% tác vụ của tập kiểm tra (1.287/1.432) thuộc phần huấn luyện chính thức. Vì vậy chúng tôi gọi tập này là \emph{tập kiểm tra giữ riêng theo tác vụ}, và điểm tuyệt đối không so thẳng được với các công trình dùng phần kiểm tra chính thức.
+Tập đánh giá đầy đủ gồm 6.958 bước. Trong số đó, 4.463 bước chạm được sử dụng để tính executability chính ở Chương~\ref{chap:5} và Chương~\ref{chap:6}; các bước còn lại được phân tích riêng khi cần.
 
-\textbf{Tập kiểm định nội bộ.} Để chọn điểm lưu và chọn luật mà không phải dùng tập kiểm tra, chúng tôi tách thêm 1.567 bước khỏi tập huấn luyện, cũng theo tác vụ. Các mô hình học sau khi tách chỉ học trên 63.000 bước còn lại. Riêng S1 đã học trên toàn bộ 64.567 bước, nên với S1 và các mô hình học tiếp từ S1, tập này là dữ liệu đã thấy. Vì vậy tập kiểm định nội bộ chỉ dùng để xếp hạng các biến thể, không dùng để báo điểm.
+Dữ liệu được phân chia theo tác vụ, tức toàn bộ các bước thuộc cùng một tác vụ nằm trong cùng một tập. Cách chia này tránh việc các màn hình rất giống nhau của cùng một chuỗi thao tác xuất hiện đồng thời ở huấn luyện và đánh giá. Kiểm tra toàn bộ mã tác vụ không phát hiện tác vụ trùng giữa hai tập.
 
-\textbf{Trùng lặp giữa hai tập.} Dù tách theo tác vụ, hai tập vẫn giống nhau ở hai mặt. Về cách diễn đạt, 17,3\% câu chuẩn của tập kiểm tra xuất hiện nguyên văn trong một mẫu của tập huấn luyện, vì bộ dữ liệu lặp lại nhiều cách nói như “click on the search bar”; ACE tận dụng chính đặc điểm này (Mục~\ref{sec:4.6}). Về ứng dụng, trong các bước gán được tên ứng dụng, 95,6\% thuộc ứng dụng cũng có trong tập huấn luyện. Chỉ 45,0\% số bước của tập kiểm tra gán được tên ứng dụng; các bước còn lại mang nhãn “không biết”, khác với nhãn “chưa thấy”. Mục~\ref{sec:6.9} đo ảnh hưởng của việc trùng ứng dụng.
+\textbf{Tập kiểm định nội bộ.} Sau khi S1 đã được huấn luyện trên toàn bộ 64.567 bước, 1.567 bước được tách theo tác vụ để làm tập kiểm định nội bộ; 63.000 bước còn lại được dùng cho các giai đoạn huấn luyện tiếp theo. Tập kiểm định nội bộ chỉ phục vụ việc xếp hạng checkpoint và lựa chọn biến thể, gồm checkpoint của mô hình học tăng cường với phần thưởng SPICE và quy tắc lựa chọn của ACE (Mục~\ref{sec:4.5} và Mục~\ref{sec:4.6}). Cần lưu ý rằng phép tách này diễn ra sau khi S1 đã học trên toàn bộ 64.567 bước. Vì thế, 1.567 mẫu kiểm định không phải là dữ liệu hoàn toàn chưa từng xuất hiện trong quá trình huấn luyện của S1 hoặc các mô hình khởi tạo từ S1, và điểm tuyệt đối trên tập này không được sử dụng như kết quả chính của luận văn.
 
-\section{Trích xuất chữ trên màn hình}\label{sec:3.4}
+\textbf{Quan hệ với cách chia chính thức của AndroidControl.} Tập huấn luyện và tập kiểm tra trong đề tài kế thừa phép chia theo tác vụ của bản phân phối có ảnh từ \code{ckg}, không trùng với cách chia chính thức của AndroidControl. Trong 1.432 tác vụ của tập kiểm tra, 1.287 tác vụ thuộc phần huấn luyện chính thức, 131 thuộc phần kiểm tra và 14 thuộc phần kiểm định. Hai tập của đề tài vẫn rời nhau theo tác vụ, nên có thể dùng để so sánh các mô hình được huấn luyện và đánh giá theo cùng giao thức của đề tài. Tuy nhiên, các kết quả trên tập này không được diễn giải như kết quả trên phần kiểm tra chính thức của AndroidControl. Trong các chương sau, tập này được gọi là \emph{tập kiểm tra giữ riêng theo tác vụ}.
 
-Chữ đọc được trên màn là phần văn bản trong câu nhắc của mô hình (Mục~\ref{sec:4.2}). Chữ được lấy bằng OCR, trung bình khoảng 24 chuỗi chữ mỗi màn ở cả hai tập. Hai lỗi OCR hay gặp là biểu tượng bị đọc thành ký tự, và mất khoảng trắng (ví dụ \code{Turnon} thay cho “Turn on”).
+\section{Xây dựng thông tin đầu vào từ giao diện}\label{sec:3.4}
 
-\section{Xây dựng nhãn mô tả tự động}\label{sec:3.5}
+Ảnh màn hình là đầu vào thị giác của mô hình, còn văn bản OCR cung cấp thông tin chữ hiển thị trên giao diện. Kết quả OCR được đưa vào prompt và đồng thời được sử dụng khi xây dựng các nhãn phụ trợ ở Mục~\ref{sec:3.7}. Cây trợ năng chỉ được dùng trong quá trình xây dựng dữ liệu và nhãn; nó không được đưa vào đầu vào của quy trình suy luận cuối cùng ở Chương~\ref{chap:4}.
 
-Từ mục này trở đi, dữ liệu chỉ dùng cho các hướng đã thử ở Phụ lục A. Hướng đầu tiên (Mục~\ref{sec:A.1.1}) dạy mô hình viết một dòng mô tả phần tử cần chạm trước khi viết câu. Dòng mô tả gồm bốn ô (Bảng~\ref{tab:3.4}) và được dựng hoàn toàn bằng luật: từ điểm chạm, tìm phần tử nhỏ nhất trong cây trợ năng chứa điểm đó; vai trò lấy từ cây trợ năng; tên lấy từ cây trợ năng nếu hợp lệ, nếu không thì lấy từ chữ OCR trong phần tử; tọa độ là điểm chạm quy về thang [0, 1000]; dấu hiệu phân biệt là một mệnh đề như “ngay trên chữ Coffee”, dựng theo luật từ chữ OCR gần nhất.
+Trung bình mỗi màn hình có 24,2 chuỗi văn bản nhận dạng được ở tập kiểm tra và 23,6 ở tập huấn luyện. Giá trị trung vị ở hai tập bằng nhau, cho thấy lượng văn bản trích xuất được có phân bố tương tự giữa hai tập.
+
+Trên bộ dữ liệu này, chúng tôi quan sát được hai dạng lỗi phổ biến của OCR: biểu tượng bị nhận dạng nhầm thành ký tự, và mất khoảng trắng (ví dụ \code{Turnon} thay cho “Turn on”). Dạng lỗi thứ hai khiến phần tử bị xếp vào nhóm “không có tên” thay vì được gán một tên sai; vì vậy lỗi chủ yếu làm mất thông tin tên thay vì tạo nhãn tên sai.
+
+\section{Dữ liệu phục vụ phương pháp đề xuất}\label{sec:3.5}
+
+Phương pháp đề xuất ở Chương~\ref{chap:4} sử dụng ba nguồn dữ liệu có vai trò khác nhau. Mục này chỉ mô tả nguồn gốc và ranh giới của các nguồn đó; cách huấn luyện và quy tắc suy luận được trình bày ở Chương~\ref{chap:4}.
+
+\textbf{Tập huấn luyện có giám sát cho S1.} S1 được huấn luyện trên toàn bộ 64.567 bước của tập huấn luyện có giám sát. Với mỗi bước, đầu ra đích là câu hướng dẫn do người chú thích AndroidControl viết. S1 là điểm xuất phát của cả hai thành phần trong phương pháp đề xuất.
+
+\textbf{Dữ liệu cho giai đoạn học tăng cường với phần thưởng SPICE.} Sau khi 1.567 bước được chỉ định làm tập kiểm định nội bộ, 63.000 bước còn lại tạo thành phần huấn luyện cho các giai đoạn sau. Giai đoạn học tăng cường lấy prompt và câu tham chiếu tương ứng từ phần dữ liệu này; câu tham chiếu được dùng để tính phần thưởng SPICE. Tập kiểm định nội bộ chỉ phục vụ xếp hạng checkpoint theo giao thức ở Mục~\ref{sec:3.3}. Việc chỉ định 1.567 bước diễn ra sau khi S1 đã được huấn luyện trên toàn bộ 64.567 bước, nên không làm các mẫu này trở thành dữ liệu chưa từng được S1 nhìn thấy.
+
+\textbf{Kho truy hồi cho ACE.} Kho truy hồi của ACE được xây dựng từ dữ liệu phía huấn luyện sau khi loại các tác vụ thuộc tập kiểm định nội bộ, gồm 62.880 bước thuộc 12.542 tác vụ. Kho này không chứa tác vụ nào của tập kiểm tra giữ riêng theo tác vụ. Câu tham chiếu của các bước trong kho đóng vai trò câu ví dụ có thể được truy hồi; Mục~\ref{sec:4.6} trình bày cách truy hồi và quy tắc quyết định có sử dụng câu ví dụ hay không. Vì vậy, ACE không truy cập câu tham chiếu của chính bước kiểm tra đang được đánh giá.
+
+\section{Đặc điểm dữ liệu ảnh hưởng đến diễn giải kết quả}\label{sec:3.6}
+
+Bên cạnh cách chia theo tác vụ, bốn đặc điểm của dữ liệu cần được tính đến khi diễn giải các kết quả ở Chương~\ref{chap:6}.
+
+\textbf{Mục tiêu tác vụ bị cắt ở nguồn.} Có 99,0\% chuỗi mô tả mục tiêu chung của tác vụ kết thúc giữa một cụm từ. Đặc điểm này làm giảm lượng thông tin về mục tiêu mà mọi mô hình trong đề tài có thể sử dụng, nhưng chưa có phép đo riêng để quy đổi phần thông tin bị mất thành mức thay đổi điểm số.
+
+\textbf{Trùng lặp cách diễn đạt.} Trên mẫu so sánh đã sử dụng trong quá trình phân tích dữ liệu, 17,3\% câu tham chiếu của tập kiểm tra xuất hiện nguyên văn trong tập huấn luyện và 66,5\% chia sẻ ít nhất một cụm bốn từ liên tiếp. Đây là mức lặp đáng kể về cách diễn đạt, không phải trùng tác vụ giữa hai tập. Đặc điểm này có liên quan trực tiếp đến ACE vì thành phần này truy hồi câu ví dụ từ dữ liệu huấn luyện, nhưng các thống kê trên không cho phép quy toàn bộ mức thay đổi của ACE cho hiện tượng lặp câu.
+
+\textbf{Trùng lặp ứng dụng.} Trong các bước của tập kiểm tra xác định được ứng dụng, 95,6\% thuộc về ứng dụng đã xuất hiện trong tập huấn luyện; nếu tính theo ứng dụng riêng biệt, tỉ lệ là 91,8\%. Vì vậy, thiết lập đánh giá chủ yếu phản ánh khả năng xử lý tác vụ mới trong những ứng dụng phần lớn đã có mặt ở dữ liệu huấn luyện, thay vì chỉ phản ánh khả năng khái quát sang ứng dụng hoàn toàn mới.
+
+\textbf{Ứng dụng không xác định và ứng dụng chưa thấy.} Tên ứng dụng chỉ xác định được cho 45,0\% tổng số 6.958 bước trong tập kiểm tra. Các bước còn lại mang nhãn “không biết”; nhãn này chỉ biểu thị việc thiếu thông tin định danh và khác với nhóm “chưa thấy”, tức các ứng dụng xác định được nhưng không xuất hiện trong tập huấn luyện. Vì vậy, các phân tích theo ứng dụng đã thấy/chưa thấy ở Chương~\ref{chap:6} chỉ được diễn giải trên phần dữ liệu có thể xác định ứng dụng; tỉ lệ 45,0\% không phải là độ phủ của riêng tập 4.463 bước chạm.
+
+\section{Dữ liệu cho các phương án biểu diễn phần tử và học theo cặp}\label{sec:3.7}
+
+Các cấu trúc dữ liệu trong mục này chỉ phục vụ những phương án được phân tích trong Phụ lục~\ref{app:A}; chúng không tham gia vào cấu hình cuối của phương pháp đề xuất.
+
+\textbf{Nhãn mô tả phần tử.} Dòng mô tả phần tử được tạo tự động từ tọa độ chạm, cây trợ năng và OCR. Chương trình chọn hộp trợ năng nhỏ nhất chứa điểm chạm, lấy vai trò từ cây trợ năng và lấy tên từ cây hoặc OCR sau khi qua các bộ lọc. Tọa độ được chuẩn hóa về thang [0, 1000], còn trường cuối chứa một dấu hiệu phân biệt được sinh theo quy tắc định sẵn.
 
 \begin{table}[htbp]
 \centering\small
@@ -104,17 +136,19 @@ Từ mục này trở đi, dữ liệu chỉ dùng cho các hướng đã thử 
 \midrule
 Vai trò & \code{tappable text} & phân biệt nút, ô nhập, mục danh sách \\
 Tên & \code{Search here} & chữ hiển thị; nguồn là OCR hoặc cây trợ năng \\
-Tọa độ & \code{<point>}\allowbreak\code{440,91}\allowbreak\code{</point>} & nhãn sạch 100\%, chi phí dựng bằng không \\
+Tọa độ & \code{<point>}\allowbreak\code{440,91}\allowbreak\code{</point>} & lấy trực tiếp từ điểm chạm, không cần gán nhãn bổ sung \\
 Dấu hiệu phân biệt & \code{just above the text “Coffee”} & mệnh đề tách phần tử này khỏi các phần tử giống nó, nhằm vào dạng lỗi “câu mơ hồ” \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Tên phần tử được lọc qua hai bước: bỏ các nhãn trợ năng rác như định danh trong mã nguồn hay \code{No label specified} (14,7\% nhãn), và chỉ lấy tên từ OCR khi phần tử chiếm dưới 25\% màn hình. Trong 32.061 tên lấy được, 23.480 tên đến từ OCR, nên nếu chỉ dùng cây trợ năng thì sẽ mất khoảng ba phần tư số tên. Bảng~\ref{tab:3.5} cho thấy chất lượng nhãn ở quy mô đầy đủ khớp với mẫu thử ban đầu.
+\textbf{Làm sạch tên và dấu hiệu phân biệt.} Bộ lọc nhãn trợ năng loại 14,7\% nhãn tại các phần tử cần chạm, gồm định danh lấy từ mã nguồn, chuỗi số dài, hậu tố dành cho trình đọc màn hình và các chuỗi chỉ báo phần tử không có nhãn như \code{No label specified}. Bộ lọc hình học chỉ lấy tên từ OCR khi hộp phần tử chiếm dưới 25\% diện tích màn hình; trong 25 trường hợp hộp chiếm gần hết màn hình được kiểm tra thủ công, không có trường hợp nào khớp với câu tham chiếu. Khi tạo dấu hiệu phân biệt, quy trình ưu tiên kết hợp một chuỗi OCR gần phần tử với thông tin vị trí tương đối để làm tham chiếu. Trên mẫu thử, 75,9\% dấu hiệu được tạo ra đủ để phân biệt phần tử cần chạm với các phần tử tương tự; 24,1\% còn lại không đạt yêu cầu này.
+
+\textbf{Chất lượng nhãn ở quy mô đầy đủ.} Bảng~\ref{tab:3.5} so sánh 41.191 nhãn ở bước chạm với mẫu thử gồm 1.074 nhãn. Với ba chỉ số có số liệu đối chiếu, chênh lệch giữa hai cột không vượt quá 1,4 điểm.
 
 \begin{table}[htbp]
 \centering\small
-\caption[Chất lượng nhãn mô tả ở quy mô đầy đủ so với mẫu thử (n = 1.074).]{Chất lượng nhãn mô tả ở quy mô đầy đủ so với mẫu thử (n = 1.074). Ở ba chỉ số có số đối chiếu, hai cột lệch nhau không quá 1,4 điểm, cho thấy quy trình không suy giảm khi mở rộng quy mô.}\label{tab:3.5}
+\caption[Chất lượng nhãn mô tả ở quy mô đầy đủ so với mẫu thử (n = 1.074).]{Chất lượng nhãn mô tả ở quy mô đầy đủ so với mẫu thử (n = 1.074). Ở ba chỉ số có số đối chiếu, hai cột lệch nhau không quá 1,4 điểm.}\label{tab:3.5}
 \begin{tabular}{@{}lrr@{}}
 \toprule
 \textbf{Chỉ số} & \textbf{Quy mô đầy đủ} & \textbf{Mẫu thử} \\
@@ -129,24 +163,21 @@ Có phần tử cùng vai trò để so & 91,6\% & - \\
 \end{tabular}
 \end{table}
 
-\section{Bốn tập dữ liệu và các điều kiện cấu trúc bắt buộc}\label{sec:3.6}
+Trong 32.061 tên lấy được, 8.581 tên đến từ cây trợ năng và 23.480 tên đến từ OCR. Các thống kê này mô tả nguồn tên của nhãn phụ trợ, không thay đổi đầu vào của quy trình suy luận cuối cùng ở Mục~\ref{sec:3.4}.
 
-Từ cùng một đầu vào, chúng tôi dựng bốn tập chỉ khác nhau ở chuỗi mà mô hình phải sinh ra. Tập thứ nhất chỉ có câu hướng dẫn và là tập giám sát của S1. Tập thứ hai (S2) có dòng mô tả thật rồi tới câu, ví dụ ở bước 1 của tác vụ 5590:
+\textbf{Các biến thể chuỗi đích.} Từ cùng đầu vào, ba biến thể phụ trợ được xây dựng cho phương án mô tả phần tử. S2 sinh dòng mô tả thật trước câu hướng dẫn; S2r thay dòng mô tả bằng một dòng lấy từ màn khác có độ dài gần tương đương; S2-nopoint bỏ tọa độ và giữ ba trường còn lại. Câu hướng dẫn dùng để đánh giá được giữ giống hệt nhau từng byte giữa các biến thể khi thiết kế yêu cầu; ở các bước không chạm, chuỗi đích cũng được giữ giống nhau. Các bước không chạm chiếm 36,2\% tập huấn luyện. Dữ liệu S2r và S2-nopoint đã được xây dựng nhưng không được tiếp tục huấn luyện; trạng thái cuối được ghi ở Bảng~\ref{tab:6.13}.
 
-\begin{itemize}
-\item S1: \code{Click on the search bar}
-\item S2: \code{tappable text | Search here | 440,91 | just above the text “Coffee”} \\ \code{Click on the search bar}
-\end{itemize}
+\textbf{Tập cặp ưu tiên.} Phương án học theo cặp ở Mục~\ref{sec:A.2.1} sử dụng 22.854 cặp gồm một chuỗi được ưu tiên và một chuỗi đối chứng. Hai vế giữ nguyên câu hướng dẫn và chỉ khác dòng mô tả. Ở vế đối chứng, dòng mô tả trỏ tới một phần tử có thật, cùng vai trò, cách phần tử cần chạm từ 80 đến 350 điểm ảnh và khác ở cả tên lẫn tọa độ. Sau khi xây dựng, các cặp được kiểm tra để câu hướng dẫn của hai vế trùng nhau từng byte và dòng mô tả đối chứng không trỏ vào phần tử cần chạm.
 
-Hai tập còn lại dùng để đối chứng: tập mô tả giả (S2r) thay dòng mô tả bằng dòng của một màn khác có độ dài gần bằng, và tập mô tả không có tọa độ (S2-nopoint) bỏ ô tọa độ. Câu hướng dẫn giống hệt nhau ở cả bốn tập, và các bước không chạm (36,2\% dữ liệu) có chuỗi đích giống hệt nhau, nên mọi chênh lệch giữa các mô hình chỉ có thể đến từ dòng mô tả. Hai tập đối chứng đã dựng nhưng chưa được huấn luyện (Bảng~\ref{tab:6.13}).
+Tập cặp này chỉ chứa bước chạm. Ngoài ra, ở 17,4\% số cặp, chuỗi \code{(no name)} chỉ xuất hiện ở một trong hai vế, nên mô hình có thể dựa vào dấu hiệu này thay vì nội dung màn hình để phân biệt hai vế. Hạn chế được phát hiện sau khi mô hình đã học xong, nên các kết quả ở Phụ lục~\ref{app:A} sử dụng dữ liệu chưa chỉnh sửa.
 
-\section{Tập cặp quy chiếu tối thiểu cho giai đoạn học ưu tiên}\label{sec:3.7}
+\section{Dữ liệu cho mô hình chọn ứng viên}\label{sec:3.8}
 
-Giai đoạn học ưu tiên (Mục~\ref{sec:A.2.1}) học trên 22.854 cặp, mỗi cặp gồm một vế được chọn (nên viết) và một vế bị loại (nên tránh). Hai vế có cùng câu hướng dẫn và chỉ khác nhau ở dòng mô tả: vế bị loại mô tả phần tử cùng vai trò gần phần tử cần chạm nhất, cách nó từ 80 đến 350 điểm ảnh. Cận dưới bỏ các phần tử sát tới mức độ đo coi là một, cận trên bỏ các phần tử quá xa, vốn dễ phân biệt. Tập cặp chỉ chứa bước chạm. Ngoài ra, ở 17,4\% số cặp chỉ một vế có chuỗi \code{(no name)}, nên mô hình có thể phân biệt hai vế nhờ chuỗi này mà không cần nhìn màn hình.
+Mục này mô tả cấu trúc dữ liệu của một phương án khác trong Phụ lục~\ref{app:A}, không phải thành phần của phương pháp đề xuất. Mô hình chọn ứng viên (Mục~\ref{sec:A.3.1}) thay danh sách OCR không có vị trí bằng tối đa 40 ứng viên, mỗi ứng viên gồm tên phần tử và tọa độ trên lưới [0, 1000]. Danh sách sử dụng cùng quy tắc đặt tên với nhãn mô tả phần tử và được sắp theo thứ tự đọc tự nhiên trên màn hình.
 
-\section{Danh sách ứng viên cho mô hình chọn ứng viên}\label{sec:3.8}
+Tên xuất hiện trong dòng mô tả của một bước được xem là tên mục tiêu của bước đó. Một ứng viên được xem là đúng khi có cùng tên mục tiêu và cách điểm chạm không quá 140 đơn vị lưới (tương đương 14\% kích thước màn hình) trên mỗi trục; nếu có nhiều ứng viên cùng thoả điều kiện, ứng viên gần điểm chạm nhất được chọn. Trên tập kiểm tra, tên đúng có mặt trong danh sách ở 96,7\% số bước có tên đúng, và ở 91,2\% số bước ấy danh sách có một dòng vừa trùng tên đúng vừa nằm trong dung sai trên. Trên mẫu 300 bước, vị trí xếp hạng của ứng viên đúng, sau khi chuẩn hóa về [0,1], có giá trị trung bình 0,481; ứng viên đúng đứng đầu ở 5,0\% số mẫu. Các thống kê này cho thấy bản thân vị trí trong danh sách không phải là một dấu hiệu hiển nhiên của đáp án. Mẫu dài nhất vẫn dưới giới hạn độ dài ngữ cảnh 3.072 token, nên không mẫu nào bị cắt.
 
-Mô hình chọn ứng viên (Mục~\ref{sec:A.3.1}) nhận một danh sách tối đa 40 phần tử trên màn thay cho chữ OCR. Mỗi dòng gồm tên phần tử và tọa độ, dạng \code{tên <point>x,y</point>}, xếp theo thứ tự đọc từ trên xuống, từ trái sang, nên vị trí trong danh sách không làm lộ đáp án. Trên tập kiểm tra, tên đúng có mặt trong danh sách ở 96,7\% số bước có tên đúng. Mô hình phải chép dòng của phần tử cần chạm vào một thẻ chọn trước khi viết câu, hoặc trả về \code{none} (từ chối chọn) khi không có dòng phù hợp:
+Từ cùng một prompt, hai cấu hình dữ liệu được xây dựng với chuỗi đích khác nhau. Ở cấu hình chọn ứng viên, mô hình phải sinh thêm thẻ lựa chọn phần tử trước câu hướng dẫn; cấu hình đối chứng sử dụng cùng đầu vào nhưng chỉ yêu cầu sinh câu hướng dẫn.
 
 \begin{center}\small
 \begin{tabular}{@{}ll@{}}
@@ -158,4 +189,9 @@ Mô hình chọn ứng viên (Mục~\ref{sec:A.3.1}) nhận một danh sách t�
 \end{tabular}
 \end{center}
 
-Mọi bước không chạm đều mang thẻ \code{none}, nên 54,78\% số mẫu huấn luyện mang thẻ này; nếu chỉ tính bước chạm thì tỉ lệ là 29,12\% (Mục~\ref{sec:A.3.2}).
+Nội dung thẻ chọn là phần sao chép nguyên văn thông tin của ứng viên đúng từ danh sách. Thẻ \code{none} được dùng cho bước không chạm, bước chạm không có tên đúng, hoặc bước chạm có tên đúng nhưng danh sách không chứa dòng khớp. Câu ở cả hai tập đều là câu tham chiếu nguyên bản; prompt và ảnh của hai cấu hình cũng được giữ giống nhau theo các điều kiện cấu trúc đã kiểm tra.
+
+Do mọi bước không chạm đều sử dụng thẻ \code{none}, 54,78\% mẫu huấn luyện mang nhãn này; nếu chỉ xét 41.191 bước chạm, tỉ lệ còn 29,12\%. Hai thống kê được sử dụng để phân tích hành vi từ chối chọn ở Mục~\ref{sec:A.3.2}.
+
+Như vậy, Mục~\ref{sec:3.7} và Mục~\ref{sec:3.8} chỉ ghi lại dữ liệu của các phương án thay thế đã khảo sát; các cấu trúc này không tham gia vào cấu hình phương pháp đề xuất được báo cáo như kết quả chính.
+

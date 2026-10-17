@@ -3,166 +3,78 @@
 
 \section{Đặt vấn đề}\label{sec:1.1}
 
-Khi thao tác trên điện thoại, không ít lần người dùng dừng lại giữa chừng vì chưa rõ bước tiếp theo cần làm gì. Lúc ấy, điều họ cần thường chỉ là một câu chỉ dẫn ngắn cho đúng bước cần làm, ví dụ như “Chạm vào biểu tượng chia sẻ ở góc trên bên phải màn hình”.
+Khi thực hiện một tác vụ trên ứng dụng di động, người dùng có thể biết mục tiêu cần đạt nhưng chưa biết phải thao tác như thế nào trên giao diện hiện tại. Trong trường hợp này, một hướng dẫn hữu ích không chỉ cần nêu đúng hành động, mà còn phải giúp người dùng xác định được phần tử cần tương tác. Chẳng hạn, thay vì chỉ yêu cầu “chia sẻ”, hệ thống có thể hướng dẫn “Chạm vào biểu tượng chia sẻ ở góc trên bên phải màn hình”.
 
-Những năm gần đây, dòng nghiên cứu về tác tử giao diện (GUI agent) giải một bài toán rất gần với bài toán trên, nhưng khác ở đầu ra. Với cùng một ảnh màn hình và cùng một mục tiêu, các hệ thống như SeeClick~\cite{seeclick}, OS-Atlas~\cite{osatlas} hay Aguvis~\cite{aguvis} trả về loại thao tác kèm tọa độ trên màn hình, dạng \code{click(872,141)}, để phần mềm tự thao tác thay người. Một số mô hình có viết thêm một đoạn văn bản trước khi đưa ra tọa độ, chẳng hạn mô tả thao tác sắp làm, nhưng đoạn văn bản ấy chỉ giúp mô hình tìm ra tọa độ. Khi đánh giá, các mô hình này được đánh giá trên thao tác và tọa độ cuối cùng, còn đoạn văn bản thì không được đánh giá.
+Các nghiên cứu gần đây về tác tử giao diện người dùng (GUI agent), như SeeClick~\cite{seeclick}, OS-Atlas~\cite{osatlas} và Aguvis~\cite{aguvis}, cũng giải quyết bài toán hiểu trạng thái giao diện và xác định hành động tiếp theo. Tuy nhiên, các hệ thống này chủ yếu hướng tới việc tự động thực hiện tác vụ: đầu ra thường là loại thao tác cùng vị trí trên màn hình, chẳng hạn \code{click(872,141)}. Biểu diễn này phù hợp với một tác tử phần mềm, nhưng không trực tiếp tạo ra hướng dẫn để người dùng đọc và làm theo.
 
-Đề tài này dùng cùng loại đầu vào với các mô hình trên. Điểm khác là mô hình không trả về tọa độ để máy tự bấm, mà viết ra một câu hướng dẫn giống ví dụ ở đầu mục, và kết quả được đánh giá trên chính câu hướng dẫn ấy.
+Luận văn này tập trung vào bài toán sinh hướng dẫn cho thao tác kế tiếp bằng ngôn ngữ tự nhiên. Tại mỗi thời điểm, mô hình nhận thông tin về mục tiêu của tác vụ, các thao tác đã được thực hiện trước đó và trạng thái giao diện hiện tại. Trạng thái giao diện được biểu diễn chủ yếu bằng ảnh chụp màn hình cùng phần văn bản đang hiển thị. Từ các thông tin này, mô hình cần sinh một câu hướng dẫn cho biết người dùng nên thực hiện thao tác nào và tương tác với phần tử nào để tiếp tục tác vụ.
 
-Việc đổi đầu ra từ tọa độ sang câu chữ dẫn tới hai vấn đề mà các công trình trước chưa có cách giải sẵn. Vấn đề thứ nhất nằm ở cách đánh giá câu, vấn đề thứ hai nằm ở dạng lỗi mà mô hình sinh câu hay mắc. Hai vấn đề này được trình bày sau khi nêu rõ đầu vào của mô hình.
+Thiết lập này tạo ra một yêu cầu khác với bài toán GUI agent truyền thống. Một dự đoán có thể xác định đúng thao tác hoặc đúng vị trí trên màn hình nhưng vẫn chưa phải là một hướng dẫn tốt cho người dùng nếu phần tử cần tương tác được mô tả không rõ ràng. Ngược lại, cùng một thao tác có thể được diễn đạt bằng nhiều câu khác nhau nhưng vẫn dẫn người dùng đến đúng phần tử và đúng hành động. Vì vậy, việc đánh giá hệ thống không thể chỉ dựa vào mức độ tương đồng giữa câu sinh và một câu tham chiếu, mà còn cần xem xét liệu hướng dẫn được sinh ra có cung cấp đủ thông tin để người dùng thực hiện đúng thao tác hay không.
 
-Tên đề tài gọi hai thành phần của đầu vào là \emph{trường hợp sử dụng} và \emph{giao diện người dùng}. Trường hợp sử dụng ở đây là mục tiêu người dùng đang theo đuổi, ví dụ như đặt vé xem phim cho tối nay hay tắt thông báo của một ứng dụng, cùng với các bước đã làm trước đó. Giao diện người dùng là ảnh chụp màn hình đang mở cùng chữ đọc được trên màn; ở khâu dựng dữ liệu, chúng tôi còn dùng thêm cây trợ năng của chính màn hình ấy. Mô hình ngôn ngữ lớn được dùng là một mô hình thị giác và ngôn ngữ cỡ ba tỉ tham số, nhận hai thành phần trên và viết ra câu hướng dẫn cho bước kế tiếp.
+Một thách thức khác là câu hướng dẫn phải đủ cụ thể để người dùng xác định đúng phần tử cần thao tác. Việc mô tả đúng loại phần tử chưa chắc đã đủ, đặc biệt khi trên cùng màn hình có nhiều phần tử giống hoặc gần giống nhau. Chẳng hạn, câu “Chạm vào biểu tượng tìm kiếm” vẫn có thể gây nhầm lẫn nếu giao diện xuất hiện hai biểu tượng tìm kiếm ở những vị trí khác nhau. Trong trường hợp đó, hướng dẫn cần bổ sung các đặc điểm giúp phân biệt phần tử mục tiêu, chẳng hạn vị trí, nội dung hiển thị hoặc mối quan hệ với các thành phần xung quanh. Vì vậy, chất lượng của câu hướng dẫn không chỉ nằm ở việc nêu đúng thao tác, mà còn ở khả năng giúp người dùng nhận ra chính xác phần tử cần tương tác.
 
-Về vấn đề thứ nhất, ở khâu đánh giá, một tọa độ dự đoán có thể đem so trực tiếp với tọa độ mà người dùng đã chạm, nhưng một câu thì khó so với một câu chuẩn duy nhất, bởi cùng một nút thường có nhiều cách gọi đều đúng. Ví dụ như “Click on the search bar” và “Tap the magnifying glass at the top” cùng chỉ về một phần tử, trong khi không bộ dữ liệu nào liệt kê được hết các cách diễn đạt hợp lệ.
-
-Hai cách đánh giá câu có sẵn là so khớp chuỗi ký tự và so vector ngữ nghĩa, và cả hai đều vướng ở điểm này. So khớp chuỗi ký tự chỉ chấp nhận câu giống câu chuẩn về mặt chữ, nên những câu cùng chỉ đúng một nút nhưng dùng từ khác đều bị coi là sai, và con số này lên tới 97,5\% số câu như vậy. So vector ngữ nghĩa cũng không khá hơn: trên 51 trường hợp viết tay, diện tích dưới đường ROC (AUC) chỉ đạt 0,336, tức còn thấp hơn đoán ngẫu nhiên. Nguyên nhân là vector ngữ nghĩa đo độ gần về chủ đề, trong khi điều cần biết là hai câu có cùng nói về một phần tử hay không. Trong phép thử này, cặp \code{inbox} và \code{outbox} đạt 0,76, cao hơn khá nhiều so với 0,55 của cặp \code{search} và \code{magnifying glass}, dù chỉ cặp sau mới cùng chỉ một nút (chi tiết ở Mục~\ref{sec:2.6}).
-
-Về vấn đề thứ hai, ở dạng lỗi của mô hình sinh câu, khi đọc thủ công 40 trường hợp sinh sai, chúng tôi thấy trường hợp mô hình nêu một nút không có trên màn hình chỉ chiếm khoảng 0 đến 2\%. Phần lớn lỗi còn lại là câu mơ hồ, ví dụ mô hình viết “biểu tượng tìm kiếm” trong khi màn hình có tới hai biểu tượng như vậy. Câu ấy không sai về mặt sự thật, nhưng người đọc khó dùng được, vì câu không giúp phân biệt phần tử cần chạm với những phần tử giống nó ở bên cạnh. Vì vậy, điều cần cải thiện là tính phân biệt của câu, tức câu phải giúp người đọc nhận ra đúng phần tử cần chạm giữa những phần tử trông giống nó. Còn lỗi nêu một phần tử không có trên màn hình vốn đã rất hiếm, nên dù giảm thêm thì chất lượng câu cũng không tăng được bao nhiêu.
-
-Từ hai vấn đề trên, đề tài đặt mục tiêu xây dựng một mô hình viết câu hướng dẫn giúp người đọc nhận ra đúng phần tử cần chạm, kèm một cách đo đáng tin cậy cho loại câu này. Công việc được chia theo hai vấn đề. Phần thứ nhất xây dựng và kiểm chứng một độ đo dùng được cho câu hướng dẫn. Phần thứ hai thiết kế và huấn luyện một mô hình viết ra những câu ít mơ hồ hơn. Đóng góp chính của đề tài là phương pháp đề xuất ở phần thứ hai, còn độ đo ở phần thứ nhất là công cụ để đánh giá phương pháp ấy. Mục~\ref{sec:1.6} tóm tắt cả hai phần cùng các kết quả chính.
+Từ yêu cầu này, luận văn tập trung vào hai vấn đề chính. Thứ nhất, cần một cách đánh giá phản ánh được liệu câu hướng dẫn có đủ thông tin để xác định đúng phần tử mục tiêu hay không, thay vì chỉ đo mức độ giống nhau về từ ngữ giữa câu sinh và câu tham chiếu. Thứ hai, cần một phương pháp sinh có khả năng tạo ra các hướng dẫn rõ ràng và đủ cụ thể để phân biệt phần tử mục tiêu với những phần tử tương tự trên màn hình. Hai vấn đề này được xem xét cùng nhau: độ đo được xây dựng để đánh giá khả năng xác định đúng phần tử, và sau đó được sử dụng để đánh giá phương pháp sinh hướng dẫn được đề xuất trong luận văn.
 
 \section{Động lực nghiên cứu}\label{sec:1.2}
 
 \subsection{Động lực khoa học}\label{sec:1.2.1}
 
-Từ năm 2016, dòng nghiên cứu sinh biểu thức quy chiếu (\emph{referring expression generation}) trong thị giác máy tính đã đặt ra yêu cầu một mô tả phải đủ để người tiếp nhận xác định đúng đối tượng. Mao và cộng sự~\cite{mao2016} đánh giá một mô tả bằng một mô hình hiểu (\emph{listener}), tức một mô hình nhận mô tả rồi chọn ra đối tượng được nhắc tới, và mô tả được tính là đạt khi mô hình ấy chọn đúng. Luo và Shakhnarovich~\cite{luo2017} cùng Yu và cộng sự~\cite{yu2017} đưa luôn mô hình hiểu ấy vào vòng huấn luyện. Đề tài kế thừa nguyên tắc này và không xem đó là đóng góp của mình.
+Về mặt khoa học, bài toán của luận văn có liên hệ gần với hướng nghiên cứu sinh biểu thức quy chiếu (\emph{referring expression generation}). Trong bài toán này, một mô tả được xem là hữu ích khi người tiếp nhận có thể dựa vào mô tả đó để nhận ra đúng đối tượng được nhắc tới. Mao và cộng sự~\cite{mao2016} đánh giá chất lượng mô tả thông qua một mô hình \emph{listener}: mô hình nhận câu mô tả và lựa chọn đối tượng mà câu đó đề cập tới; mô tả được xem là thành công nếu đối tượng được chọn trùng với đối tượng mục tiêu. Các nghiên cứu sau đó tiếp tục đưa tín hiệu từ listener vào quá trình huấn luyện nhằm khuyến khích mô hình tạo ra những mô tả có khả năng phân biệt đối tượng tốt hơn~\cite{luo2017,yu2017}. Cách tiếp cận này phù hợp với bài toán sinh hướng dẫn giao diện, bởi một câu hướng dẫn chỉ thực sự hữu ích khi nó giúp người dùng nhận ra đúng phần tử cần thao tác.
 
-Ở miền giao diện, yêu cầu này đã được nêu ra nhưng chưa được đưa vào mục tiêu huấn luyện. Widget Captioning~\cite{widgetcap}, công trình gần nhất trong miền này, đã chỉ ra trường hợp hai phần tử trông giống hệt nhau, nhưng vẫn huấn luyện bằng hàm mất mát entropy chéo thuần, tức không có số hạng nào đẩy mô tả về phía phân biệt hơn.
+Trong miền giao diện người dùng, Widget Captioning~\cite{widgetcap} cũng xem xét việc mô tả các phần tử trên màn hình, bao gồm những trường hợp có nhiều phần tử giống hoặc gần giống nhau. Tuy nhiên, mục tiêu huấn luyện vẫn chủ yếu dựa trên mức độ phù hợp với câu tham chiếu. Điều này tạo ra một khoảng cách giữa hai yêu cầu: sinh ra một câu giống với dữ liệu huấn luyện và sinh ra một câu đủ rõ để người dùng phân biệt đúng phần tử mục tiêu. Khoảng cách đó là một trong những động lực chính để luận văn xem xét cách đánh giá và tối ưu câu hướng dẫn theo khả năng xác định đúng phần tử, thay vì chỉ dựa vào độ tương đồng về từ ngữ.
 
-Ở phía đánh giá, ALOHa~\cite{aloha} dựa trên nguyên tắc kiểm chứng một phát biểu bằng một nguồn có cấu trúc bên ngoài thay vì bằng chính niềm tin của mô hình sinh. Đề tài đi theo nguyên tắc đó, nhưng có một khác biệt khiến việc kiểm chứng kém chắc chắn hơn. ALOHa đối chiếu với một danh sách tĩnh, còn chúng tôi đối chiếu với kết quả của một mô hình định vị phần tử đã học, nên độ tin cậy của độ đo không thể vượt quá độ tin cậy của chính mô hình ấy. Vì vậy, một phần đáng kể của đề tài dành cho việc kiểm tra chính công cụ đo trước khi dựa vào nó để rút ra kết luận.
-
-Jandial và cộng sự~\cite{groundersunderstand} đưa ra một cảnh báo liên quan trực tiếp tới độ đo đề xuất. Nhóm tác giả cho thấy các bộ chuẩn hiện nay chỉ đo độ chính xác trên một câu tốt nhất cho mỗi phần tử, nên con số công bố cao hơn năng lực thật của mô hình định vị. Trong công trình ấy, một tác tử đối kháng chuyên viết câu làm mô hình định vị trỏ sai đạt tỉ lệ thành công tới 84\% trên giao diện máy tính để bàn. Con số này là tỉ lệ thành công của một quá trình chủ động tìm câu đối kháng, khác với tỉ lệ trượt khi người dùng chỉ đơn giản diễn đạt khác đi. Các tác giả cũng chưa khảo sát giao diện di động. Mục~\ref{sec:5.8} kiểm phần cảnh báo áp dụng được cho đề tài bằng cách viết lại câu chuẩn rồi đánh giá lại, còn Mục~\ref{sec:7.2} nêu những phần chưa kiểm được.
+Việc dùng một mô hình định vị làm công cụ đánh giá cũng đặt ra một vấn đề khác: kết quả đo phụ thuộc vào chính khả năng của mô hình định vị đó. ALOHa~\cite{aloha} cho thấy có thể đánh giá đầu ra sinh bằng cách đối chiếu với nguồn thông tin có cấu trúc, thay vì chỉ so sánh trực tiếp với một câu tham chiếu. Tuy nhiên, khi thành phần dùng để đối chiếu cũng là một mô hình học máy, độ tin cậy của phép đo cần được kiểm chứng riêng. Jandial và cộng sự~\cite{groundersunderstand} cũng chỉ ra rằng khả năng định vị có thể thay đổi theo cách một đối tượng được diễn đạt bằng ngôn ngữ. Vì vậy, trước khi sử dụng một mô hình định vị để so sánh các phương pháp sinh, cần kiểm tra xem độ đo có duy trì hành vi hợp lý trước các biến đổi của câu và khi thay đổi mô hình đánh giá hay không.
 
 \subsection{Động lực ứng dụng}\label{sec:1.2.2}
 
-Tác vụ này đã có nhu cầu thực tế, chẳng hạn GuideMe~\cite{guideme} là một hệ thống giúp người cao tuổi tự học dùng điện thoại thông minh: người dùng đặt câu hỏi, hệ thống nhìn màn hình rồi trả về hướng dẫn từng bước. Hệ thống gọi một mô hình thương mại cỡ lớn qua mạng, không huấn luyện thêm mô hình nào, và chất lượng được đánh giá qua một nghiên cứu người dùng với 18 người, chưa có độ đo định lượng đi kèm.
+Về mặt ứng dụng, nhu cầu hướng dẫn người dùng thao tác trực tiếp trên giao diện đã xuất hiện trong các hệ thống thực tế. GuideMe~\cite{guideme}, chẳng hạn, hỗ trợ người cao tuổi sử dụng điện thoại thông minh bằng cách nhận câu hỏi cùng nội dung màn hình và trả về hướng dẫn cho các thao tác cần thực hiện. Hệ thống này sử dụng một mô hình thương mại cỡ lớn qua mạng và được đánh giá thông qua nghiên cứu người dùng với 18 người tham gia. Tuy nhiên, công trình chưa cung cấp một độ đo tự động để có thể so sánh định lượng các phương pháp sinh hướng dẫn trong quá trình phát triển hệ thống.
 
-Ví dụ này cho thấy hai điều còn thiếu ở phía ứng dụng. Trước hết, hiện chưa có độ đo định lượng nào cho phép so sánh hai hệ thống sinh hướng dẫn giao diện một cách tái lập được. Ngoài ra, việc phải gửi ảnh màn hình lên dịch vụ bên ngoài là một rào cản thực tế, vì ảnh màn hình điện thoại thường chứa tin nhắn, số dư tài khoản hay danh bạ. Một mô hình cỡ ba tỉ tham số chạy được ngay trên máy người dùng giúp tránh rào cản ấy, nên chúng tôi chọn kích cỡ này thay vì mô hình lớn nhất có thể.
+Một độ đo tự động có khả năng tái lập sẽ giúp việc thử nghiệm và so sánh các phương pháp thuận tiện hơn, đặc biệt khi mỗi thay đổi của mô hình không thể đều được đánh giá bằng một nghiên cứu người dùng riêng. Bên cạnh đó, ảnh chụp màn hình điện thoại có thể chứa các thông tin nhạy cảm như tin nhắn, danh bạ hoặc dữ liệu tài chính. Do đó, việc nghiên cứu các mô hình ngôn ngữ thị giác có quy mô vừa phải và có khả năng triển khai cục bộ có ý nghĩa thực tế, vì có thể hạn chế nhu cầu gửi dữ liệu màn hình tới dịch vụ bên ngoài. Đây là một trong những lý do luận văn tập trung vào mô hình ngôn ngữ thị giác cỡ nhỏ thay vì đặt trọng tâm vào các mô hình lớn nhất hiện có.
 
 \section{Mục đích nghiên cứu}\label{sec:1.3}
 
-Đề tài hướng tới một mục tiêu chính và hai mục tiêu hỗ trợ. Mục tiêu chính là phương pháp sinh câu hướng dẫn, còn hai mục tiêu hỗ trợ cung cấp cho phương pháp ấy một độ đo để đánh giá và một tập giám sát để huấn luyện.
+Mục tiêu tổng quát của luận văn là nâng cao chất lượng câu hướng dẫn cho thao tác kế tiếp trên giao diện di động, đặc biệt ở khả năng giúp người dùng nhận ra đúng phần tử cần tương tác. Để thực hiện mục tiêu này, luận văn tập trung vào ba mục tiêu cụ thể:
 
 \begin{enumerate}
-\item Mục tiêu chính là thiết kế và huấn luyện phương pháp đề xuất trên một mô hình thị giác và ngôn ngữ cỡ nhỏ, để mô hình viết ra những câu hướng dẫn ít mơ hồ hơn. Phương pháp được so với mô hình tinh chỉnh có giám sát trên từng bước của cùng một tập kiểm tra (phép so sánh ghép cặp), và mức chênh được đặt cạnh mức dao động đo được giữa hai lần huấn luyện cùng cấu hình nhưng khác hạt giống ngẫu nhiên. Các hướng đã thử trước khi đi tới phương pháp đề xuất được phân tích chi tiết nhằm làm rõ đâu là khâu khó nhất của bài toán.
-\item Mục tiêu hỗ trợ thứ nhất là xây dựng một độ đo cho bài toán sinh hướng dẫn giao diện mà không dựa vào việc so với một câu chuẩn duy nhất, và kiểm chứng độ đo ấy bằng các phép đo độc lập.
-\item Mục tiêu hỗ trợ thứ hai là chuyển bộ dữ liệu AndroidControl~\cite{androidcontrol} thành tập giám sát cho tác vụ này một cách hoàn toàn tự động, chỉ dùng nhãn có sẵn trong bộ dữ liệu gốc, không bổ sung nhãn mới và không dùng nhãn do mô hình khác sinh ra.
+\item Xây dựng phương pháp sinh hướng dẫn trên mô hình ngôn ngữ thị giác cỡ nhỏ, hướng tới các câu mô tả rõ thao tác cần thực hiện và đủ cụ thể để phân biệt phần tử mục tiêu với những phần tử tương tự trên màn hình.
+\item Xây dựng và kiểm chứng độ đo khả năng thực hiện theo hướng dẫn (\emph{instruction executability}), gọi ngắn là executability, cho các bước chạm. Thay vì chỉ đo mức độ tương đồng giữa câu sinh và một câu tham chiếu, độ đo này xem xét liệu thông tin trong câu hướng dẫn có giúp xác định đúng phần tử cần thao tác hay không.
+\item Xây dựng tự động tập dữ liệu giám sát cho tác vụ sinh hướng dẫn từ AndroidControl~\cite{androidcontrol}, không yêu cầu gán nhãn thủ công bổ sung và không sử dụng câu do một mô hình ngôn ngữ khác sinh ra làm mục tiêu huấn luyện.
 \end{enumerate}
 
-\section{Một số nghiên cứu liên quan}\label{sec:1.4}
+Ba mục tiêu trên bổ trợ lẫn nhau: dữ liệu giám sát được dùng để huấn luyện mô hình sinh, executability cung cấp thêm một góc nhìn để đánh giá chất lượng hướng dẫn, còn phương pháp sinh là đối tượng chính được cải tiến và so sánh trong phần thực nghiệm.
 
-\subsection{Định vị phần tử giao diện và tác tử giao diện}\label{sec:1.4.1}
+\section{Khoảng trống nghiên cứu và vị trí của đề tài}\label{sec:1.4}
 
-AndroidControl~\cite{androidcontrol} là nguồn dữ liệu của đề tài, trong đó mỗi bước có một câu hướng dẫn do chính người thao tác viết. AndroidInTheWild~\cite{aitw} là nguồn gốc của dung sai 0,14 trên tọa độ chuẩn hoá, vốn được dùng rộng rãi để xét một dự đoán tọa độ là trúng hay trượt; cả hai được giới thiệu chi tiết ở Chương 2.
+Các nghiên cứu về tác tử giao diện và định vị phần tử, như SeeClick~\cite{seeclick}, OS-Atlas~\cite{osatlas}, Aguvis~\cite{aguvis} và UGround~\cite{uground}, đã đạt nhiều tiến bộ trong việc liên kết mô tả ngôn ngữ với thao tác và vị trí trên màn hình. Tuy nhiên, mục tiêu chính của các hệ thống này là giúp một tác tử phần mềm tự thực hiện hành động. Đầu ra vì thế thường là loại thao tác hoặc tọa độ tương tác. Luận văn này xem xét một bài toán khác: từ trạng thái tác vụ và giao diện hiện tại, hệ thống cần sinh một câu hướng dẫn để con người đọc và thực hiện. AndroidControl~\cite{androidcontrol} cũng thường được sử dụng theo chiều câu hướng dẫn làm đầu vào để dự đoán thao tác; trong luận văn này, chiều bài toán được đảo lại, với câu hướng dẫn cho thao tác kế tiếp là đầu ra cần sinh.
 
-Các mô hình định vị phần tử như SeeClick~\cite{seeclick}, OS-Atlas~\cite{osatlas} và UGround~\cite{uground} ánh xạ một biểu thức văn bản thành một điểm trên màn hình. Chúng tôi dùng một mô hình thuộc nhóm này làm công cụ đo, chứ không làm đường cơ sở để so sánh. Vì thế, trước khi dựa vào công cụ này, chúng tôi trình bày sai số đo được cùng thành phần dữ liệu huấn luyện của mô hình ấy (Mục~\ref{sec:5.4} và Mục~\ref{sec:7.2}).
+Ở phía sinh ngôn ngữ, các nghiên cứu về biểu thức quy chiếu cho thấy một mô tả chỉ thực sự hữu ích khi người tiếp nhận có thể dùng nó để nhận ra đúng đối tượng~\cite{mao2016,luo2017,yu2017}. Widget Captioning~\cite{widgetcap} đưa bài toán mô tả phần tử vào miền giao diện, nhưng việc huấn luyện và đánh giá vẫn chủ yếu dựa trên câu tham chiếu. Cách đánh giá này có hạn chế đối với hướng dẫn giao diện: hai câu có thể khác nhau đáng kể về từ ngữ nhưng vẫn chỉ đúng cùng một phần tử, trong khi một câu gần với tham chiếu vẫn có thể chưa đủ cụ thể để phân biệt phần tử mục tiêu trên màn hình. Vì vậy, vẫn còn thiếu một cách đánh giá trực tiếp hơn khả năng quy chiếu của câu hướng dẫn tới phần tử cần thao tác.
 
-Việc đưa một danh sách phần tử có cấu trúc vào đầu vào cũng đã khá phổ biến. Chính nhóm tác giả AndroidControl tinh chỉnh mô hình với danh sách phần tử suy ra từ cây trợ năng và cho biết tác tử của họ không dùng trực tiếp ảnh màn hình~\cite{androidcontrol}. Mind2Web~\cite{mind2web} huấn luyện trên tập ứng viên có lẫn phần tử sai, còn Widget Captioning~\cite{widgetcap} và Screen2Words~\cite{screen2words} đặt cây phần tử ở đầu vào. Trong đề tài, cách làm này được dùng ở mô hình chọn ứng viên, một trong các hướng đã thử (Phụ lục~\ref{app:A}).
+Một khoảng trống khác nằm ở cách cải thiện mô hình sinh. Học tăng cường đã được sử dụng để tối ưu trực tiếp các độ đo văn bản trong các bài toán sinh, chẳng hạn CIDEr và SPIDEr trong sinh chú thích ảnh~\cite{scst,spider}; GRPO~\cite{shao2024grpo} cũng cung cấp cơ chế học từ so sánh tương đối giữa nhiều đầu ra của cùng một đầu vào. Tuy nhiên, việc lựa chọn kỹ thuật tối ưu không tự giải quyết câu hỏi quan trọng hơn đối với bài toán này: một câu hướng dẫn như thế nào mới cung cấp đủ thông tin để người dùng xác định đúng phần tử cần thao tác. Do đó, bài toán sinh và bài toán đánh giá cần được xem xét đồng thời thay vì tách rời.
 
-\subsection{Sinh mô tả có tính phân biệt}\label{sec:1.4.2}
-
-Bài toán sinh một mô tả đủ để nhận ra đúng một đối tượng giữa những đối tượng dễ gây nhầm lẫn chính là bài toán sinh biểu thức quy chiếu~\cite{mao2016}. Các công trình tiếp theo đặt một mô hình hiểu vào vòng huấn luyện để thúc đẩy tính phân biệt~\cite{luo2017,yu2017}. Trong miền giao diện, công trình có giám sát gần nhất là Widget Captioning~\cite{widgetcap}, và như đã nêu, hàm mất mát ở đó vẫn là entropy chéo thuần.
-
-Một trong các hướng đã thử là mô hình mô tả phần tử (Phụ lục~\ref{app:A}), trong đó mô hình viết một dòng mô tả phần tử cần chạm rồi mới viết câu hướng dẫn. Hướng này kiểm xem, với bài toán sinh hướng dẫn giao diện, việc đưa yêu cầu phân biệt vào đầu ra mẫu mà mô hình học theo, dưới dạng một dòng mô tả phần tử viết trước câu, có tác dụng ra sao.
-
-\subsection{Học tăng cường với phần thưởng là một độ đo so câu}\label{sec:1.4.3}
-
-Trong sinh chú thích ảnh, việc dùng chính độ đo đánh giá câu làm phần thưởng cho học tăng cường đã có từ trước. Rennie và cộng sự~\cite{scst} tối ưu trực tiếp CIDEr bằng gradient chính sách, lấy điểm của câu giải mã tham lam làm mốc so sánh; Liu và cộng sự~\cite{spider} tối ưu SPIDEr, một tổ hợp của SPICE và CIDEr. GRPO~\cite{shao2024grpo} thay mốc so sánh ấy bằng trung bình điểm của một nhóm câu mẫu cho cùng một đầu vào. Thành phần thứ nhất của phương pháp đề xuất áp dụng cách làm này cho câu hướng dẫn giao diện và kiểm tra xem việc tối ưu một độ đo so câu với câu chuẩn có giúp câu hướng dẫn giao diện dẫn tới đúng phần tử hơn hay không. Việc đánh giá đúng sai do một mô hình định vị độc lập đảm nhận, và mô hình này không tham gia vào phần thưởng.
-
-\subsection{Sinh bước trung gian trước khi sinh đáp án}\label{sec:1.4.4}
-
-Ý tưởng cho mô hình sinh một biểu diễn trung gian trước khi đưa ra đáp án cuối đã được thử nhiều lần, với kết quả không cùng một chiều. Bảng~\ref{tab:1.1} tổng hợp năm kết quả từ các công trình trước. Chúng tôi dựa vào các kết quả này khi thiết kế mô hình mô tả phần tử, một trong các hướng đã thử (Phụ lục~\ref{app:A}); các kết quả ấy không liên quan tới phương pháp đề xuất.
-
-\begin{table}[htbp]
-\centering\small
-\caption[Ảnh hưởng của bước trung gian trong các công trình trước.]{Ảnh hưởng của bước trung gian trong các công trình trước. Số dương nghĩa là có bước trung gian thì tốt hơn.}\label{tab:1.1}
-\setlength{\tabcolsep}{4pt}
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash\hsize=0.57\hsize}X>{\raggedright\arraybackslash\hsize=1.43\hsize}Xr@{}}
-\toprule
-\textbf{Công trình} & \textbf{Phép so} & \textbf{Chênh lệch} \\
-\midrule
-Aguvis~\cite{aguvis} & bỏ bước trung gian, đo trên chính AndroidControl mức thấp & -11,4 \\
-Shikra (văn xuôi)~\cite{shikra} & bước trung gian viết bằng văn tự do & -7,4 \\
-Shikra (có tọa độ)~\cite{shikra} & cùng mô hình, bước trung gian có tọa độ & +5,9 \\
-GCoT~\cite{gcot} & huấn luyện sinh định vị trước (LLaVA-7B / 13B) & +4,5 / +5,8 \\
-CogCoM~\cite{cogcom} & bỏ 70K dữ liệu chuỗi trung gian khỏi huấn luyện & +6,6 / +0,2 / +0,9 \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-Hai dòng Shikra dùng cùng một mô hình và cùng một bài kiểm, chỉ khác nhau ở dạng của bước trung gian. Bước trung gian viết bằng văn xuôi cho kết quả âm, còn bước trung gian có kèm tọa độ cho kết quả dương. Con số âm hay được trích của GCoT~\cite{gcot} được đo khi chỉ dùng câu nhắc với một mô hình chưa huấn luyện; khi huấn luyện theo thứ tự định vị trước, chính công trình đó cho kết quả dương như trong bảng.
-
-\subsection{Đánh giá không cần đáp án tham chiếu}\label{sec:1.4.5}
-
-Sai và cộng sự~\cite{sai2021} hệ thống hoá việc kiểm chứng một độ đo bằng cách cố ý chèn lỗi có kiểm soát, tức biến đổi câu theo từng kiểu đã biết rồi xem điểm của độ đo đó có thay đổi đúng chiều hay không. Chúng tôi áp dụng lại quy trình ấy (Mục~\ref{sec:5.7}). Chúng tôi cũng lưu ý cảnh báo rằng các đại lượng tự động thay cho đánh giá của người dễ được tin quá mức~\cite{clark2021}.
+Từ đó, luận văn đặt mình ở giao điểm của ba hướng nghiên cứu: hiểu và định vị phần tử giao diện, sinh mô tả bằng ngôn ngữ tự nhiên, và đánh giá khả năng một mô tả dẫn tới đúng đối tượng. Đề tài xây dựng executability để đánh giá khả năng xác định đúng phần tử ở các bước chạm (Chương~\ref{chap:5}), đồng thời phát triển phương pháp sinh hướng dẫn trên mô hình ngôn ngữ thị giác cỡ nhỏ (Chương~\ref{chap:4}). Độ đo được kiểm chứng bằng các phép biến đổi câu có kiểm soát và bằng các mô hình đánh giá khác~\cite{clark2021,sai2021}, nhằm hạn chế việc kết luận chỉ dựa trên hành vi của một mô hình định vị duy nhất. Các phương án thiết kế thay thế và kết quả thực nghiệm tương ứng được trình bày ở Phụ lục~\ref{app:A} và Chương~\ref{chap:6}.
 
 \section{Nội dung và phạm vi thực hiện đề tài}\label{sec:1.5}
 
 \subsection{Nội dung nghiên cứu}\label{sec:1.5.1}
 
-\begin{itemize}
-\item Khảo sát các mô hình thị giác và ngôn ngữ, cùng các kỹ thuật tinh chỉnh hiệu quả tham số phù hợp với điều kiện chỉ có một GPU.
-\item Khảo sát các độ đo hiện có cho văn bản sinh không có đáp án chuẩn, đo mức hạn chế của chúng trên dữ liệu thật, rồi từ đó thiết kế độ đo thay thế.
-\item Xây dựng quy trình tự động chuyển AndroidControl thành tập giám sát, gồm bốn khâu: ghép dữ liệu đa nguồn, chạy OCR, dựng nhãn mô tả từ cây trợ năng và kiểm tra trùng lặp dữ liệu đánh giá.
-\item Thiết kế, huấn luyện và đánh giá phương pháp đề xuất, gồm học tăng cường với phần thưởng SPICE và ACE, so với mô hình tinh chỉnh có giám sát và với các hướng đã thử (Phụ lục~\ref{app:A}).
-\item Phân tích lỗi trên từng bước, nêu rõ các giới hạn kèm số đo dùng để loại trừ hoặc xác nhận từng giới hạn.
-\end{itemize}
+Để thực hiện các mục tiêu đã nêu, luận văn triển khai bốn nhóm nội dung chính. Trước hết, dữ liệu từ AndroidControl được chuyển đổi thành tập giám sát phù hợp với bài toán sinh hướng dẫn. Trên cơ sở đó, luận văn khảo sát các độ đo hiện có, xây dựng executability cho các bước chạm và kiểm chứng độ đo bằng nhiều phép đánh giá chéo. Tiếp theo, một phương pháp sinh hướng dẫn được thiết kế và huấn luyện trên mô hình ngôn ngữ thị giác cỡ nhỏ; một số phương án thiết kế khác cũng được thử nghiệm để làm rõ ảnh hưởng của từng lựa chọn. Cuối cùng, các mô hình được đánh giá trên cùng tập kiểm tra và phân tích theo từng nhóm trường hợp nhằm xác định những điểm đã cải thiện cũng như các dạng lỗi còn tồn tại.
 
 \subsection{Phạm vi nghiên cứu}\label{sec:1.5.2}
 
-\textbf{Về bài toán,} chúng tôi chỉ xét trường hợp một màn hình: đầu vào là một ảnh chụp màn hình kèm một mục tiêu, và đầu ra là hướng dẫn cho bước kế tiếp. Trường hợp nhiều màn hình liên tiếp nằm ngoài phạm vi.
+Về bài toán, luận văn chỉ xét việc sinh hướng dẫn cho thao tác kế tiếp tại trạng thái giao diện hiện tại. Mỗi mẫu đầu vào bao gồm thông tin về tác vụ, các thao tác đã thực hiện trước đó và màn hình ở thời điểm cần đưa ra hướng dẫn. Việc lập kế hoạch cho toàn bộ tác vụ hoặc sinh đồng thời một chuỗi nhiều thao tác không thuộc phạm vi của đề tài.
 
-\textbf{Về độ đo,} đề tài tập trung đánh giá một khía cạnh của câu hướng dẫn, đó là câu sinh ra có giúp người dùng xác định đúng phần tử cần chạm trên màn hình hay không. Các khía cạnh khác như độ trôi chảy của câu, độ dài câu hay mức độ hữu ích đối với người đọc chưa được độ đo này xét tới.
+Về đánh giá, executability được xây dựng cho các bước chạm và chỉ phản ánh một khía cạnh của chất lượng hướng dẫn: câu sinh có cung cấp đủ thông tin để xác định đúng phần tử cần thao tác hay không. Độ đo này không trực tiếp phản ánh các yếu tố khác như độ trôi chảy, độ dài, mức dễ hiểu đối với từng nhóm người dùng hay chất lượng trải nghiệm tổng thể.
 
-\textbf{Về dữ liệu,} thực nghiệm chạy trên AndroidControl với giao diện tiếng Anh. Đề tài không dựng bộ dữ liệu tiếng Việt; các câu ví dụ tiếng Việt trong bài chỉ để minh hoạ.
+Về dữ liệu, các thực nghiệm sử dụng AndroidControl với giao diện và câu hướng dẫn bằng tiếng Anh. Luận văn không xây dựng bộ dữ liệu tiếng Việt; các câu tiếng Việt xuất hiện trong phần trình bày chỉ được dùng để minh họa cho bài toán.
 
-\textbf{Về mô hình,} mọi mô hình trong đề tài đều được tinh chỉnh từ cùng một mô hình gốc Qwen2.5-VL-3B-Instruct~\cite{qwen25vl} bằng QLoRA~\cite{qlora} hoặc LoRA trên một GPU. Việc huấn luyện mô hình từ đầu, cũng như so sánh nhiều mô hình gốc khác nhau, nằm ngoài phạm vi.
+Về mô hình, hệ thống sinh được phát triển từ Qwen2.5-VL-3B-Instruct~\cite{qwen25vl} và được tinh chỉnh bằng QLoRA~\cite{qlora} hoặc LoRA trong điều kiện một GPU. Luận văn không đặt mục tiêu huấn luyện mô hình nền từ đầu và cũng không thực hiện so sánh có hệ thống giữa nhiều mô hình nền khác nhau.
 
 \section{Đóng góp của luận văn}\label{sec:1.6}
 
-Đề tài có ba đóng góp. Đóng góp chính là phương pháp sinh câu hướng dẫn, gồm hai thành phần nối tiếp: một mô hình học tăng cường với phần thưởng SPICE, và ACE. Hai đóng góp còn lại hỗ trợ cho phương pháp này: một độ đo để đánh giá và một chuỗi phân tích rút ra từ các hướng đã thử.
+Luận văn có ba đóng góp chính, tương ứng với phương pháp sinh, độ đo đánh giá và phân tích thực nghiệm về quá trình tạo hướng dẫn.
 
-\textbf{Đóng góp thứ nhất, về phương pháp.} Phương pháp tác động thẳng vào câu ở đầu ra, thay vì vào một bước trung gian giữa ảnh và câu như các hướng đã thử trước đó. Nền của phương pháp là mô hình Qwen2.5-VL-3B tinh chỉnh có giám sát (S1), học từ tập giám sát 64.567 bước do chúng tôi dựng hoàn toàn tự động, có kiểm tra độ chính xác của dữ liệu đa nguồn và kiểm tra trùng lặp giữa tập huấn luyện với tập kiểm tra (Chương~\ref{chap:3}). Trừ khi nói khác, các con số dưới đây đo bằng executability, độ đo trình bày ở đóng góp thứ hai. Mô hình S1 đạt 59,1\%, so với 47,6\% của mô hình gốc chưa tinh chỉnh.
+Thứ nhất, luận văn đề xuất một phương pháp sinh hướng dẫn gồm hai thành phần nối tiếp trên nền Qwen2.5-VL-3B. Mô hình ban đầu được tinh chỉnh có giám sát trên 64.567 bước được xây dựng tự động từ AndroidControl. Sau đó, GRPO với phần thưởng SPICE được sử dụng để tiếp tục tối ưu câu sinh. Trên 4.463 bước chạm của tập kiểm tra, mô hình sau giai đoạn này đạt 60,65\% executability, so với 59,11\% của mô hình tinh chỉnh có giám sát, tương ứng mức tăng 1,55 điểm phần trăm với khoảng tin cậy 95\% [+0,80; +2,33]. Thành phần thứ hai, ACE, sử dụng ví dụ truy hồi để hiệu chỉnh câu khi ví dụ và câu hướng dẫn ban đầu nhất quán về loại thao tác. Phương pháp hoàn chỉnh đạt 60,68\% executability; đồng thời, trong cấu hình thực nghiệm của luận văn, ACE cải thiện cả bảy độ đo dựa trên câu tham chiếu so với câu đầu vào mà không làm giảm executability. Thiết kế chi tiết và kết quả được trình bày ở Chương~\ref{chap:4} và Chương~\ref{chap:6}.
 
-Thành phần thứ nhất học tiếp từ S1 bằng học tăng cường theo nhóm (GRPO), với phần thưởng là SPICE của câu sinh ra so với câu chuẩn. Thành phần này đạt 60,6\%, hơn S1 là 1,55 điểm, với khoảng tin cậy 95\% là [+0,80; +2,33]. Mức hơn xuất hiện ở cả mười ba độ đo đã dùng, gồm sáu độ đo vị trí và bảy độ đo so câu. Các hướng đã thử trước đó chỉ hơn S1 có ý nghĩa thống kê dưới những luật tính điểm lỏng hơn, còn thành phần này hơn có ý nghĩa ngay theo executability, luật chặt nhất.
+Thứ hai, luận văn xây dựng và kiểm chứng độ đo khả năng thực hiện theo hướng dẫn (executability) cho các bước chạm. Thay vì đánh giá câu sinh chỉ qua mức độ tương đồng với một câu tham chiếu, executability sử dụng một mô hình định vị tách biệt để kiểm tra liệu câu hướng dẫn có dẫn tới đúng phần tử cần thao tác hay không. Độ đo được kiểm tra qua phân tích sai số định vị, các phép biến đổi câu có kiểm soát, các biến thể diễn đạt và các phép đánh giá chéo bằng mô hình khác. Khi thay UGround bằng UI-Venus-Ground-7B, chiều của các chênh lệch được kiểm tra vẫn được duy trì; listener Phi-4, thuộc họ kiến trúc khác với Qwen, cũng duy trì cùng thứ hạng giữa các hệ thống trong phép đánh giá tương ứng. Kết quả này không xem mô hình định vị là một chuẩn tuyệt đối, nhưng cung cấp thêm bằng chứng về tính ổn định của độ đo trong các kiểm tra đã thực hiện. Chương~\ref{chap:5} trình bày đầy đủ định nghĩa và quy trình kiểm chứng.
 
-Thành phần thứ hai, ACE (luật chép câu ví dụ khi đồng thuận loại thao tác), tận dụng hơn sáu mươi nghìn câu chuẩn của tập huấn luyện. Bộ sinh câu được cho xem bốn câu chuẩn của những bước giống nhất, gọi là câu ví dụ. Câu của bộ sinh chỉ thay câu nháp khi chép nguyên văn một trong bốn câu ví dụ và cùng loại thao tác với câu nháp. Ở các bước còn lại, câu nháp được giữ nguyên.
-
-Với cả hai thành phần, phương pháp đạt 60,7\%, hơn S1 là 1,57 điểm [+0,86; +2,31]. So với câu nháp, ba độ đo vị trí giữ nguyên mức, còn cả bảy độ đo so câu đều tăng, rõ nhất ở CIDEr-D (+11,98) và SPICE (+1,34). Điều kiện đồng thuận về loại thao tác là cần thiết, vì dùng câu của bộ sinh ở mọi bước thì executability giảm có ý nghĩa (Mục~\ref{sec:6.4}). Bộ sửa câu theo vùng cắt (TAGE), một cách sửa câu khác ở cùng khâu này, cho điểm thấp hơn câu nháp trên tập kiểm tra nên không được giữ (Mục~\ref{sec:A.7.2}).
-
-\textbf{Đóng góp thứ hai, về độ đo.} Để đánh giá phương pháp đề xuất và mọi mô hình khác, chúng tôi đề xuất và kiểm chứng executability, một độ đo khả năng xác định phần tử của câu hướng dẫn. Phần kiểm chứng gồm sáu phép đo ở Chương~\ref{chap:5}:
-
-\begin{itemize}
-\item Sai số của mô hình định vị nhỏ hơn nhiều so với khoảng cách giữa các phần tử trên màn hình (Mục~\ref{sec:5.4}).
-\item Ở hai đầu của dải điểm, câu chuẩn đạt 75,7\%, còn câu chung chung hay câu của một màn hình khác chỉ đạt mức thấp (Mục~\ref{sec:5.5} và Mục~\ref{sec:5.6}).
-\item Độ đo giảm điểm đúng chiều trước mười kiểu cố ý chèn lỗi vào câu, theo phương pháp của Sai và cộng sự (Mục~\ref{sec:5.7}).
-\item Khi câu chuẩn được viết lại, độ đo ổn định trước việc đổi động từ hay đảo trật tự câu, nhưng giảm điểm khi mệnh đề vị trí bị lược bỏ (Mục~\ref{sec:5.8}).
-\item Khi đánh giá lại bằng một mô hình định vị thứ hai không dùng AndroidControl lúc huấn luyện, chênh lệch giữa S1 và mô hình gốc giữ gần nguyên độ lớn (Mục~\ref{sec:5.9}).
-\item Khi dùng một mô hình ngoài họ Qwen-VL làm người nghe, tức đọc câu rồi chọn phần tử đúng trong danh sách ứng viên đánh số, thứ tự xếp hạng các mô hình giữ nguyên (Mục~\ref{sec:5.10}).
-\end{itemize}
-
-\textbf{Đóng góp thứ ba, về phân tích các hướng đã thử.} Trước khi đi tới phương pháp đề xuất, chúng tôi đã thử nhiều hướng, phần lớn tác động vào một bước trung gian giữa ảnh và câu. Hướng đầu tiên là mô hình mô tả phần tử, cho mô hình viết một dòng mô tả phần tử cần chạm rồi mới viết câu. Hai giai đoạn huấn luyện tiếp theo xây trên mô hình này: học ưu tiên trên dòng mô tả và thưởng tọa độ. Ngoài ra còn có mô hình chọn ứng viên và bốn cách đưa thêm thông tin vị trí vào bộ sinh câu. Từ các hướng này, chúng tôi rút ra ba kết luận:
-
-\begin{enumerate}
-\item Thay đổi ở bước trung gian chỉ chuyển sang câu ở đầu ra rất ít. Khi dòng mô tả trỏ đúng phần tử thì câu tốt hơn rõ so với S1, khi trỏ sai thì câu kém hơn nhiều, và hai phần này gần như triệt tiêu nhau.
-\item Phần lớn khoảng cách executability còn lại giữa mô hình và câu chuẩn dồn vào khoảng một phần ba số bước, là những bước mô hình đã chọn sai phần tử ngay trong dòng mô tả. Khâu nhận ra phần tử là rào cản lớn nhất. Thông tin vị trí gắn thêm vào bộ sinh câu được học và đọc lại được từ trạng thái ẩn, nhưng phần sinh câu bỏ qua thông tin ấy.
-\item Khi ước lượng mức tăng tối đa của một can thiệp trên nhóm bước được chọn theo hành vi của chính mô hình đang đo, cần kiểm lại với ít nhất một cách chọn nhóm khác. Trong đề tài, một mức tăng tối đa như vậy đã đổi dấu khi đổi cách chọn nhóm.
-\end{enumerate}
-
-Các kết luận này là căn cứ để phương pháp đề xuất tác động thẳng vào câu ở đầu ra. Mục~\ref{sec:6.10} tóm tắt các hướng đã thử trong một bảng, còn Phụ lục~\ref{app:A} trình bày thiết kế và kết quả chi tiết.
-
-\section{Bố cục luận văn}\label{sec:1.7}
-
-Phần còn lại của luận văn được tổ chức như sau.
-
-\textbf{Chương~\ref{chap:2}} trình bày kiến thức nền: mô hình thị giác và ngôn ngữ, tinh chỉnh bằng LoRA và QLoRA, học tăng cường với phần thưởng tính bằng luật, định vị phần tử giao diện, bộ dữ liệu AndroidControl, và giới hạn của các độ đo có sẵn.
-
-\textbf{Chương~\ref{chap:3}} mô tả quy trình dựng tập giám sát từ AndroidControl: ghép dữ liệu đa nguồn, kiểm tra độ chính xác của phép ghép, chia tập và kiểm tra trùng lặp, trích xuất chữ trên màn hình và dựng nhãn mô tả tự động.
-
-\textbf{Chương~\ref{chap:4}} trình bày phương pháp đề xuất gồm hai thành phần, học tăng cường thưởng SPICE và ACE, cùng đầu vào, cấu hình huấn luyện, các mốc so sánh và cách đọc kết quả.
-
-\textbf{Chương~\ref{chap:5}} trình bày độ đo executability và các phép kiểm chứng độ đo.
-
-\textbf{Chương~\ref{chap:6}} trình bày thực nghiệm: kết quả chính, kết quả từng thành phần, so sánh ghép cặp, các cách giải thích thay thế, phân bố lỗi và tóm tắt các hướng đã thử.
-
-\textbf{Chương~\ref{chap:7}} tổng kết đóng góp, nêu hạn chế và hướng phát triển. Chương~\ref{chap:8} liệt kê các công trình đã công bố từ đề tài, và Phụ lục~\ref{app:A} trình bày chi tiết các hướng đã thử.
+Thứ ba, luận văn phân tích có hệ thống nhiều phương án trung gian trước khi lựa chọn phương pháp cuối cùng, gồm sinh mô tả phần tử, học theo cặp ưu tiên, thưởng tọa độ, chọn phần tử từ danh sách ứng viên, bổ sung tín hiệu vị trí và hiệu chỉnh câu bằng vùng ảnh cục bộ. Kết quả cho thấy việc cải thiện một biểu diễn trung gian không nhất thiết dẫn tới cải thiện tương ứng ở câu hướng dẫn cuối. Đồng thời, điểm số thấp hơn rõ rệt ở các nhóm bước mà biểu diễn trung gian không xác định đúng phần tử mục tiêu, dù cách chia nhóm này không đủ để khẳng định quan hệ nhân quả. Những quan sát này giúp làm rõ giới hạn của các hướng thiết kế đã thử và là cơ sở thực nghiệm cho việc ưu tiên tối ưu trực tiếp chất lượng câu sinh trong phương pháp cuối cùng. Kết quả tổng hợp được trình bày ở Mục~\ref{sec:6.10}, còn thiết kế chi tiết của các phương án nằm trong Phụ lục~\ref{app:A}.
