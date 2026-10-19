@@ -180,7 +180,7 @@ Tập huấn luyện của giai đoạn này gồm 22.854 cặp. Ở vế đư�
 
 Tập cặp chỉ chứa bước chạm. Ở 17,4\% số cặp, chuỗi \code{(no name)} chỉ xuất hiện ở một trong hai vế, tạo ra khả năng mô hình dựa vào dấu hiệu này thay vì nội dung màn hình để phân biệt hai vế. Hạn chế được phát hiện sau khi mô hình đã học xong, nên các kết quả ở Mục~\ref{sec:A.2.2} sử dụng dữ liệu chưa chỉnh sửa. Do đó, các kết quả của nhánh này được dùng để phân tích hành vi mô hình chứ không được diễn giải như một phép tách hoàn toàn sạch ảnh hưởng của biểu diễn phần tử.
 
-\subsubsection{Cấu hình so sánh và đại lượng so sánh}
+\subsubsection{Tách ảnh hưởng của mục tiêu ưu tiên}
 
 Để tách phần của mục tiêu ưu tiên khỏi phần của việc học thêm, mô hình học thêm có giám sát (CE2-S2) học có giám sát thuần trên vế được chọn của các cặp ấy, cùng điểm xuất phát và số bước. Đại lượng chính là hiệu ghép cặp $\Delta$\_thành phần = MIN-DESC $-$ CE2-S2, tính trên cùng các bước của tập kiểm tra (Mục~\ref{sec:4.8}). Tập cặp chỉ chứa bước chạm, nên thiệt hại ở bước không chạm được đo riêng (Mục~\ref{sec:A.2.2.4}).
 
@@ -289,14 +289,14 @@ Mỗi màn hình được chuyển thành danh sách tối đa 40 ứng viên, m
 
 Tên trong nhãn mô tả của một bước được xem là tên mục tiêu của bước đó. Một ứng viên được xem là đúng khi có cùng tên mục tiêu và cách điểm chạm không quá 140 đơn vị lưới trên mỗi trục, tương đương 14\% kích thước tương ứng của màn hình; nếu có nhiều ứng viên thỏa điều kiện, ứng viên gần điểm chạm nhất được chọn. Trên tập kiểm tra, trong số các bước có tên mục tiêu, 96,7\% có tên đó xuất hiện trong danh sách. Trong chính nhóm bước có tên mục tiêu, 91,2\% có ít nhất một ứng viên vừa trùng tên vừa nằm trong dung sai vị trí. Trên mẫu 300 bước có ứng viên đúng, vị trí của ứng viên đúng sau khi chuẩn hóa về [0,1] có giá trị trung bình 0,481 và ứng viên đúng đứng đầu danh sách ở 5,0\% số mẫu. Vì vậy, vị trí trong danh sách không tạo thành một dấu hiệu thứ tự hiển nhiên của đáp án. Mẫu dài nhất vẫn dưới giới hạn ngữ cảnh 3.072 token nên không mẫu nào bị cắt vì danh sách ứng viên.
 
-Từ cùng một prompt, hai cấu hình dữ liệu được dựng với chuỗi đích khác nhau. Cấu hình chọn ứng viên sinh thêm thẻ lựa chọn phần tử trước câu hướng dẫn; cấu hình so sánh chỉ sinh câu hướng dẫn.
+Từ cùng một prompt, hai cấu hình dữ liệu được dựng với chuỗi đích khác nhau. Cấu hình chọn ứng viên sinh thêm thẻ lựa chọn phần tử trước câu hướng dẫn; cấu hình chỉ sinh câu hướng dẫn vẫn nhận cùng danh sách ứng viên ở đầu vào nhưng chuỗi đích chỉ gồm câu hướng dẫn.
 
 \begin{center}\small
 \begin{tabular}{@{}ll@{}}
 \toprule
 \textbf{Mô hình chọn ứng viên} & \code{<sel>}tên \code{<point>}$x,y$\code{</point></sel>} $+$ \code{\textbackslash n} $+$ câu \\
  & hoặc \code{<sel>none</sel>} $+$ \code{\textbackslash n} $+$ câu \\
-\textbf{Cấu hình so sánh} & câu \\
+\textbf{Chỉ sinh câu hướng dẫn} & câu \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -305,7 +305,7 @@ Nội dung thẻ chọn là phần sao chép nguyên văn thông tin của ứng
 
 \subsubsection{Điều kiện thí nghiệm}
 
-Mô hình chọn ứng viên khác mô hình tinh chỉnh có giám sát (S1) và MIN-DESC ở ba biến. Ngữ cảnh dài 3072 thay vì 2560 token để chứa danh sách ứng viên (mẫu dài nhất 2.017 token cộng danh sách dài nhất 1.012 token), số lượt duyệt chỉ còn một (4.036 bước) do giới hạn tài nguyên, và đầu vào có thêm danh sách ứng viên. Vì vậy điểm của mô hình này không thể so sánh trực tiếp với điểm của hai mô hình kia. Đại lượng hợp lệ là hiệu ghép cặp $\Delta$\_chọn với một cấu hình so sánh nhận cùng danh sách ứng viên ở đầu vào nhưng chuỗi đích chỉ có câu, còn các tham số khác giữ như Bảng~\ref{tab:4.1}. Thiết kế ban đầu gồm sáu lượt huấn luyện (ba cấu hình, mỗi cấu hình hai seed), nhưng năm lượt sau chỉ được chạy nếu lượt đầu cho độ chính xác chọn hơn rõ tỉ lệ 60,6\% dòng mô tả xác định đúng phần tử của MIN-DESC. Độ chính xác chọn là tỉ lệ thẻ chọn đúng phần tử cần chạm (tên khớp, tọa độ trong dung sai 14\%) trên những bước mà danh sách có chứa phần tử ấy, tức có ứng viên đúng, đo trên 1.400 bước chạm đầu của tập kiểm tra.
+Mô hình chọn ứng viên khác mô hình tinh chỉnh có giám sát (S1) và MIN-DESC ở ba biến. Ngữ cảnh dài 3072 thay vì 2560 token để chứa danh sách ứng viên (mẫu dài nhất 2.017 token cộng danh sách dài nhất 1.012 token), số lượt duyệt chỉ còn một (4.036 bước) do giới hạn tài nguyên, và đầu vào có thêm danh sách ứng viên. Vì vậy điểm của mô hình này không thể so sánh trực tiếp với điểm của hai mô hình kia. Đại lượng hợp lệ là hiệu ghép cặp $\Delta$\_chọn giữa cấu hình chọn ứng viên và cấu hình chỉ sinh câu hướng dẫn; cả hai nhận cùng danh sách ứng viên ở đầu vào, còn các tham số khác giữ như Bảng~\ref{tab:4.1}. Thiết kế ban đầu gồm sáu lượt huấn luyện (ba cấu hình, mỗi cấu hình hai seed), nhưng năm lượt sau chỉ được chạy nếu lượt đầu cho độ chính xác chọn hơn rõ tỉ lệ 60,6\% dòng mô tả xác định đúng phần tử của MIN-DESC. Độ chính xác chọn là tỉ lệ thẻ chọn đúng phần tử cần chạm (tên khớp, tọa độ trong dung sai 14\%) trên những bước mà danh sách có chứa phần tử ấy, tức có ứng viên đúng, đo trên 1.400 bước chạm đầu của tập kiểm tra.
 
 \subsection{Kết quả}\label{sec:A.3.2}
 
@@ -315,7 +315,7 @@ Mô hình chọn ứng viên được huấn luyện với seed 101 trên 64.567
 
 Trên 1.400 bước dùng làm tiêu chí, 1.008 bước có ứng viên đúng và thẻ chọn đúng ở 580 bước, cho độ chính xác chọn 57,54\%, thấp hơn mức 60,6\% của MIN-DESC, nên năm lượt còn lại không được chạy. Từ đây, 1.400 bước này được gọi là \emph{mẫu phát triển}, còn 3.062 bước còn lại chỉ dùng để đọc kết quả. Độ chính xác chọn không phù hợp làm tiêu chí duy nhất để ra quyết định, vì cũng như cột “có đáp án” của SQuAD 2.0~\cite{rajpurkar2018}, đại lượng này chỉ đếm những bước có đáp án. Khi ép mô hình luôn chọn, độ chính xác chọn lên 69,05\%, nhưng tỉ lệ thẻ đúng trên cả mẫu phát triển giảm từ 63,43\% xuống 49,71\%.
 
-Trên 4.463 bước chạm, mô hình chọn ứng viên đạt 56,1\%, khoảng tin cậy [54,2; 58,0] (bootstrap theo 1.091 cụm), với tỉ lệ khớp loại thao tác 90,9\% và tỉ lệ đạt tiêu chí ô Voronoi 57,4\%. Điểm trên mẫu phát triển (55,4\%) và trên phần còn lại (56,5\%) gần nhau. Mô hình hơn mô hình gốc (chưa tinh chỉnh) 8,54 điểm (731 bước chỉ mô hình chọn ứng viên đúng, 350 bước chỉ mô hình gốc đúng, kiểm định McNemar cho p < 0,001); đây là phép so sánh duy nhất có thể được dùng để rút ra kết luận trực tiếp. Cấu hình so sánh nhận cùng danh sách ứng viên nằm trong năm lượt không được chạy, nên không tính được $\Delta$\_chọn và chưa thể tách riêng ảnh hưởng của cơ chế chọn tường minh khỏi ảnh hưởng của danh sách ứng viên.
+Trên 4.463 bước chạm, mô hình chọn ứng viên đạt 56,1\%, khoảng tin cậy [54,2; 58,0] (bootstrap theo 1.091 cụm), với tỉ lệ khớp loại thao tác 90,9\% và tỉ lệ đạt tiêu chí ô Voronoi 57,4\%. Điểm trên mẫu phát triển (55,4\%) và trên phần còn lại (56,5\%) gần nhau. Mô hình hơn mô hình gốc (chưa tinh chỉnh) 8,54 điểm (731 bước chỉ mô hình chọn ứng viên đúng, 350 bước chỉ mô hình gốc đúng, kiểm định McNemar cho p < 0,001); đây là phép so sánh duy nhất có thể được dùng để rút ra kết luận trực tiếp. Lượt huấn luyện cho cấu hình chỉ sinh câu hướng dẫn nhưng vẫn nhận cùng danh sách ứng viên nằm trong năm lượt không được chạy, nên không tính được $\Delta$\_chọn và chưa thể tách riêng ảnh hưởng của cơ chế chọn tường minh khỏi ảnh hưởng của danh sách ứng viên.
 
 \subsubsection{Hành vi chọn và từ chối chọn}\label{sec:A.3.2.2}
 
@@ -400,7 +400,7 @@ Trên 4.463 bước chạm, MIN-DESC (seed 101) và mô hình sau giai đoạn t
 
 \textbf{Hai chiều tác động triệt tiêu nhau.} Ở 164 bước mà giai đoạn ba sửa dòng mô tả từ sai thành đúng, executability tăng từ 32,9 lên 70,7; ở 75 bước mà giai đoạn ba làm dòng mô tả từ đúng thành sai, executability giảm từ 69,3 xuống 29,3. Một bước được coi là đổi kết quả chấm khi bước ấy chuyển từ không đạt sang đạt hoặc ngược lại. Đếm số bước đổi kết quả chấm (không đạt thành đạt tính +1, đạt thành không đạt tính $-$1), bốn nhóm (sửa đúng, làm sai, giữ nguyên, không có tên đối chiếu) cho +62, $-$30, $-$14 và $-$17, với tổng ròng chỉ +1. Trong 1.950 bước có dòng mô tả thay đổi, 1.300 bước (66,7\%) có câu không đổi một ký tự, và toàn bộ 197 lần đổi kết quả chấm nằm trong 961 bước có câu thay đổi.
 
-\textbf{Hệ quả.} Phần thưởng cải thiện trực tiếp biểu diễn trung gian, với +2,56 điểm ở dòng mô tả (p = $1{,}3 \times 10^{-8}$), nhưng không có số hạng nào ràng buộc câu. Khi trọng số thay đổi, câu cũng thay đổi ở những bước mà phần thưởng không cung cấp tín hiệu, và mức suy giảm ở các bước này bù trừ phần cải thiện đạt được ở những bước khác. Cấu hình chỉ huấn luyện thêm có giám sát trên cùng tập thưởng không được chạy vì mức chênh executability gần bằng không, nên 2,56 điểm chưa tách được khỏi phần do việc học thêm đem lại. Phép đo dòng mô tả lại dùng đúng cửa sổ của phần thưởng, nên đại lượng độc lập còn lại chỉ là executability.
+\textbf{Hệ quả.} Phần thưởng cải thiện trực tiếp biểu diễn trung gian, với +2,56 điểm ở dòng mô tả (p = $1{,}3 \times 10^{-8}$), nhưng không có số hạng nào ràng buộc câu. Khi trọng số thay đổi, câu cũng thay đổi ở những bước mà phần thưởng không cung cấp tín hiệu, và mức suy giảm ở các bước này bù trừ phần cải thiện đạt được ở những bước khác. Một lượt chỉ huấn luyện thêm có giám sát trên cùng 2.000 bước chưa được chạy vì mức chênh executability gần bằng không, nên 2,56 điểm chưa tách được khỏi phần do việc học thêm đem lại. Phép đo dòng mô tả lại dùng đúng cửa sổ của phần thưởng, nên đại lượng độc lập còn lại chỉ là executability.
 
 \subsection{Nội suy trọng số giữa hai checkpoint}\label{sec:A.4.3}
 

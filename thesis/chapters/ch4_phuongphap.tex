@@ -154,7 +154,7 @@ Mỗi bước cập nhật sử dụng hai prompt; với mỗi prompt, mô hình
 
 \textbf{Lựa chọn checkpoint.} Hai checkpoint ở bước 250 và 500 được dùng để sinh câu bằng giải mã tham lam trên tập kiểm định nội bộ và được xếp hạng theo executability. Checkpoint 500 được lựa chọn từ bước phát triển này, sau đó được cố định để sinh câu trên tập kiểm tra. Các quan sát dùng trong quá trình lựa chọn checkpoint được trình bày cùng phân tích tín hiệu phần thưởng ở Mục~\ref{sec:6.3}.
 
-\textbf{Lưu ý về thiết lập so sánh.} Thành phần học tăng cường và S1 hiện sử dụng hai quy trình sinh câu có một số khác biệt kỹ thuật, đồng thời chưa có cấu hình chỉ học thêm có giám sát với cùng số bước. Hai yếu tố này được giữ cố định trong các kết quả đã báo cáo và được liệt kê như nội dung cần kiểm chứng bổ sung ở Chương~\ref{chap:7}.
+\textbf{Lưu ý về thiết lập so sánh.} Thành phần học tăng cường và S1 hiện sử dụng hai quy trình sinh câu có một số khác biệt kỹ thuật. Ngoài ra, luận văn chưa có một lượt chỉ tiếp tục học có giám sát với cùng số bước để tách ảnh hưởng của bản thân việc huấn luyện thêm khỏi ảnh hưởng của mục tiêu học tăng cường. Hai điểm này được xem là hạn chế của thiết lập hiện tại và được nêu lại ở Chương~\ref{chap:7}.
 
 \section{Thành phần thứ hai: hiệu chỉnh bằng câu ví dụ với ràng buộc nhất quán thao tác (ACE)}\label{sec:4.6}
 

@@ -43,7 +43,7 @@ Executability dùng mô hình định vị như một thước đo thay thế ch
 
 \subsection{Hạn chế của kết quả về mô hình}\label{sec:7.2.2}
 
-Phương pháp đề xuất cho mức cải thiện nhất quán so với S1 trên các độ đo đã báo cáo, nhưng một số cấu hình so sánh bổ sung vẫn hữu ích để tách riêng đóng góp của từng cơ chế. Cụ thể, thành phần học tăng cường chưa có cấu hình chỉ học thêm có giám sát với cùng số bước, còn ACE chưa có khoảng tin cậy cho nhóm độ đo văn bản. Các phương án trong Phụ lục A chủ yếu đóng vai trò phân tích thiết kế; do một số nhánh không có đầy đủ ablation, kết luận từ các nhánh này được sử dụng để giải thích hành vi mô hình thay vì xem như so sánh nhân quả độc lập.
+Phương pháp đề xuất cho mức cải thiện nhất quán so với S1 trên các độ đo đã báo cáo, nhưng chưa thể tách hoàn toàn đóng góp của từng cơ chế. Với thành phần học tăng cường, luận văn chưa có lượt chỉ học thêm có giám sát với cùng số bước; với ACE, nhóm độ đo văn bản chưa có khoảng tin cậy. Các phương án trong Phụ lục A chủ yếu đóng vai trò phân tích thiết kế; do một số nhánh chưa có đầy đủ thí nghiệm cần thiết để tách riêng từng yếu tố, kết luận từ các nhánh này được dùng để giải thích hành vi mô hình thay vì xem như so sánh nhân quả độc lập.
 
 \subsection{Hạn chế của dữ liệu và phạm vi}\label{sec:7.2.3}
 
@@ -54,7 +54,7 @@ Thực nghiệm hiện tập trung trên AndroidControl, giao diện tiếng Anh
 Từ các kết quả hiện tại, năm hướng phát triển được ưu tiên.
 
 \begin{itemize}
-\item \textbf{Hoàn thiện các thí nghiệm so sánh của phương pháp đề xuất.} Bổ sung cấu hình chỉ học thêm có giám sát với cùng số bước cho thành phần SPICE, đồng nhất quy trình sinh câu giữa các cấu hình và ước lượng khoảng tin cậy cho các độ đo văn bản của ACE. Các thí nghiệm này giúp tách rõ hơn phần cải thiện đến từ từng thành phần.
+\item \textbf{Bổ sung thí nghiệm để tách đóng góp của từng thành phần.} Với thành phần SPICE, cần thêm lượt chỉ học có giám sát với cùng số bước và đồng nhất quy trình sinh câu giữa các mô hình. Với ACE, cần ước lượng khoảng tin cậy cho các độ đo văn bản. Các thí nghiệm này sẽ giúp xác định rõ hơn phần cải thiện đến từ từng thành phần.
 \item \textbf{Kết hợp chặt hơn giữa nhận diện phần tử và sinh câu.} Các phân tích ở Phụ lục A cho thấy việc bổ sung thông tin vị trí sau khi mô hình sinh câu đã được huấn luyện chỉ tạo ảnh hưởng hạn chế. Một hướng phù hợp hơn là học đồng thời biểu diễn phần tử, thông tin vị trí và câu hướng dẫn, hoặc mở một phần mô-đun thị giác trong quá trình tinh chỉnh.
 \item \textbf{Cải thiện cơ chế chọn ứng viên và từ chối chọn.} Khi mô hình đưa ra lựa chọn, độ chính xác tương đối cao; tuy nhiên tỉ lệ từ chối chọn vẫn lớn. Việc tách quyết định “có ứng viên đúng hay không” khỏi bước xếp hạng ứng viên là một hướng trực tiếp để khai thác tốt hơn danh sách phần tử có cấu trúc.
 \item \textbf{Đối chiếu executability với đánh giá của người dùng.} Một tập câu được nhiều người đánh giá độc lập có thể được sử dụng để đo tương quan giữa executability và khả năng người dùng thực sự xác định đúng phần tử. Đồng thời, cần mở rộng kiểm tra độ ổn định trước các cách diễn đạt khác nhau của cùng một phần tử.
