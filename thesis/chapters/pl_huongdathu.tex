@@ -39,6 +39,51 @@ phần câu & câu hướng dẫn \\
 \end{tabularx}
 \end{center}
 
+\subsubsection{Xây dựng nhãn mô tả phần tử}\label{sec:A.1.1.data}
+
+Dòng mô tả được tạo tự động từ tọa độ chạm, cây trợ năng và OCR. Chương trình chọn hộp trợ năng nhỏ nhất chứa điểm chạm, lấy vai trò từ cây trợ năng và lấy tên từ cây hoặc OCR sau khi qua các bộ lọc. Tọa độ được chuẩn hóa về thang [0, 1000], còn trường cuối chứa một dấu hiệu phân biệt được sinh theo quy tắc định sẵn. Bảng~\ref{tab:A.desc_fields} tóm tắt bốn trường của nhãn.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Bốn trường của dòng mô tả phần tử và vai trò của từng trường.}\label{tab:A.desc_fields}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash\hsize=0.54\hsize}X>{\raggedright\arraybackslash\hsize=1.46\hsize}X@{}}
+\toprule
+\textbf{Trường} & \textbf{Ví dụ} & \textbf{Vai trò} \\
+\midrule
+Vai trò & \code{tappable text} & phân biệt nút, ô nhập và mục danh sách \\
+Tên & \code{Search here} & biểu diễn chữ hoặc nhãn của phần tử; nguồn là OCR hoặc cây trợ năng \\
+Tọa độ & \code{<point>}\allowbreak\code{440,91}\allowbreak\code{</point>} & lấy từ điểm chạm tham chiếu và chuẩn hóa về lưới [0, 1000] \\
+Dấu hiệu phân biệt & \code{just above the text “Coffee”} & bổ sung quan hệ với phần tử lân cận khi chỉ tên hoặc vai trò chưa đủ phân biệt \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Làm sạch tên và dấu hiệu phân biệt.} Bộ lọc nhãn trợ năng loại 14,7\% nhãn tại các phần tử cần chạm, gồm định danh lấy từ mã nguồn, chuỗi số dài, hậu tố dành cho trình đọc màn hình và các chuỗi chỉ báo phần tử không có nhãn như \code{No label specified}. Tên OCR chỉ được lấy khi hộp phần tử chiếm dưới 25\% diện tích màn hình; trong 25 trường hợp hộp chiếm gần hết màn hình được kiểm tra thủ công, không trường hợp nào khớp với câu tham chiếu. Khi tạo dấu hiệu phân biệt, quy trình ưu tiên kết hợp một chuỗi OCR gần phần tử với thông tin vị trí tương đối. Trên mẫu thử, 75,9\% dấu hiệu được tạo ra đủ để phân biệt phần tử cần chạm với các phần tử tương tự; 24,1\% còn lại không đạt tiêu chí này.
+
+\textbf{Chất lượng nhãn ở quy mô đầy đủ.} Bảng~\ref{tab:A.desc_quality} so sánh 41.191 nhãn ở bước chạm với mẫu thử gồm 1.074 nhãn. Với ba chỉ số có số liệu đối chiếu ở cả hai cột, chênh lệch không vượt quá 1,4 điểm phần trăm.
+
+\begin{table}[htbp]
+\centering\small
+\caption[Chất lượng nhãn mô tả ở quy mô đầy đủ so với mẫu thử (n = 1.074).]{Chất lượng nhãn mô tả ở quy mô đầy đủ so với mẫu thử (n = 1.074).}\label{tab:A.desc_quality}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+\textbf{Chỉ số} & \textbf{Quy mô đầy đủ} & \textbf{Mẫu thử} \\
+\midrule
+Tên rõ ràng & 73,6\% & 73,8\% \\
+Chỉ có ký hiệu, không có chữ & 4,4\% & - \\
+Không có tên & 22,0\% & 23,4\% \\
+Vai trò rõ ràng & 75,8\% & - \\
+Trùng tên trên cùng màn & 7,6\% & 7,0\% \\
+Có phần tử cùng vai trò để so & 91,6\% & - \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Trong 32.061 tên lấy được, 8.581 tên đến từ cây trợ năng và 23.480 tên đến từ OCR. Các thống kê này chỉ mô tả nguồn tên của nhãn phụ trợ; cây trợ năng không được đưa vào đầu vào của quy trình suy luận cuối cùng ở Chương~\ref{chap:4}.
+
+\subsubsection{Lý do thiết kế và cách đánh giá}
+
 Lúc chấm, dòng mô tả bị cắt bỏ và mô hình định vị chỉ nhận câu hướng dẫn, nên mọi thay đổi về điểm số phải xuất phát từ thay đổi trong câu sinh. Thiết kế dựa trên ba căn cứ. Thứ nhất, dạng lỗi đã đo được chủ yếu là câu mơ hồ (Chương~\ref{chap:1}), nên dòng mô tả có một ô ghi dấu hiệu phân biệt. Thứ hai, hai cấu hình Shikra trong Bảng~\ref{tab:A.intermediate_prior} cho kết quả âm khi bước trung gian là văn xuôi và dương khi bước trung gian có tọa độ, nên dòng mô tả gồm bốn ô cố định và bắt buộc có tọa độ. Thứ ba, tọa độ chạm của người thật đã có sẵn trong dữ liệu, nên có thể sử dụng trực tiếp mà không cần gán nhãn bổ sung. Thiết kế còn có mục thứ hai, tức phạt mô hình khi xác suất của dòng mô tả xác định đúng phần tử không vượt xác suất của dòng mô tả trỏ sang phần tử lân cận ít nhất một khoảng lề, là phần mà Widget Captioning~\cite{widgetcap} chưa xử lý. Mục này chưa được thực hiện vì mục thứ nhất, tức bản thân dòng mô tả, chưa cho thấy tác dụng (Mục~\ref{sec:A.1.3}).
 
 \subsection{Các cấu hình của thiết kế so sánh ban đầu}\label{sec:A.1.2}
@@ -55,7 +100,7 @@ Thiết kế so sánh ban đầu gồm bảy cấu hình, dùng chung dữ liệ
 \midrule
 Tinh chỉnh có giám sát (S1) & chỉ câu hướng dẫn (2 seed) & mốc so sánh \\
 Mô tả phần tử (S2) & dòng mô tả thật + câu (2 seed) & phép so sánh chính của thiết kế ban đầu, kiểm tác dụng của việc mô tả phần tử trước \\
-Mô tả giả (S2r) & dòng mô tả giả khớp độ dài + câu & loại trừ khả năng điểm tăng chỉ do chuỗi phải sinh ra dài thêm \\
+Mô tả giả (S2r) & dòng mô tả giả có độ dài token gần tương đương + câu & loại trừ khả năng điểm tăng chỉ do chuỗi phải sinh ra dài thêm \\
 Mô tả không có tọa độ (S2-nopoint) & dòng mô tả bỏ tọa độ + câu & tách phần đóng góp của tọa độ \\
 Danh sách phần tử lúc chạy (B-infer) & trọng số S1, danh sách phần tử đưa vào đầu vào lúc chạy & so huấn luyện với việc chỉ cung cấp thông tin lúc chạy \\
 Mô hình gốc (Base) & mô hình gốc, không tinh chỉnh & đo phần cải thiện do bản thân việc tinh chỉnh \\
@@ -63,6 +108,8 @@ Câu tham chiếu & câu tham chiếu được đưa trực tiếp vào quy trì
 \bottomrule
 \end{tabularx}
 \end{table}
+
+\textbf{Cách dựng các biến thể dữ liệu.} Ba cấu hình có dòng mô tả dùng cùng đầu vào và cùng câu hướng dẫn. S2 dùng dòng mô tả thật. S2r thay dòng này bằng một dòng lấy từ màn hình khác có độ dài token gần tương đương và thay tọa độ bằng giá trị ngẫu nhiên. S2-nopoint giữ vai trò, tên và dấu hiệu phân biệt nhưng bỏ trường tọa độ. Khi thiết kế yêu cầu so sánh trực tiếp, phần câu hướng dẫn được giữ hoàn toàn giống nhau giữa các biến thể. Ở các bước không chạm, không có dòng mô tả và chuỗi đích của các cấu hình được giữ giống nhau; nhóm này chiếm 36,2\% tập huấn luyện. Trạng thái cuối của các cấu hình không được tiếp tục huấn luyện được ghi ở Bảng~\ref{tab:6.13}.
 
 Đại lượng quan tâm là $\Delta$ = S2 $-$ S1, tính trên trung bình hai seed của mỗi mô hình. Hai lượt huấn luyện mô hình tinh chỉnh có giám sát chỉ khác nhau ở seed, nên chênh lệch giữa chúng cho biết điểm số dao động bao nhiêu khi chỉ huấn luyện lại mà không có can thiệp nào. Bốn cấu hình không được chạy, gồm seed thứ hai của mô hình mô tả phần tử, cấu hình mô tả giả, cấu hình mô tả không có tọa độ và cấu hình chỉ đưa danh sách phần tử vào lúc chạy (lý do ở Bảng~\ref{tab:6.13}). Do thiếu seed thứ hai của mô hình mô tả phần tử, $\Delta$ không thể được ước lượng đầy đủ theo định nghĩa ban đầu; vì vậy các kết quả sau chỉ báo cáo những phép so sánh có dữ liệu tương ứng.
 
@@ -125,7 +172,15 @@ vế bị loại & \code{<desc>}mô tả trỏ sai phần tử\code{</desc>} $+$
 \end{tabular}
 \end{center}
 
-Hai vế chỉ khác nhau ở dòng mô tả, nên số hạng ưu tiên chỉ giảm được khi mô hình chọn đúng phần tử. Dòng mô tả trỏ sai là mô tả của một phần tử có thật, cùng vai trò, nằm gần phần tử cần chạm; quy trình xây dựng 22.854 cặp được trình bày ở Mục~\ref{sec:3.7}. Hàm mục tiêu thuộc họ tối ưu theo ưu tiên dạng tỉ số odds (ORPO), không cần mô hình tham chiếu đóng băng.
+Hai vế dùng cùng câu hướng dẫn và chỉ khác dòng mô tả. Cách dựng này tập trung tín hiệu ưu tiên vào phần mô tả phần tử, nhưng trong mô hình tự hồi quy, xác suất của phần câu phía sau vẫn được điều kiện hóa bởi tiền tố khác nhau nên ảnh hưởng của câu hậu tố không triệt tiêu hoàn toàn. Hàm mục tiêu thuộc họ tối ưu theo ưu tiên dạng tỉ số odds (ORPO), không cần mô hình tham chiếu đóng băng.
+
+\subsubsection{Xây dựng tập cặp ưu tiên}\label{sec:A.2.1.data}
+
+Tập huấn luyện của giai đoạn này gồm 22.854 cặp. Ở vế được chọn, dòng mô tả trỏ tới phần tử cần chạm. Ở vế bị loại, dòng mô tả trỏ tới một phần tử có thật trên cùng màn hình, cùng vai trò, cách phần tử mục tiêu từ 80 đến 350 điểm ảnh và khác ở cả tên lẫn tọa độ. Sau khi xây dựng, các cặp được kiểm tra để phần câu hướng dẫn của hai vế hoàn toàn giống nhau và dòng mô tả ở vế bị loại không trỏ vào phần tử cần chạm.
+
+Tập cặp chỉ chứa bước chạm. Ở 17,4\% số cặp, chuỗi \code{(no name)} chỉ xuất hiện ở một trong hai vế, tạo ra khả năng mô hình dựa vào dấu hiệu này thay vì nội dung màn hình để phân biệt hai vế. Hạn chế được phát hiện sau khi mô hình đã học xong, nên các kết quả ở Mục~\ref{sec:A.2.2} sử dụng dữ liệu chưa chỉnh sửa. Do đó, các kết quả của nhánh này được dùng để phân tích hành vi mô hình chứ không được diễn giải như một phép tách hoàn toàn sạch ảnh hưởng của biểu diễn phần tử.
+
+\subsubsection{Cấu hình đối chứng và đại lượng so sánh}
 
 Để tách phần của mục tiêu ưu tiên khỏi phần của việc học thêm, mô hình học thêm có giám sát (CE2-S2) học có giám sát thuần trên vế được chọn của các cặp ấy, cùng điểm xuất phát và số bước. Đại lượng chính là hiệu ghép cặp $\Delta$\_thành phần = MIN-DESC $-$ CE2-S2, tính trên cùng các bước của tập kiểm tra (Mục~\ref{sec:4.8}). Tập cặp chỉ chứa bước chạm, nên thiệt hại ở bước không chạm được đo riêng (Mục~\ref{sec:A.2.2.4}).
 
@@ -224,15 +279,37 @@ Theo Bảng~\ref{tab:A.7}, nhóm đúng cả tên lẫn tọa độ chiếm 46,7
 
 \subsection{Thiết kế}\label{sec:A.3.1}
 
-Phân tích ở Mục~\ref{sec:A.2.3} cho thấy phần lớn dư địa còn lại của MIN-DESC nằm ở những bước mà dòng mô tả sai cả tên lẫn tọa độ. Vì vậy, thay vì để mô hình tự viết dòng mô tả, chúng tôi cho mô hình chọn phần tử trong danh sách lấy từ chính màn hình; mô hình huấn luyện theo cách này gọi là mô hình chọn ứng viên. Căn cứ là ba con số đo được trước khi huấn luyện. Tên đúng có mặt trong chữ OCR hoặc cây trợ năng ở 99,7\% số bước. Ở 80,2\% số bước có một ứng viên vừa khớp tên vừa nằm trong dung sai, so với 59,9\% của dòng mô tả tự sinh. Ở 67,7\% số bước mà MIN-DESC gọi sai tên, tên đúng đã nằm sẵn trong 24 dòng OCR của prompt nhưng không kèm vị trí.
+Phân tích ở Mục~\ref{sec:A.2.3} cho thấy phần lớn dư địa còn lại của MIN-DESC nằm ở những bước mà dòng mô tả sai cả tên lẫn tọa độ. Vì vậy, thay vì để mô hình tự viết dòng mô tả, chúng tôi cho mô hình chọn phần tử trong danh sách lấy từ chính màn hình; mô hình huấn luyện theo cách này gọi là mô hình chọn ứng viên. Căn cứ là ba con số đo được trước khi huấn luyện. Nếu lấy toàn bộ bước chạm của tập kiểm tra làm mẫu số, 99,7\% bước có tên mục tiêu lấy được từ OCR hoặc cây trợ năng và 80,2\% bước có một ứng viên vừa khớp tên vừa nằm trong dung sai; tỉ lệ tương ứng của dòng mô tả tự sinh là 59,9\%. Ngoài ra, ở 67,7\% số bước mà MIN-DESC gọi sai tên, tên đúng đã nằm sẵn trong 24 dòng OCR của prompt nhưng không kèm vị trí.
 
-\textbf{Cách làm.} Prompt thay 24 dòng OCR bằng danh sách ứng viên ở Mục~\ref{sec:3.8}. Chuỗi đích mở đầu bằng một thẻ chọn, là bản chép nguyên văn một dòng trong danh sách hoặc thẻ \code{none}, rồi mới tới câu; thẻ này được cắt bỏ trước khi chấm. Danh sách phần tử có cấu trúc đã được sử dụng trong các công trình trước (Chương~\ref{chap:1}); trong phương án này, thành phần được khảo sát là cơ chế chọn tường minh, tức mô hình ghi rõ ứng viên được chọn ngay trong chuỗi đích.
+\textbf{Cách làm.} Prompt thay 24 dòng OCR bằng một danh sách phần tử có tên và vị trí. Chuỗi đích mở đầu bằng một thẻ chọn, là bản chép nguyên văn một dòng trong danh sách hoặc thẻ \code{none}, rồi mới tới câu; thẻ này được cắt bỏ trước khi chấm. Danh sách phần tử có cấu trúc đã được sử dụng trong các công trình trước (Chương~\ref{chap:1}); trong phương án này, thành phần được khảo sát là cơ chế chọn tường minh, tức mô hình ghi rõ ứng viên được chọn ngay trong chuỗi đích.
 
-\textbf{Điều kiện thí nghiệm.} Mô hình chọn ứng viên khác mô hình tinh chỉnh có giám sát (S1) và MIN-DESC ở ba biến. Ngữ cảnh dài 3072 thay vì 2560 token để chứa danh sách ứng viên (mẫu dài nhất 2.017 token cộng danh sách dài nhất 1.012 token), số lượt duyệt chỉ còn một (4.036 bước) do giới hạn tài nguyên, và đầu vào có thêm danh sách ứng viên. Vì vậy điểm của mô hình này không thể so sánh trực tiếp với điểm của hai mô hình kia. Đại lượng hợp lệ là hiệu ghép cặp $\Delta$\_chọn với một cấu hình đối chứng nhận cùng danh sách ứng viên ở đầu vào nhưng chuỗi đích chỉ có câu, còn các tham số khác giữ như Bảng~\ref{tab:4.1}. Thiết kế ban đầu gồm sáu lượt huấn luyện (ba cấu hình, mỗi cấu hình hai seed), nhưng năm lượt sau chỉ được chạy nếu lượt đầu cho độ chính xác chọn hơn rõ tỉ lệ 60,6\% dòng mô tả xác định đúng phần tử của MIN-DESC. Độ chính xác chọn là tỉ lệ thẻ chọn đúng phần tử cần chạm (tên khớp, tọa độ trong dung sai 14\%) trên những bước mà danh sách có chứa phần tử ấy, tức có ứng viên đúng, đo trên 1.400 bước chạm đầu của tập kiểm tra.
+\subsubsection{Xây dựng danh sách ứng viên và chuỗi đích}\label{sec:A.3.1.data}
+
+Mỗi màn hình được chuyển thành danh sách tối đa 40 ứng viên, mỗi ứng viên gồm tên phần tử và tọa độ trên lưới [0, 1000]. Danh sách dùng cùng quy tắc đặt tên với nhãn mô tả phần tử ở Mục~\ref{sec:A.1.1.data} và được sắp theo thứ tự đọc tự nhiên trên màn hình.
+
+Tên trong nhãn mô tả của một bước được xem là tên mục tiêu của bước đó. Một ứng viên được xem là đúng khi có cùng tên mục tiêu và cách điểm chạm không quá 140 đơn vị lưới trên mỗi trục, tương đương 14\% kích thước tương ứng của màn hình; nếu có nhiều ứng viên thỏa điều kiện, ứng viên gần điểm chạm nhất được chọn. Trên tập kiểm tra, trong số các bước có tên mục tiêu, 96,7\% có tên đó xuất hiện trong danh sách. Trong chính nhóm bước có tên mục tiêu, 91,2\% có ít nhất một ứng viên vừa trùng tên vừa nằm trong dung sai vị trí. Trên mẫu 300 bước có ứng viên đúng, vị trí của ứng viên đúng sau khi chuẩn hóa về [0,1] có giá trị trung bình 0,481 và ứng viên đúng đứng đầu danh sách ở 5,0\% số mẫu. Vì vậy, vị trí trong danh sách không tạo thành một dấu hiệu thứ tự hiển nhiên của đáp án. Mẫu dài nhất vẫn dưới giới hạn ngữ cảnh 3.072 token nên không mẫu nào bị cắt vì danh sách ứng viên.
+
+Từ cùng một prompt, hai cấu hình dữ liệu được dựng với chuỗi đích khác nhau. Cấu hình chọn ứng viên sinh thêm thẻ lựa chọn phần tử trước câu hướng dẫn; cấu hình đối chứng chỉ sinh câu hướng dẫn.
+
+\begin{center}\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Mô hình chọn ứng viên} & \code{<sel>}tên \code{<point>}$x,y$\code{</point></sel>} $+$ \code{\textbackslash n} $+$ câu \\
+ & hoặc \code{<sel>none</sel>} $+$ \code{\textbackslash n} $+$ câu \\
+\textbf{Cấu hình đối chứng} & câu \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Nội dung thẻ chọn là phần sao chép nguyên văn thông tin của ứng viên đúng từ danh sách. Thẻ \code{none} được dùng cho bước không chạm, bước chạm không có tên mục tiêu hoặc bước chạm có tên nhưng danh sách không chứa ứng viên khớp. Câu hướng dẫn ở cả hai cấu hình là câu tham chiếu nguyên bản; prompt và ảnh cũng được giữ giống nhau. Do mọi bước không chạm đều sử dụng thẻ \code{none}, 54,78\% toàn bộ mẫu huấn luyện mang nhãn này; nếu chỉ xét 41.191 bước chạm, tỉ lệ là 29,12\%. Hai tỉ lệ được dùng để phân tích hành vi từ chối chọn ở Mục~\ref{sec:A.3.2.3}.
+
+\subsubsection{Điều kiện thí nghiệm}
+
+Mô hình chọn ứng viên khác mô hình tinh chỉnh có giám sát (S1) và MIN-DESC ở ba biến. Ngữ cảnh dài 3072 thay vì 2560 token để chứa danh sách ứng viên (mẫu dài nhất 2.017 token cộng danh sách dài nhất 1.012 token), số lượt duyệt chỉ còn một (4.036 bước) do giới hạn tài nguyên, và đầu vào có thêm danh sách ứng viên. Vì vậy điểm của mô hình này không thể so sánh trực tiếp với điểm của hai mô hình kia. Đại lượng hợp lệ là hiệu ghép cặp $\Delta$\_chọn với một cấu hình đối chứng nhận cùng danh sách ứng viên ở đầu vào nhưng chuỗi đích chỉ có câu, còn các tham số khác giữ như Bảng~\ref{tab:4.1}. Thiết kế ban đầu gồm sáu lượt huấn luyện (ba cấu hình, mỗi cấu hình hai seed), nhưng năm lượt sau chỉ được chạy nếu lượt đầu cho độ chính xác chọn hơn rõ tỉ lệ 60,6\% dòng mô tả xác định đúng phần tử của MIN-DESC. Độ chính xác chọn là tỉ lệ thẻ chọn đúng phần tử cần chạm (tên khớp, tọa độ trong dung sai 14\%) trên những bước mà danh sách có chứa phần tử ấy, tức có ứng viên đúng, đo trên 1.400 bước chạm đầu của tập kiểm tra.
 
 \subsection{Kết quả}\label{sec:A.3.2}
 
-Mô hình chọn ứng viên được huấn luyện với seed 101 trên 64.567 mẫu của Mục~\ref{sec:3.8}.
+Mô hình chọn ứng viên được huấn luyện với seed 101 trên 64.567 mẫu của Mục~\ref{sec:A.3.1.data}.
 
 \subsubsection{Độ chính xác chọn và executability}\label{sec:A.3.2.1}
 
@@ -297,7 +374,7 @@ Tỉ lệ mô hình phát ra trên tập kiểm tra & 41,97\% \\
 \end{tabular}
 \end{table}
 
-Tỉ lệ mô hình phát ra nằm giữa tỉ lệ đúng trên bước chạm và tỉ lệ trên toàn tập huấn luyện, và gần tỉ lệ toàn tập hơn. Vì mọi bước không chạm đều mang thẻ \code{none} (Mục~\ref{sec:3.8}), thẻ này chiếm hơn một nửa số mẫu huấn luyện. Một cách giải thích phù hợp với quan sát là mô hình học tiên nghiệm của nhãn này trên toàn bộ tập huấn luyện rồi duy trì xu hướng đó khi xử lý bước chạm, là loại bước duy nhất được chấm. Rajpurkar và cộng sự~\cite{rajpurkar2018} nêu hiện tượng tương tự cho SQuAD 2.0, còn Menon và cộng sự~\cite{menon2021} chứng minh rằng dưới dạng lệch phân bố nhãn, sửa tiên nghiệm lúc huấn luyện tương đương với sửa sau huấn luyện. Tỉ lệ đúng trên bước chạm của tập huấn luyện (29,12\%) và của tập kiểm tra (28,34\%) chỉ chênh 0,8 điểm, nên phân bố nhãn trên riêng nhóm bước chạm gần như không thay đổi giữa hai tập; quan hệ nhân quả giữa tiên nghiệm toàn tập và mức từ chối chọn thì chưa được chứng minh.
+Tỉ lệ mô hình phát ra nằm giữa tỉ lệ đúng trên bước chạm và tỉ lệ trên toàn tập huấn luyện, và gần tỉ lệ toàn tập hơn. Vì mọi bước không chạm đều mang thẻ \code{none} (Mục~\ref{sec:A.3.1.data}), thẻ này chiếm hơn một nửa số mẫu huấn luyện. Một cách giải thích phù hợp với quan sát là mô hình học tiên nghiệm của nhãn này trên toàn bộ tập huấn luyện rồi duy trì xu hướng đó khi xử lý bước chạm, là loại bước duy nhất được chấm. Rajpurkar và cộng sự~\cite{rajpurkar2018} nêu hiện tượng tương tự cho SQuAD 2.0, còn Menon và cộng sự~\cite{menon2021} chứng minh rằng dưới dạng lệch phân bố nhãn, sửa tiên nghiệm lúc huấn luyện tương đương với sửa sau huấn luyện. Tỉ lệ đúng trên bước chạm của tập huấn luyện (29,12\%) và của tập kiểm tra (28,34\%) chỉ chênh 0,8 điểm, nên phân bố nhãn trên riêng nhóm bước chạm gần như không thay đổi giữa hai tập; quan hệ nhân quả giữa tiên nghiệm toàn tập và mức từ chối chọn thì chưa được chứng minh.
 
 Chúng tôi cũng đánh giá ba phương án hiệu chỉnh khác. Sửa toàn bộ lỗi loại thao tác chỉ thêm 1,21 điểm. Rút danh sách còn mười dòng hạ độ phủ ứng viên đúng từ 71,7\% xuống nhiều nhất 51,7\%. Nới dung sai tọa độ chỉ nâng độ phủ lên 76,0\% nhưng đồng thời làm thay đổi nhãn huấn luyện. Hướng còn lại là huấn luyện lại chỉ trên 41.191 bước chạm để đưa tiên nghiệm về 29,12\%.
 

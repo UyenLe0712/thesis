@@ -81,13 +81,13 @@ SPICE & Semantic Propositional Image Caption Evaluation & Độ đo dựa trên 
 \multicolumn{2}{@{}p{8.2cm}}{Mô hình mô tả phần tử (S2)}
 & Đây là hướng đã thử đầu tiên, trong đó mô hình gốc được tinh chỉnh có giám sát để viết dòng mô tả phần tử rồi mới viết câu, theo nguyên tắc mô tả phân biệt trước, phát ngôn sau (Mục~\ref{sec:A.1.1}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Cấu hình mô tả giả và cấu hình mô tả không có tọa độ (S2r, S2-nopoint)}
-& Đây là hai cấu hình đối chứng được thiết kế cho mô hình mô tả phần tử nhưng chưa được chạy. Cấu hình thứ nhất thay dòng mô tả thật bằng một dòng mô tả giả có cùng độ dài, cấu hình thứ hai bỏ tọa độ khỏi dòng mô tả (Mục~\ref{sec:A.1.2}). \\
+& Đây là hai cấu hình đối chứng được thiết kế cho mô hình mô tả phần tử nhưng chưa được chạy. Cấu hình thứ nhất thay dòng mô tả thật bằng một dòng mô tả giả có độ dài token gần tương đương, cấu hình thứ hai bỏ tọa độ khỏi dòng mô tả (Mục~\ref{sec:A.1.2}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Học theo cặp ưu tiên trên dòng mô tả (MIN-DESC)}
 & Đây là giai đoạn huấn luyện thứ hai, học tiếp từ mô hình mô tả phần tử và trong đó mô hình học từ các cặp chuỗi chỉ khác nhau ở dòng mô tả, còn câu hướng dẫn thì giống hệt nhau (Mục~\ref{sec:A.2.1}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Mô hình học thêm có giám sát (CE2-S2)}
 & Đây là mô hình dùng để so với giai đoạn học ưu tiên, chỉ học thêm có giám sát với cùng số bước, nhờ đó tách được phần cải thiện do mục tiêu ưu tiên mang lại khỏi phần chỉ do mô hình được huấn luyện thêm (Mục~\ref{sec:A.2.1}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Danh sách ứng viên}
-& Danh sách tối đa 40 phần tử của một màn hình, mỗi dòng gồm tên và tọa độ, được xây dựng từ cây trợ năng và văn bản trích xuất trên màn hình, rồi đưa vào prompt của mô hình chọn ứng viên (Mục~\ref{sec:3.8}). \\
+& Danh sách tối đa 40 phần tử của một màn hình, mỗi dòng gồm tên và tọa độ, được xây dựng từ cây trợ năng và văn bản trích xuất trên màn hình, rồi đưa vào prompt của mô hình chọn ứng viên (Mục~\ref{sec:A.3.1.data}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Mô hình chọn ứng viên}
 & Đây là hướng đã thử trong đó mô hình chọn phần tử cần chạm từ danh sách ứng viên thay vì tự viết dòng mô tả; thẻ ghi phần tử được chọn bị cắt bỏ trước khi đánh giá (Mục~\ref{sec:A.3.1}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Từ chối chọn}
