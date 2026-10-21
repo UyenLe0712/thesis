@@ -11,7 +11,7 @@ Luận văn này tập trung vào bài toán sinh hướng dẫn cho thao tác k
 
 Khác với đầu ra dạng tọa độ, chất lượng của một câu hướng dẫn còn phụ thuộc vào việc người dùng có nhận ra đúng phần tử cần tương tác hay không. Câu “Chạm vào biểu tượng tìm kiếm” vẫn có thể mơ hồ nếu màn hình có nhiều biểu tượng tương tự; khi đó, hướng dẫn cần thêm thông tin như vị trí, nội dung hiển thị hoặc quan hệ với các thành phần xung quanh. Ở chiều ngược lại, cùng một thao tác có thể được diễn đạt bằng nhiều câu khác nhau mà vẫn hoàn toàn hợp lệ.
 
-Từ đó, luận văn tập trung vào hai vấn đề chính. Thứ nhất là đánh giá liệu hướng dẫn có cung cấp đủ thông tin để xác định đúng phần tử cần thao tác hay không. Thứ hai là phát triển phương pháp nhằm nâng cao chất lượng hướng dẫn. Executability được sử dụng để đánh giá mức độ các hướng dẫn giúp xác định đúng phần tử mục tiêu.
+Từ đó, luận văn tập trung vào hai vấn đề chính. Thứ nhất là đánh giá liệu hướng dẫn có cung cấp đủ thông tin để xác định đúng phần tử và thao tác cần thực hiện hay không. Thứ hai là phát triển phương pháp nhằm nâng cao chất lượng hướng dẫn. Executability được sử dụng để đánh giá mức độ các hướng dẫn giúp xác định đúng phần tử và đúng loại thao tác.
 
 \section{Động lực nghiên cứu}\label{sec:1.2}
 
@@ -35,14 +35,14 @@ Mục tiêu tổng quát của luận văn là nâng cao chất lượng câu h�
 
 \begin{enumerate}
 \item Xây dựng phương pháp sinh hướng dẫn trên mô hình ngôn ngữ thị giác cỡ nhỏ, hướng tới các câu mô tả rõ thao tác cần thực hiện và đủ cụ thể để phân biệt phần tử mục tiêu với những phần tử tương tự trên màn hình.
-\item Xây dựng và đánh giá độ tin cậy của độ đo khả năng thực hiện theo hướng dẫn (\emph{instruction executability}), gọi ngắn là executability, cho các bước có thao tác chạm. Thay vì chỉ đo mức độ tương đồng giữa hướng dẫn do mô hình tạo ra và một câu tham chiếu, độ đo này xem xét liệu thông tin trong câu hướng dẫn có giúp xác định đúng phần tử cần thao tác hay không.
+\item Xây dựng và đánh giá độ tin cậy của độ đo khả năng thực hiện theo hướng dẫn (\emph{instruction executability}), gọi ngắn là executability, cho các bước có thao tác chạm. Thay vì chỉ đo mức độ tương đồng giữa hướng dẫn do mô hình tạo ra và một câu tham chiếu, độ đo này xem xét liệu thông tin trong câu hướng dẫn có giúp xác định đúng phần tử và đúng loại thao tác hay không.
 \item Tự động xây dựng tập dữ liệu giám sát cho tác vụ sinh hướng dẫn từ AndroidControl~\cite{androidcontrol}, không yêu cầu gán nhãn thủ công bổ sung và không sử dụng câu do một mô hình ngôn ngữ khác sinh ra làm mục tiêu huấn luyện.
 \end{enumerate}
 
 
 \section{Khoảng trống nghiên cứu và vị trí của đề tài}\label{sec:1.4}
 
-Từ các công trình trên, luận văn tập trung vào hai khoảng trống nghiên cứu. Thứ nhất, phần lớn nghiên cứu về GUI agent tập trung vào dự đoán thao tác hoặc tọa độ cho tác tử phần mềm, thay vì sinh hướng dẫn để con người đọc và thực hiện. Thứ hai, các độ đo dựa trên câu tham chiếu không trực tiếp cho biết hướng dẫn do mô hình tạo ra có đủ rõ để xác định đúng phần tử mục tiêu hay không. Luận văn giải quyết hai vấn đề này bằng phương pháp sinh hướng dẫn trên mô hình ngôn ngữ thị giác cỡ nhỏ (Chương~\ref{chap:4}) và executability để đánh giá khả năng câu hướng dẫn dẫn tới đúng phần tử (Chương~\ref{chap:5}); kết quả được phân tích ở Chương~\ref{chap:6}.
+Từ các công trình trên, luận văn tập trung vào hai khoảng trống nghiên cứu. Thứ nhất, phần lớn nghiên cứu về GUI agent tập trung vào dự đoán thao tác hoặc tọa độ cho tác tử phần mềm, thay vì sinh hướng dẫn để con người đọc và thực hiện. Thứ hai, các độ đo dựa trên câu tham chiếu không trực tiếp cho biết hướng dẫn do mô hình tạo ra có đủ rõ để xác định đúng phần tử mục tiêu hay không. Luận văn giải quyết hai vấn đề này bằng phương pháp sinh hướng dẫn trên mô hình ngôn ngữ thị giác cỡ nhỏ (Chương~\ref{chap:4}) và executability để đánh giá liệu câu hướng dẫn có xác định đúng phần tử và đúng loại thao tác hay không (Chương~\ref{chap:5}); kết quả được phân tích ở Chương~\ref{chap:6}.
 
 \section{Nội dung và phạm vi thực hiện đề tài}\label{sec:1.5}
 
@@ -54,7 +54,7 @@ Từ các công trình trên, luận văn tập trung vào hai khoảng trống 
 
 Về bài toán, luận văn chỉ xét việc sinh hướng dẫn cho thao tác kế tiếp tại trạng thái giao diện hiện tại. Việc lập kế hoạch cho toàn bộ tác vụ hoặc sinh đồng thời một chuỗi nhiều thao tác không thuộc phạm vi của đề tài.
 
-Về đánh giá, executability chỉ áp dụng cho các bước có thao tác chạm và chỉ phản ánh một khía cạnh của chất lượng hướng dẫn: câu hướng dẫn có cung cấp đủ thông tin để xác định đúng phần tử cần thao tác hay không. Độ đo này không trực tiếp phản ánh các yếu tố khác như độ trôi chảy, độ dài, mức dễ hiểu đối với từng nhóm người dùng hay chất lượng trải nghiệm tổng thể.
+Về đánh giá, executability chỉ áp dụng cho các bước có thao tác chạm và chỉ phản ánh một khía cạnh của chất lượng hướng dẫn: câu hướng dẫn có cung cấp đủ thông tin để xác định đúng phần tử và đúng loại thao tác hay không. Độ đo này không trực tiếp phản ánh các yếu tố khác như độ trôi chảy, độ dài, mức dễ hiểu đối với từng nhóm người dùng hay chất lượng trải nghiệm tổng thể.
 
 Về dữ liệu, các thực nghiệm sử dụng AndroidControl với giao diện và câu hướng dẫn bằng tiếng Anh. Luận văn không xây dựng bộ dữ liệu tiếng Việt; các câu tiếng Việt xuất hiện trong phần trình bày chỉ được dùng để minh họa cho bài toán.
 
