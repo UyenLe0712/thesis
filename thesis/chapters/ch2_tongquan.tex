@@ -1,83 +1,60 @@
 \chapter{Tổng quan}
 \label{chap:2}
 
-Chương này trình bày những kiến thức nền cho phần còn lại của đề tài. Lần lượt các mục sẽ giới thiệu kiến trúc mô hình được sử dụng, kỹ thuật tinh chỉnh trong điều kiện tài nguyên hạn chế, học tăng cường với phần thưởng tính bằng luật, bài toán định vị phần tử giao diện và bộ dữ liệu nguồn. Mục cuối cùng giải thích lý do các độ đo sẵn có khó dùng cho bài toán này, kèm số đo cho từng cách. Hai mục về tinh chỉnh hiệu quả tham số và về học tăng cường (GRPO với phần thưởng SPICE) là nền trực tiếp của phương pháp đề xuất ở Chương 4.
+Chương này trình bày các khái niệm và công trình nền tảng trực tiếp liên quan đến luận văn. Các nội dung chính gồm mô hình ngôn ngữ thị giác, LoRA và QLoRA, GRPO và SPICE, định vị phần tử giao diện, bộ dữ liệu AndroidControl và hạn chế của các độ đo dựa trên một câu tham chiếu. Cấu hình cụ thể của mô hình và cách đánh giá được trình bày lần lượt ở Chương~\ref{chap:4} và Chương~\ref{chap:5}.
 
-\section{Từ học sâu tới mô hình thị giác và ngôn ngữ}\label{sec:2.1}
+\section{Mô hình ngôn ngữ thị giác}\label{sec:2.1}
 
-Học sâu là một lĩnh vực của học máy, dùng mạng nơ-ron nhiều tầng để tự học biểu diễn từ dữ liệu thô. Bước tiến liên quan trực tiếp nhất tới đề tài là kiến trúc Transformer với cơ chế tự chú ý~\cite{vaswani2017}. Cơ chế này cho phép mô hình ước lượng quan hệ giữa các đơn vị trong chuỗi mà không phụ thuộc vào khoảng cách vị trí, đồng thời tận dụng được tính toán song song để mở rộng quy mô tham số.
+Bài toán của luận văn yêu cầu mô hình xử lý đồng thời hai nguồn thông tin. Ảnh chụp màn hình cung cấp trạng thái trực quan của giao diện, trong khi phần văn bản mô tả mục tiêu của tác vụ, các thao tác đã thực hiện trước đó và nội dung chữ xuất hiện trên màn hình. Vì vậy, mô hình sinh không chỉ cần hiểu ngôn ngữ mà còn phải liên kết nội dung văn bản với các thành phần trực quan trên giao diện.
 
-Mô hình thị giác và ngôn ngữ (\emph{vision-language model}, VLM) ghép một bộ mã hoá ảnh vào một mô hình ngôn ngữ, thường thông qua một tầng chiếu (\emph{projector}) đưa đặc trưng ảnh về cùng không gian với nhúng từ. Ảnh được cắt thành nhiều mảnh, mã hoá thành một dãy \emph{token thị giác} rồi nối vào chuỗi văn bản, nhờ đó mô hình có thể sinh văn bản dựa trên cả hai phương thức.
+Mô hình ngôn ngữ thị giác (\emph{vision-language model}, VLM) được thiết kế cho kiểu đầu vào này. Thông thường, ảnh được chuyển thành các đặc trưng hoặc token thị giác, sau đó được tích hợp với chuỗi token văn bản để mô hình có thể suy luận và sinh đầu ra dựa trên cả hai nguồn thông tin. Phần sinh ngôn ngữ thường dựa trên kiến trúc Transformer~\cite{vaswani2017}, trong đó cơ chế tự chú ý giúp mô hình học quan hệ giữa các phần tử trong chuỗi đầu vào.
 
-Mô hình gốc được chọn là Qwen2.5-VL-3B-Instruct~\cite{qwen25vl}, với ba lý do. Trước hết, đây là mô hình mở, có thể tải trọng số về và tinh chỉnh, khác với các mô hình thương mại chỉ gọi được qua giao diện lập trình. Kế đến, cỡ ba tỉ tham số đủ nhỏ để chạy trên máy người dùng, phù hợp với động lực ứng dụng đã nêu ở Chương 1. Cuối cùng, họ Qwen-VL xử lý ảnh ở độ phân giải động thay vì ép ảnh về một kích thước cố định. Cách xử lý này đặc biệt có ích với ảnh màn hình điện thoại vốn có tỉ lệ rất dài, ví dụ như 1080 $\times$ 2400.
+Luận văn sử dụng Qwen2.5-VL-3B-Instruct~\cite{qwen25vl} làm mô hình nền vì mô hình có trọng số mở, quy mô khoảng ba tỉ tham số phù hợp với điều kiện thử nghiệm và triển khai cục bộ, đồng thời hỗ trợ xử lý ảnh với độ phân giải động. Đặc điểm cuối phù hợp với ảnh chụp màn hình điện thoại, vốn có tỉ lệ và kích thước thay đổi. Cấu hình sử dụng cụ thể của Qwen2.5-VL-3B-Instruct được trình bày ở Chương~\ref{chap:4}.
 
 \section{Tinh chỉnh hiệu quả tham số bằng LoRA và QLoRA}\label{sec:2.2}
 
-Tinh chỉnh toàn bộ ba tỉ tham số đòi hỏi bộ nhớ vượt xa khả năng của một GPU, vì ngoài trọng số còn phải lưu gradient và trạng thái của bộ tối ưu. LoRA~\cite{lora} giải quyết vấn đề này bằng cách đóng băng trọng số gốc $W \in \mathbb{R}^{d \times k}$ và chỉ học thêm một số hạng hạng thấp:
+Tinh chỉnh toàn bộ một mô hình ngôn ngữ thị giác đòi hỏi lượng bộ nhớ lớn vì quá trình huấn luyện không chỉ lưu trọng số mô hình mà còn cần gradient và trạng thái của bộ tối ưu. LoRA~\cite{lora} giảm chi phí này bằng cách giữ cố định trọng số gốc và chỉ học một cập nhật có hạng thấp. Với ma trận trọng số $W \in \mathbb{R}^{d \times k}$, trọng số sau khi áp dụng LoRA được viết dưới dạng
 
 \begin{equation}
 W' = W + \frac{\alpha}{r}BA, \qquad B \in \mathbb{R}^{d \times r},\ A \in \mathbb{R}^{r \times k},\ r \ll \min(d,k),
 \label{eq:2.1}
 \end{equation}
 \noindent
-trong đó $r$ là hạng và $\alpha$ là hệ số tỉ lệ. Nhờ vậy, số tham số cần học giảm từ $dk$ xuống còn $r(d+k)$.
+trong đó $r$ là hạng của cập nhật và $\alpha$ là hệ số tỉ lệ. Thay vì cập nhật toàn bộ $dk$ tham số của ma trận $W$, LoRA chỉ cần học $r(d+k)$ tham số trong hai ma trận $A$ và $B$.
 
-QLoRA~\cite{qlora} đi thêm một bước: trọng số đóng băng được lượng tử hoá xuống 4 bit theo định dạng NormalFloat (NF4), rồi các bộ chuyển đổi LoRA mới được gắn lên trên. Trọng số gốc chỉ được giải nén khi cần cho phép nhân, còn gradient chỉ đi qua hai ma trận A, B ở độ chính xác cao.
+QLoRA~\cite{qlora} tiếp tục giảm nhu cầu bộ nhớ bằng cách kết hợp LoRA với lượng tử hóa trọng số nền xuống 4 bit. Trong đó, định dạng NormalFloat (NF4) được thiết kế cho phân bố trọng số của mạng nơ-ron. Trong quá trình huấn luyện, trọng số nền vẫn được giữ cố định ở dạng lượng tử hóa, còn gradient chỉ cập nhật các tham số LoRA ở độ chính xác cao hơn. Cách làm này giúp tinh chỉnh các mô hình có kích thước lớn hơn trong điều kiện tài nguyên hạn chế. Trong luận văn, QLoRA được sử dụng cho các lượt tinh chỉnh trực tiếp từ Qwen2.5-VL-3B-Instruct; các giai đoạn học tiếp của phương pháp có cấu hình riêng ở Chương~\ref{chap:4}.
 
-Với cấu hình ở Bảng~\ref{tab:4.1}, các bộ chuyển đổi LoRA được gắn vào bảy mô-đun ở mỗi tầng trong 36 tầng, cho tổng cộng 14.966.784 tham số học được.
+\section{GRPO và phần thưởng dựa trên độ đo văn bản}\label{sec:2.3}
 
-\section{Học tăng cường với phần thưởng tính bằng luật}\label{sec:2.3}
+Trong tinh chỉnh có giám sát, mô hình học bằng cách tăng xác suất của câu tham chiếu tương ứng với mỗi đầu vào. Cách huấn luyện này phù hợp để hình thành khả năng sinh ban đầu, nhưng không trực tiếp phân biệt chất lượng giữa nhiều câu mà mô hình có thể sinh cho cùng một trường hợp. Học tăng cường bổ sung tín hiệu này bằng cách gán phần thưởng cho từng đầu ra và cập nhật mô hình dựa trên chất lượng tương đối giữa các đầu ra.
 
-Học có giám sát dạy mô hình chép lại một chuỗi đích cho trước, tức đầu ra mẫu đã có sẵn, nhưng không cho mô hình biết câu nào tốt hơn trong số những câu mà chính mô hình có thể viết ra. Học tăng cường bổ sung phần còn thiếu này: mô hình tự sinh câu trả lời, một hàm thưởng đánh giá từng câu, và trọng số được điều chỉnh dần về phía những câu được thưởng cao. Khi hàm thưởng là một luật tính được, chẳng hạn như so một tọa độ với đáp án hay tính một độ đo so câu, cách làm này thường được gọi là học tăng cường với phần thưởng kiểm chứng được. Công trình DeepSeek-R1 trên \emph{Nature}~\cite{guo2025r1} là bản mô tả đầy đủ nhất của hướng này đối với mô hình ngôn ngữ lớn.
-
-Thuật toán học tăng cường dùng trong đề tài, kể cả ở thành phần thứ nhất của phương pháp đề xuất, là tối ưu chính sách tương đối theo nhóm (GRPO), do công trình DeepSeekMath~\cite{shao2024grpo} giới thiệu. Với mỗi câu nhắc $x$, mô hình sinh một nhóm $G$ câu trả lời $y_1, \ldots, y_G$ và nhận các điểm thưởng $r_1, \ldots, r_G$. Lợi thế của câu thứ $i$ được tính bằng cách chuẩn hoá trong nhóm,
+Tối ưu chính sách tương đối theo nhóm (\emph{Group Relative Policy Optimization}, GRPO) được giới thiệu trong DeepSeekMath~\cite{shao2024grpo}. Với mỗi đầu vào $x$, mô hình sinh một nhóm gồm $G$ đầu ra $y_1, \ldots, y_G$ và nhận các phần thưởng tương ứng $r_1, \ldots, r_G$. Lợi thế của đầu ra thứ $i$ được xác định bằng cách chuẩn hóa phần thưởng trong cùng nhóm:
 
 \begin{equation}
 \hat{A}_i = \frac{r_i - \operatorname{mean}(r_{1:G})}{\operatorname{std}(r_{1:G})},
 \label{eq:2.2}
 \end{equation}
 \noindent
-sau đó mỗi token của $y_i$ được cập nhật theo $\hat{A}_i$, cùng với một số hạng phạt độ lệch Kullback–Leibler (KL) so với một mô hình tham chiếu đóng băng để mô hình không trôi quá xa điểm xuất phát. Ưu điểm của cách chuẩn hoá này là không cần một mô hình phê bình riêng để ước lượng mức thưởng kỳ vọng, nhờ đó tiết kiệm bộ nhớ. Đi kèm là một hạn chế có thể thấy ngay từ công thức: khi mọi câu trong nhóm nhận cùng một điểm thì $\hat{A}_i = 0$ với mọi $i$, và nhóm đó không đóng góp gradient nào. Hiện tượng này xuất hiện lại ở Mục~\ref{sec:6.3}, khi phần thưởng là một độ đo so câu.
+sau đó chính sách được cập nhật dựa trên lợi thế tương đối này, đồng thời có số hạng kiểm soát mức sai lệch so với mô hình tham chiếu. Điểm đáng chú ý của GRPO là không cần huấn luyện thêm một mô hình ước lượng giá trị riêng. Mặt khác, nếu các đầu ra trong cùng nhóm nhận phần thưởng giống nhau thì nhóm đó không cung cấp tín hiệu phân biệt hữu ích cho bước cập nhật.
 
-\textbf{SPICE.} Trong số các độ đo so câu với câu chuẩn nêu ở Mục~\ref{sec:2.6}, SPICE~\cite{spice} là độ đo mà Zhao và cộng sự~\cite{zhao2021} khuyên dùng để xếp hạng các mô hình sinh chỉ dẫn khi có câu tham chiếu. Thay vì so chuỗi từ, SPICE phân tích cả hai câu thành đồ thị cảnh gồm đối tượng, thuộc tính và quan hệ, rồi tính F1 trên các bộ ba trùng nhau. Với câu hướng dẫn giao diện, đối tượng thường là tên phần tử (“search icon”) và quan hệ thường là vị trí (“at the top”), nên SPICE nhạy với tên và vị trí của phần tử hơn là với động từ hay trật tự câu. Executability, độ đo của đề tài (Chương~\ref{chap:5}), cũng quan tâm đúng hai loại thông tin này, vì độ đo ấy tính tỉ lệ câu dẫn được một mô hình định vị độc lập tới đúng phần tử cần chạm. Trong phương pháp đề xuất, SPICE được dùng làm phần thưởng cho thành phần thứ nhất, và mô hình huấn luyện theo cách này được gọi là mô hình học với thưởng SPICE (Mục~\ref{sec:4.5}). Dù vậy, mọi kết luận vẫn được đọc trên executability.
+Trong luận văn, phần thưởng cho GRPO được xây dựng từ SPICE~\cite{spice}. SPICE là một độ đo dựa trên câu tham chiếu, trong đó nội dung câu được biểu diễn thông qua các đối tượng, thuộc tính và quan hệ, sau đó so sánh các thành phần tương ứng bằng điểm F1. Zhao và cộng sự~\cite{zhao2021} đã sử dụng SPICE khi đánh giá mô hình sinh chỉ dẫn. SPICE được dùng làm tín hiệu phần thưởng ở mức nội dung cho câu hướng dẫn trong giai đoạn này. Cách xây dựng phần thưởng và quy trình huấn luyện GRPO được trình bày cụ thể ở Mục~\ref{sec:4.5}.
 
 \section{Định vị phần tử giao diện}\label{sec:2.4}
 
-Bài toán định vị phần tử giao diện (\emph{GUI grounding}) nhận một ảnh màn hình và một biểu thức văn bản, rồi trả về vị trí của phần tử được mô tả, thường dưới dạng một điểm hoặc một khung bao. Các mô hình tiêu biểu gồm SeeClick~\cite{seeclick}, OS-Atlas~\cite{osatlas} và UGround~\cite{uground}.
+Định vị phần tử giao diện (\emph{GUI grounding}) là bài toán xác định vị trí của một phần tử trên màn hình từ ảnh giao diện và một mô tả bằng ngôn ngữ. Đầu ra thường được biểu diễn dưới dạng một điểm hoặc một khung bao quanh phần tử mục tiêu. Một số mô hình tiêu biểu cho hướng nghiên cứu này gồm SeeClick~\cite{seeclick}, OS-Atlas~\cite{osatlas} và UGround~\cite{uground}.
 
-Quy ước đánh giá phổ biến bắt nguồn từ mã tính điểm gốc của AndroidInTheWild~\cite{aitw}. Theo mã ấy, một lần chạm dự đoán được coi là khớp với lần chạm đáp án khi khoảng cách giữa hai điểm, tính trên tọa độ đã chuẩn hoá theo kích thước màn hình, không vượt quá 0,14, hoặc khi cả hai điểm cùng nằm trong một khung phần tử đã được nới rộng. Chúng tôi gọi đây là \emph{luật khoảng cách Euclid của AndroidInTheWild}. Độ đo của đề tài dùng một biến thể đơn giản hơn, với cửa sổ $\pm$14\% theo từng trục (Mục~\ref{sec:5.1}), còn luật gốc được áp lại đầy đủ ở Mục~\ref{sec:5.12}. Mục~\ref{sec:5.2} cho thấy luật khoảng cách Euclid khá lỏng khi đối tượng được đánh giá là câu chữ, vì luật này vốn được đặt ra để đánh giá một bộ định vị.
-
-Trong đề tài, một mô hình thuộc nhóm này chỉ được dùng làm công cụ đo, không nằm trong số các mô hình được đánh giá (Mục~\ref{sec:5.3}).
+Bài toán định vị giúp kiểm tra trực tiếp mối liên hệ giữa câu mô tả và phần tử mà câu đó hướng tới. Nếu câu hướng dẫn cung cấp đủ thông tin để phân biệt phần tử mục tiêu với các phần tử khác trên màn hình, một mô hình định vị có thể được dùng để suy ra phần tử mà câu đang mô tả. Mối liên hệ này là cơ sở cho executability trong luận văn. Chương~\ref{chap:5} trình bày mô hình định vị được lựa chọn, quy tắc xác định một dự đoán đúng và các bước kiểm tra độ tin cậy trước khi dùng mô hình này để đánh giá câu hướng dẫn.
 
 \section{Bộ dữ liệu AndroidControl}\label{sec:2.5}
 
-AndroidControl~\cite{androidcontrol} do nhóm Google DeepMind công bố tại NeurIPS 2024 theo giấy phép CC0, gồm 15.283 chuỗi thao tác do người thật thực hiện trên thiết bị Pixel trong khoảng một năm. Mỗi bước lưu ảnh màn hình, loại thao tác, tọa độ chạm nếu có, và quan trọng nhất đối với đề tài là trường \code{step\_instructions}, tức câu hướng dẫn do chính người thao tác viết cho bước đó.
+AndroidControl~\cite{androidcontrol} là bộ dữ liệu do Google DeepMind công bố tại NeurIPS 2024 và phát hành theo giấy phép Apache 2.0. Bộ dữ liệu gồm 15.283 chuỗi thao tác do người thật thực hiện trên thiết bị Pixel trong khoảng một năm. Ở mỗi bước, dữ liệu lưu trạng thái màn hình, loại thao tác, tọa độ chạm khi có và trường \code{step\_instructions}, tức câu hướng dẫn do người thực hiện viết cho thao tác tương ứng.
 
-\begin{quote}
-\textbf{Vị trí của đề tài so với các công trình dùng bộ dữ liệu này.} Trong bài gốc AndroidControl cũng như trong các công trình dùng bộ dữ liệu này mà chúng tôi khảo sát (Aguvis~\cite{aguvis}, SeeClick~\cite{seeclick}), câu hướng dẫn từng bước nằm ở đầu vào, giúp tác tử suy ra thao tác cần thực hiện. Ở đề tài này, câu đó lại là đầu ra mà mô hình phải sinh, và chỉ câu này được tính điểm, nên dữ liệu được dùng theo chiều ngược lại.
-\end{quote}
+Trong công trình AndroidControl và các nghiên cứu về tác tử giao diện sử dụng bộ dữ liệu này, như Aguvis~\cite{aguvis}, câu hướng dẫn thường được đưa vào làm đầu vào để mô hình dự đoán thao tác cần thực hiện. Luận văn sử dụng dữ liệu theo chiều ngược lại: trạng thái tác vụ và giao diện được dùng làm đầu vào, còn câu hướng dẫn cho thao tác kế tiếp là đầu ra cần sinh. Nhờ đó, AndroidControl có thể được chuyển thành tập dữ liệu giám sát cho bài toán sinh hướng dẫn mà không cần thu thập lại toàn bộ dữ liệu từ đầu. Quy trình hợp nhất, làm sạch và phân chia dữ liệu được trình bày ở Chương~\ref{chap:3}.
 
-Câu chuẩn của bộ dữ liệu rất ngắn, trung vị chỉ khoảng sáu từ, có dạng như “click on OK” hay “Select the search result”. Câu càng ngắn thì mô hình định vị càng khó xác định phần tử, và đây là một lý do khiến ngưỡng tối đa đo được, tức executability của chính câu chuẩn, chỉ đạt 75,7\% (Mục~\ref{sec:5.5}). Mọi kết quả của đề tài đều chịu giới hạn của ngưỡng tối đa này.
+\section{Hạn chế của các độ đo dựa trên câu tham chiếu}\label{sec:2.6}
 
-\section{Giới hạn của các độ đo có sẵn}\label{sec:2.6}
+Một thao tác trên giao diện có thể được diễn đạt bằng nhiều câu khác nhau mà vẫn dẫn người dùng tới cùng một phần tử. Vì vậy, một câu tham chiếu chỉ phản ánh một trong nhiều cách mô tả có thể chấp nhận được. Các độ đo phụ thuộc nhiều vào mức trùng khớp từ vựng có thể đánh giá thấp một câu diễn đạt khác với tham chiếu dù nội dung hướng dẫn vẫn đúng. Chẳng hạn, cùng một phần tử có thể được mô tả là “more options button” trong một câu và “three-dot icon” trong một câu khác.
 
-Vì bài toán đã có sẵn câu chuẩn, cách làm trực tiếp nhất là so câu sinh ra với câu chuẩn. Chúng tôi đã thử hai nhóm phương pháp theo hướng này và đo lại mức hạn chế của từng nhóm, kết quả được tóm tắt ở Bảng~\ref{tab:2.1}.
+Các độ đo tương đồng ngữ nghĩa giảm bớt sự phụ thuộc vào từ ngữ cụ thể, nhưng vẫn không trực tiếp trả lời câu hỏi quan trọng đối với bài toán này: câu hướng dẫn có giúp xác định đúng phần tử cần thao tác hay không. Hai câu có thể gần nhau về nghĩa nhưng lại quy chiếu tới hai phần tử khác nhau trên cùng màn hình, chẳng hạn “inbox” và “outbox”. Ngược lại, hai cách diễn đạt khác nhau đáng kể vẫn có thể cùng quy chiếu tới một phần tử. Do đó, mức độ gần nhau trong không gian ngữ nghĩa không đồng nghĩa với khả năng dẫn tới cùng một đối tượng trên giao diện.
 
-\begin{table}[htbp]
-\centering\small
-\caption{Hai cách đánh giá dựa trên câu chuẩn, và mức độ thất bại đo được trên dữ liệu thật của bài toán.}\label{tab:2.1}
-\setlength{\tabcolsep}{4pt}
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash\hsize=0.35\hsize}X>{\raggedright\arraybackslash\hsize=0.66\hsize}X>{\raggedright\arraybackslash\hsize=1.99\hsize}X@{}}
-\toprule
-\textbf{Cách đánh giá} & \textbf{Kết quả đo} & \textbf{Nguyên nhân thất bại} \\
-\midrule
-So chuỗi & coi là sai 97,5\% số câu đúng nút nhưng dùng từ khác câu chuẩn & “search bar” và “magnifying glass” không chung từ nào \\
-So vector ngữ nghĩa & AUC 0,336 trên 51 ca viết tay & do độ gần chủ đề, nên cặp \code{inbox} và \code{outbox} được 0,76, cao hơn cặp \code{search} và \code{magnifying glass} chỉ 0,55 \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-Ở dòng thứ hai, diện tích dưới đường ROC (AUC) chỉ đạt 0,336, thấp hơn cả mức đoán ngẫu nhiên 0,5, và kết quả này đi ngược một trực giác khá phổ biến. Nhúng ngữ nghĩa được huấn luyện để đặt gần nhau những đoạn văn cùng chủ đề. “Hộp thư đến” và “hộp thư đi” cùng nói về thư từ nên nằm gần nhau, dù trên màn hình chúng là hai nút khác nhau. Ngược lại, “thanh tìm kiếm” và “kính lúp” nói về hai đối tượng khác nhau (một là ô nhập, một là hình vẽ), trong khi thật ra chúng là cùng một nút. Độ đo cần biết hai câu có cùng chỉ một phần tử hay không, còn nhúng ngữ nghĩa chỉ cho biết hai câu gần nhau về chủ đề đến mức nào. Hai tín hiệu này không đi cùng chiều, nên không có ngưỡng điểm nào tách được trường hợp cùng phần tử với trường hợp khác phần tử.
-
-Vì vậy, các độ đo dựa trên tiêu chí “câu sinh ra giống câu chuẩn” khó cho kết quả đáng tin với bài toán này, và Chương~\ref{chap:5} xây dựng một độ đo theo tiêu chí khác.
-
+Từ hạn chế này, việc đánh giá câu hướng dẫn cần xem xét trực tiếp mối quan hệ giữa hướng dẫn do mô hình tạo ra và phần tử mà hướng dẫn đó mô tả, thay vì chỉ đo mức độ giống với một câu tham chiếu. Chương~\ref{chap:5} phát triển executability theo hướng này và đánh giá độ tin cậy của cách đo trên nhiều tình huống khác nhau.
