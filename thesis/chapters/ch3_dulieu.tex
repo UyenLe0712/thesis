@@ -56,6 +56,42 @@ Dữ liệu được chia theo tác vụ, nghĩa là tất cả các bước c�
 
 \textbf{Tập kiểm định nội bộ.} S1 ban đầu được huấn luyện trên toàn bộ tập huấn luyện ở Bảng~\ref{tab:3.3}. Sau khi giai đoạn này hoàn tất, 1.567 bước được tách theo tác vụ để tạo tập kiểm định nội bộ; nếu một tác vụ được chọn thì toàn bộ các bước của tác vụ đó đều được đưa vào tập này. 63.000 bước còn lại được dùng cho các giai đoạn sau. Tập kiểm định nội bộ chỉ dùng để xếp hạng checkpoint của mô hình học tăng cường với phần thưởng SPICE và lựa chọn quy tắc của ACE (Mục~\ref{sec:4.5} và Mục~\ref{sec:4.6}). Do S1 đã được huấn luyện với 1.567 bước này trước khi tách, điểm trên tập kiểm định nội bộ không được dùng làm kết quả đánh giá chính của luận văn.
 
+Hình~\ref{fig:3.1} tóm tắt quan hệ giữa các tập dữ liệu chính và cách chúng được sử dụng ở từng giai đoạn.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  blk/.style={draw=black!70, rounded corners=3pt, align=center, inner sep=5pt, fill=white},
+  hl/.style={blk, fill=black!5, thick},
+  note/.style={align=center, font=\footnotesize},
+  mui/.style={-{Latex[length=2.2mm]}, draw=black!70, thick},
+  muidut/.style={-{Latex[length=2.0mm]}, draw=black!55, dashed}
+]
+\node (nguon) [blk, text width=5.2cm] {hai bản phân phối AndroidControl\\câu hướng dẫn $+$ ảnh màn hình};
+\node (ghep) [hl, below=6mm of nguon, text width=5.2cm] {hợp nhất theo \code{(episode\_id, step\_id)}\\và kiểm tra tính nhất quán};
+\node (train) [blk, below=8mm of ghep, xshift=-2.5cm, text width=3.3cm] {tập huấn luyện\\64.567 bước\\12.895 tác vụ};
+\node (test) [blk, below=8mm of ghep, xshift=2.5cm, text width=3.3cm] {tập kiểm tra của đề tài\\6.958 bước\\4.463 bước chạm; 1.432 tác vụ};
+\node (s1) [hl, below=6mm of train, text width=3.3cm] {S1 huấn luyện trên\\toàn bộ 64.567 bước};
+\node (val) [blk, below=8mm of s1, xshift=-1.9cm, text width=3.0cm] {kiểm định nội bộ\\1.567 bước};
+\node (remain) [hl, below=8mm of s1, xshift=1.9cm, text width=3.3cm] {dữ liệu cho các giai đoạn sau\\63.000 bước\\GRPO-SPICE lấy prompt từ phần này};
+\node (retr) [blk, below left=7mm and 5mm of remain, text width=3.2cm] {kho truy hồi ACE\\62.880 bước\\12.542 tác vụ};
+\node (aceft) [blk, below right=7mm and 5mm of remain, text width=3.2cm] {tập có ảnh cho lượt học thêm của ACE\\3.991 bước};
+
+\draw [mui] (nguon) -- (ghep);
+\draw [mui] (ghep) -- (train);
+\draw [mui] (ghep) -- (test);
+\draw [mui] (train) -- (s1);
+\draw [muidut] (s1) -- node[note, left] {tách sau\\khi S1 học} (val);
+\draw [mui] (s1) -- (remain);
+\draw [mui] (remain) -- (retr);
+\draw [mui] (remain) -- (aceft);
+\end{tikzpicture}
+\caption[Quan hệ giữa các tập dữ liệu chính và cách sử dụng trong từng giai đoạn.]{Quan hệ giữa các tập dữ liệu chính và cách sử dụng trong từng giai đoạn. S1 được huấn luyện trên toàn bộ 64.567 bước trước khi 1.567 bước được tách làm tập kiểm định nội bộ; các giai đoạn sau chỉ sử dụng phần dữ liệu còn lại.}
+\label{fig:3.1}
+\end{figure}
+
+
 \textbf{Quan hệ với cách chia chính thức của AndroidControl.} Tập huấn luyện và tập kiểm tra của đề tài được lấy theo cách chia của bản phân phối có ảnh từ \code{ckg}, không theo cách chia chính thức của AndroidControl. Trong các tác vụ của tập kiểm tra, 1.287 tác vụ thuộc phần huấn luyện chính thức của AndroidControl, 131 thuộc phần kiểm tra và 14 thuộc phần kiểm định. Tuy vậy, tập huấn luyện và tập kiểm tra của đề tài vẫn không trùng nhau về tác vụ. Vì thế, hai tập này vẫn phù hợp để so sánh các mô hình theo cùng cách đánh giá trong luận văn, nhưng kết quả không tương đương với kết quả trên tập kiểm tra chính thức của AndroidControl. Trong các chương sau, tập này được gọi là \emph{tập kiểm tra của đề tài}.
 
 \section{Xây dựng thông tin đầu vào từ giao diện}\label{sec:3.4}
@@ -65,6 +101,8 @@ Dữ liệu được chia theo tác vụ, nghĩa là tất cả các bước c�
 \section{Dữ liệu phục vụ phương pháp đề xuất}\label{sec:3.5}
 
 Dữ liệu được sử dụng cho bốn phần của phương pháp đề xuất: huấn luyện S1, học tăng cường, học thêm mô hình sinh câu ứng viên của ACE và xây dựng kho truy hồi ACE. Mục này làm rõ dữ liệu dùng cho từng phần; chi tiết huấn luyện, truy hồi và lựa chọn đầu ra được trình bày ở Chương~\ref{chap:4}.
+
+
 
 \textbf{Tập huấn luyện có giám sát cho S1.} S1 được huấn luyện trên toàn bộ tập huấn luyện ở Bảng~\ref{tab:3.3} để sinh câu hướng dẫn theo bước của AndroidControl. Trong tập này, 122 bản ghi (0,19\%) có câu hướng dẫn rỗng ngay từ nguồn và vẫn được giữ trong dữ liệu ban đầu; 64.445 bản ghi còn lại có câu hướng dẫn không rỗng. S1 được dùng làm mô hình khởi tạo cho các giai đoạn tiếp theo của phương pháp đề xuất.
 

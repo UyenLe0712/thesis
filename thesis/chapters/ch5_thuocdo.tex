@@ -26,6 +26,39 @@ với $c(e)$ là tâm của phần tử $e$. Vùng gồm mọi điểm thoả đ
 
 Điểm executability là tỉ lệ các bước có thao tác chạm thoả cả ba điều kiện.
 
+
+Hình~\ref{fig:5.flow} tóm tắt cách ba điều kiện trên được kết hợp để xác định một bước đạt executability.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  blk/.style={draw=black!70, rounded corners=3pt, align=center, inner sep=5pt, fill=white},
+  hl/.style={blk, fill=black!5, thick},
+  note/.style={font=\footnotesize, align=center},
+  mui/.style={-{Latex[length=2.2mm]}, draw=black!70, thick}
+]
+\node (in) [blk, text width=5.0cm] {ảnh màn hình $I$ $+$ câu hướng dẫn $s$};
+\node (act) [blk, below=6mm of in, text width=5.0cm] {(i) khớp loại thao tác sau chuẩn hoá};
+\node (opp) [blk, below=5mm of act, text width=5.0cm] {(ii) không đảo nghĩa so với câu tham chiếu};
+\node (ground) [hl, below=6mm of opp, text width=5.0cm] {mô hình định vị $G$ trả tọa độ\\$p = G(I,s)$};
+\node (tol) [blk, below left=7mm and 5mm of ground, text width=3.5cm] {nằm trong vùng dung sai\\$\pm14\%$ theo từng trục};
+\node (vor) [blk, below right=7mm and 5mm of ground, text width=3.5cm] {nằm trong ô Voronoi\\quanh điểm chạm $g$};
+\node (loc) [note, below=17mm of ground] {(iii) định vị đúng khi đồng thời thoả hai điều kiện vị trí};
+\node (out) [hl, below=5mm of loc, text width=5.0cm] {đạt executability\\khi (i), (ii) và (iii) đều đúng};
+
+\draw [mui] (in) -- (act);
+\draw [mui] (act) -- (opp);
+\draw [mui] (opp) -- (ground);
+\draw [mui] (ground) -- (tol);
+\draw [mui] (ground) -- (vor);
+\draw [mui] (tol) |- (out);
+\draw [mui] (vor) |- (out);
+\end{tikzpicture}
+\caption[Quy trình xác định một bước đạt executability.]{Quy trình xác định một bước đạt executability. Mô hình định vị chỉ cung cấp tọa độ dự đoán; quyết định cuối cùng còn phụ thuộc vào loại thao tác, quy tắc đảo nghĩa, vùng dung sai và ô Voronoi.}
+\label{fig:5.flow}
+\end{figure}
+
 Điều kiện (iii) có hai chi tiết cần làm rõ. Vùng dung sai là hình chữ nhật, không phải hình tròn: trên màn 1080 $\times$ 2400, vùng rộng $\pm$151 điểm ảnh theo chiều ngang và $\pm$336 điểm ảnh theo chiều dọc. Ô Voronoi được dựng quanh điểm chạm $g$ thay vì tâm hộp của phần tử chứa $g$; sử dụng tâm hộp làm hạt làm tăng đáng kể số trường hợp bị loại. Cách đánh giá chính dùng tâm các phần tử để xác định vùng cạnh tranh; các quy tắc dựa trên hộp bao được phân tích riêng ở Mục~\ref{sec:5.12}.
 
 \textbf{Vai trò của mô hình định vị và phạm vi của độ đo.} Tọa độ chạm của người dùng được dùng làm mốc đối chiếu. Mô hình $G$ không được tinh chỉnh trong đề tài và chỉ có nhiệm vụ suy ra một tọa độ từ ảnh cùng câu hướng dẫn; tọa độ này sau đó được so sánh với $g$ theo các điều kiện ở trên. Vì vậy, executability chỉ phản ánh một khía cạnh của chất lượng hướng dẫn: câu có đủ thông tin để xác định đúng phần tử và đúng thao tác hay không. Độ đo không trực tiếp phản ánh độ trôi chảy, độ ngắn gọn, mức dễ hiểu đối với từng nhóm người dùng, mức hữu ích tổng thể hay trải nghiệm sử dụng.
