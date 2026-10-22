@@ -64,11 +64,13 @@ Dữ liệu được chia theo tác vụ, nghĩa là tất cả các bước c�
 
 \section{Dữ liệu phục vụ phương pháp đề xuất}\label{sec:3.5}
 
-Dữ liệu được sử dụng theo ba cách trong phương pháp đề xuất: huấn luyện S1, học tăng cường và xây dựng kho truy hồi ACE. Mục này làm rõ dữ liệu dùng cho từng phần; chi tiết huấn luyện, truy hồi và lựa chọn đầu ra được trình bày ở Chương~\ref{chap:4}.
+Dữ liệu được sử dụng cho bốn phần của phương pháp đề xuất: huấn luyện S1, học tăng cường, học thêm mô hình sinh câu ứng viên của ACE và xây dựng kho truy hồi ACE. Mục này làm rõ dữ liệu dùng cho từng phần; chi tiết huấn luyện, truy hồi và lựa chọn đầu ra được trình bày ở Chương~\ref{chap:4}.
 
 \textbf{Tập huấn luyện có giám sát cho S1.} S1 được huấn luyện trên toàn bộ tập huấn luyện ở Bảng~\ref{tab:3.3} để sinh câu hướng dẫn theo bước của AndroidControl. Trong tập này, 122 bản ghi (0,19\%) có câu hướng dẫn rỗng ngay từ nguồn và vẫn được giữ trong dữ liệu ban đầu; 64.445 bản ghi còn lại có câu hướng dẫn không rỗng. S1 được dùng làm mô hình khởi tạo cho các giai đoạn tiếp theo của phương pháp đề xuất.
 
 \textbf{Dữ liệu cho giai đoạn học tăng cường với phần thưởng SPICE.} Phần dữ liệu còn lại sau khi tách tập kiểm định nội bộ ở Mục~\ref{sec:3.3} được dùng cho các giai đoạn huấn luyện tiếp theo. Giai đoạn học tăng cường sử dụng prompt và câu tham chiếu từ phần dữ liệu này; câu tham chiếu được dùng để tính phần thưởng SPICE. Cách lấy mẫu và số bước cập nhật được trình bày ở Mục~\ref{sec:4.5}.
+
+\textbf{Dữ liệu để học thêm mô hình sinh câu ứng viên của ACE.} Ngoài kho truy hồi, ACE có một lượt tinh chỉnh có giám sát để mô hình học cách sử dụng khối ví dụ. Lượt này sử dụng 3.991 bước có ảnh đã được chuẩn bị cho giai đoạn huấn luyện. Quy mô 3.991 phản ánh phần dữ liệu ảnh khả dụng ở giai đoạn này, không phải một tiêu chí chọn mẫu của ACE. Thiết lập huấn luyện được trình bày ở Mục~\ref{sec:4.6}.
 
 \textbf{Kho truy hồi cho ACE.} Kho truy hồi ACE được xây dựng từ cùng phần dữ liệu còn lại sau khi tách tập kiểm định nội bộ. Vì mỗi bản ghi trong kho cần một câu hướng dẫn để làm ví dụ, 120 bản ghi có \code{target\_instruction} rỗng được loại. Hai bản ghi rỗng còn lại trong tổng số 122 bản ghi nêu trên nằm trong tập kiểm định nội bộ. Kho cuối cùng gồm 62.880 bước thuộc 12.542 tác vụ. Kho không chứa tác vụ nào của tập kiểm tra của đề tài, nên ACE không truy cập câu tham chiếu của bước đang được đánh giá. Cách truy hồi được trình bày ở Mục~\ref{sec:4.6}.
 

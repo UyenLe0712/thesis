@@ -16,20 +16,22 @@ Cơ sở đào tạo: & Trường ĐH Khoa học Tự nhiên, ĐHQG-HCM \\
 
 \subsection*{1. Tóm tắt nội dung luận văn}
 
-Các tác tử giao diện thường nhận ảnh chụp màn hình và dự đoán thao tác cùng vị trí tương tác để tự động thực hiện tác vụ. Luận văn sử dụng thông tin đầu vào tương tự nhưng hướng tới việc sinh hướng dẫn cho người dùng. Ở mỗi bước, mô hình nhận mục tiêu của tác vụ, các bước đã hoàn thành, ảnh chụp màn hình hiện tại và phần văn bản hiển thị, sau đó tạo một câu hướng dẫn nêu thao tác cần thực hiện và phần tử giao diện cần tương tác. Dữ liệu huấn luyện được xây dựng tự động từ AndroidControl, không yêu cầu gán nhãn thủ công bổ sung; tập huấn luyện sau khi hợp nhất gồm 64.567 bước.
+Các tác tử giao diện thường nhận ảnh chụp màn hình và dự đoán thao tác cùng vị trí tương tác để tự động thực hiện tác vụ. Luận văn sử dụng thông tin đầu vào tương tự nhưng hướng tới việc sinh hướng dẫn cho người dùng. Ở mỗi bước, mô hình nhận mục tiêu của tác vụ, các bước đã hoàn thành, ảnh chụp màn hình hiện tại và phần văn bản hiển thị, sau đó tạo một câu hướng dẫn nêu thao tác cần thực hiện và phần tử giao diện cần tương tác. Dữ liệu huấn luyện được xây dựng tự động từ AndroidControl và không yêu cầu gán nhãn thủ công bổ sung. Tập huấn luyện sau khi hợp nhất gồm 64.567 bước.
 
 Phương pháp đề xuất gồm hai thành phần. Trước hết, Qwen2.5-VL-3B sau khi tinh chỉnh có giám sát được tiếp tục huấn luyện bằng GRPO với SPICE làm phần thưởng để sinh hướng dẫn ban đầu. Sau đó, ACE truy hồi bốn câu tham chiếu từ các bước tương tự trong tập huấn luyện và chỉ thay hướng dẫn ban đầu khi câu ứng viên giống hoàn toàn với một trong các câu được truy hồi và có cùng loại thao tác với hướng dẫn ban đầu.
 
-Để đánh giá chất lượng hướng dẫn, luận văn xây dựng độ đo khả năng thực hiện theo hướng dẫn (instruction executability), gọi ngắn là executability. Thay vì chỉ so sánh hướng dẫn do mô hình tạo ra với một câu tham chiếu, executability sử dụng một mô hình định vị tách biệt với mô hình sinh để kiểm tra liệu câu hướng dẫn có dẫn tới đúng phần tử cần tương tác và đúng loại thao tác hay không. Câu tham chiếu đạt 75,7\% executability và được dùng làm một mốc để diễn giải điểm số. Thứ hạng giữa các hệ thống vẫn được duy trì khi thay đổi mô hình dùng để đánh giá.
+Để đánh giá chất lượng hướng dẫn, luận văn xây dựng độ đo khả năng thực hiện theo hướng dẫn (instruction executability), gọi ngắn là executability. Thay vì chỉ so sánh hướng dẫn do mô hình tạo ra với một câu tham chiếu, executability sử dụng một mô hình định vị tách biệt với mô hình sinh để kiểm tra liệu câu hướng dẫn có dẫn tới đúng phần tử cần tương tác và đúng loại thao tác hay không. Câu tham chiếu đạt 75,7\% executability và được dùng làm một mốc để diễn giải điểm số. Các đánh giá bổ sung trên một số cấu hình đại diện cho kết quả nhất quán về chiều của các chênh lệch và thứ hạng quan sát được khi thay đổi quy tắc hoặc mô hình đánh giá.
 
-Trên tập kiểm tra, phương pháp đề xuất đạt 60,7\% executability, cao hơn mô hình tinh chỉnh có giám sát 1,57 điểm với khoảng tin cậy 95\% [+0,86; +2,31]. Thành phần GRPO-SPICE tạo ra phần cải thiện chính về executability. Khi bổ sung ACE, executability tăng nhẹ 0,02 điểm và về cơ bản được giữ ổn định, trong khi cả bảy độ đo dựa trên câu tham chiếu đều tăng.
+Trên 4.463 bước có thao tác chạm của tập kiểm tra, phương pháp đề xuất đạt 60,7\% executability, cao hơn mô hình tinh chỉnh có giám sát 1,57 điểm với khoảng tin cậy 95\% [+0,86; +2,31]. Phần lớn mức tăng executability so với mô hình tinh chỉnh có giám sát xuất hiện sau giai đoạn GRPO-SPICE. Khi bổ sung ACE, executability tăng nhẹ 0,02 điểm và về cơ bản được giữ ổn định, trong khi cả bảy độ đo dựa trên câu tham chiếu đều tăng.
 
 \subsection*{2. Những kết quả mới của luận văn}
 
+Ba đóng góp chính của luận văn gồm phương pháp sinh hướng dẫn, độ đo executability và phân tích các phương án thiết kế. Quy trình xây dựng dữ liệu tự động từ AndroidControl là kết quả nền tảng phục vụ các phần này.
+
 \begin{itemize}
-\item \textbf{Phương pháp sinh hướng dẫn gồm hai thành phần.} Thành phần thứ nhất sử dụng học tăng cường với phần thưởng SPICE để cải thiện hướng dẫn ban đầu; thành phần thứ hai, ACE, dùng các câu ví dụ truy hồi để hiệu chỉnh đầu ra khi câu ứng viên đáp ứng điều kiện lựa chọn. Phương pháp đạt executability cao hơn mô hình tinh chỉnh có giám sát với ý nghĩa thống kê, trong khi mô hình định vị dùng để đánh giá không tham gia vào phần thưởng. ACE đồng thời cải thiện cả bảy độ đo dựa trên câu tham chiếu, trong khi executability tăng nhẹ 0,02 điểm và về cơ bản được giữ ổn định.
-\item \textbf{Độ đo executability và các mốc dùng để diễn giải điểm số.} Executability đánh giá liệu câu hướng dẫn có giúp xác định đúng phần tử cần tương tác và đúng loại thao tác hay không, thay vì chỉ dựa vào mức tương đồng với một câu tham chiếu duy nhất. Câu tham chiếu đạt 75,7\%, một câu chung chung không xác định phần tử đạt 12,0\%, còn câu tham chiếu lấy từ một màn hình khác đạt 6,1\%. Thứ hạng giữa các hệ thống vẫn được duy trì khi đánh giá lại bằng các quy tắc và mô hình đánh giá khác.
-\item \textbf{Quy trình xây dựng dữ liệu tự động từ AndroidControl.} Luận văn chuyển AndroidControl sang bài toán sinh hướng dẫn bằng cách ghép hai bản phát hành công khai, một bản chứa câu hướng dẫn và một bản chứa ảnh. Cách ghép được kiểm tra bằng cách cố ý làm lệch một bước trên một mẫu dữ liệu và xem mức độ phù hợp giữa ảnh và câu hướng dẫn thay đổi như thế nào. Trong thiết lập mới, câu hướng dẫn từng bước chuyển từ vai trò đầu vào trong AndroidControl thành mục tiêu cần sinh và đánh giá.
+\item \textbf{Phương pháp sinh hướng dẫn gồm hai thành phần.} Thành phần thứ nhất sử dụng học tăng cường với phần thưởng SPICE để cải thiện hướng dẫn ban đầu; thành phần thứ hai, ACE, dùng các câu ví dụ truy hồi để hiệu chỉnh đầu ra khi câu ứng viên đáp ứng điều kiện lựa chọn. Phương pháp đạt executability cao hơn mô hình tinh chỉnh có giám sát với ý nghĩa thống kê, trong khi mô hình định vị dùng để đánh giá không tham gia vào phần thưởng. ACE đồng thời làm tăng cả bảy độ đo dựa trên câu tham chiếu, trong khi executability tăng nhẹ 0,02 điểm và về cơ bản được giữ ổn định.
+\item \textbf{Độ đo executability và các mốc dùng để diễn giải điểm số.} Executability đánh giá liệu câu hướng dẫn có giúp xác định đúng phần tử cần tương tác và đúng loại thao tác hay không, thay vì chỉ dựa vào mức tương đồng với một câu tham chiếu duy nhất. Trên toàn bộ 4.463 bước có thao tác chạm, câu tham chiếu đạt 75,7\%. Trên mẫu ngẫu nhiên 800 bước dùng để kiểm tra các mốc thấp, câu tham chiếu đạt 74,9\%, một câu chung chung không xác định phần tử đạt 12,0\%, còn câu tham chiếu lấy từ một màn hình khác đạt 6,1\%. Các đánh giá bổ sung trên một số cấu hình đại diện cho kết quả nhất quán về chiều của các chênh lệch và thứ hạng quan sát được khi thay đổi quy tắc hoặc mô hình đánh giá.
+\item \textbf{Kết quả nền tảng hỗ trợ ba đóng góp chính: dữ liệu được xây dựng tự động từ AndroidControl.} Luận văn chuyển AndroidControl sang bài toán sinh hướng dẫn bằng cách ghép hai bản phát hành công khai, một bản chứa câu hướng dẫn và một bản chứa ảnh. Cách ghép được kiểm tra bằng cách cố ý làm lệch một bước trên một mẫu dữ liệu và xem mức độ phù hợp giữa ảnh và câu hướng dẫn thay đổi như thế nào. Trong thiết lập mới, câu hướng dẫn từng bước chuyển từ vai trò đầu vào trong AndroidControl thành mục tiêu cần sinh và đánh giá.
 \item \textbf{Phân tích các phương án thiết kế đã khảo sát.} Các thí nghiệm ở Phụ lục~\ref{app:A} cho thấy việc cải thiện biểu diễn trung gian chưa chắc tạo ra câu hướng dẫn tốt hơn. Kết quả này giúp làm rõ giới hạn của các hướng dựa trên mô tả phần tử, thông tin vị trí và chọn ứng viên, đồng thời giải thích vì sao chúng không được giữ lại trong phương pháp cuối cùng.
 \end{itemize}
 
@@ -52,41 +54,43 @@ XÁC NHẬN CỦA CƠ SỞ ĐÀO TẠO\\ HIỆU TRƯỞNG
 
 \noindent\begin{tabularx}{\textwidth}{@{}lX@{}}
 Thesis title: & \TenDeTaiEN. \\
-Speciality: & Artificial Intelligence \\
+Field of study: & Artificial Intelligence \\
 Code: & \MaNganh \\
 Name: & Le Doan Phuong Uyen \\
 Student ID: & \MSHV \\
-Academic year: & \Khoa \\
+Cohort: & \Khoa \\
 Supervisor: & \GVHDen \\
-At: & VNUHCM - University of Science \\
+Institution: & VNUHCM - University of Science \\
 \end{tabularx}
 
 \subsection*{1. Summary}
 
-GUI agents commonly take screenshots as input and predict an action together with an interaction location so that the system can execute a task automatically. This thesis uses a similar input setting but targets user-facing instructions. At each step, the model receives the task goal, preceding steps, the current screenshot and displayed text, then generates one instruction specifying the required action and target interface element. The training data are constructed automatically from AndroidControl without additional manual annotation; the merged training set contains 64,567 steps.
+GUI agents commonly take screenshots as input and predict an action together with an interaction location so that the system can execute a task automatically. This thesis uses a similar input setting but targets user-facing instructions. At each step, the model receives the task goal, preceding steps, the current screenshot and displayed text, then generates one instruction specifying the required action and target interface element. The training data are constructed automatically from AndroidControl without additional manual annotation. The merged training set contains 64,567 steps.
 
-The proposed method has two components. First, a supervised Qwen2.5-VL-3B model is further trained with GRPO using SPICE as the reward to produce the initial instruction. ACE then retrieves four reference instructions from similar training steps and replaces the initial instruction only when a candidate exactly matches one retrieved exemplar and has the same action type as the initial instruction.
+The proposed method has two components. First, Qwen2.5-VL-3B is fine-tuned with supervised learning and then further trained with GRPO using SPICE as the reward to produce the initial instruction. ACE then retrieves four reference instructions from similar training steps and replaces the initial instruction only when a candidate exactly matches one retrieved exemplar and has the same action type as the initial instruction.
 
-To evaluate instruction quality, the thesis introduces instruction executability, referred to as executability. Rather than relying only on similarity to a single reference sentence, executability uses a GUI grounding model separate from the generator to test whether an instruction identifies the correct target element and specifies the correct action type. Human-written reference instructions reach 75.7\% executability and serve as a reference point for interpreting model scores. System ordering is preserved when the evaluation model is changed.
+To evaluate instruction quality, the thesis introduces instruction executability, referred to as executability. Rather than relying only on similarity to a single reference sentence, executability uses a GUI grounding model separate from the generator to test whether an instruction identifies the correct target element and specifies the correct action type. Human-written reference instructions reach 75.7\% executability and serve as a reference point for interpreting model scores. Additional evaluations on selected representative configurations show consistent directions of the observed differences and rankings when the evaluation rule or grounding model is changed.
 
-On the test set, the proposed method reaches 60.7\% executability, 1.57 percentage points above supervised fine-tuning, with a 95\% confidence interval of [+0.86, +2.31]. GRPO-SPICE accounts for the main executability improvement. Adding ACE keeps executability nearly unchanged while improving all seven reference-based text measures.
+On the 4,463 touch-action steps in the test set, the proposed method reaches 60.7\% executability, 1.57 percentage points above supervised fine-tuning, with a 95\% confidence interval of [+0.86, +2.31]. Most of the executability gain over supervised fine-tuning appears after the GRPO-SPICE stage. Adding ACE increases executability by 0.02 percentage points and leaves it essentially stable while all seven reference-based text measures increase.
 
 \subsection*{2. Novelty of thesis}
 
+The three main contributions are the instruction-generation method, executability, and the analysis of alternative design choices. The automatically constructed AndroidControl data are a foundational result supporting these contributions.
+
 \begin{itemize}
-\item \textbf{A two-component instruction-generation method.} The first component uses reinforcement learning with SPICE reward to improve the initial instruction, while ACE uses retrieved exemplars to revise the output when the candidate meets the selection criteria. The method improves executability over supervised fine-tuning with statistical significance, while the grounding model used for evaluation is not part of the reward. ACE also improves all seven reference-based text measures without a meaningful decrease in executability.
-\item \textbf{Executability and empirical reference points for interpreting the score.} Executability evaluates whether an instruction identifies the correct target element and action type without requiring a single reference sentence as the answer key. Human-written reference instructions reach 75.7\%, a generic instruction that does not identify an element scores 12.0\%, and a reference instruction taken from a different screen scores 6.1\%. System ordering remains stable under alternative evaluation rules and models.
-\item \textbf{An automatic data-construction pipeline for AndroidControl.} The thesis reformulates AndroidControl for instruction generation by joining two public releases, one containing instructions and the other screenshots. The consistency of the join is checked against data deliberately shifted by one step. In the resulting task, the human-written per-step instruction changes from an input in AndroidControl to the generation target and evaluated output.
+\item \textbf{A two-component instruction-generation method.} The first component uses reinforcement learning with SPICE reward to improve the initial instruction, while ACE uses retrieved exemplars to revise the output when the candidate meets the selection criteria. The method achieves a statistically significant executability gain over supervised fine-tuning, while the grounding model used for evaluation is not part of the reward. ACE also increases all seven reported reference-based text measures while leaving executability essentially unchanged.
+\item \textbf{Executability and empirical reference points for interpreting the score.} Executability evaluates whether an instruction identifies the correct target element and action type rather than relying only on similarity to a single reference sentence. On all 4,463 touch-action steps, human-written reference instructions reach 75.7\%. In the random sample of 800 steps used to examine low reference points, the reference instructions reach 74.9\%, a generic instruction that does not identify an element scores 12.0\%, and a reference instruction from a different screen scores 6.1\%. Additional evaluations on selected representative configurations show consistent directions of the observed differences and rankings under alternative evaluation rules and grounding models.
+\item \textbf{A foundational result supporting the three main contributions: automatically constructed data from AndroidControl.} The thesis reformulates AndroidControl for instruction generation by joining two public releases, one containing instructions and the other screenshots. The consistency of the join is checked against data deliberately shifted by one step. In the resulting task, the human-written per-step instruction changes from an input in AndroidControl to the generation target and evaluated output.
 \item \textbf{An analysis of alternative design choices.} The experiments in Appendix~\ref{app:A} show that improving an intermediate representation does not necessarily produce a better final instruction. This analysis clarifies the limitations of approaches based on element descriptions, location information and candidate selection, and explains why they are not part of the final method.
 \end{itemize}
 
 \vspace{1.5em}
 \noindent\begin{tabularx}{\textwidth}{@{}XX@{}}
-\centering SUPERVISOR & \centering\arraybackslash MASTER STUDENT \\
+\centering SUPERVISOR & \centering\arraybackslash MASTER'S STUDENT \\
 \end{tabularx}
 
 \vspace{4em}
 \begin{center}
-CERTIFICATION\\ UNIVERSITY OF SCIENCE\\ PRESIDENT
+CERTIFICATION\\ UNIVERSITY OF SCIENCE\\ RECTOR
 \end{center}
 \clearpage
