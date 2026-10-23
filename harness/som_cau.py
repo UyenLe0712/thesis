@@ -18,7 +18,9 @@ NHANH = {"grpo": "grpo_point/score_grpo_point_seed101_raw.jsonl",
          "s1_101": "score_s1_seed101_raw.jsonl",
          "s1_202": "score_s1_seed202_raw.jsonl",
          "base": "score_base_raw.jsonl",
-         "chuan": "score_ceiling_human_raw.jsonl"}
+         "chuan": "score_ceiling_human_raw.jsonl",
+         "ck500": "grpo_spice/score_ck500_test_raw.jsonl",
+         "r3": "ra304_luat/score_R3_test_raw.jsonl"}
 
 
 def main():
