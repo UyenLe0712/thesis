@@ -1,5 +1,7 @@
 # Bài SOICT 2026 — thư mục nộp
 
+✅ **22/10/2026: BÀI ĐƯỢC NHẬN, ORAL 15 phút, kỷ yếu Springer CCIS. Mail ghi Paper ID 5590 (README cũ ghi #5577, cần xác nhận). Bản camera-ready 12–15 trang gồm tham khảo, hạn 30/10. Toàn bộ bối cảnh + ACTION: `guistep/CAMERA_READY_ACTION_22_10.md`.**
+
 The 15th International Symposium on Information and Communication Technology · TP.HCM, 4–5/12/2026
 Kỷ yếu **Springer CCIS** (template LNCS `llncs.cls`) · https://soict.org/submission/paper-submission/
 
@@ -7,7 +9,7 @@ Kỷ yếu **Springer CCIS** (template LNCS `llncs.cls`) · https://soict.org/su
 |---|---|
 | abstract · full paper | 20/9/2026, **EasyChair còn mở tới 25/9** |
 | báo kết quả | 12/10/2026 |
-| camera-ready | 23/10/2026 |
+| camera-ready | ~~23/10~~ **30/10/2026** (sửa 22/10 theo mail ban tổ chức) |
 
 Nộp tại: https://easychair.org/conferences/?conf=soict2026
 
