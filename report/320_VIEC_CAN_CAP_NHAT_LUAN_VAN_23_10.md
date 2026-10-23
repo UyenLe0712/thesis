@@ -69,7 +69,7 @@ Theo `CLAUDE.md`: dùng "chúng tôi", không dùng "luận văn" làm chủ ng�
 
 ## F. Bổ sung chiều 23/10 (việc đã làm ở máy, chưa vào luận văn)
 
-**F1. KTC thước chữ cho S1/101, ck500, ACE (đang chạy nền, ghi vào `runs/ktc_thuoc_chu.json`).**
+**F1. KTC thước chữ cho S1/101, ck500, ACE (đã xong, ghi vào `runs/ktc_thuoc_chu.json`).**
 - Script `harness/ktc_thuoc_chu.py`, bootstrap cụm theo app, 2.000 lần, ghép cặp. Có BLEU-4, ROUGE-L, CIDEr-D, SPICE, chrF. Không có METEOR và BERTScore.
 - Chỗ cần sửa khi có số: bảng ACE ở ch6 (khoảng dòng 138 đến 152, cột "ACE − câu ban đầu"). Các hàng BLEU-4, METEOR, ROUGE-L, CIDEr-D, SPICE, chrF, BERTScore hiện chỉ có Δ, không có KTC; chỉ ba hàng vị trí có KTC. Thêm KTC cho năm thước có số; METEOR và BERTScore phải ghi chú là không có KTC, hoặc để nguyên.
 - Phải khai trong chú thích: chrF là trung bình mức câu (xấp xỉ), BLEU-4 tính lại mức kho trên mẫu bootstrap.
@@ -99,3 +99,12 @@ Theo `CLAUDE.md`: dùng "chúng tôi", không dùng "luận văn" làm chủ ng�
 - Việc cần làm trước khi sinh bảng: tạo JSON cho ACE (có thể mở rộng `harness/ck500_text_metrics.py`), rồi mới thêm hàng, sinh bảng, dựng lại `thesis/main.pdf`.
 
 **F4. Chưa làm, đã cân nhắc:** hạt giống thứ hai cho ck500 và nhánh "train thêm không có thưởng SPICE" (mục D). Đều cần Colab, chưa có quyết định.
+
+**F5. Việc cần sửa trong luận văn rút ra từ hai mục trên (gom một chỗ, chưa sửa `thesis/`).**
+- ch6, bảng ACE (khoảng dòng 138 đến 152): thêm KTC95 cho năm thước chữ theo bảng F1; chú thích chrF xấp xỉ, METEOR và BERTScore không có KTC.
+- ch6, đoạn ACE: thêm câu nói ACE hơn ck500 ở cả năm thước chữ (mọi KTC loại 0) nhưng exec chỉ ngang (+0,02 [−0,21; +0,26]); giải thích thước chữ chưa cho biết câu có giúp bộ trỏ hay không.
+- ch6, đoạn Venus (khoảng dòng 347) và phần người nghe Phi-4: thêm kết quả ck500 và ACE dưới hai dụng cụ độc lập (mục A), viết "ổn định nhưng khiêm tốn, một hạt giống", không viết kết luận chắc chắn; nêu Venus vẫn thuộc họ Qwen.
+- ch6, sau phần ck500: thêm ví dụ định tính cứu/phá (F2) và đoạn nói chiều phá ở scroll/back dẫn tới ACE.
+- ch7, hạn chế: ghi rõ một hạt giống cho ck500, ACE chỉ ngang ck500 ở exec, chưa có nhánh train thêm không thưởng SPICE.
+- Bảng tự sinh `bang_nhieu_thuoc.tex`: thêm hàng ACE sau khi có JSON bảy thước chữ (F3), rồi dựng lại `thesis/main.pdf`.
+- Khi hai lượt Kaggle S1/202 xong: cập nhật mục B bằng ck500 − S1/202 và ACE − S1/202 trên Phi-4 và Venus.
