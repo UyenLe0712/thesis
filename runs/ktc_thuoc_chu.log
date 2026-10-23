@@ -1,0 +1,56 @@
+PTBTokenizer tokenized 41033 tokens at 209551.10 tokens per second.
+PTBTokenizer tokenized 41102 tokens at 290123.84 tokens per second.
+  S1/101: BLEU xong (0 s)
+  S1/101: ROUGE-L · CIDEr-D xong (1 s)
+Parsing reference captions
+Parsing test captions
+SPICE evaluation took: 3.440 s
+  S1/101: SPICE xong (5 s)
+PTBTokenizer tokenized 41033 tokens at 249373.64 tokens per second.
+PTBTokenizer tokenized 41674 tokens at 242803.00 tokens per second.
+  ck500: BLEU xong (0 s)
+  ck500: ROUGE-L · CIDEr-D xong (1 s)
+Parsing reference captions
+Parsing test captions
+SPICE evaluation took: 2.693 s
+  ck500: SPICE xong (4 s)
+PTBTokenizer tokenized 41033 tokens at 291151.94 tokens per second.
+PTBTokenizer tokenized 41447 tokens at 283630.51 tokens per second.
+  ACE: BLEU xong (0 s)
+  ACE: ROUGE-L · CIDEr-D xong (1 s)
+Parsing reference captions
+Parsing test captions
+SPICE evaluation took: 2.954 s
+  ACE: SPICE xong (5 s)
+  kiểm S1/101  bleu4    tính    51.56 · đã in    51.56 · lệch 0.00
+  kiểm S1/101  rougeL   tính    67.35 · đã in    67.35 · lệch 0.00
+  kiểm S1/101  cider_d  tính   416.12 · đã in   416.12 · lệch 0.00
+  kiểm S1/101  spice    tính    44.37 · đã in    44.37 · lệch 0.00
+  kiểm S1/101  chrf     tính    60.74 · đã in    61.26 · lệch 0.52
+  kiểm ck500   bleu4    tính    52.36 · đã in    52.36 · lệch 0.00
+  kiểm ck500   rougeL   tính    68.36 · đã in    68.36 · lệch 0.00
+  kiểm ck500   cider_d  tính   430.05 · đã in   430.05 · lệch 0.00
+  kiểm ck500   spice    tính    45.79 · đã in    45.79 · lệch 0.00
+  kiểm ck500   chrf     tính    62.00 · đã in    62.87 · lệch 0.87
+  kiểm ACE     bleu4    tính    53.47 · đã in    53.47 · lệch 0.00
+  kiểm ACE     rougeL   tính    69.11 · đã in    69.08 · lệch 0.03
+  kiểm ACE     cider_d  tính   442.02 · đã in   442.02 · lệch 0.00
+  kiểm ACE     spice    tính    47.13 · đã in    47.13 · lệch 0.00
+  kiểm ACE     chrf     tính    62.69 · đã in    63.44 · lệch 0.75
+cụm: 1091
+  bootstrap 200/2000 · 0 s
+  bootstrap 400/2000 · 1 s
+  bootstrap 600/2000 · 1 s
+  bootstrap 800/2000 · 2 s
+  bootstrap 1000/2000 · 2 s
+  bootstrap 1200/2000 · 2 s
+  bootstrap 1400/2000 · 2 s
+  bootstrap 1600/2000 · 3 s
+  bootstrap 1800/2000 · 3 s
+  bootstrap 2000/2000 · 3 s
+bleu4 {'ck500-S1/101': {'delta': np.float64(0.8), 'lo': 0.23, 'hi': 1.61}, 'ACE-S1/101': {'delta': np.float64(1.91), 'lo': 1.29, 'hi': 2.71}, 'ACE-ck500': {'delta': np.float64(1.11), 'lo': 0.77, 'hi': 1.43}}
+rougeL {'ck500-S1/101': {'delta': np.float64(1.01), 'lo': 0.56, 'hi': 1.49}, 'ACE-S1/101': {'delta': np.float64(1.76), 'lo': 1.26, 'hi': 2.25}, 'ACE-ck500': {'delta': np.float64(0.74), 'lo': 0.54, 'hi': 0.96}}
+cider_d {'ck500-S1/101': {'delta': np.float64(13.93), 'lo': 7.5, 'hi': 19.87}, 'ACE-S1/101': {'delta': np.float64(25.91), 'lo': 18.71, 'hi': 32.72}, 'ACE-ck500': {'delta': np.float64(11.97), 'lo': 8.5, 'hi': 15.61}}
+spice {'ck500-S1/101': {'delta': np.float64(1.42), 'lo': 0.69, 'hi': 2.16}, 'ACE-S1/101': {'delta': np.float64(2.76), 'lo': 1.95, 'hi': 3.55}, 'ACE-ck500': {'delta': np.float64(1.33), 'lo': 0.92, 'hi': 1.73}}
+chrf {'ck500-S1/101': {'delta': np.float64(1.26), 'lo': 0.76, 'hi': 1.78}, 'ACE-S1/101': {'delta': np.float64(1.95), 'lo': 1.42, 'hi': 2.48}, 'ACE-ck500': {'delta': np.float64(0.69), 'lo': 0.47, 'hi': 0.93}}
+→ runs/ktc_thuoc_chu.json
