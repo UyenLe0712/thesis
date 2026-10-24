@@ -1,0 +1,98 @@
+{
+ "passed": 6,
+ "total": 10,
+ "criteria": {
+  "fp_paraphrase_thuc_te": {
+   "rate": 0.06532663316582915,
+   "n": 398,
+   "thr": 0.1,
+   "op": "≤",
+   "pass": true
+  },
+  "fp_action_gate": {
+   "rate": 0.0,
+   "n": 398,
+   "thr": 0.15,
+   "op": "≤",
+   "pass": true
+  },
+  "fp_flip_rule": {
+   "rate": 0.0,
+   "n": 398,
+   "thr": 0.05,
+   "op": "≤",
+   "pass": true
+  },
+  "det_nut_canh_gan": {
+   "rate": 0.256198347107438,
+   "n": 121,
+   "thr": 0.8,
+   "op": "≥",
+   "pass": false
+  },
+  "det_nut_canh_xa": {
+   "rate": 0.8197424892703863,
+   "n": 233,
+   "thr": 0.9,
+   "op": "≥",
+   "pass": false
+  },
+  "det_nut_rat_xa": {
+   "rate": 0.9445843828715366,
+   "n": 397,
+   "thr": 0.95,
+   "op": "≥",
+   "pass": false
+  },
+  "det_flip_heldout": {
+   "rate": 0.2,
+   "n": 15,
+   "thr": 0.5,
+   "op": "≥",
+   "pass": false
+  },
+  "det_wrong_action": {
+   "rate": 1.0,
+   "n": 369,
+   "thr": 0.8,
+   "op": "≥",
+   "pass": true
+  },
+  "det_wrong_content": {
+   "rate": 0.9109311740890689,
+   "n": 494,
+   "thr": 0.9,
+   "op": "≥",
+   "pass": true
+  },
+  "det_wrong_direction": {
+   "rate": 1.0,
+   "n": 755,
+   "thr": 0.9,
+   "op": "≥",
+   "pass": true
+  },
+  "det_nut_canh_gan_khong_dich": {
+   "rate": 0.32231404958677684,
+   "n": 121
+  },
+  "det_nut_canh_xa_khong_dich": {
+   "rate": 0.8669527896995708,
+   "n": 233
+  },
+  "det_nut_rat_xa_khong_dich": {
+   "rate": 0.9521410579345088,
+   "n": 397
+  }
+ },
+ "fp_curve": {
+  "0.01": 0.01256281407035176,
+  "0.03": 0.09045226130653267,
+  "0.05": 0.3065326633165829,
+  "0.08": 0.49748743718592964,
+  "0.13": 0.8994974874371859
+ },
+ "n_items": 398,
+ "bo_qua": 2,
+ "instrument": "a11y + D.3 (hộp vàng)"
+}

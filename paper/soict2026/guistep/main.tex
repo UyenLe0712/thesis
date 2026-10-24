@@ -199,7 +199,10 @@ action is a touch ($4{,}446$ taps and $17$ long presses). The $2{,}495$ non-touc
 (\texttt{wait}, \texttt{open\_app} and similar) have no point to compare against and are
 excluded, so all metrics are computed on the same population. Steps within an app are not
 independent, so confidence intervals use $10{,}000$ cluster bootstrap resamples over
-apps~\cite{cameron2008}, and paired comparisons use McNemar's test.
+apps~\cite{cameron2008}. Paired differences use the same cluster bootstrap, with clusters being
+apps and, for the steps whose app cannot be identified, tasks, and a two-sided $p$ is the share of
+resamples on either side of zero. We use this in place of McNemar's test, which treats steps as
+independent.
 
 %------------------------------------------------------------------------------
 \section{GUIStep}
@@ -331,24 +334,27 @@ Table~\ref{tab:valid} summarises the checks.
 
 \begin{table}[t]
 \centering
-\caption{Validation of the instrument. Thresholds in the second column were fixed before the
-corresponding measurement was executed. The table lists the localisation check and seven of the
-ten injection criteria. The other three (one check for false rejection and two detection checks)
-pass at $0.0\%$, $100.0\%$ and $100.0\%$. Two of the ten criteria fail.}
+\caption{Validation of the instrument under the primary D.3 rule, with the earlier Voronoi
+run alongside. Thresholds in the second column were fixed before either run, and are the same for both.
+Rates are the share of injected errors detected, except for the two false-rejection rows, where lower is better.
+Both runs use the same $398$ steps and seed.}
 \label{tab:valid}
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{>{\raggedright\arraybackslash}p{4.9cm}>{\raggedright\arraybackslash}p{2.1cm}>{\raggedright\arraybackslash}p{2.6cm}l}
+\begin{tabular}{>{\raggedright\arraybackslash}p{4.5cm}>{\raggedright\arraybackslash}p{1.9cm}rrl}
 \toprule
-check & threshold & measured & verdict\\
+check & threshold & D.3 & Voronoi & D.3 verdict\\
 \midrule
-median localisation error of the instrument & $\le 3\%$ of width & $0.7\%$ ($n=300$) & pass\\
-false rejection of paraphrases & $\le 10\%$ & $0.0\%$ ($n=398$) & pass\\
-false rejection under the action check & $\le 15\%$ & $0.0\%$ ($n=398$) & pass\\
-catching a distant wrong element & $\ge 90\%$ & $99.6\%$ ($n=233$) & pass\\
-catching a wrong action class & $\ge 80\%$ & $100.0\%$ ($n=369$) & pass\\
-catching wrong content & $\ge 90\%$ & $91.1\%$ ($n=494$) & pass\\
-\textbf{catching a neighbouring element} & $\ge 80\%$ & $33.1\%$ ($n=121$) & \textbf{fail}\\
-\textbf{catching negation absent from the table} & $\ge 50\%$ & $20.0\%$ ($n=15$) & \textbf{fail}\\
+median localisation error of the instrument & $\le 3\%$ of width & \multicolumn{2}{c}{$0.7\%$ ($n=300$)} & pass\\
+false rejection of paraphrases & $\le 10\%$ & $6.5\%$ & $0.0\%$ & pass\\
+false rejection under the action check & $\le 15\%$ & $0.0\%$ & $0.0\%$ & pass\\
+false rejection by the polarity check & $\le 5\%$ & $0.0\%$ & $0.0\%$ & pass\\
+catching a wrong action class & $\ge 80\%$ & $100.0\%$ & $100.0\%$ & pass\\
+catching wrong content & $\ge 90\%$ & $91.1\%$ & $91.1\%$ & pass\\
+catching a wrong scroll direction & $\ge 90\%$ & $100.0\%$ & $100.0\%$ & pass\\
+\textbf{catching a neighbouring element} (30--80 px) & $\ge 80\%$ & $25.6\%$ & $33.1\%$ & \textbf{fail}\\
+\textbf{catching a nearby element} (80--150 px) & $\ge 90\%$ & $82.0\%$ & $99.6\%$ & \textbf{fail}\\
+\textbf{catching a distant element} ($\ge 25\%$ of width) & $\ge 95\%$ & $94.5\%$ & $100.0\%$ & \textbf{fail}\\
+\textbf{catching negation absent from the table} & $\ge 50\%$ & $20.0\%$ & $20.0\%$ & \textbf{fail}\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -361,11 +367,24 @@ $800$-step slice of Table~\ref{tab:rules} deleting the name costs a smaller $8.2
 because most sentences there contain no removable position clause. Across $1{,}139$
 rewrites that preserve the meaning, the net change is $-0.09$ points $[-0.93,+0.79]$.
 
-In total the injection suite passes eight of the ten criteria, and it is weak on neighbouring
-elements and on negations absent from the polarity table. UGround has seen AndroidControl
-training data, so we repeat our main comparison with UI-Venus-Ground-7B~\cite{uivenus}, which has
-not. The gap between GUIStep-S and the untuned backbone then changes from $+11.14$ to $+11.02$,
-retaining $99\%$ of its magnitude.
+We first ran the injection suite with the Voronoi rule, where it passed eight of the ten criteria.
+Rerunning it with the primary D.3 rule, on the same steps, thresholds and seed, passes six.
+Detection is lower under D.3 for every localisation criterion, and the paraphrase false-rejection
+rate rises from $0.0\%$ to $6.5\%$, because the simulated listener offset of about $3\%$ of the
+width can fall outside a small box. Of the injected points that D.3 accepts despite targeting a
+distant element, the median reconstructed box covers $14.7\%$ of the screen, against $0.9\%$ for
+the others, so large container boxes are the main source of missed detections. The suite is
+therefore weak on neighbouring elements, on elements that share a large box with the target, and on
+negations absent from the polarity table. Since confusion between neighbouring controls is the
+case that matters most for a person following the instruction, absolute levels should be read with
+that weakness in mind.
+
+UGround has seen AndroidControl training data, so we repeat our main comparison with
+UI-Venus-Ground-7B~\cite{uivenus}, which has not. On the $2{,}532$-step subset on which both
+listeners were run, the gap between GUIStep-S and the untuned backbone changes from $+11.14$ under
+UGround to $+11.02$ under UI-Venus, retaining $99\%$ of its magnitude. The $+11.9$ points of
+Table~\ref{tab:main} are UGround on all $4{,}463$ steps, so the three values differ only in the
+steps scored and in the listener.
 
 %------------------------------------------------------------------------------
 \section{Experiments}
@@ -401,12 +420,57 @@ untuned backbone.
 \subsection{Ablation}
 
 The same table also separates our three configurations.
-GUIStep-D scores $1.9$ points below GUIStep-S $[-3.0,-0.7]$, so the structured target costs
-accuracy on its own. GUIStep-P recovers that loss, but its $+1.05$-point difference from
-GUIStep-S is not significant ($p=0.078$). Against the matched cross-entropy control, the preference objective adds $+0.52$ points $[+0.02,+1.00]$, which suggests that part of
-the recovery comes from the extra updates and not from the objective. We therefore attribute
+GUIStep-D scores $1.9$ points below GUIStep-S $[-3.0,-0.7]$ ($p=0.003$), so the structured target
+costs accuracy on its own. GUIStep-P recovers that loss, but its $+1.05$-point difference from
+GUIStep-S is not significant ($p=0.073$). Against the matched cross-entropy control, the preference objective adds $+0.52$ points $[+0.02,+1.00]$ ($p=0.043$), which suggests that part of
+the recovery comes from the extra updates and not from the objective. All three comparisons come
+from one training run each for GUIStep-D, GUIStep-P and the control, so differences of this size
+may not be stable across seeds. We therefore attribute
 the main gain to training on the sentence alone, since neither the structured target nor the preference
 objective yields a clear improvement beyond it.
+
+\subsection{Repeated and Unseen Sentences}
+\label{sec:repeat}
+
+Training and test tasks are disjoint, but many GUI instructions are worded alike. We call a test
+reference \emph{repeated} when, after lower-casing and removing punctuation, it equals the target
+sentence of at least one training step. This holds for $2{,}347$ of the $4{,}463$ steps
+($52.6\%$), and for $43.3\%$ when only surrounding spaces are ignored. The remaining
+$2{,}116$ steps are \emph{unseen}. Table~\ref{tab:repeat} scores both groups.
+
+\begin{table}[t]
+\centering
+\caption{Executability by whether the reference sentence occurs in the training targets, with $95\%$
+cluster bootstrap intervals. The last three rows are paired differences.}
+\label{tab:repeat}
+\setlength{\tabcolsep}{3pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrr}
+\toprule
+& repeated ($n=2{,}347$) & unseen ($n=2{,}116$)\\
+\midrule
+backbone & $58.7$ $[56.5,60.9]$ & $47.9$ $[45.4,50.5]$\\
+GUIStep-S & $73.7$ $[71.8,75.7]$ & $56.3$ $[53.8,58.9]$\\
+GUIStep-D & $71.7$ $[69.7,73.5]$ & $54.7$ $[52.2,57.3]$\\
+D $+$ cross-entropy (control) & $73.8$ $[72.0,75.7]$ & $57.4$ $[54.9,59.8]$\\
+GUIStep-P & $74.0$ $[72.1,75.9]$ & $58.3$ $[55.8,60.8]$\\
+\midrule
+S $-$ backbone & $+15.0$ $[+13.1,+17.0]$ & $+8.4$ $[+6.0,+11.0]$\\
+P $-$ S & $+0.3$ $[-1.3,+1.8]$ ($p=0.75$) & $+1.9$ $[+0.2,+3.7]$ ($p=0.031$)\\
+P $-$ control & $+0.2$ $[-0.5,+0.8]$ ($p=0.64$) & $+0.9$ $[+0.2,+1.6]$ ($p=0.015$)\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Fine-tuning helps in both groups, but the gain over the backbone is nearly twice as large on repeated
+sentences, so part of it comes from learning the dataset's usual wording. The gain on unseen
+sentences, $+8.4$ points, does not depend on that. The preference objective is indistinguishable
+from the baselines on repeated sentences and ahead of both on unseen ones, although this is a
+subgroup comparison made after seeing the overall result and is not corrected for multiple
+comparisons. Only $78$ steps, from $20$ applications, belong to applications absent from training.
+There GUIStep-S scores $65.4$, GUIStep-P $68.0$ and the backbone $56.4$, but the intervals are wide
+(the difference between GUIStep-P and the backbone is $+11.5$ $[+1.9,+19.8]$), so we report them and draw no
+conclusion.
 
 \subsection{Reference-Overlap Metrics}
 For comparability with Widget Captioning and Screen2Words we also report the conventional
@@ -449,30 +513,49 @@ executability.
 \label{sec:analysis}
 
 GUIStep-P fails on $1{,}493$ steps. Of these, $50$ failures use the wrong action class
-and the other $1{,}443$ ($96.7\%$) describe the wrong element.
-Typical examples are \texttt{select minutes 00} for \emph{click on the OK option} and
-\texttt{Click on the Air India flight option} for \emph{Click on the Sort filter}. The main
-remaining problem is therefore element naming, not action selection or fluency, which is
-consistent with the hard case that Widget Captioning reports for visually identical
-widgets~\cite{widgetcap}.
+and the other $1{,}443$ ($96.7\%$) fail the localisation check. We did not inspect these cases
+by hand, so a failure may come from a sentence that names the wrong element, from a listener
+error, or from an error in the reconstructed box.
+Typical failures are \texttt{select minutes 00} for \emph{click on the OK option} and
+\texttt{Click on the Air India flight option} for \emph{Click on the Sort filter}. The remaining failures are
+therefore mostly of localisation and not of action selection, and a plausible but untested
+explanation is element naming, which would be consistent with the hard case that Widget Captioning
+reports for visually identical widgets~\cite{widgetcap}. Separating sentence, listener and box
+errors needs a manual or human study, which we leave open.
 
 %------------------------------------------------------------------------------
 \section{Limitations}
 \label{sec:limits}
 
-Our injection suite was run with the Voronoi localisation rule, whereas the primary score
-uses the D.3 rule. Since the D.3 rule is the more permissive of the two, the detection
-rates in Table~\ref{tab:valid} should be read as upper bounds. The reconstructed boxes are also
-stricter than AndroidControl's original labels and are not directly comparable with them.
+\paragraph{Validity of the score.}
+Executability is a proxy, computed by a learned model, for whether a person can follow an
+instruction, and we have not established that link with a human study or with a manually labelled
+sample. The validation in Sect.~\ref{sec:validate} was rerun with the primary D.3 rule and fails
+four of ten criteria, among them the detection of neighbouring elements, which is the confusion
+that matters most to a reader. The reconstructed boxes are also stricter than AndroidControl's
+original labels, so scores are not directly comparable with work that uses them. Absolute levels
+are conditional on UGround, because the check with an independent listener covers the gap between
+the backbone and our adapted models and not every reported level.
 
-Executability remains a proxy, computed by a model, for whether a person can follow an instruction, and we
-have not yet established that link with a human study. Our experiments also cover one English
-corpus, one backbone and touch actions only, and they compare against the untuned backbone and our
-matched controls, with no external generation system as a reference. Absolute levels are
-conditional on UGround, because the check with an independent listener covers the gap between the
-backbone and our adapted models and not every reported level. Finally, $17.3\%$ of the test
-reference sentences occur verbatim in training, and the history we supply consists of reference
-instructions, not the model's own previous outputs.
+\paragraph{Scope.}
+The experiments cover one English dataset, one backbone and touch actions only. We train one run
+per configuration apart from GUIStep-S, so the small differences between GUIStep-D, GUIStep-P and
+the control have not been checked across seeds. The comparison is with the untuned backbone and
+our matched controls. We did not compare with another instruction-capable vision-language model or
+with a pipeline that first selects a target and then verbalises it, and we have no measurement of
+inference latency, which we do not report. Training used 4-bit QLoRA on a single A100 GPU. The exact
+prompts and scoring rules are given in Appendix~\ref{app:prompts}.
+
+\paragraph{Evaluation protocol.}
+$52.6\%$ of the test reference sentences repeat a training target (Sect.~\ref{sec:repeat}), and
+the history we supply consists of reference instructions, not the model's own previous outputs, so
+the setting does not include the accumulation of errors over a task. The declarations and
+preference pairs are derived automatically from the accessibility tree and were not checked by hand.
+
+\paragraph{Novelty.}
+The adaptation uses existing methods, namely QLoRA and an established preference objective, and our
+ablation shows that most of the improvement over the backbone comes from supervised training on the
+sentence alone.
 
 %------------------------------------------------------------------------------
 \section{Conclusion}
@@ -490,6 +573,48 @@ sequence-level training with a listener reward~\cite{scst,luodisc}, and should v
 metric against human judgements.
 
 %------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\appendix
+\section{Prompts and Scoring Rules}
+\label{app:prompts}
+
+\paragraph{Generation prompt.}
+The system message and the user turn are the same for training and scoring in every configuration.
+Their wording is in Vietnamese; the model is told to answer in English and all targets are English. In translation, the
+system message reads \emph{``You look at a phone screenshot and write ONE short English instruction
+for the user that says where to touch in order to continue.''} The user turn is the image followed
+by up to four lines, of which the second and third are omitted when empty:
+\begin{center}
+\texttt{Mục tiêu: <goal>}\\
+\texttt{Đã làm: <step 1> → <step 2> → <step 3>}\\
+\texttt{Chữ đọc được trên màn: <OCR 1> · <OCR 2> · \dots}\\
+\texttt{Viết câu hướng dẫn cho bước tiếp theo.}
+\end{center}
+The labels mean \emph{goal}, \emph{done so far}, \emph{text read on the screen} and \emph{write the
+instruction for the next step}. The history holds the last three reference instructions and the
+OCR line holds at most $24$ detections.
+
+\paragraph{Listener prompt.}
+The frozen listener UGround-V1-2B receives the screenshot and the following text, taken from its
+model card, with the generated sentence in place of \texttt{<desc>}:
+\begin{quote}\small
+Your task is to help the user identify the precise coordinates (x, y) of a specific
+area/element/object on the screen based on a description. Your response should aim to point to the
+center or a representative point within the described area/element/object as accurately as possible.
+If the description is unclear or ambiguous, infer the most relevant area or element based on its
+likely context or purpose. Your answer should be a single string (x, y) corresponding to the point
+of the interest. Description: \texttt{<desc>} Answer:
+\end{quote}
+It does not see the goal, the history, the OCR text or the recorded touch. Its output on a
+$0$--$1000$ grid is converted to pixels.
+
+\paragraph{Scoring rule.}
+A step is executable when (i) the action class of the generated sentence equals that of the
+reference, (ii) the two sentences do not name opposite states of one control, and (iii) the point
+returned by the listener lies in the box of the target element, as in Sect.~\ref{sec:metric}.
+Steps whose target has no reconstructed box count as failures. The Voronoi and tolerance-window
+variants of Table~\ref{tab:rules} change only condition (iii).
+
 \begin{thebibliography}{99}
 
 \bibitem{androidcontrol}
