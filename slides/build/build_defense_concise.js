@@ -273,16 +273,23 @@ rect(M,4.72,8.9,1.05,LIGHT,{radius:0.05,line:FOOTD});
 addText('Phương pháp đề xuất − S1/101 = +1,57 điểm Executability\nKTC 95% [+0,86; +2,31], p < 0,001',{x:M+0.2,y:4.83,w:8.5,h:0.82,fontSize:17,bold:true,color:FOOTB,align:'center',valign:'mid'});
 source('4.463 bước chạm · Luận văn §6.2, §6.6'); foot();
 
-// 20 · Text metrics simplified
+// 20 · Text metrics
 newSlide('19. Kết quả các thước đo dựa trên câu tham chiếu');
-addText('So với GRPO + SPICE, sau ACE điểm quan sát của cả 7 thước đo dựa trên câu tham chiếu đều tăng.',{x:M,y:1.02,w:8.9,h:0.62,fontSize:16.5,bold:true,color:FOOTB,align:'center',fit:'shrink'});
-metricBadge(0.85,2.05,2.25,'+11,98','CIDEr-D',FOOTC);
-metricBadge(3.88,2.05,2.25,'+1,34','SPICE',FOOTC);
-metricBadge(6.90,2.05,2.25,'+0,66','BERTScore',FOOTC);
-rect(1.05,3.70,7.90,1.05,LIGHT,{radius:0.05,line:FOOTD});
-addText('BLEU-4, METEOR, ROUGE-L và chrF cũng tăng → 7/7 thước đo dựa trên câu tham chiếu đều tăng.',{x:1.28,y:3.70,w:7.44,h:1.05,fontSize:15.5,bold:true,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
-addText('Executability chỉ thay đổi +0,02 điểm [−0,21; +0,26]. Các mức tăng của 7 thước đo văn bản hiện chưa có khoảng tin cậy.',{x:M,y:5.28,w:8.9,h:0.78,fontSize:14.6,align:'center',fit:'shrink'});
-source('Bảng đầy đủ ở slide bổ sung · Luận văn §6.4, §6.6'); foot();
+addText('Sau ACE, điểm quan sát của cả 7 thước đo dựa trên câu tham chiếu đều tăng so với GRPO + SPICE.',{x:M,y:0.92,w:8.9,h:0.48,fontSize:15.5,bold:true,color:FOOTB,align:'center',fit:'shrink'});
+table(M,1.52,[1.85,1.12,1.12,1.42,1.52,1.35],[
+  {cells:['Thước đo','Base','S1','GRPO','Đề xuất','Δ ACE'],fill:FOOTB,color:WHITE,bold:true,h:0.42,fs:11.8},
+  {cells:['BLEU-4','15,30','51,56','52,36','53,47','+1,11'],h:0.47,rule:true},
+  {cells:['METEOR','24,60','36,79','37,92','38,37','+0,46'],h:0.47,rule:true},
+  {cells:['ROUGE-L','42,30','67,35','68,36','69,08','+0,74'],h:0.47,rule:true},
+  {cells:['CIDEr-D','88,00','416,12','430,05','442,02','+11,98'],h:0.47,rule:true},
+  {cells:['SPICE','18,50','44,37','45,79','47,13','+1,34'],h:0.47,rule:true},
+  {cells:['chrF','40,20','61,26','62,87','63,44','+0,58'],h:0.47,rule:true},
+  {cells:['BERTScore','40,10','66,33','67,07','67,73','+0,66'],h:0.47}
+],{align:['left','center','center','center','center','center'],fs:11.9});
+rect(M,5.48,8.9,0.82,LIGHT,{radius:0.05,line:FOOTD});
+addText('ACE làm cả 7 thước đo văn bản tăng; Executability gần như giữ nguyên: +0,02 điểm, KTC 95% [−0,21; +0,26].',{x:M+0.18,y:5.48,w:8.54,h:0.82,fontSize:13.4,bold:true,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
+addText('Lưu ý: các mức tăng của 7 thước đo văn bản hiện chưa có khoảng tin cậy.',{x:M,y:6.43,w:8.9,h:0.30,fontSize:10.8,color:GREY,align:'center',fit:'shrink'});
+source('Luận văn §6.4, §6.6'); foot();
 
 // 21 · Negative results
 newSlide('20. Một số hướng đã thử và bài học');
