@@ -205,3 +205,18 @@ G7. Đã kiểm chéo lại 24/10 (tính lại từ tệp thô trên máy, khôn
 - G5 (Phi-4 Base): số lấy từ chính lượt chạy `som_doc.py` hôm 24/10; tập bước 3.566 + 897 = 4.463, giao rỗng, bằng tập bước của S1/101.
 - G4: kl và thưởng tính từ `log_history.json`; md5 adapter tính lại trên tệp đã giải nén. Điểm test ck500/202 tính lại ngoài kernel bằng `score_run.cluster_bootstrap` từ tệp thô trên máy: 4.463 bước chung với bốn nhánh còn lại; các số của S1/101, S1/202, ck500/101, R3 khớp G1.
 - Chưa kiểm, cần xem trước khi dùng: (a) lịch sử đứt máy ở điểm lưu 200 (không còn log); (b) mọi giờ dự kiến trong G6 (suy từ tốc độ cũ); (c) D.3 và AitW cho S1/202 và ck500/202.
+
+G8. Trạng thái Kaggle 25/10 trưa (kiểm bằng CLI lúc 12:29 giờ VN; điền số khi về).
+- `uyenle0712/xao101-1` COMPLETE (đầu ra ở `runs/xao101/c1b`); `uyenle0712/xao101-2` đang chạy từ khoảng 06:53 sáng 25/10, cắt ở 11 giờ. Commit 3 chưa đẩy. uyenle còn 11,86 h GPU tới 31/10, sau commit 2 sẽ không đủ cho commit 3. Chưa có số, chưa vào luận văn (xem G6).
+- `trangphngngc/ck500-s202-chu-cpu` COMPLETE, số đã ghi ở G4 (bảng thước chữ).
+- `trangphngngc/phiground-bc` (Phi-Ground, dụng cụ ngoài họ Qwen) COMPLETE nhưng chỉ ra một nửa. Đầu ra ở `runs/phiground/bc_25_10/`.
+  · Base: exec 40,87 (hit_disk 49,24) trên 4.456 bước chạm, 1.091 cụm. Lưu ý: tệp dự đoán Base trong dataset `phiground-ck` thiếu 7/4.463 bước (score_run có in cảnh báo nhưng vì dưới 1% nên vẫn chấm). Đối chiếu dưới UGround Base là 47,59. Chưa có KTC, chưa có nhánh nào khác để ghép cặp.
+  · ck500: KHÔNG có số. score_run dừng vì `preds_ck500.jsonl` trong dataset chỉ có 1.668 bước, tức đúng các bước ck500 viết khác S1 (đã kiểm: 1.668/1.668 câu trùng bản đầy đủ `runs/grpo_spice/pred_ck500_test.jsonl`). Tệp không sai; notebook gọi score_run như với nhánh đủ bước nên bị chặn. Phải chạy lại: chấm 1.668 bước rồi ghép với S1, hoặc chấm bản đầy đủ 4.463 bước.
+  · S1 dưới Phi-Ground cũng chưa có số (kernel `k_s1` trong `_bundles/phiground_ck/` chưa thấy chạy trên tài khoản nào).
+  · Cách viết: chưa được in số Phi-Ground nào vào luận văn khi chưa có ít nhất S1 và ck500 cùng dụng cụ; vẫn cấm "đã đóng đòn cùng họ Qwen" (G3). Chưa kiểm dữ liệu huấn luyện Phi-Ground có AndroidControl không.
+
+G9. Phi-Ground, S1/101 đã có (kernel `trangphngngc/phiground-s1` COMPLETE, phát hiện 25/10 trưa; đầu ra `runs/phiground/s1_25_10/`). Số test, một hạt.
+- S1/101 exec 46,97 trên 4.462 bước (bước câu rỗng không có trong tệp; tính trên 4.463 với câu rỗng = 0 là 46,96).
+- Ghép cặp trên 4.463 bước (bước thiếu tính 0; Base thiếu 7 bước), bootstrap cụm app, McNemar chính xác: S1/101 − Base **+6,16 [+4,71; +7,64]**, b=693 c=418, p=1,4e−16. Dưới UGround cùng phép so là +11,52, dưới UI-Venus (lát 2.532) +9,68. Hướng giữ dưới dụng cụ ngoài họ Qwen, độ lớn nhỏ hơn khoảng một nửa.
+- Còn thiếu để so ck500/R3: chấm 1.668 câu ck500 khác S1 và 327 câu R3 khác cả S1 lẫn ck500 (tổng 1.995 bước, ước ~1,3 h T4 [suy từ 2,95 h / 4.462 bước của lượt S1]). Cách gọi: `score_run.py --mode score --n <số dòng tệp>` (có `--n` thì không bị chặn ở phép kiểm thiếu 1%; tệp chỉ chứa các bước cần chấm), rồi ghép theo (bước, câu) như `venus_ck_doc.py`.
+- Cách viết: số Base/S1 chưa đủ để nói gì về ck500. Vẫn cấm "đã đóng đòn cùng họ Qwen" cho tới khi kiểm xong dữ liệu huấn luyện của Phi-Ground (G3).
