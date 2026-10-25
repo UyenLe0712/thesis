@@ -629,20 +629,20 @@ Ba bước đầu thuộc luồng tạo câu hướng dẫn cuối cùng. Khâu 
   font=\small,
   blk/.style={draw=black!70, rounded corners=3pt, align=center,
               text width=0.62\textwidth, inner sep=6pt, fill=white},
-  huanluyen/.style={blk, fill=black!5, thick},
-  dongoc/.style={align=center, font=\small},
+  huanluyen/.style={blk, thick},
+  dongoc/.style={align=center, font=\small, rounded corners=3pt, inner sep=5pt},
   danhgia/.style={draw=black!55, rounded corners=3pt, align=center,
                   text width=0.48\textwidth, inner sep=5pt, fill=white, dashed},
   mui/.style={-{Latex[length=2.4mm]}, draw=black!70, thick},
   muidut/.style={-{Latex[length=2.2mm]}, draw=black!55, dashed}
 ]
-\node (vao) [dongoc] {ảnh màn hình\ \ $+$\ \ mục tiêu\ \ $+$\ \ lịch sử tham chiếu\ \ $+$\ \ văn bản OCR};
-\node (draft) [huanluyen, below=6mm of vao]
+\node (vao) [dongoc, draw=blue!50!black, fill=blue!8] {ảnh màn hình\ \ $+$\ \ mục tiêu\ \ $+$\ \ lịch sử tham chiếu\ \ $+$\ \ văn bản OCR};
+\node (draft) [huanluyen, draw=orange!70!black, fill=orange!15, below=6mm of vao]
   {thành phần thứ nhất: S1 học tiếp bằng GRPO với phần thưởng SPICE\\ sinh \textbf{câu hướng dẫn ban đầu} bằng giải mã tham lam};
-\node (ace) [huanluyen, below=7mm of draft]
+\node (ace) [huanluyen, draw=green!45!black, fill=green!12, below=7mm of draft]
   {ACE: truy hồi câu ví dụ $+$ mô hình sinh câu $+$ điều kiện đồng thuận};
-\node (ra) [dongoc, below=6mm of ace] {câu hướng dẫn cuối};
-\node (dg) [danhgia, below=9mm of ra]
+\node (ra) [dongoc, draw=teal!70!black, fill=teal!12, below=6mm of ace] {câu hướng dẫn cuối};
+\node (dg) [danhgia, fill=black!4, below=9mm of ra]
   {đánh giá ở Chương~\ref{chap:5}: mô hình định vị $+$ tiêu chí đánh giá của executability};
 
 \draw [mui] (vao) -- (draft);
@@ -650,7 +650,7 @@ Ba bước đầu thuộc luồng tạo câu hướng dẫn cuối cùng. Khâu 
 \draw [mui] (ace) -- (ra);
 \draw [muidut] (ra) -- (dg);
 \end{tikzpicture}
-\caption[Quy trình sinh hướng dẫn của phương pháp đề xuất.]{Quy trình sinh hướng dẫn của phương pháp đề xuất. Hai khối tô xám tạo và hiệu chỉnh câu hướng dẫn; nhánh nét đứt là quy trình đánh giá riêng ở Chương~\ref{chap:5}, không phải thành phần của luồng suy luận.}
+\caption[Quy trình sinh hướng dẫn của phương pháp đề xuất.]{Quy trình sinh hướng dẫn của phương pháp đề xuất. Khối cam tạo câu hướng dẫn ban đầu, khối xanh lá hiệu chỉnh câu bằng ACE; nhánh nét đứt là quy trình đánh giá riêng ở Chương~\ref{chap:5}, không phải thành phần của luồng suy luận.}
 \label{fig:4.1}
 \end{figure}
 
