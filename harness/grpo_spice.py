@@ -26,6 +26,7 @@ N_PROMPT = 1000
 PIX = dict(min_pixels=200704, max_pixels=1003520)
 WORD = re.compile(r"[A-Za-z0-9'-]+")
 STAT = {"n": 0, "t": 0.0}
+MODE = {"reward": "spice", "G": 8, "seed": SEED}   # "shuffle" = nhánh kiểm: xáo thưởng trong từng nhóm G câu
 
 
 def nwords(s):
@@ -60,6 +61,14 @@ def r_spice(completions, gold, **kw):
     f = spice_batch([s if s else "none" for s in sents], list(gold))
     out = [0.0 if not s else x - MU * max(0, nwords(s) - nwords(g) - 3)
            for s, g, x in zip(sents, gold, f)]
+    if MODE["reward"] == "shuffle":
+        g = MODE["G"]
+        assert len(out) % g == 0, (len(out), g)
+        rg = random.Random(MODE["seed"] * 100003 + STAT["n"])
+        for i in range(0, len(out), g):
+            blk = out[i:i + g]
+            rg.shuffle(blk)
+            out[i:i + g] = blk
     dt = time.time() - t0
     STAT["n"] += 1
     STAT["t"] += dt
@@ -80,7 +89,7 @@ def body_of(r, ocr):
                        ocr.get(r["image"]))
 
 
-def dung_hang(bundle, n=N_PROMPT, dai_nhat=0):
+def dung_hang(bundle, n=N_PROMPT, dai_nhat=0, seed=SEED):
     tr = [json.loads(l) for l in open(os.path.join(bundle, "p1_train_rows.jsonl"), encoding="utf-8")]
     va = [json.loads(l) for l in open(os.path.join(bundle, "p1_val_rows.jsonl"), encoding="utf-8")]
     assert len(tr) == 4000 and len(va) == 1567, (len(tr), len(va))
@@ -129,7 +138,7 @@ def dung_hang(bundle, n=N_PROMPT, dai_nhat=0):
 
     assert bo["trung_val"] == 0 and bo["trung_episode_val"] == 0, f"⛔ tập câu nhắc chạm val: {dict(bo)}"
 
-    random.Random(SEED).shuffle(rows)
+    random.Random(seed).shuffle(rows)
     rows = sorted(rows, key=lambda r: -r["n_char"])[:dai_nhat] if dai_nhat else rows[:n]
     return rows, dict(bo)
 
@@ -348,6 +357,7 @@ def train(a):
     from trl import GRPOConfig, GRPOTrainer
     from datasets import Dataset, Image as HFImage
 
+    print(f"[cấu hình] seed {a.seed} · thưởng {a.reward}", flush=True)
     print(f"trl {trl.__version__} · transformers {transformers.__version__} · "
           f"peft {peft.__version__} · torch {torch.__version__}", flush=True)
 
@@ -383,6 +393,7 @@ def train(a):
         a.bundle,
         n=a.n_prompt,
         dai_nhat=(50 if a.probe else 0),
+        seed=a.seed,
     )
     print(f"[câu nhắc] {len(rows)} · bỏ {bo} · n_char max {max(r['n_char'] for r in rows)}",
           flush=True)
@@ -398,7 +409,7 @@ def train(a):
     bf = dt == torch.bfloat16
     want = dict(
         output_dir=a.out,
-        seed=SEED,
+        seed=a.seed,
         bf16=bf,
         fp16=not bf,
         gradient_checkpointing=True,
@@ -554,9 +565,12 @@ def main():
     ap.add_argument("--max-steps", type=int, default=500)
     ap.add_argument("--resume", default=None)
     ap.add_argument("--no-q4", dest="q4", action="store_false")
+    ap.add_argument("--seed", type=int, default=SEED)   # đổi cả tập 1.000 câu nhắc lẫn hạt lấy mẫu của trainer
+    ap.add_argument("--reward", choices=("spice", "shuffle"), default="spice")
     ap.add_argument("--gen-chunk", type=int, default=0)  # 0 = sinh một lần như cũ
 
     a = ap.parse_args()
+    MODE.update(reward=a.reward, G=a.G, seed=a.seed)
     a.adapter = a.adapter or os.path.join(a.bundle, "adapter_s1_seed101")
 
     if a.selftest:

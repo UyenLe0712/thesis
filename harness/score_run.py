@@ -318,6 +318,7 @@ class PhiGround:
         self.torch = torch
         print(f"[PhiGround] transformers {transformers.__version__} "
               f"(thẻ mô hình ghim 4.43 — lệch lớn thì lỗi nổ ngay dòng dưới)", flush=True)
+        path = self._ban_cuc_bo(path)
         self.proc = AutoProcessor.from_pretrained(path, trust_remote_code=True)
         self.model = AutoModelForCausalLM.from_pretrained(
             path, device_map="auto", trust_remote_code=True,
@@ -326,21 +327,76 @@ class PhiGround:
         print(f"[PhiGround] dtype thật = {next(self.model.parameters()).dtype} · "
               f"attn = {getattr(self.model.config, '_attn_implementation', '?')}", flush=True)
 
+    @staticmethod
+    def _ban_cuc_bo(repo, dich="/tmp/phig"):
+        """Tải repo về thư mục tên KHÔNG có dấu chấm và kéo mã tham chiếu chéo
+        (`microsoft/Phi-3.5-vision-instruct--modeling_phi3_v...`) về cạnh nó. Với tên repo
+        có dấu chấm, transformers dựng đường import `transformers_modules.microsoft.Phi-3`
+        rồi vỡ ModuleNotFoundError (đo 24/10)."""
+        import json, os, shutil
+        from huggingface_hub import snapshot_download, hf_hub_download
+        d = snapshot_download(repo, local_dir=dich)
+        cfgp = os.path.join(d, "config.json")
+        cfg = json.load(open(cfgp, encoding="utf-8"))
+        am = cfg.get("auto_map", {})
+        for k, v in list(am.items()):
+            vs = v if isinstance(v, list) else [v]
+            moi = []
+            for x in vs:
+                if x and "--" in x:
+                    r, ref = x.split("--", 1)
+                    mod = ref.split(".")[0]
+                    shutil.copy(hf_hub_download(r, mod + ".py"), os.path.join(d, mod + ".py"))
+                    x = ref
+                moi.append(x)
+            am[k] = moi if isinstance(v, list) else moi[0]
+        json.dump(cfg, open(cfgp, "w", encoding="utf-8"), indent=1)
+        print(f"[PhiGround] bản cục bộ {d} · auto_map = {am}", flush=True)
+        return d
+
     def point(self, img, sentence):
         import re
         p = self.PROMPT.format(desc=sentence)
-        inp = self.proc(p, [img], return_tensors="pt").to(self.model.device)
+        # 24/10 thăm dò tiền xử lý (biến môi trường PHIG_PRE): mặc định để bộ xử lý tự lo; ảnh dọc
+        # 1080x2400 vào khung ngang 1008x672 cho lệch ngang 25% nên thử hai cách tự làm.
+        pre = os.environ.get("PHIG_PRE", "")
+        W0, H0 = img.size
+        if pre == "stretch":      # kéo giãn đúng 1008x672 ⇒ toạ độ tương đối map thẳng về ảnh gốc
+            img_in = img.resize((1008, 672))
+            off = (0.0, 0.0, 1008.0, 672.0)
+        elif pre == "letterbox":  # giữ tỉ lệ, đệm đen hai bên về 1008x672 ⇒ phải bù lại
+            from PIL import Image as _I
+            sc = min(1008 / W0, 672 / H0); nw, nh = round(W0 * sc), round(H0 * sc)
+            img_in = _I.new("RGB", (1008, 672), (0, 0, 0))
+            ox, oy = (1008 - nw) // 2, (672 - nh) // 2
+            img_in.paste(img.convert("RGB").resize((nw, nh)), (ox, oy))
+            off = (float(ox), float(oy), float(nw), float(nh))
+        else:
+            img_in, off = img, None
+        inp = self.proc(p, [img_in], return_tensors="pt").to(self.model.device)
         with self.torch.no_grad():
             g = self.model.generate(**inp, max_new_tokens=64, do_sample=False,
                                     eos_token_id=self.proc.tokenizer.eos_token_id)
         out = self.proc.batch_decode(g[:, inp["input_ids"].shape[1]:],
                                      skip_special_tokens=True)[0]
         m = re.findall(r"(\d+(?:\.\d+)?)", out)
-        if len(m) < 4:
+        self._n_in = getattr(self, "_n_in", 0) + 1
+        if self._n_in <= 8:  # 24/10: lượt thử 4 ra 100/100 không đọc được toạ độ, cần thấy chuỗi thô
+            print(f"[PhiGround] thô #{self._n_in}: dài_vào={inp['input_ids'].shape[1]} dài_ra={g.shape[1]} "
+                  f"out={out!r} ids_cuối={g[0, -12:].tolist()}", flush=True)
+        # 24/10: mô hình thật ra trả MỘT ĐIỂM `<point>x, y</point>` (y thấy tới 955 ⇒ thang x1000),
+        # không phải hộp bốn số như thẻ mô hình tả. Nhận cả hai dạng; dạng khác ⇒ bỏ.
+        if len(m) == 2:
+            x1 = x2 = float(m[0]); y1 = y2 = float(m[1])
+        elif len(m) >= 4:
+            x1, y1, x2, y2 = (float(v) for v in m[:4])
+        else:
             return None
-        x1, y1, x2, y2 = (float(v) for v in m[:4])
         # toạ độ TƯƠNG ĐỐI x1000 ⇒ chia 1000 rồi nhân kích thước ảnh GỐC
-        return ((x1 + x2) / 2 / 1000 * img.width, (y1 + y2) / 2 / 1000 * img.height)
+        cx, cy = (x1 + x2) / 2 / 1000, (y1 + y2) / 2 / 1000
+        if off is not None and pre == "letterbox":   # khung 1008x672 ⇒ trừ lề rồi chia cho phần ảnh thật
+            cx = (cx * 1008 - off[0]) / off[2]; cy = (cy * 672 - off[1]) / off[3]
+        return (cx * img.width, cy * img.height)
 
 
 class UGround7B(UGround):
@@ -533,7 +589,7 @@ def main():
     ap.add_argument("--baseline", help="chế độ noharm: tệp dự đoán của nhánh nền (thường S1) "
                                        "để tính hiệu số theo cặp")
     ap.add_argument("--grounder", default="uground",
-                    choices=["uground", "openai", "uivenus"])
+                    choices=["uground", "openai", "uivenus", "phiground"])
     ap.add_argument("--preds", help="tệp dự đoán (chế độ score)")
     ap.add_argument("--out")
     ap.add_argument("--n", type=int, default=0, help="chỉ chạy N bước (0 = tất cả)")
