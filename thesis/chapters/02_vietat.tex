@@ -2,7 +2,7 @@
 \addcontentsline{toc}{chapter}{Danh mục từ viết tắt và thuật ngữ}
 
 \renewcommand{\arraystretch}{1.35}
-\begin{longtable}{@{}p{2.6cm}p{5.4cm}p{6.2cm}@{}}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{5.4cm}>{\raggedright\arraybackslash}p{6.2cm}@{}}
 \toprule
 \textbf{Viết tắt} & \textbf{Từ đầy đủ} & \textbf{Tiếng Việt / giải thích} \\
 \midrule
@@ -18,15 +18,23 @@ SFT & Supervised Fine-Tuning & Tinh chỉnh có giám sát \\
 LoRA & Low-Rank Adaptation & Tinh chỉnh hạng thấp \\
 QLoRA & Quantized LoRA & LoRA trên trọng số đã lượng tử hoá \\
 NF4 & 4-bit NormalFloat & Định dạng lượng tử hoá 4 bit \\
-AitW & AndroidInTheWild & Bộ dữ liệu Android quy mô lớn (NeurIPS 2023). Trong các bảng, AitW chỉ quy tắc khoảng cách Euclid của bộ dữ liệu này \\
+AitW & AndroidInTheWild & Bộ dữ liệu Android quy mô lớn (NeurIPS 2023) \\
 OCR & Optical Character Recognition & Nhận dạng văn bản trong ảnh \\
 KTC & Confidence Interval & Khoảng tin cậy \\
+Exec. & executability & Viết tắt của executability trong các bảng \\
 dp & density-independent pixel & Đơn vị độ dài độc lập mật độ điểm ảnh trên Android \\
-pp & percentage point & Điểm phần trăm, tức chênh lệch tuyệt đối giữa hai tỉ lệ \\
 ORPO & Odds Ratio Preference Optimization & Mục tiêu học ưu tiên không cần mô hình tham chiếu riêng \\
 GRPO & Group Relative Policy Optimization & Tối ưu chính sách dựa trên phần thưởng tương đối giữa các đầu ra của cùng một nhóm \\
 KL & Kullback-Leibler divergence & Độ lệch giữa hai phân bố xác suất \\
 SPICE & Semantic Propositional Image Caption Evaluation & Độ đo dựa trên câu tham chiếu, so sánh các đối tượng, thuộc tính và quan hệ được trích xuất từ hai câu \\
+BLEU & Bilingual Evaluation Understudy & Độ đo trùng lặp cụm từ giữa câu sinh ra và câu tham chiếu \\
+METEOR & Metric for Evaluation of Translation with Explicit ORdering & Độ đo ghép từ giữa hai câu, có tính từ đồng nghĩa và biến thể từ \\
+ROUGE-L & Recall-Oriented Understudy for Gisting Evaluation, Longest common subsequence & Độ đo dựa trên chuỗi con chung dài nhất giữa hai câu \\
+CIDEr-D & Consensus-based Image Description Evaluation, bản D & Độ đo trùng lặp cụm từ có trọng số theo độ hiếm của cụm từ, bản D thêm phạt độ dài và giới hạn số lần đếm \\
+McNemar & McNemar's test & Kiểm định ghép cặp cho hai tỉ lệ trên cùng các bước \\
+UGround & - & Mô hình định vị chính dùng để tính executability \\
+chrF & character n-gram F-score & Độ đo trùng lặp cụm ký tự giữa hai câu \\
+BERTScore & BERTScore & Độ đo tương đồng ngữ nghĩa giữa hai câu dựa trên biểu diễn của mô hình ngôn ngữ \\
 \midrule
 \multicolumn{3}{@{}l@{}}{\textit{Thuật ngữ riêng của đề tài}} \\
 \midrule
@@ -36,6 +44,14 @@ SPICE & Semantic Propositional Image Caption Evaluation & Độ đo dựa trên 
 & Độ đo xem xét liệu một câu hướng dẫn có dẫn tới đúng phần tử cần thao tác hay không. Trong luận văn, một câu đạt khi mô hình định vị xác định đúng phần tử mà người dùng đã chạm và câu nêu đúng loại thao tác (Chương~\ref{chap:5}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Mô hình tinh chỉnh có giám sát (S1)}
 & Qwen2.5-VL-3B-Instruct sau khi được tinh chỉnh có giám sát cho bài toán sinh hướng dẫn. S1 là mốc so sánh chính và cũng là mô hình khởi tạo cho giai đoạn học tăng cường của phương pháp đề xuất. \\
+\multicolumn{2}{@{}p{8.2cm}}{S1/101, S1/202}
+& S1 huấn luyện với seed 101 và seed 202. Base là mô hình gốc Qwen2.5-VL-3B-Instruct chưa tinh chỉnh \\
+\multicolumn{2}{@{}p{8.2cm}}{GRPO-SPICE}
+& Thành phần thứ nhất của phương pháp đề xuất: S1/101 học tiếp bằng GRPO với phần thưởng SPICE (Mục~\ref{sec:4.5}) \\
+\multicolumn{2}{@{}p{8.2cm}}{S2, CE2-S2, MIN-DESC, giai đoạn ba}
+& Các mô hình của hướng mô tả phần tử trước khi sinh câu (Phụ lục~\ref{app:A}): mô hình mô tả phần tử, mô hình chỉ học thêm có giám sát, mô hình học theo cặp ưu tiên trên dòng mô tả, và giai đoạn thưởng tọa độ \\
+\multicolumn{2}{@{}p{8.2cm}}{TAGE (\emph{Type-Aware Grounded Editor})}
+& Mô-đun hiệu chỉnh câu theo vùng ảnh cục bộ, một hướng đã thử (Mục~\ref{sec:A.7}) \\
 \multicolumn{2}{@{}p{8.2cm}}{Câu tham chiếu}
 & Câu hướng dẫn theo từng bước do người thực hiện AndroidControl viết cho bước tương ứng; được dùng làm mục tiêu trong huấn luyện có giám sát và trong các độ đo dựa trên câu tham chiếu. \\
 \bottomrule

@@ -7,7 +7,33 @@ Khi thực hiện một tác vụ trên ứng dụng di động, người dùng 
 
 Các nghiên cứu gần đây về tác tử giao diện người dùng (GUI agent), như SeeClick~\cite{seeclick}, OS-Atlas~\cite{osatlas} và Aguvis~\cite{aguvis}, cũng giải quyết bài toán hiểu trạng thái giao diện và xác định hành động tiếp theo. Tuy nhiên, các hệ thống này chủ yếu hướng tới việc tự động thực hiện tác vụ: đầu ra thường gồm loại thao tác và vị trí trên màn hình, chẳng hạn \code{click(872,141)}. Biểu diễn này phù hợp với một tác tử phần mềm, nhưng không trực tiếp tạo ra hướng dẫn để người dùng đọc và làm theo.
 
-Luận văn này tập trung vào bài toán sinh hướng dẫn cho thao tác kế tiếp bằng ngôn ngữ tự nhiên. Tại mỗi thời điểm, mô hình nhận thông tin về mục tiêu của tác vụ, các thao tác đã được thực hiện trước đó và trạng thái giao diện hiện tại. Trạng thái giao diện được biểu diễn chủ yếu bằng ảnh chụp màn hình cùng phần văn bản đang hiển thị. Từ các thông tin này, mô hình cần sinh một câu hướng dẫn cho biết người dùng nên thực hiện thao tác nào và tương tác với phần tử nào để tiếp tục tác vụ.
+Luận văn này tập trung vào bài toán sinh hướng dẫn cho thao tác kế tiếp bằng ngôn ngữ tự nhiên. Tại mỗi thời điểm, mô hình nhận thông tin về mục tiêu của tác vụ, các thao tác đã được thực hiện trước đó và trạng thái giao diện hiện tại. Trạng thái giao diện được biểu diễn chủ yếu bằng ảnh chụp màn hình cùng phần văn bản đang hiển thị. Từ các thông tin này, mô hình cần sinh một câu hướng dẫn cho biết người dùng nên thực hiện thao tác nào và tương tác với phần tử nào để tiếp tục tác vụ. Hình~\ref{fig:1.1} minh họa bài toán trên một bước của tập kiểm tra.
+
+\begin{figure}[!htb]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  hop/.style={draw, rounded corners=3pt, align=left, inner sep=5pt, thick, text width=8.6cm, execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000}},
+  vao/.style={hop, draw=blue!50!black, fill=blue!8},
+  mh/.style={hop, draw=orange!70!black, fill=orange!15},
+  ra/.style={hop, draw=teal!70!black, fill=teal!12},
+  dg/.style={hop, draw=black!55, fill=black!4, dashed},
+  mui/.style={-{Latex[length=2.3mm]}, draw=black!70, thick}
+]
+\node (anh) [inner sep=0pt] {\includegraphics[width=4.3cm]{figures/fig_bai_toan_anh.png}};
+\node (muc) [vao, anchor=north west] at ([xshift=6mm]anh.north east) {\textbf{Mục tiêu tác vụ:} \emph{Delete the second photo from the gallery a\ldots}};
+\node (ls) [vao, below=2mm of muc] {\textbf{Các bước trước:} (1) \emph{Open Gallery app}, (2) \emph{Go back to the previous page}, (3) \emph{View the second photo}};
+\node (mh) [mh, below=6mm of ls] {\textbf{Phương pháp đề xuất sinh hướng dẫn}\\ đầu vào gồm ảnh màn hình, văn bản OCR, mục tiêu và các bước trước};
+\node (cau) [ra, below=6mm of mh] {\textbf{Câu hướng dẫn sinh ra:} \emph{Click on the bin icon at the bottom right corner of the screen}};
+\node (dg) [dg, below=6mm of cau] {\textbf{Đánh giá bằng executability:} mô hình định vị đọc câu và trả về một điểm trên màn hình (vòng xanh lá). Câu đạt vì câu gọi đúng thao tác chạm và điểm này rơi vào đúng nút \emph{Bin} mà người dùng đã chạm (vòng vàng).};
+\draw [mui] (ls) -- (mh);
+\draw [mui] (anh.east |- mh.west) -- (mh.west);
+\draw [mui] (mh) -- (cau);
+\draw [mui, dashed, draw=black!55] (cau) -- (dg);
+\end{tikzpicture}
+\caption[Bài toán sinh hướng dẫn cho thao tác kế tiếp và cách đánh giá bằng executability.]{Bài toán sinh hướng dẫn cho thao tác kế tiếp và cách đánh giá bằng executability, minh họa trên một bước của tập kiểm tra. Vòng vàng là điểm người dùng đã chạm. Vòng xanh lá là điểm mà mô hình định vị trả về khi đọc câu do phương pháp đề xuất sinh ra. Dấu X đỏ là điểm trả về cho câu của mô hình gốc chưa tinh chỉnh (\emph{Click on the three dots at the top right corner of the screen to access more options.}), nên câu đó không đạt. Mục tiêu tác vụ được giữ nguyên như trong bộ dữ liệu, vốn bị cắt mất phần cuối.}
+\label{fig:1.1}
+\end{figure}
 
 Khác với đầu ra dạng tọa độ, chất lượng của một câu hướng dẫn còn phụ thuộc vào việc người dùng có nhận ra đúng phần tử cần tương tác hay không. Câu “Chạm vào biểu tượng tìm kiếm” vẫn có thể mơ hồ nếu màn hình có nhiều biểu tượng tương tự; khi đó, hướng dẫn cần thêm thông tin như vị trí, nội dung hiển thị hoặc quan hệ với các thành phần xung quanh. Ở chiều ngược lại, cùng một thao tác có thể được diễn đạt bằng nhiều câu khác nhau mà vẫn hoàn toàn hợp lệ.
 

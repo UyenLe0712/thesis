@@ -10,40 +10,60 @@ Với ảnh chụp màn hình và mục tiêu tác vụ, hệ thống cần tạ
 \begin{enumerate}
 \item \textbf{Đầu vào:} ảnh chụp màn hình, mục tiêu tác vụ, lịch sử tham chiếu của các bước trước và văn bản OCR.
 \item \textbf{Sinh hướng dẫn ban đầu:} S1 sau khi học tiếp bằng GRPO với phần thưởng SPICE tạo câu hướng dẫn ban đầu.
-\item \textbf{Hiệu chỉnh bằng ACE:} các câu ví dụ được truy hồi từ tập huấn luyện được dùng để tạo một câu ứng viên; quy tắc đồng thuận quyết định có thay câu hướng dẫn ban đầu hay không.
+\item \textbf{Hiệu chỉnh bằng ACE:} các câu ví dụ được truy hồi từ tập huấn luyện được dùng để tạo một câu ứng viên; điều kiện đồng thuận quyết định có thay câu hướng dẫn ban đầu hay không.
 \item \textbf{Đánh giá:} mô hình định vị nhận ảnh màn hình cùng câu hướng dẫn và dự đoán vị trí của phần tử được nhắc tới. Executability được xác định từ vị trí này và loại thao tác trong câu.
 \end{enumerate}
 
 Ba bước đầu thuộc luồng tạo câu hướng dẫn cuối cùng. Khâu đánh giá được thực hiện riêng và không tham gia vào quá trình suy luận.
 
-\begin{figure}[t]
+\begin{figure}[!htb]
 \centering
 \begin{tikzpicture}[
   font=\small,
-  blk/.style={draw=black!70, rounded corners=3pt, align=center,
-              text width=0.62\textwidth, inner sep=6pt, fill=white},
-  huanluyen/.style={blk, fill=black!5, thick},
-  dongoc/.style={align=center, font=\small},
-  danhgia/.style={draw=black!55, rounded corners=3pt, align=center,
-                  text width=0.48\textwidth, inner sep=5pt, fill=white, dashed},
+  hop/.style={draw, rounded corners=3pt, align=center, inner sep=5pt, thick},
+  vao/.style={hop, draw=blue!50!black, fill=blue!8},
+  grpo/.style={hop, draw=orange!70!black, fill=orange!15},
+  con/.style={hop, draw=green!45!black, fill=white, text width=3.55cm, minimum height=1.45cm},
+  ra/.style={hop, draw=teal!70!black, fill=teal!12},
+  dg/.style={draw=black!55, rounded corners=3pt, align=center, inner sep=5pt, fill=black!4, dashed},
+  so/.style={circle, fill=#1, text=white, font=\footnotesize\bfseries, inner sep=1.4pt},
   mui/.style={-{Latex[length=2.4mm]}, draw=black!70, thick},
-  muidut/.style={-{Latex[length=2.2mm]}, draw=black!55, dashed}
+  nhan/.style={font=\footnotesize, fill=white, inner sep=1.5pt}
 ]
-\node (vao) [dongoc] {ảnh màn hình\ \ $+$\ \ mục tiêu\ \ $+$\ \ lịch sử tham chiếu\ \ $+$\ \ văn bản OCR};
-\node (draft) [huanluyen, below=6mm of vao]
-  {thành phần thứ nhất: S1 học tiếp bằng GRPO với phần thưởng SPICE\\ sinh \textbf{câu hướng dẫn ban đầu} bằng giải mã tham lam};
-\node (ace) [huanluyen, below=7mm of draft]
-  {ACE: truy hồi câu ví dụ $+$ mô hình sinh câu $+$ quy tắc đồng thuận};
-\node (ra) [dongoc, below=6mm of ace] {câu hướng dẫn cuối};
-\node (dg) [danhgia, below=9mm of ra]
-  {đánh giá ở Chương~\ref{chap:5}: mô hình định vị $+$ quy tắc đánh giá của executability};
+\node (vao) [vao, text width=0.78\textwidth] {\textbf{Đầu vào của một bước:} ảnh màn hình, mục tiêu tác vụ, các câu hướng dẫn ở bước trước, văn bản OCR};
 
-\draw [mui] (vao) -- (draft);
-\draw [mui] (draft) -- (ace);
-\draw [mui] (ace) -- (ra);
-\draw [muidut] (ra) -- (dg);
+\node (b1) [grpo, text width=0.78\textwidth, below=7mm of vao]
+  {\textbf{Sinh câu hướng dẫn ban đầu}\\ S1 học tiếp bằng GRPO với phần thưởng SPICE (Mục~\ref{sec:4.5}), giải mã tham lam};
+\node [so=blue!55!black] at (vao.north west) {1};
+\node [so=orange!75!black] at (b1.north west) {2};
+
+\node (tde) [font=\small\bfseries, text=green!30!black, below=12mm of b1.south west, anchor=north west, xshift=3mm] {ACE: hiệu chỉnh bằng câu ví dụ (Mục~\ref{sec:4.6})};
+\node (truy) [con, below=2mm of tde.south west, anchor=north west]
+  {truy hồi \textbf{4 câu ví dụ}\\ từ tập huấn luyện\\ (TF-IDF trên văn bản)};
+\node (sinh) [con, right=6mm of truy]
+  {sinh \textbf{câu ứng viên}\\ từ đầu vào\\ $+$ 4 câu ví dụ};
+\node (dk) [con, right=6mm of sinh, fill=green!6]
+  {\textbf{điều kiện:} câu ứng viên trùng một câu ví dụ và cùng loại thao tác với câu ban đầu};
+\begin{scope}[on background layer]
+  \node (ace) [draw=green!45!black, thick, rounded corners=4pt, fill=green!12, inner sep=3mm,
+               fit=(tde)(truy)(sinh)(dk)] {};
+\end{scope}
+\node [so=green!45!black] at (ace.north west) {3};
+
+\node (ra) [ra, text width=0.62\textwidth, below=10mm of ace] {\textbf{Câu hướng dẫn cuối}\\ thỏa điều kiện: câu ứng viên\quad không thỏa: câu ban đầu};
+\node (dg) [dg, text width=0.62\textwidth, below=10mm of ra]
+  {Đánh giá ở Chương~\ref{chap:5}: mô hình định vị đọc câu và chỉ ra phần tử trên màn hình (không thuộc luồng sinh câu)};
+
+\draw [mui] (vao) -- (b1);
+\draw [mui] (b1.south -| dk.north) -- node[nhan, pos=0.3, right=1mm] {câu ban đầu} (dk.north);
+\draw [mui] (truy) -- (sinh);
+\draw [mui] (sinh) -- (dk);
+\draw [mui] (ace.south) -- (ra.north);
+\draw [mui, draw=black!50, dashed] (ra) -- (dg);
+\node [so=black!55] at (dg.north west) {4};
+\draw [mui] (vao.west) -- ++(-4mm,0) |- (truy.west);
 \end{tikzpicture}
-\caption[Quy trình sinh hướng dẫn của phương pháp đề xuất.]{Quy trình sinh hướng dẫn của phương pháp đề xuất. Hai khối tô xám tạo và hiệu chỉnh câu hướng dẫn; nhánh nét đứt là quy trình đánh giá riêng ở Chương~\ref{chap:5}, không phải thành phần của luồng suy luận.}
+\caption[Quy trình sinh hướng dẫn của phương pháp đề xuất.]{Quy trình sinh hướng dẫn của phương pháp đề xuất. Số trên mỗi khối ứng với bốn bước liệt kê ở trên. Khối xanh dương là đầu vào. Khối cam sinh câu hướng dẫn ban đầu. Khối xanh lá là ACE: truy hồi câu ví dụ từ mục tiêu và các bước trước, sinh câu ứng viên rồi kiểm tra điều kiện đồng thuận, và câu ứng viên chỉ thay câu ban đầu khi thỏa cả hai điều kiện. Khối xanh ngọc là câu hướng dẫn cuối. Khối nét đứt là khâu đánh giá ở Chương~\ref{chap:5}, không thuộc luồng suy luận.}
 \label{fig:4.1}
 \end{figure}
 
@@ -85,23 +105,23 @@ Lượng tử hoá & NF4, 4 bit \\
 Hạng LoRA r / $\alpha$ / dropout & 8 / 16 / 0,05 \\
 Mô-đun gắn bộ chuyển đổi & q, k, v, o, gate, up, down \\
 Tháp thị giác, tầng chiếu đa phương thức & đóng băng \\
-Độ dài ngữ cảnh & 2560 \\
+Độ dài ngữ cảnh & 2.560 \\
 Cỡ lô mỗi thiết bị / tích luỹ gradient & 4 / 4 (hiệu dụng 16) \\
 Tốc độ học / lịch / tỉ lệ khởi động & $1 \times 10^{-4}$ / cosine / 0,05 \\
 Số lượt duyệt & 2 (=8.072 bước) \\
 Độ chính xác & bf16, có gradient checkpointing \\
-Hạt giống & 101 và 202 \\
+Seed & 101 và 202 \\
 Phần cứng & một GPU A100 \\
 Tham số huấn luyện được & 14.966.784 (0,48\% phần ngôn ngữ) \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\textbf{Độ dài ngữ cảnh.} Độ dài ngữ cảnh được đặt ở 2560 token, cao hơn mức 2.017 token của mẫu dài nhất trong các cấu hình đã huấn luyện. Giới hạn này đủ để chứa cả phần đầu vào và câu đích trong các thiết lập của đề tài.
+\textbf{Độ dài ngữ cảnh.} Độ dài ngữ cảnh được đặt ở 2.560 token, cao hơn mức 2.017 token của mẫu dài nhất trong các cấu hình đã huấn luyện. Giới hạn này đủ để chứa cả phần đầu vào và câu đích trong các thiết lập của đề tài.
 
 \section{Tổng quan phương pháp đề xuất}\label{sec:4.4}
 
-Phương pháp đề xuất bắt đầu từ S1 và sử dụng hai thành phần đã tóm tắt ở Hình~\ref{fig:4.1}. Mô hình định vị dùng trong executability không tham gia vào phần thưởng của giai đoạn GRPO-SPICE hoặc quy tắc đồng thuận của ACE. Ở giai đoạn suy luận, phương pháp cũng không truy cập câu tham chiếu của chính bước đang xét. Trong các phần sau, thuật ngữ \emph{mô hình học tăng cường với phần thưởng SPICE} dùng để chỉ riêng thành phần thứ nhất, còn \emph{phương pháp đề xuất} dùng để chỉ toàn bộ quy trình sau khi áp dụng ACE.
+Phương pháp đề xuất bắt đầu từ S1 và sử dụng hai thành phần đã tóm tắt ở Hình~\ref{fig:4.1}. Mô hình định vị dùng trong executability không tham gia vào phần thưởng của giai đoạn GRPO-SPICE hoặc điều kiện đồng thuận của ACE. Ở giai đoạn suy luận, phương pháp cũng không truy cập câu tham chiếu của chính bước đang xét. Trong các phần sau, thuật ngữ \emph{mô hình học tăng cường với phần thưởng SPICE} (viết gọn là GRPO-SPICE trong các bảng) dùng để chỉ riêng thành phần thứ nhất, còn \emph{phương pháp đề xuất} dùng để chỉ toàn bộ quy trình sau khi áp dụng ACE.
 
 \section{Thành phần thứ nhất: học tăng cường với phần thưởng SPICE}\label{sec:4.5}
 
@@ -120,30 +140,41 @@ trong đó $|\cdot|$ là số từ, và câu rỗng nhận 0 điểm. Số hạn
 
 Mỗi bước cập nhật sử dụng hai prompt; với mỗi prompt, mô hình sinh $G = 8$ câu ở nhiệt độ 1,0, mỗi câu dài tối đa 96 token. Quá trình huấn luyện gồm 500 bước cập nhật, tương ứng tổng cộng 1.000 prompt được lấy từ phần tập huấn luyện sau khi loại tập kiểm định nội bộ. Các prompt gồm mọi loại thao tác, trong đó khoảng hai phần ba là bước có thao tác chạm. Tốc độ học là $10^{-5}$ và hệ số KL là $\beta = 0{,}04$; vòng huấn luyện được tóm tắt ở Hình~\ref{fig:4.2}. GRPO sử dụng chênh lệch phần thưởng tương đối giữa các đầu ra trong cùng nhóm; nếu các ứng viên nhận cùng phần thưởng, nhóm đó không tạo ra chênh lệch để xếp hạng các ứng viên.
 
-\begin{figure}[t]
+\begin{figure}[!htb]
 \centering
 \begin{tikzpicture}[
   font=\small,
-  blk/.style={draw=black!70, rounded corners=3pt, align=center, inner sep=5pt, fill=white},
-  hl/.style={blk, fill=black!5, thick},
-  mui/.style={-{Latex[length=2.2mm]}, draw=black!70, thick},
-  nh/.style={font=\footnotesize, inner sep=1.5pt}
+  hop/.style={draw, rounded corners=3pt, align=center, inner sep=5pt, thick, minimum height=1.35cm},
+  vao/.style={hop, draw=blue!50!black, fill=blue!8},
+  hoc/.style={hop, draw=orange!70!black, fill=orange!18},
+  tinh/.style={hop, draw=black!55, fill=black!4},
+  buoc/.style={hop, draw=green!45!black, fill=green!10},
+  so/.style={circle, fill=black!70, text=white, font=\footnotesize\bfseries, inner sep=1.4pt},
+  mui/.style={-{Latex[length=2.3mm]}, draw=black!70, thick},
+  nhan/.style={font=\footnotesize, inner sep=1.5pt, align=center}
 ]
-\node (vao) [blk, text width=2.8cm] {ảnh $+$ mục tiêu\\$+$ lịch sử $+$ OCR};
-\node (pol) [hl, right=12mm of vao, text width=3.4cm] {S1 sau khi hợp nhất LoRA\\$+$ LoRA mới ($B = 0$)\\\textit{\footnotesize được cập nhật}};
-\node (nhom) [blk, right=12mm of pol, text width=2.9cm] {$8$ câu mẫu\\$y_1, \ldots, y_8$};
-\node (thuong) [blk, below=11mm of nhom, text width=2.9cm] {SPICE$(y_i, g)$\\$-$ phạt độ dài};
-\node (adv) [blk, below=11mm of pol, text width=3.4cm] {lợi thế chuẩn hoá\\trong nhóm $\hat{A}_i$};
-\node (ref) [blk, below=11mm of vao, text width=2.8cm] {S1 đóng băng\\(tham chiếu KL)};
-\node (g) [nh, right=1mm of thuong, align=left] {câu\\tham chiếu $g$};
+\node (vao) [vao, text width=2.6cm] {\textbf{prompt}\\ ảnh, mục tiêu,\\ lịch sử, OCR};
+\node (pol) [hoc, right=17mm of vao, text width=3.3cm] {\textbf{mô hình đang học}\\ S1 (đã hợp nhất)\\ $+$ LoRA mới, \emph{được cập nhật}};
+\node (nhom) [buoc, right=14mm of pol, text width=3.1cm] {sinh \textbf{8 câu} $y_1,\ldots,y_8$\\ ở nhiệt độ 1,0};
+\node (thuong) [buoc, below=13mm of nhom, text width=3.1cm] {\textbf{phần thưởng}\\ cho từng câu:\\ SPICE$(y_i, g)$\\ $-$ phạt câu quá dài};
+\node (adv) [buoc, below=13mm of pol, text width=3.5cm] {\textbf{so với trung bình nhóm}\\ câu tốt hơn được tăng xác suất, câu kém hơn bị giảm};
+\node (ref) [tinh, text width=2.6cm] at (vao |- adv) {\textbf{S1 đóng băng}\\ mốc cho KL};
+\node (g) [nhan, right=4mm of thuong, text width=1.3cm] {câu tham chiếu $g$};
+
+\node [so] at (pol.north west) {1};
+\node [so] at (nhom.north west) {2};
+\node [so] at (thuong.north west) {3};
+\node [so] at (adv.north west) {4};
+
 \draw [mui] (vao) -- (pol);
 \draw [mui] (pol) -- (nhom);
 \draw [mui] (nhom) -- (thuong);
-\draw [mui] (thuong) -- (adv);
-\draw [mui] (adv) -- node[nh, right] {cập nhật} (pol);
-\draw [mui, dashed] (ref) -- node[nh, below=1mm] {$\beta\,\mathrm{KL}$} (adv);
+\draw [mui] (g) -- (thuong);
+\draw [mui] (thuong) -- node[nhan, above] {$r_i$} (adv);
+\draw [mui, draw=orange!70!black] (adv) -- node[nhan, right] {cập nhật LoRA} (pol);
+\draw [mui, dashed, draw=black!55] (ref.north) |- node[nhan, pos=0.75, above] {$\beta\,\mathrm{KL}$: giữ gần S1} ($(adv.north)!0.5!(pol.south)$);
 \end{tikzpicture}
-\caption[Vòng huấn luyện của thành phần thứ nhất, học tăng cường với phần thưởng SPICE.]{Vòng huấn luyện của thành phần thứ nhất, học tăng cường với phần thưởng SPICE. Chỉ khối tô xám được cập nhật.}
+\caption[Vòng huấn luyện của thành phần thứ nhất, học tăng cường với phần thưởng SPICE.]{Vòng huấn luyện của thành phần thứ nhất, học tăng cường với phần thưởng SPICE. Với mỗi prompt, mô hình sinh 8 câu (bước 2). Mỗi câu nhận phần thưởng $r_i$ là điểm SPICE so với câu tham chiếu $g$, trừ phần phạt khi câu quá dài (bước 3). Phần thưởng của từng câu được so với trung bình của nhóm để cập nhật LoRA mới (bước 4). Trong khối cam, chỉ LoRA mới được cập nhật. Các khối xanh lá là các bước xử lý. Hàm mất mát gồm số hạng theo lợi thế của từng câu và số hạng KL với hệ số $\beta$, trong đó S1 đóng băng (khối xám) là mốc để giữ mô hình không lệch quá xa S1.}
 \label{fig:4.2}
 \end{figure}
 
@@ -153,7 +184,7 @@ Mỗi bước cập nhật sử dụng hai prompt; với mỗi prompt, mô hình
 
 \section{Thành phần thứ hai: hiệu chỉnh bằng câu ví dụ với ràng buộc nhất quán thao tác (ACE)}\label{sec:4.6}
 
-\textbf{Cơ sở lựa chọn.} ACE (\emph{Action-Consistent Exemplar Copying}) sử dụng các câu tham chiếu trong tập huấn luyện làm nguồn ví dụ cho bước hiện tại. Do các câu được truy hồi đến từ những bước khác, việc dùng chúng trực tiếp có thể dẫn tới sai phần tử hoặc sai loại thao tác. ACE vì vậy thực hiện hai bước: trước hết, mô hình tạo một câu ứng viên từ đầu vào hiện tại và các ví dụ truy hồi; sau đó, quy tắc đồng thuận quyết định có thay câu hướng dẫn ban đầu của thành phần thứ nhất bằng câu ứng viên hay không.
+\textbf{Cơ sở lựa chọn.} ACE (\emph{Action-Consistent Exemplar Copying}) sử dụng các câu tham chiếu trong tập huấn luyện làm nguồn ví dụ cho bước hiện tại. Do các câu được truy hồi đến từ những bước khác, việc dùng chúng trực tiếp có thể dẫn tới sai phần tử hoặc sai loại thao tác. ACE vì vậy thực hiện hai bước: trước hết, mô hình tạo một câu ứng viên từ đầu vào hiện tại và các ví dụ truy hồi; sau đó, điều kiện đồng thuận quyết định có thay câu hướng dẫn ban đầu của thành phần thứ nhất bằng câu ứng viên hay không.
 
 \textbf{Mô hình sinh câu với ví dụ truy hồi.} ACE sử dụng kho truy hồi được xác định ở Mục~\ref{sec:3.5}. Kho chỉ được xây dựng từ dữ liệu huấn luyện và không chứa tác vụ nào của tập kiểm tra của đề tài. Truy hồi chỉ sử dụng văn bản và độ tương đồng TF-IDF, không sử dụng ảnh.
 
@@ -163,16 +194,51 @@ ACE dùng hai cách tìm câu ví dụ. Cách thứ nhất lấy ý tưởng tru
 
 Để tách ảnh hưởng của truy hồi khỏi ảnh hưởng của việc tiếp tục học có giám sát, luận văn huấn luyện thêm một mô hình trên cùng các bước, cùng câu đích và cùng siêu tham số, nhưng không chèn khối ví dụ vào prompt.
 
-\textbf{Quy tắc đồng thuận.} Ở mỗi bước có hai câu: câu hướng dẫn ban đầu của thành phần thứ nhất và câu ứng viên do mô hình ACE tạo ra từ các ví dụ truy hồi. Câu ứng viên chỉ được chọn khi thỏa đồng thời hai điều kiện.
+\textbf{Tiêu chí đồng thuận.} Ở mỗi bước có hai câu: câu hướng dẫn ban đầu của thành phần thứ nhất và câu ứng viên do mô hình ACE tạo ra từ các ví dụ truy hồi. Câu ứng viên chỉ được chọn khi thỏa đồng thời hai điều kiện.
 
 \begin{enumerate}
 \item \textbf{Giống hoàn toàn với câu ví dụ.} Sau khi tách từ, câu của mô hình sinh phải giống hoàn toàn với một trong bốn câu ví dụ của khối. Điều kiện này chỉ giữ lại những bước mà mô hình chọn lại một câu ví dụ và bỏ các bước mà mô hình tạo câu mới.
-\item \textbf{Đồng thuận loại thao tác.} Động từ ở đầu câu của mô hình sinh và động từ ở đầu câu hướng dẫn ban đầu thuộc cùng một lớp thao tác (chạm, nhấn giữ, gõ, cuộn, mở ứng dụng, quay lại). Ngay cả khi câu ứng viên gọi đúng phần tử, loại thao tác vẫn có thể không phù hợp, chẳng hạn câu yêu cầu gõ ở một bước cần chạm. Câu hướng dẫn ban đầu được sinh từ chính màn hình hiện tại và được sử dụng làm tín hiệu kiểm tra loại thao tác. Phân lớp sáu nhóm này chỉ phục vụ quy tắc đồng thuận của ACE và khác với quy tắc chuẩn hoá năm loại dùng cho executability ở Mục~\ref{sec:5.1}.
+\item \textbf{Đồng thuận loại thao tác.} Động từ ở đầu câu của mô hình sinh và động từ ở đầu câu hướng dẫn ban đầu thuộc cùng một lớp thao tác (chạm, nhấn giữ, gõ, cuộn, mở ứng dụng, quay lại). Ngay cả khi câu ứng viên gọi đúng phần tử, loại thao tác vẫn có thể không phù hợp, chẳng hạn câu yêu cầu gõ ở một bước cần chạm. Câu hướng dẫn ban đầu được sinh từ chính màn hình hiện tại và được sử dụng làm tín hiệu kiểm tra loại thao tác. Phân lớp sáu nhóm này chỉ phục vụ điều kiện đồng thuận của ACE và khác với cách chuẩn hoá năm loại dùng cho executability ở Mục~\ref{sec:5.1}.
 \end{enumerate}
 
-\textbf{Lựa chọn quy tắc.} Bốn biến thể được khảo sát trên tập kiểm định nội bộ: chỉ dùng điều kiện sao chép; sao chép kèm đồng thuận loại thao tác; sao chép kèm điều kiện phần lõi của câu (phần còn lại sau khi bỏ động từ và hư từ) giống câu hướng dẫn ban đầu ít nhất một nửa; và sao chép kèm cả hai điều kiện.
+Hình~\ref{fig:4.3} minh họa hai bước của tập kiểm tra: một bước câu ứng viên được nhận và một bước câu ứng viên bị loại vì đổi loại thao tác.
 
-Tiêu chí lựa chọn được xác định trước khi tính executability trên tập này. Chỉ những biến thể không kém hơn câu hướng dẫn ban đầu trên đa số độ đo dựa trên câu tham chiếu mới được xem xét; trong số này, biến thể có executability cao nhất được lựa chọn. Quy tắc đã chọn được cố định trước khi áp dụng trên tập kiểm tra.
+\begin{figure}[!htb]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  hop/.style={draw, rounded corners=3pt, align=left, inner sep=4pt, thick, text width=6.6cm, execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000}},
+  bd/.style={hop, draw=orange!70!black, fill=orange!15},
+  vd/.style={hop, draw=black!45, fill=white},
+  uv/.style={hop, draw=green!45!black, fill=green!10},
+  kq/.style={hop, draw=teal!70!black, fill=teal!12},
+  td/.style={font=\small\bfseries, anchor=south west, inner sep=1pt},
+  mui/.style={-{Latex[length=2.1mm]}, draw=black!70, thick}
+]
+% (a) được nhận
+\node (a1) [bd] {\textbf{Câu ban đầu:} \emph{Click on the search button.}\\ (executability: không đạt)};
+\node [td] at ([yshift=1.5mm]a1.north west) {(a) Câu ứng viên được nhận};
+\node (a2) [vd, below=4mm of a1] {\textbf{Bốn câu ví dụ truy hồi:}\\ 1. \emph{Click on Rooms option.}\\ 2. \emph{Click on the destination text box.}\\ 3. \emph{Click on the Hotels option.}\\ 4. \emph{Click on the date selection option.}};
+\node (a3) [uv, below=4mm of a2] {\textbf{Câu ứng viên:} \emph{Click on the date selection option.}};
+\node (a4) [kq, below=4mm of a3] {trùng câu ví dụ 4: thỏa\\ cùng thao tác chạm với câu ban đầu: thỏa\\ $\Rightarrow$ \textbf{dùng câu ứng viên} (executability: đạt)};
+\draw [mui] (a2) -- (a3); \draw [mui] (a3) -- (a4);
+\draw [mui] (a1.west) -- ++(-3mm,0) |- (a4.west);
+% (b) bị loại
+\node (b1) [bd, right=9mm of a1] {\textbf{Câu ban đầu:} \emph{Click on the close icon}\\ (executability: đạt)};
+\node [td] at ([yshift=1.5mm]b1.north west) {(b) Câu ứng viên bị loại};
+\node (b2) [vd, below=4mm of b1] {\textbf{Bốn câu ví dụ truy hồi:}\\ 1. \emph{Swipe up}\\ 2. \emph{Open the Calm app}\\ 3. \emph{Click on the 21 days of calm}\\ 4. \emph{Click on the Start Meditating button}};
+\node (b3) [uv, below=4mm of b2] {\textbf{Câu ứng viên:} \emph{Swipe up}};
+\node (b4) [kq, below=4mm of b3] {trùng câu ví dụ 1: thỏa\\ thao tác vuốt, khác thao tác chạm của câu ban đầu: không thỏa\\ $\Rightarrow$ \textbf{giữ câu ban đầu} (executability: đạt)};
+\draw [mui] (b2) -- (b3); \draw [mui] (b3) -- (b4);
+\draw [mui] (b1.west) -- ++(-3mm,0) |- (b4.west);
+\end{tikzpicture}
+\caption[Hai bước minh họa điều kiện đồng thuận của ACE.]{Hai bước minh họa điều kiện đồng thuận của ACE trên tập kiểm tra. Khối cam là câu hướng dẫn ban đầu do GRPO-SPICE sinh ra, khối trắng là bốn câu ví dụ truy hồi từ tập huấn luyện, khối xanh lá là câu ứng viên do mô hình sinh của ACE tạo ra, khối xanh ngọc là kết quả của hai điều kiện. Câu ví dụ được truy hồi theo mục tiêu và các bước trước, không theo câu ban đầu, còn câu ban đầu chỉ được dùng ở bước kiểm tra loại thao tác (mũi tên bên trái). Ở (a), ACE sửa một câu sai thành câu đúng. Ở (b), điều kiện loại thao tác ngăn ACE thay một câu đúng bằng câu chép từ ví dụ nhưng sai loại thao tác.}
+\label{fig:4.3}
+\end{figure}
+
+\textbf{Lựa chọn tiêu chí.} Bốn biến thể được khảo sát trên tập kiểm định nội bộ: chỉ dùng điều kiện sao chép; sao chép kèm đồng thuận loại thao tác; sao chép kèm điều kiện phần lõi của câu (phần còn lại sau khi bỏ động từ và hư từ) giống câu hướng dẫn ban đầu ít nhất một nửa; và sao chép kèm cả hai điều kiện.
+
+Tiêu chí lựa chọn được xác định trước khi tính executability trên tập này. Chỉ những biến thể không kém hơn câu hướng dẫn ban đầu trên đa số độ đo dựa trên câu tham chiếu mới được xem xét; trong số này, biến thể có executability cao nhất được lựa chọn. Điều kiện đã chọn được cố định trước khi áp dụng trên tập kiểm tra.
 
 \section{Mô hình và thiết lập so sánh}\label{sec:4.7}
 
@@ -185,4 +251,3 @@ Các phương án được khảo sát trước khi hình thành phương pháp 
 Với executability, các so sánh chính giữa hai mô hình được thực hiện theo cặp trên cùng các bước được đánh giá; tập chính gồm 4.463 bước có thao tác chạm. Mỗi so sánh báo cáo mức chênh $\Delta$, khoảng tin cậy 95\% từ bootstrap và giá trị p của kiểm định McNemar. Cách tạo khoảng tin cậy cho từng phân tích được trình bày ở Mục~\ref{sec:5.13} và tại các bảng kết quả tương ứng. Khi khoảng tin cậy của chênh lệch nằm hoàn toàn về một phía của 0, kết quả được xem là có cơ sở để kết luận về mức cải thiện hoặc suy giảm so với mốc; nếu khoảng tin cậy chứa 0, kết quả được xem là chưa đủ cơ sở để kết luận, kể cả khi $\Delta$ dương.
 
 Mức dao động giữa hai seed của S1 được phân tích ở Mục~\ref{sec:6.7}. Các phân tích theo độ dài câu, độ khó của màn hình và nguồn của tên phần tử được trình bày ở Mục~\ref{sec:6.9}.
-

@@ -13,7 +13,7 @@ import metric_exec as M
 
 IMG = os.path.join(H, "dg1_cache/test_ac/images/ep19374_s3.png")
 OUT = "/mnt/d/Master/Thesis/thesis/figures/fig_voronoi.png"
-FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+FONT = "/usr/share/fonts/truetype/liberation/LiberationSerif-Regular.ttf"   # cùng cỡ chữ với Times của thân bài
 
 GOLD, PRED_S1, PRED_BASE = (540.0, 586.0), (539.0, 588.0), (540.0, 458.0)
 CROP = (0, 340, 1080, 800)
@@ -57,9 +57,13 @@ def main():
         d.ellipse([pt[0]-r, pt[1]-r, pt[0]+r, pt[1]+r], outline=(255, 255, 255), width=wdt+4)
         d.ellipse([pt[0]-r, pt[1]-r, pt[0]+r, pt[1]+r], outline=col, width=wdt)
 
-    for o in others:                       # tâm phần tử cạnh tranh
+    mo = Image.new("RGBA", im.size, (0, 0, 0, 0))   # tâm phần tử cạnh tranh: vẽ mờ để không che chữ trên ảnh
+    dm = ImageDraw.Draw(mo)
+    for o in others:
         if y0 <= o[1] <= y1:
-            cham_tron(o, C_OTHER, 6, 2)
+            dm.ellipse([o[0]-9, o[1]-9, o[0]+9, o[1]+9], outline=C_OTHER + (170,), width=3)
+    im = Image.alpha_composite(im, mo)
+    d = ImageDraw.Draw(im)
 
     tol_x, tol_y = 0.14 * w, 0.14 * h      # khung dung sai quy ước
     bx0, bx1 = GOLD[0] - tol_x, GOLD[0] + tol_x
@@ -72,12 +76,13 @@ def main():
         for xx in (bx0, bx1):
             d.line([xx, y, xx, min(y + dash, by1)], fill=C_GOLD, width=3)
 
-    cham_tron(PRED_BASE, C_BAD, 17, 5)
-    cham_tron(PRED_S1, C_OK, 28, 5)      # to hơn để không che dấu chữ thập bên trong
-    # điểm chạm thật: chữ thập viền trắng
-    for wdt, col in ((11, (255, 255, 255)), (5, C_GOLD)):
-        d.line([GOLD[0]-19, GOLD[1], GOLD[0]+19, GOLD[1]], fill=col, width=wdt)
-        d.line([GOLD[0], GOLD[1]-19, GOLD[0], GOLD[1]+19], fill=col, width=wdt)
+    for s_ in ((1, 1), (1, -1)):          # điểm định vị cho câu của mô hình gốc: dấu X đỏ (không đạt)
+        for wdt, col in ((10, (255, 255, 255)), (5, C_BAD)):
+            d.line([PRED_BASE[0]-15*s_[0], PRED_BASE[1]-15*s_[1], PRED_BASE[0]+15*s_[0], PRED_BASE[1]+15*s_[1]], fill=col, width=wdt)
+    cham_tron(PRED_S1, C_OK, 18, 5)       # điểm định vị cho câu của S1/101: vòng xanh lá (đạt)
+    # điểm người dùng chạm: vòng vàng viền đen, cùng quy ước với các hình ví dụ khác
+    d.ellipse([GOLD[0]-30, GOLD[1]-30, GOLD[0]+30, GOLD[1]+30], outline=(0, 0, 0), width=11)
+    d.ellipse([GOLD[0]-27, GOLD[1]-27, GOLD[0]+27, GOLD[1]+27], outline=(255, 193, 7), width=6)
 
     im = im.crop(CROP).convert("RGB")
     cw, ch = im.size
@@ -87,14 +92,17 @@ def main():
     out.paste(im, (0, 0))
     d = ImageDraw.Draw(out)
     d.rectangle([0, 0, cw - 1, ch - 1], outline=(120, 120, 120), width=2)
-    f = ImageFont.truetype(FONT, 26)
+    f = ImageFont.truetype(FONT, 28)
     yA, yB, yC = ch + 55, ch + 130, ch + 205
     def muc(x, y, ve, chu):
         ve(x, y)
         d.text((x + 34, y - 15), chu, font=f, fill=(20, 20, 20))
-    def cross(x, y):
-        d.line([x-14, y, x+14, y], fill=C_GOLD, width=5)
-        d.line([x, y-14, x, y+14], fill=C_GOLD, width=5)
+    def cross(x, y):   # khoá chú giải cho điểm người dùng chạm (vòng vàng viền đen)
+        d.ellipse([x-14, y-14, x+14, y+14], outline=(0, 0, 0), width=8)
+        d.ellipse([x-12, y-12, x+12, y+12], outline=(255, 193, 7), width=4)
+    def xdo(x, y):
+        d.line([x-12, y-12, x+12, y+12], fill=C_BAD, width=5)
+        d.line([x-12, y+12, x+12, y-12], fill=C_BAD, width=5)
     def ring(col, r=13, wdt=4):
         return lambda x, y: d.ellipse([x-r, y-r, x+r, y+r], outline=col, width=wdt)
     def patch(x, y):
@@ -108,11 +116,11 @@ def main():
             d.line([x+15, y+i, x+15, y+min(i+6, 13)], fill=C_GOLD, width=3)
 
     muc(50,  yA, cross,               "điểm người dùng chạm")
-    muc(50,  yB, ring(C_OK),          "điểm trả về cho câu của S1: trúng")
-    muc(50,  yC, ring(C_BAD),         "điểm trả về cho câu của Base: trượt")
-    muc(590, yA, patch,               "ô Voronoi của điểm chạm")
-    muc(590, yB, dashbox,             "vùng dung sai quy ước")
-    muc(590, yC, ring(C_OTHER, 8, 3), "tâm một phần tử cạnh tranh")
+    muc(50,  yB, ring(C_OK),          "điểm định vị cho câu của S1/101: đạt")
+    muc(50,  yC, xdo,                "điểm định vị cho câu của mô hình gốc: không đạt")
+    muc(700, yA, patch,               "ô Voronoi của điểm chạm")
+    muc(700, yB, dashbox,             "biên dọc của vùng dung sai")
+    muc(700, yC, ring(C_OTHER, 9, 3), "tâm một phần tử cạnh tranh")
 
     out.save(OUT, dpi=(600, 600))
     print("đã ghi", OUT, out.size)

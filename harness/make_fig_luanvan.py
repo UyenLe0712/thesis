@@ -20,44 +20,52 @@ H = os.path.dirname(os.path.abspath(__file__))
 RUNS = os.path.join(H, "..", "runs")
 OUT = os.path.join(H, "..", "thesis", "figures")
 IMG = os.path.join(H, "dg1_cache", "test_ac", "images")
-FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-FONTB = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+FONT = "/usr/share/fonts/truetype/liberation/LiberationSerif-Regular.ttf"   # cùng cỡ chữ với Times của thân bài
+FONTB = "/usr/share/fonts/truetype/liberation/LiberationSerif-Bold.ttf"
 
 # bảng màu tham chiếu (đã kiểm phân biệt mù màu ở ba ô đầu); xám cho mốc
 XANH, CAM, NGOC, XAM, CHU = "#2a78d6", "#eb6834", "#1baf7a", "#9a9993", "#0b0b0b"
-plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 10, "axes.edgecolor": "#52514e",
+from matplotlib import font_manager
+for _f in (FONT, FONTB):
+    font_manager.fontManager.addfont(_f)
+plt.rcParams.update({"font.family": "Liberation Serif", "mathtext.fontset": "stix", "font.size": 10, "axes.edgecolor": "#52514e",
                      "axes.labelcolor": CHU, "xtick.color": "#52514e", "ytick.color": "#52514e",
                      "axes.spines.top": False, "axes.spines.right": False})
 J = lambda f: json.load(open(os.path.join(RUNS, f), encoding="utf-8"))
 key = lambda r: (str(r["episode_id"]), str(r["step_id"]))
 JL = lambda f: {key(r): r for r in map(json.loads, open(os.path.join(RUNS, f), encoding="utf-8"))}
-vn = lambda x, nd=1: f"{x:.{nd}f}".replace(".", ",")
+from decimal import Decimal, ROUND_HALF_UP
+# làm tròn kiểu thập phân (60,654 → 60,7), tránh lỗi dấu phẩy động của f-string
+vn = lambda x, nd=1: str(Decimal(str(x)).quantize(Decimal(1).scaleb(-nd), ROUND_HALF_UP)).replace(".", ",")
 
 
 def fig_ba_luat():
     P, A, N = J("luat_d3.json")["n4463"], J("luat_aitw_day_du.json")["n4463"], J("hang_ck500_tage.json")
-    hang = [("Base", "Base"), ("S1/101", "S1 (101)"), ("MIN-DESC/101", "MIN-DESC"),
-            ("GRPO-point/101", "Chặng ba"), ("ck500", "Thưởng\nSPICE"), ("Câu người (trần)", "Câu chuẩn")]
+    N = dict(N, ace=J("hang_ace.json"))
+    hang = [("Base", "Mô hình\ngốc"), ("S1/101", "S1/101"), ("MIN-DESC/101", "MIN-DESC"),
+            ("GRPO-point/101", "Giai đoạn\nba"), ("ck500", "GRPO-\nSPICE"), ("ace", "Phương pháp\nđề xuất"),
+            ("Câu người (trần)", "Câu tham\nchiếu")]
     def v(k, c):
-        if k == "ck500":
+        if k in ("ck500", "ace"):
             return {"aitw": N[k]["aitw_full"], "d3": N[k]["d3"], "vor": N[k]["vor"]}[c]
         return A[k]["aitw_full"] if c == "aitw" else P[k][c]
-    luat = [("aitw", "Luật khớp chạm AitW", XANH), ("d3", "Hộp phần tử (D.3)", NGOC), ("vor", "Executability", CAM)]
-    fig, ax = plt.subplots(figsize=(7.4, 3.6), dpi=200)
+    luat = [("vor", "Executability", CAM), ("d3", "Hộp phần tử (AndroidControl)", NGOC),
+            ("aitw", "Khoảng cách Euclid (AndroidInTheWild)", XANH)]
+    fig, ax = plt.subplots(figsize=(7.8, 3.7), dpi=200)
     w = 0.26
     for j, (c, ten, mau) in enumerate(luat):
         xs = [i + (j - 1) * w for i in range(len(hang))]
         ys = [v(k, c) for k, _ in hang]
         ax.bar(xs, ys, w - 0.03, color=mau, label=ten, zorder=2)
         for x, y in zip(xs, ys):
-            ax.text(x, y + 1.0, vn(y), ha="center", va="bottom", fontsize=6.6, color=CHU)
+            ax.text(x, y + 1.0, vn(y), ha="center", va="bottom", fontsize=6.4, color=CHU)
     ax.set_xticks(range(len(hang)))
     ax.set_xticklabels([t for _, t in hang])
     ax.set_ylim(0, 100)
-    ax.set_ylabel("% bước chạm (n = 4.463)")
+    ax.set_ylabel("% số bước có thao tác chạm (n = 4.463)")
     ax.yaxis.grid(True, color="#e6e5e0", zorder=0)
     ax.axvspan(len(hang) - 1.5, len(hang) - 0.5, color="#f0efec", zorder=0)
-    ax.legend(frameon=False, ncol=3, loc="upper left", fontsize=8.5)
+    ax.legend(frameon=False, ncol=3, loc="upper left", fontsize=8.5, bbox_to_anchor=(0, 1.08))
     fig.tight_layout()
     fig.savefig(os.path.join(OUT, "fig_ba_luat.png"))
     plt.close(fig)
@@ -82,7 +90,7 @@ def fig_khongcham():
     ax.set_yticklabels([f"{ten[k]} (n = {D[k]['n']:,})".replace(",", ".") for k in thu])
     ax.axvline(0, color="#52514e", lw=0.8)
     ax.set_xlim(-11.5, 9)
-    ax.set_xlabel("Thưởng SPICE − S1 (101), điểm khớp loại thao tác, KTC 95%")
+    ax.set_xlabel("GRPO-SPICE − S1/101, chênh lệch tỉ lệ đúng loại thao tác (điểm), KTC 95%")
     ax.xaxis.grid(True, color="#e6e5e0", zorder=0)
     fig.tight_layout()
     fig.savefig(os.path.join(OUT, "fig_khongcham.png"))
@@ -96,7 +104,7 @@ def fig_tage_cong():
     loc = {}
     for f in ("tage_test/loc_test_s0.jsonl", "tage_test/loc_test_s1.jsonl"):
         loc.update(JL(f))
-    bins = [(-1e9, 0, "≤ 0"), (0, 0.4, "(0; 0,4]"), (0.4, 0.73767, "(0,4; 0,74]"), (0.73767, 1e9, "> 0,74\n(cổng nhận)")]
+    bins = [(-1e9, 0, "≤ 0"), (0, 0.4, "(0; 0,4]"), (0.4, 0.73767, "(0,4; 0,74]"), (0.73767, 1e9, "> 0,74\n(bộ chọn nhận)")]
     dem = [[0, 0] for _ in bins]
     for k, m in meta.items():
         if m["edit"] == m["draft"]:
@@ -110,7 +118,7 @@ def fig_tage_cong():
     # đối chiếu report/269 §3: nhóm cổng nhận = 219 câu, bộ định vị trúng 80 (bảng tách theo điểm vàng).
     # Bảng Δlp của 269 in 36,9% / n = 217 vì cắt ở 0,74 đã làm tròn; ở đây cắt đúng τ = 0,73767.
     assert dem[-1] == [219, 80], dem
-    fig, ax = plt.subplots(figsize=(6.2, 2.9), dpi=200)
+    fig, ax = plt.subplots(figsize=(5.2, 2.9), dpi=220)
     xs = range(len(bins))
     ax.bar(xs, ti, 0.55, color=[XANH, XANH, XANH, CAM], zorder=2)
     for x, t, (n, _) in zip(xs, ti, dem):
@@ -118,52 +126,70 @@ def fig_tage_cong():
     ax.set_xticks(list(xs))
     ax.set_xticklabels([b[2] for b in bins])
     ax.set_ylim(0, 100)
-    ax.set_xlabel("Δlp = lp(câu sửa) − lp(câu nháp), chỉ các câu bị đổi")
-    ax.set_ylabel("% vùng cắt đúng chỗ")
+    ax.set_xlabel("Δlp = lp(câu sửa) − lp(câu ban đầu), chỉ tính các câu bị đổi")
+    ax.set_ylabel("% bước bộ định vị trỏ đúng\n(trong dung sai 14%)")
     ax.yaxis.grid(True, color="#e6e5e0", zorder=0)
     fig.tight_layout()
     fig.savefig(os.path.join(OUT, "fig_tage_cong.png"))
     plt.close(fig)
 
 
-def ve_buoc(path, gold, diem, cat=None, cao=None):
-    """Ảnh màn hình + điểm vàng (vòng đen) + các điểm (màu, dạng). Trả ảnh RGB."""
-    im = Image.open(path).convert("RGB")
+VANG = (255, 193, 7)   # điểm người dùng chạm: vòng vàng viền đen, thấy rõ trên cả nền sáng lẫn nền tối
+
+
+def ve_buoc(path, gold, diem, cat=None, cao=None, to=1.0):
+    """Ảnh màn hình + điểm người dùng chạm (vòng vàng) + các điểm định vị (vòng xanh lá = đạt, X đỏ = không đạt)."""
+    nen = Image.open(path).convert("RGBA")
+    d0 = ImageDraw.Draw(nen)
+    if cat:   # ô cắt vẽ đậm, không phủ trong suốt
+        (cx, cy), s = cat, 0.4 * nen.size[0]
+        W0, H0 = nen.size
+        x0, y0 = max(5, cx - s / 2), max(5, cy - s / 2)
+        x1, y1 = min(W0 - 5, cx + s / 2), min(H0 - 5, cy + s / 2)
+        if cao:
+            y1 = min(y1, cao[3] - 6); x0 = max(x0, cao[0] + 6)
+        d0.rectangle([x0, y0, x1, y1], outline=(235, 104, 52), width=9)
+    im = Image.new("RGBA", nen.size, (0, 0, 0, 0))   # điểm định vị: lớp riêng, phủ bán trong suốt để chữ bên dưới vẫn đọc được
     d = ImageDraw.Draw(im)
-    if cat:
-        (cx, cy), s = cat, 0.4 * im.size[0]
-        d.rectangle([cx - s / 2, cy - s / 2, cx + s / 2, cy + s / 2], outline=(235, 104, 52), width=9)
-    def vong(p, col, r=34, w=9):
-        d.ellipse([p[0] - r, p[1] - r, p[0] + r, p[1] + r], outline=(255, 255, 255), width=w + 6)
-        d.ellipse([p[0] - r, p[1] - r, p[0] + r, p[1] + r], outline=col, width=w)
-    vong(gold, (0, 0, 0), 44, 10)
     for p, col, dang in diem:
         if dang == "x":
             for s in ((1, 1), (1, -1)):
-                for wd, c in ((22, (255, 255, 255)), (12, col)):
-                    d.line([p[0] - 30 * s[0], p[1] - 30 * s[1], p[0] + 30 * s[0], p[1] + 30 * s[1]], fill=c, width=wd)
+                for wd, c in ((int(11 * to), (255, 255, 255)), (int(6 * to), col)):
+                    d.line([p[0] - 26 * to * s[0], p[1] - 26 * to * s[1], p[0] + 26 * to * s[0], p[1] + 26 * to * s[1]], fill=c, width=wd)
         else:
-            d.ellipse([p[0] - 22, p[1] - 22, p[0] + 22, p[1] + 22], fill=col, outline=(255, 255, 255), width=6)
+            r = 24 * to
+            d.ellipse([p[0] - r, p[1] - r, p[0] + r, p[1] + r], outline=(255, 255, 255), width=int(12 * to))
+            d.ellipse([p[0] - r, p[1] - r, p[0] + r, p[1] + r], outline=col, width=int(7 * to))
+    im.putalpha(im.getchannel("A").point(lambda v: v * 0.8))
+    im = Image.alpha_composite(nen, im)
+    d = ImageDraw.Draw(im)
+    r, w = 44 * to, int(8 * to)   # vòng vàng to hơn vòng xanh lá nên hai vòng không che nhau
+    d.ellipse([gold[0] - r, gold[1] - r, gold[0] + r, gold[1] + r], outline=(0, 0, 0), width=w + int(6 * to))
+    d.ellipse([gold[0] - r + 3 * to, gold[1] - r + 3 * to, gold[0] + r - 3 * to, gold[1] + r - 3 * to], outline=VANG, width=w)
+    im = im.convert("RGB")
     if cao:
         im = im.crop(cao)
     return im
 
 
-def chu_giai(w, dong, co=34):
+def chu_giai(w, dong, co=34, x0=18):
     f, fb = ImageFont.truetype(FONT, co), ImageFont.truetype(FONTB, co)
     h = 30 + len(dong) * (co + 20)
     im = Image.new("RGB", (w, h), (255, 255, 255))
     d = ImageDraw.Draw(im)
     y = 18
     for ky, col, nhan, txt in dong:
-        x = 18
-        if ky == "o":
+        x = x0
+        if ky == "vang":
+            d.ellipse([x, y + 4, x + co - 6, y + co - 2], outline=(0, 0, 0), width=9)
+            d.ellipse([x + 3, y + 7, x + co - 9, y + co - 5], outline=VANG, width=5)
+        elif ky == "o":
             d.ellipse([x, y + 4, x + co - 6, y + co - 2], outline=col, width=6)
         elif ky == "x":
             d.line([x, y + 4, x + co - 6, y + co - 2], fill=col, width=7)
             d.line([x, y + co - 2, x + co - 6, y + 4], fill=col, width=7)
         elif ky == "dot":
-            d.ellipse([x + 4, y + 8, x + co - 10, y + co - 6], fill=col)
+            d.ellipse([x + 2, y + 6, x + co - 8, y + co - 4], outline=col, width=6)
         elif ky == "sq":
             d.rectangle([x, y + 4, x + co - 6, y + co - 2], outline=col, width=6)
         d.text((x + co + 10, y), nhan, font=fb, fill=(11, 11, 11))
@@ -189,11 +215,12 @@ def fig_vidu_spice():
     W = 1500
     g = s1["gold_instruction"].strip()
     assert g == "Click on the Not now button to remove this pop up notification", g
-    cg = chu_giai(W, [("o", (0, 0, 0), "Câu chuẩn:", "“Click on the Not now button"),
+    cg = chu_giai(W, [("vang", None, "Vòng vàng:", "điểm người dùng đã chạm"),
+                      ("", None, "Câu tham chiếu:", "“Click on the Not now button"),
                       ("", None, "", "     to remove this pop up notification”"),
-                      ("x", (227, 73, 72), "S1 (101):", f"“{s1['sent']}”  → trượt"),
-                      ("dot", (27, 175, 122), "Thưởng SPICE:", "“Click on the Not Now button"),
-                      ("", None, "", f"     at the bottom of the screen”  → trúng")], co=40)
+                      ("x", (227, 73, 72), "S1/101:", f"“{s1['sent']}”  → không đạt"),
+                      ("dot", (27, 175, 122), "GRPO-SPICE:", "“Click on the Not Now button"),
+                      ("", None, "", f"     at the bottom of the screen”  → đạt")], co=42, x0=(W - im.size[0]) // 2)
     assert ck["sent"] == "Click on the Not Now button at the bottom of the screen", ck["sent"]
     can = Image.new("RGB", (W, im.size[1]), (255, 255, 255))
     can.paste(im, ((W - im.size[0]) // 2, 0))
@@ -217,21 +244,64 @@ def fig_vidu_tage():
     w = sum(i.size[0] for i, _, _ in tam) + 60
     anh = Image.new("RGB", (w, tam[0][0].size[1] + 70), (255, 255, 255))
     d = ImageDraw.Draw(anh)
-    fb = ImageFont.truetype(FONTB, 40)
+    fb = ImageFont.truetype(FONTB, 48)
     x = 0
-    for nhan, (im, _, _) in zip(("(a) cổng nhận, vùng cắt đúng chỗ", "(b) cổng nhận, vùng cắt sai chỗ"), tam):
+    for nhan, (im, _, _) in zip(("(a) Ô cắt chứa phần tử mục tiêu", "(b) Ô cắt rơi vào phần tử khác"), tam):
         d.text((x + 10, 10), nhan, font=fb, fill=(11, 11, 11))
         anh.paste(im, (x, 70)); x += im.size[0] + 60
     (_, ma, _), (_, mb, _) = tam
-    cg = chu_giai(w, [("sq", (235, 104, 52), "Ô cam:", "vùng cắt 40% bề ngang quanh điểm bộ định vị đoán"),
-                      ("o", (0, 0, 0), "Vòng đen:", "điểm người dùng đã chạm"),
-                      ("dot", (27, 175, 122), "Chấm xanh / dấu đỏ:", "câu trúng / câu trượt dưới mô hình định vị"),
-                      ("", None, "(a) nháp:", f"“{ma['draft']}”  →  sửa: “{ma['edit']}”"),
-                      ("", None, "(b) nháp:", f"“{mb['draft']}”  →  sửa: “{mb['edit']}”")], co=32)
+    cg = chu_giai(w, [("sq", (235, 104, 52), "Khung cam:", "ô cắt rộng 40% bề ngang quanh điểm mà bộ định vị dự đoán"),
+                      ("vang", None, "Vòng vàng:", "điểm người dùng đã chạm"),
+                      ("dot", (27, 175, 122), "Vòng xanh lá:", "điểm định vị cho câu đạt, (a) câu sửa, (b) câu ban đầu"),
+                      ("x", (227, 73, 72), "Dấu X đỏ:", "điểm định vị cho câu không đạt, (a) câu ban đầu, (b) câu sửa"),
+                      ("", None, "(a) câu ban đầu:", f"“{ma['draft']}”"),
+                      ("", None, "      câu sửa:", f"“{ma['edit']}”"),
+                      ("", None, "(b) câu ban đầu:", f"“{mb['draft']}”"),
+                      ("", None, "      câu sửa:", f"“{mb['edit']}”")], co=46)
     ghep_doc(anh, cg).save(os.path.join(OUT, "fig_vidu_tage.png"))
+
+
+def fig_bai_toan():
+    """Ảnh nền cho Hình 1.1 (phần chữ viết bằng TikZ trong luận văn)."""
+    k = ("18794", "3")
+    ace, base = JL("ra304_luat/score_R3_test_raw.jsonl")[k], JL("score_base_raw.jsonl")[k]
+    assert ace["executable"] == 1 and base["executable"] == 0
+    assert ace["sent"] == "Click on the bin icon at the bottom right corner of the screen", ace["sent"]
+    im = ve_buoc(os.path.join(IMG, "ep18794_s3.png"), ace["gold_xy"],
+                 [(base["pred_xy"], (227, 73, 72), "x"), (ace["pred_xy"], (27, 175, 122), "dot")], to=2.0)
+    im.save(os.path.join(OUT, "fig_bai_toan_anh.png"))
+
+
+def fig_chenh_lech():
+    """Hình 6.2: chênh lệch so với S1/101 theo ba tiêu chí, kèm KTC 95% (runs/chenh_so_s1_25_10.json)."""
+    C = J("chenh_so_s1_25_10.json")
+    hang = [("ACE", "Phương pháp đề xuất"), ("GRPO-SPICE", "GRPO-SPICE"), ("GRPO-SPICE/202", "GRPO-SPICE (seed 202)"),
+            ("S1/202", "S1/202 (chỉ đổi seed)"),
+            ("GRPO-point/101", "Giai đoạn ba/101"), ("MIN-DESC/101", "MIN-DESC/101"), ("CE2-S2/101", "CE2-S2/101"),
+            ("S2/101", "S2/101")]
+    cot = [("vor", "Executability", CAM, "o"), ("d3", "Hộp phần tử", NGOC, "s"), ("aitwf", "Khoảng cách Euclid", XANH, "D")]
+    fig, ax = plt.subplots(figsize=(6.0, 3.9), dpi=220)
+    y = list(range(len(hang)))[::-1]
+    for (c, ten, mau, dang), dy in zip(cot, (0.22, 0, -0.22)):
+        for yi, (k, _) in zip(y, hang):
+            d, lo, hi = C[f"{k}|{c}"]
+            ax.plot([lo, hi], [yi + dy] * 2, color=mau, lw=1.6, zorder=2)
+            ax.plot(d, yi + dy, dang, color=mau, ms=5, zorder=3, label=ten if k == "ACE" else None)
+    ax.axvline(0, color="#52514e", lw=0.9, zorder=1)
+    ax.axhspan(y[2] - 0.5, y[0] + 0.5, color="#f3f2ee", zorder=0)
+    for yy in (y[2] - 0.5, y[3] - 0.5):
+        ax.axhline(yy, color="#b9b8b2", lw=0.7, ls=(0, (4, 3)), zorder=1)
+    ax.set_yticks(y)
+    ax.set_yticklabels([t for _, t in hang])
+    ax.set_xlabel("Chênh lệch so với S1/101 (điểm), khoảng tin cậy 95%")
+    ax.xaxis.grid(True, color="#e6e5e0", zorder=0)
+    ax.legend(frameon=False, ncol=3, loc="lower center", bbox_to_anchor=(0.5, 1.0), fontsize=8.5)
+    fig.tight_layout()
+    fig.savefig(os.path.join(OUT, "fig_chenh_lech.png"))
+    plt.close(fig)
 
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
-    for f in (fig_ba_luat, fig_khongcham, fig_tage_cong, fig_vidu_spice, fig_vidu_tage):
+    for f in (fig_ba_luat, fig_khongcham, fig_tage_cong, fig_vidu_spice, fig_vidu_tage, fig_bai_toan, fig_chenh_lech):
         f(); print("xong", f.__name__)
