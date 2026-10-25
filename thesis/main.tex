@@ -623,34 +623,51 @@ Với ảnh chụp màn hình và mục tiêu tác vụ, hệ thống cần tạ
 
 Ba bước đầu thuộc luồng tạo câu hướng dẫn cuối cùng. Khâu đánh giá được thực hiện riêng và không tham gia vào quá trình suy luận.
 
-\begin{figure}[t]
+\begin{figure}[!htb]
 \centering
 \begin{tikzpicture}[
   font=\small,
-  blk/.style={draw=black!70, rounded corners=3pt, align=center,
-              text width=0.62\textwidth, inner sep=6pt, fill=white},
-  huanluyen/.style={blk, thick},
-  dongoc/.style={align=center, font=\small, rounded corners=3pt, inner sep=5pt},
-  danhgia/.style={draw=black!55, rounded corners=3pt, align=center,
-                  text width=0.48\textwidth, inner sep=5pt, fill=white, dashed},
+  hop/.style={draw, rounded corners=3pt, align=center, inner sep=5pt, thick},
+  vao/.style={hop, draw=blue!50!black, fill=blue!8},
+  grpo/.style={hop, draw=orange!70!black, fill=orange!15},
+  con/.style={hop, draw=green!45!black, fill=white, text width=3.55cm, minimum height=1.45cm},
+  ra/.style={hop, draw=teal!70!black, fill=teal!12},
+  dg/.style={draw=black!55, rounded corners=3pt, align=center, inner sep=5pt, fill=black!4, dashed},
+  so/.style={circle, fill=#1, text=white, font=\footnotesize\bfseries, inner sep=1.4pt},
   mui/.style={-{Latex[length=2.4mm]}, draw=black!70, thick},
-  muidut/.style={-{Latex[length=2.2mm]}, draw=black!55, dashed}
+  nhan/.style={font=\footnotesize, fill=white, inner sep=1.5pt}
 ]
-\node (vao) [dongoc, draw=blue!50!black, fill=blue!8] {ảnh màn hình\ \ $+$\ \ mục tiêu\ \ $+$\ \ lịch sử tham chiếu\ \ $+$\ \ văn bản OCR};
-\node (draft) [huanluyen, draw=orange!70!black, fill=orange!15, below=6mm of vao]
-  {thành phần thứ nhất: S1 học tiếp bằng GRPO với phần thưởng SPICE\\ sinh \textbf{câu hướng dẫn ban đầu} bằng giải mã tham lam};
-\node (ace) [huanluyen, draw=green!45!black, fill=green!12, below=7mm of draft]
-  {ACE: truy hồi câu ví dụ $+$ mô hình sinh câu $+$ điều kiện đồng thuận};
-\node (ra) [dongoc, draw=teal!70!black, fill=teal!12, below=6mm of ace] {câu hướng dẫn cuối};
-\node (dg) [danhgia, fill=black!4, below=9mm of ra]
-  {đánh giá ở Chương~\ref{chap:5}: mô hình định vị $+$ tiêu chí đánh giá của executability};
+\node (vao) [vao, text width=0.82\textwidth] {\textbf{Đầu vào của một bước:} ảnh màn hình, mục tiêu tác vụ, các câu hướng dẫn ở bước trước, văn bản OCR};
 
-\draw [mui] (vao) -- (draft);
-\draw [mui] (draft) -- (ace);
-\draw [mui] (ace) -- (ra);
-\draw [muidut] (ra) -- (dg);
+\node (b1) [grpo, text width=0.82\textwidth, below=7mm of vao]
+  {\textbf{Sinh câu hướng dẫn ban đầu}\\ S1 học tiếp bằng GRPO với phần thưởng SPICE (Mục~\ref{sec:4.5}), giải mã tham lam};
+\node [so=orange!75!black] at (b1.north west) {1};
+
+\node (tde) [font=\small\bfseries, text=green!30!black, below=12mm of b1.south west, anchor=north west, xshift=3mm] {ACE: hiệu chỉnh bằng câu ví dụ (Mục~\ref{sec:4.6})};
+\node (truy) [con, below=2mm of tde.south west, anchor=north west]
+  {truy hồi \textbf{4 câu ví dụ}\\ từ tập huấn luyện\\ (TF-IDF trên văn bản)};
+\node (sinh) [con, right=6mm of truy]
+  {sinh \textbf{câu ứng viên}\\ từ đầu vào\\ $+$ 4 câu ví dụ};
+\node (dk) [con, right=6mm of sinh, fill=green!6]
+  {câu ứng viên \textbf{trùng một câu ví dụ} và \textbf{cùng loại thao tác} với câu ban đầu?};
+\begin{scope}[on background layer]
+  \node (ace) [draw=green!45!black, thick, rounded corners=4pt, fill=green!12, inner sep=3mm,
+               fit=(tde)(truy)(sinh)(dk)] {};
+\end{scope}
+\node [so=green!45!black] at (ace.north west) {2};
+
+\node (ra) [ra, text width=0.62\textwidth, below=10mm of ace] {\textbf{Câu hướng dẫn cuối}\\ thỏa điều kiện: câu ứng viên\quad không thỏa: câu ban đầu};
+\node (dg) [dg, text width=0.62\textwidth, below=10mm of ra]
+  {Đánh giá ở Chương~\ref{chap:5}: mô hình định vị đọc câu và chỉ ra phần tử trên màn hình (không thuộc luồng sinh câu)};
+
+\draw [mui] (vao) -- (b1);
+\draw [mui] (b1.south -| dk.north) -- node[nhan, pos=0.3, right=1mm] {câu ban đầu} (dk.north);
+\draw [mui] (truy) -- (sinh);
+\draw [mui] (sinh) -- (dk);
+\draw [mui] (ace.south) -- (ra.north);
+\draw [mui, draw=black!50, dashed] (ra) -- (dg);
 \end{tikzpicture}
-\caption[Quy trình sinh hướng dẫn của phương pháp đề xuất.]{Quy trình sinh hướng dẫn của phương pháp đề xuất. Khối cam tạo câu hướng dẫn ban đầu, khối xanh lá hiệu chỉnh câu bằng ACE; nhánh nét đứt là quy trình đánh giá riêng ở Chương~\ref{chap:5}, không phải thành phần của luồng suy luận.}
+\caption[Quy trình sinh hướng dẫn của phương pháp đề xuất.]{Quy trình sinh hướng dẫn của phương pháp đề xuất. Bước 1 (khối cam) sinh câu hướng dẫn ban đầu. Bước 2 (khối xanh lá) là ACE: truy hồi câu ví dụ, sinh câu ứng viên rồi kiểm tra điều kiện đồng thuận; câu ứng viên chỉ thay câu ban đầu khi thỏa cả hai điều kiện. Khối nét đứt là khâu đánh giá ở Chương~\ref{chap:5}, không thuộc luồng suy luận.}
 \label{fig:4.1}
 \end{figure}
 
@@ -727,30 +744,41 @@ trong đó $|\cdot|$ là số từ, và câu rỗng nhận 0 điểm. Số hạn
 
 Mỗi bước cập nhật sử dụng hai prompt; với mỗi prompt, mô hình sinh $G = 8$ câu ở nhiệt độ 1,0, mỗi câu dài tối đa 96 token. Quá trình huấn luyện gồm 500 bước cập nhật, tương ứng tổng cộng 1.000 prompt được lấy từ phần tập huấn luyện sau khi loại tập kiểm định nội bộ. Các prompt gồm mọi loại thao tác, trong đó khoảng hai phần ba là bước có thao tác chạm. Tốc độ học là $10^{-5}$ và hệ số KL là $\beta = 0{,}04$; vòng huấn luyện được tóm tắt ở Hình~\ref{fig:4.2}. GRPO sử dụng chênh lệch phần thưởng tương đối giữa các đầu ra trong cùng nhóm; nếu các ứng viên nhận cùng phần thưởng, nhóm đó không tạo ra chênh lệch để xếp hạng các ứng viên.
 
-\begin{figure}[t]
+\begin{figure}[!htb]
 \centering
 \begin{tikzpicture}[
   font=\small,
-  blk/.style={draw=black!70, rounded corners=3pt, align=center, inner sep=5pt, fill=white},
-  hl/.style={blk, fill=black!5, thick},
-  mui/.style={-{Latex[length=2.2mm]}, draw=black!70, thick},
-  nh/.style={font=\footnotesize, inner sep=1.5pt}
+  hop/.style={draw, rounded corners=3pt, align=center, inner sep=5pt, thick, minimum height=1.35cm},
+  vao/.style={hop, draw=blue!50!black, fill=blue!8},
+  hoc/.style={hop, draw=orange!70!black, fill=orange!18},
+  tinh/.style={hop, draw=black!55, fill=black!4},
+  buoc/.style={hop, draw=green!45!black, fill=green!10},
+  so/.style={circle, fill=black!70, text=white, font=\footnotesize\bfseries, inner sep=1.4pt},
+  mui/.style={-{Latex[length=2.3mm]}, draw=black!70, thick},
+  nhan/.style={font=\footnotesize, inner sep=1.5pt, align=center}
 ]
-\node (vao) [blk, text width=2.8cm] {ảnh $+$ mục tiêu\\$+$ lịch sử $+$ OCR};
-\node (pol) [hl, right=12mm of vao, text width=3.4cm] {S1 sau khi hợp nhất LoRA\\$+$ LoRA mới ($B = 0$)\\\textit{\footnotesize được cập nhật}};
-\node (nhom) [blk, right=12mm of pol, text width=2.9cm] {$8$ câu mẫu\\$y_1, \ldots, y_8$};
-\node (thuong) [blk, below=11mm of nhom, text width=2.9cm] {SPICE$(y_i, g)$\\$-$ phạt độ dài};
-\node (adv) [blk, below=11mm of pol, text width=3.4cm] {lợi thế chuẩn hoá\\trong nhóm $\hat{A}_i$};
-\node (ref) [blk, below=11mm of vao, text width=2.8cm] {S1 đóng băng\\(tham chiếu KL)};
-\node (g) [nh, right=1mm of thuong, align=left] {câu\\tham chiếu $g$};
+\node (vao) [vao, text width=2.6cm] {\textbf{prompt}\\ ảnh, mục tiêu,\\ lịch sử, OCR};
+\node (pol) [hoc, right=17mm of vao, text width=3.3cm] {\textbf{mô hình đang học}\\ S1 (đã hợp nhất)\\ $+$ LoRA mới, \emph{được cập nhật}};
+\node (nhom) [buoc, right=14mm of pol, text width=2.8cm] {sinh \textbf{8 câu} $y_1,\ldots,y_8$\\ ở nhiệt độ 1,0};
+\node (thuong) [buoc, below=13mm of nhom, text width=2.8cm] {\textbf{chấm thưởng} từng câu\\ SPICE$(y_i, g)$\\ $-$ phạt câu quá dài};
+\node (adv) [buoc, below=13mm of pol, text width=3.3cm] {\textbf{so với trung bình nhóm}\\ câu tốt hơn được tăng xác suất, câu kém hơn bị giảm};
+\node (ref) [tinh, text width=2.6cm] at (vao |- adv) {\textbf{S1 đóng băng}\\ mốc cho KL};
+\node (g) [nhan, right=4mm of thuong, text width=1.3cm] {câu tham chiếu $g$};
+
+\node [so] at (pol.north west) {1};
+\node [so] at (nhom.north west) {2};
+\node [so] at (thuong.north west) {3};
+\node [so] at (adv.north west) {4};
+
 \draw [mui] (vao) -- (pol);
 \draw [mui] (pol) -- (nhom);
 \draw [mui] (nhom) -- (thuong);
-\draw [mui] (thuong) -- (adv);
-\draw [mui] (adv) -- node[nh, right] {cập nhật} (pol);
-\draw [mui, dashed] (ref) -- node[nh, below=1mm] {$\beta\,\mathrm{KL}$} (adv);
+\draw [mui] (g) -- (thuong);
+\draw [mui] (thuong) -- node[nhan, above] {$r_i$} (adv);
+\draw [mui, draw=orange!70!black] (adv) -- node[nhan, right] {cập nhật LoRA} (pol);
+\draw [mui, dashed, draw=black!55] (ref) -- node[nhan, above] {$\beta\,\mathrm{KL}$} node[nhan, below, font=\scriptsize] {giữ gần S1} (adv);
 \end{tikzpicture}
-\caption[Vòng huấn luyện của thành phần thứ nhất, học tăng cường với phần thưởng SPICE.]{Vòng huấn luyện của thành phần thứ nhất, học tăng cường với phần thưởng SPICE. Chỉ khối tô xám được cập nhật.}
+\caption[Vòng huấn luyện của thành phần thứ nhất, học tăng cường với phần thưởng SPICE.]{Vòng huấn luyện của thành phần thứ nhất, học tăng cường với phần thưởng SPICE. Với mỗi prompt, mô hình sinh 8 câu (bước 2), mỗi câu được chấm bằng SPICE so với câu tham chiếu (bước 3), rồi so với trung bình của nhóm để cập nhật LoRA mới (bước 4). Chỉ khối màu cam được cập nhật; S1 đóng băng chỉ dùng làm mốc cho số hạng KL.}
 \label{fig:4.2}
 \end{figure}
 
