@@ -125,27 +125,31 @@ while the declaration and the preference objective add no clear benefit beyond i
 \label{sec:related}
 
 \paragraph{Language about graphical interfaces.}
-Widget Captioning~\cite{widgetcap} describes a UI element that has already been selected and reports visually identical widgets as its hardest case, and Screen2Words~\cite{screen2words} summarises
-a whole screen. VUT~\cite{vut}
-shares one encoder across five UI tasks, while Spotlight~\cite{spotlight} and
-Ferret-UI~\cite{ferretui} work from pixels with a region of focus. In our task the target element is not given, and the model has to decide on the next step before it can describe it.
+Widget Captioning~\cite{widgetcap} writes a label for a UI element that has already been selected
+and reports visually identical widgets as its hardest case. Screen2Words~\cite{screen2words}
+summarises a whole screen, VUT~\cite{vut} shares one encoder across five UI tasks, and Spotlight~\cite{spotlight} and Ferret-UI~\cite{ferretui} describe a given region or locate the element that a given expression names. None of these systems decides which element should be acted on next. In our task the model has to make that decision before it can describe the element.
 
 \paragraph{GUI control and grounding.}
 AndroidControl~\cite{androidcontrol} records $15{,}283$ human episodes and uses each step's
-instruction as \emph{input} to action prediction, whereas we use it as the generation target and
-take our localisation rule from its Appendix~D.3. Android-in-the-Wild~\cite{aitw} is the source
-of the $0.14$ normalised tolerance widely used to judge a predicted coordinate, and Sect.~\ref{sec:rules}
-compares it with two other rules before we adopt one. Grounding
-models~\cite{seeclick,osatlas,uground} map an expression to a point. We use one as the
-\emph{listener} of our metric, not as a system under test, and Sect.~\ref{sec:validate} reports its measured error and whether its training data include AndroidControl.
+instruction as \emph{input} to action prediction. We use the same instruction as the generation
+target, and take our localisation rule from its Appendix~D.3. Android-in-the-Wild~\cite{aitw}
+introduced the $0.14$ normalised tolerance that is widely used to judge a predicted coordinate;
+Sect.~\ref{sec:rules} compares it with two other rules. Grounding
+models~\cite{seeclick,osatlas,uground} map a referring expression to a point on the screen. We use
+one as the \emph{listener} of our metric, not as a system under test, and Sect.~\ref{sec:validate}
+reports its measured error and whether its training data include AndroidControl.
 
 \paragraph{Listener-based evaluation.}
-Listener-based success criteria come from discriminative referring expression generation~\cite{mao2016,luo2017,yu2016}. Newman et
-al.~\cite{newman2020} show that a model listener tracks communicative success
-better than $n$-gram overlap, and Zhao et al.~\cite{zhao2021} reach a compatible conclusion for navigation instructions. Zhao et al. also report a human reference beside the system scores, as we do. Validating a metric with injected errors and thresholds fixed in advance follows
-Sai et al.~\cite{sai2021}. Prior work also cautions that automatic proxies may diverge from human
-judgement~\cite{clark2021} and that GUI grounders can be brittle under
-rephrasing~\cite{groundersunderstand}. Section~\ref{sec:validate} tests both concerns.
+In referring expression generation, Mao et al.~\cite{mao2016} train a speaker so that its description singles out the target among the other objects, Luo and Shakhnarovich~\cite{luo2017} let the comprehension model
+guide generation, and Yu et al.~\cite{yu2016} add the visual context of competing objects. Newman et
+al.~\cite{newman2020} argue that a model listener tracks communicative success better than $n$-gram
+overlap, and Zhao et al.~\cite{zhao2021} find that BLEU, ROUGE, METEOR and CIDEr fail to judge
+navigation instructions; like us, they report a human reference beside the system scores. Our
+injection suite follows the perturbation checklists of Sai et al.~\cite{sai2021}, which test whether
+a metric reacts to controlled changes in the output. Clark et al.~\cite{clark2021} show that untrained
+human judges cannot reliably tell generated text from human text, so human ratings are not a safe gold standard either. Jandial et al.~\cite{groundersunderstand} show that GUI grounders can be
+misled by rephrased descriptions. Section~\ref{sec:validate} measures how our listener reacts to
+paraphrases and to errors of known type.
 
 %------------------------------------------------------------------------------
 \section{The GUIStep Framework}
