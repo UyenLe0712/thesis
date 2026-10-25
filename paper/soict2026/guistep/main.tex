@@ -522,20 +522,16 @@ In two typical failures the model writes \texttt{select minutes 00} where the re
 \label{sec:limits}
 
 \paragraph{Validity of the score.}
-Executability is a proxy, computed by a learned model, for whether a person can follow an
-instruction, and we have not established that link with a human study or with a manually labelled
-sample. The validation in Sect.~\ref{sec:validate} was rerun with the primary D.3 rule and fails
-four of ten criteria, among them the detection of neighbouring elements. The ranking holds under the Voronoi rule and two further listeners, but those listeners cover only the backbone and \mbox{GUIStep-S}, and absolute levels depend on the listener and the rule. Because the reconstructed boxes are stricter than AndroidControl's original labels, our scores are not directly comparable with work that uses those labels.
+Executability uses a learned model as a stand-in for a person following the instruction, and we have not checked it against human judgements or a manually labelled sample. Under the primary D.3 rule the injection suite fails four of its ten criteria, including the detection of neighbouring elements (Sect.~\ref{sec:validate}). The ranking holds under the Voronoi rule and two further listeners, but those listeners cover only the backbone and \mbox{GUIStep-S}, and absolute levels depend on the listener and the rule. Because the reconstructed boxes are stricter than AndroidControl's original labels, our scores are not directly comparable with work that uses those labels.
 
 \paragraph{Scope.}
-The experiments cover one English dataset, one backbone and touch actions only. \mbox{GUIStep-D}, \mbox{GUIStep-P} and the control were each trained once (Sect.~\ref{sec:results}). Besides the untuned backbone and our matched
+The experiments cover one English dataset, one backbone and touch actions only. \mbox{GUIStep-D}, \mbox{GUIStep-P} and the control were each trained once, so their small differences may not replicate. Besides the untuned backbone and our matched
 control, the only other pipeline is the select-then-verbalise variant, which differs from \mbox{GUIStep-S}
 in more than one setting. We know of no public system trained for this task and did not compare
 with another instruction-capable vision-language model. We report the training setting (4-bit QLoRA on a single A100 GPU) but did not measure inference latency. The exact prompts and scoring rules are given in Appendix~\ref{app:prompts}.
 
 \paragraph{Evaluation protocol.}
-$52.6\%$ of the test reference sentences repeat a training target (Sect.~\ref{sec:repeat}), and
-the history we supply consists of reference instructions instead of the model's own previous outputs. Errors cannot accumulate over a task in this setting. The declarations and
+Over half of the test references ($52.6\%$) repeat a training target (Sect.~\ref{sec:repeat}), and $90\%$ of the test tasks lie in AndroidControl's official training split (Sect.~\ref{sec:setup}). The history we supply consists of reference instructions instead of the model's own previous outputs, so errors cannot accumulate over a task. The declarations and
 preference pairs are derived automatically from the accessibility tree and were not checked by hand.
 
 \paragraph{Novelty.}
@@ -545,11 +541,8 @@ The adaptation relies on existing methods, namely QLoRA and an established prefe
 \section{Conclusion}
 \label{sec:conclusion}
 
-We have shown that the records already present in a GUI demonstration dataset suffice to train a compact model that writes next-step instructions for people, and that a frozen listener, once validated, can score such sentences without a list of admissible wordings. On AndroidControl the best configuration gains $13.0$ points of executability over the untuned backbone. Most of this gain comes from learning the recorded sentences, and the declaration and preference stages add little. One explanation is that our preference signal acts on the declaration
-and not on the sentence that is scored. Future work should put the
-grounding signal directly on the generated sentence, either by reranking sampled candidates or by
-sequence-level training with a listener reward~\cite{scst,luodisc}, and should validate the
-metric against human judgements.
+We have shown that the records already present in a GUI demonstration dataset such as AndroidControl suffice to train a compact model that writes next-step instructions for people, and that a frozen listener can score such sentences without a list of admissible wordings, although our validation leaves gaps on neighbouring elements. On AndroidControl the best configuration gains $13.0$ points of executability over the untuned backbone. Most of this gain comes from learning the recorded sentences, and the declaration and preference stages add little. One explanation is that our preference signal acts on the declaration
+and not on the sentence that is scored. Future work should put the grounding signal directly on the generated sentence, either by reranking sampled candidates or by sequence-level training with a listener reward~\cite{scst,luodisc}. The metric also needs a check against human judgements, and the framework a second dataset with step-level human instructions.
 
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
