@@ -246,3 +246,45 @@ G11. Dữ liệu huấn luyện của Phi-Ground (tra 25/10 tối, tận nguồn
   · GUIAct có tập con smartphone lấy từ AITW-general (GUICourse, ACL 2025, 9.157 mẫu). Bài Phi-Ground không nói dùng tập con web hay cả smartphone. Việc này không ảnh hưởng phép đo trên AndroidControl, nhưng **có ảnh hưởng nếu dùng Phi-Ground chấm AitZ** (AitZ dựng trên AITW, có nhóm general).
 - Venue: chỉ là arXiv preprint, chưa thấy bản bình duyệt; trích phải ghi đúng như vậy.
 - Cách viết được phép: "Phi-Ground-4B dựng trên Phi-3.5-Vision (ngoài họ Qwen), theo báo cáo kỹ thuật không dùng AndroidControl để huấn luyện". Như vậy dưới Phi-Ground (G10) cả hai đòn "bộ trỏ quen văn phong AndroidControl" và "bộ trỏ cùng họ Qwen" cùng được đóng, với điều kiện ghi rõ là dựa trên khai báo của báo cáo kỹ thuật, và khai luôn mức ck500 − S1/101 chỉ +0,78 [+0,05; +1,51]. Vẫn không viết "chưa từng thấy màn hình di động".
+
+G12. Ba lượt Kaggle đêm 25/10 (xong trước 5:00 sáng 26/10). Số test, một hạt giống mỗi nhánh, ghép cặp bằng `score_run.cluster_bootstrap` (B = 10.000), McNemar chính xác.
+
+**xao101 (nhánh kiểm sàn: GRPO 500 bước, thưởng SPICE bị xáo).** Kernel `uyenle0712/ck500-xao101-test`, đầu ra `runs/xao101/test/` (preds 4.463 dòng, kiểm hoà 16/20 trùng S1/101 như mọi lượt trước). Bảng ghép cặp ở `runs/xao101/test/so_ghep_cap_xao101.json`.
+| nhánh | exec | D.3 | AitW đầy đủ |
+|---|---|---|---|
+| S1/101 | 59,11 | 65,49 | 74,37 |
+| xao101 | 59,11 | 65,58 | 74,59 |
+| ck500 | 60,65 | 67,02 | 76,25 |
+| ck500/202 | 59,94 | 66,55 | 76,23 |
+| R3 (ACE) | 60,68 | 67,11 | 76,32 |
+- xao101 − S1/101: exec **+0,00 [−0,41; +0,42]**, cứu 45 phá 45, p = 1 · D.3 +0,09 · AitW +0,22 (p = 0,35).
+- ck500 − xao101: exec **+1,55 [+0,81; +2,30]**, cứu 163 phá 94, p = 2e−5 · D.3 +1,43 [+0,69; +2,20] · AitW +1,66 [+0,94; +2,41].
+- ck500/202 − xao101: exec +0,83 [+0,02; +1,65] p = 0,033 · D.3 +0,96 p = 0,016 · AitW +1,64 p = 3e−5.
+- R3 − xao101: exec +1,57 [+0,85; +2,29] p = 1e−5.
+- xao101 đổi câu ở 593/4.463 bước so với S1/101 (ck500 đổi 1.668).
+Cách đọc: chạy thêm 500 bước GRPO cùng cấu hình (cùng KL, cùng số mẫu, cùng câu nhắc) nhưng thưởng không mang thông tin thì không tăng gì so với S1. Vậy toàn bộ mức +1,55 của ck500 thuộc về tín hiệu SPICE, không phải việc train thêm. Đây là đòn "chưa có nhánh so sánh train thêm" (từng chưa đóng từ lượt GRPO-point 6/9), nay đã đóng cho ck500. Phải khai: kl của xao101 thấp hơn ck500 10 đến 30 lần, tức thưởng xáo làm chính sách gần như đứng yên; đó đúng là điều nhánh kiểm sàn cần cho thấy, nhưng không chứng minh mọi tín hiệu thưởng khác SPICE cũng vô ích. Hạt 202 của ck500 hơn xao101 ít hơn (+0,83, KTC sát 0).
+
+**AitZ zero-shot (bộ dữ liệu thứ hai, không train thêm).** Kernel `trangphuongngoc/aitz-gen-s1-ck500` (bản 2), 5,6 h trên T4×2, đầu ra `runs/aitz/gen_25_10/v2/` (cả bốn nhánh đủ 2.736 câu, kiểm hoà 16/20). Cụm bootstrap = episode (506 cụm, G hiệu dụng 398). Bảng ghép cặp ở `runs/aitz/gen_25_10/v2/so_ghep_cap_aitz.json`.
+| nhánh | exec | hit_disk | action_ok |
+|---|---|---|---|
+| Base 3B | 34,50 | 47,51 | 94,08 |
+| S1/101 | 37,79 | 50,00 | 93,46 |
+| ck500 | 37,28 | 49,56 | 92,40 |
+| ck500/202 | 36,62 | 48,90 | 92,62 |
+- S1/101 − Base: exec **+3,29 [+1,51; +5,03]** p = 4,5e−4 · ck500 − Base +2,78 [+1,02; +4,50] p = 0,003 · ck500/202 − Base +2,12 [+0,44; +3,76] p = 0,021.
+- ck500 − S1/101: exec **−0,51 [−1,39; +0,36]**, cứu 81 phá 95, p = 0,33 · action_ok −1,06 [−1,72; −0,40] p = 0,002.
+- ck500/202 − S1/101: exec −1,17 [−2,12; −0,22] p = 0,027.
+- Trên 2.502 bước cả S1 lẫn ck500 đúng loại thao tác: S1 40,17 · ck500 40,45. Vậy phần thua của ck500 nằm ở loại thao tác, phần định vị ngang S1.
+Cách đọc: tinh chỉnh trên AndroidControl chuyển được sang AitZ (cả ba nhánh hơn Base có ý nghĩa), nhưng mức tăng của GRPO thưởng SPICE **không chuyển sang miền khác**; hạt 202 còn thấp hơn S1 có ý nghĩa. Không được viết "ck500 hơn S1 trên AitZ". Cách viết đúng: "trên AitZ, ck500 ngang S1 (−0,51, KTC phủ 0); lợi ích của thưởng SPICE gắn với phân phối câu chuẩn của AndroidControl". Phải khai kèm: câu chuẩn AitZ do GPT-4V sinh rồi người duyệt (văn phong khác AndroidControl, mà SPICE thưởng đúng văn phong AndroidControl); UGround có AITZ 8K trong dữ liệu huấn luyện; ảnh AitZ nhỏ (nhiều màn 270×600); chưa có mốc câu chuẩn chấm qua UGround trên AitZ (cần một lượt ~1,3 h T4) nên chưa biết trần; ACE/R3 chưa chạy trên AitZ.
+
+**Qwen2.5-VL-7B-Instruct prompting (mốc so bên ngoài, việc #3 của report/322).** Kernel `trangphngngc/qwen7b-test` (phiên khác đẩy, ở đây chỉ đọc), đầu ra `runs/qwen7b/test_25_10/`, chấm đủ 4.463 bước trong một commit, 0 câu rỗng. Bảng ghép cặp ở `runs/qwen7b/test_25_10/so_ghep_cap_q7b.json`.
+| nhánh | exec | D.3 | AitW đầy đủ |
+|---|---|---|---|
+| Base 3B | 47,59 | 53,60 | 63,39 |
+| 7B prompting | 51,51 [49,82; 53,15] | 57,67 | 66,79 |
+| S1/101 | 59,11 | 65,49 | 74,37 |
+| ck500 | 60,65 | 67,02 | 76,25 |
+- 7B − Base 3B: exec +3,92 [+2,66; +5,23] p = 5e−10.
+- S1/101 − 7B: exec **+7,60 [+5,95; +9,28]** · ck500 − 7B **+9,14 [+7,55; +10,75]** · R3 − 7B +9,16 [+7,57; +10,79], đều p < 1e−24, giữ ở cả D.3 và AitW.
+- 7B: action_ok 96,37, câu trung vị 64 ký tự (S1 33). Tốc độ sinh 0,4 bước/giây trên T4×2 (đọc từ `infer.log`; VRAM chưa có trong log, việc #7 còn thiếu số VRAM).
+Cách đọc: mô hình 3B đã tinh chỉnh hơn mô hình 7B cùng họ không tinh chỉnh khoảng 9 điểm exec, gấp đôi mức 7B hơn 3B gốc. Phải khai: cùng câu nhắc của Base (không tối ưu câu nhắc riêng cho 7B), cùng họ Qwen với mô hình và bộ trỏ, chưa kiểm 7B có thấy AndroidControl lúc huấn luyện; câu 7B dài gấp đôi, mà thước có thiên vị câu dài (+5,4) nghiêng về phía 7B, nên chiều so có lợi cho 7B chứ không bất lợi.
