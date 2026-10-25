@@ -155,8 +155,7 @@ paraphrases and to errors of known type.
 \section{The GUIStep Framework}
 \label{sec:framework}
 
-GUIStep has three parts that do not depend on a particular dataset: a task definition, a way of
-building supervision from records that GUI datasets already contain, and an execution-based score. The score needs only the screenshot, the sentence and the recorded touch, so it applies to any dataset that records touches. Figure~\ref{fig:pipeline} shows how they connect. Section~\ref{sec:metric} defines and validates the score, and Sect.~\ref{sec:setup} instantiates the framework on AndroidControl.
+GUIStep consists of a task definition, a recipe for building supervision from records that a GUI dataset already contains, and an execution-based score. None of the three is specific to AndroidControl. The score needs only the screenshot, the sentence and the recorded touch, so it applies to any dataset that records touches. Figure~\ref{fig:pipeline} shows how they connect. Section~\ref{sec:metric} defines and validates the score, and Sect.~\ref{sec:setup} instantiates the framework on AndroidControl.
 
 \begin{figure}[t]
 \centering
@@ -187,14 +186,10 @@ already contains. Only the generated sentence and the screenshot reach the liste
 
 \paragraph{Task.}
 At step $t$ of a task, the input is the screenshot, the task goal, the instructions of the
-previous steps and the text read from the screen by OCR. The output is one sentence for a person that
-names the next action and its target. The target element, its coordinates and the UI structure
-tree are not inputs.
+previous steps and the text read from the screen by OCR. The output is one sentence, written for a person, that names the next action and its target element. The target element, its coordinates and the UI structure tree are not inputs, so the model has to infer the target from the screen.
 
 \paragraph{Supervision from recorded demonstrations.}
-GUI datasets commonly store, for every step, a human instruction, the touched point and a UI
-structure tree (an accessibility tree or view hierarchy). GUIStep uses these three records and
-collects no new labels. (a) The \emph{sentence target} is the recorded instruction. (b) The
+Some GUI datasets, AndroidControl among them, store for every step a human instruction, the touched point and a UI structure tree (an accessibility tree or view hierarchy). GUIStep uses these three records and collects no new labels. (a) The \emph{sentence target} is the recorded instruction. (b) The
 \emph{target declaration} is a structured description of the touched element,
 \texttt{role | name | point | relation}, computed by rule from the tree node that contains the
 touched point. (c) A \emph{preference pair} contrasts the target with a nearby competing element
@@ -203,7 +198,7 @@ competitor, and both end with the same recorded sentence, so the two sides diffe
 declared element.
 
 \paragraph{Configurations.}
-Table~\ref{tab:configs} lists the three configurations, named after what they add (S for sentence, D for declaration, P for preference), and the matched control. For \mbox{GUIStep-D} and
+Table~\ref{tab:configs} lists the three configurations, named after their training target (S for sentence, D for declaration) or objective (P for preference). \mbox{GUIStep-P} trains longer than \mbox{GUIStep-D}, so we add a control that receives the same extra updates without the preference objective. For \mbox{GUIStep-D} and
 \mbox{GUIStep-P} the declaration is generated first and discarded, and only the sentence that follows is
 evaluated.
 
