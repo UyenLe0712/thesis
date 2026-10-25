@@ -61,11 +61,7 @@ with a listener from another model family.
 \section{Introduction}
 \label{sec:intro}
 
-A user who gets stuck halfway through a phone task needs to be told, in one sentence, what to touch next, for example \emph{Click on the share icon at the top right of the screen}. Research on GUI agents usually targets a different output. Given a screenshot and a goal,
-SeeClick~\cite{seeclick}, OS-Atlas~\cite{osatlas} and UGround~\cite{uground} emit a
-machine-readable action such as \texttt{click(872,141)} so that software can act on the
-user's behalf. Any language they produce along the way is an intermediate step and is not evaluated. Our target is the next-step instruction, written for a human reader, and
-Fig.~\ref{fig:overview} shows one such step.
+A user who gets stuck halfway through a phone task needs to be told, in one sentence, what to touch next, for example \emph{Click on the share icon at the top right of the screen}. Sentences of this kind make up help pages and step-by-step user guides. Research on GUI agents mostly targets a different output. Agents such as SeeClick~\cite{seeclick} and OS-Atlas~\cite{osatlas}, and grounding models such as UGround~\cite{uground}, produce a machine-readable action such as \texttt{click(872,141)} so that software can act on the user's behalf, and any language they produce along the way is an intermediate step that is not evaluated. We instead generate the instruction itself, for a human reader (Fig.~\ref{fig:overview}).
 
 \begin{figure}[!ht]
 \centering
@@ -91,7 +87,7 @@ Fig.~\ref{fig:overview} shows one such step.
 \draw[->,thick] (5.95,-1.687) -- (6.4,-1.687);
 \end{tikzpicture}
 \caption{One step of the task, taken from an episode in the training split of
-AndroidControl~\cite{androidcontrol} to illustrate the input and output. GUIStep-P saw this step
+AndroidControl~\cite{androidcontrol} to illustrate the input and output. \mbox{GUIStep-P} saw this step
 during training, so it is not a scored example. The OCR strings the model also reads are omitted.
 Five filter chips compete on this screen, so the instruction has to name the intended one. The
 circle marks the recorded touch and is not shown to the model.}
@@ -100,17 +96,15 @@ circle marks the recorded touch and is not shown to the model.}
 
 GUIStep is a training framework that builds all of its supervision from what a recorded
 demonstration already contains: the human instruction, the touched point and the UI structure tree.
-We instantiate it on AndroidControl~\cite{androidcontrol} with Qwen2.5-VL-3B-Instruct~\cite{qwen25vl}.
-One configuration (GUIStep-S) predicts the instruction directly, a second (GUIStep-D) first predicts a structured declaration of the target element, and a third (GUIStep-P) refines the second with preference pairs that share an instruction but declare different elements. 
+We instantiate it on AndroidControl~\cite{androidcontrol} with Qwen2.5-VL-3B-Instruct~\cite{qwen25vl} in three configurations. \mbox{GUIStep-S} predicts the instruction directly. \mbox{GUIStep-D} first writes a structured declaration of the target element, so that the model commits to one element before describing it. \mbox{GUIStep-P} refines \mbox{GUIStep-D} with preference pairs that share an instruction but declare different elements. 
 
-The task also lacks an established automatic metric. A sentence cannot be judged against a single reference when the same button has many
-valid names. \emph{Click on the search bar} and \emph{Tap the magnifying glass at the top} denote
+Scoring these sentences is hard, because the same button has many valid names and a single reference covers only one of them. \emph{Click on the search bar} and \emph{Tap the magnifying glass at the top} denote
 one element, and no corpus lists the admissible wordings. In a small pilot with valid rewordings that we wrote, string matching on content words rejects $97.5\%$ of them. Similarity between sentence embeddings does no
 better: on $51$ hand-written cases it separates rewordings of the same element from descriptions of
-different elements with an AUC of $0.336$, below the $0.5$ of chance. Embedding similarity follows topic: \texttt{inbox}/\texttt{outbox} reaches a cosine similarity of $0.76$, whereas \texttt{search}/\texttt{magnifying glass}, two names for one button, reaches $0.55$.
+different elements with an AUC of $0.336$, below the $0.5$ of chance. It rewards a shared topic, so \texttt{inbox}/\texttt{outbox} reaches a cosine similarity of $0.76$, whereas \texttt{search}/\texttt{magnifying glass}, two names for one button, reaches $0.55$.
 
 We therefore adopt the criterion used in referring expression generation, where a description is
-adequate if a \emph{listener} recovers the referent~\cite{mao2016,luo2017,yu2016}. On phone screens our listener is a frozen grounding model that reads the sentence and returns a point. We call the share of steps on which this point falls on the intended element, with the right action named, \emph{executability}.  Because the listener is itself a learned model, we first validate its localisation, its sensitivity to paraphrase and its dependence on its own training data. We also repeat the comparison under a stricter rule and with a listener from a different model family. Reference instructions reach $83.8$ under this score, and we read all
+adequate if a \emph{listener} recovers the referent~\cite{mao2016,luo2017,yu2016}. On phone screens our listener is a frozen grounding model that reads the sentence and returns a point. We call the share of steps on which this point falls on the intended element, with the right action named, \emph{executability}.  Because the listener is itself a learned model, we validate it before use. Reference instructions reach $83.8$ under this score, and we read all
 results against that measured ceiling instead of against $100$.
 
 Our main contributions are as follows.
@@ -119,7 +113,7 @@ Our main contributions are as follows.
 sentence targets, target declarations and preference pairs from recorded demonstrations without
 collecting additional labels, instantiated on AndroidControl (Sects.~\ref{sec:framework}
 and~\ref{sec:setup}).
-\item \textbf{An execution-based score for the generated instructions.} We measure its ceiling and floor, how it reacts to paraphrase, and how much it depends on the chosen listener (Sect.~\ref{sec:metric}).
+\item \textbf{An execution-based score for the generated instructions.} We measure its ceiling and floor and its reaction to paraphrase, and show that the ranking of systems holds under a stricter rule and with a second listener from another model family (Sect.~\ref{sec:metric}).
 \item \textbf{A controlled ablation.} With a matched cross-entropy control and a
 select-then-verbalise variant, we show that most of the gain comes from training on the sentence,
 while the declaration and the preference objective add no clear benefit beyond it
@@ -205,24 +199,24 @@ competitor, and both end with the same recorded sentence, so the two sides diffe
 declared element.
 
 \paragraph{Configurations.}
-Table~\ref{tab:configs} lists the three configurations, named after what they add (S for sentence, D for declaration, P for preference), and the matched control. For GUIStep-D and
-GUIStep-P the declaration is generated first and discarded, and only the sentence that follows is
+Table~\ref{tab:configs} lists the three configurations, named after what they add (S for sentence, D for declaration, P for preference), and the matched control. For \mbox{GUIStep-D} and
+\mbox{GUIStep-P} the declaration is generated first and discarded, and only the sentence that follows is
 evaluated.
 
 \begin{table}[t]
 \centering
 \caption{The configurations compared in this paper. The control receives the same data and the
-same number of updates as GUIStep-P but no rejected outputs.}
+same number of updates as \mbox{GUIStep-P} but no rejected outputs.}
 \label{tab:configs}
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{llp{4.2cm}l}
 \toprule
 configuration & starts from & training target & objective\\
 \midrule
-GUIStep-S & backbone & sentence & cross-entropy\\
-GUIStep-D & backbone & declaration, then sentence & cross-entropy\\
-GUIStep-P & GUIStep-D & preferred vs.\ rejected declaration, both followed by the same sentence & ORPO~\cite{orpo}\\
-control & GUIStep-D & preferred output only & cross-entropy\\
+\mbox{GUIStep-S} & backbone & sentence & cross-entropy\\
+\mbox{GUIStep-D} & backbone & declaration, then sentence & cross-entropy\\
+\mbox{GUIStep-P} & \mbox{GUIStep-D} & preferred vs.\ rejected declaration, both followed by the same sentence & ORPO~\cite{orpo}\\
+control & \mbox{GUIStep-D} & preferred output only & cross-entropy\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -346,22 +340,22 @@ Rerunning it with the primary D.3 rule, on the same steps, thresholds and seed, 
 Detection is lower under D.3 for every localisation criterion, and the paraphrase false-rejection
 rate rises from $0.0\%$ to $6.5\%$, because the suite adds an offset of about $3\%$ of the width to simulate listener error, and that offset can leave a small box. Of the injected points that D.3 accepts despite targeting a distant element, the median reconstructed box covers $14.7\%$ of the screen, against $0.9\%$ for the others. Large container boxes are thus the main source of missed detections. The score is therefore weak at rejecting neighbouring elements, elements that share a large box with the target, and negations absent from the polarity table.
 
-\textit{Stricter rule.} The Voronoi rule rejects $99.6\%$ of the nearby and all of the distant injected elements, so we also rescored every system under it. The ranking does not change: backbone $47.6$, GUIStep-D
-$57.2$, GUIStep-S $59.1$, control $59.4$, GUIStep-P $60.0$ and reference $75.7$, with GUIStep-S
+\textit{Stricter rule.} The Voronoi rule rejects $99.6\%$ of the nearby and all of the distant injected elements, so we also rescored every system under it. The ranking does not change: backbone $47.6$, \mbox{GUIStep-D}
+$57.2$, \mbox{GUIStep-S} $59.1$, control $59.4$, \mbox{GUIStep-P} $60.0$ and reference $75.7$, with \mbox{GUIStep-S}
 ahead of the backbone by $+11.5$ $[+10.0,+13.1]$. Neither rule reliably catches a confusion between
 adjacent controls ($30$--$80$ px), although such a confusion would mislead a person following the instruction. Absolute levels may thus overstate how often a reader would pick the right
 control, and we rely mainly on the comparisons between systems, which hold under both rules.
 
 \textit{Other listeners.} UGround has seen AndroidControl training data. To check whether this matters, we repeat our main comparison with
 UI-Venus-Ground-7B~\cite{uivenus}, which has not. On the $2{,}532$-step subset on which both
-listeners were run, the gap between GUIStep-S and the untuned backbone changes from $+11.14$ under
+listeners were run, the gap between \mbox{GUIStep-S} and the untuned backbone changes from $+11.14$ under
 UGround to $+11.02$ under UI-Venus, retaining $99\%$ of its magnitude. The $+11.9$ points of
 Table~\ref{tab:main} are UGround on all $4{,}463$ steps, so the three values differ only in the
 steps scored and in the listener.
 
 Both grounding listeners and our backbone come from the Qwen family. As a third listener we use Phi-4-multimodal-instruct~\cite{phi4}, which belongs to another family and was not trained on AndroidControl, in a multiple-choice format~\cite{som}. Numbered boxes are drawn on the clickable accessibility nodes of the screenshot (median $15$ per screen). The model sees this marked screenshot and the sentence, without the goal or history, and answers with a box number. A step is correct when the chosen box contains the recorded touch; such a box exists for $95.7\%$ of steps. On all $4{,}463$ steps, reference instructions reach $54.9$ $[53.0,56.9]$,
-GUIStep-S $44.6$ $[42.9,46.4]$ and the backbone $38.2$ $[36.5,39.9]$, a difference of $+6.4$
-$[+5.1,+7.7]$ ($p<0.001$) between GUIStep-S and the backbone. The ordering matches that of UGround,
+\mbox{GUIStep-S} $44.6$ $[42.9,46.4]$ and the backbone $38.2$ $[36.5,39.9]$, a difference of $+6.4$
+$[+5.1,+7.7]$ ($p<0.001$) between \mbox{GUIStep-S} and the backbone. The ordering matches that of UGround,
 although this listener has a lower ceiling and we did not run it on the other configurations.
 
 %------------------------------------------------------------------------------
@@ -407,9 +401,9 @@ pairs.
 All configurations adapt Qwen2.5-VL-3B-Instruct~\cite{qwen25vl} with 4-bit NF4
 QLoRA~\cite{lora,qlora} under LLaMA-Factory~\cite{llamafactory}: rank $8$, scale $16$, dropout
 $0.05$, adapters on the seven decoder projections, frozen vision tower and projector, context
-length $2{,}560$, and loss on assistant tokens only; inference uses greedy decoding. GUIStep-S and GUIStep-D train
+length $2{,}560$, and loss on assistant tokens only; inference uses greedy decoding. \mbox{GUIStep-S} and \mbox{GUIStep-D} train
 for two epochs ($8{,}072$ updates) with effective batch $16$, peak learning rate $10^{-4}$, cosine
-decay and $5\%$ warm-up. GUIStep-P trains with ORPO ($\beta=0.1$) for $800$ updates at learning
+decay and $5\%$ warm-up. \mbox{GUIStep-P} trains with ORPO ($\beta=0.1$) for $800$ updates at learning
 rate $2\times10^{-5}$, and the control uses the same preferred outputs and the same number of updates. A declaration without a
 closing tag yields an empty sentence, which counts as a failed step.
 
@@ -426,9 +420,9 @@ measured reference ceiling of $83.8$.}
 system & executability & 95\% CI\\
 \midrule
 untuned backbone & $53.6$ & $[51.9,55.3]$\\
-GUIStep-S (sentence only) & $65.5$ & $[63.8,67.2]$\\
-GUIStep-D (declaration) & $63.6$ & $[61.9,65.4]$\\
-GUIStep-D $+$ cross-entropy (control) & $66.0$ & $[64.3,67.7]$\\
+\mbox{GUIStep-S} (sentence only) & $65.5$ & $[63.8,67.2]$\\
+\mbox{GUIStep-D} (declaration) & $63.6$ & $[61.9,65.4]$\\
+\mbox{GUIStep-D} $+$ cross-entropy (control) & $66.0$ & $[64.3,67.7]$\\
 \textbf{GUIStep-P} (preference refined) & $\mathbf{66.5}$ & $[64.9,68.2]$\\
 \midrule
 select-then-verbalise variant & $62.4$ & $[60.5,64.2]$\\
@@ -439,7 +433,7 @@ reference instruction & $83.8$ & $[82.5,85.1]$\\
 \end{table}
 
 Higher executability means that more generated sentences lead the listener to the intended
-element. Table~\ref{tab:main} reports it for every configuration. GUIStep-P raises the score
+element. Table~\ref{tab:main} reports it for every configuration. \mbox{GUIStep-P} raises the score
 from $53.6$ to $66.5$, a paired difference of $+13.0$ points $[+11.5,+14.4]$ ($p<0.001$), and
 remains $17.3$ points below the reference instructions.
 
@@ -447,15 +441,15 @@ remains $17.3$ points below the reference instructions.
 To compare with a pipeline that first selects a target and then describes it, we score a variant
 trained earlier on the same data. In its prompt, the OCR lines are replaced by a numbered list of up to $40$ candidate elements from the accessibility tree, each with its name and point. The model first outputs the selected candidate, or \emph{none}, and then the sentence. Only the sentence is
 scored. The variant reaches $62.4$, which is $8.8$ points above the backbone and $3.1$ points below
-GUIStep-S $[-4.3,-1.9]$ ($p<0.001$). Its main weakness is abstention: on $27.3\%$ of the steps
-whose target is in the list it outputs \emph{none}. The variant also differs from GUIStep-S in context length ($3{,}072$ tokens) and trains for one epoch. The gap does not isolate the selection step.
+\mbox{GUIStep-S} $[-4.3,-1.9]$ ($p<0.001$). Its main weakness is abstention: on $27.3\%$ of the steps
+whose target is in the list it outputs \emph{none}. The variant also differs from \mbox{GUIStep-S} in context length ($3{,}072$ tokens) and trains for one epoch. The gap does not isolate the selection step.
 
 \subsection{Ablation}
 
 Table~\ref{tab:main} also compares our three configurations.
-GUIStep-D scores $1.9$ points below GUIStep-S $[-3.0,-0.7]$ ($p=0.003$). On its own, the structured target costs accuracy. GUIStep-P recovers that loss, but its $+1.05$-point difference from
-GUIStep-S is not significant ($p=0.073$). Against the matched cross-entropy control, the preference objective adds $+0.52$ points $[+0.02,+1.00]$ ($p=0.043$). The control alone already recovers $2.4$ of the $2.9$ points that GUIStep-P gains over GUIStep-D, so most of the recovery comes from the extra updates. All three comparisons come
-from one training run each for GUIStep-D, GUIStep-P and the control, so differences of this size
+\mbox{GUIStep-D} scores $1.9$ points below \mbox{GUIStep-S} $[-3.0,-0.7]$ ($p=0.003$). On its own, the structured target costs accuracy. \mbox{GUIStep-P} recovers that loss, but its $+1.05$-point difference from
+\mbox{GUIStep-S} is not significant ($p=0.073$). Against the matched cross-entropy control, the preference objective adds $+0.52$ points $[+0.02,+1.00]$ ($p=0.043$). The control alone already recovers $2.4$ of the $2.9$ points that \mbox{GUIStep-P} gains over \mbox{GUIStep-D}, so most of the recovery comes from the extra updates. All three comparisons come
+from one training run each for \mbox{GUIStep-D}, \mbox{GUIStep-P} and the control, so differences of this size
 may not be stable across seeds. We therefore attribute
 the main gain to training on the sentence alone, since neither the structured target nor the preference
 objective yields a clear improvement beyond it.
@@ -481,10 +475,10 @@ cluster bootstrap intervals. The last three rows are paired differences.}
 & repeated ($n=2{,}347$) & unseen ($n=2{,}116$)\\
 \midrule
 backbone & $58.7$ $[56.5,60.9]$ & $47.9$ $[45.4,50.5]$\\
-GUIStep-S & $73.7$ $[71.8,75.7]$ & $56.3$ $[53.8,58.9]$\\
-GUIStep-D & $71.7$ $[69.7,73.5]$ & $54.7$ $[52.2,57.3]$\\
+\mbox{GUIStep-S} & $73.7$ $[71.8,75.7]$ & $56.3$ $[53.8,58.9]$\\
+\mbox{GUIStep-D} & $71.7$ $[69.7,73.5]$ & $54.7$ $[52.2,57.3]$\\
 D $+$ cross-entropy (control) & $73.8$ $[72.0,75.7]$ & $57.4$ $[54.9,59.8]$\\
-GUIStep-P & $74.0$ $[72.1,75.9]$ & $58.3$ $[55.8,60.8]$\\
+\mbox{GUIStep-P} & $74.0$ $[72.1,75.9]$ & $58.3$ $[55.8,60.8]$\\
 \midrule
 S $-$ backbone & $+15.0$ $[+13.1,+17.0]$ & $+8.4$ $[+6.0,+11.0]$\\
 P $-$ S & $+0.3$ $[-1.3,+1.8]$ ($p=0.75$) & $+1.9$ $[+0.2,+3.7]$ ($p=0.031$)\\
@@ -493,9 +487,9 @@ P $-$ control & $+0.2$ $[-0.5,+0.8]$ ($p=0.64$) & $+0.9$ $[+0.2,+1.6]$ ($p=0.015
 \end{tabular}}
 \end{table}
 
-Fine-tuning helps in both groups. The gain over the backbone is nearly twice as large on repeated sentences, so part of it comes from learning the dataset's usual wording. The gain of $+8.4$ points on unseen sentences cannot come from reproducing a training sentence. GUIStep-P is indistinguishable from GUIStep-S and the control on repeated sentences and ahead of both on unseen ones, although this is a
+Fine-tuning helps in both groups. The gain over the backbone is nearly twice as large on repeated sentences, so part of it comes from learning the dataset's usual wording. The gain of $+8.4$ points on unseen sentences cannot come from reproducing a training sentence. \mbox{GUIStep-P} is indistinguishable from \mbox{GUIStep-S} and the control on repeated sentences and ahead of both on unseen ones, although this is a
 subgroup comparison made after seeing the overall result and is not corrected for multiple
-comparisons. On the $78$ steps from $20$ applications absent from training, GUIStep-S scores $65.4$, GUIStep-P $68.0$ and the backbone $56.4$; the intervals are too wide for a conclusion (GUIStep-P $-$ backbone: $+11.5$ $[+1.9,+19.8]$).
+comparisons. On the $78$ steps from $20$ applications absent from training, \mbox{GUIStep-S} scores $65.4$, \mbox{GUIStep-P} $68.0$ and the backbone $56.4$; the intervals are too wide for a conclusion (\mbox{GUIStep-P} $-$ backbone: $+11.5$ $[+1.9,+19.8]$).
 
 \subsection{Reference-Overlap Metrics}
 For comparability with Widget Captioning and Screen2Words we also report the conventional
@@ -515,10 +509,10 @@ baseline-rescaled F1 from layer $17$ of \texttt{roberta-large}. With one referen
 & BLEU-4 & METEOR & ROUGE-L & CIDEr-D & SPICE & chrF & BERTScore\\
 \midrule
 untuned backbone & $15.3$ & $24.6$ & $42.3$ & $88.0$ & $18.5$ & $40.2$ & $40.1$\\
-GUIStep-S & $\mathbf{51.6}$ & $36.8$ & $67.3$ & $\mathbf{416.1}$ & $\mathbf{44.4}$ & $61.3$ &
+\mbox{GUIStep-S} & $\mathbf{51.6}$ & $36.8$ & $67.3$ & $\mathbf{416.1}$ & $\mathbf{44.4}$ & $61.3$ &
 $66.3$\\
-GUIStep-D & $48.7$ & $35.8$ & $66.0$ & $387.7$ & $41.3$ & $59.9$ & $65.1$\\
-GUIStep-P & $49.9$ & $\mathbf{37.3}$ & $\mathbf{68.5}$ & $401.0$ & $42.2$ & $\mathbf{61.8}$ &
+\mbox{GUIStep-D} & $48.7$ & $35.8$ & $66.0$ & $387.7$ & $41.3$ & $59.9$ & $65.1$\\
+\mbox{GUIStep-P} & $49.9$ & $\mathbf{37.3}$ & $\mathbf{68.5}$ & $401.0$ & $42.2$ & $\mathbf{61.8}$ &
 $\mathbf{66.7}$\\
 \midrule
 reference & $100.0$ & $100.0$ & $100.0$ & $988.7$ & $98.6$ & $100.0$ & $100.0$\\
@@ -527,13 +521,13 @@ reference & $100.0$ & $100.0$ & $100.0$ & $988.7$ & $98.6$ & $100.0$ & $100.0$\\
 \end{table}
 
 All seven metrics improve substantially over the untuned backbone, but the ranking of our
-configurations differs from the one under executability. GUIStep-S leads on BLEU-4, CIDEr-D and
-SPICE, whereas GUIStep-P leads on METEOR, ROUGE-L, chrF and BERTScore. None of these metrics checks whether the sentence identifies the intended element, and we treat them as a complement to executability.
+configurations differs from the one under executability. \mbox{GUIStep-S} leads on BLEU-4, CIDEr-D and
+SPICE, whereas \mbox{GUIStep-P} leads on METEOR, ROUGE-L, chrF and BERTScore. None of these metrics checks whether the sentence identifies the intended element, and we treat them as a complement to executability.
 
 \subsection{Error Analysis}
 \label{sec:analysis}
 
-GUIStep-P fails on $1{,}493$ steps. Only $50$ of these failures use the wrong action class; the other $1{,}443$ ($96.7\%$) fail the localisation check, so most failures concern localisation and not action selection. We did not inspect these cases
+\mbox{GUIStep-P} fails on $1{,}493$ steps. Only $50$ of these failures use the wrong action class; the other $1{,}443$ ($96.7\%$) fail the localisation check, so most failures concern localisation and not action selection. We did not inspect these cases
 by hand, so a failure may come from a sentence that names the wrong element, from a listener
 error, or from an error in the reconstructed box.
 In two typical failures the model writes \texttt{select minutes 00} where the reference is \emph{click on the OK option}, and \texttt{Click on the Air India flight option} where it is \emph{Click on the Sort filter}. We suspect element naming, the hard case that Widget Captioning reports for visually identical widgets~\cite{widgetcap}, but have not tested this. Separating sentence, listener and box
@@ -547,11 +541,11 @@ errors needs a manual or human study, which we leave open.
 Executability is a proxy, computed by a learned model, for whether a person can follow an
 instruction, and we have not established that link with a human study or with a manually labelled
 sample. The validation in Sect.~\ref{sec:validate} was rerun with the primary D.3 rule and fails
-four of ten criteria, among them the detection of neighbouring elements. The ranking holds under the Voronoi rule and two further listeners, but those listeners cover only the backbone and GUIStep-S, and absolute levels depend on the listener and the rule. Because the reconstructed boxes are stricter than AndroidControl's original labels, our scores are not directly comparable with work that uses those labels.
+four of ten criteria, among them the detection of neighbouring elements. The ranking holds under the Voronoi rule and two further listeners, but those listeners cover only the backbone and \mbox{GUIStep-S}, and absolute levels depend on the listener and the rule. Because the reconstructed boxes are stricter than AndroidControl's original labels, our scores are not directly comparable with work that uses those labels.
 
 \paragraph{Scope.}
-The experiments cover one English dataset, one backbone and touch actions only. GUIStep-D, GUIStep-P and the control were each trained once, so their small differences are untested across seeds. Besides the untuned backbone and our matched
-control, the only other pipeline is the select-then-verbalise variant, which differs from GUIStep-S
+The experiments cover one English dataset, one backbone and touch actions only. \mbox{GUIStep-D}, \mbox{GUIStep-P} and the control were each trained once, so their small differences are untested across seeds. Besides the untuned backbone and our matched
+control, the only other pipeline is the select-then-verbalise variant, which differs from \mbox{GUIStep-S}
 in more than one setting. We know of no public system trained for this task and did not compare
 with another instruction-capable vision-language model. We report the training setting (4-bit QLoRA on a single A100 GPU) but did not measure inference latency. The exact prompts and scoring rules are given in Appendix~\ref{app:prompts}.
 
