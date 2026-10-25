@@ -1,0 +1,62 @@
+[{"stream_name":"stderr","time":6.953073324,"data":"/usr/local/lib/python3.13/dist-packages/nbformat/validator.py:434: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.\n"}
+,{"stream_name":"stderr","time":6.953176217,"data":"  _validate(nbdict, ref, version, version_minor, relax_add_props)\n"}
+,{"stream_name":"stderr","time":8.024196939,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.024233947,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.024240233,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.024245147,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":8.786342891,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.786383057,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.786389225,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.786394197,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":809.412083647,"data":"WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError(\"HTTPSConnection(host='pypi.org', port=443): Failed to resolve 'pypi.org' ([Errno -3] Temporary failure in name resolution)\")': /simple/bitsandbytes/\n"}
+,{"stream_name":"stdout","time":809.412125977,"data":"ERROR: Could not find a version that satisfies the requirement bitsandbytes (from versions: none)\n"}
+,{"stream_name":"stdout","time":809.412132724,"data":"ERROR: No matching distribution found for bitsandbytes\n"}
+,{"stream_name":"stdout","time":809.41213668,"data":"\n"}
+,{"stream_name":"stdout","time":810.361364237,"data":"  Successfully uninstalled torchao-0.10.0\n"}
+,{"stream_name":"stdout","time":810.361398916,"data":"\n"}
+,{"stream_name":"stdout","time":841.632945186,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stdout","time":841.632983473,"data":"  File \"\u003cstring\u003e\", line 1, in \u003cmodule\u003e\n"}
+,{"stream_name":"stdout","time":841.632991998,"data":"    import transformers, peft, torch; print(transformers.__version__, peft.__version__, torch.__version__, torch.cuda.device_count(), torch.cuda.get_device_name(0))\n"}
+,{"stream_name":"stdout","time":841.632998661,"data":"                                                                                                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^\n"}
+,{"stream_name":"stdout","time":841.633004885,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/cuda/__init__.py\", line 653, in get_device_name\n"}
+,{"stream_name":"stdout","time":841.63301103,"data":"    return get_device_properties(device).name\n"}
+,{"stream_name":"stdout","time":841.633016723,"data":"           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^\n"}
+,{"stream_name":"stdout","time":841.633022078,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/cuda/__init__.py\", line 686, in get_device_properties\n"}
+,{"stream_name":"stdout","time":841.633027869,"data":"    _lazy_init()  # will define _get_device_properties\n"}
+,{"stream_name":"stdout","time":841.633033616,"data":"    ~~~~~~~~~~^^\n"}
+,{"stream_name":"stdout","time":841.633050426,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/cuda/__init__.py\", line 471, in _lazy_init\n"}
+,{"stream_name":"stdout","time":841.63305569,"data":"    raise AssertionError(\"Torch not compiled with CUDA enabled\")\n"}
+,{"stream_name":"stdout","time":841.633061258,"data":"AssertionError: Torch not compiled with CUDA enabled\n"}
+,{"stream_name":"stdout","time":841.633065963,"data":"\n"}
+,{"stream_name":"stderr","time":844.159492181,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":844.160318694,"data":"  File \"\u003cstring\u003e\", line 1, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":844.160340409,"data":"    import sys;import papermill as pm;pm.execute_notebook(\"__notebook__.ipynb\",\"__notebook__.ipynb\",progress_bar=False,log_output=True,stdout_file=sys.stdout,stderr_file=sys.stderr,allow_errors=False,timeout=43200)\n"}
+,{"stream_name":"stderr","time":844.160347252,"data":"                                      ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":844.160353158,"data":"  File \"/usr/local/lib/python3.13/dist-packages/papermill/execute.py\", line 131, in execute_notebook\n"}
+,{"stream_name":"stderr","time":844.160358522,"data":"    raise_for_execution_errors(nb, output_path)\n"}
+,{"stream_name":"stderr","time":844.160362002,"data":"    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":844.160365059,"data":"  File \"/usr/local/lib/python3.13/dist-packages/papermill/execute.py\", line 251, in raise_for_execution_errors\n"}
+,{"stream_name":"stderr","time":844.160368319,"data":"    raise error\n"}
+,{"stream_name":"stderr","time":844.160371299,"data":"papermill.exceptions.PapermillExecutionError: \n"}
+,{"stream_name":"stderr","time":844.160375409,"data":"---------------------------------------------------------------------------\n"}
+,{"stream_name":"stderr","time":844.160380374,"data":"Exception encountered at \"In [2]\":\n"}
+,{"stream_name":"stderr","time":844.160385211,"data":"---------------------------------------------------------------------------\n"}
+,{"stream_name":"stderr","time":844.160389756,"data":"AssertionError                            Traceback (most recent call last)\n"}
+,{"stream_name":"stderr","time":844.160394439,"data":"/tmp/ipykernel_16/1115862105.py in \u003ccell line: 0\u003e()\n"}
+,{"stream_name":"stderr","time":844.160399338,"data":"      7 md5 = lambda p: hashlib.md5(open(p, \"rb\").read()).hexdigest()\n"}
+,{"stream_name":"stderr","time":844.160404101,"data":"      8 import torch\n"}
+,{"stream_name":"stderr","time":844.160408567,"data":"----\u003e 9 assert torch.cuda.device_count() == 2, \"DỪNG: cần 2 GPU (T4 x2)\"\n"}
+,{"stream_name":"stderr","time":844.160414536,"data":"     10 KIT = os.path.dirname(glob.glob(\"/kaggle/input/**/gen_aitz.py\", recursive=True)[0])\n"}
+,{"stream_name":"stderr","time":844.160419661,"data":"     11 for f in (\"grpo_spice.py\", \"build_branch_data.py\", \"gen_aitz.py\"): shutil.copy(f\"{KIT}/{f}\", f\"{W}/{f}\")\n"}
+,{"stream_name":"stderr","time":844.160425274,"data":"\n"}
+,{"stream_name":"stderr","time":844.160429679,"data":"AssertionError: DỪNG: cần 2 GPU (T4 x2)\n"}
+,{"stream_name":"stderr","time":844.160434324,"data":"\n"}
+,{"stream_name":"stderr","time":847.024814736,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":847.02485466,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":847.225908267,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":847.225936663,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":848.124200964,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":848.221982819,"data":"[NbConvertApp] Writing 15763 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":851.519285952,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":852.220078813,"data":"[NbConvertApp] Writing 326669 bytes to __results__.html\n"}
+]

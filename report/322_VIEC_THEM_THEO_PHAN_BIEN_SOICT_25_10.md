@@ -18,7 +18,7 @@ Kết quả có số thì ghi vào `report/320` (theo luật làm việc), file 
 | # | việc | trả lời | chi phí | trạng thái |
 |---|---|---|---|---|
 | 1 | Chấm test **xao101** (GRPO thưởng xáo trộn, cùng số bước, chỉ khác thưởng) | đòn 1 | ~5–8 h Kaggle T4 | ▶️ đang chạy 25/10: `uyenle0712/ck500-xao101-test` |
-| 2 | Chấm zero-shot trên **AitZ** (2.736 bước chạm): Base, S1, ck500, ACE; không train lại | đòn 2 | ~4 × 2–3 h T4 | ⏳ chờ OCR tập kiểm (`trangphngngc/aitz-build-cpu` đang chạy) |
+| 2 | Chấm zero-shot trên **AitZ** (2.736 bước chạm): Base, S1, ck500, ACE; không train lại | đòn 2 | ~4 × 2–3 h T4 | ▶️ **nhận việc 25/10 tối (phiên khác): chạy trên tài khoản thứ ba `trang2` (`trangphuongngoc`)**, kernel `trangphuongngoc/aitz-gen-s1-ck500`: Base, S1 (hoà), ck500, ck500/202 sinh câu + chấm UGround trên 2.736 bước. ACE chưa (cần truy hồi câu ví dụ + mô hình RA), làm sau. Đừng đẩy trùng trên uyenle/trang. |
 | 3 | Mốc so bên ngoài: **Qwen2.5-VL-7B-Instruct** prompting, cùng ảnh, mục tiêu, lịch sử, 24 dòng OCR, cùng câu nhắc với Base | đòn 3 | ~1 commit T4×2 (đo tốc độ ở ô thử) + chấm UGround | ▶️ đẩy 25/10: `trangphngngc/qwen7b-test` (xem §3) |
 | 4 | Bảng bước không chạm cho ACE (ck500 đã có: scroll −6,23, `report/261`) | phạm vi (R4) | ~0 GPU nếu ACE chỉ đổi câu ở bước chạm, cần kiểm | ⬜ |
 | 5 | Lịch sử do mô hình sinh thay cho câu chuẩn (S1, ck500), đo lỗi cộng dồn | R4 | ~2 × 5,6 h T4 | ⬜ xếp sau |
