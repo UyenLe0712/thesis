@@ -551,9 +551,7 @@ and not on the sentence that is scored. Future work should put the grounding sig
 \label{app:prompts}
 
 \paragraph{Generation prompt.}
-The system message and the user turn are the same for training and scoring in every configuration.
-Their wording is in Vietnamese; the model is told to answer in English and all targets are English. In translation, the
-system message reads \emph{``You look at a phone screenshot and write ONE short English instruction
+All four configurations use the same system message and user-turn template in training and in scoring. The prompt is written in Vietnamese, but it asks for an English answer and every training target is English. In translation, the system message reads \emph{``You look at a phone screenshot and write ONE short English instruction
 for the user that says where to touch in order to continue.''} The user turn is the image followed
 by up to four lines, of which the second and third are omitted when empty:
 \begin{center}
@@ -567,8 +565,7 @@ instruction for the next step}. The history holds the last three reference instr
 OCR line holds at most $24$ detections.
 
 \paragraph{Listener prompt.}
-The frozen listener UGround-V1-2B receives the screenshot and the following text, taken from its
-model card, with the generated sentence in place of \texttt{<desc>}:
+The frozen listener UGround-V1-2B receives the screenshot and the prompt from its model card, shown here without its bullet marks and line breaks, with the generated sentence in place of \texttt{<desc>}:
 \begin{quote}\small
 Your task is to help the user identify the precise coordinates (x, y) of a specific
 area/element/object on the screen based on a description. Your response should aim to point to the
@@ -581,11 +578,7 @@ It does not see the goal, the history, the OCR text or the recorded touch. Its o
 $0$--$1000$ grid is converted to pixels.
 
 \paragraph{Scoring rule.}
-A step is executable when (i) the action class of the generated sentence equals that of the
-reference, (ii) the two sentences do not name opposite states of one control, and (iii) the point
-returned by the listener lies in the box of the target element, as in Sect.~\ref{sec:metric}.
-Steps whose target has no reconstructed box count as failures. The Voronoi and tolerance-window
-variants of Table~\ref{tab:rules} change only condition (iii).
+Conditions (i) to (iii) are defined in Sect.~\ref{sec:def}. The polarity check of condition (ii) uses nine pairs: \emph{on/off}, \emph{enable/disable}, \emph{enabled/disabled}, \emph{show/hide}, \emph{mute/unmute}, \emph{expand/collapse}, \emph{check/uncheck}, \emph{select/deselect} and \emph{start/stop}. It fails a step when one sentence contains a word of a pair  and the other contains its opposite. The Voronoi and tolerance-window variants of Table~\ref{tab:rules} change only condition (iii).
 
 \begin{thebibliography}{99}
 
