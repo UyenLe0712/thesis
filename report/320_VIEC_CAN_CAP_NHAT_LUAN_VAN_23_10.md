@@ -174,7 +174,17 @@ ck500/202 − S1/202: D.3 +0,45 [−0,44; +1,34] p=0,34 · D.3∧14% +0,29 [−0
 ck500/202 − ck500/101: D.3 −0,47 [−1,04; +0,09] · AitW đầy đủ −0,02 [−0,57; +0,54] p=1,0 (hai hạt GRPO ngang nhau dưới AitW).
 Đối chiếu ck500/101 − S1/202: D.3 +0,92 [+0,11; +1,75] · AitW đầy đủ +0,94 [+0,07; +1,81].
 Đọc: dưới D.3 và AitW, hạt GRPO thứ hai hơn S1/101 rõ hơn dưới exec (+1,05 và +1,86 so với +0,83), và hai hạt GRPO không còn khác nhau có ý nghĩa; nhưng so với S1/202 thì vẫn không có ý nghĩa dưới D.3 (+0,45), chỉ sát ngưỡng dưới AitW (+0,92, cận dưới +0,02). Kết luận về hướng không đổi: GRPO ≥ S1 ở cả hai hạt, độ lớn khoảng +0,3 đến +1,9 tuỳ luật, dưới MDE 2,11 của exec. Ba luật khác nhau cho ba độ lớn, nên khi báo phải nêu rõ luật và không chọn luật chỉ vì cho số lớn nhất.
-Thước chữ cho ck500/202 (BLEU-4, METEOR, ROUGE-L, CIDEr-D, SPICE, chrF, BERTScore): đang chạy kernel CPU `trangphngngc/ck500-s202-chu-cpu`, kết quả về `runs/text_metrics_s202.json`; chưa có số.
+Thước chữ cho ck500/202 (XONG 25/10, kernel CPU `trangphngngc/ck500-s202-chu-cpu` v5, mức kho, `runs/text_metrics_s202.json`). Kiểm tái lập: ck500/101 khớp tuyệt đối bảy số đã in (52,36 · 37,92 · 68,36 · 430,05 · 45,79 · 62,87 · 67,07).
+| thước | S1/101 | S1/202 | ck500/101 | ck500/202 |
+|---|---|---|---|---|
+| BLEU-4 | 51,56 | 51,66 | 52,36 | 52,94 |
+| METEOR | 36,79 | 37,17 | 37,92 | 37,53 |
+| ROUGE-L | 67,35 | 67,71 | 68,36 | 68,48 |
+| CIDEr-D | 416,12 | 419,19 | 430,05 | 431,22 |
+| SPICE | 44,37 | 44,23 | 45,79 | 45,69 |
+| chrF | 61,26 | 61,92 | 62,87 | 62,37 |
+| BERTScore | 66,33 | 66,75 | 67,07 | 67,12 |
+Đọc: hạt GRPO thứ hai hơn cả hai hạt S1 ở cả bảy thước chữ (so S1/202: SPICE +1,46, CIDEr-D +12,03), và gần như trùng hạt thứ nhất (SPICE −0,10, CIDEr-D +1,17). Tức là phần thưởng SPICE lặp lại ổn định ở thước chữ, trong khi exec giữa hai hạt chênh 0,72. Chưa có KTC (mức kho, một lần tính). Cột S1/202 đã đối chiếu khớp `runs/text_metrics_coco.json` và Bảng 6.6 của luận văn.
 Chưa làm: Phi-4 và Venus cho ck500/202 (~5 h, tài khoản uyenle), user quyết tạm không chạy 25/10.
 
 G5. Phi-4, Base đủ 4.463 bước (XONG 24/10, số test, một hạt giống mỗi nhánh).
