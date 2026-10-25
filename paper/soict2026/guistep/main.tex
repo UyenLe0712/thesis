@@ -53,9 +53,7 @@ training on the sentence alone. Adding the declaration lowers the score by $1.9$
 \section{Introduction}
 \label{sec:intro}
 
-A user who gets stuck halfway through a phone task needs to be told, in one sentence, what to touch next, for example \emph{Click on the share icon at the top right of the screen}.
-
-Research on GUI agents usually targets a different output. Given a screenshot and a goal,
+A user who gets stuck halfway through a phone task needs to be told, in one sentence, what to touch next, for example \emph{Click on the share icon at the top right of the screen}. Research on GUI agents usually targets a different output. Given a screenshot and a goal,
 SeeClick~\cite{seeclick}, OS-Atlas~\cite{osatlas} and UGround~\cite{uground} emit a
 machine-readable action such as \texttt{click(872,141)} so that software can act on the
 user's behalf. Any language they produce along the way is an intermediate step and is not evaluated. Our target is the next-step instruction, written for a human reader, and
@@ -95,13 +93,12 @@ circle marks the recorded touch and is not shown to the model.}
 GUIStep is a training framework that builds all of its supervision from what a recorded
 demonstration already contains: the human instruction, the touched point and the UI structure tree.
 We instantiate it on AndroidControl~\cite{androidcontrol} with Qwen2.5-VL-3B-Instruct~\cite{qwen25vl}.
-One configuration (GUIStep-S) predicts the instruction directly, a second (GUIStep-D) first predicts a structured declaration of the target element, and a third (GUIStep-P) refines the second with preference pairs that share an instruction but declare different elements. All of them improve on the untuned backbone, both in
-executability and in the standard reference-overlap metrics.
+One configuration (GUIStep-S) predicts the instruction directly, a second (GUIStep-D) first predicts a structured declaration of the target element, and a third (GUIStep-P) refines the second with preference pairs that share an instruction but declare different elements. 
 
 Scoring is a further difficulty, because the task has no established automatic
 metric. A sentence cannot be judged against a single reference when the same button has many
 valid names. \emph{Click on the search bar} and \emph{Tap the magnifying glass at the top} denote
-one element, and no corpus lists the admissible wordings. On a set of valid rewordings that we collected, string matching on content words rejects $97.5\%$. Similarity between sentence embeddings does no
+one element, and no corpus lists the admissible wordings. In a small pilot with valid rewordings that we wrote, string matching on content words rejects $97.5\%$ of them. Similarity between sentence embeddings does no
 better: on $51$ hand-written cases it separates rewordings of the same element from descriptions of
 different elements with an AUC of $0.336$, below the $0.5$ of chance. It measures topical
 proximity and not whether two phrases name the same element. For example, the cosine similarity of \texttt{inbox}/\texttt{outbox} is $0.76$, while that of \texttt{search}/\texttt{magnifying glass}, two names for one button, is only $0.55$.
@@ -116,9 +113,7 @@ Our main contributions are as follows.
 sentence targets, target declarations and preference pairs from recorded demonstrations without
 collecting additional labels, instantiated on AndroidControl (Sects.~\ref{sec:framework}
 and~\ref{sec:setup}).
-\item \textbf{An execution-based score for the generated instructions.} A frozen listener maps
-each instruction back to the screen, and the score checks the recovered element together with the
-action class. We also measure the ceiling, the floor, the robustness to paraphrase and the
+\item \textbf{An execution-based score for the generated instructions.} Besides defining executability, we measure the ceiling, the floor, the robustness to paraphrase and the
 dependence on the chosen listener (Sect.~\ref{sec:metric}).
 \item \textbf{A controlled ablation.} With a matched cross-entropy control and a
 select-then-verbalise variant, we show that most of the gain comes from training on the sentence,
@@ -151,16 +146,14 @@ al.~\cite{newman2020} show that a model listener tracks communicative success
 better than $n$-gram overlap, and Zhao et al.~\cite{zhao2021} reach a compatible conclusion for navigation instructions. Zhao et al. also report a human reference beside the system scores, as we do. Validating a metric with injected errors and thresholds fixed in advance follows
 Sai et al.~\cite{sai2021}. Prior work also cautions that automatic proxies may diverge from human
 judgement~\cite{clark2021} and that GUI grounders can be brittle under
-rephrasing~\cite{groundersunderstand}. Sect.~\ref{sec:validate} tests both concerns.
+rephrasing~\cite{groundersunderstand}. Section~\ref{sec:validate} tests both concerns.
 
 %------------------------------------------------------------------------------
 \section{The GUIStep Framework}
 \label{sec:framework}
 
 GUIStep has three parts that do not depend on a particular dataset: a task definition, a way of
-building supervision from records that GUI datasets already contain, and an execution-based score.
-Fig.~\ref{fig:pipeline} shows how they connect. Sect.~\ref{sec:setup} then instantiates each part on
-AndroidControl.
+building supervision from records that GUI datasets already contain, and an execution-based score. The score needs only the screenshot, the sentence and the recorded touch, so it applies to any dataset that records touches. Figure~\ref{fig:pipeline} shows how they connect. Section~\ref{sec:metric} defines and validates the score, and Sect.~\ref{sec:setup} instantiates the framework on AndroidControl.
 
 \begin{figure}[t]
 \centering
@@ -229,63 +222,7 @@ control & GUIStep-D & preferred output only & cross-entropy\\
 \end{tabular}
 \end{table}
 
-\paragraph{Evaluation.}
-A frozen grounding model that is independent of the system under test reads the generated
-sentence and the screenshot and returns a point. The step counts as executable when the point
-falls in the target element and the action class matches (Sect.~\ref{sec:metric}). Because the score needs only the screenshot, the sentence and the recorded target, it applies to any dataset that records touches.
 
-%------------------------------------------------------------------------------
-\section{Experimental Setup on AndroidControl}
-\label{sec:setup}
-
-\paragraph{Data.}
-We join an instruction mirror\footnote{\url{https://huggingface.co/datasets/HarrytheOrange/parsed_AndroidControl}}
-with an image mirror\footnote{\url{https://huggingface.co/datasets/ckg/AndroidControlParsedWithImages-20k}}
-of AndroidControl~\cite{androidcontrol} on \texttt{(episode\_id, step\_id)}. The sentence target
-is the recorded human step instruction, and the accessibility trees come from
-\texttt{all\_\allowbreak forest\_\allowbreak dict.zip} in the first mirror. Keys missing from
-either mirror are dropped. To check that the two releases are aligned, we sampled $400$ steps: the OCR text at the recorded touch overlaps the paired instruction on $48\%$ of them, and on only $20\%$ when each instruction is paired with the next step instead. The corpus has $64{,}567$ training steps over $12{,}895$ tasks and
-$6{,}958$ test steps over $1{,}432$ disjoint tasks. The same app can appear in both partitions.
-
-\paragraph{Model input.}
-The prompt presents the goal, the previous three reference instructions and up to $24$ OCR
-detections from RapidOCR at confidence at least $0.5$, in detector order, before requesting the
-next-step instruction (Appendix~\ref{app:prompts}). Training uses steps of every action type; evaluation uses touch steps only (see below).
-
-\paragraph{Declarations.}
-The target node is the smallest visible accessibility node containing the recorded touch. Its
-role comes from a fixed map over Android classes that yields eleven interaction roles such as
-\texttt{button}, \texttt{tappable text}, \texttt{text field} and \texttt{switch}, with container
-classes mapping to \texttt{item} and the remainder to \texttt{element}. The name is the first
-valid accessibility \texttt{text} or \texttt{content\_description}, and otherwise the first one or
-two OCR strings inside the node in reading order. The point is the recorded touch, normalised to a $0$--$1000$ grid. The
-relation uses the nearest OCR string whose centre lies outside the node and within $350$ pixels,
-expressed as above, below, left or right; without such a string, a template states whether the
-role is unique or how many nodes share it. Non-touch steps keep the sentence target alone. For
-example, \texttt{<desc>item | Close | <point>274,285</point> | just below ``3:09''</desc>}.
-
-\paragraph{Preference pairs.}
-The competitor is the nearest visible node with the same role, excluding the target, any node
-nested in it and any node overlapping more than half of the smaller one. A pair is kept if the two
-names and points differ and the centres are $80$ to $350$ pixels apart. This yields $22{,}854$
-pairs.
-
-\paragraph{Training.}
-All configurations adapt Qwen2.5-VL-3B-Instruct~\cite{qwen25vl} with 4-bit NF4
-QLoRA~\cite{lora,qlora} under LLaMA-Factory~\cite{llamafactory}: rank $8$, scale $16$, dropout
-$0.05$, adapters on the seven decoder projections, frozen vision tower and projector, context
-length $2{,}560$, and loss on assistant tokens only; inference uses greedy decoding. GUIStep-S and GUIStep-D train
-for two epochs ($8{,}072$ updates) with effective batch $16$, peak learning rate $10^{-4}$, cosine
-decay and $5\%$ warm-up. GUIStep-P trains with ORPO ($\beta=0.1$) for $800$ updates at learning
-rate $2\times10^{-5}$, and the control uses the same preferred outputs and the same number of updates. A declaration without a
-closing tag yields an empty sentence, which counts as a failed step.
-
-\paragraph{Scoring population and statistics.}
-Scoring needs a recorded point, which restricts the evaluation population to the $4{,}463$ test steps whose action is a touch ($4{,}446$ taps and $17$ long presses). The $2{,}495$ non-touch steps
-(\texttt{wait}, \texttt{open\_app} and similar) are excluded, and every metric is computed on the same population.
-Because steps within an app are not independent, confidence intervals use $10{,}000$ cluster bootstrap resamples~\cite{cameron2008}, with apps as clusters and tasks for the steps whose app cannot be
-identified. Paired differences use the same bootstrap, and the two-sided $p$ is twice the smaller share of resamples falling on one side of zero. We use this in place of McNemar's test, which treats steps as
-independent.
 
 %------------------------------------------------------------------------------
 \section{Evaluation Metric}
@@ -348,6 +285,16 @@ The D.3 rule has the widest measured range, as it retains the reference ceiling 
 the generic sentence lower than the tolerance window does, and we adopt it as our primary score.
 Because AndroidControl does not provide a target box for every step, we reconstruct each box as the smallest visible accessibility node containing the recorded touch.
 
+\subsection{Evaluation Population and Statistics}
+\label{sec:population}
+
+
+Scoring needs a recorded point, which restricts the evaluation population to the $4{,}463$ of the $6{,}958$ AndroidControl test steps (Sect.~\ref{sec:setup}) whose action is a touch ($4{,}446$ taps and $17$ long presses). The $2{,}495$ non-touch steps
+(\texttt{wait}, \texttt{open\_app} and similar) are excluded, and every metric is computed on the same population.
+Because steps within an app are not independent, confidence intervals use $10{,}000$ cluster bootstrap resamples~\cite{cameron2008}, with apps as clusters and tasks for the steps whose app cannot be
+identified. Paired differences use the same bootstrap, and the two-sided $p$ is twice the smaller share of resamples falling on one side of zero. We use this in place of McNemar's test, which treats steps as
+independent.
+
 %------------------------------------------------------------------------------
 \subsection{Validation of the Metric}
 \label{sec:validate}
@@ -386,27 +333,25 @@ catching a wrong scroll direction & $\ge 90\%$ & $100.0\%$ & $100.0\%$ & pass\\
 \end{tabular}
 \end{table}
 
-For the frozen listener UGround-V1-2B~\cite{uground}, reference instructions score $83.8$
+\textit{Direct checks.} For the frozen listener UGround-V1-2B~\cite{uground}, reference instructions score $83.8$
 $[82.5,85.1]$, whereas the generic sentence \emph{``Tap the button.''}, which names no element,
 scores $14.1$ $[11.7,16.7]$. On the $193$ sentences that
 contain both a name and a position clause, deleting the name costs $34.2$ points, compared with
-$4.7$ for deleting the position, so the score is driven mainly by the element name. On the full
-$800$-step slice of Table~\ref{tab:rules} deleting the name costs a smaller $8.2$ points,
-because most sentences there contain no removable position clause. Across $1{,}139$
+$4.7$ for deleting the position, so the score is driven mainly by the element name.  Across $1{,}139$
 rewrites that preserve the meaning, the net change is $-0.09$ points $[-0.93,+0.79]$.
 
-We first ran the injection suite with the Voronoi rule, where it passed eight of the ten criteria.
+\textit{Injection suite.} We first ran the injection suite with the Voronoi rule, where it passed eight of the ten criteria.
 Rerunning it with the primary D.3 rule, on the same steps, thresholds and seed, passes six.
 Detection is lower under D.3 for every localisation criterion, and the paraphrase false-rejection
 rate rises from $0.0\%$ to $6.5\%$, because the suite adds an offset of about $3\%$ of the width to simulate listener error, and that offset can leave a small box. Of the injected points that D.3 accepts despite targeting a distant element, the median reconstructed box covers $14.7\%$ of the screen, against $0.9\%$ for the others. Large container boxes are thus the main source of missed detections. The score is therefore weak at rejecting neighbouring elements, elements that share a large box with the target, and negations absent from the polarity table.
 
-Because the Voronoi rule catches $99.6\%$ of the nearby and all of the distant injected elements, we also rescored every system under it. The ranking does not change: backbone $47.6$, GUIStep-D
+\textit{Stricter rule.} Because the Voronoi rule catches $99.6\%$ of the nearby and all of the distant injected elements, we also rescored every system under it. The ranking does not change: backbone $47.6$, GUIStep-D
 $57.2$, GUIStep-S $59.1$, control $59.4$, GUIStep-P $60.0$ and reference $75.7$, with GUIStep-S
 ahead of the backbone by $+11.5$ $[+10.0,+13.1]$. Neither rule reliably catches a confusion between
 adjacent controls ($30$--$80$ px), although such a confusion would mislead a person following the instruction. Absolute levels may thus overstate how often a reader would pick the right
 control, and we rely mainly on the comparisons between systems, which hold under both rules.
 
-UGround has seen AndroidControl training data. To check whether this matters, we repeat our main comparison with
+\textit{Other listeners.} UGround has seen AndroidControl training data. To check whether this matters, we repeat our main comparison with
 UI-Venus-Ground-7B~\cite{uivenus}, which has not. On the $2{,}532$-step subset on which both
 listeners were run, the gap between GUIStep-S and the untuned backbone changes from $+11.14$ under
 UGround to $+11.02$ under UI-Venus, retaining $99\%$ of its magnitude. The $+11.9$ points of
@@ -421,6 +366,52 @@ although this listener has a lower ceiling and we did not run it on the other co
 %------------------------------------------------------------------------------
 \section{Experiments}
 \label{sec:results}
+
+\subsection{Setup on AndroidControl}
+\label{sec:setup}
+
+
+\paragraph{Data.}
+We join an instruction release\footnote{\url{https://huggingface.co/datasets/HarrytheOrange/parsed_AndroidControl}}
+with an image release\footnote{\url{https://huggingface.co/datasets/ckg/AndroidControlParsedWithImages-20k}}
+of AndroidControl~\cite{androidcontrol} on \texttt{(episode\_id, step\_id)}. The sentence target
+is the recorded human step instruction, and the accessibility trees come from
+\texttt{all\_\allowbreak forest\_\allowbreak dict.zip} in the first release. Keys missing from either release are dropped. To check that the two releases are aligned, we sampled $400$ steps: the OCR text at the recorded touch overlaps the paired instruction on $48\%$ of them, and on only $20\%$ when each instruction is paired with the next step instead. The corpus has $64{,}567$ training steps over $12{,}895$ tasks and
+$6{,}958$ test steps over $1{,}432$ disjoint tasks. The same app can appear in both partitions.
+
+\paragraph{Model input.}
+The prompt presents the goal, the previous three reference instructions and up to $24$ OCR
+detections from RapidOCR at confidence at least $0.5$, in detector order, before requesting the
+next-step instruction (Appendix~\ref{app:prompts}). Training uses steps of every action type; evaluation uses touch steps only (Sect.~\ref{sec:population}).
+
+\paragraph{Declarations.}
+The target node is the node whose box defines the target in Sect.~\ref{sec:rules}. Its
+role comes from a fixed map over Android classes that yields eleven interaction roles such as
+\texttt{button}, \texttt{tappable text}, \texttt{text field} and \texttt{switch}, with container
+classes mapping to \texttt{item} and the remainder to \texttt{element}. The name is the first
+valid accessibility \texttt{text} or \texttt{content\_description}, and otherwise the first one or
+two OCR strings inside the node in reading order. The point is the recorded touch, normalised to a $0$--$1000$ grid. The
+relation uses the nearest OCR string whose centre lies outside the node and within $350$ pixels,
+expressed as above, below, left or right; without such a string, a template states whether the
+role is unique or how many nodes share it. Non-touch steps keep the sentence target alone. For
+example, \texttt{<desc>item | Close | <point>274,285</point> | just below ``3:09''</desc>}.
+
+\paragraph{Preference pairs.}
+The competitor is the nearest visible node with the same role, excluding the target, any node
+nested in it and any node overlapping more than half of the smaller one. A pair is kept if the two
+names and points differ and the centres are $80$ to $350$ pixels apart. This yields $22{,}854$
+pairs.
+
+\paragraph{Training.}
+All configurations adapt Qwen2.5-VL-3B-Instruct~\cite{qwen25vl} with 4-bit NF4
+QLoRA~\cite{lora,qlora} under LLaMA-Factory~\cite{llamafactory}: rank $8$, scale $16$, dropout
+$0.05$, adapters on the seven decoder projections, frozen vision tower and projector, context
+length $2{,}560$, and loss on assistant tokens only; inference uses greedy decoding. GUIStep-S and GUIStep-D train
+for two epochs ($8{,}072$ updates) with effective batch $16$, peak learning rate $10^{-4}$, cosine
+decay and $5\%$ warm-up. GUIStep-P trains with ORPO ($\beta=0.1$) for $800$ updates at learning
+rate $2\times10^{-5}$, and the control uses the same preferred outputs and the same number of updates. A declaration without a
+closing tag yields an empty sentence, which counts as a failed step.
+
 
 \subsection{Main Results}
 
@@ -502,13 +493,9 @@ P $-$ control & $+0.2$ $[-0.5,+0.8]$ ($p=0.64$) & $+0.9$ $[+0.2,+1.6]$ ($p=0.015
 \end{tabular}}
 \end{table}
 
-Fine-tuning helps in both groups. The gain over the backbone is nearly twice as large on repeated sentences, which indicates that part of it comes from learning the dataset's usual wording. The gain on unseen
-sentences, $+8.4$ points, does not depend on that. GUIStep-P is indistinguishable from GUIStep-S and the control on repeated sentences and ahead of both on unseen ones, although this is a
+Fine-tuning helps in both groups. The gain over the backbone is nearly twice as large on repeated sentences, which indicates that part of it comes from learning the dataset's usual wording. The gain of $+8.4$ points on unseen sentences cannot come from reproducing a training sentence. GUIStep-P is indistinguishable from GUIStep-S and the control on repeated sentences and ahead of both on unseen ones, although this is a
 subgroup comparison made after seeing the overall result and is not corrected for multiple
-comparisons. Only $78$ steps, from $20$ applications, belong to applications absent from training.
-There GUIStep-S scores $65.4$, GUIStep-P $68.0$ and the backbone $56.4$, but the intervals are wide
-(the difference between GUIStep-P and the backbone is $+11.5$ $[+1.9,+19.8]$), so we report them and draw no
-conclusion.
+comparisons. On the $78$ steps from $20$ applications absent from training, GUIStep-S scores $65.4$, GUIStep-P $68.0$ and the backbone $56.4$; the intervals are too wide for a conclusion (GUIStep-P $-$ backbone: $+11.5$ $[+1.9,+19.8]$).
 
 \subsection{Reference-Overlap Metrics}
 For comparability with Widget Captioning and Screen2Words we also report the conventional
@@ -562,16 +549,13 @@ errors needs a manual or human study, which we leave open.
 Executability is a proxy, computed by a learned model, for whether a person can follow an
 instruction, and we have not established that link with a human study or with a manually labelled
 sample. The validation in Sect.~\ref{sec:validate} was rerun with the primary D.3 rule and fails
-four of ten criteria, among them the detection of neighbouring elements. The ranking of systems holds under the stricter Voronoi rule and under two further listeners, one of them outside the Qwen family. The two extra listeners, however, are reported only for the backbone and GUIStep-S, and absolute levels depend on the listener and the rule. Because the reconstructed boxes are stricter than AndroidControl's original labels, our scores are not directly comparable with work that uses those labels.
+four of ten criteria, among them the detection of neighbouring elements. The ranking holds under the Voronoi rule and two further listeners, but those listeners cover only the backbone and GUIStep-S, and absolute levels depend on the listener and the rule. Because the reconstructed boxes are stricter than AndroidControl's original labels, our scores are not directly comparable with work that uses those labels.
 
 \paragraph{Scope.}
-The experiments cover one English dataset, one backbone and touch actions only. We train one run
-per configuration apart from GUIStep-S, so the small differences between GUIStep-D, GUIStep-P and
-the control have not been checked across seeds. Besides the untuned backbone and our matched
+The experiments cover one English dataset, one backbone and touch actions only. GUIStep-D, GUIStep-P and the control were each trained once, so their small differences are untested across seeds. Besides the untuned backbone and our matched
 control, the only other pipeline is the select-then-verbalise variant, which differs from GUIStep-S
 in more than one setting. We know of no public system trained for this task and did not compare
-with another instruction-capable vision-language model. We did not measure inference latency. Training used 4-bit QLoRA on a single A100 GPU. The exact
-prompts and scoring rules are given in Appendix~\ref{app:prompts}.
+with another instruction-capable vision-language model. We report the training setting (4-bit QLoRA on a single A100 GPU) but did not measure inference latency. The exact prompts and scoring rules are given in Appendix~\ref{app:prompts}.
 
 \paragraph{Evaluation protocol.}
 $52.6\%$ of the test reference sentences repeat a training target (Sect.~\ref{sec:repeat}), and
@@ -579,20 +563,13 @@ the history we supply consists of reference instructions instead of the model's 
 preference pairs are derived automatically from the accessibility tree and were not checked by hand.
 
 \paragraph{Novelty.}
-The adaptation uses existing methods, namely QLoRA and an established preference objective, and our
-ablation shows that most of the improvement over the backbone comes from supervised training on the
-sentence alone.
+The adaptation relies on existing methods, namely QLoRA and an established preference objective. Our contribution lies in the task formulation, the supervision derived from existing records, and the validated score, not in a new learning algorithm.
 
 %------------------------------------------------------------------------------
 \section{Conclusion}
 \label{sec:conclusion}
 
-We introduced GUIStep, a training framework for GUI step instruction generation that derives
-sentence targets, declarations and preference pairs from recorded demonstrations, instantiated it on
-AndroidControl, and scored it with an execution-based measure that we validated before use. GUIStep-P outperforms the
-untuned backbone by $13.0$ points, although our ablation attributes most of that gain to
-training on the sentence alone, with neither the structured target nor the preference objective
-improving clearly on it. One explanation is that our preference signal acts on the declaration
+We have shown that the records already present in a GUI demonstration dataset suffice to train a compact model that writes next-step instructions for people, and that a frozen listener, once validated, can score such sentences without a list of admissible wordings. On AndroidControl the best configuration gains $13.0$ points of executability over the untuned backbone. Most of this gain comes from learning the recorded sentences, and the declaration and preference stages add little. One explanation is that our preference signal acts on the declaration
 and not on the sentence that is scored. Future work should put the
 grounding signal directly on the generated sentence, either by reranking sampled candidates or by
 sequence-level training with a listener reward~\cite{scst,luodisc}, and should validate the
