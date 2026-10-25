@@ -220,3 +220,20 @@ G9. Phi-Ground, S1/101 đã có (kernel `trangphngngc/phiground-s1` COMPLETE, ph
 - Ghép cặp trên 4.463 bước (bước thiếu tính 0; Base thiếu 7 bước), bootstrap cụm app, McNemar chính xác: S1/101 − Base **+6,16 [+4,71; +7,64]**, b=693 c=418, p=1,4e−16. Dưới UGround cùng phép so là +11,52, dưới UI-Venus (lát 2.532) +9,68. Hướng giữ dưới dụng cụ ngoài họ Qwen, độ lớn nhỏ hơn khoảng một nửa.
 - Còn thiếu để so ck500/R3: chấm 1.668 câu ck500 khác S1 và 327 câu R3 khác cả S1 lẫn ck500 (tổng 1.995 bước, ước ~1,3 h T4 [suy từ 2,95 h / 4.462 bước của lượt S1]). Cách gọi: `score_run.py --mode score --n <số dòng tệp>` (có `--n` thì không bị chặn ở phép kiểm thiếu 1%; tệp chỉ chứa các bước cần chấm), rồi ghép theo (bước, câu) như `venus_ck_doc.py`.
 - Cách viết: số Base/S1 chưa đủ để nói gì về ck500. Vẫn cấm "đã đóng đòn cùng họ Qwen" cho tới khi kiểm xong dữ liệu huấn luyện của Phi-Ground (G3).
+
+G10. Kết quả Kaggle chiều 25/10.
+
+**Phi-Ground (bộ trỏ ngoài họ Qwen), đủ 4.463 bước** (số test, một hạt giống mỗi nhánh). Kernel `trangphngngc/phiground-cham-ck-r3` chỉ chấm câu chưa có điểm (1.668 câu ck500 khác S1, 327 câu R3 khác cả hai), ghép theo (bước, câu) với kết quả S1 của G9; đầu ra `runs/phiground/ck_r3_25_10/`. Kiểm tái lập: 40 bước S1 chấm lại trùng exec 40/40, toạ độ lệch 0. Ghép xong thiếu 0 bước. Base thiếu 7 bước tính 0 (G8).
+| nhánh | exec |
+|---|---|
+| Base | 40,80 |
+| S1/101 | 46,96 |
+| ck500 | 47,75 |
+| R3 (ACE) | 47,73 |
+Ghép cặp (bootstrap cụm app, McNemar chính xác): ck500 − S1/101 +0,78 [+0,05; +1,51] b=146 c=111 p=0,034 · R3 − S1/101 +0,76 [+0,02; +1,49] p=0,047 · R3 − ck500 −0,02 [−0,33; +0,29] p=1 · S1/101 − Base +6,16 [+4,71; +7,64] · ck500 − Base +6,95 [+5,46; +8,45].
+Cách đọc: chiều Base < S1 < ck500 ≈ R3 giữ dưới bộ trỏ thứ ba, ngoài họ Qwen; mức ck500 − S1/101 nhỏ hơn dưới UGround (+1,55) và UI-Venus (+1,55), KTC sát 0, p sát 0,05. Chưa có S1/202 dưới Phi-Ground nên chưa so được với hạt thứ hai (dưới Phi-4 và UGround, so với S1/202 thì mức tăng nhỏ hơn hẳn, xem B và G1). Cách viết: "giữ hướng dưới ba bộ trỏ (UGround, UI-Venus, Phi-Ground), mức tăng khiêm tốn"; vẫn chưa được viết "đã đóng đòn cùng họ Qwen" cho tới khi kiểm dữ liệu huấn luyện của Phi-Ground (G3).
+
+**xao101 (GRPO thưởng xáo trộn, nhánh kiểm sàn) đã train đủ 500 bước.** Commit 1 dừng ở điểm lưu 275 (không phải ~225 như ghi chú cũ); commit 2 chạy tiếp từ `checkpoint-275` tới 500 (225 bước, 148,2 s/bước, VRAM đỉnh 12,79 GiB), không cần commit 3. Log có `[nạp default] 504 tensor · |lora_B| 0.0000 → 6.1258` nên lần chạy tiếp không bị đặt lại. kl trung bình theo cửa sổ: 0,0001 (1–100) · 0,0003 (100–200) · 0,0004 (200–250) · 0,0011 (450–500), thấp hơn ck500 gốc khoảng 10 đến 30 lần (ck500 cuối lượt ~0,03); thưởng TB 0,45 → 0,48. Đọc: thưởng xáo không có tín hiệu nhất quán nên chính sách gần như đứng yên quanh S1. Chưa có điểm test; phải chấm như `kaggle_grpo_spice_test_ck500.md` (tên ra `pred_ck500_xao101`) rồi mới đưa vào luận văn. Log ở `runs/xao101/c2/`.
+
+**AitZ (bộ dữ liệu thứ hai, chưa có điểm mô hình nào).** Kernel CPU `trangphngngc/aitz-build-cpu` dựng xong tập kiểm (bản 2). OCR lỗi hai lần do bản `rapidocr_onnxruntime` mới trên Kaggle: bản 2 không nhận ảnh PIL, bản 3 trả độ tin cậy dạng chuỗi (sửa bằng `float(conf)`, ngưỡng 0,5 giữ nguyên); bản 4 đang chạy lại OCR. Thống kê tập test chính thức của AitZ (đo, `runs/aitz/build_v2_25_10/out/thong_ke.json`): 506 tác vụ · 4.724 bước · **2.736 bước chạm** · scroll 601 · input_text 500 · enter 118 · home 232 · back 33 · hoàn tất 504. Bốn nhóm: general 1.202 · google_apps 621 · install 1.108 · web_shopping 1.793. Cỡ ảnh đa dạng, nhỏ hơn AndroidControl nhiều (412×732 · 540×1080 · 540×1140 · 540×1170 · 270×600 · 720×1520). Điểm chạm vàng nằm trong ít nhất một khung chú thích ở 1.562/2.736 bước (57%), vì khung của AitW là khung OCR và biểu tượng chứ không phải cây trợ năng.
+Phải khai khi dùng: câu mô tả từng bước do GPT-4V sinh rồi ba chuyên gia đối chiếu với thao tác vàng và sửa tay chỗ không khớp (Phụ lục A.2 bài AitZ, arXiv 2403.02713); venue "Findings of EMNLP 2024" mới lấy từ README GitHub, chưa kiểm ACL Anthology; UGround có AITZ 8K trong dữ liệu huấn luyện.

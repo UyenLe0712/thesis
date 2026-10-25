@@ -86,7 +86,7 @@ def lam(args):
             res, _ = ocr(f"{D}/{r['image']}"); items = []
             for box, txt, conf in (res or []):
                 cx = sum(q[0] for q in box) / 4; cy = sum(q[1] for q in box) / 4; t = (txt or "").strip()
-                if len(t) < 1 or conf < 0.5: continue
+                if len(t) < 1 or float(conf) < 0.5: continue
                 items.append({"text": t, "cx": round(cx), "cy": round(cy), "zone": zone(cx, cy, w, h)})
             f.write(json.dumps({"image": r["image"], "w": w, "h": h, "items": items}, ensure_ascii=False) + "\n"); f.flush()
     return k

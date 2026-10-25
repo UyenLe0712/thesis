@@ -1,0 +1,46 @@
+[dữ liệu] /kaggle/working/harness/dg1_cache/test_ac/test.jsonl
+⚠️  TỆP DỰ ĐOÁN THIẾU: chỉ có 327/4463 bước chạm.
+    Chạy nốt infer_branch.py (nó tự nối tiếp) rồi hãy chấm — đừng chấm
+    tệp dở, con số ra sẽ tính trên một phần tập kiểm mà không có gì báo.
+[PhiGround] transformers 4.48.2 (thẻ mô hình ghim 4.43 — lệch lớn thì lỗi nổ ngay dòng dưới)
+[PhiGround] bản cục bộ /tmp/phig · auto_map = {'AutoConfig': 'configuration_phi3_v.Phi3VConfig', 'AutoModelForCausalLM': 'modeling_phi3_v.Phi3VForCausalLM'}
+/usr/local/lib/python3.13/dist-packages/transformers/models/auto/image_processing_auto.py:590: FutureWarning: The image_processor_class argument is deprecated and will be removed in v4.42. Please use `slow_image_processor_class`, or `fast_image_processor_class` instead
+  warnings.warn(
+[PhiGround] dtype thật = torch.float16 · attn = eager
+The `seen_tokens` attribute is deprecated and will be removed in v4.41. Use the `cache_position` model input instead.
+`get_max_cache()` is deprecated for all Cache classes. Use `get_max_cache_shape()` instead. Calling `get_max_cache()` will raise error from v4.48
+You are not running the flash-attention implementation, expect numerical differences.
+[PhiGround] thô #1: dài_vào=1103 dài_ra=1121 out='<point>433, 295</point> \n' ids_cuối=[29892, 29871, 29906, 29929, 29945, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #2: dài_vào=1102 dài_ra=1120 out='<point>473, 903</point> \n' ids_cuối=[29892, 29871, 29929, 29900, 29941, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #3: dài_vào=1105 dài_ra=1123 out='<point>499, 958</point> \n' ids_cuối=[29892, 29871, 29929, 29945, 29947, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #4: dài_vào=1104 dài_ra=1121 out='<point>596, 91</point> \n' ids_cuối=[29953, 29892, 29871, 29929, 29896, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #5: dài_vào=1114 dài_ra=1132 out='<point>572, 502</point> \n' ids_cuối=[29892, 29871, 29945, 29900, 29906, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #6: dài_vào=1101 dài_ra=1119 out='<point>499, 687</point> \n' ids_cuối=[29892, 29871, 29953, 29947, 29955, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #7: dài_vào=1101 dài_ra=1119 out='<point>499, 680</point> \n' ids_cuối=[29892, 29871, 29953, 29947, 29900, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #8: dài_vào=1101 dài_ra=1118 out='<point>416, 87</point> \n' ids_cuối=[29953, 29892, 29871, 29947, 29955, 829, 3149, 29958, 32007, 29871, 13, 32000]
+  [09:03:30] 20/327 =  6.1% · 0.40 bước/giây · còn ~13 phút
+  [09:04:20] 40/327 = 12.2% · 0.40 bước/giây · còn ~12 phút
+  [09:05:09] 60/327 = 18.3% · 0.40 bước/giây · còn ~11 phút
+  [09:05:58] 80/327 = 24.5% · 0.40 bước/giây · còn ~10 phút
+  [09:06:48] 100/327 = 30.6% · 0.40 bước/giây · còn ~9 phút
+  [09:07:36] 120/327 = 36.7% · 0.41 bước/giây · còn ~9 phút
+  [09:08:26] 140/327 = 42.8% · 0.41 bước/giây · còn ~8 phút
+  [09:09:15] 160/327 = 48.9% · 0.41 bước/giây · còn ~7 phút
+  [09:10:04] 180/327 = 55.0% · 0.41 bước/giây · còn ~6 phút
+  [09:10:54] 200/327 = 61.2% · 0.41 bước/giây · còn ~5 phút
+  [09:11:44] 220/327 = 67.3% · 0.40 bước/giây · còn ~4 phút
+  [09:12:32] 240/327 = 73.4% · 0.41 bước/giây · còn ~4 phút
+  [09:13:22] 260/327 = 79.5% · 0.41 bước/giây · còn ~3 phút
+  [09:14:12] 280/327 = 85.6% · 0.40 bước/giây · còn ~2 phút
+  [09:15:00] 300/327 = 91.7% · 0.41 bước/giây · còn ~1 phút
+  [09:15:49] 320/327 = 97.9% · 0.41 bước/giây · còn ~0 phút
+Gộp từ tệp thô: 327 bản ghi
+======================================================================
+CHẤM — preds_r3d.jsonl  ·  327 bước chạm
+======================================================================
+  ô-Voronoi tâm (headline):  56.3%   KTC95 [51.1%, 61.2%]
+  đĩa dung sai (báo kèm) :  66.7%   KTC95 [61.9%, 71.4%]
+  cụm: 256 (hiệu dụng 206.0)
+
+Đã lưu /kaggle/working/out/score_r3d.json
+         /kaggle/working/out/score_r3d_raw.jsonl  (327 bước — đổi luật chấm hay thêm lát cắt thì chấm lại từ tệp này, KHÔNG gọi lại bộ trỏ)

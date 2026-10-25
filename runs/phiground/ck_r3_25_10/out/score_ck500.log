@@ -1,0 +1,113 @@
+[dữ liệu] /kaggle/working/harness/dg1_cache/test_ac/test.jsonl
+⚠️  TỆP DỰ ĐOÁN THIẾU: chỉ có 1668/4463 bước chạm.
+    Chạy nốt infer_branch.py (nó tự nối tiếp) rồi hãy chấm — đừng chấm
+    tệp dở, con số ra sẽ tính trên một phần tập kiểm mà không có gì báo.
+[PhiGround] transformers 4.48.2 (thẻ mô hình ghim 4.43 — lệch lớn thì lỗi nổ ngay dòng dưới)
+[PhiGround] bản cục bộ /tmp/phig · auto_map = {'AutoConfig': 'configuration_phi3_v.Phi3VConfig', 'AutoModelForCausalLM': 'modeling_phi3_v.Phi3VForCausalLM'}
+/usr/local/lib/python3.13/dist-packages/transformers/models/auto/image_processing_auto.py:590: FutureWarning: The image_processor_class argument is deprecated and will be removed in v4.42. Please use `slow_image_processor_class`, or `fast_image_processor_class` instead
+  warnings.warn(
+[PhiGround] dtype thật = torch.float16 · attn = eager
+The `seen_tokens` attribute is deprecated and will be removed in v4.41. Use the `cache_position` model input instead.
+`get_max_cache()` is deprecated for all Cache classes. Use `get_max_cache_shape()` instead. Calling `get_max_cache()` will raise error from v4.48
+You are not running the flash-attention implementation, expect numerical differences.
+[PhiGround] thô #1: dài_vào=1106 dài_ra=1124 out='<point>530, 281</point> \n' ids_cuối=[29892, 29871, 29906, 29947, 29896, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #2: dài_vào=1103 dài_ra=1121 out='<point>470, 771</point> \n' ids_cuối=[29892, 29871, 29955, 29955, 29896, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #3: dài_vào=1098 dài_ra=1116 out='<point>625, 897</point> \n' ids_cuối=[29892, 29871, 29947, 29929, 29955, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #4: dài_vào=1108 dài_ra=1126 out='<point>634, 920</point> \n' ids_cuối=[29892, 29871, 29929, 29906, 29900, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #5: dài_vào=1112 dài_ra=1130 out='<point>377, 169</point> \n' ids_cuối=[29892, 29871, 29896, 29953, 29929, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #6: dài_vào=1101 dài_ra=1119 out='<point>582, 645</point> \n' ids_cuối=[29892, 29871, 29953, 29946, 29945, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #7: dài_vào=1104 dài_ra=1122 out='<point>448, 497</point> \n' ids_cuối=[29892, 29871, 29946, 29929, 29955, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #8: dài_vào=1100 dài_ra=1118 out='<point>499, 915</point> \n' ids_cuối=[29892, 29871, 29929, 29896, 29945, 829, 3149, 29958, 32007, 29871, 13, 32000]
+  [07:53:29] 20/1668 =  1.2% · 0.40 bước/giây · còn ~69 phút
+  [07:54:20] 40/1668 =  2.4% · 0.40 bước/giây · còn ~68 phút
+  [07:55:09] 60/1668 =  3.6% · 0.40 bước/giây · còn ~67 phút
+  [07:56:00] 80/1668 =  4.8% · 0.40 bước/giây · còn ~66 phút
+  [07:56:50] 100/1668 =  6.0% · 0.40 bước/giây · còn ~65 phút
+  [07:57:40] 120/1668 =  7.2% · 0.40 bước/giây · còn ~65 phút
+  [07:58:30] 140/1668 =  8.4% · 0.40 bước/giây · còn ~64 phút
+  [07:59:20] 160/1668 =  9.6% · 0.40 bước/giây · còn ~63 phút
+  [08:00:11] 180/1668 = 10.8% · 0.40 bước/giây · còn ~62 phút
+  [08:01:02] 200/1668 = 12.0% · 0.40 bước/giây · còn ~61 phút
+  [08:01:51] 220/1668 = 13.2% · 0.40 bước/giây · còn ~61 phút
+  [08:02:40] 240/1668 = 14.4% · 0.40 bước/giây · còn ~60 phút
+  [08:03:30] 260/1668 = 15.6% · 0.40 bước/giây · còn ~59 phút
+  [08:04:20] 280/1668 = 16.8% · 0.40 bước/giây · còn ~58 phút
+  [08:05:10] 300/1668 = 18.0% · 0.40 bước/giây · còn ~57 phút
+  [08:05:59] 320/1668 = 19.2% · 0.40 bước/giây · còn ~56 phút
+  [08:06:48] 340/1668 = 20.4% · 0.40 bước/giây · còn ~55 phút
+  [08:07:38] 360/1668 = 21.6% · 0.40 bước/giây · còn ~54 phút
+  [08:08:28] 380/1668 = 22.8% · 0.40 bước/giây · còn ~54 phút
+  [08:09:17] 400/1668 = 24.0% · 0.40 bước/giây · còn ~53 phút
+  [08:10:05] 420/1668 = 25.2% · 0.40 bước/giây · còn ~52 phút
+  [08:10:55] 440/1668 = 26.4% · 0.40 bước/giây · còn ~51 phút
+  [08:11:45] 460/1668 = 27.6% · 0.40 bước/giây · còn ~50 phút
+  [08:12:35] 480/1668 = 28.8% · 0.40 bước/giây · còn ~49 phút
+  [08:13:24] 500/1668 = 30.0% · 0.40 bước/giây · còn ~48 phút
+  [08:14:15] 520/1668 = 31.2% · 0.40 bước/giây · còn ~48 phút
+  [08:15:04] 540/1668 = 32.4% · 0.40 bước/giây · còn ~47 phút
+  [08:15:53] 560/1668 = 33.6% · 0.40 bước/giây · còn ~46 phút
+  [08:16:43] 580/1668 = 34.8% · 0.40 bước/giây · còn ~45 phút
+  [08:17:32] 600/1668 = 36.0% · 0.40 bước/giây · còn ~44 phút
+  [08:18:21] 620/1668 = 37.2% · 0.40 bước/giây · còn ~43 phút
+  [08:19:11] 640/1668 = 38.4% · 0.40 bước/giây · còn ~43 phút
+  [08:20:00] 660/1668 = 39.6% · 0.40 bước/giây · còn ~42 phút
+  [08:20:49] 680/1668 = 40.8% · 0.40 bước/giây · còn ~41 phút
+  [08:21:39] 700/1668 = 42.0% · 0.40 bước/giây · còn ~40 phút
+  [08:22:28] 720/1668 = 43.2% · 0.40 bước/giây · còn ~39 phút
+  [08:23:17] 740/1668 = 44.4% · 0.40 bước/giây · còn ~38 phút
+  [08:24:06] 760/1668 = 45.6% · 0.40 bước/giây · còn ~38 phút
+  [08:24:55] 780/1668 = 46.8% · 0.40 bước/giây · còn ~37 phút
+  [08:25:44] 800/1668 = 48.0% · 0.40 bước/giây · còn ~36 phút
+  [08:26:33] 820/1668 = 49.2% · 0.40 bước/giây · còn ~35 phút
+  [08:27:22] 840/1668 = 50.4% · 0.40 bước/giây · còn ~34 phút
+  [08:28:11] 860/1668 = 51.6% · 0.40 bước/giây · còn ~33 phút
+  [08:29:01] 880/1668 = 52.8% · 0.40 bước/giây · còn ~33 phút
+  [08:29:50] 900/1668 = 54.0% · 0.40 bước/giây · còn ~32 phút
+  [08:30:40] 920/1668 = 55.2% · 0.40 bước/giây · còn ~31 phút
+  [08:31:29] 940/1668 = 56.4% · 0.40 bước/giây · còn ~30 phút
+  [08:32:19] 960/1668 = 57.6% · 0.40 bước/giây · còn ~29 phút
+  [08:33:08] 980/1668 = 58.8% · 0.40 bước/giây · còn ~28 phút
+  [08:33:58] 1000/1668 = 60.0% · 0.40 bước/giây · còn ~28 phút
+  [08:34:47] 1020/1668 = 61.2% · 0.40 bước/giây · còn ~27 phút
+  [08:35:36] 1040/1668 = 62.4% · 0.40 bước/giây · còn ~26 phút
+  [08:36:25] 1060/1668 = 63.5% · 0.40 bước/giây · còn ~25 phút
+  [08:37:14] 1080/1668 = 64.7% · 0.40 bước/giây · còn ~24 phút
+  [08:38:03] 1100/1668 = 65.9% · 0.40 bước/giây · còn ~23 phút
+  [08:38:52] 1120/1668 = 67.1% · 0.40 bước/giây · còn ~23 phút
+  [08:39:41] 1140/1668 = 68.3% · 0.40 bước/giây · còn ~22 phút
+  [08:40:30] 1160/1668 = 69.5% · 0.40 bước/giây · còn ~21 phút
+  [08:41:20] 1180/1668 = 70.7% · 0.40 bước/giây · còn ~20 phút
+  [08:42:10] 1200/1668 = 71.9% · 0.40 bước/giây · còn ~19 phút
+  [08:43:01] 1220/1668 = 73.1% · 0.40 bước/giây · còn ~18 phút
+  [08:43:51] 1240/1668 = 74.3% · 0.40 bước/giây · còn ~18 phút
+  [08:44:41] 1260/1668 = 75.5% · 0.40 bước/giây · còn ~17 phút
+  [08:45:31] 1280/1668 = 76.7% · 0.40 bước/giây · còn ~16 phút
+  [08:46:22] 1300/1668 = 77.9% · 0.40 bước/giây · còn ~15 phút
+  [08:47:12] 1320/1668 = 79.1% · 0.40 bước/giây · còn ~14 phút
+  [08:48:03] 1340/1668 = 80.3% · 0.40 bước/giây · còn ~14 phút
+  [08:48:54] 1360/1668 = 81.5% · 0.40 bước/giây · còn ~13 phút
+  [08:49:44] 1380/1668 = 82.7% · 0.40 bước/giây · còn ~12 phút
+  [08:50:35] 1400/1668 = 83.9% · 0.40 bước/giây · còn ~11 phút
+  [08:51:25] 1420/1668 = 85.1% · 0.40 bước/giây · còn ~10 phút
+  [08:52:16] 1440/1668 = 86.3% · 0.40 bước/giây · còn ~9 phút
+  [08:53:07] 1460/1668 = 87.5% · 0.40 bước/giây · còn ~9 phút
+  [08:53:58] 1480/1668 = 88.7% · 0.40 bước/giây · còn ~8 phút
+  [08:54:49] 1500/1668 = 89.9% · 0.40 bước/giây · còn ~7 phút
+  [08:55:40] 1520/1668 = 91.1% · 0.40 bước/giây · còn ~6 phút
+  [08:56:31] 1540/1668 = 92.3% · 0.40 bước/giây · còn ~5 phút
+  [08:57:21] 1560/1668 = 93.5% · 0.40 bước/giây · còn ~4 phút
+  [08:58:12] 1580/1668 = 94.7% · 0.40 bước/giây · còn ~4 phút
+  [08:59:03] 1600/1668 = 95.9% · 0.40 bước/giây · còn ~3 phút
+  [08:59:54] 1620/1668 = 97.1% · 0.40 bước/giây · còn ~2 phút
+  [09:00:45] 1640/1668 = 98.3% · 0.40 bước/giây · còn ~1 phút
+  [09:01:36] 1660/1668 = 99.5% · 0.40 bước/giây · còn ~0 phút
+Gộp từ tệp thô: 1668 bản ghi
+======================================================================
+CHẤM — preds_ck500.jsonl  ·  1668 bước chạm
+======================================================================
+  ô-Voronoi tâm (headline):  46.2%   KTC95 [43.7%, 48.7%]
+  đĩa dung sai (báo kèm) :  55.0%   KTC95 [52.4%, 57.5%]
+  cụm: 785 (hiệu dụng 375.0)
+
+Đã lưu /kaggle/working/out/score_ck500.json
+         /kaggle/working/out/score_ck500_raw.jsonl  (1668 bước — đổi luật chấm hay thêm lát cắt thì chấm lại từ tệp này, KHÔNG gọi lại bộ trỏ)

@@ -1,0 +1,32 @@
+[dữ liệu] /kaggle/working/harness/dg1_cache/test_ac/test.jsonl
+⚠️  TỆP DỰ ĐOÁN THIẾU: chỉ có 40/4463 bước chạm.
+    Chạy nốt infer_branch.py (nó tự nối tiếp) rồi hãy chấm — đừng chấm
+    tệp dở, con số ra sẽ tính trên một phần tập kiểm mà không có gì báo.
+[PhiGround] transformers 4.48.2 (thẻ mô hình ghim 4.43 — lệch lớn thì lỗi nổ ngay dòng dưới)
+[PhiGround] bản cục bộ /tmp/phig · auto_map = {'AutoConfig': 'configuration_phi3_v.Phi3VConfig', 'AutoModelForCausalLM': 'modeling_phi3_v.Phi3VForCausalLM'}
+/usr/local/lib/python3.13/dist-packages/transformers/models/auto/image_processing_auto.py:590: FutureWarning: The image_processor_class argument is deprecated and will be removed in v4.42. Please use `slow_image_processor_class`, or `fast_image_processor_class` instead
+  warnings.warn(
+[PhiGround] dtype thật = torch.float16 · attn = eager
+The `seen_tokens` attribute is deprecated and will be removed in v4.41. Use the `cache_position` model input instead.
+`get_max_cache()` is deprecated for all Cache classes. Use `get_max_cache_shape()` instead. Calling `get_max_cache()` will raise error from v4.48
+You are not running the flash-attention implementation, expect numerical differences.
+[PhiGround] thô #1: dài_vào=1100 dài_ra=1118 out='<point>499, 920</point> \n' ids_cuối=[29892, 29871, 29929, 29906, 29900, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #2: dài_vào=1108 dài_ra=1125 out='<point>596, 90</point> \n' ids_cuối=[29953, 29892, 29871, 29929, 29900, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #3: dài_vào=1100 dài_ra=1118 out='<point>499, 930</point> \n' ids_cuối=[29892, 29871, 29929, 29941, 29900, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #4: dài_vào=1106 dài_ra=1124 out='<point>461, 954</point> \n' ids_cuối=[29892, 29871, 29929, 29945, 29946, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #5: dài_vào=1109 dài_ra=1126 out='<point>373, 91</point> \n' ids_cuối=[29941, 29892, 29871, 29929, 29896, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #6: dài_vào=1109 dài_ra=1126 out='<point>633, 91</point> \n' ids_cuối=[29941, 29892, 29871, 29929, 29896, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #7: dài_vào=1099 dài_ra=1116 out='<point>613, 27</point> \n' ids_cuối=[29941, 29892, 29871, 29906, 29955, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #8: dài_vào=1100 dài_ra=1118 out='<point>414, 666</point> \n' ids_cuối=[29892, 29871, 29953, 29953, 29953, 829, 3149, 29958, 32007, 29871, 13, 32000]
+  [07:50:37] 20/40 = 50.0% · 0.38 bước/giây · còn ~1 phút
+  [07:51:24] 40/40 = 100.0% · 0.40 bước/giây · còn ~0 phút
+Gộp từ tệp thô: 40 bản ghi
+======================================================================
+CHẤM — preds_kiem.jsonl  ·  40 bước chạm
+======================================================================
+  ô-Voronoi tâm (headline):  50.0%   KTC95 [34.2%, 65.1%]
+  đĩa dung sai (báo kèm) :  55.0%   KTC95 [39.5%, 70.0%]
+  cụm: 38 (hiệu dụng 36.4)
+
+Đã lưu /kaggle/working/out/score_kiem.json
+         /kaggle/working/out/score_kiem_raw.jsonl  (40 bước — đổi luật chấm hay thêm lát cắt thì chấm lại từ tệp này, KHÔNG gọi lại bộ trỏ)
