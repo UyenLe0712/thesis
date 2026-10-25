@@ -1,0 +1,24 @@
+[cấu hình] backend=phi4 · câu=cau_base_rest.jsonl · ra=/kaggle/working/som/chon_phi4_base_rest_s0.jsonl · bước cần=422 · đã xong=0 · shard=0/2 · mẫu=đủ
+/usr/local/lib/python3.13/dist-packages/transformers/models/auto/image_processing_auto.py:590: FutureWarning: The image_processor_class argument is deprecated and will be removed in v4.42. Please use `slow_image_processor_class`, or `fast_image_processor_class` instead
+  warnings.warn(
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.48, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+[phi4] attn = sdpa
+[phi4] dynamic_hd = 16
+[mô hình] microsoft/Phi-4-multimodal-instruct · [phiên bản mã] 14/9-b (sdpa + bắt OOM)
+  25/422 · 3.20 s/bước · còn ~21 phút
+  50/422 · 3.27 s/bước · còn ~20 phút
+  75/422 · 3.11 s/bước · còn ~18 phút
+  100/422 · 3.10 s/bước · còn ~17 phút
+  125/422 · 3.15 s/bước · còn ~16 phút
+  150/422 · 3.19 s/bước · còn ~14 phút
+  175/422 · 3.22 s/bước · còn ~13 phút
+  200/422 · 3.24 s/bước · còn ~12 phút
+  225/422 · 3.26 s/bước · còn ~11 phút
+  250/422 · 3.27 s/bước · còn ~9 phút
+  275/422 · 3.28 s/bước · còn ~8 phút
+  300/422 · 3.29 s/bước · còn ~7 phút
+  325/422 · 3.30 s/bước · còn ~5 phút
+  350/422 · 3.28 s/bước · còn ~4 phút
+  375/422 · 3.29 s/bước · còn ~3 phút
+  400/422 · 3.30 s/bước · còn ~1 phút
+xong 422 bước mới → /kaggle/working/som/chon_phi4_base_rest_s0.jsonl · OOM 0
