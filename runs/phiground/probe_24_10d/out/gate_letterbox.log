@@ -1,0 +1,42 @@
+[dữ liệu] /kaggle/working/harness/dg1_cache/test_ac/test.jsonl
+[PhiGround] transformers 4.48.2 (thẻ mô hình ghim 4.43 — lệch lớn thì lỗi nổ ngay dòng dưới)
+[PhiGround] bản cục bộ /tmp/phig · auto_map = {'AutoConfig': 'configuration_phi3_v.Phi3VConfig', 'AutoModelForCausalLM': 'modeling_phi3_v.Phi3VForCausalLM'}
+/usr/local/lib/python3.13/dist-packages/transformers/models/auto/image_processing_auto.py:590: FutureWarning: The image_processor_class argument is deprecated and will be removed in v4.42. Please use `slow_image_processor_class`, or `fast_image_processor_class` instead
+  warnings.warn(
+[PhiGround] dtype thật = torch.float16 · attn = eager
+The `seen_tokens` attribute is deprecated and will be removed in v4.41. Use the `cache_position` model input instead.
+`get_max_cache()` is deprecated for all Cache classes. Use `get_max_cache_shape()` instead. Calling `get_max_cache()` will raise error from v4.48
+You are not running the flash-attention implementation, expect numerical differences.
+[PhiGround] thô #1: dài_vào=1102 dài_ra=1120 out='<point>426, 209</point> \n' ids_cuối=[29892, 29871, 29906, 29900, 29929, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #2: dài_vào=1101 dài_ra=1119 out='<point>421, 610</point> \n' ids_cuối=[29892, 29871, 29953, 29896, 29900, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #3: dài_vào=1100 dài_ra=1117 out='<point>447, 91</point> \n' ids_cuối=[29955, 29892, 29871, 29929, 29896, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #4: dài_vào=1103 dài_ra=1121 out='<point>388, 392</point> \n' ids_cuối=[29892, 29871, 29941, 29929, 29906, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #5: dài_vào=1109 dài_ra=1127 out='<point>613, 804</point> \n' ids_cuối=[29892, 29871, 29947, 29900, 29946, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #6: dài_vào=1102 dài_ra=1120 out='<point>430, 294</point> \n' ids_cuối=[29892, 29871, 29906, 29929, 29946, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #7: dài_vào=1101 dài_ra=1119 out='<point>533, 168</point> \n' ids_cuối=[29892, 29871, 29896, 29953, 29947, 829, 3149, 29958, 32007, 29871, 13, 32000]
+[PhiGround] thô #8: dài_vào=1100 dài_ra=1118 out='<point>421, 249</point> \n' ids_cuối=[29892, 29871, 29906, 29946, 29929, 829, 3149, 29958, 32007, 29871, 13, 32000]
+  [18:32:22] 20/100 = 20.0% · 0.43 bước/giây · còn ~3 phút
+  [18:33:09] 40/100 = 40.0% · 0.43 bước/giây · còn ~2 phút
+  [18:33:55] 60/100 = 60.0% · 0.43 bước/giây · còn ~2 phút
+  [18:34:41] 80/100 = 80.0% · 0.43 bước/giây · còn ~1 phút
+  [18:35:26] 100/100 = 100.0% · 0.43 bước/giây · còn ~0 phút
+Gộp từ tệp thô: 100 bản ghi
+======================================================================
+CỔNG A — bộ trỏ 'phiground' trên 100 bước của tập kiểm
+======================================================================
+  sai số TRUNG VỊ :   8.6% chiều rộng màn
+  phân vị 75      :  30.9%
+  ≤3% (đạt cổng)  :  43.0% số bước
+----------------------------------------------------------------------
+  DẤU HIỆU LỖI CÀI ĐẶT — kiểm trước khi kết luận rớt cổng:
+    không đọc được toạ độ : 0/100 =  0.0%   ổn
+    toạ độ lặp nhiều nhất : (384.9949668874172, 2119.2) xuất hiện 2/100 =  2.0%   ổn
+    toạ độ bội của 50     : 1/100 =  1.0%   ổn
+    x đúng giữa màn       : 7/100 =  7.0%   ổn
+----------------------------------------------------------------------
+  lệch > 8% — ĐỪNG đổi sang thước yếu hơn (đo được: top-2 sàn 61,4%,
+     đĩa dung sai sàn 84,3%). Nâng chấm tay lên 200 câu thành thước
+     đồng-chính, và chỉ báo THỨ HẠNG tương đối giữa các nhánh.
+
+Đã lưu /kaggle/working/out/gate_letterbox.json
+         /kaggle/working/out/gate_letterbox_raw.jsonl  (100 bước — đổi luật chấm hay thêm lát cắt thì chấm lại từ tệp này, KHÔNG gọi lại bộ trỏ)
