@@ -1,0 +1,128 @@
+Failed to load /usr/local/lib/python3.13/dist-packages/torchao/_C_cutlass_90a.abi3.so: Could not load this library: /usr/local/lib/python3.13/dist-packages/torchao/_C_cutlass_90a.abi3.so
+Failed to load /usr/local/lib/python3.13/dist-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so: Could not load this library: /usr/local/lib/python3.13/dist-packages/torchao/_C_mxfp8.cpython-310-x86_64-linux-gnu.so
+[cấu hình] seed 101 · thưởng shuffle
+trl 0.29.1 · transformers 5.20.2 · peft 0.21.2 · torch 2.11.0+cu128
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[nạp] /kaggle/working/s1_merged · dtype torch.float16 · 4-bit False · Tesla T4
+[LoRA mới] tham số học 14,966,784 · S1 có 14,966,784
+[câu nhắc] 1000 · bỏ {'trung_val': 0, 'trung_episode_val': 0, 'thieu_anh': 0, 'thieu_ocr': 0, 'rong': 9} · n_char max 1974
+⚠️ GRPOConfig không có khoá (đã bỏ): []
+GRPOConfig: {'num_generations': 8, 'per_device_train_batch_size': 4, 'gradient_accumulation_steps': 4, 'generation_batch_size': 16, 'steps_per_generation': 4, 'max_completion_length': 96, 'temperature': 1.0, 'top_p': 1.0, 'top_k': 0, 'beta': 0.04, 'learning_rate': 1e-05, 'loss_type': 'dapo', 'scale_rewards': 'group', 'max_steps': 500, 'bf16': False, 'fp16': True}
+[lô] mỗi lượt sinh 16 câu = 2 câu nhắc × 8
+[sinh theo khúc] bật, mỗi khúc ≤ 8 chuỗi · pad 151643
+[tiếp từ] None
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+[sinh theo khúc] 16 chuỗi → 2 khúc ≤ 8
+PTBTokenizer tokenized 159 tokens at 2356.34 tokens per second.
+PTBTokenizer tokenized 120 tokens at 2312.84 tokens per second.
+Downloading stanford-corenlp-3.6.0 for SPICE ...
+Traceback (most recent call last):
+  File "/usr/lib/python3.13/urllib/request.py", line 1318, in do_open
+    h.request(req.get_method(), req.selector, req.data, headers,
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              encode_chunked=req.has_header('Transfer-encoding'))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/http/client.py", line 1386, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/http/client.py", line 1432, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/http/client.py", line 1381, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/http/client.py", line 1141, in _send_output
+    self.send(msg)
+    ~~~~~~~~~^^^^^
+  File "/usr/lib/python3.13/http/client.py", line 1085, in send
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "/usr/lib/python3.13/http/client.py", line 1051, in connect
+    self.sock = self._create_connection(
+                ~~~~~~~~~~~~~~~~~~~~~~~^
+        (self.host,self.port), self.timeout, self.source_address)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/socket.py", line 868, in create_connection
+    raise exceptions[0]
+  File "/usr/lib/python3.13/socket.py", line 853, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+OSError: [Errno 113] No route to host
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/kaggle/working/grpo_spice.py", line 591, in <module>
+    main()
+    ~~~~^^
+  File "/kaggle/working/grpo_spice.py", line 585, in main
+    train(a)
+    ~~~~~^^^
+  File "/kaggle/working/grpo_spice.py", line 523, in train
+    trainer.train(resume_from_checkpoint=resume)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/transformers/trainer.py", line 1559, in train
+    return inner_training_loop(
+        args=args,
+    ...<2 lines>...
+        ignore_keys_for_eval=ignore_keys_for_eval,
+    )
+  File "/usr/local/lib/python3.13/dist-packages/transformers/trainer.py", line 1643, in _inner_training_loop
+    self._run_epoch(
+    ~~~~~~~~~~~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...<9 lines>...
+        steps_trained_in_current_epoch=steps_trained_in_current_epoch,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/transformers/trainer.py", line 1889, in _run_epoch
+    tr_loss_step = self.training_step(model, inputs, num_items_in_batch)
+  File "/usr/local/lib/python3.13/dist-packages/trl/trainer/grpo_trainer.py", line 1085, in training_step
+    output = super().training_step(model, inputs, num_items_in_batch)
+  File "/usr/local/lib/python3.13/dist-packages/transformers/trainer.py", line 2056, in training_step
+    inputs = self._prepare_inputs(inputs)
+  File "/usr/local/lib/python3.13/dist-packages/trl/extras/profiling.py", line 202, in wrapper
+    return func(self, *args, **kwargs)
+  File "/usr/local/lib/python3.13/dist-packages/trl/trainer/grpo_trainer.py", line 1114, in _prepare_inputs
+    generation_batch = self._generate_and_score_completions(generation_batch)
+  File "/usr/local/lib/python3.13/dist-packages/trl/trainer/grpo_trainer.py", line 1881, in _generate_and_score_completions
+    rewards_per_func = self._calculate_rewards(inputs, prompts, completions, completion_ids_list)
+  File "/usr/local/lib/python3.13/dist-packages/trl/extras/profiling.py", line 202, in wrapper
+    return func(self, *args, **kwargs)
+  File "/usr/local/lib/python3.13/dist-packages/trl/trainer/grpo_trainer.py", line 1166, in _calculate_rewards
+    output_reward_func = reward_func(
+        prompts=prompts, completions=completions, completion_ids=completion_ids_list, **reward_kwargs
+    )
+  File "/kaggle/working/grpo_spice.py", line 61, in r_spice
+    f = spice_batch([s if s else "none" for s in sents], list(gold))
+  File "/kaggle/working/grpo_spice.py", line 49, in spice_batch
+    _, sc = Spice().compute_score(g, c)
+            ~~~~~^^
+  File "/usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/spice.py", line 24, in __init__
+    get_stanford_models()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/get_stanford_models.py", line 27, in get_stanford_models
+    zip_file, headers = urlretrieve(url, reporthook=print_progress)
+                        ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/urllib/request.py", line 214, in urlretrieve
+    with contextlib.closing(urlopen(url, data)) as fp:
+                            ~~~~~~~^^^^^^^^^^^
+  File "/usr/lib/python3.13/urllib/request.py", line 189, in urlopen
+    return opener.open(url, data, timeout)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/urllib/request.py", line 489, in open
+    response = self._open(req, data)
+  File "/usr/lib/python3.13/urllib/request.py", line 506, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+                              '_open', req)
+  File "/usr/lib/python3.13/urllib/request.py", line 466, in _call_chain
+    result = func(*args)
+  File "/usr/lib/python3.13/urllib/request.py", line 1347, in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/urllib/request.py", line 1321, in do_open
+    raise URLError(err)
+urllib.error.URLError: <urlopen error [Errno 113] No route to host>
