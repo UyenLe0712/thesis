@@ -260,3 +260,10 @@ runs/cw309/T/cw_sft/
 runs/rd314/R/ket_qua_314_R.zip
 runs/rd314/R/raft_sft/
 runs/rd314/E/ket_qua_314_E.zip
+
+# 25/10: jar Stanford CoreNLP cho SPICE (378 MB, tải lại được từ pycocoevalcap / nlp.stanford.edu)
+*.jar
+# 25/10: điểm lưu xao101 (optimizer.pt 120 MB + adapter 60 MB mỗi điểm lưu) — giữ ở máy nhà
+runs/xao101/c1b/grpo_spice/checkpoint-*/
+# 25/10: adapter ck500 hạt 202 để upload Kaggle (60 MB), cùng lý do với _bundles/grpo-spice-ck500/
+_bundles/grpo-spice-ck500-s202/
