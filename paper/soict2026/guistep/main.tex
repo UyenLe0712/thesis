@@ -227,42 +227,40 @@ control & \mbox{GUIStep-D} & preferred output only & cross-entropy\\
 \label{sec:metric}
 
 \subsection{Definition}
+\label{sec:def}
 
-Let $s$ be the generated sentence, $I$ the screenshot, $g$ the recorded touch and $B(g)$ the
-bounding box of the element that was touched. Let $G$ be a grounding model that is independent of
-the system under test, kept frozen and given no access to $g$, so that $p=G(I,s)$. A step counts
-as correct when three conditions hold jointly.
+Let $s$ be the generated sentence, $r$ the reference instruction, $I$ the screenshot, $g$ the
+recorded touch and $B(g)$ the bounding box of the touched element. The listener $G$ is a grounding
+model that is independent of the system under test, kept frozen and given no access to $g$, and
+returns a point $p=G(I,s)$. A step counts as correct when three conditions hold jointly, and
+executability is the share of correct steps.
 
 \begin{description}
-\item[(i) Action class.] The normalised action class of $s$ matches that of the reference. Twelve
+\item[(i) Action class.] The normalised action class of $s$ matches that of $r$. Twelve
 surface verbs (\emph{tap, click, press, select, choose, touch, open, launch, go, navigate, visit,
 view}) collapse into one touch class, since on screen each denotes one contact. The five classes
 kept apart are touch, type, scroll, long press and back.
-\item[(ii) No polarity inversion.] The generated sentence and the reference must not name opposite states of one
-control, since \emph{enable notifications} and \emph{disable notifications} share a touch point.
+\item[(ii) No polarity inversion.] $s$ and $r$ must not name opposite states of one control, since \emph{enable notifications} and \emph{disable notifications} share a touch point.
 The check uses a table of nine pairs written by hand.
-\item[(iii) Localisation.] $p$ lies inside $B(g)$, the rule of AndroidControl's
-Appendix~D.3~\cite{androidcontrol}, namely
+\item[(iii) Localisation.] As in Appendix~D.3 of AndroidControl~\cite{androidcontrol},
 \begin{equation}
 p \in B(g) .
 \label{eq:d3}
 \end{equation}
 \end{description}
 
-Condition (iii) is strict, since the median target covers $1.0\%$ of the screen, compared with $7.8\%$
-for the $\pm14\%$ tolerance window of Android-in-the-Wild~\cite{aitw}. The fifteen steps whose element has no box count as failures.
+AndroidControl does not provide a target box for every step, so we reconstruct $B(g)$ as the smallest visible accessibility node containing $g$; the $15$ steps without such a node count as failures. Condition (iii) is strict, since the median target covers $1.0\%$ of the screen, compared with $7.8\%$ for a window of $\pm14\%$ around $g$ on each axis.
 
 \subsection{Choice of Localisation Rule}
 \label{sec:rules}
 
-We considered three rules for condition (iii). The tolerance window, the field's convention, accepts $p$ within $\pm14\%$ of $g$ on each axis. The D.3 rule is Eq.~\ref{eq:d3}. The Voronoi rule, the strictest, additionally requires $p$ to lie inside the tolerance window and closer to $g$ than to the centre of any other element. On the same sentences the three rules differ by up to $9$ points, so we chose between them by measuring the ceiling and the floor of each.
+We considered three rules for condition (iii). The tolerance window accepts $p$ within $\pm14\%$ of $g$ on each axis; it is our per-axis variant of the $0.14$ normalised distance of Android-in-the-Wild~\cite{aitw}, the field's usual tolerance. The D.3 rule is Eq.~\ref{eq:d3}. The Voronoi rule, the strictest, additionally requires $p$ to lie inside the tolerance window and closer to $g$ than to the centre of any other element. On the same sentences the three rules differ by up to $9$ points, so we chose between them by measuring each rule's ceiling, the score of reference instructions, and its floor, the score of sentences that should fail.
 Table~\ref{tab:rules} scores all three on one random slice of $800$ steps.
 
 \begin{table}[t]
 \centering
 \caption{Choosing the localisation rule. One random slice of $800$ steps, identical sentences
-scored under each rule. The usable range is the ceiling minus the score of the generic sentence, which names no element. We
-adopt the D.3 rule.}
+scored under each rule. The usable range is the ceiling minus the score of the generic sentence, which names no element.}
 \label{tab:rules}
 \begin{tabular}{lrrr}
 \toprule
@@ -281,7 +279,7 @@ element name deleted, position kept & $74.8$ & $68.0$ & $78.9$\\
 
 The D.3 rule has the widest measured range, as it retains the reference ceiling while keeping
 the generic sentence lower than the tolerance window does, and we adopt it as our primary score.
-Because AndroidControl does not provide a target box for every step, we reconstruct each box as the smallest visible accessibility node containing the recorded touch.
+
 
 \subsection{Evaluation Population and Statistics}
 \label{sec:population}
@@ -303,9 +301,7 @@ first run. Table~\ref{tab:valid} summarises the checks.
 \begin{table}[t]
 \centering
 \caption{Validation of the listener under the primary D.3 rule, with the earlier Voronoi
-run alongside. Thresholds in the second column were fixed before either run, and are the same for both.
-Rates are the share of injected errors detected, except for the two false-rejection rows, where lower is better.
-Both runs use the same $398$ steps and seed.}
+run alongside. Thresholds were fixed before either run. Rates are the share of injected errors detected, except in the false-rejection rows, where lower is better. Both runs use the same $398$ steps and seed.}
 \label{tab:valid}
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{>{\raggedright\arraybackslash}p{4.5cm}>{\raggedright\arraybackslash}p{1.9cm}rrl}
@@ -331,23 +327,21 @@ catching a wrong scroll direction & $\ge 90\%$ & $100.0\%$ & $100.0\%$ & pass\\
 $[82.5,85.1]$, whereas the generic sentence \emph{``Tap the button.''}, which names no element,
 scores $14.1$ $[11.7,16.7]$. On the $193$ sentences that
 contain both a name and a position clause, deleting the name costs $34.2$ points, compared with
-$4.7$ for deleting the position, so the score is driven mainly by the element name.  Across $1{,}139$
-rewrites that preserve the meaning, the net change is $-0.09$ points $[-0.93,+0.79]$.
+$4.7$ for deleting the position, so the score is driven mainly by the element name.  Across $1{,}139$ rewrites that change the verb or the word order but preserve the meaning, the net change is $-0.09$ points $[-0.93,+0.79]$.
 
 \textit{Injection suite.} We first ran the injection suite with the Voronoi rule, where it passed eight of the ten criteria.
 Rerunning it with the primary D.3 rule, on the same steps, thresholds and seed, passes six.
 Detection is lower under D.3 for every localisation criterion, and the paraphrase false-rejection
-rate rises from $0.0\%$ to $6.5\%$, because the suite adds an offset of about $3\%$ of the width to simulate listener error, and that offset can leave a small box. Of the injected points that D.3 accepts despite targeting a distant element, the median reconstructed box covers $14.7\%$ of the screen, against $0.9\%$ for the others. Large container boxes are thus the main source of missed detections. The score is therefore weak at rejecting neighbouring elements, elements that share a large box with the target, and negations absent from the polarity table.
+rate rises from $0.0\%$ to $6.5\%$, because the suite adds an offset of about $3\%$ of the width to simulate listener error, and that offset can leave a small box. Of the injected points that D.3 accepts despite targeting a distant element, the median reconstructed box covers $14.7\%$ of the screen, against $0.9\%$ for the others. Large container boxes are the main source of missed detections. The score is therefore weak at rejecting neighbouring elements, elements that share a large box with the target, and negations absent from the polarity table.
 
-\textit{Stricter rule.} The Voronoi rule rejects $99.6\%$ of the nearby and all of the distant injected elements, so we also rescored every system under it. The ranking does not change: backbone $47.6$, \mbox{GUIStep-D}
+\textit{Stricter rule.} The Voronoi rule rejects $99.6\%$ of the nearby and all of the distant injected elements, so we also rescored every system under it on all $4{,}463$ steps. The ranking does not change: backbone $47.6$, \mbox{GUIStep-D}
 $57.2$, \mbox{GUIStep-S} $59.1$, control $59.4$, \mbox{GUIStep-P} $60.0$ and reference $75.7$, with \mbox{GUIStep-S}
 ahead of the backbone by $+11.5$ $[+10.0,+13.1]$. Neither rule reliably catches a confusion between
 adjacent controls ($30$--$80$ px), although such a confusion would mislead a person following the instruction. Absolute levels may thus overstate how often a reader would pick the right
 control, and we rely mainly on the comparisons between systems, which hold under both rules.
 
 \textit{Other listeners.} UGround has seen AndroidControl training data. To check whether this matters, we repeat our main comparison with
-UI-Venus-Ground-7B~\cite{uivenus}, which has not. On the $2{,}532$-step subset on which both
-listeners were run, the gap between \mbox{GUIStep-S} and the untuned backbone changes from $+11.14$ under
+UI-Venus-Ground-7B~\cite{uivenus}, which has not. On the $2{,}532$-step subset on which both listeners were run, the gap between \mbox{GUIStep-S} and the untuned backbone changes from $+11.14$ under
 UGround to $+11.02$ under UI-Venus, retaining $99\%$ of its magnitude. The $+11.9$ points of
 Table~\ref{tab:main} are UGround on all $4{,}463$ steps, so the three values differ only in the
 steps scored and in the listener.
@@ -379,7 +373,7 @@ detections from RapidOCR at confidence at least $0.5$, in detector order, before
 next-step instruction (Appendix~\ref{app:prompts}). Training uses steps of every action type; evaluation uses touch steps only (Sect.~\ref{sec:population}).
 
 \paragraph{Declarations.}
-The target node is the node whose box defines the target in Sect.~\ref{sec:rules}. Its
+The target node is the node that defines $B(g)$ in Sect.~\ref{sec:def}. Its
 role comes from a fixed map over Android classes that yields eleven interaction roles such as
 \texttt{button}, \texttt{tappable text}, \texttt{text field} and \texttt{switch}, with container
 classes mapping to \texttt{item} and the remainder to \texttt{element}. The name is the first
