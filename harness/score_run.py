@@ -432,6 +432,10 @@ def make_grounder(name):
 # ─────────────────────────── nút trên màn ───────────────────────────
 def buttons_of(rec):
     """Tâm mọi phần tử hiển thị của màn — cần cho cách chấm nút-gần-nhất."""
+    # AitZ (25/10): bản ghi mang sẵn tâm khung chú thích của AitW; AndroidControl không có
+    # trường này nên đi đường cũ, không đổi số nào đã chấm.
+    if rec.get("buttons") is not None:
+        return [tuple(b) for b in rec["buttons"]]
     rel = f"episode_{rec['episode_id']}_screenshot_{rec['step_id']}.png"
     o = A11Y._load(A11Y.key_for(rel) or "")
     if not o:
