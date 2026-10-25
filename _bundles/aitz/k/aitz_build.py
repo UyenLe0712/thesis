@@ -83,33 +83,37 @@ def lam(args):
         for i, r in enumerate(recs):
             if i % n != k or r["image"] in done: continue
             im = Image.open(f"{D}/{r['image']}").convert("RGB"); w, h = im.size
-            res, _ = ocr(im); items = []
+            res, _ = ocr(f"{D}/{r['image']}"); items = []
             for box, txt, conf in (res or []):
                 cx = sum(q[0] for q in box) / 4; cy = sum(q[1] for q in box) / 4; t = (txt or "").strip()
                 if len(t) < 1 or conf < 0.5: continue
                 items.append({"text": t, "cx": round(cx), "cy": round(cy), "zone": zone(cx, cy, w, h)})
             f.write(json.dumps({"image": r["image"], "w": w, "h": h, "items": items}, ensure_ascii=False) + "\n"); f.flush()
     return k
-from multiprocessing import Pool
-N = os.cpu_count() or 4; ghi("OCR", len(recs), "ảnh ·", N, "tiến trình")
-with Pool(N) as pool:
-    it = pool.imap_unordered(lam, [(k, N) for k in range(N)])
-    import threading
-    stop = False
-    def nhip():
-        while not stop:
-            time.sleep(120); c = sum(sum(1 for _ in open(p)) for p in glob.glob(f"{D}/ocr.part*.jsonl"))
-            print(f"  {(time.time()-T0)/3600:5.2f} h · OCR {c}/{len(recs)}", flush=True)
-    th = threading.Thread(target=nhip, daemon=True); th.start()
-    for _ in it: pass
-    stop = True
-seen = set()
-with open(f"{D}/ocr.jsonl", "w", encoding="utf-8") as w:
-    for p in sorted(glob.glob(f"{D}/ocr.part*.jsonl")):
-        for l in open(p):
-            k = json.loads(l)["image"]
-            if k not in seen: seen.add(k); w.write(l)
-for p in glob.glob(f"{D}/ocr.part*.jsonl"): os.remove(p)
-ghi("OCR xong", len(seen), "ảnh")
+import traceback
+try:
+  from multiprocessing import Pool
+  N = os.cpu_count() or 4; ghi("OCR", len(recs), "ảnh ·", N, "tiến trình")
+  with Pool(N) as pool:
+      it = pool.imap_unordered(lam, [(k, N) for k in range(N)])
+      import threading
+      stop = False
+      def nhip():
+          while not stop:
+              time.sleep(120); c = sum(sum(1 for _ in open(p)) for p in glob.glob(f"{D}/ocr.part*.jsonl"))
+              print(f"  {(time.time()-T0)/3600:5.2f} h · OCR {c}/{len(recs)}", flush=True)
+      th = threading.Thread(target=nhip, daemon=True); th.start()
+      for _ in it: pass
+      stop = True
+  seen = set()
+  with open(f"{D}/ocr.jsonl", "w", encoding="utf-8") as w:
+      for p in sorted(glob.glob(f"{D}/ocr.part*.jsonl")):
+          for l in open(p):
+              k = json.loads(l)["image"]
+              if k not in seen: seen.add(k); w.write(l)
+  for p in glob.glob(f"{D}/ocr.part*.jsonl"): os.remove(p)
+  ghi("OCR xong", len(seen), "ảnh")
+except Exception:
+  ghi("OCR LỖI:\n" + traceback.format_exc())
 sh(f"cd /kaggle/temp && zip -qr {OUT}/aitz_test.zip aitz_test && cp aitz_test/test.jsonl aitz_test/ocr.jsonl {OUT}/ && rm -f {OUT}/aitz_test_khong_ocr.zip && ls -la {OUT}")
 ghi("KẾT THÚC")
