@@ -34,7 +34,7 @@ Bản ghi theo thời gian (G1 đến G17) nằm ở commit `3e895b1` nếu cầ
 5. **Mô hình 3B đã tinh chỉnh hơn xa 7B không tinh chỉnh.** 7B prompting đạt 51,51, thấp hơn S1/101 7,60 điểm và ck500 9,14 điểm. (Mục 2)
 6. **Ra ngoài miền (AitZ), mức tăng không chuyển sang.** SFT vẫn hơn Base (+3,29), nhưng ck500 ngang S1 (−0,51, KTC phủ 0) và ACE gần như không kích hoạt. (Mục 6)
 7. **ck500 có tác hại ở bước không chạm.** Ở bước scroll giảm 6,23 điểm. Tác hại này lớn hơn khi lịch sử là câu do mô hình tự sinh (đúng loại thao tác ở bước không chạm giảm 4,49 so với S1). Ngược lại, ở bước chạm ck500 bền hơn S1. (Mục 5, 7)
-8. **Chưa có số:** exec của thí nghiệm lịch sử tự sinh (mục 7) và ACU, tức phần AndroidControl mà S1 chưa thấy (mục 8).
+8. **Chưa có số:** exec của thí nghiệm lịch sử tự sinh (mục 7) và ACU, tức phần AndroidControl mà S1 chưa thấy (mục 8). Lịch chờ và chỗ điền số ở mục 11.
 
 ---
 
@@ -424,9 +424,15 @@ Mọi việc dưới đây chưa làm. Sửa xong thì dựng lại `thesis/main
 
 ## 11. Còn chờ, còn thiếu
 
-**Đang chạy:**
-- `trangphuongngoc/tuantu-cham`: exec cho lịch sử tự sinh (mục 7).
-- `trangphuongngoc/acu-gen`: ACU (mục 8), dự kiến 6–8 h sáng 27/10. Sau đó thêm khoảng 1 giờ để phân tích và chấm thước chữ.
+**Đang chạy, chờ kết quả (cập nhật 26/10, 21:45):**
+
+| việc | kernel | chờ số gì | dự kiến | khi có số, điền vào | chỗ dùng trong luận văn |
+|---|---|---|---|---|---|
+| Lịch sử tự sinh, exec | `trangphuongngoc/tuantu-cham` | exec trên 4.463 bước chạm cho S1 và ck500 khi lịch sử là câu tự sinh; ghép cặp tự sinh − cũ và ck500 − S1 | đêm 26/10 (chưa xem được log nên chưa ước chính xác) | mục 7: thay dòng "exec: CHƯA CÓ", viết lại phần "Đọc" | ch6, mục mới về lịch sử tự sinh; ch7, hạn chế về giả định lịch sử là câu chuẩn |
+| ACU, exec | `trangphuongngoc/acu-gen` | exec, D.3, AitW trên 1.484 bước cho câu chuẩn, Base, S1, ck500, ck500/202, ra_k4, ACE; ghép cặp ck500 − S1, ACE − S1, ACE − ck500; số lần ACE kích hoạt | 6–8 h sáng 27/10 (muộn nhất khoảng 8:40) | mục 8 (thêm bảng như mục 6.2); mục 1 (thêm ý về ACU); `report/322` hàng #8 | ch6, mục kiểm tổng quát hoá (đặt cạnh AitZ); ch1 và ch7 nếu kết quả đổi kết luận |
+| ACU, thước chữ | kernel CPU sẽ đẩy sau khi `acu-gen` xong | bảy thước chữ trên 1.484 bước | khoảng 1 giờ sau `acu-gen` | mục 8 (bảng như mục 6.3) | ch6, cùng chỗ với ACU exec |
+
+Tới khi có số, trong luận văn không viết câu nào về ACU hay về exec của lịch sử tự sinh. Nếu cần giữ chỗ thì để `\CANDIEN`.
 
 **Chưa làm, không cần GPU:**
 - D.3 và AitW cho các phép so ck500 − S1/101 và ACE − S1 (nhiều ô "-" ở mục 2.2).
