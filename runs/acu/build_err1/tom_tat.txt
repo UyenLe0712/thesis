@@ -1,0 +1,36 @@
+[ 0.00 h] $ /usr/bin/python3 -m pip install -q huggingface_hub 'rapidocr_onnxruntime==1.4.4' 2>&1 | tail -2
+[ 0.00 h] ERROR: Could not find a version that satisfies the requirement rapidocr_onnxruntime==1.4.4 (from versions: 0.0.0, 1.0.1, 1.0.2, 1.0.3, 1.0.4, 1.0.5, 1.0.6, 1.0.7, 1.0.8, 1.0.9, 1.1.0, 1.1.1, 1.1.2, 1.1.3, 1.1.4, 1.1.5, 1.1.6, 1.1.7, 1.1.8, 1.1.9, 1.1.10, 1.1.11, 1.1.12, 1.1.13, 1.1.14, 1.1.15, 1.1.16, 1.1.17, 1.1.18, 1.1.19, 1.1.20, 1.1.21, 1.1.22, 1.1.23, 1.1.24, 1.1.25, 1.1.26, 1.1.27, 1.1.28, 1.1.29, 1.1.30, 1.2.0, 1.2.1, 1.2.2, 1.2.3)
+ERROR: No matching distribution found for rapidocr_onnxruntime==1.4.4
+
+[ 0.00 h] $ /usr/bin/python3 -m pip show rapidocr_onnxruntime onnxruntime | grep -E 'Name|Version'
+[ 0.00 h] WARNING: Package(s) not found: onnxruntime, rapidocr_onnxruntime
+
+[ 0.00 h] bản ghi 3103 · bước chạm cần ảnh 1484
+[ 0.01 h] shard 0: 50 tác vụ cần · tổng gặp 50/945 · ảnh 83/1484 · lệch {} · 30s
+[ 0.01 h] shard 1: 43 tác vụ cần · tổng gặp 93/945 · ảnh 149/1484 · lệch {} · 19s
+[ 0.02 h] shard 2: 69 tác vụ cần · tổng gặp 162/945 · ảnh 239/1484 · lệch {} · 21s
+[ 0.03 h] shard 3: 41 tác vụ cần · tổng gặp 203/945 · ảnh 316/1484 · lệch {} · 29s
+[ 0.03 h] shard 4: 45 tác vụ cần · tổng gặp 248/945 · ảnh 381/1484 · lệch {} · 21s
+[ 0.04 h] shard 5: 52 tác vụ cần · tổng gặp 300/945 · ảnh 459/1484 · lệch {} · 24s
+[ 0.05 h] shard 6: 53 tác vụ cần · tổng gặp 353/945 · ảnh 543/1484 · lệch {} · 22s
+[ 0.05 h] shard 7: 34 tác vụ cần · tổng gặp 387/945 · ảnh 609/1484 · lệch {} · 21s
+[ 0.06 h] shard 8: 51 tác vụ cần · tổng gặp 438/945 · ảnh 695/1484 · lệch {} · 20s
+[ 0.06 h] shard 9: 45 tác vụ cần · tổng gặp 483/945 · ảnh 772/1484 · lệch {} · 20s
+[ 0.07 h] shard 10: 52 tác vụ cần · tổng gặp 535/945 · ảnh 845/1484 · lệch {} · 20s
+[ 0.08 h] shard 11: 42 tác vụ cần · tổng gặp 577/945 · ảnh 909/1484 · lệch {} · 19s
+[ 0.08 h] shard 12: 43 tác vụ cần · tổng gặp 620/945 · ảnh 977/1484 · lệch {} · 20s
+[ 0.09 h] shard 13: 42 tác vụ cần · tổng gặp 662/945 · ảnh 1037/1484 · lệch {'câu': 3} · 21s
+[ 0.09 h] shard 14: 57 tác vụ cần · tổng gặp 719/945 · ảnh 1131/1484 · lệch {'câu': 4} · 20s
+[ 0.10 h] shard 15: 31 tác vụ cần · tổng gặp 750/945 · ảnh 1179/1484 · lệch {'câu': 4} · 19s
+[ 0.10 h] shard 16: 40 tác vụ cần · tổng gặp 790/945 · ảnh 1241/1484 · lệch {'câu': 4} · 19s
+[ 0.11 h] shard 17: 67 tác vụ cần · tổng gặp 857/945 · ảnh 1346/1484 · lệch {'câu': 4} · 19s
+[ 0.11 h] shard 18: 44 tác vụ cần · tổng gặp 901/945 · ảnh 1407/1484 · lệch {'câu': 5} · 20s
+[ 0.12 h] shard 19: 44 tác vụ cần · tổng gặp 945/945 · ảnh 1484/1484 · lệch {'câu': 5} · 21s
+[ 0.12 h] thiếu ảnh 0 []
+[ 0.12 h] lệch với HarrytheOrange {'câu': 5}
+[ 0.12 h] $ /usr/bin/python3 /kaggle/working/ocr_one.py /kaggle/temp/kiem_ocr /kaggle/working/kiem.json /kaggle/working/kiem_ocr.jsonl
+[ 0.12 h] Traceback (most recent call last):
+  File "/kaggle/working/ocr_one.py", line 4, in <module>
+    from rapidocr_onnxruntime import RapidOCR
+ModuleNotFoundError: No module named 'rapidocr_onnxruntime'
+
