@@ -288,3 +288,29 @@ Cách đọc: tinh chỉnh trên AndroidControl chuyển được sang AitZ (c�
 - S1/101 − 7B: exec **+7,60 [+5,95; +9,28]** · ck500 − 7B **+9,14 [+7,55; +10,75]** · R3 − 7B +9,16 [+7,57; +10,79], đều p < 1e−24, giữ ở cả D.3 và AitW.
 - 7B: action_ok 96,37, câu trung vị 64 ký tự (S1 33). Tốc độ sinh 0,4 bước/giây trên T4×2 (đọc từ `infer.log`; VRAM chưa có trong log, việc #7 còn thiếu số VRAM).
 Cách đọc: mô hình 3B đã tinh chỉnh hơn mô hình 7B cùng họ không tinh chỉnh khoảng 9 điểm exec, gấp đôi mức 7B hơn 3B gốc. Phải khai: cùng câu nhắc của Base (không tối ưu câu nhắc riêng cho 7B), cùng họ Qwen với mô hình và bộ trỏ, chưa kiểm 7B có thấy AndroidControl lúc huấn luyện; câu 7B dài gấp đôi, mà thước có thiên vị câu dài (+5,4) nghiêng về phía 7B, nên chiều so có lợi cho 7B chứ không bất lợi.
+
+G13. AitZ bổ sung 26/10: trần câu chuẩn và ACE/R3. Kernel `trangphuongngoc/aitz-ace-tran` (gói `_bundles/aitz_ace/`), 3,5 h T4×2, đầu ra `runs/aitz/ace_26_10/`, bảng ghép cặp `runs/aitz/ace_26_10/so_ghep_cap_aitz_ace.json`. ra_k4 = `runs/ra304_T/ra_sft/final` (md5 f3c543b0, trùng adapter lượt test 304); kiểm ra_k4 sinh lại 20 bước AndroidControl 20/20 trùng; luật R3 trong gói tái lập pred_R3_test 4.463/4.463. Khối ví dụ dựng bằng `_bundles/aitz_ace/xuat_ex_aitz.py` (tự kiểm 30/30 trùng ex_test_k4).
+| nhánh | exec AitZ (2.736 bước) |
+|---|---|
+| câu chuẩn (trần) | 66,26 |
+| Base 3B | 34,50 |
+| S1/101 | 37,79 |
+| ck500 | 37,28 |
+| R3 (ACE) | 37,28 |
+| ra_k4 riêng | 37,02 |
+- Trần − S1/101 +28,47 [+26,40; +30,51]. Trên AndroidControl trần − S1/101 là +16,6. Vị trí của S1 trong dải Base → trần: AitZ 10% ((37,79 − 34,50)/(66,26 − 34,50)), AndroidControl 41%.
+- R3 − S1/101 −0,51 [−1,39; +0,36] p = 0,33 · R3 − ck500 +0,00 (cứu 1 phá 1) · ra_k4 − S1/101 −0,77 [−1,68; +0,14] p = 0,14.
+- ACE gần như không hoạt động trên AitZ: ra_k4 chép đúng một câu ví dụ ở 78/2.736 bước, R3 lấy câu ra_k4 ở 75 bước, trong đó 52 câu khác ck500. Khối ví dụ (truy hồi từ tập dạy AndroidControl) không chứa đúng câu chuẩn AitZ ở bước nào (0,0%; trên tập kiểm AndroidControl ~13%).
+Cách đọc: ACE dựa vào việc chép câu ví dụ của cùng văn phong; sang AitZ (câu chuẩn GPT-4V) gần như không có gì để chép, nên R3 trùng ck500. Trần 66,26 cho thấy câu chuẩn AitZ chấm qua UGround vẫn cao xa so với mọi mô hình, tức khoảng trống lớn nằm ở phía mô hình chứ không ở dụng cụ; nhưng mọi nhánh tinh chỉnh chỉ nhích 2 đến 3 điểm trên Base, nên AitZ là phép thử chuyển miền khó cho cả SFT lẫn GRPO. Viết: "ngoài miền, mức tăng của ck500 và ACE không chuyển sang; tinh chỉnh SFT vẫn hơn Base". Khai kèm như G12.
+
+G14. Việc #5: sinh câu tuần tự, lịch sử là câu mô hình tự sinh (kernel `trangphuongngoc/tuantu-lichsu-tusinh`, gói `_bundles/tuantu/`, 5,3 h T4×2; đầu ra `runs/tuantu/out/`). Mỗi tác vụ sinh từ bước 0, câu của bước trước đưa vào ô lịch sử thay cho câu chuẩn. Số test, một hạt giống mỗi nhánh. Kiểm hoà: ck500 20/20 trùng lượt cũ, S1 16/20 (S1 hoà fp16 so với lượt công bố, như report/259).
+- Câu đổi so với lượt cũ (lịch sử = câu chuẩn): S1 2.671/4.463 bước chạm · ck500 2.602/4.463. Bước 0 (lịch sử rỗng) gần như không đổi (ck500 0%, S1 10% do hoà); từ bước 1 trở đi 50–80% câu đổi, tăng dần theo vị trí bước.
+- Đúng loại thao tác (`canon_action`, `strict_back`), bootstrap cụm app/episode:
+| | S1 cũ | S1 tự sinh | ck500 cũ | ck500 tự sinh |
+|---|---|---|---|---|
+| bước chạm (4.463) | 92,54 | 89,16 | 94,42 | 92,67 |
+| bước không chạm (2.495) | 85,97 | 81,32 | 84,29 | 76,83 |
+  - Tự sinh − cũ: S1 chạm −3,38 [−4,83; −2,11] · ck500 chạm −1,75 [−2,88; −0,75] · S1 không chạm −4,65 [−6,05; −3,30] · ck500 không chạm −7,45 [−9,33; −5,72].
+  - ck500 − S1: chạm, lịch sử cũ +1,88 [+1,42; +2,39] → tự sinh **+3,52 [+2,44; +4,69]**; không chạm, cũ −1,68 [−2,76; −0,62] → tự sinh **−4,49 [−6,48; −2,61]**; toàn bộ 6.958 bước +0,65 [−0,35; +1,70] (cũ +0,60 [+0,13; +1,08]).
+- exec trên bước chạm: CHƯA CÓ. Ô chấm trong kernel đầu lỗi (`score_run` chặn tệp chỉ có 2.672/4.463 câu mới; cần `--n`), đã đẩy lại thành kernel `trangphuongngoc/tuantu-cham` (đang chạy 26/10 tối). Đọc bằng `harness/doc_tuantu.py` khi về.
+Cách đọc (tạm, chưa có exec): bỏ lịch sử chuẩn làm cả hai nhánh giảm vài điểm loại thao tác. Ở bước chạm ck500 bền hơn S1, khoảng cách gần gấp đôi. Ở bước không chạm thì ngược lại, ck500 giảm mạnh hơn: tác hại không chạm đã biết của ck500 (report/261 §6, câu lệch về thao tác chạm) lớn thêm khi lịch sử là câu của chính mô hình. Phải khai cả hai chiều.

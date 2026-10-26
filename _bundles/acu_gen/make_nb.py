@@ -21,8 +21,15 @@ assert torch.cuda.device_count() == 2, "DỪNG: cần 2 GPU (T4 x2)"
 G = os.path.dirname(glob.glob("/kaggle/input/**/gen_aitz.py", recursive=True)[0])      # aitz-gen-kit
 A = os.path.dirname(glob.glob("/kaggle/input/**/ra_gen.py", recursive=True)[0])        # aitz-ace-kit
 Z = os.path.dirname(glob.glob("/kaggle/input/**/only_tap_aitz.jsonl", recursive=True)[0])  # infer_branch cho Base
-ACU = [os.path.dirname(p) for p in glob.glob("/kaggle/input/**/acu_test/test.jsonl", recursive=True)]
-assert len(ACU) == 1, ACU; ACU = ACU[0]
+# ảnh: output của acu-build-cpu; OCR (rapidocr 1.4.4, máy nhà) + khối ví dụ: dataset acu-ocr144 — OCR 1.2.3 trên Kaggle lệch tập kiểm cũ (1/20 trùng)
+SRC = [os.path.dirname(p) for p in glob.glob("/kaggle/input/**/acu_test/test.jsonl", recursive=True)]
+assert len(SRC) == 1, SRC; SRC = SRC[0]
+O144 = os.path.dirname(glob.glob("/kaggle/input/**/ocr_acu_144.jsonl", recursive=True)[0])
+ACU = f"{W}/acu"; os.makedirs(ACU, exist_ok=True)
+shutil.copy(f"{SRC}/test.jsonl", f"{ACU}/test.jsonl")
+shutil.copy(f"{O144}/ocr_acu_144.jsonl", f"{ACU}/ocr.jsonl"); shutil.copy(f"{O144}/ex_acu_k4.jsonl", f"{ACU}/ex_acu_k4.jsonl")
+if not os.path.exists(f"{ACU}/images"): os.symlink(f"{SRC}/images", f"{ACU}/images")
+assert md5(f"{ACU}/ocr.jsonl") == "__MD5_OCR__" and md5(f"{ACU}/ex_acu_k4.jsonl") == "__MD5_EX__", "DỪNG: OCR/khối ví dụ lệch"
 for f in ("grpo_spice.py", "build_branch_data.py", "gen_aitz.py"): shutil.copy(f"{G}/{f}", f"{W}/{f}")
 for f in ("ra_gen.py", "ra_exemplars.py", "luat_ghep_304.py"): shutil.copy(f"{A}/{f}", f"{W}/{f}")
 os.makedirs(f"{W}/harness", exist_ok=True)
