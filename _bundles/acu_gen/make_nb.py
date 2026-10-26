@@ -29,7 +29,7 @@ ACU = f"{W}/acu"; os.makedirs(ACU, exist_ok=True)
 shutil.copy(f"{SRC}/test.jsonl", f"{ACU}/test.jsonl")
 shutil.copy(f"{O144}/ocr_acu_144.jsonl", f"{ACU}/ocr.jsonl"); shutil.copy(f"{O144}/ex_acu_k4.jsonl", f"{ACU}/ex_acu_k4.jsonl")
 if not os.path.exists(f"{ACU}/images"): os.symlink(f"{SRC}/images", f"{ACU}/images")
-assert md5(f"{ACU}/ocr.jsonl") == "__MD5_OCR__" and md5(f"{ACU}/ex_acu_k4.jsonl") == "__MD5_EX__", "DỪNG: OCR/khối ví dụ lệch"
+assert md5(f"{ACU}/ocr.jsonl") == "8b0a50cf19f274a1767c5a8997cc323a" and md5(f"{ACU}/ex_acu_k4.jsonl") == "619448d53691e5c70a0785825b91dbee", "DỪNG: OCR/khối ví dụ lệch"
 for f in ("grpo_spice.py", "build_branch_data.py", "gen_aitz.py"): shutil.copy(f"{G}/{f}", f"{W}/{f}")
 for f in ("ra_gen.py", "ra_exemplars.py", "luat_ghep_304.py"): shutil.copy(f"{A}/{f}", f"{W}/{f}")
 os.makedirs(f"{W}/harness", exist_ok=True)

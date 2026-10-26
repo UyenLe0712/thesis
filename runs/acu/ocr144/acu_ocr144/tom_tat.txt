@@ -1,0 +1,50 @@
+[ 0.00 h] $ /usr/bin/python3 -m pip install -q uv
+[ 0.00 h] 
+[ 0.00 h] $ uv venv -q -p 3.12 /kaggle/temp/v312
+[ 0.00 h] 
+[ 0.00 h] $ uv pip install -q -p /kaggle/temp/v312/bin/python 'rapidocr_onnxruntime==1.4.4' pillow numpy
+[ 0.00 h] 
+[ 0.00 h] $ uv pip show -p /kaggle/temp/v312/bin/python rapidocr_onnxruntime onnxruntime | grep -E 'Name|Version'
+[ 0.00 h] Name: onnxruntime
+Version: 1.31.0
+Name: rapidocr-onnxruntime
+Version: 1.4.4
+Using Python 3.12.3 environment at: /kaggle/temp/v312
+
+[ 0.00 h] ảnh /kaggle/input/notebooks/trangphuongngoc/acu-build-cpu/acu_test 1484
+[ 0.00 h] $ /kaggle/temp/v312/bin/python /kaggle/working/ocr_one.py /kaggle/temp/kiem_ocr /kaggle/working/kiem.json /kaggle/working/kiem_ocr.jsonl
+[ 0.02 h] 
+[ 0.02 h] [kiểm OCR] 20/20 ảnh trùng tuyệt đối · 20/20 trùng chữ 24 dòng đầu (phần đi vào câu nhắc)
+[ 0.02 h] tiến trình 4
+[ 0.05 h] OCR 54 / 1484
+[ 0.09 h] OCR 116 / 1484
+[ 0.12 h] OCR 175 / 1484
+[ 0.15 h] OCR 238 / 1484
+[ 0.19 h] OCR 295 / 1484
+[ 0.22 h] OCR 351 / 1484
+[ 0.25 h] OCR 406 / 1484
+[ 0.29 h] OCR 459 / 1484
+[ 0.32 h] OCR 520 / 1484
+[ 0.35 h] OCR 575 / 1484
+[ 0.39 h] OCR 635 / 1484
+[ 0.42 h] OCR 688 / 1484
+[ 0.45 h] OCR 741 / 1484
+[ 0.49 h] OCR 803 / 1484
+[ 0.52 h] OCR 863 / 1484
+[ 0.55 h] OCR 920 / 1484
+[ 0.59 h] OCR 975 / 1484
+[ 0.62 h] OCR 1032 / 1484
+[ 0.65 h] OCR 1088 / 1484
+[ 0.69 h] OCR 1143 / 1484
+[ 0.72 h] OCR 1203 / 1484
+[ 0.75 h] OCR 1254 / 1484
+[ 0.79 h] OCR 1311 / 1484
+[ 0.82 h] OCR 1366 / 1484
+[ 0.85 h] OCR 1418 / 1484
+[ 0.89 h] OCR 1471 / 1484
+[ 0.92 h] OCR 1484 / 1484
+[ 0.92 h] OCR xong 1484 · ảnh 0 dòng 0
+[ 0.92 h] kho 62880
+[ 1.00 h] khối ví dụ 1484 bước · chứa đúng câu chuẩn 8.7%
+[ 1.00 h] md5 ocr_acu_144.jsonl 8b0a50cf19f274a1767c5a8997cc323a
+[ 1.00 h] md5 ex_acu_k4.jsonl 619448d53691e5c70a0785825b91dbee
