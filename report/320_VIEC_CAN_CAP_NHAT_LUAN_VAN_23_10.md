@@ -328,3 +328,24 @@ G16. ACU: phần AndroidControl mà S1 chưa thấy (report/322 #8). Tình trạ
 - Dữ liệu: 1.484 bước dựng từ TFRecord gốc (kernel `trangphuongngoc/acu-build-cpu`). Gói ảnh nằm trên GitHub Release `data-acu-build-v1` (`acu_test.zip`). Khai kèm hai điều: 1.383/1.484 bước thuộc split train chính thức của AndroidControl (giống tập kiểm chính, report/209), và có 5 bước câu chuẩn lệch với bản HarrytheOrange.
 - OCR (kernel CPU `trangphuongngoc/acu-ocr144-cpu`, 1,0 h, xong 26/10 tối): dùng đúng rapidocr_onnxruntime 1.4.4 như OCR của tập dạy và tập kiểm (Python 3.12 dựng bằng uv, vì Python 3.13 của Kaggle chỉ cài được bản 1.2.3). Kiểm trên 20 ảnh tập kiểm cũ: 20/20 trùng tuyệt đối. OCR đủ 1.484 ảnh, 0 ảnh rỗng. Khối 4 câu ví dụ của ACE chứa đúng câu chuẩn ở 8,7% bước (tập kiểm chính ~13%, AitZ 0%). md5 `ocr_acu_144.jsonl` 8b0a50cf…, `ex_acu_k4.jsonl` 619448d5…; tệp ở `runs/acu/ocr144/`, dataset `trangphuongngoc/acu-ocr144`.
 - Sinh câu + chấm (kernel `trangphuongngoc/acu-gen`, T4, đẩy 21:25 26/10, dự kiến xong 6–8 h sáng 27/10): sinh s1 · ck500 · ra_k4 · base · ck500_s202; chấm UGround cho câu chuẩn, s1, ck500, R3, base, ck500_s202, ra_k4. Khi về: so ghép cặp ck500 − S1, R3 − S1, R3 − ck500 (exec, D.3, AitW; bootstrap cụm app/episode), gộp với tập kiểm chính (5.947 bước, khai là gộp), cộng thước chữ trên Kaggle CPU.
+
+G17. Thước chữ cho các kết quả 25–26/10 (kernel CPU `trangphngngc/chu-26-10-cpu`, cùng quy trình với luận văn: bộ chấm COCO + chrF + BERTScore roberta-large L17 rescaled, câu rỗng tính 0). S1/101 chấm lại trùng tuyệt đối 7/7 thước đã công bố ⇒ các hàng dưới so được với bảng cũ. Tệp `runs/text_metrics_26_10/text_metrics_26_10.json`. Chưa có KTC.
+| nhánh | n | BLEU-4 | METEOR | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
+|---|---|---|---|---|---|---|---|---|
+| S1/101 (đối chiếu) | 4.463 | 51,56 | 36,79 | 67,35 | 416,12 | 44,37 | 61,26 | 66,33 |
+| ck500 (bảng cũ) | 4.463 | 52,36 | 37,92 | 68,36 | 430,05 | 45,79 | 62,87 | 67,07 |
+| xao101 | 4.463 | 51,32 | 36,95 | 67,36 | 418,13 | 44,40 | 61,52 | 66,40 |
+| Qwen2.5-VL-7B prompting | 4.463 | 14,48 | 21,90 | 39,79 | 100,71 | 18,74 | 36,22 | 39,70 |
+| S1, lịch sử tự sinh | 4.463 | 43,44 | 31,73 | 59,78 | 331,42 | 34,97 | 53,71 | 59,11 |
+| ck500, lịch sử tự sinh | 4.463 | 43,50 | 32,37 | 60,39 | 333,58 | 35,10 | 54,54 | 59,23 |
+| AitZ Base | 2.736 | 18,68 | 18,56 | 39,11 | 86,98 | 15,66 | 35,24 | 38,81 |
+| AitZ S1/101 | 2.736 | 21,01 | 20,83 | 46,84 | 120,24 | 15,27 | 35,66 | 49,69 |
+| AitZ ck500 | 2.736 | 21,48 | 21,08 | 46,92 | 123,38 | 16,37 | 36,28 | 49,68 |
+| AitZ ck500/202 | 2.736 | 19,76 | 19,99 | 45,44 | 117,26 | 15,63 | 34,43 | 48,47 |
+| AitZ R3 (ACE) | 2.736 | 21,45 | 21,05 | 46,91 | 123,29 | 16,40 | 36,24 | 49,63 |
+| AitZ ra_k4 | 2.736 | 19,94 | 20,04 | 45,39 | 117,42 | 15,70 | 34,24 | 48,27 |
+Cách đọc:
+- xao101 trùng S1 ở cả 7 thước (chênh ≤ 2 điểm CIDEr-D, ≤ 0,3 ở các thước khác), giống exec (G12). Phần ck500 hơn S1 ở thước chữ (CIDEr-D +14, SPICE +1,4) là của thưởng SPICE, không phải của việc chạy thêm 500 bước GRPO.
+- 7B prompting thấp xa mọi nhánh tinh chỉnh ở mọi thước (BLEU-4 14,5 vs 51,6), cùng chiều với exec 51,51.
+- Lịch sử tự sinh làm cả hai nhánh giảm mạnh (CIDEr-D S1 −85, ck500 −96; SPICE −9,4 và −10,7). ck500 vẫn nhỉnh hơn S1 ở 7/7 thước nhưng khoảng cách co lại (CIDEr-D +2,2, trước là +13,9). Đây là thước đối chiếu với câu chuẩn của bước đó nên chịu cả lỗi dây chuyền từ các bước trước.
+- AitZ: ck500 hơn S1 ở 6/7 thước (BERTScore ngang, −0,01), R3 gần trùng ck500 (khớp với việc ACE gần như không kích hoạt trên AitZ, G13). ck500/202 và ra_k4 thấp hơn S1 ở 6/7 thước. Mức tăng của ck500 so với S1 trên AitZ nhỏ (CIDEr-D +3,1, SPICE +1,1) và hạt 202 đi ngược chiều ⇒ không viết "ck500 hơn S1 trên AitZ" bằng thước chữ.
