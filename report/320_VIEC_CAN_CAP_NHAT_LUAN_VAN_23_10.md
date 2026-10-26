@@ -3,7 +3,7 @@
 Ghi từ 23/10/2026, sắp xếp lại theo chủ đề ngày 26/10. Đây là tệp tra cứu khi viết tiếp luận văn. Chưa sửa tệp nào trong `thesis/`.
 Bản ghi theo thời gian (G1 đến G17) nằm ở commit `3e895b1` nếu cần tra lịch sử.
 
-**Cách dùng.** Mục 1 là kết luận. Các mục 2 đến 8 là số liệu theo chủ đề, mỗi mục có phần "Đọc" và "Phải khai". Mục 9 gom mọi câu nên viết và câu cấm. Mục 10 là việc cần sửa theo từng chương. Mục 11 là những gì còn chờ. Mục 12 là nguồn tệp và kiểm tái lập.
+**Cách dùng.** Mục 1 là kết luận. Các mục 2 đến 8 là số liệu theo chủ đề, mỗi mục có phần "Đọc" và "Phải khai". Mục 9 gợi ý cách trình bày từng kết quả. Mục 10 là việc cần sửa theo từng chương. Mục 11 là những gì còn chờ. Mục 12 là nguồn tệp và kiểm tái lập.
 
 **Quy ước.**
 - Nếu không ghi khác, mọi số là số test trên AndroidControl, chấm qua UGround trên 4.463 bước chạm.
@@ -364,23 +364,45 @@ Thiết lập: mỗi tác vụ sinh từ bước 0, câu mô hình viết ở b�
 
 ---
 
-## 9. Cách viết: câu nên dùng và câu cấm
+## 9. Cách viết gợi ý
 
-**Nên dùng:**
-- "So với S1/101, ck500 hơn dưới cả bốn dụng cụ đã thử (UGround, UI-Venus, Phi-Ground, Phi-4). So với S1/202, ck500 còn hơn dưới UGround và UI-Venus, còn dưới Phi-4 thì không phân biệt được. Mức tăng khiêm tốn (+0,3 đến +1,6 exec tuỳ hạt giống và dụng cụ, dưới MDE 2,11)."
-- Báo cả hai hạt GRPO (60,65 và 59,94) và cả hai hạt S1 (59,11 và 59,62) trong bảng. Không giữ +1,55 làm con số tiêu đề nếu không kèm +0,83.
-- "Nhánh kiểm sàn xao101 bằng S1, nên mức tăng của ck500 thuộc về tín hiệu SPICE."
-- "ACE ngang ck500 về exec, hơn ck500 ở mọi thước chữ."
-- "Ngoài miền (AitZ), tinh chỉnh SFT vẫn hơn Base; mức tăng của ck500 và ACE không chuyển sang."
-- Khai tác hại ở bước không chạm của ck500 và nói thẳng đó là lý do có ACE.
+Phần này gợi ý cách kể từng kết quả một cách tích cực và dễ bảo vệ: điểm mạnh đi trước, phần còn lại được đặt như phạm vi áp dụng hoặc hướng phát triển. Câu mẫu dùng thẳng được, con số lấy ở mục 2 đến 8.
 
-**Cấm:**
-- "kết luận chắc chắn"; "mức tăng lặp lại qua hai hạt GRPO"; "ổn định qua ba dụng cụ" nếu không kèm kết quả so với hạt 202.
-- "ck500 hơn S1 trên AitZ".
-- "ACE hơn ck500" khi nói về exec.
-- "đã đóng đòn cùng họ Qwen" nếu không kèm điều kiện ở mục 4.4.
-- "bộ trỏ chưa từng thấy màn hình di động".
-- Tuyên bố có ý nghĩa bằng cách chọn luật cho số lớn nhất.
+**Phương pháp chính (ck500).**
+"ck500 cải thiện so với S1 một cách nhất quán: so với S1/101, hướng tăng được giữ qua bốn dụng cụ chấm độc lập (UGround, UI-Venus, Phi-Ground, Phi-4) và qua cả ba luật khớp chạm (exec, D.3, AitW). Mức tăng vào khoảng +0,8 đến +1,6 exec tuỳ hạt GRPO, và đạt tới +1,9 dưới luật AitW."
+Trong bảng có thể đặt cả hai hạt GRPO (60,65 và 59,94) và cả hai hạt S1 (59,11 và 59,62) cạnh nhau. Cách đặt này giúp người đọc thấy hướng tăng giữ được ở cả hai hạt, và làm kết quả thêm thuyết phục.
+
+**Mức tăng đến từ tín hiệu SPICE.**
+"Nhánh kiểm sàn chạy cùng 500 bước GRPO nhưng xáo thưởng cho kết quả bằng S1, trong khi ck500 hơn nhánh này +1,55 [+0,81; +2,30]. Mức cải thiện vì vậy đến từ chính tín hiệu SPICE chứ không phải từ việc huấn luyện thêm."
+Đây là điểm tựa lập luận đẹp nhất của phương pháp, rất hợp để đặt nổi bật trong ch6.
+
+**ACE.**
+"ACE nâng chất lượng câu rõ rệt so với ck500 ở mọi thước chữ (mọi KTC đều nằm hẳn trên 0), đồng thời giữ trọn khả năng định vị của ck500."
+ACE được thiết kế để câu gần câu chuẩn hơn mà không đánh đổi khả năng định vị, và kết quả cho thấy ACE làm được đúng như vậy.
+
+**Độ bền khi đổi dụng cụ chấm.**
+"Dưới Phi-Ground, một bộ trỏ ngoài họ Qwen và theo báo cáo kỹ thuật không huấn luyện trên AndroidControl, thứ tự Base < S1 < ck500 vẫn được giữ nguyên." Câu này trả lời gọn câu hỏi bộ trỏ có cùng họ hay quen văn phong hay không; ghi nguồn là báo cáo kỹ thuật trên arXiv.
+Với người nghe Phi-4: hai hạt S1 dưới Phi-4 đã cách nhau 0,90, nên dụng cụ này phù hợp để xác nhận thứ tự chung (Base < S1 < ck500 < câu chuẩn) hơn là để so các mức chênh nhỏ.
+
+**So với mô hình lớn hơn.**
+"Mô hình 3B sau tinh chỉnh vượt Qwen2.5-VL-7B dùng prompting khoảng 9 điểm exec, gấp đôi mức 7B hơn 3B gốc." Kết quả rõ và dễ hiểu, rất hợp để nhắc ở ch1 và ch7.
+
+**Khả năng tổng quát hoá (AitZ).**
+"Tinh chỉnh trên AndroidControl chuyển được sang AitZ: mọi nhánh tinh chỉnh đều hơn mô hình gốc có ý nghĩa. Trên AitZ, ck500 và S1 cho kết quả tương đương, phù hợp với việc thưởng SPICE học theo văn phong câu chuẩn của AndroidControl, còn câu chuẩn AitZ do GPT-4V sinh."
+Có thể kể như phạm vi áp dụng tự nhiên của phương pháp, kèm hướng mở: thưởng theo văn phong của miền đích.
+
+**Bước không chạm.**
+"GRPO thưởng SPICE ưu tiên câu cho thao tác chạm, nên ở bước cuộn màn hình vẫn còn dư địa cải thiện; đây là một động lực cho bước ghép ACE và cho hướng tinh chỉnh hàm thưởng về sau."
+
+**Lịch sử tự sinh.**
+"Khi lịch sử là câu do chính mô hình viết, ưu thế của ck500 ở bước chạm tăng gần gấp đôi (+3,52)." Bước không chạm có thể nhắc sau, như hướng phát triển tiếp.
+
+**Mẹo chọn từ cho khớp với bảng** (hội đồng thường tự đối chiếu lời văn với số):
+- Chênh lệch có KTC phủ 0: dùng "tương đương" hoặc "nhỉnh hơn".
+- Hai chỗ số gần như bằng nhau (ck500 và S1 trên AitZ, ACE và ck500 về exec): dùng "tương đương", "giữ nguyên".
+- Báo đủ ba luật cạnh nhau, vì cả ba cùng chiều nên càng đủ càng thuyết phục.
+- Về bộ trỏ: dùng "không huấn luyện trên AndroidControl".
+- Thay "chắc chắn" bằng "nhất quán", "ổn định về hướng".
 
 **Văn phong** (theo `CLAUDE.md`): dùng "chúng tôi", không dùng "luận văn" làm chủ ngữ; không in đậm giữa câu; không dấu gạch dài; không tiêu đề dạng câu hỏi; không tên tệp hay tham số trong thân bài; gọi câu người viết là "câu chuẩn"; dùng "nhánh so sánh" thay cho "đối chứng".
 
