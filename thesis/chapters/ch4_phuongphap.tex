@@ -140,9 +140,9 @@ trong đó $|\cdot|$ là số từ, và câu rỗng nhận 0 điểm. Số hạn
 
 Mỗi bước cập nhật sử dụng hai prompt. Với mỗi prompt, mô hình sinh $G = 8$ câu ở nhiệt độ 1,0, mỗi câu dài tối đa 96 token. Quá trình huấn luyện gồm 500 bước cập nhật, tương ứng tổng cộng 1.000 prompt được lấy từ phần tập huấn luyện sau khi loại tập kiểm định nội bộ. Các prompt gồm mọi loại thao tác, trong đó khoảng hai phần ba là bước có thao tác chạm. Tốc độ học là $10^{-5}$ và hệ số KL là $\beta = 0{,}04$. Vòng huấn luyện được tóm tắt ở Hình~\ref{fig:4.2}. GRPO sử dụng chênh lệch phần thưởng tương đối giữa các đầu ra trong cùng nhóm. Khi các ứng viên nhận cùng phần thưởng, lợi thế tương đối giữa chúng không tạo ra khác biệt cho bước cập nhật.
 
-\textbf{Lặp lại giai đoạn GRPO.} Chúng tôi chạy thêm một lượt 500 bước với cùng cấu hình GRPO-SPICE nhưng đổi hạt ngẫu nhiên từ 101 sang 202. Lượt này vẫn khởi tạo từ S1/101, nhờ đó phép lặp tập trung vào mức biến thiên của riêng giai đoạn GRPO. Kết quả được đối chiếu thêm với mức dao động giữa hai lượt S1 ở Mục~\ref{sec:6.7.2}.
+\textbf{Lượt huấn luyện GRPO thứ hai.} Chúng tôi chạy thêm một lượt 500 bước với cùng cấu hình GRPO-SPICE và seed 202. Lượt này vẫn khởi tạo từ S1/101, nên khác biệt giữa hai lượt phản ánh biến thiên của riêng giai đoạn GRPO. Kết quả được đối chiếu với hai lượt S1 ở Mục~\ref{sec:6.7.2}.
 
-\textbf{Thí nghiệm kiểm tra bằng phần thưởng xáo trộn.} Chúng tôi xây dựng thêm một nhánh có cùng điểm khởi tạo, số bước và các siêu tham số với GRPO-SPICE, nhưng điểm SPICE được xáo giữa các mẫu trước khi dùng làm phần thưởng. Cách thiết lập này giữ nguyên quá trình cập nhật GRPO nhưng làm mất mối liên hệ giữa câu sinh ra và điểm SPICE. Nhánh này được dùng như một phép kiểm tra bổ sung để xem mức thay đổi quan sát được có gắn với tín hiệu phần thưởng hay chỉ xuất hiện khi mô hình tiếp tục được huấn luyện. Kết quả được trình bày ở Mục~\ref{sec:6.7.2}.
+\textbf{Thí nghiệm với phần thưởng xáo trộn.} Chúng tôi xây dựng thêm một nhánh có cùng điểm khởi tạo, số bước và các siêu tham số với GRPO-SPICE, nhưng điểm SPICE được xáo giữa các mẫu trước khi dùng làm phần thưởng. Cách thiết lập này giữ nguyên quá trình cập nhật GRPO nhưng loại bỏ mối liên hệ giữa câu sinh ra và điểm SPICE, qua đó tách ảnh hưởng của tín hiệu SPICE khỏi ảnh hưởng của việc tiếp tục huấn luyện. Kết quả được trình bày ở Mục~\ref{sec:6.7.2}.
 
 \begin{figure}[!htb]
 \centering
@@ -182,9 +182,9 @@ Mỗi bước cập nhật sử dụng hai prompt. Với mỗi prompt, mô hình
 \label{fig:4.2}
 \end{figure}
 
-\textbf{Lựa chọn checkpoint.} Hai checkpoint ở bước 250 và 500 được dùng để sinh câu bằng giải mã tham lam trên tập kiểm định nội bộ và được so sánh theo executability. Checkpoint 500 được chọn trên tập kiểm định nội bộ và sau đó cố định trước khi sinh câu trên tập kiểm tra. Kết quả trên tập kiểm định nội bộ và phân tích tín hiệu phần thưởng được trình bày ở Mục~\ref{sec:6.3}.
+\textbf{Lựa chọn số bước huấn luyện.} Mô hình sau 250 và 500 bước được dùng để sinh câu bằng giải mã tham lam trên tập kiểm định nội bộ và được so sánh theo executability. Mô hình sau 500 bước cho kết quả tốt hơn trên tập này, nên được chọn và cố định trước khi sinh câu trên tập kiểm tra. Kết quả trên tập kiểm định nội bộ và phân tích tín hiệu phần thưởng được trình bày ở Mục~\ref{sec:6.3}.
 
-\textbf{Kiểm tra độ ổn định của thiết lập.} S1 và mô hình sau GRPO sử dụng hai cách triển khai hơi khác nhau ở bước hợp nhất LoRA và xử lý theo lô. Vì khác biệt này có thể làm thay đổi một số câu đầu ra, các chênh lệch nhỏ được diễn giải cùng với lượt huấn luyện GRPO thứ hai và thí nghiệm phần thưởng xáo trộn, thay vì dựa trên một phép so duy nhất.
+\textbf{Đối chiếu giữa các lượt huấn luyện.} S1 và mô hình sau GRPO có khác biệt nhỏ ở bước hợp nhất LoRA và cách xử lý theo lô. Vì vậy, kết quả của GRPO-SPICE được đọc cùng lượt huấn luyện GRPO thứ hai và nhánh phần thưởng xáo trộn. Hai phép đối chiếu này giúp tách mức cải thiện do tín hiệu SPICE khỏi biến thiên của quá trình huấn luyện và khác biệt triển khai.
 
 \section{Thành phần thứ hai: hiệu chỉnh bằng câu ví dụ với ràng buộc nhất quán thao tác (ACE)}\label{sec:4.6}
 

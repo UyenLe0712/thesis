@@ -28,7 +28,8 @@ HANG = [
     ("CE2-S2/101", "CE2-S2/101", "CE2-S2", True),
     ("MIN-DESC/101", "MIN-DESC/101", "MIN-DESC", True),
     ("GRPO-point/101", "GRPO-point/101", "Chặng ba", True),
-    ("ck500", "ck500", "Thưởng SPICE\\textsuperscript{$\\ast$}", True),
+    ("ck500", "ck500", "GRPO-SPICE", True),
+    ("ACE", "ACE", "Phương pháp đề xuất (ACE)\\textsuperscript{$\\ast$}", True),
     ("TAGE", "TAGE", "TAGE", True),
     ("gui_sel/101", "gui_sel/101", "Nhánh ứng viên\\textsuperscript{$\\dagger$}", True),
     ("Câu người (trần)", "Câu chuẩn", "\\emph{Câu chuẩn}", False),
@@ -76,6 +77,9 @@ def main():
     HN = R("hang_ck500_tage.json")
     CK = R("grpo_spice/text_metrics_ck500.json")["ck500"]
     TG = R("tage_test/tage_test_doc.json")["diem"]
+    AC = R("hang_ace.json")
+    ACT = R("ra304_luat/cham_r3/diem_test_R3.json")["diem"]["R3"]
+    ACK = R("ktc_chu_27_10.json")["AndroidControl"]["diem"]["ACE"]
     AF0 = R("luat_aitw_day_du.json")["n4463"]
     AM0 = R("luat_aitw_moi_hop.json")["n4463"]
     for t in ("ck500", "TAGE"):
@@ -85,6 +89,14 @@ def main():
         T[t] = {"action_ok": HN[t]["action_ok"]}
     C["ck500"] = {c: CK[c] for c in ("bleu4", "meteor15", "rougeL", "cider_d", "spice")}
     M["ck500"] = {c: CK[c] for c in ("chrf", "bertscore_f1_rescaled")}
+    # ACE: dùng kết quả đã tái lập. ROUGE-L lấy bản tính lại 27/10 (69,11); các thước còn lại lấy JSON R3.
+    C["ACE"] = {"bleu4": ACT["bleu4"], "meteor15": ACT["meteor"], "rougeL": ACK["rougeL"]["diem"],
+                "cider_d": ACT["cider_d"], "spice": ACT["spice"]}
+    M["ACE"] = {"chrf": ACT["chrf"], "bertscore_f1_rescaled": ACT["bertscore"]}
+    P["ACE"] = {c: AC[c] for c in ("vor", "d3", "d14_truc")}
+    AF0["ACE"] = {"aitw_full": AC["aitw_full"]}
+    AM0["ACE"] = {"aitw_moi_khung": AC["aitw_moi_khung"]}
+    T["ACE"] = {"action_ok": AC["action_ok"]}
     C["TAGE"] = {"spice": TG["SPICE"]["TAGE"]}
 
     AF, AM = AF0, AM0
@@ -98,7 +110,7 @@ def main():
            r" không gọi lại mô hình định vị. AitW là luật khớp chạm trong mã tính điểm gốc của"
            r" AndroidInTheWild, AitW cận trên là biến thể của luật ấy khi vế khung xét mọi phần tử bấm được (sàn cao hơn, Mục~\ref{sec:donhay}). Hộp (D.3) là luật khớp gốc của"
            r" AndroidControl. Exec.\ là executability (Mục~\ref{sec:donhay}). Thao tác là tỉ lệ gọi đúng loại thao tác. Số in đậm"
-           r" là số cao nhất trong các nhánh mô hình ở cột đó. \textsuperscript{$\ast$}Thưởng SPICE là phương pháp đề xuất, học tiếp từ S1 ($101$) bằng GRPO với phần thưởng SPICE, TAGE là bộ sửa câu đặt sau phương pháp đó (Mục~\ref{sec:grpospice} và~\ref{sec:tage}). \textsuperscript{$\dagger$}Nhánh ứng viên lệch ba"
+           r" là số cao nhất trong các nhánh mô hình ở cột đó. \textsuperscript{$\ast$}ACE là phương pháp đề xuất hoàn chỉnh. GRPO-SPICE là thành phần thứ nhất, học tiếp từ S1 ($101$) bằng GRPO với phần thưởng SPICE. TAGE là một hướng hiệu chỉnh khác đặt sau GRPO-SPICE (Mục~\ref{sec:grpospice} và~\ref{sec:tage}). \textsuperscript{$\dagger$}Nhánh ứng viên lệch ba"
            r" biến so với các nhánh còn lại nên chỉ đọc được so với Base.}",
            r"\label{tab:nhieuthuoc_vitri}", r"\centering\small", r"\renewcommand{\arraystretch}{1.2}",
            r"\setlength{\tabcolsep}{3.5pt}",

@@ -168,9 +168,11 @@ báo Pixtral phải khai đúng vậy; muốn so công bằng thì tăng `max_ne
 | câu chuẩn | **54,94** | [53,05; 56,82] | 54,90 | 57,40 |
 | chặng ba (GRPO) | **45,78** | [44,07; 47,49] | 45,57 | 47,82 |
 | S1/101 | **44,63** | [42,88; 46,37] | 43,51 | 46,63 |
-| Base *(3.566 bước)* | 38,56 | [36,71; 40,44] | 37,55 | - |
+| Base | 38,23 | [36,53; 39,93] | 37,24 | - |
 | câu rỗng nghĩa `"Tap the button."` | 15,86 | [14,69; 17,04] | 15,86 | 16,57 |
 | *đoán ngẫu nhiên (kỳ vọng) · trần phủ đáp án* | *10,06 · 95,72* | | | |
+
+Base trong bảng trên là kết quả sau khi chấm bù đủ 4.463 bước. Các phân tích ở Mục 2.4.7 vẫn giữ lát 3.566 bước cũ để bốn thước được so trên cùng một mẫu.
 
 - **Dải hữu dụng** (câu chuẩn − câu rỗng): **39,08** trên 4.463 bước; trên đúng lát 800 bước dùng đo sàn của exec: trần 54,00 ·
   câu rỗng 14,38 · dải **39,62** (exec trên cùng lát: 62,9; D.3 68,9; AitW 64,9) ⇒ thang **hẹp hơn** các luật toạ độ.
