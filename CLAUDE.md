@@ -1639,3 +1639,16 @@ phút dựng lại dữ liệu và ảnh. Quyết chọn card ở **ô thăm dò
 - Citation: chỉ trình peer-reviewed như đã bình duyệt; verify venue/năm trước khi trích.
 - Tư vấn model/giá/API Claude/Anthropic: đọc tài liệu, KHÔNG trả lời theo trí nhớ.
 - Sau thay đổi lớn: cập nhật file report tương ứng và cập nhật file này khi có quyết định mới.
+
+### ⭐ Quy tắc văn phong luận văn hiện hành — user chốt 27/10/2026
+
+Các quy tắc dưới đây áp dụng cho **toàn bộ `thesis/chapters/*.tex`** và thắng các cách gọi cũ còn sót trong ghi chú lịch sử:
+- ⛔ Không dùng **“khớp chạm”**. Dùng **“tiêu chí đánh giá”**, **“tiêu chí xác định vị trí”**, **“tiêu chí hộp phần tử”**, **“AitW đầy đủ”** hoặc tên cụ thể của tiêu chí.
+- ⛔ Không dùng **“luật”** để gọi tiêu chí/cách đánh giá trong văn xuôi luận văn. Dùng **“tiêu chí”**, **“cách đánh giá”** hoặc **“cách xác định”**. Tên file/mã lịch sử có chữ `luat` không cần đổi.
+- ⛔ Không dùng **“xáo”**. Nhánh kiểm soát viết **“điểm SPICE được ghép ngẫu nhiên giữa các mẫu”** hoặc cách diễn đạt tương đương.
+- ⛔ Không dùng **“thước chữ”**. Dùng **“độ đo dựa trên câu chuẩn”** hoặc **“độ đo văn bản”** khi phù hợp.
+- ⛔ Không dùng **“luồng”** trong văn xuôi, dùng **“quy trình”**. Không dùng **“điều kiện đồng thuận”**, dùng **“điều kiện lựa chọn”**. Ưu tiên **“dữ liệu gốc”** thay cho “dữ liệu nguồn”. Tránh từ **“rỗng”** khi mô tả dữ liệu/câu trong văn xuôi.
+- ✅ Được **in đậm có chọn lọc các con số kết quả quan trọng**. Không in đậm dày đặc mọi con số. Chỉ đạo này thắng quy tắc cũ “không in đậm giữa câu” khi phần in đậm là con số headline.
+- ✅ Caption hình và bảng phải **ngắn**, không mô tả lại từng màu, từng khối hay từng cột nếu hình/bảng đã thể hiện rõ.
+- ✅ Chương 3, 4 và 6 ưu tiên **ngắn gọn**. Bỏ chi tiết vận hành, số phụ hoặc phần giải thích lặp lại nếu đã có ở chương khác hay Phụ lục. Không bỏ số chính, KTC quan trọng hoặc caveat khoa học cần thiết.
+- ✅ Trước khi hoàn tất một vòng sửa luận văn, grep `thesis/chapters/` cho các cụm `khớp chạm`, `thước chữ`, `điều kiện đồng thuận`, `luồng`, và kiểm riêng việc dùng từ `luật` trong văn xuôi.

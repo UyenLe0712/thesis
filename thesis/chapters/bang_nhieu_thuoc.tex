@@ -1,6 +1,6 @@
 % SINH TỰ ĐỘNG bởi harness/sinh_bang_nhieu_thuoc.py — đừng sửa tay
 \begin{table}[t]
-\caption{Nhóm thước theo vị trí trên đủ $4.463$ bước chạm, tính lại từ bản ghi từng bước, không gọi lại mô hình định vị. AitW là luật khớp chạm trong mã tính điểm gốc của AndroidInTheWild, AitW cận trên là biến thể của luật ấy khi vế khung xét mọi phần tử bấm được (sàn cao hơn, Mục~\ref{sec:donhay}). Hộp (D.3) là luật khớp gốc của AndroidControl. Exec.\ là executability (Mục~\ref{sec:donhay}). Thao tác là tỉ lệ gọi đúng loại thao tác. Số in đậm là số cao nhất trong các nhánh mô hình ở cột đó. \textsuperscript{$\ast$}ACE là phương pháp đề xuất hoàn chỉnh. GRPO-SPICE là thành phần thứ nhất, học tiếp từ S1 ($101$) bằng GRPO với phần thưởng SPICE. TAGE là một hướng hiệu chỉnh khác đặt sau GRPO-SPICE (Mục~\ref{sec:grpospice} và~\ref{sec:tage}). \textsuperscript{$\dagger$}Nhánh ứng viên lệch ba biến so với các nhánh còn lại nên chỉ đọc được so với Base.}
+\caption{Nhóm thước theo vị trí trên đủ $4.463$ bước chạm, tính lại từ bản ghi từng bước, không gọi lại mô hình định vị. AitW là tiêu chí đánh giá lấy từ mã tính điểm gốc của AndroidInTheWild, AitW cận trên là biến thể của tiêu chí này khi vế khung xét mọi phần tử bấm được (sàn cao hơn, Mục~\ref{sec:donhay}). Hộp (D.3) là tiêu chí gốc của AndroidControl. Exec.\ là executability (Mục~\ref{sec:donhay}). Thao tác là tỉ lệ gọi đúng loại thao tác. Số in đậm là số cao nhất trong các nhánh mô hình ở cột đó. \textsuperscript{$\ast$}ACE là phương pháp đề xuất hoàn chỉnh. GRPO-SPICE là thành phần thứ nhất, học tiếp từ S1 ($101$) bằng GRPO với phần thưởng SPICE. TAGE là một hướng hiệu chỉnh khác đặt sau GRPO-SPICE (Mục~\ref{sec:grpospice} và~\ref{sec:tage}). \textsuperscript{$\dagger$}Nhánh ứng viên lệch ba biến so với các nhánh còn lại nên chỉ đọc được so với Base.}
 \label{tab:nhieuthuoc_vitri}
 \centering\small
 \renewcommand{\arraystretch}{1.2}
@@ -54,7 +54,7 @@ Nhánh ứng viên\textsuperscript{$\dagger$} & $46{,}9$ & $34{,}2$ & $63{,}3$ &
 \end{table}
 
 \begin{table}[t]
-\caption{Khoảng tin cậy $95\%$ của ba số chính trên $4.463$ bước (trên) và phép so ghép cặp (dưới). Khoảng tin cậy lấy từ bootstrap $10.000$ lần gom cụm theo ứng dụng ($G = 1.091$), giá trị $p$ của kiểm định McNemar. MIN là MIN-DESC.}
+\caption{Khoảng tin cậy $95\%$ của ba số chính trên $4.463$ bước (trên) và phép so ghép cặp (dưới). Khoảng tin cậy lấy từ bootstrap $10.000$ lần gom cụm theo ứng dụng ($G = 1.091$), giá trị $p$ của phép kiểm McNemar. MIN là MIN-DESC.}
 \label{tab:d3ktc}
 \centering\footnotesize
 \renewcommand{\arraystretch}{1.15}
@@ -75,7 +75,7 @@ Câu chuẩn & $92{,}1$ $[91{,}1; 93{,}1]$ & $83{,}8$ $[82{,}5; 85{,}1]$ & $75{,
 \vspace{0.6em}
 \begin{tabular}{@{}llrrr@{}}
 \toprule
-Phép so & Luật & $\Delta$ & KTC $95\%$ & $p$ \\
+Phép so & Tiêu chí & $\Delta$ & KTC $95\%$ & $p$ \\
 \midrule
 S1 ($101$) $-$ Base & AitW đầy đủ & $+10{,}98$ & $[+9{,}44; +12{,}56]$ & $<0{,}001$ \\
  & D.3 & $+11{,}90$ & $[+10{,}36; +13{,}47]$ & $<0{,}001$ \\

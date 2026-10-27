@@ -107,8 +107,8 @@ def main():
           ("Thao tác", lambda h: T[h[1]]["action_ok"])]
     ra += [r"\begin{table}[t]",
            r"\caption{Nhóm thước theo vị trí trên đủ $4.463$ bước chạm, tính lại từ bản ghi từng bước,"
-           r" không gọi lại mô hình định vị. AitW là luật khớp chạm trong mã tính điểm gốc của"
-           r" AndroidInTheWild, AitW cận trên là biến thể của luật ấy khi vế khung xét mọi phần tử bấm được (sàn cao hơn, Mục~\ref{sec:donhay}). Hộp (D.3) là luật khớp gốc của"
+           r" không gọi lại mô hình định vị. AitW là tiêu chí đánh giá lấy từ mã tính điểm gốc của"
+           r" AndroidInTheWild, AitW cận trên là biến thể của tiêu chí này khi vế khung xét mọi phần tử bấm được (sàn cao hơn, Mục~\ref{sec:donhay}). Hộp (D.3) là tiêu chí gốc của"
            r" AndroidControl. Exec.\ là executability (Mục~\ref{sec:donhay}). Thao tác là tỉ lệ gọi đúng loại thao tác. Số in đậm"
            r" là số cao nhất trong các nhánh mô hình ở cột đó. \textsuperscript{$\ast$}ACE là phương pháp đề xuất hoàn chỉnh. GRPO-SPICE là thành phần thứ nhất, học tiếp từ S1 ($101$) bằng GRPO với phần thưởng SPICE. TAGE là một hướng hiệu chỉnh khác đặt sau GRPO-SPICE (Mục~\ref{sec:grpospice} và~\ref{sec:tage}). \textsuperscript{$\dagger$}Nhánh ứng viên lệch ba"
            r" biến so với các nhánh còn lại nên chỉ đọc được so với Base.}",
@@ -158,7 +158,7 @@ def main():
         ra.append(f"{TEN[t]} & {ci(o['aitwf'])} & {ci(o['d3'])} & {ci(o['vor'])} \\\\")
     ra += [r"\bottomrule", r"\end{tabular}", "", r"\vspace{0.6em}",
            r"\begin{tabular}{@{}llrrr@{}}", r"\toprule",
-           r"Phép so & Luật & $\Delta$ & KTC $95\%$ & $p$ \\", r"\midrule"]
+           r"Phép so & Tiêu chí & $\Delta$ & KTC $95\%$ & $p$ \\", r"\midrule"]
     cap = (("S1/101", "Base"), ("S2/101", "S1/101"), ("GRPO-point/101", "S2/101"),
            ("GRPO-point/101", "S1/101"), ("GRPO-point/101", "S1/202"),
            ("MIN-DESC/101", "S1/101"), ("GRPO-point/101", "MIN-DESC/101"))

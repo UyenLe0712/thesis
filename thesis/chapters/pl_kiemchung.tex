@@ -1,0 +1,38 @@
+\chapter{Kiểm chứng bổ sung cho executability}
+\label{app:B}
+
+Phụ lục này trình bày hai phép kiểm phụ được nhắc ngắn ở Chương~\ref{chap:5}.
+
+\section{Biến đổi lỗi có kiểm soát}\label{sec:B.1}\label{sec:5.7}
+
+Theo cách làm của Sai và cộng sự~\cite{sai2021}, chúng tôi tạo các trường hợp đúng hoặc sai đã biết trước rồi đếm tỉ lệ cách đánh giá phản ứng đúng chiều (Bảng~\ref{tab:5.2}). Phép kiểm này không gọi mô hình định vị. Điểm dự đoán được đặt tổng hợp, hoặc lệch nhẹ quanh điểm chạm, hoặc gần tâm một phần tử khác, nên bảng chỉ kiểm tra phần tính điểm, tức ba điều kiện ở Mục~\ref{sec:5.1}. Ảnh hưởng của cách diễn đạt lên chính mô hình định vị được đo riêng ở Mục~\ref{sec:5.8}. Ba dòng đầu và các dòng về vị trí, loại thao tác dùng mẫu 398 bước có thao tác chạm. Ba dòng cuối dùng mọi bước phù hợp của tập kiểm tra; hai dòng cuối lấy từ các bước nhập chữ và bước cuộn, kiểm tra cách so nội dung nhập và hướng cuộn dùng khi phân tích các bước không chạm.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Tỉ lệ phản ứng đúng chiều của cách đánh giá trước các biến đổi đã biết kết quả.}\label{tab:5.2}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+\textbf{Trường hợp kiểm tra} & \textbf{Tỉ lệ} & \textbf{n} \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{Loại nhầm một câu vẫn đúng (càng thấp càng tốt)}} \\
+Câu diễn đạt khác, điểm lệch 3\% bề ngang & 0,0\% & 398 \\
+Điều kiện loại thao tác trên câu diễn đạt khác & 0,0\% & 398 \\
+Điều kiện đảo nghĩa trên câu diễn đạt khác & 0,0\% & 398 \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{Phát hiện một câu đã bị làm sai (càng cao càng tốt)}} \\
+Điểm gần phần tử cách đích từ 30 đến 80 điểm ảnh & 33,1\% & 121 \\
+Điểm gần phần tử cách đích từ 80 đến 150 điểm ảnh & 99,6\% & 233 \\
+Điểm gần phần tử cách đích hơn 25\% bề ngang & 100,0\% & 397 \\
+Sai loại thao tác & 100,0\% & 369 \\
+Cặp trạng thái đối lập ngoài danh sách & 0,0\% & 12 \\
+Sai nội dung nhập & 91,1\% & 494 \\
+Sai hướng cuộn & 100,0\% & 755 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Tỉ lệ thấp ở dòng 30 đến 80 điểm ảnh phản ánh phép gộp tâm 24 dp (khoảng 63 điểm ảnh) ở Mục~\ref{sec:5.2}: nhiều phần tử trong khoảng này bị gộp với đích nên không được tính là cạnh tranh. Điều kiện đảo nghĩa chỉ bắt các cặp có trong danh sách lập thủ công, nên 12 trường hợp thuộc cặp ngoài danh sách đều không bị phát hiện. Khi điểm dự đoán lệch đều quanh điểm chạm với câu đúng, tỉ lệ loại nhầm là 0\% ở mức lệch 3\% bề ngang, 7,5\% ở 5\%, 24,1\% ở 8\% và 55,0\% ở 13\%.
+
+\section{Độ tương đồng nhúng giữa các cách gọi phần tử}\label{sec:B.2}
+
+Phép thử dùng 51 cặp câu viết tay: 25 cặp cùng phần tử nhưng khác cách gọi, 15 cặp khác phần tử nhưng có từ ngữ chồng lấn, và 11 cặp khó liên quan tới trạng thái đối lập, con số, hướng hoặc quan hệ giữa phần tử cha và phần tử con. Hai vế của mỗi cặp được biểu diễn bằng bge-m3~\cite{bgem3} rồi so bằng độ tương đồng cosine. Điểm trung bình của các cặp cùng phần tử là 0,62, thấp hơn mức 0,67 của các cặp khác phần tử có từ ngữ chồng lấn. Cặp \emph{inbox} và \emph{outbox}, hai phần tử khác nhau, đạt 0,76, trong khi \emph{search} và \emph{magnifying glass}, hai cách gọi có thể chỉ cùng một phần tử, chỉ đạt 0,55. Trên tập này, độ gần trong không gian nhúng không đi cùng chiều với quan hệ quy chiếu, nên không có ngưỡng cosine nào tách được cặp cùng phần tử khỏi cặp khác phần tử. Kết luận chỉ áp dụng cho tập câu và mô hình nhúng nêu trên.

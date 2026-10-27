@@ -1,37 +1,26 @@
 \chapter{Xây dựng bộ dữ liệu}
 \label{chap:3}
 
-Chương này trình bày cách hợp nhất các nguồn dữ liệu, cách chia tập huấn luyện và tập kiểm tra, thông tin giao diện được sử dụng, cùng dữ liệu dành cho từng giai đoạn của phương pháp. Toàn bộ quá trình xây dựng dữ liệu được tự động hóa, không yêu cầu gán nhãn thủ công bổ sung và không dùng nhãn do một mô hình ngôn ngữ khác sinh ra làm mục tiêu huấn luyện.
+Chương này trình bày nguồn dữ liệu, cách hợp nhất và kiểm tra, cách chia tập và dữ liệu dùng cho từng thành phần của phương pháp. Toàn bộ dữ liệu được dựng tự động từ AndroidControl, không gán nhãn thủ công bổ sung và không dùng câu do một mô hình ngôn ngữ khác sinh ra làm mục tiêu huấn luyện.
 
-\section{Nguồn dữ liệu và cách hợp nhất}\label{sec:3.1}
+\section{Nguồn dữ liệu, cách hợp nhất và kiểm tra}\label{sec:3.1}\label{sec:3.2}
 
-Để xây dựng dữ liệu, chúng tôi sử dụng câu hướng dẫn theo từng bước, ảnh chụp màn hình và cây trợ năng. Cây trợ năng chỉ cần thiết ở một số bước tiền xử lý. Hai bản phân phối trên Hugging Face cung cấp các thành phần bổ sung cho nhau, nên chúng tôi kết hợp chúng để ghép câu hướng dẫn với ảnh màn hình như trình bày ở Bảng~\ref{tab:3.2}. Cây trợ năng được lấy riêng từ bản phát hành gốc của AndroidControl.
+Dữ liệu cần ba thành phần: câu hướng dẫn theo từng bước, ảnh màn hình và cây trợ năng. Không bản phân phối công khai nào trên Hugging Face có đủ cả ba, nên chúng tôi ghép hai bản ở Bảng~\ref{tab:3.2} theo cặp mã tác vụ và số thứ tự bước, \code{(episode\_id, step\_id)}. Cây trợ năng chỉ dùng khi dựng dữ liệu và phân tích, không được đưa vào mô hình.
 
 \begin{table}[htbp]
 \centering\small
-\caption{Hai bản phân phối trên Hugging Face dùng để ghép câu hướng dẫn với ảnh màn hình.}\label{tab:3.2}
-\setlength{\tabcolsep}{4pt}
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash\hsize=1.25\hsize}X>{\raggedright\arraybackslash\hsize=0.85\hsize}X>{\raggedright\arraybackslash\hsize=0.90\hsize}X@{}}
+\caption{Hai bản phân phối trên Hugging Face được ghép để dựng dữ liệu.}\label{tab:3.2}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash\hsize=0.9\hsize}X>{\raggedright\arraybackslash\hsize=1.1\hsize}X@{}}
 \toprule
-\textbf{Bản phát hành} & \textbf{Có} & \textbf{Thiếu} \\
+\textbf{Bản phân phối} & \textbf{Thành phần sử dụng} \\
 \midrule
-\code{HarrytheOrange/}\allowbreak\code{parsed\_AndroidControl} & câu hướng dẫn theo từng bước & không có ảnh \\
-\code{ckg/}\allowbreak\code{AndroidControlParsed}\allowbreak\code{WithImages-20k} & ảnh màn hình & không có câu hướng dẫn theo bước \\
+\code{HarrytheOrange/}\allowbreak\code{parsed\_AndroidControl} & câu hướng dẫn theo từng bước; cây trợ năng của 99.131 màn hình \\
+\code{ckg/}\allowbreak\code{AndroidControlParsed}\allowbreak\code{WithImages-20k} & ảnh màn hình; cách chia tập huấn luyện và tập kiểm tra \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Hai bản được ghép theo cặp mã tác vụ và số thứ tự bước, \code{(episode\_id, step\_id)}. Cây trợ năng của 99.131 màn hình được lấy riêng từ bản phát hành gốc.
-
-\section{Kiểm tra tính nhất quán của dữ liệu sau hợp nhất}\label{sec:3.2}
-
-Khi hợp nhất hai nguồn, điểm cần kiểm tra quan trọng là ảnh và câu hướng dẫn có cùng số thứ tự bước hay không. Sai lệch ở bước này có thể không làm thay đổi số lượng bản ghi, nên chúng tôi kiểm tra thêm mức độ phù hợp giữa nội dung ảnh và câu hướng dẫn.
-
-Với mỗi bước có thao tác chạm, chúng tôi lấy phần văn bản OCR tại vị trí chạm và kiểm tra xem văn bản này có xuất hiện trong câu hướng dẫn hay không. Nếu ảnh được ghép với đúng câu hướng dẫn của cùng bước, văn bản tại vị trí chạm được kỳ vọng xuất hiện trong câu hướng dẫn thường xuyên hơn. Để đối chiếu, chúng tôi cố ý ghép ảnh của một bước với câu hướng dẫn ở bước kế tiếp rồi tính lại cùng tỉ lệ.
-
-Trong 400 bước được kiểm tra, 193 bước có văn bản tại vị trí chạm xuất hiện trong câu hướng dẫn, tương ứng 48\%. Khi cố ý ghép ảnh với câu hướng dẫn ở bước kế tiếp, 311 trường hợp còn đủ dữ liệu để tạo cặp so sánh. Trong số này, 61 trường hợp vẫn có văn bản tại vị trí chạm xuất hiện trong câu hướng dẫn, tương ứng 20\%. Như vậy, tỉ lệ 48\% khi ghép đúng ảnh và câu hướng dẫn cao khoảng 2,4 lần so với mức 20\% khi ghép ảnh với câu hướng dẫn ở bước kế tiếp.
-
-Kết quả đối chiếu này được dùng để xác nhận tính nhất quán của liên kết theo \code{(episode\_id, step\_id)} sau khi hợp nhất hai nguồn dữ liệu.
+Ghép sai bước không làm thay đổi số bản ghi, nên chúng tôi kiểm tra trên nội dung. Với mỗi bước có thao tác chạm, chúng tôi lấy văn bản OCR tại vị trí chạm và xem văn bản này có xuất hiện trong câu hướng dẫn hay không. Trên 400 bước được kiểm tra, tỉ lệ này là 48\%. Khi cố ý ghép ảnh với câu hướng dẫn của bước kế tiếp, tỉ lệ giảm còn 20\% (trên 311 cặp đủ dữ liệu). Chênh lệch khoảng 2,4 lần cho thấy ảnh và câu hướng dẫn được ghép đúng bước.
 
 \section{Quy mô và phân chia dữ liệu}\label{sec:3.3}
 
@@ -45,45 +34,39 @@ Kết quả đối chiếu này được dùng để xác nhận tính nhất qu
 Số bước & 64.567 & 6.958 \\
 Số bước có thao tác chạm & 41.191 (63,8\%) & 4.463 (64,1\%) \\
 Số tác vụ & 12.895 & 1.432 \\
-Độ phủ OCR & 100\% & 100\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Các kết quả executability ở Chương~\ref{chap:5} và Chương~\ref{chap:6} được tính trên nhóm bước có thao tác chạm trong Bảng~\ref{tab:3.3}. Các loại bước còn lại được phân tích riêng khi cần.
+Mọi màn hình ở cả hai tập đều có văn bản OCR. Executability ở Chương~\ref{chap:5} và Chương~\ref{chap:6} chỉ tính trên 4.463 bước có thao tác chạm của tập kiểm tra. Các bước không chạm, như cuộn, quay lại hay nhập chữ, được phân tích riêng ở Mục~\ref{sec:6.3.1}.
 
-Dữ liệu được chia theo tác vụ, nghĩa là tất cả các bước của cùng một tác vụ chỉ nằm trong một tập. Cách chia này tránh để các màn hình liên tiếp của cùng một chuỗi thao tác xuất hiện ở cả tập huấn luyện và tập kiểm tra. Đối chiếu mã tác vụ cho thấy không có tác vụ nào xuất hiện ở cả hai tập.
+Dữ liệu được chia theo tác vụ: mọi bước của một tác vụ chỉ nằm trong một tập, nên các màn hình liên tiếp của cùng một chuỗi thao tác không xuất hiện ở cả hai phía. Đối chiếu mã tác vụ cho thấy không có tác vụ chung giữa tập huấn luyện và tập kiểm tra.
 
-\textbf{Tập kiểm định nội bộ.} Một phần dữ liệu huấn luyện được tách theo tác vụ để lựa chọn cấu hình cho các giai đoạn GRPO-SPICE và ACE. Vì phần này thuộc dữ liệu đã dùng ở giai đoạn S1, nó chỉ được dùng để lựa chọn cấu hình và không được dùng làm kết quả đánh giá cuối cùng.
+\textbf{Quan hệ với cách chia chính thức.} Bản \code{ckg} tự chia tác vụ thành hai tập, độc lập với cách chia chính thức của AndroidControl~\cite{androidcontrol}. Đối chiếu cho thấy 1.287/1.432 tác vụ (90\%) của tập kiểm tra thuộc phần huấn luyện chính thức, còn 1.357 tác vụ của phần kiểm tra chính thức nằm trong tập huấn luyện của chúng tôi. Vì vậy, các chương sau gọi tập này là \emph{tập kiểm tra của đề tài}, và điểm số không so trực tiếp với các công trình báo cáo trên phần kiểm tra chính thức. Ảnh hưởng của điều này tới công cụ đánh giá được kiểm tra ở Mục~\ref{sec:5.3}.
 
-\textbf{Quan hệ với cách chia chính thức của AndroidControl.} Tập huấn luyện và tập kiểm tra của đề tài theo bản phân phối có ảnh từ \code{ckg} và được tách biệt hoàn toàn theo mã tác vụ. Trong các chương sau, tập này được gọi là \emph{tập kiểm tra của đề tài}.
+\textbf{Tập kiểm định nội bộ.} Từ tập huấn luyện, chúng tôi tách riêng 346 tác vụ (1.567 bước, trong đó 1.002 bước chạm) để chọn cấu hình cho GRPO-SPICE và ACE. S1 đã được huấn luyện trên phần này, nên điểm trên tập kiểm định nội bộ có xu hướng cao hơn thực tế và chỉ dùng để chọn cấu hình, không dùng làm kết quả báo cáo.
 
-\textbf{Tập tác vụ bổ sung chưa xuất hiện trong huấn luyện S1 (ACU).} ACU gồm 1.484 bước có thao tác chạm từ các tác vụ không xuất hiện trong tập huấn luyện của S1. Phần lớn các bước này thuộc phần huấn luyện theo cách chia chính thức của AndroidControl, nên ACU chỉ được dùng để kiểm tra trường hợp tác vụ chưa xuất hiện trong huấn luyện S1, không thay thế tập kiểm tra chính.
+\textbf{Tập tác vụ chưa xuất hiện trong huấn luyện S1 (ACU).} AndroidControl còn những tác vụ có câu hướng dẫn nhưng không thuộc bản \code{ckg}, nên không thuộc tập nào ở Bảng~\ref{tab:3.3}. Chúng tôi lấy ảnh của các tác vụ này từ bản phát hành gốc của AndroidControl, chạy OCR theo cùng cách với hai tập trên, và thu được ACU gồm 1.484 bước có thao tác chạm thuộc 818 tác vụ. ACU được dùng để kiểm tra khả năng khái quát trên tác vụ mới. Phần lớn các bước này (1.383/1.484) cũng thuộc phần huấn luyện chính thức, nên ACU chỉ là tập bổ sung, không thay thế tập kiểm tra chính.
 
-\section{Xây dựng thông tin đầu vào từ giao diện}\label{sec:3.4}
+\section{Dữ liệu cho từng thành phần của phương pháp}\label{sec:3.5}\label{sec:3.4}
 
-Ảnh màn hình và văn bản OCR là hai nguồn thông tin được đưa vào mô hình. Ảnh cung cấp thông tin thị giác, còn OCR bổ sung phần chữ hiển thị trên giao diện. Cây trợ năng chỉ được dùng khi xây dựng dữ liệu và thực hiện một số phân tích, không được đưa vào mô hình khi suy luận ở Chương~\ref{chap:4}. Văn bản OCR được giữ nguyên từ dữ liệu gốc, không được sửa thủ công theo từng màn hình.
+Mỗi mẫu gồm ảnh màn hình, văn bản OCR do chúng tôi chạy tự động trên ảnh (không sửa thủ công), mục tiêu tác vụ và câu chuẩn của các bước trước làm lịch sử; đích là câu hướng dẫn của bước hiện tại. Các thành phần của phương pháp dùng dữ liệu như sau.
 
-\section{Dữ liệu cho từng thành phần của phương pháp}\label{sec:3.5}
+\begin{itemize}
+\item \textbf{S1} được tinh chỉnh có giám sát trên toàn bộ tập huấn luyện ở Bảng~\ref{tab:3.3}. Có 122 bản ghi không có câu hướng dẫn được giữ nguyên như dữ liệu gốc.
+\item \textbf{GRPO-SPICE} lấy prompt và câu chuẩn (để tính phần thưởng SPICE) từ 3.991 bước của tập huấn luyện có ảnh khả dụng ở giai đoạn này và không trùng tác vụ với tập kiểm định nội bộ.
+\item \textbf{Lượt tinh chỉnh thêm của ACE} dùng cùng 3.991 bước đó, kèm câu ví dụ truy hồi từ kho bên dưới.
+\item \textbf{Kho truy hồi của ACE} gồm 62.880 bước có câu hướng dẫn của tập huấn luyện, đã loại các tác vụ của tập kiểm định nội bộ. Kho không chứa tác vụ nào của tập kiểm tra của đề tài, nên ACE không thể truy hồi câu chuẩn của bước đang được đánh giá.
+\end{itemize}
 
-Dữ liệu được sử dụng cho bốn phần của phương pháp đề xuất gồm huấn luyện S1, học tăng cường, học thêm mô hình sinh câu ứng viên của ACE và xây dựng kho truy hồi ACE. Mục này làm rõ dữ liệu dùng cho từng phần. Chi tiết huấn luyện, truy hồi và lựa chọn đầu ra được trình bày ở Chương~\ref{chap:4}.
-
-\textbf{Tập huấn luyện có giám sát cho S1.} S1 được huấn luyện trên tập huấn luyện ở Bảng~\ref{tab:3.3} để sinh câu hướng dẫn theo bước của AndroidControl. Một số ít bản ghi không có câu hướng dẫn được giữ nguyên như trong dữ liệu gốc. S1 được dùng làm mô hình khởi tạo cho các giai đoạn tiếp theo.
-
-\textbf{Dữ liệu cho giai đoạn học tăng cường với phần thưởng SPICE.} Phần dữ liệu còn lại sau khi tách tập kiểm định nội bộ ở Mục~\ref{sec:3.3} được dùng cho các giai đoạn huấn luyện tiếp theo. Giai đoạn học tăng cường sử dụng prompt và câu chuẩn từ phần dữ liệu này. Câu chuẩn được dùng để tính phần thưởng SPICE. Cách lấy mẫu và số bước cập nhật được trình bày ở Mục~\ref{sec:4.5}.
-
-\textbf{Dữ liệu để học thêm mô hình sinh câu ứng viên của ACE.} ACE có thêm một lượt tinh chỉnh có giám sát để mô hình học cách sử dụng các câu ví dụ được truy hồi. Dữ liệu và thiết lập huấn luyện của lượt này được trình bày ở Mục~\ref{sec:4.6}.
-
-\textbf{Kho truy hồi cho ACE.} Kho truy hồi được xây dựng từ dữ liệu huấn luyện và chỉ giữ các bản ghi có câu hướng dẫn để làm ví dụ. Kho không chứa tác vụ nào của tập kiểm tra của đề tài, nên ACE không truy cập câu chuẩn của bước đang được đánh giá. Cách truy hồi được trình bày ở Mục~\ref{sec:4.6}.
+Cách lấy mẫu, số bước cập nhật và cách truy hồi được trình bày ở Mục~\ref{sec:4.5} và Mục~\ref{sec:4.6}. Các nhãn mô tả phần tử, tập cặp ưu tiên và danh sách ứng viên chỉ phục vụ các phương án đã khảo sát trước phương pháp cuối, và được trình bày cùng từng phương án ở Phụ lục~\ref{app:A}.
 
 \section{Một số đặc điểm cần lưu ý}\label{sec:3.6}
 
-Bên cạnh cách chia theo tác vụ, ba đặc điểm dưới đây giúp làm rõ phân bố dữ liệu khi đọc các kết quả ở Chương~\ref{chap:6}.
+Ba đặc điểm sau ảnh hưởng tới cách đọc kết quả ở Chương~\ref{chap:6}.
 
-\textbf{Cách biểu diễn mục tiêu tác vụ.} Phần lớn mô tả mục tiêu trong dữ liệu gốc kết thúc trước khi câu hoàn chỉnh. Các thực nghiệm giữ nguyên trường mục tiêu được cung cấp và áp dụng nhất quán giữa tập huấn luyện và tập kiểm tra.
+\textbf{Mục tiêu tác vụ bị cắt ngắn.} Trong dữ liệu gốc, phần lớn mô tả mục tiêu bị cắt giữa chừng. Chúng tôi giữ nguyên trường này cho cả tập huấn luyện lẫn tập kiểm tra.
 
-\textbf{Mức độ lặp lại của cách diễn đạt.} Một số câu và cụm từ xuất hiện lặp lại giữa tập huấn luyện và tập kiểm tra, dù hai tập không có tác vụ chung. Điều này phản ánh các khuôn diễn đạt thường gặp trong hướng dẫn giao diện, không phải sự trùng lặp tác vụ.
+\textbf{Cách diễn đạt lặp lại.} Một số câu và cụm từ xuất hiện ở cả tập huấn luyện và tập kiểm tra dù hai tập không có tác vụ chung. Hiện tượng này phản ánh các khuôn diễn đạt quen thuộc của hướng dẫn giao diện, không phải sự trùng lặp tác vụ.
 
-\textbf{Phạm vi phân tích theo ứng dụng.} Không phải mọi bước đều xác định được tên ứng dụng. Vì vậy, các phân tích theo ứng dụng ở Chương~\ref{chap:6} chỉ sử dụng phần dữ liệu có thông tin ứng dụng rõ ràng.
-
-Các nhãn mô tả phần tử, tập cặp ưu tiên và danh sách ứng viên chỉ phục vụ các phương án đã khảo sát trước phương pháp cuối. Cách xây dựng và kiểm tra các dữ liệu này được trình bày cùng từng phương án ở Phụ lục~\ref{app:A}.
+\textbf{Phạm vi phân tích theo ứng dụng.} Khoảng 55\% số bước của tập kiểm tra không xác định được tên ứng dụng, nên các phân tích theo ứng dụng chỉ dùng phần còn lại.
