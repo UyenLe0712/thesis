@@ -1,13 +1,13 @@
 \chapter{Thực nghiệm và kết quả}
 \label{chap:6}
 
-Chương này trình bày kết quả của phương pháp đề xuất, phân tích nguồn gốc mức tăng của GRPO-SPICE, kiểm chứng độ vững và khả năng khái quát của kết quả, rồi phân tích bước không chạm, các lỗi còn lại và thành phần ACE.
+Chương này trình bày kết quả thực nghiệm của phương pháp đề xuất. Trọng tâm là mức cải thiện của GRPO-SPICE, độ vững của kết quả khi thay đổi seed và công cụ đánh giá, khả năng khái quát trên dữ liệu mới, cũng như đóng góp của ACE. Các giới hạn còn lại trên bước không chạm và lỗi định vị cũng được phân tích ở cuối chương.
 
 \section{Thiết lập thực nghiệm}\label{sec:6.1}\label{sec:6.6}
 
-Mọi mô hình được đánh giá trên 4.463 bước có thao tác chạm của tập kiểm tra (Mục~\ref{sec:3.3}) bằng quy trình ở Chương~\ref{chap:5}, với UGround làm mô hình định vị; câu không có nội dung vẫn nằm trong mẫu số và tính là không đạt. Bốn mốc so sánh là Base, Qwen2.5-VL-7B chỉ dùng prompting, S1 với hai seed 101 và 202, và câu chuẩn (Mục~\ref{sec:4.7}).
+Các kết quả chính được tính trên 4.463 bước có thao tác chạm của tập kiểm tra (Mục~\ref{sec:3.3}) theo quy trình ở Chương~\ref{chap:5}, với UGround làm mô hình định vị. Câu không có nội dung được tính là không đạt. Các mốc so sánh gồm Base, Qwen2.5-VL-7B chỉ dùng prompting, S1 với hai seed 101 và 202, và câu chuẩn (Mục~\ref{sec:4.7}).
 
-Các phép so được tính theo cặp trên cùng tập bước: chênh lệch executability, KTC 95\% bằng bootstrap theo cụm ứng dụng, và giá trị $p$ của kiểm định McNemar dạng chính xác trên $b$ bước chỉ mô hình thứ nhất đạt và $c$ bước chỉ mô hình thứ hai đạt (Mục~\ref{sec:5.13}). Một chênh lệch có KTC không chứa 0 nhưng nhỏ hơn MDE $\approx$ 2,11 điểm (công thức~\eqref{eq:5.mde}) phân biệt được hai mô hình cụ thể, nhưng chưa loại trừ được dao động do huấn luyện lại.
+Chênh lệch giữa các mô hình được tính theo cặp trên cùng tập bước. KTC 95\% được ước lượng bằng bootstrap theo cụm ứng dụng và giá trị $p$ dùng kiểm định McNemar dạng chính xác, như trình bày ở Mục~\ref{sec:5.13}. Khi chênh lệch nhỏ hơn MDE $\approx$ 2,11 điểm, kết quả được diễn giải thận trọng vì vẫn có thể chịu ảnh hưởng của biến thiên giữa các lượt huấn luyện.
 
 \section{Kết quả chính}\label{sec:6.2}
 
@@ -59,13 +59,13 @@ GRPO-SPICE lượt 2 $-$ GRPO-SPICE & $-$0,72 & [$-$1,27; $-$0,16] & 59 / 91 & 0
 \end{tabular}
 \end{table}
 
-GRPO-SPICE đạt \textbf{60,65\%} executability, cao hơn mô hình xuất phát S1/101 \textbf{1,55 điểm} [+0,80; +2,33] ($p = 1{,}5 \times 10^{-5}$) và cao hơn S1/202 1,03 điểm (Bảng~\ref{tab:6.2}), cùng chiều dưới cả ba tiêu chí báo kèm (Bảng~\ref{tab:6.3}). Mức tăng có ý nghĩa thống kê nhưng nhỏ hơn MDE, nên được kiểm chứng thêm ở Mục~\ref{sec:6.7} và Mục~\ref{sec:6.general}.
+GRPO-SPICE đạt \textbf{60,65\%} executability, cao hơn S1/101 \textbf{1,55 điểm} [+0,80; +2,33] ($p = 1{,}5 \times 10^{-5}$) và cao hơn S1/202 1,03 điểm (Bảng~\ref{tab:6.2}). Mức tăng cùng chiều dưới các tiêu chí báo kèm, nhưng vẫn nhỏ hơn MDE 2,11 điểm nên cần được đối chiếu thêm qua các thí nghiệm về độ vững và khả năng khái quát.
 
-Nhánh kiểm soát chạy cùng 500 bước GRPO từ S1/101 nhưng điểm SPICE được ghép ngẫu nhiên giữa các mẫu (Mục~\ref{sec:4.5}). Nhánh này đạt đúng 59,11\%, ngang S1/101, còn GRPO-SPICE cao hơn nhánh này 1,55 điểm. Mức tăng vì vậy đến từ tín hiệu SPICE chứ không từ việc huấn luyện thêm.
+Nhánh kiểm soát, trong đó điểm SPICE được ghép ngẫu nhiên giữa các mẫu, đạt 59,11\%, đúng bằng S1/101. Việc GRPO-SPICE cao hơn nhánh này 1,55 điểm cho thấy mức tăng đến từ tín hiệu phần thưởng SPICE chứ không chỉ từ quá trình huấn luyện thêm.
 
-ACE đạt \textbf{60,68\%}, ngang GRPO-SPICE về executability và cao hơn ở cả bảy độ đo văn bản (Mục~\ref{sec:6.4}). Qwen2.5-VL-7B chỉ dùng prompting đạt 51,51\%, thấp hơn GRPO-SPICE 9,14 điểm; phép so này chỉ phản ánh cấu hình prompting đã thử, với cùng prompt của Base.
+ACE đạt \textbf{60,68\%}, gần như không thay đổi executability so với GRPO-SPICE nhưng cải thiện các độ đo văn bản. Trong khi đó, Qwen2.5-VL-7B chỉ dùng prompting đạt 51,51\%, thấp hơn GRPO-SPICE 9,14 điểm trong cấu hình prompting được khảo sát.
 
-\section{Thành phần thứ nhất: học tăng cường với phần thưởng SPICE}\label{sec:6.3}\label{sec:6.5}
+\section{Ảnh hưởng của GRPO-SPICE}\label{sec:6.3}\label{sec:6.5}
 
 \begin{table}[htbp]
 \centering\footnotesize
@@ -92,9 +92,9 @@ BERTScore & 66,33 & 67,07 & +0,74 & [+0,32; +1,15] & - \\
 \end{tabular}
 \end{table}
 
-GRPO-SPICE cao hơn S1/101 ở cả 13 độ đo, và 12 độ đo có KTC đều có khoảng tăng nằm trên 0 (Bảng~\ref{tab:6.3}; METEOR chỉ có giá trị mức toàn tập). Phần thưởng không dùng mô hình định vị, nhưng mức tăng xuất hiện ở cả tiêu chí xác định vị trí lẫn độ đo văn bản.
+GRPO-SPICE cao hơn S1/101 ở cả 13 độ đo trong Bảng~\ref{tab:6.3}; với 12 độ đo có KTC, khoảng tăng đều nằm trên 0. Mặc dù phần thưởng SPICE không sử dụng mô hình định vị, cải thiện vẫn xuất hiện ở cả tiêu chí xác định vị trí và các độ đo văn bản.
 
-\textbf{Nguồn của mức tăng.} GRPO-SPICE đổi câu ở 1.668 bước (37,4\%). Trong mức tăng ròng 69 bước ($b - c = 159 - 90$), khoảng 28 bước đến từ câu nêu đúng loại thao tác mà S1/101 nêu sai, và khoảng 41 bước đến từ câu dẫn tới đúng phần tử, như ở Hình~\ref{fig:6.1}, nơi S1/101 gọi nút \emph{Allow} còn GRPO-SPICE gọi đúng nút \emph{Not Now}. Phần thứ nhất phản ánh xu hướng viết câu cho thao tác chạm thường xuyên hơn: trên bước chạm, loại thao tác được sửa đúng ở 83 bước và bị làm sai ở 11 bước. Cùng xu hướng này làm giảm độ chính xác ở bước cuộn và quay lại (Mục~\ref{sec:6.3.1}).
+GRPO-SPICE thay đổi câu ở 1.668 bước, tương ứng 37,4\% tập đánh giá. Trong 69 bước cải thiện ròng, khoảng 28 bước đến từ việc sửa đúng loại thao tác và khoảng 41 bước đến từ việc mô tả đúng phần tử mục tiêu. Hình~\ref{fig:6.1} minh họa trường hợp S1/101 gọi nhầm nút \emph{Allow}, trong khi GRPO-SPICE xác định đúng nút \emph{Not Now}. Tuy nhiên, xu hướng ưu tiên câu cho thao tác chạm cũng làm giảm độ chính xác ở các bước cuộn và quay lại, được phân tích ở Mục~\ref{sec:6.3.1}.
 
 \begin{figure}[!htb]
 \centering
@@ -102,17 +102,17 @@ GRPO-SPICE cao hơn S1/101 ở cả 13 độ đo, và 12 độ đo có KTC đề
 \caption{Một bước được GRPO-SPICE sửa đúng.}\label{fig:6.1}
 \end{figure}
 
-\textbf{Lựa chọn SPICE.} Thay SPICE bằng CIDEr-D, giữ các thiết lập khác, cho executability thấp hơn GRPO-SPICE 0,69 điểm [$-$1,34; $-$0,02] ($p = 0{,}04$): mô hình thưởng CIDEr-D nêu đúng loại thao tác nhiều hơn nhưng dẫn tới sai phần tử nhiều hơn. Mỗi cấu hình chỉ có một lượt, hai lượt khác tập prompt và môi trường tính toán, và mức chênh chỉ nhỉnh hơn chênh lệch 0,52 điểm giữa hai lượt S1, nên kết quả này chỉ hỗ trợ lựa chọn SPICE trong thiết lập đã thử.
+Khi thay SPICE bằng CIDEr-D và giữ các thiết lập còn lại, executability giảm 0,69 điểm [$-$1,34; $-$0,02] ($p = 0{,}04$). Mô hình dùng CIDEr-D nêu đúng loại thao tác nhiều hơn nhưng dẫn tới sai phần tử thường xuyên hơn. Do mỗi cấu hình chỉ được huấn luyện một lượt và mức chênh không lớn so với biến thiên giữa hai lượt S1, kết quả này chỉ cho thấy SPICE phù hợp hơn trong thiết lập đã khảo sát.
 
 \section{Độ vững của kết quả}\label{sec:6.7}
 
 \subsection{Huấn luyện lại với seed khác}\label{sec:6.7.1}\label{sec:6.7.2}
 
-Hai lượt S1 chênh nhau 0,52 điểm với KTC chứa 0, nhỏ hơn nhiều mức S1/101 cao hơn Base (11,52 điểm). Lượt GRPO-SPICE thứ hai chỉ đổi seed (Mục~\ref{sec:4.5}) và đạt 59,94\%, cao hơn S1/101 0,83 điểm [+0,00; +1,67] ($p = 0{,}036$) và 1,86 điểm theo AitW đầy đủ. Lượt này thấp hơn lượt thứ nhất 0,72 điểm [$-$1,27; $-$0,16] về executability và chỉ ngang S1/202 (Bảng~\ref{tab:6.2}), nhưng theo AitW đầy đủ hai lượt gần như bằng nhau (chênh 0,02 điểm). Hướng tăng so với điểm xuất phát vì vậy lặp lại ở cả hai lượt GRPO, còn độ lớn trên tập kiểm tra chính dao động cỡ biến thiên giữa hai lượt S1; trên ACU, hai lượt cho mức tăng gần nhau (Mục~\ref{sec:6.acu}).
+Hai lượt S1 chênh nhau 0,52 điểm và KTC chứa 0, cho thấy một mức biến thiên nhất định giữa các seed. Khi chỉ thay seed của GRPO-SPICE, lượt thứ hai đạt 59,94\%, cao hơn S1/101 0,83 điểm [+0,00; +1,67] nhưng thấp hơn lượt GRPO-SPICE thứ nhất 0,72 điểm. Theo AitW đầy đủ, hai lượt GRPO gần như tương đương. Như vậy, hướng cải thiện so với điểm xuất phát được lặp lại, nhưng độ lớn của mức tăng trên tập kiểm tra chính vẫn nằm trong khoảng biến thiên giữa các lượt huấn luyện. Trên ACU, hai lượt cho kết quả nhất quán hơn (Mục~\ref{sec:6.acu}).
 
 \subsection{Đánh giá bằng công cụ khác}\label{sec:6.7.3}
 
-Ngoài UGround, các nhánh chính được đánh giá bằng UI-Venus-Ground-7B (không dùng AndroidControl khi huấn luyện nhưng cùng họ Qwen), Phi-Ground-4B (ngoài họ Qwen) và mô hình người nghe Phi-4 (ngoài họ Qwen, chọn phần tử trong danh sách đánh số), như mô tả ở Mục~\ref{sec:5.9}. Vì thang điểm khác nhau, phép so dựa trên chênh lệch giữa các mô hình (Bảng~\ref{tab:6.tools}).
+Để kiểm tra kết quả có phụ thuộc vào UGround hay không, các nhánh chính được đánh giá thêm bằng UI-Venus-Ground-7B, Phi-Ground-4B và mô hình người nghe Phi-4, như mô tả ở Mục~\ref{sec:5.9}. Do các công cụ có thang điểm khác nhau, phép so tập trung vào chênh lệch giữa các mô hình thay vì giá trị tuyệt đối (Bảng~\ref{tab:6.tools}).
 
 \begin{table}[htbp]
 \centering\footnotesize
@@ -143,11 +143,11 @@ S1/202 $-$ S1/101 & \dk{+0,52}{[$-$0,22; +1,26]} & \dk{+0,60}{[$-$0,13; +1,34]} 
 \begin{minipage}{\linewidth}\footnotesize Ô ``-'' là chưa đánh giá trên đủ 4.463 bước. Với Phi-Ground, Base thiếu dự đoán ở 7 bước, các bước này tính là không đạt. Với Phi-4, S1/202 chỉ được đánh giá lại ở 1.652 bước có câu khác S1/101, các bước còn lại dùng kết quả của S1/101.\end{minipage}
 \end{table}
 
-So với S1/101, GRPO-SPICE cao hơn với KTC nằm trên 0 dưới cả bốn công cụ: +1,55 điểm dưới UI-Venus như dưới UGround, còn dưới hai công cụ ngoài họ Qwen chỉ +0,78 và +0,69 điểm, với cận dưới sát 0. Dưới hai công cụ này, mức S1/101 cao hơn Base (6,16 và 6,41 điểm, Mục~\ref{sec:5.9}) cũng chỉ khoảng một nửa mức 11,52 điểm dưới UGround, tức thang chênh lệch của chúng hẹp hơn nói chung. Dưới Phi-4, GRPO-SPICE ngang S1/202 ($-$0,20 điểm, KTC chứa 0), và hai lượt S1 đã chênh nhau 0,90 điểm. Các công cụ ngoài họ Qwen vì vậy xác nhận thứ tự Base $<$ S1/101 $<$ GRPO-SPICE nhưng chưa đủ nhạy để tách GRPO-SPICE khỏi lượt S1 thứ hai. ACE ngang GRPO-SPICE dưới cả bốn công cụ.
+So với S1/101, GRPO-SPICE có chênh lệch dương dưới cả bốn công cụ. Mức tăng là 1,55 điểm với UGround và UI-Venus, còn 0,78 và 0,69 điểm với Phi-Ground và Phi-4. Hai công cụ ngoài họ Qwen cũng tạo khoảng cách nhỏ hơn giữa S1/101 và Base, cho thấy thang điểm của chúng hẹp hơn nói chung. Kết quả này vẫn xác nhận thứ tự Base $<$ S1/101 $<$ GRPO-SPICE, nhưng chưa đủ để tách GRPO-SPICE khỏi S1/202. ACE tiếp tục gần như tương đương GRPO-SPICE dưới cả bốn công cụ.
 
 \subsection{Lịch sử thao tác do mô hình tự sinh}\label{sec:6.tusinh}
 
-Trong thiết lập chính, lịch sử các bước trước là câu chuẩn (Mục~\ref{sec:4.2}). Ở thí nghiệm này, mỗi tác vụ được sinh lại từ bước đầu, và câu mô hình sinh ở bước trước thay câu chuẩn trong lịch sử của bước sau (Bảng~\ref{tab:6.tusinh}).
+Thiết lập chính sử dụng câu chuẩn của các bước trước làm lịch sử (Mục~\ref{sec:4.2}). Để kiểm tra ảnh hưởng khi triển khai thực tế, mỗi tác vụ được sinh lại từ đầu và câu do mô hình tạo ở bước trước được dùng làm lịch sử cho bước tiếp theo (Bảng~\ref{tab:6.tusinh}).
 
 \begin{table}[htbp]
 \centering\small
@@ -164,7 +164,7 @@ GRPO-SPICE $-$ S1/101 & +1,55 [+0,80; +2,33] & +1,48 [+0,54; +2,43] \\
 \end{tabular}
 \end{table}
 
-Executability của cả hai mô hình giảm khoảng 4 điểm ($-$4,15 và $-$4,21), nên mức giảm là đặc điểm chung của thiết lập này chứ không riêng mô hình nào. GRPO-SPICE vẫn cao hơn S1/101 \textbf{1,48 điểm} [+0,54; +2,43] ($p = 7{,}5 \times 10^{-4}$). Ở 811 bước, lịch sử vẫn phải dùng câu chuẩn của một bước trước vì thiếu ảnh; trên 3.492 bước thuộc các tác vụ có đủ ảnh, chênh lệch là 1,66 điểm [+0,60; +2,75].
+Khi dùng lịch sử tự sinh, executability của cả S1/101 và GRPO-SPICE đều giảm khoảng 4 điểm. Tuy vậy, GRPO-SPICE vẫn cao hơn S1/101 \textbf{1,48 điểm} [+0,54; +2,43] ($p = 7{,}5 \times 10^{-4}$). Trên 3.492 bước thuộc các tác vụ có đủ ảnh để dùng hoàn toàn lịch sử tự sinh, chênh lệch là 1,66 điểm [+0,60; +2,75]. Kết quả cho thấy lợi thế của GRPO-SPICE vẫn được duy trì khi lịch sử không còn lấy hoàn toàn từ câu chuẩn.
 
 \section{Khả năng khái quát}\label{sec:6.general}
 
@@ -189,7 +189,7 @@ Câu chuẩn & 71,70 & +19,54 [+17,28; +21,87] \\
 \end{tabular}
 \end{table}
 
-Trên ACU, GRPO-SPICE cao hơn S1/101 \textbf{4,58 điểm} [+3,17; +6,05] ($p = 2{,}1 \times 10^{-10}$), gần gấp ba mức trên tập kiểm tra chính. Lượt GRPO thứ hai và ACE cho mức tương tự, và cận dưới KTC của cả ba đều cao hơn MDE 2,11 điểm. Từ tập kiểm tra chính sang ACU, S1/101 giảm 6,95 điểm còn GRPO-SPICE chỉ giảm 3,91 điểm, trong khi câu chuẩn vẫn đạt 71,70\%. Gộp hai tập thành 5.947 bước, GRPO-SPICE cao hơn S1/101 \textbf{2,30 điểm} [+1,62; +2,99] ($p = 6{,}8 \times 10^{-13}$), vượt MDE. Cả sáu độ đo văn bản có KTC trên ACU cũng có khoảng tăng nằm trên 0.
+Trên ACU, GRPO-SPICE cao hơn S1/101 \textbf{4,58 điểm} [+3,17; +6,05] ($p = 2{,}1 \times 10^{-10}$), lớn hơn rõ rệt mức tăng trên tập kiểm tra chính. Lượt GRPO thứ hai và ACE cho kết quả tương tự, với cận dưới KTC đều vượt MDE 2,11 điểm. Khi gộp tập kiểm tra chính và ACU thành 5.947 bước, chênh lệch còn \textbf{2,30 điểm} [+1,62; +2,99], vẫn vượt MDE. Các độ đo văn bản trên ACU cũng cùng cho xu hướng cải thiện. Kết quả này cho thấy lợi ích của GRPO-SPICE rõ hơn trên các tác vụ chưa xuất hiện trong huấn luyện S1.
 
 \subsection{Chuyển miền sang AitZ}\label{sec:6.aitz}
 
@@ -212,11 +212,11 @@ Câu chuẩn & 66,26 & +28,47 [+26,40; +30,51] \\
 \end{tabular}
 \end{table}
 
-S1/101 cao hơn Base 3,29 điểm ($p = 4{,}5 \times 10^{-4}$), nên tinh chỉnh có giám sát vẫn chuyển được sang miền này. GRPO-SPICE tương đương S1/101 về executability ($p = 0{,}33$) nhưng cao hơn với KTC nằm trên 0 ở BLEU-4, SPICE và chrF. ACE chỉ đổi câu ở 52 bước, vì kho câu ví dụ lấy từ AndroidControl ít khi có câu phù hợp. Như vậy, khi phân phối câu chuẩn thay đổi, phần thưởng SPICE vẫn cải thiện một số độ đo văn bản nhưng chưa tạo thêm mức tăng executability.
+Trên AitZ, S1/101 vẫn cao hơn Base 3,29 điểm, cho thấy lợi ích của tinh chỉnh có giám sát được duy trì khi chuyển miền. Tuy nhiên, GRPO-SPICE không cải thiện executability so với S1/101 ($p = 0{,}33$), dù BLEU-4, SPICE và chrF vẫn tăng. ACE chỉ thay 52 câu vì kho ví dụ từ AndroidControl ít khi có mẫu phù hợp. Như vậy, lợi ích của GRPO-SPICE về khả năng thực hiện không được duy trì khi phân phối câu chuẩn thay đổi đáng kể.
 
 \section{Bước không chạm và các lỗi còn lại}\label{sec:6.3.1}\label{sec:6.9}
 
-\textbf{Bước không chạm.} Trên 2.495 bước không chạm của tập kiểm tra, chúng tôi đo tỉ lệ câu nêu đúng loại thao tác, với câu quay lại được xếp riêng vào loại quay lại (Bảng~\ref{tab:6.khongcham}).
+Đối với 2.495 bước không chạm của tập kiểm tra, kết quả được đánh giá bằng tỉ lệ câu nêu đúng loại thao tác. Thao tác quay lại được xem là một loại riêng (Bảng~\ref{tab:6.khongcham}).
 
 \begin{table}[htbp]
 \centering\small
@@ -234,13 +234,13 @@ Toàn bộ, lịch sử tự sinh & 2.495 & 81,32 & 76,83 & $-$4,49 [$-$6,48; $-
 \end{tabular}
 \end{table}
 
-GRPO-SPICE kém S1/101 rõ nhất ở bước cuộn và quay lại. Nguyên nhân là chính xu hướng viết câu cho thao tác chạm đã tạo một phần mức tăng ở bước chạm (Mục~\ref{sec:6.3}): trong 51 bước cuộn S1/101 nêu đúng còn GRPO-SPICE nêu sai, 47 bước bị đổi thành câu chạm, chẳng hạn \emph{Swipe up} thành \emph{Click on technology}. Ngược lại, ở bước chờ, nơi câu chuẩn phần lớn là câu chạm, tỉ lệ đúng tăng 4,55 điểm. Mức giảm lớn hơn khi lịch sử do mô hình tự sinh. Đây là giới hạn chính của GRPO-SPICE ở dạng hiện tại (Mục~\ref{sec:7.2.3}).
+GRPO-SPICE giảm rõ nhất ở các bước cuộn và quay lại. Nguyên nhân chính là xu hướng ưu tiên câu cho thao tác chạm, vốn tạo ra một phần mức tăng trên bước chạm. Chẳng hạn, trong 51 bước cuộn mà S1/101 nêu đúng còn GRPO-SPICE nêu sai, có 47 bước bị chuyển thành câu chạm. Mức giảm còn lớn hơn khi lịch sử do mô hình tự sinh, cho thấy đây là một giới hạn đáng chú ý của GRPO-SPICE hiện tại (Mục~\ref{sec:7.2.3}).
 
-\textbf{Các lỗi còn lại trên bước chạm.} Số bước không đạt vì sai loại thao tác giảm từ 251 ở S1/101 xuống 179 ở GRPO-SPICE. Số bước đã đúng loại thao tác nhưng câu chưa giúp mô hình định vị xác định đúng phần tử gần như không đổi (1.573 và 1.576), vì số bước được sửa phần tử xấp xỉ số bước chuyển vào nhóm này sau khi được sửa loại thao tác. Nhóm này chiếm khoảng 90\% trong 1.756 bước GRPO-SPICE không đạt, nên điểm nghẽn còn lại nằm ở việc gọi tên hoặc mô tả phần tử mục tiêu.
+Trên các bước chạm, số lỗi do sai loại thao tác giảm từ 251 xuống 179. Ngược lại, số bước đã đúng loại thao tác nhưng vẫn không xác định đúng phần tử gần như không đổi, từ 1.573 lên 1.576. Nhóm lỗi này chiếm khoảng 90\% số bước GRPO-SPICE không đạt, cho thấy điểm nghẽn còn lại chủ yếu nằm ở việc gọi tên hoặc mô tả phần tử mục tiêu.
 
-\section{Thành phần thứ hai: ACE}\label{sec:6.4}
+\section{Ảnh hưởng của ACE}\label{sec:6.4}
 
-ACE thay 402 trong 4.463 câu ban đầu, ở những bước câu ứng viên thỏa điều kiện lựa chọn (Mục~\ref{sec:4.6}).
+ACE chỉ thay câu ở những bước mà câu ứng viên thỏa điều kiện lựa chọn trong Mục~\ref{sec:4.6}. Trên 4.463 bước đánh giá, có 402 câu được thay.
 
 \begin{table}[htbp]
 \centering\small
@@ -267,8 +267,8 @@ BERTScore & 67,07 & 67,52 & 67,73 & +0,66 [+0,46; +0,86] \\
 \begin{minipage}{\linewidth}\footnotesize Độ đo văn bản của mô hình sinh độc lập lấy từ một lượt tính trước đó; ở lượt này, các giá trị của câu ban đầu lệch không quá 0,02 điểm so với cột thứ nhất.\end{minipage}
 \end{table}
 
-ACE giữ executability của GRPO-SPICE ($p = 1$) và tăng cả \textbf{7/7 độ đo văn bản}; sáu độ đo có KTC đều có khoảng tăng nằm trên 0 (Bảng~\ref{tab:6.4}). Dùng thẳng mô hình sinh câu ứng viên cho mọi bước làm năm trong bảy độ đo văn bản tăng nhưng executability giảm 1,25 điểm [$-$2,06; $-$0,44] ($p = 0{,}0016$). Điều kiện lựa chọn giữ được phần lợi về văn bản mà không mất executability, vì chỉ nhận câu trùng một câu ví dụ và cùng loại thao tác với câu ban đầu; câu được nhận có thể dẫn tới phần tử khác hẳn câu ban đầu, như ở Hình~\ref{fig:4.3}(a). Trên ACU, ACE cũng ngang GRPO-SPICE về executability.
+ACE gần như giữ nguyên executability của GRPO-SPICE ($p = 1$) nhưng cải thiện cả \textbf{7/7 độ đo văn bản}; sáu độ đo có KTC đều cho khoảng tăng nằm trên 0 (Bảng~\ref{tab:6.4}). Ngược lại, nếu dùng trực tiếp mô hình sinh câu ứng viên cho mọi bước, executability giảm 1,25 điểm dù phần lớn độ đo văn bản tăng. Kết quả cho thấy điều kiện lựa chọn của ACE giúp tận dụng các câu phù hợp mà không làm giảm khả năng xác định đúng phần tử. Trên ACU, ACE cũng giữ executability tương đương GRPO-SPICE.
 
 \section{Các phương án thiết kế đã khảo sát}\label{sec:6.10}
 
-Trước phương pháp cuối cùng, chúng tôi khảo sát các hướng dựa trên mô tả phần tử, học theo cặp ưu tiên, phần thưởng tọa độ, chọn ứng viên và hiệu chỉnh theo vùng ảnh. Các hướng này thay đổi rõ biểu diễn trung gian nhưng mức cải thiện ít truyền sang câu hướng dẫn cuối cùng, nên phương pháp chuyển sang tối ưu trực tiếp câu bằng GRPO-SPICE, rồi dùng ACE để hiệu chỉnh có chọn lọc. Thiết kế và số liệu của từng hướng được trình bày ở Phụ lục~\ref{app:A}.
+Trước khi xác định phương pháp cuối cùng, luận văn khảo sát các hướng dựa trên mô tả phần tử, học theo cặp ưu tiên, phần thưởng tọa độ, chọn ứng viên và hiệu chỉnh theo vùng ảnh. Các hướng này tạo thay đổi ở biểu diễn trung gian nhưng mức cải thiện ít truyền sang câu hướng dẫn cuối cùng. Vì vậy, phương pháp được chuyển sang tối ưu trực tiếp câu bằng GRPO-SPICE và sau đó hiệu chỉnh có chọn lọc bằng ACE. Thiết kế và kết quả chi tiết của các phương án này được trình bày ở Phụ lục~\ref{app:A}.
