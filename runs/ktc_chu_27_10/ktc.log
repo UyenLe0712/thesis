@@ -1,0 +1,556 @@
+PTBTokenizer tokenized 41033 tokens at 336917.12 tokens per second.
+PTBTokenizer tokenized 41102 tokens at 340873.05 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.4 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.5 sec].
+Threads( StanfordCoreNLP ) [39.987 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [17.631 seconds]
+SPICE evaluation took: 1.070 min
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/389 [00:00<?, ?it/s]Loading weights: 100%|██████████| 389/389 [00:00<00:00, 4190.68it/s]
+[transformers] [1mRobertaModel LOAD REPORT[0m from: roberta-large
+Key                       | Status     | 
+--------------------------+------------+-
+lm_head.dense.weight      | UNEXPECTED | 
+lm_head.dense.bias        | UNEXPECTED | 
+lm_head.bias              | UNEXPECTED | 
+lm_head.layer_norm.weight | UNEXPECTED | 
+lm_head.layer_norm.bias   | UNEXPECTED | 
+pooler.dense.bias         | MISSING    | 
+pooler.dense.weight       | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Warning: Empty candidate sentence detected; setting raw BERTscores to 0.
+Warning: Empty reference sentence detected; setting raw BERTScores to 0.
+  S1/101: tính từng bước xong (367 s)
+PTBTokenizer tokenized 41033 tokens at 329051.81 tokens per second.
+Oct 27, 2026 12:07:16 AM edu.stanford.nlp.process.PTBLexer next
+WARNING: Untokenizable: ₹ (U+20B9, decimal: 8377)
+PTBTokenizer tokenized 41374 tokens at 282720.76 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.4 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [0.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.4 sec].
+Threads( StanfordCoreNLP ) [12.431 seconds]
+SPICE evaluation took: 18.73 s
+Warning: Empty candidate sentence detected; setting raw BERTscores to 0.
+Warning: Empty reference sentence detected; setting raw BERTScores to 0.
+  S1/202: tính từng bước xong (275 s)
+PTBTokenizer tokenized 41033 tokens at 337441.34 tokens per second.
+PTBTokenizer tokenized 41674 tokens at 328698.13 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.4 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [0.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.4 sec].
+Threads( StanfordCoreNLP ) [10.456 seconds]
+SPICE evaluation took: 16.42 s
+Warning: Empty candidate sentence detected; setting raw BERTscores to 0.
+Warning: Empty reference sentence detected; setting raw BERTScores to 0.
+  ck500: tính từng bước xong (282 s)
+PTBTokenizer tokenized 41033 tokens at 335966.01 tokens per second.
+PTBTokenizer tokenized 40527 tokens at 332240.44 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.4 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [0.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.4 sec].
+Threads( StanfordCoreNLP ) [7.753 seconds]
+SPICE evaluation took: 13.59 s
+Warning: Empty candidate sentence detected; setting raw BERTscores to 0.
+Warning: Empty reference sentence detected; setting raw BERTScores to 0.
+  ck500/202: tính từng bước xong (279 s)
+PTBTokenizer tokenized 41033 tokens at 336035.87 tokens per second.
+PTBTokenizer tokenized 41447 tokens at 282368.12 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.4 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [0.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.4 sec].
+Threads( StanfordCoreNLP ) [2.737 seconds]
+SPICE evaluation took: 10.57 s
+Warning: Empty candidate sentence detected; setting raw BERTscores to 0.
+Warning: Empty reference sentence detected; setting raw BERTScores to 0.
+  ACE: tính từng bước xong (278 s)
+PTBTokenizer tokenized 41033 tokens at 317340.63 tokens per second.
+PTBTokenizer tokenized 41501 tokens at 327615.78 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.4 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.1 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.4 sec].
+Threads( StanfordCoreNLP ) [3.942 seconds]
+SPICE evaluation took: 11.87 s
+Warning: Empty candidate sentence detected; setting raw BERTscores to 0.
+Warning: Empty reference sentence detected; setting raw BERTScores to 0.
+  xao101: tính từng bước xong (275 s)
+PTBTokenizer tokenized 41044 tokens at 329344.02 tokens per second.
+Oct 27, 2026 12:30:27 AM edu.stanford.nlp.process.PTBLexer next
+WARNING: Untokenizable: ₹ (U+20B9, decimal: 8377)
+PTBTokenizer tokenized 73178 tokens at 351093.22 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.5 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.5 sec].
+Threads( StanfordCoreNLP ) [0.347 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [01:28.389 minutes]
+SPICE evaluation took: 1.611 min
+  7B: tính từng bước xong (569 s)
+PTBTokenizer tokenized 41033 tokens at 335167.60 tokens per second.
+PTBTokenizer tokenized 40817 tokens at 326323.97 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.4 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [0.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.4 sec].
+Threads( StanfordCoreNLP ) [10.865 seconds]
+SPICE evaluation took: 17.20 s
+Warning: Empty candidate sentence detected; setting raw BERTscores to 0.
+Warning: Empty reference sentence detected; setting raw BERTScores to 0.
+  tự sinh S1: tính từng bước xong (270 s)
+PTBTokenizer tokenized 41033 tokens at 318612.89 tokens per second.
+PTBTokenizer tokenized 41410 tokens at 321410.82 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.4 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [0.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.4 sec].
+Threads( StanfordCoreNLP ) [9.657 seconds]
+SPICE evaluation took: 17.28 s
+Warning: Empty candidate sentence detected; setting raw BERTscores to 0.
+Warning: Empty reference sentence detected; setting raw BERTScores to 0.
+  tự sinh ck500: tính từng bước xong (281 s)
+✅ AndroidControl: 9 nhánh tái lập số đã lưu
+  AndroidControl bootstrap 200/2000 · 1 s
+  AndroidControl bootstrap 400/2000 · 2 s
+  AndroidControl bootstrap 600/2000 · 3 s
+  AndroidControl bootstrap 800/2000 · 4 s
+  AndroidControl bootstrap 1000/2000 · 5 s
+  AndroidControl bootstrap 1200/2000 · 5 s
+  AndroidControl bootstrap 1400/2000 · 6 s
+  AndroidControl bootstrap 1600/2000 · 7 s
+  AndroidControl bootstrap 1800/2000 · 8 s
+  AndroidControl bootstrap 2000/2000 · 9 s
+  ck500 − S1/101: bleu4 +0.80 [+0.22; +1.60] · rougeL +1.01 [+0.55; +1.48] · cider_d +13.93 [+8.05; +19.91] · spice +1.42 [+0.71; +2.16] · chrf +1.61 [+1.10; +2.11] · bert +0.74 [+0.32; +1.15]
+  ck500 − S1/202: bleu4 +0.70 [-0.06; +1.48] · rougeL +0.66 [+0.06; +1.19] · cider_d +10.86 [+3.77; +17.85] · spice +1.56 [+0.72; +2.36] · chrf +0.96 [+0.34; +1.53] · bert +0.32 [-0.22; +0.84]
+  ck500/202 − S1/101: bleu4 +1.38 [+0.71; +2.25] · rougeL +1.13 [+0.64; +1.63] · cider_d +15.11 [+8.60; +21.52] · spice +1.32 [+0.57; +2.12] · chrf +1.11 [+0.56; +1.62] · bert +0.78 [+0.33; +1.22]
+  ck500/202 − S1/202: bleu4 +1.28 [+0.31; +2.19] · rougeL +0.77 [+0.19; +1.34] · cider_d +12.04 [+5.19; +19.05] · spice +1.46 [+0.65; +2.30] · chrf +0.46 [-0.16; +1.07] · bert +0.37 [-0.18; +0.91]
+  ck500/202 − ck500: bleu4 +0.58 [-0.28; +1.35] · rougeL +0.12 [-0.21; +0.47] · cider_d +1.17 [-3.43; +5.71] · spice -0.11 [-0.68; +0.49] · chrf -0.50 [-0.87; -0.12] · bert +0.05 [-0.27; +0.37]
+  S1/202 − S1/101: bleu4 +0.10 [-0.53; +0.91] · rougeL +0.36 [-0.12; +0.84] · cider_d +3.07 [-3.09; +9.29] · spice -0.14 [-0.81; +0.59] · chrf +0.65 [+0.11; +1.20] · bert +0.42 [-0.03; +0.87]
+  ACE − S1/101: bleu4 +1.91 [+1.30; +2.69] · rougeL +1.76 [+1.28; +2.22] · cider_d +25.91 [+19.14; +32.50] · spice +2.76 [+1.98; +3.54] · chrf +2.19 [+1.66; +2.70] · bert +1.40 [+0.95; +1.83]
+  ACE − S1/202: bleu4 +1.81 [+1.03; +2.58] · rougeL +1.40 [+0.79; +1.94] · cider_d +22.84 [+15.31; +29.99] · spice +2.90 [+2.00; +3.75] · chrf +1.54 [+0.89; +2.11] · bert +0.98 [+0.44; +1.47]
+  ACE − ck500: bleu4 +1.11 [+0.78; +1.42] · rougeL +0.74 [+0.54; +0.94] · cider_d +11.97 [+8.24; +15.34] · spice +1.33 [+0.92; +1.75] · chrf +0.58 [+0.37; +0.80] · bert +0.66 [+0.46; +0.86]
+  ACE − ck500/202: bleu4 +0.53 [-0.31; +1.39] · rougeL +0.62 [+0.21; +1.00] · cider_d +10.80 [+5.09; +16.14] · spice +1.44 [+0.73; +2.15] · chrf +1.08 [+0.68; +1.49] · bert +0.61 [+0.25; +0.97]
+  xao101 − S1/101: bleu4 -0.24 [-0.56; +0.34] · rougeL +0.01 [-0.27; +0.26] · cider_d +2.02 [-1.47; +5.31] · spice +0.03 [-0.38; +0.45] · chrf +0.25 [-0.02; +0.51] · bert +0.07 [-0.16; +0.29]
+  ck500 − xao101: bleu4 +1.04 [+0.42; +1.68] · rougeL +1.01 [+0.53; +1.46] · cider_d +11.92 [+5.76; +17.89] · spice +1.39 [+0.69; +2.11] · chrf +1.35 [+0.85; +1.85] · bert +0.67 [+0.23; +1.09]
+  S1/101 − 7B: bleu4 +37.08 [+35.69; +38.38] · rougeL +27.56 [+26.64; +28.46] · cider_d +315.41 [+302.48; +328.16] · spice +25.63 [+24.26; +27.00] · chrf +25.05 [+23.96; +26.14] · bert +26.63 [+25.79; +27.52]
+  ck500 − 7B: bleu4 +37.88 [+36.58; +39.25] · rougeL +28.58 [+27.69; +29.48] · cider_d +329.35 [+316.48; +342.17] · spice +27.05 [+25.71; +28.53] · chrf +26.65 [+25.61; +27.72] · bert +27.37 [+26.52; +28.22]
+  ACE − 7B: bleu4 +38.99 [+37.64; +40.42] · rougeL +29.32 [+28.38; +30.24] · cider_d +341.32 [+327.93; +354.34] · spice +28.39 [+27.00; +29.82] · chrf +27.24 [+26.17; +28.31] · bert +28.03 [+27.16; +28.90]
+  tự sinh ck500 − tự sinh S1: bleu4 +0.06 [-0.68; +1.23] · rougeL +0.61 [-0.18; +1.41] · cider_d +2.16 [-5.73; +10.25] · spice +0.12 [-0.82; +1.16] · chrf +0.83 [+0.07; +1.58] · bert +0.11 [-0.63; +0.83]
+  tự sinh S1 − S1/101: bleu4 -8.12 [-9.89; -6.78] · rougeL -7.56 [-8.81; -6.49] · cider_d -84.69 [-98.15; -71.92] · spice -9.40 [-10.87; -7.97] · chrf -7.55 [-9.01; -6.31] · bert -7.22 [-8.33; -6.21]
+  tự sinh ck500 − ck500: bleu4 -8.86 [-10.34; -7.52] · rougeL -7.97 [-9.19; -6.84] · cider_d -96.47 [-110.48; -83.33] · spice -10.70 [-12.17; -9.23] · chrf -8.33 [-9.65; -7.09] · bert -7.84 [-9.00; -6.75]
+PTBTokenizer tokenized 14180 tokens at 156971.71 tokens per second.
+PTBTokenizer tokenized 14180 tokens at 158157.52 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.4 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.5 sec].
+Threads( StanfordCoreNLP ) [15.294 seconds]
+Parsing test captions
+SPICE evaluation took: 20.78 s
+  ACU câu chuẩn: tính từng bước xong (78 s)
+PTBTokenizer tokenized 14180 tokens at 159885.19 tokens per second.
+Oct 27, 2026 12:50:34 AM edu.stanford.nlp.process.PTBLexer next
+WARNING: Untokenizable: ₹ (U+20B9, decimal: 8377)
+PTBTokenizer tokenized 28218 tokens at 196840.29 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.4 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.5 sec].
+Threads( StanfordCoreNLP ) [52.611 seconds]
+SPICE evaluation took: 58.43 s
+  ACU Base: tính từng bước xong (217 s)
+PTBTokenizer tokenized 14144 tokens at 146874.73 tokens per second.
+PTBTokenizer tokenized 13671 tokens at 145199.33 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.4 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.5 sec].
+Threads( StanfordCoreNLP ) [12.18 seconds]
+SPICE evaluation took: 17.68 s
+Warning: Empty candidate sentence detected; setting raw BERTscores to 0.
+Warning: Empty reference sentence detected; setting raw BERTScores to 0.
+  ACU S1: tính từng bước xong (110 s)
+PTBTokenizer tokenized 14180 tokens at 160998.55 tokens per second.
+PTBTokenizer tokenized 14251 tokens at 155732.94 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.3 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.5 sec].
+Threads( StanfordCoreNLP ) [5.742 seconds]
+SPICE evaluation took: 11.28 s
+  ACU ck500: tính từng bước xong (108 s)
+PTBTokenizer tokenized 14180 tokens at 152134.22 tokens per second.
+PTBTokenizer tokenized 13623 tokens at 148104.84 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.4 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.5 sec].
+Threads( StanfordCoreNLP ) [4.522 seconds]
+SPICE evaluation took: 9.964 s
+  ACU ck500/202: tính từng bước xong (106 s)
+PTBTokenizer tokenized 14180 tokens at 153654.68 tokens per second.
+PTBTokenizer tokenized 14158 tokens at 156988.17 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.3 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.5 sec].
+Threads( StanfordCoreNLP ) [1.466 seconds]
+SPICE evaluation took: 6.789 s
+  ACU ACE: tính từng bước xong (101 s)
+PTBTokenizer tokenized 14180 tokens at 156311.03 tokens per second.
+PTBTokenizer tokenized 13302 tokens at 147435.20 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.4 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.6 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.5 sec].
+Threads( StanfordCoreNLP ) [5.377 seconds]
+SPICE evaluation took: 10.64 s
+  ACU ra_k4: tính từng bước xong (106 s)
+✅ ACU: 7 nhánh tái lập số đã lưu
+  ACU bootstrap 200/2000 · 0 s
+  ACU bootstrap 400/2000 · 1 s
+  ACU bootstrap 600/2000 · 1 s
+  ACU bootstrap 800/2000 · 1 s
+  ACU bootstrap 1000/2000 · 2 s
+  ACU bootstrap 1200/2000 · 2 s
+  ACU bootstrap 1400/2000 · 2 s
+  ACU bootstrap 1600/2000 · 2 s
+  ACU bootstrap 1800/2000 · 3 s
+  ACU bootstrap 2000/2000 · 3 s
+PTBTokenizer tokenized 14180 tokens at 156505.58 tokens per second.
+PTBTokenizer tokenized 14180 tokens at 153976.44 tokens per second.
+PTBTokenizer tokenized 14180 tokens at 160076.80 tokens per second.
+Oct 27, 2026 1:03:12 AM edu.stanford.nlp.process.PTBLexer next
+WARNING: Untokenizable: ₹ (U+20B9, decimal: 8377)
+PTBTokenizer tokenized 28218 tokens at 197900.98 tokens per second.
+PTBTokenizer tokenized 14144 tokens at 148255.92 tokens per second.
+PTBTokenizer tokenized 13671 tokens at 148225.46 tokens per second.
+PTBTokenizer tokenized 14180 tokens at 154416.61 tokens per second.
+PTBTokenizer tokenized 14251 tokens at 161353.97 tokens per second.
+PTBTokenizer tokenized 14180 tokens at 156483.28 tokens per second.
+PTBTokenizer tokenized 13623 tokens at 149946.64 tokens per second.
+PTBTokenizer tokenized 14180 tokens at 141703.35 tokens per second.
+PTBTokenizer tokenized 14158 tokens at 155273.56 tokens per second.
+PTBTokenizer tokenized 14180 tokens at 155091.16 tokens per second.
+PTBTokenizer tokenized 13302 tokens at 150394.39 tokens per second.
+  METEOR {'ACU câu chuẩn': 100.0, 'ACU Base': 25.14, 'ACU S1': 34.47, 'ACU ck500': 36.64, 'ACU ck500/202': 36.08, 'ACU ACE': 37.03, 'ACU ra_k4': 35.12}
+  ACU ck500 − ACU S1: bleu4 +2.32 [+0.74; +3.82] · rougeL +2.93 [+1.97; +3.92] · cider_d +26.73 [+15.84; +37.96] · spice +2.51 [+1.18; +3.87] · chrf +2.87 [+1.83; +3.94] · bert +1.87 [+1.08; +2.71]
+  ACU ck500/202 − ACU S1: bleu4 +2.54 [+1.38; +3.71] · rougeL +2.85 [+1.88; +3.86] · cider_d +28.34 [+16.83; +40.03] · spice +2.41 [+1.02; +3.84] · chrf +2.20 [+1.18; +3.26] · bert +1.83 [+0.98; +2.68]
+  ACU ck500/202 − ACU ck500: bleu4 +0.22 [-1.02; +1.66] · rougeL -0.08 [-0.74; +0.57] · cider_d +1.61 [-6.50; +10.20] · spice -0.10 [-1.15; +0.95] · chrf -0.66 [-1.38; +0.00] · bert -0.05 [-0.64; +0.54]
+  ACU ACE − ACU S1: bleu4 +3.35 [+1.81; +4.69] · rougeL +3.65 [+2.69; +4.67] · cider_d +39.73 [+28.65; +51.95] · spice +3.47 [+2.13; +4.93] · chrf +3.39 [+2.38; +4.45] · bert +2.56 [+1.76; +3.39]
+  ACU ACE − ACU ck500: bleu4 +1.03 [+0.46; +1.47] · rougeL +0.72 [+0.45; +1.03] · cider_d +13.00 [+7.88; +19.07] · spice +0.96 [+0.35; +1.62] · chrf +0.53 [+0.27; +0.83] · bert +0.69 [+0.43; +0.99]
+  ACU ra_k4 − ACU S1: bleu4 +1.07 [-0.34; +2.54] · rougeL +1.28 [+0.30; +2.31] · cider_d +19.70 [+8.15; +31.72] · spice +1.91 [+0.42; +3.41] · chrf +0.99 [-0.08; +2.19] · bert +1.44 [+0.63; +2.33]
+  ACU S1 − ACU Base: bleu4 +32.51 [+30.49; +34.57] · rougeL +21.41 [+19.87; +22.93] · cider_d +292.74 [+273.92; +312.81] · spice +20.46 [+18.21; +22.67] · chrf +17.58 [+15.99; +19.25] · bert +22.67 [+21.24; +24.02]
+Oct 27, 2026 1:04:00 AM edu.stanford.nlp.process.PTBLexer next
+WARNING: Untokenizable: ️ (U+FE0F, decimal: 65039)
+PTBTokenizer tokenized 45887 tokens at 289575.09 tokens per second.
+PTBTokenizer tokenized 49609 tokens at 326135.87 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.4 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.5 sec].
+Threads( StanfordCoreNLP ) [01:17.286 minutes]
+Parsing test captions
+Threads( StanfordCoreNLP ) [01:18.425 minutes]
+SPICE evaluation took: 2.720 min
+  AitZ Base: tính từng bước xong (462 s)
+Oct 27, 2026 1:11:42 AM edu.stanford.nlp.process.PTBLexer next
+WARNING: Untokenizable: ️ (U+FE0F, decimal: 65039)
+PTBTokenizer tokenized 45887 tokens at 250897.86 tokens per second.
+PTBTokenizer tokenized 29576 tokens at 247948.41 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.4 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [0.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.2 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.4 sec].
+Threads( StanfordCoreNLP ) [20.858 seconds]
+SPICE evaluation took: 27.18 s
+  AitZ S1: tính từng bước xong (214 s)
+Oct 27, 2026 1:15:15 AM edu.stanford.nlp.process.PTBLexer next
+WARNING: Untokenizable: ️ (U+FE0F, decimal: 65039)
+PTBTokenizer tokenized 45887 tokens at 263802.99 tokens per second.
+PTBTokenizer tokenized 29929 tokens at 243909.18 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.3 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [0.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.1 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.4 sec].
+Threads( StanfordCoreNLP ) [11.166 seconds]
+SPICE evaluation took: 17.25 s
+  AitZ ck500: tính từng bước xong (206 s)
+Oct 27, 2026 1:18:42 AM edu.stanford.nlp.process.PTBLexer next
+WARNING: Untokenizable: ️ (U+FE0F, decimal: 65039)
+PTBTokenizer tokenized 45887 tokens at 279358.68 tokens per second.
+PTBTokenizer tokenized 28475 tokens at 247376.47 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.4 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [0.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.2 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.4 sec].
+Threads( StanfordCoreNLP ) [6.441 seconds]
+SPICE evaluation took: 12.44 s
+  AitZ ck500/202: tính từng bước xong (198 s)
+Oct 27, 2026 1:21:59 AM edu.stanford.nlp.process.PTBLexer next
+WARNING: Untokenizable: ️ (U+FE0F, decimal: 65039)
+PTBTokenizer tokenized 45887 tokens at 284093.18 tokens per second.
+PTBTokenizer tokenized 29888 tokens at 244336.46 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.5 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [0.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.4 sec].
+Threads( StanfordCoreNLP ) [0.507 seconds]
+SPICE evaluation took: 7.667 s
+  AitZ ACE: tính từng bước xong (195 s)
+Oct 27, 2026 1:25:15 AM edu.stanford.nlp.process.PTBLexer next
+WARNING: Untokenizable: ️ (U+FE0F, decimal: 65039)
+PTBTokenizer tokenized 45887 tokens at 280994.06 tokens per second.
+PTBTokenizer tokenized 28168 tokens at 238306.93 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.4 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [0.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.2 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.4 sec].
+Threads( StanfordCoreNLP ) [9.609 seconds]
+SPICE evaluation took: 15.57 s
+  AitZ ra_k4: tính từng bước xong (204 s)
+✅ AitZ: 6 nhánh tái lập số đã lưu
+  AitZ bootstrap 200/2000 · 0 s
+  AitZ bootstrap 400/2000 · 1 s
+  AitZ bootstrap 600/2000 · 1 s
+  AitZ bootstrap 800/2000 · 1 s
+  AitZ bootstrap 1000/2000 · 2 s
+  AitZ bootstrap 1200/2000 · 2 s
+  AitZ bootstrap 1400/2000 · 3 s
+  AitZ bootstrap 1600/2000 · 3 s
+  AitZ bootstrap 1800/2000 · 3 s
+  AitZ bootstrap 2000/2000 · 4 s
+  AitZ S1 − AitZ Base: bleu4 +2.33 [+1.31; +3.33] · rougeL +7.73 [+6.85; +8.60] · cider_d +33.26 [+25.95; +40.78] · spice -0.39 [-1.35; +0.54] · chrf +0.43 [-0.39; +1.19] · bert +10.88 [+10.04; +11.68]
+  AitZ ck500 − AitZ Base: bleu4 +2.80 [+1.76; +3.83] · rougeL +7.81 [+6.92; +8.66] · cider_d +36.40 [+28.54; +43.86] · spice +0.71 [-0.28; +1.63] · chrf +1.05 [+0.20; +1.84] · bert +10.87 [+10.00; +11.68]
+  AitZ ck500 − AitZ S1: bleu4 +0.47 [+0.01; +0.95] · rougeL +0.08 [-0.40; +0.56] · cider_d +3.15 [-1.06; +7.69] · spice +1.10 [+0.53; +1.66] · chrf +0.62 [+0.22; +1.03] · bert -0.01 [-0.46; +0.43]
+  AitZ ck500/202 − AitZ S1: bleu4 -1.25 [-1.79; -0.68] · rougeL -1.41 [-1.95; -0.88] · cider_d -2.97 [-7.54; +2.24] · spice +0.35 [-0.24; +0.93] · chrf -1.24 [-1.69; -0.78] · bert -1.22 [-1.73; -0.74]
+  AitZ ACE − AitZ S1: bleu4 +0.45 [-0.02; +0.93] · rougeL +0.07 [-0.44; +0.54] · cider_d +3.05 [-1.17; +7.68] · spice +1.13 [+0.56; +1.70] · chrf +0.57 [+0.18; +1.00] · bert -0.06 [-0.53; +0.38]
+  AitZ ACE − AitZ ck500: bleu4 -0.02 [-0.08; +0.02] · rougeL -0.01 [-0.08; +0.04] · cider_d -0.10 [-0.37; +0.17] · spice +0.03 [-0.04; +0.10] · chrf -0.05 [-0.11; +0.00] · bert -0.05 [-0.12; +0.01]
+  AitZ ra_k4 − AitZ S1: bleu4 -1.06 [-1.63; -0.50] · rougeL -1.45 [-2.05; -0.90] · cider_d -2.82 [-7.44; +1.74] · spice +0.43 [-0.20; +1.01] · chrf -1.43 [-1.93; -0.93] · bert -1.42 [-1.99; -0.90]
+→ /kaggle/working/w/runs/ktc_chu_27_10.json
