@@ -142,7 +142,7 @@ Mỗi bước cập nhật sử dụng hai prompt. Với mỗi prompt, mô hình
 
 \textbf{Lượt huấn luyện GRPO thứ hai.} Chúng tôi chạy thêm một lượt 500 bước với cùng cấu hình GRPO-SPICE và seed 202. Lượt này vẫn khởi tạo từ S1/101, nên khác biệt giữa hai lượt phản ánh biến thiên của riêng giai đoạn GRPO. Kết quả được đối chiếu với hai lượt S1 ở Mục~\ref{sec:6.7.2}.
 
-\textbf{Thí nghiệm với phần thưởng xáo trộn.} Chúng tôi xây dựng thêm một nhánh có cùng điểm khởi tạo, số bước và các siêu tham số với GRPO-SPICE, nhưng điểm SPICE được xáo giữa các mẫu trước khi dùng làm phần thưởng. Cách thiết lập này giữ nguyên quá trình cập nhật GRPO nhưng loại bỏ mối liên hệ giữa câu sinh ra và điểm SPICE, qua đó tách ảnh hưởng của tín hiệu SPICE khỏi ảnh hưởng của việc tiếp tục huấn luyện. Kết quả được trình bày ở Mục~\ref{sec:6.7.2}.
+\textbf{Thí nghiệm đối chứng với điểm SPICE ghép ngẫu nhiên.} Chúng tôi xây dựng thêm một nhánh có cùng điểm khởi tạo, số bước và các siêu tham số với GRPO-SPICE, nhưng điểm SPICE được ghép ngẫu nhiên giữa các mẫu trước khi dùng làm phần thưởng. Cách thiết lập này giữ nguyên quá trình cập nhật GRPO nhưng loại bỏ mối liên hệ giữa câu sinh ra và điểm SPICE, qua đó tách ảnh hưởng của tín hiệu SPICE khỏi ảnh hưởng của việc tiếp tục huấn luyện. Kết quả được trình bày ở Mục~\ref{sec:6.7.2}.
 
 \begin{figure}[!htb]
 \centering
@@ -184,7 +184,7 @@ Mỗi bước cập nhật sử dụng hai prompt. Với mỗi prompt, mô hình
 
 \textbf{Lựa chọn số bước huấn luyện.} Mô hình sau 250 và 500 bước được dùng để sinh câu bằng giải mã tham lam trên tập kiểm định nội bộ và được so sánh theo executability. Mô hình sau 500 bước cho kết quả tốt hơn trên tập này, nên được chọn và cố định trước khi sinh câu trên tập kiểm tra. Kết quả trên tập kiểm định nội bộ và phân tích tín hiệu phần thưởng được trình bày ở Mục~\ref{sec:6.3}.
 
-\textbf{Đối chiếu giữa các lượt huấn luyện.} S1 và mô hình sau GRPO có khác biệt nhỏ ở bước hợp nhất LoRA và cách xử lý theo lô. Vì vậy, kết quả của GRPO-SPICE được đọc cùng lượt huấn luyện GRPO thứ hai và nhánh phần thưởng xáo trộn. Hai phép đối chiếu này giúp tách mức cải thiện do tín hiệu SPICE khỏi biến thiên của quá trình huấn luyện và khác biệt triển khai.
+\textbf{Đối chiếu giữa các lượt huấn luyện.} S1 và mô hình sau GRPO có khác biệt nhỏ ở bước hợp nhất LoRA và cách xử lý theo lô. Vì vậy, kết quả của GRPO-SPICE được đọc cùng lượt huấn luyện GRPO thứ hai và nhánh đối chứng. Hai phép đối chiếu này giúp tách mức cải thiện do tín hiệu SPICE khỏi biến thiên của quá trình huấn luyện và khác biệt triển khai.
 
 \section{Thành phần thứ hai: hiệu chỉnh bằng câu ví dụ với ràng buộc nhất quán thao tác (ACE)}\label{sec:4.6}
 
@@ -194,7 +194,7 @@ Mỗi bước cập nhật sử dụng hai prompt. Với mỗi prompt, mô hình
 
 ACE dùng hai cách tìm câu ví dụ. Cách thứ nhất lấy ý tưởng truy hồi trực tiếp câu ví dụ từ SmallCap~\cite{smallcap}. Trong thiết lập của chúng tôi, truy vấn được xây dựng từ mục tiêu tác vụ và câu gần nhất trong lịch sử thao tác, rồi dùng để truy hồi trực tiếp các bước tương tự. Cách thứ hai trước hết tìm các tác vụ có mục tiêu gần nhất, sau đó chọn bước trong từng tác vụ dựa trên câu gần nhất trong lịch sử. Kết quả từ hai cách được gộp, loại bỏ câu lặp và giữ bốn câu ví dụ để chèn vào prompt ngay trước yêu cầu sinh câu.
 
-Để tạo mô hình sinh câu ứng viên cho ACE, bộ chuyển đổi của thành phần thứ nhất được tiếp tục tinh chỉnh có giám sát thêm 250 bước với tốc độ học $2 \times 10^{-5}$. Lượt tinh chỉnh này sử dụng 3.991 bước có ảnh được mô tả ở Mục~\ref{sec:3.5}, tương ứng với phần dữ liệu ảnh khả dụng cho giai đoạn huấn luyện này. Trong quá trình này, số câu ví dụ được lấy ngẫu nhiên từ 2 đến 6 và thứ tự các câu được xáo trộn để hạn chế việc mô hình phụ thuộc quá mức vào khối ví dụ. Ngoài ra, 15\% prompt không có khối ví dụ, 10\% prompt sử dụng các câu ví dụ lấy ngẫu nhiên, và tác vụ đang học được loại khỏi kho truy hồi.
+Để tạo mô hình sinh câu ứng viên cho ACE, bộ chuyển đổi của thành phần thứ nhất được tiếp tục tinh chỉnh có giám sát thêm 250 bước với tốc độ học $2 \times 10^{-5}$. Lượt tinh chỉnh này sử dụng 3.991 bước có ảnh được mô tả ở Mục~\ref{sec:3.5}, tương ứng với phần dữ liệu ảnh khả dụng cho giai đoạn huấn luyện này. Trong quá trình này, số câu ví dụ được lấy ngẫu nhiên từ 2 đến 6 và các câu được sắp theo thứ tự ngẫu nhiên để hạn chế việc mô hình phụ thuộc quá mức vào khối ví dụ. Ngoài ra, 15\% prompt không có khối ví dụ, 10\% prompt sử dụng các câu ví dụ lấy ngẫu nhiên, và tác vụ đang học được loại khỏi kho truy hồi.
 
 Để tách ảnh hưởng của truy hồi khỏi ảnh hưởng của việc tiếp tục học có giám sát, chúng tôi huấn luyện thêm một mô hình trên cùng các bước, cùng câu đích và cùng siêu tham số, nhưng không chèn khối ví dụ vào prompt.
 

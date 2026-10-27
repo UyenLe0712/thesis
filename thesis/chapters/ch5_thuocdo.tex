@@ -50,7 +50,7 @@ Cửa sổ dung sai $\pm$ 14\% theo từng trục & 100,0\% & 84,3\% & $\approx$
 
 Tiêu chí dung sai quy ước vẫn chấp nhận phần lớn dự đoán bị chuyển sang nút lân cận, vì 63,2\% số bước có ít nhất một phần tử khác nằm trong vùng dung sai của phần tử cần chạm. Ngược lại, tiêu chí ô Voronoi chỉ chấp nhận 2,8\% các dự đoán sai nút lân cận nhưng vẫn giữ tỉ lệ chấp nhận 99,7\% khi điểm chỉ lệch 3\%. Vì vậy tiêu chí ô Voronoi được chọn làm tiêu chí chính.
 
-Ô Voronoi phân tách rõ hai tình huống được kiểm tra: vẫn chấp nhận 99,7\% điểm chỉ lệch nhẹ nhưng chỉ chấp nhận 2,8\% trường hợp bị chuyển sang phần tử lân cận sai. Mức 2,8\% áp dụng cho tình huống tổng hợp này, còn các điểm lệch nhẹ trong cùng vùng tương tác được xem xét riêng ở Mục~\ref{sec:5.7}. Cách gộp các tâm gần nhau chủ yếu loại các tâm cùng thuộc một phần tử. Trong 8,2\% số bước, phép gộp cũng có thể hợp nhất các tâm thuộc những phần tử khác nhau. Chúng tôi báo cáo thêm tiêu chí dung sai và các tiêu chí dựa trên hộp phần tử để đối chiếu với kết quả chính.
+Mức 2,8\% áp dụng cho tình huống tổng hợp này, còn các điểm lệch nhẹ trong cùng vùng tương tác được xem xét riêng ở Mục~\ref{sec:5.7}. Cách gộp các tâm gần nhau chủ yếu loại các tâm cùng thuộc một phần tử. Trong 8,2\% số bước, phép gộp cũng có thể hợp nhất các tâm thuộc những phần tử khác nhau. Chúng tôi báo cáo thêm tiêu chí dung sai và các tiêu chí dựa trên hộp phần tử để đối chiếu với kết quả chính.
 
 \begin{figure}[!htbp]
 \centering
@@ -235,30 +235,27 @@ Listener không được cung cấp mục tiêu tác vụ hoặc lịch sử tha
 
 \begin{table}[htbp]
 \centering\small
-\caption[Tỉ lệ chọn đúng phần tử của listener Phi-4 trên 4.463 bước có thao tác chạm.]{Tỉ lệ Phi-4 chọn đúng phần tử trong số các phần tử được đánh số trên ảnh, trên 4.463 bước có thao tác chạm. Chọn ngẫu nhiên đạt 10,1\%, và 95,7\% số bước có ít nhất một phần tử được đánh số chứa điểm chạm thật. Giai đoạn thưởng tọa độ là một hướng đã thử (Phụ lục~\ref{app:A}). Với S1/202, chỉ 1.652 bước có câu khác S1/101 được đánh giá lại, các bước còn lại dùng kết quả của S1/101.}\label{tab:5.5}
+\caption[Tỉ lệ chọn đúng phần tử của listener Phi-4 trên 4.463 bước có thao tác chạm.]{Tỉ lệ Phi-4 chọn đúng phần tử trong số các phần tử được đánh số trên ảnh, trên 4.463 bước có thao tác chạm. Với S1/202, chỉ 1.652 bước có câu khác S1/101 được đánh giá lại, các bước còn lại dùng kết quả của S1/101. Dấu -- cho biết KTC chưa được báo cáo cho nhánh tương ứng.}\label{tab:5.5}
 \begin{tabular}{@{}lrr@{}}
 \toprule
 \textbf{Câu đưa cho mô hình listener} & \textbf{Chọn đúng} & \textbf{KTC 95\%} \\
 \midrule
-Câu chuẩn & 54,9 & [53,1; 56,8] \\
-Giai đoạn thưởng tọa độ (giai đoạn ba) & 45,8 & [44,1; 47,5] \\
-S1/202 & 45,5 & [43,8; 47,2] \\
-Phương pháp đề xuất & 45,3 & [43,6; 47,1] \\
-GRPO-SPICE & 45,3 & [43,6; 47,1] \\
-S1/101 & 44,6 & [42,9; 46,4] \\
+Câu chuẩn & 54,94 & -- \\
+S1/202 & 45,53 & -- \\
+Phương pháp đề xuất & 45,33 & [43,57; 47,12] \\
+GRPO-SPICE & 45,33 & [43,59; 47,11] \\
+S1/101 & 44,63 & [42,88; 46,37] \\
 Mô hình gốc (Base) & 38,23 & [36,53; 39,93] \\
-Câu chung chung “\emph{Tap the button.}” & 15,9 & [14,7; 17,0] \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Trên đủ 4.463 bước (Bảng~\ref{tab:5.5}), mô hình gốc đạt 38,23\%, thấp hơn S1/101 6,41 điểm [+5,12; +7,71], nên chênh lệch lớn giữa S1 và Base vẫn giữ chiều dưới listener này. Thứ tự câu chuẩn, giai đoạn thưởng tọa độ, S1/101 và Base cũng giống với executability, tiêu chí hộp phần tử và tiêu chí AitW đầy đủ (Mục~\ref{sec:5.12}). Nếu chuẩn hóa điểm theo khoảng từ mô hình gốc đến câu chuẩn, mô hình sau giai đoạn thưởng tọa độ đạt khoảng 45--48\% khoảng cải thiện này ở cả bốn cách đánh giá. So với S1/101, mô hình đó cao hơn 1,14 điểm theo listener, với khoảng tin cậy 95\% [+0,23; +2,10] và p = 0,020. Mức chênh lệch tương ứng là +0,96 điểm theo executability và +1,55 điểm theo tiêu chí hộp phần tử.
+Trên đủ 4.463 bước (Bảng~\ref{tab:5.5}), mô hình gốc đạt 38,23\% còn S1/101 đạt 44,63\%, chênh +6,41 điểm. GRPO-SPICE đạt 45,33\%, cao hơn S1/101 0,69 điểm [+0,02; +1,40]. ACE cũng đạt 45,33\% và cho kết quả tương đương GRPO-SPICE. S1/202 đạt 45,53\%, gần với hai cấu hình này. Listener ngoài họ Qwen vì vậy vẫn giữ chiều Base $<$ S1/101 $<$ GRPO-SPICE, trong khi chênh lệch giữa các mô hình đã tinh chỉnh nhỏ hơn đáng kể so với khoảng cách S1--Base.
 
-Với các mô hình đã tinh chỉnh, thành phần thứ nhất cao hơn S1/101 0,69 điểm [+0,02; +1,40], còn ACE và thành phần thứ nhất cho cùng tỉ lệ chọn đúng. S1/202 đạt mức gần với hai cấu hình này. Listener ngoài họ Qwen vẫn giữ thứ tự Base $<$ S1/101 $<$ GRPO-SPICE, dù khoảng cách giữa các mô hình đã tinh chỉnh nhỏ hơn so với khoảng cách giữa S1 và mô hình gốc.
 
 Khi lặp lại đánh giá trên 200 bước, mô hình listener cho kết quả hoàn toàn nhất quán giữa các lần chạy. Mức đồng thuận theo từng bước giữa listener và UGround ở mức vừa phải ($\kappa$ từ 0,25 đến 0,44 tùy mô hình). Hai công cụ vì thế có thể khác nhau ở từng bước cụ thể nhưng vẫn duy trì cùng thứ hạng giữa các hệ thống.
 
-Khoảng phân tách giữa câu chuẩn và câu chung chung của listener là 39 điểm, hẹp hơn mức 63 điểm của executability. Một nguyên nhân có thể là listener chỉ nhận câu hướng dẫn và ảnh đã đánh số, không có thêm mục tiêu tác vụ hay lịch sử thao tác để hỗ trợ xác định phần tử. Vì vậy, kết quả của listener được dùng như một phép kiểm độc lập cho thứ hạng và chiều của các chênh lệch chính, còn executability vẫn là chỉ số chính.
+Phi-4 chỉ nhận câu hướng dẫn và ảnh đã đánh số, không có thêm mục tiêu tác vụ hay lịch sử thao tác như thiết lập executability. Vì vậy, listener này được dùng như một phép kiểm độc lập cho thứ hạng và chiều của các chênh lệch chính, còn executability vẫn là chỉ số chính.
 
 \section{So sánh với các độ đo dựa trên câu chuẩn}\label{sec:5.11}
 
@@ -270,7 +267,7 @@ Hai phân tích trên cho thấy cách so sánh với một câu chuẩn và exe
 
 Bảng~\ref{tab:6.1} ở Chương~\ref{chap:6} có thêm BLEU-4~\cite{bleu}, tính cho từng câu rồi lấy trung bình, và ROUGE-L~\cite{rouge}, F1 của chuỗi con chung dài nhất. Với ba loại câu có chất lượng khác biệt rõ rệt (câu của mô hình gốc, của S1 và câu chuẩn), hai độ đo này và executability cho cùng thứ hạng. Vì vậy, các độ đo dựa trên câu chuẩn vẫn có thể phản ánh những khác biệt lớn giữa các mô hình.
 
-Trong thiết lập này, các độ đo dựa trên câu chuẩn và executability bổ sung cho nhau. Câu chuẩn đạt 100 điểm theo ROUGE-L và 96,1 điểm theo BLEU-4, trong khi executability của câu chuẩn là 75,7 và còn phân biệt được các bước đạt hoặc chưa đạt theo phần tử và thao tác. Với các mô hình có kết quả gần nhau, thứ hạng giữa các độ đo cũng có thể khác. Trong nhóm mô hình đã tinh chỉnh có executability từ 57,2 đến 60,0, ba độ đo cho ba thứ hạng khác nhau (Bảng~\ref{tab:6.1}). Vì vậy, chúng tôi báo cáo song song các độ đo dựa trên câu chuẩn và executability, trong đó executability được dùng làm tiêu chí chính cho khả năng xác định phần tử và thao tác. Zhao và cộng sự~\cite{zhao2021} cũng thảo luận sự khác biệt giữa các độ đo khi đánh giá chỉ dẫn điều hướng có grounding và khuyến nghị SPICE khi có câu chuẩn.
+Trong thiết lập này, các độ đo dựa trên câu chuẩn và executability bổ sung cho nhau. Câu chuẩn đạt 100 điểm theo ROUGE-L và 96,1 điểm theo BLEU-4, trong khi executability của câu chuẩn là 75,7 và còn phân biệt được các bước đạt hoặc chưa đạt theo phần tử và thao tác. Với các mô hình đã tinh chỉnh có kết quả executability gần nhau, thứ hạng giữa các độ đo cũng có thể khác. Bảng~\ref{tab:6.1} cho thấy executability, BLEU-4 và ROUGE-L không luôn xếp các cấu hình theo cùng thứ tự. Vì vậy, chúng tôi báo cáo song song các độ đo dựa trên câu chuẩn và executability, trong đó executability được dùng làm tiêu chí chính cho khả năng xác định phần tử và thao tác. Zhao và cộng sự~\cite{zhao2021} cũng thảo luận sự khác biệt giữa các độ đo khi đánh giá chỉ dẫn điều hướng có grounding và khuyến nghị SPICE khi có câu chuẩn.
 
 \section{Độ nhạy của kết luận theo tiêu chí đánh giá}\label{sec:5.12}
 

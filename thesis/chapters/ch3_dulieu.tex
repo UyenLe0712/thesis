@@ -31,7 +31,7 @@ Với mỗi bước có thao tác chạm, chúng tôi lấy phần văn bản OC
 
 Trong 400 bước được kiểm tra, 193 bước có văn bản tại vị trí chạm xuất hiện trong câu hướng dẫn, tương ứng 48\%. Khi dịch số thứ tự câu hướng dẫn đi một bước, 311 trường hợp còn đủ dữ liệu để tạo cặp so sánh. Trong số này, 61 trường hợp vẫn có văn bản tại vị trí chạm xuất hiện trong câu hướng dẫn, tương ứng 20\%. Như vậy, tỉ lệ quan sát được khi giữ đúng liên kết giữa hai nguồn cao khoảng 2,4 lần so với khi dịch liên kết đi một bước.
 
-Mức chênh 48\% so với 20\% cho thấy cách liên kết theo \code{(episode\_id, step\_id)} tạo sự phù hợp giữa ảnh và câu hướng dẫn rõ hơn so với khi dịch liên kết đi một bước. Phép kiểm này được dùng để xác nhận tính nhất quán của dữ liệu sau hợp nhất.
+Phép kiểm này được dùng để xác nhận tính nhất quán của liên kết theo \code{(episode\_id, step\_id)} sau khi hợp nhất hai nguồn dữ liệu.
 
 \section{Quy mô và phân chia dữ liệu}\label{sec:3.3}
 

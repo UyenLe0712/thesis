@@ -117,7 +117,7 @@ Thiết kế ban đầu dự kiến dùng $\Delta$ = S2 $-$ S1, tính từ trung
 
 \subsection{Kết quả}\label{sec:A.1.3}
 
-S2/101 đạt 57,2\% executability và vẫn cao hơn mô hình gốc 9,59 điểm, cho thấy phần lớn lợi ích của bước tinh chỉnh được duy trì. So với S1/101 và S1/202, S2 thấp hơn lần lượt 1,93 và 2,44 điểm (Bảng~\ref{tab:6.8}), với khoảng tin cậy của cả hai chênh lệch nằm dưới 0. Đánh giá bằng mô hình định vị thứ hai giữ cùng thứ tự (Mục~\ref{sec:5.9}). Phân tích theo trạng thái dòng mô tả ở Mục~\ref{sec:A.1.3.2} cho thấy kết quả thay đổi mạnh theo việc biểu diễn trung gian có xác định đúng phần tử hay không.
+S2/101 đạt 57,2\% executability, cao hơn mô hình gốc 9,59 điểm nhưng thấp hơn S1/101 và S1/202 lần lượt 1,93 và 2,44 điểm (Bảng~\ref{tab:6.8}). Khoảng tin cậy của cả hai chênh lệch so với S1 đều nằm dưới 0, và đánh giá bằng mô hình định vị thứ hai giữ cùng thứ tự (Mục~\ref{sec:5.9}). Ở Mục~\ref{sec:A.1.3.2}, kết quả thay đổi mạnh tùy việc biểu diễn trung gian có xác định đúng phần tử hay không.
 
 Ba cách giải thích thay thế đã được kiểm tra và không cách nào giải thích được chênh lệch. Ba cách đó là độ dài câu, nhóm ứng dụng, và tên ghi trong dòng mô tả bị sai do lỗi nhận dạng chữ.
 
@@ -136,7 +136,7 @@ Không sinh dòng mô tả & 325 & 19,7 & 10,8 & $-$8,92 [$-$12,57; $-$5,25] \\
 \end{tabular}
 \end{table}
 
-Theo Bảng~\ref{tab:A.2}, nhóm 325 bước mà mô hình mô tả phần tử bỏ qua dòng mô tả chỉ gồm 7,3\% số bước nhưng chiếm 34\% toàn bộ chênh lệch. Ở nhóm này mô hình phần lớn đoán sai loại thao tác, trong khi câu chuẩn vẫn đạt 68,3\%, cho thấy các bước này vẫn có thể đạt điểm cao với một câu hướng dẫn phù hợp. Mô hình gốc gọi đúng loại thao tác ở 83,4\% số bước trong nhóm, mô hình tinh chỉnh có giám sát ở 55,1\% và mô hình mô tả phần tử ở 38,8\%. Kết quả cho thấy sự thay đổi về xu hướng chọn loại thao tác đã xuất hiện từ S1 và rõ hơn ở S2. Một giả thuyết là mô hình học một tương quan tắt từ dữ liệu, vì tập huấn luyện chỉ gắn dòng mô tả cho bước chạm, nên mô hình có thể học lối tắt “đã viết dòng mô tả thì là chạm”. Cấu hình mô tả không có tọa độ không được tiếp tục, nên cách giải thích này không được dùng như một kết luận nhân quả. Nhóm này được định nghĩa bằng hành vi của chính mô hình mô tả phần tử, nên việc mô hình này kém trên nhóm một phần là hệ quả của cách chia nhóm. Dù vậy, mô hình tinh chỉnh có giám sát cũng chỉ đạt 19,7\% trên cùng nhóm.
+Theo Bảng~\ref{tab:A.2}, nhóm 325 bước mà mô hình mô tả phần tử bỏ qua dòng mô tả chỉ gồm 7,3\% số bước nhưng chiếm 34\% toàn bộ chênh lệch. Câu chuẩn vẫn đạt 68,3\% trên nhóm này, trong khi mô hình phần lớn đoán sai loại thao tác. Tỉ lệ gọi đúng loại thao tác lần lượt là 83,4\% ở mô hình gốc, 55,1\% ở S1 và 38,8\% ở S2. Xu hướng lệch loại thao tác đã xuất hiện từ S1 và rõ hơn ở S2. Một giả thuyết là mô hình học tương quan tắt từ dữ liệu vì tập huấn luyện chỉ gắn dòng mô tả cho bước chạm, từ đó có thể hình thành lối tắt “đã viết dòng mô tả thì là chạm”. Cấu hình mô tả không có tọa độ không được tiếp tục, nên giả thuyết này không được dùng như một kết luận nhân quả. Nhóm cũng được định nghĩa bằng hành vi của chính S2, vì vậy điểm thấp của S2 một phần gắn với cách chia nhóm. Trên cùng nhóm, S1 cũng chỉ đạt 19,7\%.
 
 \subsubsection{Ảnh hưởng hai chiều của dòng mô tả}\label{sec:A.1.3.2}
 
@@ -163,7 +163,7 @@ Bảng~\ref{tab:A.3} chia các bước được đánh giá theo việc dòng m�
 
 \subsection{Thiết kế}\label{sec:A.2.1}
 
-Kết quả của mô hình mô tả phần tử cho thấy chất lượng dòng mô tả có liên hệ chặt với kết quả chung (Mục~\ref{sec:A.1.3.2}). Vì học có giám sát chỉ tối ưu xác suất của chuỗi đích, giai đoạn tiếp theo bổ sung mục tiêu ưu tiên trên các cặp đầu ra gần nhau. Giai đoạn này, gọi tắt là học theo cặp ưu tiên và ký hiệu MIN-DESC trong bảng, học tiếp 800 bước từ trọng số của mô hình mô tả phần tử.
+Ở Mục~\ref{sec:A.1.3.2}, chất lượng dòng mô tả thay đổi cùng kết quả của câu hướng dẫn. Vì học có giám sát chỉ tối ưu xác suất của chuỗi đích, giai đoạn tiếp theo bổ sung mục tiêu ưu tiên trên các cặp đầu ra gần nhau. Giai đoạn này, gọi tắt là học theo cặp ưu tiên và ký hiệu MIN-DESC trong bảng, học tiếp 800 bước từ trọng số của mô hình mô tả phần tử.
 
 \begin{center}\small
 \begin{tabular}{@{}ll@{}}
@@ -207,15 +207,15 @@ Học theo cặp ưu tiên (MIN-DESC) & 99,6\% & 67,0\% & 71,8\% & 60,6\% \\
 \end{tabularx}
 \end{table}
 
-Học theo cặp ưu tiên đưa tỉ lệ đúng cả tên lẫn tọa độ lên 60,6\%, cao nhất trong ba cấu hình ở Bảng~\ref{tab:A.4}. So với S2, mức tăng là 6,77 điểm. Cấu hình chỉ học thêm có giám sát đạt 59,8\%, tương ứng tăng 5,93 điểm. Phần chênh riêng giữa MIN-DESC và CE2-S2 là 0,84 điểm, cho thấy mục tiêu ưu tiên tạo thêm mức tăng trên nền hiệu quả của việc học tiếp.
+Học theo cặp ưu tiên đưa tỉ lệ đúng cả tên lẫn tọa độ lên 60,6\%, cao nhất trong ba cấu hình ở Bảng~\ref{tab:A.4}. So với S2, mức tăng là 6,77 điểm. Cấu hình chỉ học thêm có giám sát đạt 59,8\%, tương ứng tăng 5,93 điểm. Phần chênh riêng giữa MIN-DESC và CE2-S2 là 0,84 điểm, tức mục tiêu ưu tiên tạo thêm một mức tăng trên nền hiệu quả của việc học tiếp.
 
 \subsubsection{Executability và đại lượng chính}\label{sec:A.2.2.2}
 
-MIN-DESC đạt 60,0\% executability, cao hơn cấu hình chỉ học thêm có giám sát 0,63 điểm với KTC 95\% [+0,16; +1,09] và p = 0,011. Như vậy, mục tiêu ưu tiên tạo một mức tăng riêng có ý nghĩa trong phép so trực tiếp này. So với S2, MIN-DESC tăng 2,87 điểm, trong đó 2,24 điểm cũng xuất hiện ở CE2-S2, cho thấy việc tiếp tục huấn luyện đóng góp phần lớn mức tăng tổng thể. So với S1/101, MIN-DESC cao hơn 0,94 điểm với KTC chứa 0.
+MIN-DESC đạt 60,0\% executability, cao hơn cấu hình chỉ học thêm có giám sát 0,63 điểm với KTC 95\% [+0,16; +1,09] và p = 0,011. Mục tiêu ưu tiên vì vậy tạo một mức tăng riêng trong phép so trực tiếp này. So với S2, MIN-DESC tăng 2,87 điểm, trong đó 2,24 điểm cũng xuất hiện ở CE2-S2. Phần lớn mức tăng tổng thể so với S2 đến từ việc tiếp tục huấn luyện, còn mục tiêu ưu tiên đóng góp thêm 0,63 điểm so với cấu hình học thêm có giám sát. So với S1/101, MIN-DESC cao hơn 0,94 điểm với KTC chứa 0.
 
 \subsubsection{Biến thể lấy vế bị loại theo chính sách}\label{sec:A.2.2.3}
 
-Ngoài nguồn cặp được xây dựng theo cách cố định (cửa sổ 80--350 điểm ảnh quanh phần tử mục tiêu), chúng tôi thử thêm biến thể on-policy, trong đó vế bị loại lấy từ chính phần tử mô hình dự đoán sai. Trên 14.000 màn huấn luyện thu được 459 cặp hợp lệ (3,3\%). Phân bố lỗi cho thấy mô hình thường gọi đúng phần tử bằng tên khác hoặc xác định một vùng cách xa phần tử mục tiêu, còn lỗi nhầm giữa hai nút lân cận xuất hiện ít hơn giả định ban đầu. Quan sát này cho thấy nguồn cặp cố định phù hợp hơn với mục tiêu tạo đủ cặp lân cận để huấn luyện trong thiết lập hiện tại.
+Ngoài nguồn cặp được xây dựng theo cách cố định (cửa sổ 80--350 điểm ảnh quanh phần tử mục tiêu), chúng tôi thử thêm biến thể on-policy, trong đó vế bị loại lấy từ chính phần tử mô hình dự đoán sai. Trên 14.000 màn huấn luyện chỉ thu được 459 cặp hợp lệ (3,3\%). Mô hình thường gọi đúng phần tử bằng tên khác hoặc xác định một vùng cách xa phần tử mục tiêu, còn lỗi nhầm giữa hai nút lân cận xuất hiện ít hơn giả định ban đầu. Với mục tiêu tạo đủ cặp lân cận để huấn luyện, nguồn cặp cố định phù hợp hơn trong thiết lập hiện tại.
 
 \subsection{Phân tích cơ chế mô tả phần tử}\label{sec:A.2.3}
 
@@ -234,7 +234,7 @@ Trỏ sai phần tử & 1.367 (39,4\%) & 21,8 & 32,9 & $-$11,12 & 61,4 \\
 \end{tabular}
 \end{table}
 
-Khi dòng mô tả xác định đúng phần tử, MIN-DESC đạt 87,1\%, cao hơn S1 8,83 điểm và vượt cả điểm của câu chuẩn trên chính nhóm đó. Khi dòng mô tả xác định sai, MIN-DESC thấp hơn S1 11,12 điểm. Kết quả theo hai nhóm cho thấy độ chính xác của biểu diễn trung gian là yếu tố quyết định việc câu hướng dẫn nhận lợi ích hay bị ảnh hưởng. Trên toàn bộ tập, MIN-DESC cao hơn S1/101 0,94 điểm với KTC chứa 0 (Mục~\ref{sec:A.2.2}).
+Khi dòng mô tả xác định đúng phần tử, MIN-DESC đạt 87,1\%, cao hơn S1 8,83 điểm và vượt cả điểm của câu chuẩn trên chính nhóm đó. Khi dòng mô tả xác định sai, MIN-DESC thấp hơn S1 11,12 điểm. Chênh lệch giữa hai nhóm gắn chặt lợi ích của nhánh này với độ chính xác của biểu diễn trung gian. Trên toàn bộ tập, MIN-DESC cao hơn S1/101 0,94 điểm với KTC chứa 0 (Mục~\ref{sec:A.2.2}).
 
 \textbf{Ngưỡng tối đa lý thuyết khi bù được phần thiệt ở các bước mô tả sai.} Giả sử ở mỗi bước mà dòng mô tả xác định sai, MIN-DESC cho đúng kết quả của mô hình tinh chỉnh có giám sát. Khi đó điểm trên 3.473 bước có tên đúng để đối chiếu sẽ là 65,8\% thay vì 61,4\% thực đo, tức cao hơn mô hình tinh chỉnh có giám sát 5,4 điểm. Mức này không đạt được ở khâu suy luận bằng một cách chọn câu ở từng bước, tức quyết định lấy câu của MIN-DESC hay câu của mô hình tinh chỉnh có giám sát. Một cách chọn hoàn hảo, biết trước dòng mô tả xác định đúng hay sai, cho 63,5\% trên toàn bộ 4.463 bước, nhưng bảy cách chọn thực tế đã thử chỉ cho 60,0 đến 60,3\%, không khác biệt rõ so với mức 60,0\% của MIN-DESC. Các phép chọn câu thực tế chưa đạt mức của cách chọn biết trước, nên nếu tiếp tục hướng này, can thiệp phù hợp hơn nằm ở khâu huấn luyện thay vì hậu xử lý.
 
@@ -257,13 +257,13 @@ không có tên để đối chiếu & 990 & 22,2 & 55,3 & 54,4 & 73,0 & +3,94 \
 \end{tabularx}
 \end{table}
 
-Bảng~\ref{tab:A.7} cho thấy nhóm đúng cả tên lẫn tọa độ chiếm 47,2\% số bước và MIN-DESC đạt 87,1\%, cao hơn mức 86,3\% của câu chuẩn trên nhóm này. Phần lớn khoảng cách còn lại tập trung ở nhóm sai cả tên lẫn tọa độ: nhóm này đóng góp 10,15 trong tổng 16,08 điểm khoảng cách dương, tương ứng khoảng 63\%. Vì vậy, nâng độ chính xác của biểu diễn phần tử là hướng có tiềm năng tác động trực tiếp nhất nếu tiếp tục phát triển nhánh này.
+Nhóm đúng cả tên lẫn tọa độ chiếm 47,2\% số bước và MIN-DESC đạt 87,1\%, cao hơn mức 86,3\% của câu chuẩn trên chính nhóm này. Phần lớn khoảng cách còn lại tập trung ở nhóm sai cả tên lẫn tọa độ: nhóm này đóng góp 10,15 trong tổng 16,08 điểm khoảng cách dương, tương ứng khoảng 63\%. Nếu tiếp tục phát triển nhánh biểu diễn trung gian, cải thiện độ chính xác của biểu diễn phần tử là hướng tác động trực tiếp nhất vào phần dư địa này.
 
 \section{Chọn phần tử trong danh sách ứng viên}\label{sec:A.3}
 
 \subsection{Thiết kế}\label{sec:A.3.1}
 
-Phân tích ở Mục~\ref{sec:A.2.3} cho thấy phần lớn dư địa còn lại của MIN-DESC nằm ở những bước mà dòng mô tả sai cả tên lẫn tọa độ. Vì vậy, thay vì để mô hình tự viết dòng mô tả, phương án chuyển sang cho mô hình chọn phần tử trong danh sách lấy từ chính màn hình. Mô hình huấn luyện theo cách này được gọi là mô hình chọn ứng viên. Căn cứ là ba con số đo được trước khi huấn luyện. Nếu lấy toàn bộ bước chạm của tập kiểm tra làm mẫu số, 99,7\% bước có tên mục tiêu lấy được từ OCR hoặc cây trợ năng và 80,2\% bước có một ứng viên vừa khớp tên vừa nằm trong dung sai. Tỉ lệ tương ứng của dòng mô tả tự sinh là 59,9\%. Ngoài ra, ở 67,7\% số bước mà MIN-DESC gọi sai tên, tên đúng đã nằm sẵn trong 24 dòng OCR của prompt nhưng không kèm vị trí.
+Ở Mục~\ref{sec:A.2.3}, phần lớn dư địa còn lại của MIN-DESC tập trung ở những bước mà dòng mô tả sai cả tên lẫn tọa độ. Vì vậy, thay vì để mô hình tự viết dòng mô tả, phương án chuyển sang cho mô hình chọn phần tử trong danh sách lấy từ chính màn hình. Mô hình huấn luyện theo cách này được gọi là mô hình chọn ứng viên. Căn cứ là ba con số đo được trước khi huấn luyện. Nếu lấy toàn bộ bước chạm của tập kiểm tra làm mẫu số, 99,7\% bước có tên mục tiêu lấy được từ OCR hoặc cây trợ năng và 80,2\% bước có một ứng viên vừa khớp tên vừa nằm trong dung sai. Tỉ lệ tương ứng của dòng mô tả tự sinh là 59,9\%. Ngoài ra, ở 67,7\% số bước mà MIN-DESC gọi sai tên, tên đúng đã nằm sẵn trong 24 dòng OCR của prompt nhưng không kèm vị trí.
 
 \textbf{Cách làm.} Prompt thay 24 dòng OCR bằng một danh sách phần tử có tên và vị trí. Chuỗi đích mở đầu bằng một thẻ chọn, là bản chép nguyên văn một dòng trong danh sách hoặc thẻ \code{none}, rồi mới tới câu. Thẻ này được cắt bỏ trước khi đánh giá. Danh sách phần tử có cấu trúc đã được sử dụng trong các công trình trước (Chương~\ref{chap:1}). Trong phương án này, thành phần được khảo sát là cơ chế chọn tường minh, tức mô hình ghi rõ ứng viên được chọn ngay trong chuỗi đích.
 
@@ -297,7 +297,7 @@ Mô hình chọn ứng viên được huấn luyện với seed 101 trên 64.567
 
 \subsubsection{Độ chính xác chọn và executability}\label{sec:A.3.2.1}
 
-Trên 1.400 bước của mẫu phát triển, 1.008 bước có ứng viên đúng và mô hình chọn đúng ở 580 bước, tương ứng 57,54\%. Mức này chưa vượt cổng 60,6\% đã đặt trước, nên phạm vi thí nghiệm được giữ ở lượt đầu. 3.063 bước còn lại chỉ được dùng để đọc kết quả, trong đó 3.062 bước thuộc các tác vụ không xuất hiện trong mẫu phát triển. Phân tích sau đó cho thấy độ chính xác chọn không nên được dùng riêng lẻ để đánh giá cơ chế: khi ép mô hình luôn chọn, độ chính xác trên các bước có ứng viên đúng tăng lên 69,05\%, nhưng tỉ lệ thẻ đúng trên toàn mẫu phát triển giảm từ 63,43\% xuống 49,71\%.
+Trên 1.400 bước của mẫu phát triển, 1.008 bước có ứng viên đúng và mô hình chọn đúng ở 580 bước, tương ứng 57,54\%. Mức này chưa vượt cổng 60,6\% đã đặt trước, nên phạm vi thí nghiệm được giữ ở lượt đầu. 3.063 bước còn lại chỉ được dùng để đọc kết quả, trong đó 3.062 bước thuộc các tác vụ không xuất hiện trong mẫu phát triển. Độ chính xác chọn riêng lẻ không phản ánh đầy đủ cơ chế: khi ép mô hình luôn chọn, độ chính xác trên các bước có ứng viên đúng tăng lên 69,05\%, nhưng tỉ lệ thẻ đúng trên toàn mẫu phát triển giảm từ 63,43\% xuống 49,71\%.
 
 Trên 4.463 bước chạm, mô hình chọn ứng viên đạt 56,1\% executability [54,2; 58,0] và cao hơn mô hình gốc 8,54 điểm, với 731 bước chỉ mô hình chọn ứng viên đạt so với 350 bước theo chiều ngược lại (p < 0,001). Điểm trên mẫu phát triển (55,4\%) và phần còn lại (56,5\%) gần nhau. Do cấu hình đối ứng chỉ sinh câu nhưng nhận cùng danh sách ứng viên không được chạy sau cổng thực nghiệm, $\Delta_{\text{chọn}}$ không được ước lượng. Vì vậy, phần này được dùng để phân tích hành vi của cơ chế chọn và so sánh trực tiếp với Base, là mốc có cùng mô hình nền chưa tinh chỉnh.
 
@@ -319,7 +319,7 @@ không & từ chối (đúng) & 1.001 & 22,4 & 53,8 & 86,6 \\
 \end{tabularx}
 \end{table}
 
-Khi danh sách chứa ứng viên đúng và mô hình đưa ra lựa chọn, executability đạt 71,4\% (Bảng~\ref{tab:A.8}), chỉ cách câu chuẩn 4,3 điểm. Đây là nhóm chiếm 52,1\% toàn bộ tập kiểm tra. Phần lớn cơ hội cải thiện nằm ở 872 bước có ứng viên đúng nhưng mô hình phát thẻ từ chối chọn, với executability 23,7\%. Tỉ lệ từ chối nhầm gần bằng mức 27,1\% trên mẫu phát triển. Như vậy, khả năng chọn đúng khi đã quyết định chọn khá tốt, còn quyết định có đưa ra lựa chọn hay không là thành phần ảnh hưởng lớn hơn đến kết quả tổng thể.
+Khi danh sách chứa ứng viên đúng và mô hình đưa ra lựa chọn, executability đạt 71,4\% (Bảng~\ref{tab:A.8}), chỉ cách câu chuẩn 4,3 điểm. Nhóm này chiếm 52,1\% toàn bộ tập kiểm tra. Phần lớn cơ hội cải thiện nằm ở 872 bước có ứng viên đúng nhưng mô hình phát thẻ từ chối chọn, với executability 23,7\%. Tỉ lệ từ chối nhầm gần bằng mức 27,1\% trên mẫu phát triển. Khả năng chọn khi mô hình đã quyết định đưa ra lựa chọn vì vậy tốt hơn rõ rệt so với khâu quyết định có chọn hay không.
 
 \textbf{Dấu hiệu đi kèm việc từ chối chọn.} Câu mang động từ không phải chạm chiếm 28,3\% số bước từ chối chọn, so với 0,97\% ở bước đưa ra lựa chọn, tương tự hiện tượng lẫn loại thao tác ở Mục~\ref{sec:A.1.3.1}. Sai số của mô hình định vị ở nhóm từ chối chọn có trung vị 19,9\% bề ngang màn, so với 0,78\% ở nhóm còn lại, tức mô hình xác định một vùng khác của màn như dạng lỗi lưỡng cực ở Mục~\ref{sec:A.2.2.3}. Tỉ lệ từ chối chọn tăng theo độ dài danh sách (Bảng~\ref{tab:A.9}), nhưng các màn hình có nhiều phần tử cũng thường khó hơn, nên quan sát này chỉ phản ánh tương quan.
 
@@ -380,7 +380,7 @@ Theo tổng log-xác suất, ứng viên đúng đứng đầu ở 67,5\% số b
 
 \subsection{Kết quả}\label{sec:A.4.2}
 
-Giai đoạn thưởng tọa độ cải thiện trực tiếp đại lượng được tối ưu: độ chính xác của dòng mô tả tăng 2,56 điểm với p = $1{,}3 \times 10^{-8}$. Trên 4.463 bước chạm, executability của MIN-DESC và mô hình sau giai đoạn này lần lượt là 60,05\% và 60,07\%, tương ứng chênh +0,02 điểm [$-$0,59; +0,64]. Tiêu chí hộp phần tử tăng từ 66,55 lên 67,04. Trước khi đánh giá trên tập kiểm tra, mức tăng executability từng được ước lượng từ hệ số chuyển đổi của giai đoạn hai là +1,10 điểm [+0,59; +1,49]. Kết quả thực đo cho thấy hệ số chuyển đổi không cố định mà phụ thuộc vào dạng can thiệp.
+Giai đoạn thưởng tọa độ cải thiện trực tiếp đại lượng được tối ưu: độ chính xác của dòng mô tả tăng 2,56 điểm với p = $1{,}3 \times 10^{-8}$. Trên 4.463 bước chạm, executability của MIN-DESC và mô hình sau giai đoạn này lần lượt là 60,05\% và 60,07\%, tương ứng chênh +0,02 điểm [$-$0,59; +0,64]. Tiêu chí hộp phần tử tăng từ 66,55 lên 67,04. Trước khi đánh giá trên tập kiểm tra, mức tăng executability từng được ước lượng từ hệ số chuyển đổi của giai đoạn hai là +1,10 điểm [+0,59; +1,49]. Mức thực đo +0,02 điểm thấp hơn nhiều ước lượng này, nên hệ số chuyển đổi không được xem là cố định giữa các dạng can thiệp.
 
 \textbf{Phân rã thay đổi theo từng bước.} Ở 164 bước mà giai đoạn ba sửa dòng mô tả từ sai thành đúng, executability tăng từ 32,9 lên 70,7. Ở 75 bước mà dòng mô tả chuyển từ đúng thành sai, executability giảm từ 69,3 xuống 29,3. Khi đếm chuyển đổi đạt/không đạt, bốn nhóm sửa đúng, làm sai, giữ nguyên và không có tên đối chiếu đóng góp lần lượt +62, $-$30, $-$14 và $-$17 bước, cho tổng ròng +1. Trong 1.950 bước có dòng mô tả thay đổi, 1.300 bước (66,7\%) giữ nguyên câu, và toàn bộ 197 lần đổi kết quả đánh giá nằm trong 961 bước có câu thay đổi.
 
@@ -394,7 +394,7 @@ Giai đoạn ba nối tiếp giai đoạn hai, nên hai bộ trọng số chỉ 
 
 \section{Phân rã lỗi giữa nhận diện phần tử và sinh câu hướng dẫn}\label{sec:A.5}
 
-Các phương án từ Mục~\ref{sec:A.1.3} đến đây cho thấy chất lượng của biểu diễn phần tử liên hệ mạnh với chất lượng câu đầu ra, nhưng mức tăng ở biểu diễn trung gian không tự động chuyển thành executability. Mục này tách quá trình thành hai khâu: nhận diện phần tử, đo bằng tọa độ mô hình ghi trong dòng mô tả, và sinh câu hướng dẫn, đo bằng tọa độ mà mô hình định vị suy ra từ câu. Trên 4.442 bước có dòng mô tả hợp lệ, MIN-DESC đạt 70,10\% ở khâu nhận diện phần tử và 69,36\% ở khâu sinh câu.
+Các phương án từ Mục~\ref{sec:A.1.3} đến đây cho thấy biểu diễn phần tử và câu đầu ra có liên hệ chặt, nhưng mức tăng ở biểu diễn trung gian không tự động chuyển thành executability. Mục này tách quá trình thành hai khâu: nhận diện phần tử, đo bằng tọa độ mô hình ghi trong dòng mô tả, và sinh câu hướng dẫn, đo bằng tọa độ mà mô hình định vị suy ra từ câu. Trên 4.442 bước có dòng mô tả hợp lệ, MIN-DESC đạt 70,10\% ở khâu nhận diện phần tử và 69,36\% ở khâu sinh câu.
 
 \begin{table}[htbp]
 \centering\small
@@ -409,11 +409,11 @@ Nhận ra sai phần tử & 1.328 (29,9\%) & 8,43 & 24,47 & 55,72 \\
 \end{tabular}
 \end{table}
 
-\textbf{Vai trò của nhóm nhận diện sai phần tử.} Trên toàn bộ các bước được đánh giá, câu chuẩn hơn MIN-DESC 15,53 điểm. Nhóm mà mô hình nhận ra đúng phần tử chiếm 70,1\% số bước và chỉ đóng góp 1,40 điểm, tương ứng 9,0\% khoảng cách. Nhóm nhận ra sai chiếm 29,9\% nhưng đóng góp 14,14 điểm, tương ứng 91,0\%. Phân rã này cho thấy cải thiện khâu nhận diện phần tử là hướng tập trung hợp lý nếu tiếp tục phát triển biểu diễn trung gian.
+\textbf{Vai trò của nhóm nhận diện sai phần tử.} Trên toàn bộ các bước được đánh giá, câu chuẩn hơn MIN-DESC 15,53 điểm. Nhóm mà mô hình nhận ra đúng phần tử chiếm 70,1\% số bước và chỉ đóng góp 1,40 điểm, tương ứng 9,0\% khoảng cách. Nhóm nhận ra sai chiếm 29,9\% nhưng đóng góp 14,14 điểm, tương ứng 91,0\%. Nếu tiếp tục phát triển biểu diễn trung gian, phần dư địa lớn nhất nằm ở khâu nhận diện phần tử của nhóm này.
 
-\textbf{Chênh lệch theo trạng thái nhận diện phần tử.} Nhóm mà mô hình nhận diện sai phần tử cũng khó hơn đối với câu chuẩn. Tuy nhiên, mức giảm của MIN-DESC lớn hơn đáng kể: từ 82,37 xuống 8,43, trong khi câu chuẩn giảm từ 84,36 xuống 55,72. Quan sát này cho thấy lỗi nhận diện phần tử có liên hệ mạnh với chất lượng câu hướng dẫn, dù cách chia nhóm chưa cho phép diễn giải hoàn toàn theo quan hệ nhân quả.
+\textbf{Chênh lệch theo trạng thái nhận diện phần tử.} Nhóm mà mô hình nhận diện sai phần tử cũng khó hơn đối với câu chuẩn. Tuy nhiên, mức giảm của MIN-DESC lớn hơn đáng kể: từ 82,37 xuống 8,43, trong khi câu chuẩn giảm từ 84,36 xuống 55,72. Lỗi nhận diện phần tử vì vậy đi cùng mức giảm mạnh hơn ở câu hướng dẫn của MIN-DESC, dù cách chia nhóm chưa cho phép diễn giải hoàn toàn theo quan hệ nhân quả.
 
-\textbf{Quan hệ giữa cải thiện nhận diện và executability.} Giai đoạn thưởng tọa độ là can thiệp đặt phần thưởng trực tiếp lên tọa độ trong dòng mô tả. Trên 4.437 bước ghép cặp, tỉ lệ nhận diện đúng phần tử tăng 1,60 điểm trong khi executability tăng 0,045 điểm, tương ứng 0,028 điểm executability cho mỗi điểm tăng ở tỉ lệ nhận diện. Phép đo này cho thấy hai đại lượng có liên hệ nhưng mức chuyển đổi phụ thuộc vào cách can thiệp.
+\textbf{Quan hệ giữa cải thiện nhận diện và executability.} Giai đoạn thưởng tọa độ là can thiệp đặt phần thưởng trực tiếp lên tọa độ trong dòng mô tả. Trên 4.437 bước ghép cặp, tỉ lệ nhận diện đúng phần tử tăng 1,60 điểm trong khi executability tăng 0,045 điểm, tương ứng 0,028 điểm executability cho mỗi điểm tăng ở tỉ lệ nhận diện. Hai đại lượng có liên hệ, nhưng mức chuyển đổi đo được ở can thiệp này không thể dùng như một hệ số cố định cho các thiết kế khác.
 
 \begin{table}[htbp]
 \centering\small
@@ -461,7 +461,7 @@ Bảng~\ref{tab:A.13} đổi cách định nghĩa nhóm ba lần. Khi nhóm đư
 
 \section{Tích hợp thông tin vị trí vào mô hình sinh câu}\label{sec:A.6}
 
-Phân tích ở Mục~\ref{sec:A.5} cho thấy độ chính xác nhận diện phần tử liên hệ chặt với chất lượng câu hướng dẫn. Từ quan sát đó, chúng tôi khảo sát bốn cách đưa thông tin vị trí vào mô hình sinh câu và hai phép sàng lọc ý tưởng không cần GPU (Bảng~\ref{tab:A.14}). Phần lớn phép đo được thực hiện trên tập kiểm định nội bộ để so sánh tương đối giữa các biến thể trước khi quyết định có mở rộng thí nghiệm.
+Ở Mục~\ref{sec:A.5}, độ chính xác nhận diện phần tử thay đổi cùng chất lượng câu hướng dẫn, nhưng cải thiện biểu diễn trung gian chưa chuyển trực tiếp thành executability. Từ đó, chúng tôi khảo sát bốn cách đưa thông tin vị trí vào mô hình sinh câu và hai phép sàng lọc ý tưởng không cần GPU (Bảng~\ref{tab:A.14}). Phần lớn phép đo được thực hiện trên tập kiểm định nội bộ để so sánh tương đối giữa các biến thể trước khi quyết định có mở rộng thí nghiệm.
 
 \begin{table}[htbp]
 \centering\small
@@ -481,7 +481,7 @@ Bộ xếp hạng câu biết màn sau* & học chọn một trong chín câu do
 \end{tabularx}
 \end{table}
 
-\textbf{Điều rút ra từ chuỗi phép thử.} Các biến thể cho thấy thông tin vị trí có thể được mã hóa trong trạng thái ẩn và mô hình có phản ứng với thay đổi hình ảnh. Tuy nhiên, khi đường tín hiệu vị trí được bổ sung sau khi mô hình sinh câu đã được huấn luyện, thay đổi ở câu đầu ra còn nhỏ. Ở phép tích hợp vai trò, vùng và thao tác, hệ số trộn tự giảm về gần 0; ở các phép biến đổi ảnh, mô hình phản ứng với vùng được nhấn mạnh nhưng chưa phân biệt ổn định phần tử mục tiêu với phần tử lân cận. Các quan sát trên gợi ý hai hướng phù hợp hơn: tích hợp tín hiệu vị trí sớm hơn trong quá trình học hoặc tối ưu trực tiếp câu đầu ra, thay vì chỉ bổ sung một mô-đun hậu kỳ.
+\textbf{Điều rút ra từ chuỗi phép thử.} Thông tin vị trí có thể được giải mã từ trạng thái ẩn và mô hình có phản ứng với thay đổi hình ảnh, nhưng việc bổ sung đường tín hiệu vị trí sau khi mô hình sinh câu đã được huấn luyện chỉ tạo thay đổi nhỏ ở đầu ra. Ở phép tích hợp vai trò, vùng và thao tác, hệ số trộn tự giảm về gần 0. Ở các phép biến đổi ảnh, mô hình phản ứng với vùng được nhấn mạnh nhưng chưa phân biệt ổn định phần tử mục tiêu với phần tử lân cận. Hai hướng phù hợp hơn là tích hợp tín hiệu vị trí sớm hơn trong quá trình học hoặc tối ưu trực tiếp câu đầu ra, thay vì chỉ bổ sung một mô-đun hậu kỳ.
 
 \section{Hiệu chỉnh câu dựa trên vùng ảnh cục bộ (TAGE)}\label{sec:A.7}
 
@@ -544,7 +544,7 @@ Bộ định vị và bộ biên tập là hai bộ chuyển đổi LoRA hạng 
 
 \subsection{Kết quả}\label{sec:A.7.2}
 
-Trên tập kiểm định nội bộ, câu sửa tốt hơn câu hướng dẫn ban đầu rõ rệt khi ô cắt đặt quanh điểm chạm đúng và kém đi rõ khi ô cắt cố ý đặt quanh một phần tử lân cận, cho thấy bộ biên tập thực sự khai thác nội dung ô cắt. Mô-đun hiệu chỉnh câu hoàn chỉnh cũng cao hơn nhẹ so với câu hướng dẫn ban đầu trên tập ấy, nên được đánh giá một lần trên tập kiểm tra.
+Trên tập kiểm định nội bộ, câu sửa tốt hơn câu hướng dẫn ban đầu rõ rệt khi ô cắt đặt quanh điểm chạm đúng và kém đi rõ khi ô cắt cố ý đặt quanh một phần tử lân cận. Bộ biên tập vì vậy có phản ứng với nội dung ô cắt. Mô-đun hiệu chỉnh câu hoàn chỉnh cũng cao hơn nhẹ so với câu hướng dẫn ban đầu trên tập ấy, nên được đánh giá một lần trên tập kiểm tra.
 
 \begin{table}[htbp]
 \centering\small
@@ -562,9 +562,9 @@ SPICE & 44,37 & 45,79 & 45,74 & $-$0,05 [$-$0,38; +0,27] & - \\
 \end{tabular}
 \end{table}
 
-\textbf{Kết quả trên tập kiểm tra.} TAGE đạt 60,23\% executability, cao hơn S1/101 1,12 điểm [+0,31; +1,94] và gần với mức 60,65\% của câu hướng dẫn ban đầu từ GRPO-SPICE. So trực tiếp với câu ban đầu, chênh lệch executability là $-$0,43 điểm [$-$0,87; +0,02], còn tiêu chí hộp phần tử giảm 0,58 điểm. Vì vậy, cấu hình TAGE hiện tại không được chọn thay ACE, nhưng phân tích theo vị trí ô cắt cho thấy bộ biên tập có tín hiệu hữu ích khi nhận đúng vùng mục tiêu.
+\textbf{Kết quả trên tập kiểm tra.} TAGE đạt 60,23\% executability, cao hơn S1/101 1,12 điểm [+0,31; +1,94] và gần với mức 60,65\% của câu hướng dẫn ban đầu từ GRPO-SPICE. So trực tiếp với câu ban đầu, chênh lệch executability là $-$0,43 điểm [$-$0,87; +0,02], còn tiêu chí hộp phần tử giảm 0,58 điểm. Cấu hình TAGE hiện tại vì vậy không được chọn thay ACE. Khi vùng đầu vào chứa đúng phần tử mục tiêu, câu sửa vẫn tạo mức cải thiện rõ ở các phép phân rã theo bước.
 
-\textbf{Ảnh hưởng của độ chính xác ô cắt.} Mô hình định vị xác định đúng phần tử ở 69,5\% số bước, bộ biên tập đổi câu ở 70,8\%, và bộ chọn nhận 219 câu sửa. Trong 80 bước mà ô cắt đặt đúng chỗ, câu sửa chuyển 46 bước từ sai sang đúng và chỉ 7 bước theo chiều ngược lại, tương ứng ròng +39 bước. Ngược lại, trong 139 bước ô cắt đặt sai, câu sửa chỉ cứu 2 bước nhưng làm 60 bước chuyển từ đạt sang không đạt. Phân rã này cho thấy bộ biên tập có khả năng sửa câu khi vùng đầu vào đúng, còn chất lượng định vị vùng là yếu tố quyết định kết quả của TAGE.
+\textbf{Ảnh hưởng của độ chính xác ô cắt.} Mô hình định vị xác định đúng phần tử ở 69,5\% số bước, bộ biên tập đổi câu ở 70,8\%, và bộ chọn nhận 219 câu sửa. Trong 80 bước mà ô cắt đặt đúng chỗ, câu sửa chuyển 46 bước từ sai sang đúng và chỉ 7 bước theo chiều ngược lại, tương ứng ròng +39 bước. Ngược lại, trong 139 bước ô cắt đặt sai, câu sửa chỉ cứu 2 bước nhưng làm 60 bước chuyển từ đạt sang không đạt. Lợi ích của bộ biên tập vì vậy tập trung ở các trường hợp vùng đầu vào đúng, còn sai số định vị vùng làm đảo chiều tác động của TAGE.
 
 \begin{figure}[!htbp]
 \centering
@@ -582,7 +582,7 @@ SPICE & 44,37 & 45,79 & 45,74 & $-$0,05 [$-$0,38; +0,27] & - \\
 \label{fig:A.3}
 \end{figure}
 
-\textbf{Hướng cải thiện.} Bộ chọn hiện dùng xác suất do chính bộ biên tập tính, nên tín hiệu lựa chọn phụ thuộc trực tiếp vào nội dung ô cắt. Một hướng phù hợp hơn là dùng tín hiệu độc lập để xác nhận ô cắt trước khi nhận câu sửa. Nếu chỉ nhận các câu sửa trong 80 bước có ô cắt đúng, số bước đạt tăng ròng 39, tương ứng khoảng +0,87 điểm trên toàn tập. Con số này là ước lượng dựa trên điểm chạm thật để xác định ô cắt đúng, không phải kết quả của một cấu hình đã chạy, nhưng cho thấy tiềm năng của bộ biên tập khi khâu định vị được cải thiện.
+\textbf{Hướng cải thiện.} Bộ chọn hiện dùng xác suất do chính bộ biên tập tính, nên tín hiệu lựa chọn phụ thuộc trực tiếp vào nội dung ô cắt. Một hướng phù hợp hơn là dùng tín hiệu độc lập để xác nhận ô cắt trước khi nhận câu sửa. Nếu chỉ nhận các câu sửa trong 80 bước có ô cắt đúng, số bước đạt tăng ròng 39, tương ứng khoảng +0,87 điểm trên toàn tập. Đây là ước lượng dựa trên điểm chạm thật để xác định ô cắt đúng, không phải kết quả của một cấu hình đã chạy. Giá trị +0,87 điểm chỉ được dùng để định lượng phần dư địa của bộ biên tập nếu khâu xác nhận vùng được cải thiện.
 
 
 \section{Trạng thái các cấu hình đã khảo sát}\label{sec:A.status}
@@ -625,7 +625,8 @@ Làm nét ảnh quanh phần tử & Dừng ở khâu đánh giá & không cải 
 Hai lượt viết lại có chọn lọc và bộ xếp hạng câu dùng màn kế tiếp & Dừng ở khâu sàng lọc & số câu lỗi đủ điều kiện hiệu chỉnh còn ít, bộ xếp hạng cho kết quả thấp hơn giải mã tham lam \\
 Hiệu chỉnh câu theo vùng ảnh cục bộ (TAGE) & Hoàn tất, đã đánh giá & 60,2, cao hơn S1 +1,12. Khi ô cắt đúng, câu sửa cứu ròng 39 bước, Mục~\ref{sec:A.7.2} \\
 Mô hình định vị thứ hai (UI-Venus) & Hoàn tất & chênh lệch S1 với mô hình gốc giữ 94\%, phương pháp đề xuất hơn cả hai seed của S1, Mục~\ref{sec:5.9} \\
-Mô hình listener dạng lựa chọn (Phi-4) & Hoàn tất một phần & đã đánh giá câu chuẩn, mô hình gốc, hai seed của S1, giai đoạn thưởng tọa độ và phương pháp đề xuất, Mục~\ref{sec:5.10} \\
+Phi-Ground, bộ trỏ ngoài họ Qwen & Hoàn tất & GRPO-SPICE hơn S1/101 +0,78 [+0,05; +1,51], ACE hơn +0,76 [+0,02; +1,49]. Theo báo cáo kỹ thuật, Phi-Ground không dùng AndroidControl để huấn luyện, Mục~\ref{sec:5.9} \\
+Mô hình listener dạng lựa chọn (Phi-4) & Hoàn tất & đã đánh giá mô hình gốc, hai lượt S1, GRPO-SPICE, ACE và câu chuẩn. GRPO-SPICE hơn S1/101 +0,69 [+0,02; +1,40], còn ACE ngang GRPO-SPICE, Mục~\ref{sec:5.10} \\
 Đánh giá thủ công 100 câu bởi hai người & Hướng mở rộng & được đề xuất như một bước đối chiếu bổ sung, Mục~\ref{sec:7.2} \\
 \end{longtable}
 }
