@@ -1,7 +1,7 @@
 \chapter{Phương pháp đề xuất}
 \label{chap:4}
 
-Chương này trình bày phương pháp sinh hướng dẫn của luận văn. Sau phần mô tả luồng xử lý, đầu vào và cấu hình huấn luyện, chương đi vào hai thành phần chính: học tăng cường với phần thưởng SPICE và ACE, rồi nêu các mốc so sánh và thiết lập đánh giá. Các phương án đã khảo sát trước phương pháp cuối cùng được trình bày ở Phụ lục~\ref{app:A}; độ đo executability được trình bày riêng ở Chương~\ref{chap:5}.
+Chương này trình bày phương pháp sinh hướng dẫn của chúng tôi. Sau phần mô tả luồng xử lý, đầu vào và cấu hình huấn luyện, chương đi vào hai thành phần chính là học tăng cường với phần thưởng SPICE và ACE, rồi nêu các mốc so sánh và thiết lập đánh giá. Các phương án đã khảo sát trước phương pháp cuối cùng được trình bày ở Phụ lục~\ref{app:A}. Độ đo executability được trình bày riêng ở Chương~\ref{chap:5}.
 
 \section{Quy trình tổng thể}\label{sec:4.1}
 
@@ -10,7 +10,7 @@ Với ảnh chụp màn hình và mục tiêu tác vụ, hệ thống cần tạ
 \begin{enumerate}
 \item \textbf{Đầu vào:} ảnh chụp màn hình, mục tiêu tác vụ, lịch sử tham chiếu của các bước trước và văn bản OCR.
 \item \textbf{Sinh hướng dẫn ban đầu:} S1 sau khi học tiếp bằng GRPO với phần thưởng SPICE tạo câu hướng dẫn ban đầu.
-\item \textbf{Hiệu chỉnh bằng ACE:} các câu ví dụ được truy hồi từ tập huấn luyện được dùng để tạo một câu ứng viên; điều kiện đồng thuận quyết định có thay câu hướng dẫn ban đầu hay không.
+\item \textbf{Hiệu chỉnh bằng ACE:} các câu ví dụ được truy hồi từ tập huấn luyện được dùng để tạo một câu ứng viên. Điều kiện đồng thuận quyết định có thay câu hướng dẫn ban đầu hay không.
 \item \textbf{Đánh giá:} mô hình định vị nhận ảnh màn hình cùng câu hướng dẫn và dự đoán vị trí của phần tử được nhắc tới. Executability được xác định từ vị trí này và loại thao tác trong câu.
 \end{enumerate}
 
@@ -43,7 +43,7 @@ Ba bước đầu thuộc luồng tạo câu hướng dẫn cuối cùng. Khâu 
 \node (sinh) [con, right=6mm of truy]
   {sinh \textbf{câu ứng viên}\\ từ đầu vào\\ $+$ 4 câu ví dụ};
 \node (dk) [con, right=6mm of sinh, fill=green!6]
-  {\textbf{điều kiện:} câu ứng viên trùng một câu ví dụ và cùng loại thao tác với câu ban đầu};
+  {\textbf{điều kiện:} câu ứng viên giống hoàn toàn một câu ví dụ và cùng loại thao tác với câu ban đầu};
 \begin{scope}[on background layer]
   \node (ace) [draw=green!45!black, thick, rounded corners=4pt, fill=green!12, inner sep=3mm,
                fit=(tde)(truy)(sinh)(dk)] {};
@@ -67,7 +67,7 @@ Ba bước đầu thuộc luồng tạo câu hướng dẫn cuối cùng. Khâu 
 \label{fig:4.1}
 \end{figure}
 
-Ở giai đoạn suy luận, phương pháp sử dụng ảnh màn hình, mục tiêu, lịch sử tham chiếu, văn bản OCR, mô hình sinh và kho câu tham chiếu của tập huấn luyện dùng cho ACE. Cây trợ năng và mô hình định vị chỉ phục vụ xây dựng dữ liệu hoặc đánh giá, không tham gia vào việc tạo câu hướng dẫn cuối.
+Ở giai đoạn suy luận, phương pháp sử dụng ảnh màn hình, mục tiêu, lịch sử tham chiếu, văn bản OCR, mô hình sinh và kho câu chuẩn của tập huấn luyện dùng cho ACE. Cây trợ năng và mô hình định vị chỉ phục vụ xây dựng dữ liệu hoặc đánh giá, không tham gia vào việc tạo câu hướng dẫn cuối.
 
 \section{Đầu vào và cấu trúc prompt}\label{sec:4.2}
 
@@ -87,11 +87,11 @@ Các nhãn trường được viết bằng tiếng Việt, còn câu trả lờ
 
 Đầu vào còn bao gồm văn bản được trích xuất từ ảnh màn hình bằng nhận dạng chữ quang học (OCR), nhằm bổ sung thông tin về các nhãn và nội dung văn bản đang hiển thị trên giao diện.
 
-Trường “Đã làm” chứa câu tham chiếu của các bước trước, không sử dụng đầu ra do mô hình sinh ở các bước trước. Vì vậy, mỗi bước được đánh giá với lịch sử tham chiếu (ground-truth history) và không tích lũy lỗi sinh từ các bước trước. Điều kiện này được giữ cố định giữa các mô hình.
+Trường “Đã làm” chứa câu chuẩn của các bước trước, không sử dụng đầu ra do mô hình sinh ở các bước trước. Vì vậy, mỗi bước được đánh giá với lịch sử tham chiếu (ground-truth history) và không tích lũy lỗi sinh từ các bước trước. Điều kiện này được giữ cố định giữa các mô hình.
 
 \section{Cấu hình huấn luyện}\label{sec:4.3}
 
-Các lượt tinh chỉnh trực tiếp từ Qwen2.5-VL-3B-Instruct~\cite{qwen25vl}, gồm S1 và các cấu hình cùng nhóm, sử dụng QLoRA~\cite{lora,qlora} trên thư viện LLaMA-Factory~\cite{llamafactory}. Trong thiết lập này, trọng số gốc được lượng tử hóa 4 bit và chỉ các tham số LoRA được cập nhật; tổng số tham số huấn luyện khoảng 15 triệu. Các lượt này được huấn luyện trên một GPU A100 với cấu hình ở Bảng~\ref{tab:4.1}. Thiết lập QLoRA 4 bit chỉ áp dụng cho các lượt tinh chỉnh trực tiếp từ mô hình gốc; các giai đoạn học tiếp của phương pháp đề xuất có cấu hình riêng ở Mục~\ref{sec:4.5} và Mục~\ref{sec:4.6}.
+Các lượt tinh chỉnh trực tiếp từ Qwen2.5-VL-3B-Instruct~\cite{qwen25vl}, gồm S1 và các cấu hình cùng nhóm, sử dụng QLoRA~\cite{lora,qlora} trên thư viện LLaMA-Factory~\cite{llamafactory}. Trong thiết lập này, trọng số gốc được lượng tử hóa 4 bit và chỉ các tham số LoRA được cập nhật. Tổng số tham số huấn luyện khoảng 15 triệu. Các lượt này được huấn luyện trên một GPU A100 với cấu hình ở Bảng~\ref{tab:4.1}. Thiết lập QLoRA 4 bit chỉ áp dụng cho các lượt tinh chỉnh trực tiếp từ mô hình gốc. Các giai đoạn học tiếp của phương pháp đề xuất có cấu hình riêng ở Mục~\ref{sec:4.5} và Mục~\ref{sec:4.6}.
 
 \begin{table}[htbp]
 \centering\small
@@ -121,24 +121,28 @@ Tham số huấn luyện được & 14.966.784 (0,48\% phần ngôn ngữ) \\
 
 \section{Tổng quan phương pháp đề xuất}\label{sec:4.4}
 
-Phương pháp đề xuất bắt đầu từ S1 và sử dụng hai thành phần đã tóm tắt ở Hình~\ref{fig:4.1}. Mô hình định vị dùng trong executability không tham gia vào phần thưởng của giai đoạn GRPO-SPICE hoặc điều kiện đồng thuận của ACE. Ở giai đoạn suy luận, phương pháp cũng không truy cập câu tham chiếu của chính bước đang xét. Trong các phần sau, thuật ngữ \emph{mô hình học tăng cường với phần thưởng SPICE} (viết gọn là GRPO-SPICE trong các bảng) dùng để chỉ riêng thành phần thứ nhất, còn \emph{phương pháp đề xuất} dùng để chỉ toàn bộ quy trình sau khi áp dụng ACE.
+Phương pháp đề xuất bắt đầu từ S1 và sử dụng hai thành phần đã tóm tắt ở Hình~\ref{fig:4.1}. Mô hình định vị dùng trong executability không tham gia vào phần thưởng của giai đoạn GRPO-SPICE hoặc điều kiện đồng thuận của ACE. Ở giai đoạn suy luận, phương pháp cũng không truy cập câu chuẩn của chính bước đang xét. Trong các phần sau, thuật ngữ \emph{mô hình học tăng cường với phần thưởng SPICE} (viết gọn là GRPO-SPICE trong các bảng) dùng để chỉ riêng thành phần thứ nhất, còn \emph{phương pháp đề xuất} dùng để chỉ toàn bộ quy trình sau khi áp dụng ACE.
 
 \section{Thành phần thứ nhất: học tăng cường với phần thưởng SPICE}\label{sec:4.5}
 
-\textbf{Cơ sở lựa chọn.} Những hướng được khảo sát trước phương pháp cuối cùng chủ yếu tác động vào một biểu diễn trung gian trước khi sinh câu hướng dẫn (Phụ lục~\ref{app:A}). Thành phần thứ nhất chuyển sang tối ưu trực tiếp câu đầu ra bằng một phần thưởng văn bản, tương tự cách CIDEr hoặc SPIDEr được sử dụng làm phần thưởng trong một số công trình sinh chú thích ảnh~\cite{scst,spider}. SPICE được chọn sau khi phân tích trên tập kiểm định nội bộ cho thấy độ đo này phân biệt được một phần các đầu ra khác nhau mà S1 sinh cho cùng một bước; kết quả phân tích được trình bày ở Mục~\ref{sec:6.3}.
+\textbf{Cơ sở lựa chọn.} Những hướng được khảo sát trước phương pháp cuối cùng chủ yếu tác động vào một biểu diễn trung gian trước khi sinh câu hướng dẫn (Phụ lục~\ref{app:A}). Thành phần thứ nhất chuyển sang tối ưu trực tiếp câu đầu ra bằng một phần thưởng văn bản, tương tự cách CIDEr hoặc SPIDEr được sử dụng làm phần thưởng trong một số công trình sinh chú thích ảnh~\cite{scst,spider}. SPICE được chọn sau khi phân tích trên tập kiểm định nội bộ cho thấy độ đo này tạo được tín hiệu phân biệt giữa một số đầu ra mà S1 sinh cho cùng một bước. Kết quả phân tích được trình bày ở Mục~\ref{sec:6.3}.
 
 \textbf{Thiết kế.} Thành phần thứ nhất khởi tạo trực tiếp từ S1 với seed 101. Như vậy, S1 cũng là điểm bắt đầu của giai đoạn học tăng cường. Bộ chuyển đổi LoRA của S1 được hợp nhất vào trọng số gốc, sau đó một bộ chuyển đổi LoRA mới với cùng hạng và cùng các mô-đun được gắn vào mô hình. Ma trận B của bộ chuyển đổi mới được khởi tạo bằng không, nên trước bước cập nhật đầu tiên mô hình vẫn tương đương với S1 sau khi hợp nhất.
 
-Một bản sao của S1 sau khi hợp nhất được đóng băng và dùng làm mô hình tham chiếu cho số hạng KL. Số hạng này hạn chế mức thay đổi của chính sách đang học so với mô hình tham chiếu. Phần thưởng của một câu $s$ so với câu tham chiếu là
+Một bản sao của S1 sau khi hợp nhất được đóng băng và dùng làm mô hình tham chiếu cho số hạng KL. Số hạng này hạn chế mức thay đổi của chính sách đang học so với mô hình tham chiếu. Phần thưởng của một câu $s$ so với câu chuẩn là
 
 \begin{equation}
 r(s) = \operatorname{SPICE}(s,g) - 0{,}02 \cdot \max(0,\ |s|-|g|-3),
 \label{eq:4.1}
 \end{equation}
 \noindent
-trong đó $|\cdot|$ là số từ, và câu rỗng nhận 0 điểm. Số hạng thứ hai chỉ phạt những câu dài hơn câu tham chiếu quá ba từ, nhằm hạn chế việc tăng SPICE bằng cách thêm các chi tiết không cần thiết.
+trong đó $|\cdot|$ là số từ, và câu rỗng nhận 0 điểm. Số hạng thứ hai chỉ phạt những câu dài hơn câu chuẩn quá ba từ, nhằm hạn chế việc tăng SPICE bằng cách thêm các chi tiết không cần thiết.
 
-Mỗi bước cập nhật sử dụng hai prompt; với mỗi prompt, mô hình sinh $G = 8$ câu ở nhiệt độ 1,0, mỗi câu dài tối đa 96 token. Quá trình huấn luyện gồm 500 bước cập nhật, tương ứng tổng cộng 1.000 prompt được lấy từ phần tập huấn luyện sau khi loại tập kiểm định nội bộ. Các prompt gồm mọi loại thao tác, trong đó khoảng hai phần ba là bước có thao tác chạm. Tốc độ học là $10^{-5}$ và hệ số KL là $\beta = 0{,}04$; vòng huấn luyện được tóm tắt ở Hình~\ref{fig:4.2}. GRPO sử dụng chênh lệch phần thưởng tương đối giữa các đầu ra trong cùng nhóm; nếu các ứng viên nhận cùng phần thưởng, nhóm đó không tạo ra chênh lệch để xếp hạng các ứng viên.
+Mỗi bước cập nhật sử dụng hai prompt. Với mỗi prompt, mô hình sinh $G = 8$ câu ở nhiệt độ 1,0, mỗi câu dài tối đa 96 token. Quá trình huấn luyện gồm 500 bước cập nhật, tương ứng tổng cộng 1.000 prompt được lấy từ phần tập huấn luyện sau khi loại tập kiểm định nội bộ. Các prompt gồm mọi loại thao tác, trong đó khoảng hai phần ba là bước có thao tác chạm. Tốc độ học là $10^{-5}$ và hệ số KL là $\beta = 0{,}04$. Vòng huấn luyện được tóm tắt ở Hình~\ref{fig:4.2}. GRPO sử dụng chênh lệch phần thưởng tương đối giữa các đầu ra trong cùng nhóm. Khi các ứng viên nhận cùng phần thưởng, lợi thế tương đối giữa chúng không tạo ra khác biệt cho bước cập nhật.
+
+\textbf{Lặp lại giai đoạn GRPO.} Chúng tôi chạy thêm một lượt 500 bước với cùng cấu hình GRPO-SPICE nhưng đổi hạt ngẫu nhiên từ 101 sang 202. Lượt này vẫn khởi tạo từ S1/101, nhờ đó phép lặp tập trung vào mức biến thiên của riêng giai đoạn GRPO. Kết quả được đối chiếu thêm với mức dao động giữa hai lượt S1 ở Mục~\ref{sec:6.7.2}.
+
+\textbf{Thí nghiệm kiểm tra bằng phần thưởng xáo trộn.} Chúng tôi xây dựng thêm một nhánh có cùng điểm khởi tạo, số bước và các siêu tham số với GRPO-SPICE, nhưng điểm SPICE được xáo giữa các mẫu trước khi dùng làm phần thưởng. Cách thiết lập này giữ nguyên quá trình cập nhật GRPO nhưng làm mất mối liên hệ giữa câu sinh ra và điểm SPICE. Nhánh này được dùng như một phép kiểm tra bổ sung để xem mức thay đổi quan sát được có gắn với tín hiệu phần thưởng hay chỉ xuất hiện khi mô hình tiếp tục được huấn luyện. Kết quả được trình bày ở Mục~\ref{sec:6.7.2}.
 
 \begin{figure}[!htb]
 \centering
@@ -159,7 +163,7 @@ Mỗi bước cập nhật sử dụng hai prompt; với mỗi prompt, mô hình
 \node (thuong) [buoc, below=13mm of nhom, text width=3.1cm] {\textbf{phần thưởng}\\ cho từng câu:\\ SPICE$(y_i, g)$\\ $-$ phạt câu quá dài};
 \node (adv) [buoc, below=13mm of pol, text width=3.5cm] {\textbf{so với trung bình nhóm}\\ câu tốt hơn được tăng xác suất, câu kém hơn bị giảm};
 \node (ref) [tinh, text width=2.6cm] at (vao |- adv) {\textbf{S1 đóng băng}\\ mốc cho KL};
-\node (g) [nhan, right=4mm of thuong, text width=1.3cm] {câu tham chiếu $g$};
+\node (g) [nhan, right=4mm of thuong, text width=1.3cm] {câu chuẩn $g$};
 
 \node [so] at (pol.north west) {1};
 \node [so] at (nhom.north west) {2};
@@ -174,25 +178,25 @@ Mỗi bước cập nhật sử dụng hai prompt; với mỗi prompt, mô hình
 \draw [mui, draw=orange!70!black] (adv) -- node[nhan, right] {cập nhật LoRA} (pol);
 \draw [mui, dashed, draw=black!55] (ref.north) |- node[nhan, pos=0.75, above] {$\beta\,\mathrm{KL}$: giữ gần S1} ($(adv.north)!0.5!(pol.south)$);
 \end{tikzpicture}
-\caption[Vòng huấn luyện của thành phần thứ nhất, học tăng cường với phần thưởng SPICE.]{Vòng huấn luyện của thành phần thứ nhất, học tăng cường với phần thưởng SPICE. Với mỗi prompt, mô hình sinh 8 câu (bước 2). Mỗi câu nhận phần thưởng $r_i$ là điểm SPICE so với câu tham chiếu $g$, trừ phần phạt khi câu quá dài (bước 3). Phần thưởng của từng câu được so với trung bình của nhóm để cập nhật LoRA mới (bước 4). Trong khối cam, chỉ LoRA mới được cập nhật. Các khối xanh lá là các bước xử lý. Hàm mất mát gồm số hạng theo lợi thế của từng câu và số hạng KL với hệ số $\beta$, trong đó S1 đóng băng (khối xám) là mốc để giữ mô hình không lệch quá xa S1.}
+\caption[Vòng huấn luyện của thành phần thứ nhất, học tăng cường với phần thưởng SPICE.]{Vòng huấn luyện của thành phần thứ nhất, học tăng cường với phần thưởng SPICE. Với mỗi prompt, mô hình sinh 8 câu (bước 2). Mỗi câu nhận phần thưởng $r_i$ là điểm SPICE so với câu chuẩn $g$, trừ phần phạt khi câu quá dài (bước 3). Phần thưởng của từng câu được so với trung bình của nhóm để cập nhật LoRA mới (bước 4). Trong khối cam, chỉ LoRA mới được cập nhật. Các khối xanh lá là các bước xử lý. Hàm mất mát gồm số hạng theo lợi thế của từng câu và số hạng KL với hệ số $\beta$, trong đó S1 đóng băng (khối xám) là mốc để giữ mô hình không lệch quá xa S1.}
 \label{fig:4.2}
 \end{figure}
 
 \textbf{Lựa chọn checkpoint.} Hai checkpoint ở bước 250 và 500 được dùng để sinh câu bằng giải mã tham lam trên tập kiểm định nội bộ và được so sánh theo executability. Checkpoint 500 được chọn trên tập kiểm định nội bộ và sau đó cố định trước khi sinh câu trên tập kiểm tra. Kết quả trên tập kiểm định nội bộ và phân tích tín hiệu phần thưởng được trình bày ở Mục~\ref{sec:6.3}.
 
-\textbf{Lưu ý về thiết lập so sánh.} Câu của S1 trong các bảng kết quả được sinh khi bộ chuyển đổi LoRA còn tách riêng và theo lô, còn câu của mô hình học tăng cường được sinh sau khi LoRA đã được hợp nhất vào trọng số, ở độ chính xác fp16 và theo từng câu. Một kiểm tra nhỏ trên 20 bước có thao tác chạm cho thấy chỉ riêng thay đổi cách sinh đã làm 4 câu khác đi, nên một phần chênh lệch giữa hai mô hình có thể đến từ cách sinh câu. Ngoài ra, luận văn chưa có một lượt chỉ tiếp tục học có giám sát với cùng số bước để tách ảnh hưởng của việc huấn luyện thêm khỏi ảnh hưởng của mục tiêu học tăng cường. Hai điểm này được xem là hạn chế của thiết lập hiện tại và được nêu lại ở Chương~\ref{chap:7}.
+\textbf{Kiểm tra độ ổn định của thiết lập.} S1 và mô hình sau GRPO sử dụng hai cách triển khai hơi khác nhau ở bước hợp nhất LoRA và xử lý theo lô. Vì khác biệt này có thể làm thay đổi một số câu đầu ra, các chênh lệch nhỏ được diễn giải cùng với lượt huấn luyện GRPO thứ hai và thí nghiệm phần thưởng xáo trộn, thay vì dựa trên một phép so duy nhất.
 
 \section{Thành phần thứ hai: hiệu chỉnh bằng câu ví dụ với ràng buộc nhất quán thao tác (ACE)}\label{sec:4.6}
 
-\textbf{Cơ sở lựa chọn.} ACE (\emph{Action-Consistent Exemplar Copying}) sử dụng các câu tham chiếu trong tập huấn luyện làm nguồn ví dụ cho bước hiện tại. Do các câu được truy hồi đến từ những bước khác, việc dùng chúng trực tiếp có thể dẫn tới sai phần tử hoặc sai loại thao tác. ACE vì vậy thực hiện hai bước: trước hết, mô hình tạo một câu ứng viên từ đầu vào hiện tại và các ví dụ truy hồi; sau đó, điều kiện đồng thuận quyết định có thay câu hướng dẫn ban đầu của thành phần thứ nhất bằng câu ứng viên hay không.
+\textbf{Cơ sở lựa chọn.} ACE (\emph{Action-Consistent Exemplar Copying}) sử dụng các câu chuẩn trong tập huấn luyện làm nguồn ví dụ cho bước hiện tại. Để bảo đảm câu ví dụ phù hợp với thao tác đang xét, ACE thực hiện hai bước. Trước hết, mô hình tạo một câu ứng viên từ đầu vào hiện tại và các ví dụ truy hồi. Sau đó, điều kiện đồng thuận quyết định có thay câu hướng dẫn ban đầu của thành phần thứ nhất bằng câu ứng viên hay không.
 
 \textbf{Mô hình sinh câu với ví dụ truy hồi.} ACE sử dụng kho truy hồi được xác định ở Mục~\ref{sec:3.5}. Kho chỉ được xây dựng từ dữ liệu huấn luyện và không chứa tác vụ nào của tập kiểm tra của đề tài. Truy hồi chỉ sử dụng văn bản và độ tương đồng TF-IDF, không sử dụng ảnh.
 
-ACE dùng hai cách tìm câu ví dụ. Cách thứ nhất lấy ý tưởng truy hồi trực tiếp câu ví dụ từ SmallCap~\cite{smallcap}; trong luận văn, truy vấn được xây dựng từ mục tiêu tác vụ và câu gần nhất trong lịch sử thao tác, rồi dùng để truy hồi trực tiếp các bước tương tự. Cách thứ hai trước hết tìm các tác vụ có mục tiêu gần nhất, sau đó chọn bước trong từng tác vụ dựa trên câu gần nhất trong lịch sử. Kết quả từ hai cách được gộp, loại bỏ câu lặp và giữ bốn câu ví dụ để chèn vào prompt ngay trước yêu cầu sinh câu.
+ACE dùng hai cách tìm câu ví dụ. Cách thứ nhất lấy ý tưởng truy hồi trực tiếp câu ví dụ từ SmallCap~\cite{smallcap}. Trong thiết lập của chúng tôi, truy vấn được xây dựng từ mục tiêu tác vụ và câu gần nhất trong lịch sử thao tác, rồi dùng để truy hồi trực tiếp các bước tương tự. Cách thứ hai trước hết tìm các tác vụ có mục tiêu gần nhất, sau đó chọn bước trong từng tác vụ dựa trên câu gần nhất trong lịch sử. Kết quả từ hai cách được gộp, loại bỏ câu lặp và giữ bốn câu ví dụ để chèn vào prompt ngay trước yêu cầu sinh câu.
 
-Để tạo mô hình sinh câu ứng viên cho ACE, bộ chuyển đổi của thành phần thứ nhất được tiếp tục tinh chỉnh có giám sát thêm 250 bước với tốc độ học $2 \times 10^{-5}$. Lượt tinh chỉnh này sử dụng tập 3.991 bước có ảnh được mô tả ở Mục~\ref{sec:3.5}; quy mô này phản ánh phần dữ liệu ảnh khả dụng cho lượt huấn luyện, không phải một tiêu chí chọn mẫu của ACE. Trong quá trình này, số câu ví dụ được lấy ngẫu nhiên từ 2 đến 6 và thứ tự các câu được xáo trộn để hạn chế việc mô hình phụ thuộc quá mức vào khối ví dụ. Ngoài ra, 15\% prompt không có khối ví dụ, 10\% prompt sử dụng các câu ví dụ lấy ngẫu nhiên, và tác vụ đang học được loại khỏi kho truy hồi.
+Để tạo mô hình sinh câu ứng viên cho ACE, bộ chuyển đổi của thành phần thứ nhất được tiếp tục tinh chỉnh có giám sát thêm 250 bước với tốc độ học $2 \times 10^{-5}$. Lượt tinh chỉnh này sử dụng 3.991 bước có ảnh được mô tả ở Mục~\ref{sec:3.5}, tương ứng với phần dữ liệu ảnh khả dụng cho giai đoạn huấn luyện này. Trong quá trình này, số câu ví dụ được lấy ngẫu nhiên từ 2 đến 6 và thứ tự các câu được xáo trộn để hạn chế việc mô hình phụ thuộc quá mức vào khối ví dụ. Ngoài ra, 15\% prompt không có khối ví dụ, 10\% prompt sử dụng các câu ví dụ lấy ngẫu nhiên, và tác vụ đang học được loại khỏi kho truy hồi.
 
-Để tách ảnh hưởng của truy hồi khỏi ảnh hưởng của việc tiếp tục học có giám sát, luận văn huấn luyện thêm một mô hình trên cùng các bước, cùng câu đích và cùng siêu tham số, nhưng không chèn khối ví dụ vào prompt.
+Để tách ảnh hưởng của truy hồi khỏi ảnh hưởng của việc tiếp tục học có giám sát, chúng tôi huấn luyện thêm một mô hình trên cùng các bước, cùng câu đích và cùng siêu tham số, nhưng không chèn khối ví dụ vào prompt.
 
 \textbf{Tiêu chí đồng thuận.} Ở mỗi bước có hai câu: câu hướng dẫn ban đầu của thành phần thứ nhất và câu ứng viên do mô hình ACE tạo ra từ các ví dụ truy hồi. Câu ứng viên chỉ được chọn khi thỏa đồng thời hai điều kiện.
 
@@ -220,7 +224,7 @@ Hình~\ref{fig:4.3} minh họa hai bước của tập kiểm tra: một bước
 \node [td] at ([yshift=1.5mm]a1.north west) {(a) Câu ứng viên được nhận};
 \node (a2) [vd, below=4mm of a1] {\textbf{Bốn câu ví dụ truy hồi:}\\ 1. \emph{Click on Rooms option.}\\ 2. \emph{Click on the destination text box.}\\ 3. \emph{Click on the Hotels option.}\\ 4. \emph{Click on the date selection option.}};
 \node (a3) [uv, below=4mm of a2] {\textbf{Câu ứng viên:} \emph{Click on the date selection option.}};
-\node (a4) [kq, below=4mm of a3] {trùng câu ví dụ 4: thỏa\\ cùng thao tác chạm với câu ban đầu: thỏa\\ $\Rightarrow$ \textbf{dùng câu ứng viên} (executability: đạt)};
+\node (a4) [kq, below=4mm of a3] {giống hoàn toàn câu ví dụ 4: thỏa\\ cùng thao tác chạm với câu ban đầu: thỏa\\ $\Rightarrow$ \textbf{dùng câu ứng viên} (executability: đạt)};
 \draw [mui] (a2) -- (a3); \draw [mui] (a3) -- (a4);
 \draw [mui] (a1.west) -- ++(-3mm,0) |- (a4.west);
 % (b) bị loại
@@ -228,7 +232,7 @@ Hình~\ref{fig:4.3} minh họa hai bước của tập kiểm tra: một bước
 \node [td] at ([yshift=1.5mm]b1.north west) {(b) Câu ứng viên bị loại};
 \node (b2) [vd, below=4mm of b1] {\textbf{Bốn câu ví dụ truy hồi:}\\ 1. \emph{Swipe up}\\ 2. \emph{Open the Calm app}\\ 3. \emph{Click on the 21 days of calm}\\ 4. \emph{Click on the Start Meditating button}};
 \node (b3) [uv, below=4mm of b2] {\textbf{Câu ứng viên:} \emph{Swipe up}};
-\node (b4) [kq, below=4mm of b3] {trùng câu ví dụ 1: thỏa\\ thao tác vuốt, khác thao tác chạm của câu ban đầu: không thỏa\\ $\Rightarrow$ \textbf{giữ câu ban đầu} (executability: đạt)};
+\node (b4) [kq, below=4mm of b3] {giống hoàn toàn câu ví dụ 1: thỏa\\ thao tác vuốt, khác thao tác chạm của câu ban đầu: không thỏa\\ $\Rightarrow$ \textbf{giữ câu ban đầu} (executability: đạt)};
 \draw [mui] (b2) -- (b3); \draw [mui] (b3) -- (b4);
 \draw [mui] (b1.west) -- ++(-3mm,0) |- (b4.west);
 \end{tikzpicture}
@@ -236,18 +240,18 @@ Hình~\ref{fig:4.3} minh họa hai bước của tập kiểm tra: một bước
 \label{fig:4.3}
 \end{figure}
 
-\textbf{Lựa chọn tiêu chí.} Bốn biến thể được khảo sát trên tập kiểm định nội bộ: chỉ dùng điều kiện sao chép; sao chép kèm đồng thuận loại thao tác; sao chép kèm điều kiện phần lõi của câu (phần còn lại sau khi bỏ động từ và hư từ) giống câu hướng dẫn ban đầu ít nhất một nửa; và sao chép kèm cả hai điều kiện.
+\textbf{Lựa chọn tiêu chí.} Bốn biến thể được khảo sát trên tập kiểm định nội bộ gồm chỉ dùng điều kiện sao chép, sao chép kèm đồng thuận loại thao tác, sao chép kèm điều kiện phần lõi của câu (phần còn lại sau khi bỏ động từ và hư từ) giống câu hướng dẫn ban đầu ít nhất một nửa, và sao chép kèm cả hai điều kiện.
 
-Tiêu chí lựa chọn được xác định trước khi tính executability trên tập này. Chỉ những biến thể không kém hơn câu hướng dẫn ban đầu trên đa số độ đo dựa trên câu tham chiếu mới được xem xét; trong số này, biến thể có executability cao nhất được lựa chọn. Điều kiện đã chọn được cố định trước khi áp dụng trên tập kiểm tra.
+Tiêu chí lựa chọn được xác định trước khi tính executability trên tập này. Trước hết, chỉ các biến thể không kém hơn câu hướng dẫn ban đầu trên đa số độ đo dựa trên câu chuẩn được giữ lại. Trong số đó, biến thể có executability cao nhất được lựa chọn. Điều kiện đã chọn được cố định trước khi áp dụng trên tập kiểm tra.
 
 \section{Mô hình và thiết lập so sánh}\label{sec:4.7}
 
-Ba mốc chính được sử dụng để so sánh với phương pháp đề xuất: Base, S1 và câu tham chiếu. Base là Qwen2.5-VL-3B-Instruct khi chưa tinh chỉnh. S1 là mô hình được tinh chỉnh có giám sát từ Base với cấu hình ở Bảng~\ref{tab:4.1} để sinh trực tiếp câu hướng dẫn từ prompt. S1 được huấn luyện hai lần với seed 101 và 202; chênh lệch giữa hai lượt được dùng để tham khảo mức dao động khi lặp lại cùng một cấu hình. Thành phần thứ nhất của phương pháp đề xuất học tiếp từ lượt seed 101, nên lượt này cũng là mốc so sánh trực tiếp. Cuối cùng, câu tham chiếu được đưa qua cùng quy trình đánh giá để tạo một mốc giúp diễn giải điểm số của các mô hình.
+Ba mốc chính được sử dụng để so sánh với phương pháp đề xuất gồm Base, S1 và câu chuẩn. Base là Qwen2.5-VL-3B-Instruct khi chưa tinh chỉnh. S1 là mô hình được tinh chỉnh có giám sát từ Base với cấu hình ở Bảng~\ref{tab:4.1} để sinh trực tiếp câu hướng dẫn từ prompt. S1 được huấn luyện hai lần với seed 101 và 202. Chênh lệch giữa hai lượt được dùng để tham khảo mức dao động khi lặp lại cùng một cấu hình. Thành phần thứ nhất của phương pháp đề xuất học tiếp từ lượt seed 101, nên lượt này cũng là mốc so sánh trực tiếp. Cuối cùng, câu chuẩn được đưa qua cùng quy trình đánh giá để tạo một mốc giúp diễn giải điểm số của các mô hình.
 
-Các phương án được khảo sát trước khi hình thành phương pháp cuối cùng được tóm tắt ở Mục~\ref{sec:6.10}; thiết kế và số liệu chi tiết được trình bày ở Phụ lục~\ref{app:A}.
+Các phương án được khảo sát trước khi hình thành phương pháp cuối cùng được tóm tắt ở Mục~\ref{sec:6.10}. Thiết kế và số liệu chi tiết được trình bày ở Phụ lục~\ref{app:A}.
 
 \section{Thiết lập so sánh và diễn giải kết quả}\label{sec:4.8}
 
-Với executability, các so sánh chính giữa hai mô hình được thực hiện theo cặp trên cùng các bước được đánh giá; tập chính gồm 4.463 bước có thao tác chạm. Mỗi so sánh báo cáo mức chênh $\Delta$, khoảng tin cậy 95\% từ bootstrap và giá trị p của kiểm định McNemar. Cách tạo khoảng tin cậy cho từng phân tích được trình bày ở Mục~\ref{sec:5.13} và tại các bảng kết quả tương ứng. Khi khoảng tin cậy của chênh lệch nằm hoàn toàn về một phía của 0, kết quả được xem là có cơ sở để kết luận về mức cải thiện hoặc suy giảm so với mốc; nếu khoảng tin cậy chứa 0, kết quả được xem là chưa đủ cơ sở để kết luận, kể cả khi $\Delta$ dương.
+Với executability, các so sánh chính giữa hai mô hình được thực hiện theo cặp trên cùng các bước được đánh giá. Tập chính gồm 4.463 bước có thao tác chạm. Mỗi so sánh báo cáo mức chênh $\Delta$, khoảng tin cậy 95\% từ bootstrap và giá trị p của kiểm định McNemar. Cách tạo khoảng tin cậy cho từng phân tích được trình bày ở Mục~\ref{sec:5.13} và tại các bảng kết quả tương ứng. Khi khoảng tin cậy của chênh lệch nằm hoàn toàn về một phía của 0, kết quả được diễn giải theo chiều cải thiện hoặc suy giảm so với mốc. Khi khoảng tin cậy chứa 0, chúng tôi không dựa vào dấu của $\Delta$ để kết luận khác biệt giữa hai mô hình.
 
 Mức dao động giữa hai seed của S1 được phân tích ở Mục~\ref{sec:6.7}. Các phân tích theo độ dài câu, độ khó của màn hình và nguồn của tên phần tử được trình bày ở Mục~\ref{sec:6.9}.

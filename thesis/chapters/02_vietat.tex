@@ -26,8 +26,8 @@ dp & density-independent pixel & Đơn vị độ dài độc lập mật độ 
 ORPO & Odds Ratio Preference Optimization & Mục tiêu học ưu tiên không cần mô hình tham chiếu riêng \\
 GRPO & Group Relative Policy Optimization & Tối ưu chính sách dựa trên phần thưởng tương đối giữa các đầu ra của cùng một nhóm \\
 KL & Kullback-Leibler divergence & Độ lệch giữa hai phân bố xác suất \\
-SPICE & Semantic Propositional Image Caption Evaluation & Độ đo dựa trên câu tham chiếu, so sánh các đối tượng, thuộc tính và quan hệ được trích xuất từ hai câu \\
-BLEU & Bilingual Evaluation Understudy & Độ đo trùng lặp cụm từ giữa câu sinh ra và câu tham chiếu \\
+SPICE & Semantic Propositional Image Caption Evaluation & Độ đo dựa trên câu chuẩn, so sánh các đối tượng, thuộc tính và quan hệ được trích xuất từ hai câu \\
+BLEU & Bilingual Evaluation Understudy & Độ đo mức lặp lại của cụm từ giữa câu sinh ra và câu chuẩn \\
 METEOR & Metric for Evaluation of Translation with Explicit ORdering & Độ đo ghép từ giữa hai câu, có tính từ đồng nghĩa và biến thể từ \\
 ROUGE-L & Recall-Oriented Understudy for Gisting Evaluation, Longest common subsequence & Độ đo dựa trên chuỗi con chung dài nhất giữa hai câu \\
 CIDEr-D & Consensus-based Image Description Evaluation, bản D & Độ đo trùng lặp cụm từ có trọng số theo độ hiếm của cụm từ, bản D thêm phạt độ dài và giới hạn số lần đếm \\
@@ -39,9 +39,9 @@ BERTScore & BERTScore & Độ đo tương đồng ngữ nghĩa giữa hai câu d
 \multicolumn{3}{@{}l@{}}{\textit{Thuật ngữ riêng của đề tài}} \\
 \midrule
 \multicolumn{2}{@{}p{8.2cm}}{ACE (\emph{Action-Consistent Exemplar Copying})}
-& Thành phần hiệu chỉnh của phương pháp đề xuất. ACE truy hồi bốn câu tham chiếu từ các bước tương tự trong tập huấn luyện và chỉ thay hướng dẫn ban đầu khi câu ứng viên giống hoàn toàn với một trong các câu được truy hồi và có cùng loại thao tác với hướng dẫn ban đầu (Mục~\ref{sec:4.6}). \\
+& Thành phần hiệu chỉnh của phương pháp đề xuất. ACE truy hồi bốn câu chuẩn từ các bước tương tự trong tập huấn luyện và chỉ thay hướng dẫn ban đầu khi câu ứng viên giống hoàn toàn với một trong các câu được truy hồi và có cùng loại thao tác với hướng dẫn ban đầu (Mục~\ref{sec:4.6}). \\
 \multicolumn{2}{@{}p{8.2cm}}{executability (khả năng thực hiện theo hướng dẫn)}
-& Độ đo xem xét liệu một câu hướng dẫn có dẫn tới đúng phần tử cần thao tác hay không. Trong luận văn, một câu đạt khi mô hình định vị xác định đúng phần tử mà người dùng đã chạm và câu nêu đúng loại thao tác (Chương~\ref{chap:5}). \\
+& Độ đo xem xét liệu một câu hướng dẫn có dẫn tới đúng phần tử cần thao tác hay không. Một câu đạt khi mô hình định vị xác định đúng phần tử mà người dùng đã chạm và câu nêu đúng loại thao tác (Chương~\ref{chap:5}). \\
 \multicolumn{2}{@{}p{8.2cm}}{Mô hình tinh chỉnh có giám sát (S1)}
 & Qwen2.5-VL-3B-Instruct sau khi được tinh chỉnh có giám sát cho bài toán sinh hướng dẫn. S1 là mốc so sánh chính và cũng là mô hình khởi tạo cho giai đoạn học tăng cường của phương pháp đề xuất. \\
 \multicolumn{2}{@{}p{8.2cm}}{S1/101, S1/202}
@@ -52,8 +52,8 @@ BERTScore & BERTScore & Độ đo tương đồng ngữ nghĩa giữa hai câu d
 & Các mô hình của hướng mô tả phần tử trước khi sinh câu (Phụ lục~\ref{app:A}): mô hình mô tả phần tử, mô hình chỉ học thêm có giám sát, mô hình học theo cặp ưu tiên trên dòng mô tả, và giai đoạn thưởng tọa độ \\
 \multicolumn{2}{@{}p{8.2cm}}{TAGE (\emph{Type-Aware Grounded Editor})}
 & Mô-đun hiệu chỉnh câu theo vùng ảnh cục bộ, một hướng đã thử (Mục~\ref{sec:A.7}) \\
-\multicolumn{2}{@{}p{8.2cm}}{Câu tham chiếu}
-& Câu hướng dẫn theo từng bước do người thực hiện AndroidControl viết cho bước tương ứng; được dùng làm mục tiêu trong huấn luyện có giám sát và trong các độ đo dựa trên câu tham chiếu. \\
+\multicolumn{2}{@{}p{8.2cm}}{Câu chuẩn}
+& Câu hướng dẫn theo từng bước do người thực hiện AndroidControl viết cho bước tương ứng. Câu này được dùng làm mục tiêu trong huấn luyện có giám sát và trong các độ đo dựa trên câu chuẩn. \\
 \bottomrule
 \end{longtable}
 \clearpage
