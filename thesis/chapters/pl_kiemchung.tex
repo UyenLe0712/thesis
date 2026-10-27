@@ -1,11 +1,11 @@
-\chapter{Kiểm chứng bổ sung cho executability}
+\chapter[Kiểm chứng bổ sung cho executability]{Kiểm chứng bổ sung\\cho executability}
 \label{app:B}
 
-Phụ lục này trình bày hai phép kiểm phụ được nhắc ngắn ở Chương~\ref{chap:5}.
+Phụ lục này trình bày các phép kiểm phụ được nhắc ngắn ở Chương~\ref{chap:5}.
 
 \section{Biến đổi lỗi có kiểm soát}\label{sec:B.1}\label{sec:5.7}
 
-Theo cách làm của Sai và cộng sự~\cite{sai2021}, chúng tôi tạo các trường hợp đúng hoặc sai đã biết trước rồi đếm tỉ lệ cách đánh giá phản ứng đúng chiều (Bảng~\ref{tab:5.2}). Phép kiểm này không gọi mô hình định vị. Điểm dự đoán được đặt tổng hợp, hoặc lệch nhẹ quanh điểm chạm, hoặc gần tâm một phần tử khác, nên bảng chỉ kiểm tra phần tính điểm, tức ba điều kiện ở Mục~\ref{sec:5.1}. Ảnh hưởng của cách diễn đạt lên chính mô hình định vị được đo riêng ở Mục~\ref{sec:5.8}. Ba dòng đầu và các dòng về vị trí, loại thao tác dùng mẫu 398 bước có thao tác chạm. Ba dòng cuối dùng mọi bước phù hợp của tập kiểm tra; hai dòng cuối lấy từ các bước nhập chữ và bước cuộn, kiểm tra cách so nội dung nhập và hướng cuộn dùng khi phân tích các bước không chạm.
+Theo cách làm của Sai và cộng sự~\cite{sai2021}, chúng tôi tạo các trường hợp đúng hoặc sai đã biết trước rồi đếm tỉ lệ cách đánh giá phản ứng đúng chiều (Bảng~\ref{tab:5.2}). Phép kiểm này không gọi mô hình định vị. Điểm dự đoán được đặt tổng hợp, hoặc lệch nhẹ quanh điểm chạm, hoặc gần tâm một phần tử khác, nên bảng chỉ kiểm tra phần tính điểm, tức hai điều kiện ở Mục~\ref{sec:5.1}. Ảnh hưởng của cách diễn đạt lên chính mô hình định vị được đo riêng ở Mục~\ref{sec:5.8}. Ba dòng đầu và các dòng về vị trí, loại thao tác dùng mẫu 398 bước có thao tác chạm. Ba dòng cuối dùng mọi bước phù hợp của tập kiểm tra; hai dòng cuối lấy từ các bước nhập chữ và bước cuộn, kiểm tra cách so nội dung nhập và hướng cuộn dùng khi phân tích các bước không chạm.
 
 \begin{table}[htbp]
 \centering\small
@@ -36,3 +36,57 @@ Tỉ lệ thấp ở dòng 30 đến 80 điểm ảnh phản ánh phép gộp t�
 \section{Độ tương đồng nhúng giữa các cách gọi phần tử}\label{sec:B.2}
 
 Phép thử dùng 51 cặp câu viết tay: 25 cặp cùng phần tử nhưng khác cách gọi, 15 cặp khác phần tử nhưng có từ ngữ chồng lấn, và 11 cặp khó liên quan tới trạng thái đối lập, con số, hướng hoặc quan hệ giữa phần tử cha và phần tử con. Hai vế của mỗi cặp được biểu diễn bằng bge-m3~\cite{bgem3} rồi so bằng độ tương đồng cosine. Điểm trung bình của các cặp cùng phần tử là 0,62, thấp hơn mức 0,67 của các cặp khác phần tử có từ ngữ chồng lấn. Cặp \emph{inbox} và \emph{outbox}, hai phần tử khác nhau, đạt 0,76, trong khi \emph{search} và \emph{magnifying glass}, hai cách gọi có thể chỉ cùng một phần tử, chỉ đạt 0,55. Trên tập này, độ gần trong không gian nhúng không đi cùng chiều với quan hệ quy chiếu, nên không có ngưỡng cosine nào tách được cặp cùng phần tử khỏi cặp khác phần tử. Kết luận chỉ áp dụng cho tập câu và mô hình nhúng nêu trên.
+
+\section{So sánh năm cách xác định vị trí}\label{sec:B.3}
+
+Giá trị tuyệt đối của điểm số phụ thuộc cách xác định một điểm là đúng phần tử. Trên mẫu 698 bước, chúng tôi đánh giá lại câu chuẩn, S1 và Base theo năm cách: đĩa Euclid bán kính 14\% bề ngang, cửa sổ chữ nhật 14\% theo từng trục, ô Voronoi đang dùng, ô Voronoi dựng quanh tâm hộp chứa $g$ thay vì quanh $g$, và hộp gần nhất. Điểm của câu chuẩn thay đổi từ 56,6 đến 82,2, nhưng thứ hạng giữ nguyên và chênh lệch S1 $-$ Base luôn nằm trong khoảng từ 9,5 đến 13,0 điểm (Bảng~\ref{tab:5.6}).
+
+\begin{table}[htbp]
+\centering\small
+\caption{Điểm của câu chuẩn và chênh lệch S1 $-$ Base theo năm cách xác định vị trí (698 bước).}\label{tab:5.6}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}Xrrrrr@{}}
+\toprule
+ & \textbf{Đĩa} & \textbf{Chữ nhật} & \textbf{Voronoi} & \textbf{Voronoi (tâm hộp)} & \textbf{Hộp gần nhất} \\
+\midrule
+Câu chuẩn & 80,2 & 82,2 & 74,2 & 56,6 & 82,2 \\
+S1 $-$ Base & +12,6 & +13,0 & +11,7 & +9,5 & +13,0 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Tiêu chí lỏng và kết luận thống kê}\label{sec:B.4}
+
+Tiêu chí dung sai chấp nhận mọi điểm đủ gần, nên trên mẫu 800 bước cả câu chung chung ``\emph{Tap the button.}'' cũng tăng từ 12,0 lên 20,5 điểm khi chỉ dùng cửa sổ 14\%. Một phần mức tăng khi nới tiêu chí vì vậy là phần mà câu không mang thông tin quy chiếu cũng nhận được. Bảng~\ref{tab:5.holm} minh họa hệ quả trên một phép so: mô hình sau giai đoạn thưởng tọa độ (một hướng đã thử, Mục~\ref{sec:A.4}) cao hơn S1/101 có ý nghĩa thống kê dưới hai tiêu chí lỏng nhưng không có ý nghĩa dưới executability.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Mô hình sau giai đoạn thưởng tọa độ trừ S1/101 dưới ba tiêu chí, kèm hiệu chỉnh Holm.}\label{tab:5.holm}
+\begin{tabular}{@{}lrrl@{}}
+\toprule
+\textbf{Tiêu chí} & \textbf{$\Delta$} & \textbf{p} & \textbf{Sau hiệu chỉnh Holm} \\
+\midrule
+Cửa sổ $\pm$14\% theo từng trục & +2,13 & 0,0003 & có ý nghĩa thống kê \\
+Điều kiện khoảng cách của AitW & +1,99 & 0,0007 & có ý nghĩa thống kê \\
+Executability & +0,96 & 0,090 & không có ý nghĩa thống kê \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Viết lại câu chuẩn}\label{sec:B.5}
+
+Bảng~\ref{tab:5.3} chi tiết phép viết lại câu chuẩn ở Mục~\ref{sec:5.8}, tính trên các câu được viết lại của mẫu 800 bước.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Executability khi viết lại câu chuẩn.}\label{tab:5.3}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Biến thể} & \textbf{Số câu viết lại} & \textbf{Trước $\rightarrow$ sau} & \textbf{$b$ / $c$} & \textbf{p} \\
+\midrule
+Đổi động từ thao tác & 725 (90,6\%) & 76,8 $\rightarrow$ 77,0 & 13 / 14 & 1,000 \\
+Đảo trật tự mệnh đề & 211 (26,4\%) & 89,6 $\rightarrow$ 90,0 & 0 / 1 & 1,000 \\
+Đổi động từ và đảo trật tự & 203 (25,4\%) & 90,1 $\rightarrow$ 91,1 & 0 / 2 & 0,500 \\
+\bottomrule
+\end{tabular}
+\end{table}
