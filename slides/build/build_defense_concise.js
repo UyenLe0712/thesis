@@ -76,7 +76,7 @@ addText('Chỉ ra đúng phần tử cần thao tác.',{x:5.60,y:3.75,w:3.55,h:0
 addText('Vì vậy, câu hướng dẫn không chỉ cần đúng nội dung mà còn phải phân biệt được đúng phần tử cần thao tác.',{x:M,y:5.32,w:8.9,h:0.7,fontSize:15.5,bold:true,color:FOOTB,align:'center',fit:'shrink'}); foot();
 
 // 4 · Khoảng trống đánh giá
-newSlide('Tổng quan','Hạn chế của độ tương đồng');
+newSlide('Giới thiệu','Hạn chế của độ tương đồng');
 addText('Các thước đo dựa trên câu chuẩn và executability phản ánh hai khía cạnh bổ sung cho nhau.',{x:M,y:1.0,w:8.9,h:0.55,fontSize:17,bold:true,color:FOOTB,align:'center'});
 box(0.70,2.05,2.55,1.2,'BLEU / ROUGE\nĐo mức giống câu chuẩn',{bold:true,fill:LIGHT,line:FOOTD,fs:15});
 box(3.72,2.05,2.55,1.2,'SPICE / CIDEr\nĐo tương đồng nội dung',{bold:true,fill:LIGHT,line:FOOTD,fs:15});
@@ -99,7 +99,7 @@ metricBadge(3.72,4.78,2.55,'+4,58','điểm trên tác vụ chưa có trong tậ
 metricBadge(6.65,4.78,2.55,'7/7','chỉ số câu tăng sau ACE',FOOTD); foot();
 
 // 6 · Dữ liệu
-newSlide('Xây dựng bộ dữ liệu','Dữ liệu và cách chia tập');
+newSlide('Dữ liệu và đánh giá','Dữ liệu và cách chia tập');
 addText('Tập huấn luyện và tập kiểm tra chính được tách theo tác vụ; không có tác vụ xuất hiện ở cả hai phía.',{x:M,y:0.96,w:8.9,h:0.55,fontSize:16.5,bold:true,color:FOOTB,align:'center',fit:'shrink'});
 table(M,1.72,[2.75,1.85,1.85,2.45],[
   {cells:['','Huấn luyện','Kiểm tra chính','Ghi chú'],fill:FOOTB,color:WHITE,bold:true,h:0.46},
@@ -112,22 +112,7 @@ addText('Đánh giá tổng quát hóa bổ sung',{x:M+0.22,y:4.34,w:2.8,h:0.55,
 addText('ACU gồm 1.484 bước thuộc các tác vụ chưa có trong tập huấn luyện. AitZ dùng để kiểm tra khi đổi miền dữ liệu.',{x:M+2.72,y:4.28,w:5.88,h:0.86,fontSize:13.5,align:'left',valign:'mid',fit:'shrink'}); foot();
 
 // 7 · Baseline và scale
-newSlide('Thực nghiệm và kết quả','So sánh 3B sau tinh chỉnh với 7B prompting');
-metricBadge(0.62,1.45,2.00,'47,59%','3B · chưa tinh chỉnh',FOOTD);
-metricBadge(2.88,1.45,2.00,'51,51%','7B · prompting',FOOTD);
-metricBadge(5.14,1.45,2.00,'59,11%','3B · S1',FOOTB);
-metricBadge(7.40,1.45,2.00,'60,65%','3B · GRPO-SPICE',FOOTC);
-line(M,3.05,8.9,0,RULE,1);
-rect(0.85,3.50,3.85,1.42,LIGHT,{radius:0.05,line:FOOTD});
-addText('7B hơn 3B gốc',{x:1.05,y:3.75,w:3.45,h:0.35,fontSize:14.5,bold:true,color:FOOTB,align:'center'});
-addText('+3,92 điểm',{x:1.05,y:4.18,w:3.45,h:0.45,fontSize:21,bold:true,color:FOOTD,align:'center'});
-rect(5.30,3.50,3.85,1.42,LIGHT,{radius:0.05,line:FOOTC});
-addText('3B sau GRPO-SPICE hơn 7B prompting',{x:5.50,y:3.70,w:3.45,h:0.52,fontSize:13.6,bold:true,color:FOOTB,align:'center',fit:'shrink'});
-addText('+9,14 điểm',{x:5.50,y:4.18,w:3.45,h:0.45,fontSize:21,bold:true,color:FOOTC,align:'center'});
-addText('So sánh này chỉ áp dụng cho thiết lập prompting đã thử. 7B không được tối ưu prompt riêng.',{x:M,y:5.55,w:8.9,h:0.55,fontSize:13.8,bold:true,color:FOOTB,align:'center',fit:'shrink'}); foot();
-
-// 8 · Executability
-newSlide('Độ đo khả năng thực hiện theo hướng dẫn','Executability');
+newSlide('Dữ liệu và đánh giá','Executability');
 box(0.65,1.72,1.90,0.92,'Câu hướng dẫn',{bold:true,fill:WHITE,line:FOOTD});
 line(2.67,2.18,0.40,0,FOOTC,2,true);
 box(3.18,1.58,2.25,1.20,'Mô hình định vị\ntách biệt',{bold:true,fill:LIGHT,line:FOOTB,fs:15});
@@ -140,7 +125,7 @@ bullets(['đúng loại thao tác','không diễn đạt ngược thao tác cầ
 addText('Mô hình định vị không tham gia huấn luyện phương pháp và không biết tọa độ đáp án.',{x:M,y:5.98,w:8.9,h:0.45,fontSize:14.0,bold:true,color:FOOTB,align:'center'}); foot();
 
 // 9 · Độ tin cậy metric
-newSlide('Độ đo khả năng thực hiện theo hướng dẫn','Kiểm tra độ tin cậy của executability');
+newSlide('Dữ liệu và đánh giá','Kiểm tra độ tin cậy của executability');
 metricBadge(0.70,1.20,2.35,'75,7%','câu chuẩn',FOOTB);
 metricBadge(3.82,1.20,2.35,'12,0%','“Tap the button.”',FOOTC);
 metricBadge(6.94,1.20,2.35,'6,1%','câu của màn hình khác',FOOTD);
@@ -181,6 +166,37 @@ addText('SPICE ưu tiên mức đúng về nội dung thay vì chỉ mức giố
 addText('500 bước cập nhật từ S1 · nhánh đối chứng dùng cùng cấu hình huấn luyện.',{x:M,y:5.82,w:8.9,h:0.43,fontSize:13.6,bold:true,color:FOOTB,align:'center'}); foot();
 
 // 12 · shuffled control
+newSlide('Phương pháp đề xuất','Thành phần thứ hai: ACE');
+box(0.45,1.25,1.65,0.95,'Câu ban đầu',{bold:true,fill:WHITE,line:FOOTD,fs:14.5});
+line(2.20,1.73,0.38,0,FOOTC,2,true);
+box(2.68,1.15,1.90,1.15,'Truy hồi 4 câu\nví dụ từ train',{bold:true,fill:LIGHT,line:FOOTB,fs:14});
+line(4.68,1.73,0.38,0,FOOTC,2,true);
+box(5.16,1.15,1.55,1.15,'Sinh câu\nứng viên',{bold:true,fill:LIGHT,line:FOOTC,fs:14});
+line(6.81,1.73,0.38,0,FOOTC,2,true);
+box(7.29,1.05,2.20,1.35,'Kiểm tra\n2 điều kiện chọn lọc',{bold:true,fill:LIGHT,line:FOOTD,fs:14});
+rect(M,3.42,4.20,1.18,LIGHT,{radius:0.05,line:FOOTC});
+addText('1 · Câu ứng viên phải giống hoàn toàn một trong bốn câu ví dụ được truy hồi.',{x:M+0.18,y:3.42,w:3.84,h:1.18,fontSize:14.0,bold:true,align:'center',valign:'mid',fit:'shrink'});
+rect(5.25,3.42,4.20,1.18,LIGHT,{radius:0.05,line:FOOTC});
+addText('2 · Động từ đầu câu phải cùng lớp thao tác với câu ban đầu.',{x:5.43,y:3.42,w:3.84,h:1.18,fontSize:14.0,bold:true,align:'center',valign:'mid',fit:'shrink'});
+box(1.80,5.10,2.80,0.82,'Đủ điều kiện → dùng câu mới',{bold:true,fill:LIGHT,line:FOOTC,fs:14});
+box(5.40,5.10,2.80,0.82,'Không đủ → giữ câu ban đầu',{bold:true,fill:WHITE,line:FOOTD,fs:14}); foot();
+
+// 16 · ACE result
+newSlide('Thực nghiệm và kết quả','So sánh 3B sau tinh chỉnh với 7B prompting');
+metricBadge(0.62,1.45,2.00,'47,59%','3B · chưa tinh chỉnh',FOOTD);
+metricBadge(2.88,1.45,2.00,'51,51%','7B · prompting',FOOTD);
+metricBadge(5.14,1.45,2.00,'59,11%','3B · S1',FOOTB);
+metricBadge(7.40,1.45,2.00,'60,65%','3B · GRPO-SPICE',FOOTC);
+line(M,3.05,8.9,0,RULE,1);
+rect(0.85,3.50,3.85,1.42,LIGHT,{radius:0.05,line:FOOTD});
+addText('7B hơn 3B gốc',{x:1.05,y:3.75,w:3.45,h:0.35,fontSize:14.5,bold:true,color:FOOTB,align:'center'});
+addText('+3,92 điểm',{x:1.05,y:4.18,w:3.45,h:0.45,fontSize:21,bold:true,color:FOOTD,align:'center'});
+rect(5.30,3.50,3.85,1.42,LIGHT,{radius:0.05,line:FOOTC});
+addText('3B sau GRPO-SPICE hơn 7B prompting',{x:5.50,y:3.70,w:3.45,h:0.52,fontSize:13.6,bold:true,color:FOOTB,align:'center',fit:'shrink'});
+addText('+9,14 điểm',{x:5.50,y:4.18,w:3.45,h:0.45,fontSize:21,bold:true,color:FOOTC,align:'center'});
+addText('So sánh này chỉ áp dụng cho thiết lập prompting đã thử. 7B không được tối ưu prompt riêng.',{x:M,y:5.55,w:8.9,h:0.55,fontSize:13.8,bold:true,color:FOOTB,align:'center',fit:'shrink'}); foot();
+
+// 8 · Executability
 newSlide('Thực nghiệm và kết quả','Vai trò của tín hiệu SPICE');
 addText('Nhánh đối chứng dùng cùng cấu hình huấn luyện nhưng không giữ đúng tín hiệu SPICE.',{x:M,y:0.95,w:8.9,h:0.55,fontSize:16.3,bold:true,color:FOOTB,align:'center',fit:'shrink'});
 metricBadge(0.78,1.82,2.45,'59,11%','S1',FOOTD);
@@ -218,22 +234,6 @@ addText('Trên ACU, 6/6 chỉ số chất lượng câu có KTC đều tăng.',{
 addText('ACU dùng để kiểm tra khả năng tổng quát hóa sang tác vụ mới.',{x:M,y:6.24,w:8.9,h:0.30,fontSize:10.8,color:GREY,align:'center',fit:'shrink'}); foot();
 
 // 15 · ACE process
-newSlide('Phương pháp đề xuất','Thành phần thứ hai: ACE');
-box(0.45,1.25,1.65,0.95,'Câu ban đầu',{bold:true,fill:WHITE,line:FOOTD,fs:14.5});
-line(2.20,1.73,0.38,0,FOOTC,2,true);
-box(2.68,1.15,1.90,1.15,'Truy hồi 4 câu\nví dụ từ train',{bold:true,fill:LIGHT,line:FOOTB,fs:14});
-line(4.68,1.73,0.38,0,FOOTC,2,true);
-box(5.16,1.15,1.55,1.15,'Sinh câu\nứng viên',{bold:true,fill:LIGHT,line:FOOTC,fs:14});
-line(6.81,1.73,0.38,0,FOOTC,2,true);
-box(7.29,1.05,2.20,1.35,'Kiểm tra\n2 điều kiện chọn lọc',{bold:true,fill:LIGHT,line:FOOTD,fs:14});
-rect(M,3.42,4.20,1.18,LIGHT,{radius:0.05,line:FOOTC});
-addText('1 · Câu ứng viên phải giống hoàn toàn một trong bốn câu ví dụ được truy hồi.',{x:M+0.18,y:3.42,w:3.84,h:1.18,fontSize:14.0,bold:true,align:'center',valign:'mid',fit:'shrink'});
-rect(5.25,3.42,4.20,1.18,LIGHT,{radius:0.05,line:FOOTC});
-addText('2 · Động từ đầu câu phải cùng lớp thao tác với câu ban đầu.',{x:5.43,y:3.42,w:3.84,h:1.18,fontSize:14.0,bold:true,align:'center',valign:'mid',fit:'shrink'});
-box(1.80,5.10,2.80,0.82,'Đủ điều kiện → dùng câu mới',{bold:true,fill:LIGHT,line:FOOTC,fs:14});
-box(5.40,5.10,2.80,0.82,'Không đủ → giữ câu ban đầu',{bold:true,fill:WHITE,line:FOOTD,fs:14}); foot();
-
-// 16 · ACE result
 newSlide('Thực nghiệm và kết quả','Kết quả sau ACE');
 metricBadge(0.82,0.94,1.95,'60,68%','Executability',FOOTB);
 metricBadge(3.00,0.94,1.95,'+0,02','so với GRPO-SPICE',FOOTD);
