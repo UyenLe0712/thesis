@@ -65,7 +65,7 @@ Kết quả trên điểm do mô hình định vị trả về cũng phù hợp 
 
 UGround-V1-2B~\cite{uground} được chọn làm công cụ định vị chính vì mô hình có trọng số công khai, được phát triển cho bài toán GUI grounding và có thể trả về trực tiếp tọa độ phần tử từ ảnh cùng mô tả văn bản. Trước khi sử dụng cho executability, sai số định vị của mô hình được kiểm tra trong tương quan với khoảng cách giữa các phần tử trên màn hình ở Mục~\ref{sec:5.4}.
 
-UGround được xây dựng trên Qwen2-VL và dữ liệu huấn luyện có sử dụng 47 nghìn phần tử được gán nhãn từ AndroidControl~\cite{uground}. Do tập kiểm tra của đề tài được lấy từ một bản phân phối khác của AndroidControl, chúng tôi bổ sung các phép kiểm theo phần chia chính thức và đánh giá chéo bằng những công cụ khác ở Mục~\ref{sec:5.9} và Mục~\ref{sec:5.10}. Các phép kiểm này được dùng để xem liệu thứ hạng và chiều của các chênh lệch chính có được giữ khi thay đổi công cụ đánh giá hay không.
+UGround được xây dựng trên Qwen2-VL và dữ liệu huấn luyện có sử dụng 47 nghìn phần tử được gán nhãn từ AndroidControl~\cite{uground}. Do tập kiểm tra của đề tài được lấy từ một bản phân phối khác của AndroidControl, chúng tôi bổ sung các kiểm tra theo phần chia chính thức và đánh giá chéo bằng những công cụ khác ở Mục~\ref{sec:5.9} và Mục~\ref{sec:5.10}. Các kiểm tra này được dùng để xem liệu thứ hạng và chiều của các chênh lệch chính có được giữ khi thay đổi công cụ đánh giá hay không.
 
 Khi tách 4.463 bước có thao tác chạm theo phần chia chính thức của AndroidControl, điểm số giữa hai nhóm gần như giữ nguyên. Câu chuẩn đạt 75,9\% trên phần huấn luyện chính thức và 74,0\% trên phần kiểm tra cùng kiểm định, S1 đạt 59,1\% và 59,3\%, còn mô hình gốc đạt 47,7\% và 46,7\%. Khoảng tin cậy của hai phần chồng nhau ở cả ba loại câu, nên không xuất hiện mức tăng riêng trên phần huấn luyện chính thức. Phân tích này được dùng cùng các đánh giá chéo ở Mục~\ref{sec:5.9} và Mục~\ref{sec:5.10} để kiểm tra độ ổn định của kết luận. Prompt cung cấp cho $G$ được giữ nguyên theo trang giới thiệu mô hình của nhóm tác giả.
 
@@ -179,7 +179,7 @@ Bỏ mệnh đề vị trí & 198 (24,8\%) & 89,4 $\rightarrow$ 85,9 & b=8, c=1,
 
 Gộp ba biến thể giữ nguyên nghĩa (Bảng~\ref{tab:5.3}), 30 trong 1.139 câu viết lại (2,6\%) làm thay đổi kết quả đánh giá. Hiệu ròng là +0,35 điểm, với khoảng tin cậy 95\% [$-$0,59; +1,29]. So với mốc bỏ mệnh đề vị trí ở Mục~\ref{sec:5.6}, độ đo tương đối ổn định trước những thay đổi bề mặt được khảo sát nhưng vẫn phản ứng khi thông tin định vị bị loại bỏ.
 
-\textbf{Phạm vi của phép kiểm.} Công cụ đo giữ kết quả ổn định trước việc thay động từ và đảo trật tự câu trong các biến đổi trên. Các cách viết lại này thay đổi bề mặt câu nhưng giữ nguyên phần mô tả phần tử và lớp thao tác. Vì vậy, phép kiểm tập trung vào độ ổn định trước các biến đổi này. Các dạng thay đổi trực tiếp tên gọi của phần tử nằm ngoài phạm vi của thí nghiệm tại mục này.
+\textbf{Phạm vi đánh giá độ ổn định.} Công cụ đo giữ kết quả ổn định trước việc thay động từ và đảo trật tự câu trong các biến đổi trên. Các cách viết lại này thay đổi bề mặt câu nhưng giữ nguyên phần mô tả phần tử và lớp thao tác. Vì vậy, phần đánh giá này tập trung vào độ ổn định trước các biến đổi trên. Các dạng thay đổi trực tiếp tên gọi của phần tử nằm ngoài phạm vi của thí nghiệm tại mục này.
 
 \section{Đánh giá chéo bằng mô hình định vị thứ hai}\label{sec:5.9}
 
@@ -225,7 +225,7 @@ Phương pháp đề xuất & 56,20 & GRPO-SPICE $-$ S1/101 & +1,55 [+0,82; +2,3
 \end{tabular}
 \end{table}
 
-\textbf{Bộ trỏ ngoài họ Qwen.} Chúng tôi đánh giá thêm bằng Phi-Ground-4B~\cite{phiground}, mô hình được xây dựng trên Phi-3.5-Vision. Theo báo cáo kỹ thuật, mô hình không dùng AndroidControl để huấn luyện. Dữ liệu được công bố gồm các tập con của OS-Atlas, SeeClick, E2ISynth, GUIAct, dữ liệu web và dữ liệu giao diện Windows/Office do người gán nhãn. Phi-Ground vì vậy cung cấp một phép kiểm bằng kiến trúc khác với UGround và UI-Venus. Ở nhánh Base, tệp dự đoán thiếu 7 trong 4.463 bước và các bước này được tính là không đạt. Kết quả định lượng được tổng hợp ở Chương~\ref{chap:6}.
+\textbf{Bộ trỏ ngoài họ Qwen.} Chúng tôi đánh giá thêm bằng Phi-Ground-4B~\cite{phiground}, mô hình được xây dựng trên Phi-3.5-Vision. Theo báo cáo kỹ thuật, mô hình không dùng AndroidControl để huấn luyện. Dữ liệu được công bố gồm các tập con của OS-Atlas, SeeClick, E2ISynth, GUIAct, dữ liệu web và dữ liệu giao diện Windows/Office do người gán nhãn. Phi-Ground vì vậy cung cấp thêm một đánh giá chéo bằng kiến trúc khác với UGround và UI-Venus. Ở nhánh Base, tệp dự đoán thiếu 7 trong 4.463 bước và các bước này được tính là không đạt. Kết quả định lượng được tổng hợp ở Chương~\ref{chap:6}.
 
 \section{Đánh giá chéo bằng mô hình listener thuộc họ kiến trúc khác}\label{sec:5.10}
 
@@ -255,7 +255,7 @@ Trên đủ 4.463 bước (Bảng~\ref{tab:5.5}), mô hình gốc đạt 38,23\%
 
 Khi lặp lại đánh giá trên 200 bước, mô hình listener cho kết quả hoàn toàn nhất quán giữa các lần chạy. Mức đồng thuận theo từng bước giữa listener và UGround ở mức vừa phải ($\kappa$ từ 0,25 đến 0,44 tùy mô hình). Hai công cụ vì thế có thể khác nhau ở từng bước cụ thể nhưng vẫn duy trì cùng thứ hạng giữa các hệ thống.
 
-Phi-4 chỉ nhận câu hướng dẫn và ảnh đã đánh số, không có thêm mục tiêu tác vụ hay lịch sử thao tác như thiết lập executability. Vì vậy, listener này được dùng như một phép kiểm độc lập cho thứ hạng và chiều của các chênh lệch chính, còn executability vẫn là chỉ số chính.
+Phi-4 chỉ nhận câu hướng dẫn và ảnh đã đánh số, không có thêm mục tiêu tác vụ hay lịch sử thao tác như thiết lập executability. Vì vậy, listener này được dùng như một đánh giá độc lập cho thứ hạng và chiều của các chênh lệch chính, còn executability vẫn là chỉ số chính.
 
 \section{So sánh với các độ đo dựa trên câu chuẩn}\label{sec:5.11}
 

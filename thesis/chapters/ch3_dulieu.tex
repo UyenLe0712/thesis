@@ -25,13 +25,13 @@ Hai bản được ghép theo cặp mã tác vụ và số thứ tự bước, \
 
 \section{Kiểm tra tính nhất quán của dữ liệu sau hợp nhất}\label{sec:3.2}
 
-Khi hợp nhất hai nguồn, điểm cần kiểm tra quan trọng là ảnh và câu hướng dẫn có cùng số thứ tự bước hay không. Sai lệch ở bước này có thể không làm thay đổi số lượng bản ghi, nên chúng tôi bổ sung một phép kiểm dựa trên mức độ phù hợp giữa nội dung ảnh và câu hướng dẫn.
+Khi hợp nhất hai nguồn, điểm cần kiểm tra quan trọng là ảnh và câu hướng dẫn có cùng số thứ tự bước hay không. Sai lệch ở bước này có thể không làm thay đổi số lượng bản ghi, nên chúng tôi kiểm tra thêm mức độ phù hợp giữa nội dung ảnh và câu hướng dẫn.
 
-Với mỗi bước có thao tác chạm, chúng tôi lấy phần văn bản OCR tại vị trí chạm và kiểm tra xem văn bản này có xuất hiện trong câu hướng dẫn hay không. Nếu ảnh và câu hướng dẫn thuộc cùng một bước, tín hiệu này được kỳ vọng xuất hiện thường xuyên hơn so với khi dịch số thứ tự câu hướng dẫn đi một bước.
+Với mỗi bước có thao tác chạm, chúng tôi lấy phần văn bản OCR tại vị trí chạm và kiểm tra xem văn bản này có xuất hiện trong câu hướng dẫn hay không. Nếu ảnh được ghép với đúng câu hướng dẫn của cùng bước, văn bản tại vị trí chạm được kỳ vọng xuất hiện trong câu hướng dẫn thường xuyên hơn. Để đối chiếu, chúng tôi cố ý ghép ảnh của một bước với câu hướng dẫn ở bước kế tiếp rồi tính lại cùng tỉ lệ.
 
-Trong 400 bước được kiểm tra, 193 bước có văn bản tại vị trí chạm xuất hiện trong câu hướng dẫn, tương ứng 48\%. Khi dịch số thứ tự câu hướng dẫn đi một bước, 311 trường hợp còn đủ dữ liệu để tạo cặp so sánh. Trong số này, 61 trường hợp vẫn có văn bản tại vị trí chạm xuất hiện trong câu hướng dẫn, tương ứng 20\%. Như vậy, tỉ lệ quan sát được khi giữ đúng liên kết giữa hai nguồn cao khoảng 2,4 lần so với khi dịch liên kết đi một bước.
+Trong 400 bước được kiểm tra, 193 bước có văn bản tại vị trí chạm xuất hiện trong câu hướng dẫn, tương ứng 48\%. Khi cố ý ghép ảnh với câu hướng dẫn ở bước kế tiếp, 311 trường hợp còn đủ dữ liệu để tạo cặp so sánh. Trong số này, 61 trường hợp vẫn có văn bản tại vị trí chạm xuất hiện trong câu hướng dẫn, tương ứng 20\%. Như vậy, tỉ lệ 48\% khi ghép đúng ảnh và câu hướng dẫn cao khoảng 2,4 lần so với mức 20\% khi ghép ảnh với câu hướng dẫn ở bước kế tiếp.
 
-Phép kiểm này được dùng để xác nhận tính nhất quán của liên kết theo \code{(episode\_id, step\_id)} sau khi hợp nhất hai nguồn dữ liệu.
+Kết quả đối chiếu này được dùng để xác nhận tính nhất quán của liên kết theo \code{(episode\_id, step\_id)} sau khi hợp nhất hai nguồn dữ liệu.
 
 \section{Quy mô và phân chia dữ liệu}\label{sec:3.3}
 
