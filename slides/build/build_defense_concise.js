@@ -212,15 +212,15 @@ addText('7B dùng cùng prompt của Base và không được tối ưu prompt r
 
 // 8 · Executability
 newSlide('Thực nghiệm và kết quả','Vai trò của tín hiệu SPICE');
-addText('Cùng 500 bước huấn luyện, chỉ nhánh dùng đúng tín hiệu SPICE tăng điểm.',{x:M,y:0.95,w:8.9,h:0.52,fontSize:16.5,bold:true,color:FOOTB,align:'center',fit:'shrink'});
-hbarChart(1.02,1.72,7.95,[
-  {label:'S1',value:59.11,text:'59,11%',color:FOOTD},
-  {label:'GRPO · đối chứng',value:59.11,text:'59,11%',color:FOOTD},
-  {label:'GRPO-SPICE',value:60.65,text:'60,65%',color:FOOTC,bold:true}
-],{max:63,rowH:0.88,labelW:2.15,valueW:0.95,fs:14.2});
-rect(1.10,4.62,7.80,0.95,LIGHT,{radius:0.05,line:FOOTC});
-addText('+1,55 điểm so với đối chứng   ·   KTC 95% [+0,81; +2,30]',{x:1.30,y:4.62,w:7.40,h:0.95,fontSize:16.6,bold:true,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
-addText('6/6 chỉ số chất lượng câu có KTC đều tăng so với đối chứng.',{x:M,y:5.98,w:8.9,h:0.42,fontSize:13.4,bold:true,color:FOOTB,align:'center'}); foot();
+addText('Cùng 500 bước GRPO, mức tăng chỉ xuất hiện khi điểm SPICE vẫn gắn với đúng mẫu.',{x:M,y:0.95,w:8.9,h:0.52,fontSize:16.5,bold:true,color:FOOTB,align:'center',fit:'shrink'});
+table(0.82,1.78,[2.85,2.85,2.85],[
+  {cells:['S1','GRPO + SPICE ghép ngẫu nhiên',{t:'GRPO-SPICE',bold:true}],fill:FOOTB,color:WHITE,bold:true,h:0.58,fs:13.8},
+  {cells:[{t:'59,11%',bold:true},{t:'59,11%',bold:true},{t:'60,65%',bold:true,color:FOOTC}],h:0.92,fs:20.0}
+],{align:['center','center','center'],fs:14.0});
+addText('Điểm SPICE của nhánh kiểm soát được ghép ngẫu nhiên sang mẫu khác.',{x:2.82,y:3.38,w:4.36,h:0.48,fontSize:13.4,color:GREY,align:'center',fit:'shrink'});
+rect(1.10,4.42,7.80,0.98,LIGHT,{radius:0.05,line:FOOTC});
+addText('GRPO-SPICE cao hơn nhánh kiểm soát +1,55 điểm · KTC 95% [+0,81; +2,30]',{x:1.30,y:4.42,w:7.40,h:0.98,fontSize:16.0,bold:true,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
+addText('6/6 độ đo chất lượng câu có KTC đều tăng so với nhánh kiểm soát.',{x:M,y:5.92,w:8.9,h:0.44,fontSize:13.8,bold:true,color:FOOTB,align:'center'}); foot();
 
 // 13 · main benchmark
 newSlide('Thực nghiệm và kết quả','Kết quả trên tập kiểm chính');
@@ -254,42 +254,46 @@ newSlide('Thực nghiệm và kết quả','Kết quả sau ACE');
 metricBadge(0.92,0.96,2.35,'60,68%','Executability',FOOTB);
 metricBadge(3.82,0.96,2.35,'+0,02','so với GRPO-SPICE',FOOTD);
 metricBadge(6.72,0.96,2.35,'7/7','chỉ số câu tăng',FOOTC);
-addText('6/6 độ đo có KTC nằm trên 0; METEOR chưa có KTC.',{x:M,y:2.02,w:8.9,h:0.38,fontSize:13.6,bold:true,color:FOOTB,align:'center'});
-table(1.05,2.56,[2.35,2.05,3.55],[
-  {cells:['Chỉ số','Δ ACE','KTC 95%'],fill:FOOTB,color:WHITE,bold:true,h:0.50,fs:13.5},
-  {cells:['BLEU-4',{t:'+1,11',bold:true,color:FOOTC},'[+0,78; +1,42]'],h:0.50,rule:true},
-  {cells:['METEOR',{t:'+0,45',bold:true,color:FOOTC},'—'],h:0.50,rule:true},
-  {cells:['ROUGE-L',{t:'+0,74',bold:true,color:FOOTC},'[+0,54; +0,94]'],h:0.50,rule:true},
-  {cells:['CIDEr-D',{t:'+11,97',bold:true,color:FOOTC},'[+8,24; +15,34]'],h:0.50,rule:true},
-  {cells:['SPICE',{t:'+1,33',bold:true,color:FOOTC},'[+0,92; +1,75]'],h:0.50,rule:true},
-  {cells:['chrF',{t:'+0,58',bold:true,color:FOOTC},'[+0,37; +0,80]'],h:0.50,rule:true},
-  {cells:['BERTScore',{t:'+0,66',bold:true,color:FOOTC},'[+0,46; +0,86]'],h:0.50}
-],{align:['left','center','center'],fs:13.3});
-foot();
+addText('ACE tiếp tục tăng các độ đo dựa trên câu chuẩn mà không làm giảm executability.',{x:M,y:1.98,w:8.9,h:0.42,fontSize:14.2,bold:true,color:FOOTB,align:'center'});
+rect(6.34,2.53,2.05,3.84,'F0EEF5');
+table(0.72,2.53,[1.95,1.62,2.05,2.05],[
+  {cells:['Chỉ số','S1','GRPO-SPICE',{t:'ACE',bold:true}],fill:FOOTB,color:WHITE,bold:true,h:0.48,fs:12.8},
+  {cells:['BLEU-4','51,56','52,36',{t:'53,47',bold:true,color:FOOTC}],h:0.48,rule:true},
+  {cells:['METEOR','36,79','37,92',{t:'38,37',bold:true,color:FOOTC}],h:0.48,rule:true},
+  {cells:['ROUGE-L','67,35','68,36',{t:'69,11',bold:true,color:FOOTC}],h:0.48,rule:true},
+  {cells:['CIDEr-D','416,12','430,05',{t:'442,02',bold:true,color:FOOTC}],h:0.48,rule:true},
+  {cells:['SPICE','44,37','45,79',{t:'47,13',bold:true,color:FOOTC}],h:0.48,rule:true},
+  {cells:['chrF','61,26','62,87',{t:'63,44',bold:true,color:FOOTC}],h:0.48,rule:true},
+  {cells:['BERTScore','66,33','67,07',{t:'67,73',bold:true,color:FOOTC}],h:0.48}
+],{align:['left','center','center','center'],fs:12.8});
+addText('6/6 độ đo có KTC nằm trên 0; METEOR chưa có KTC.',{x:M,y:6.43,w:8.9,h:0.32,fontSize:12.8,bold:true,color:FOOTB,align:'center',fit:'shrink'}); foot();
 
 // 17 · multi-tool
 newSlide('Thực nghiệm và kết quả','Đối chiếu với bốn công cụ đánh giá');
-addText('Chênh lệch executability: GRPO-SPICE − S1',{x:M,y:0.96,w:8.9,h:0.42,fontSize:16.5,bold:true,color:FOOTB,align:'center'});
-hbarChart(1.05,1.65,7.90,[
-  {label:'UGround',value:1.55,text:'+1,55',color:FOOTB,bold:true},
-  {label:'UI-Venus',value:1.55,text:'+1,55',color:FOOTB,bold:true},
-  {label:'Phi-Ground',value:0.78,text:'+0,78',color:FOOTC},
-  {label:'Phi-4',value:0.69,text:'+0,69',color:FOOTD}
-],{max:1.7,rowH:0.75,labelW:2.05,valueW:0.85,fs:14.0});
-rect(1.05,4.88,7.90,0.84,LIGHT,{radius:0.05,line:FOOTC});
-addText('KTC của cả 4 chênh lệch đều nằm trên 0',{x:1.30,y:4.88,w:7.40,h:0.84,fontSize:16.8,bold:true,color:FOOTB,align:'center',valign:'mid'});
-addText('Phi-Ground và Phi-4 nằm ngoài họ Qwen.',{x:M,y:6.05,w:8.9,h:0.34,fontSize:12.8,color:GREY,align:'center'}); foot();
+addText('GRPO-SPICE cao hơn S1 khi executability được tính bằng bốn công cụ định vị khác nhau.',{x:M,y:0.96,w:8.9,h:0.50,fontSize:16.2,bold:true,color:FOOTB,align:'center',fit:'shrink'});
+table(1.15,1.72,[3.10,2.00,2.60],[
+  {cells:['Công cụ','GRPO-SPICE − S1','KTC 95%'],fill:FOOTB,color:WHITE,bold:true,h:0.55,fs:13.5},
+  {cells:['UGround',{t:'+1,55',bold:true,color:FOOTC},'[+0,80; +2,33]'],h:0.68,rule:true},
+  {cells:['UI-Venus',{t:'+1,55',bold:true,color:FOOTC},'[+0,82; +2,30]'],h:0.68,rule:true},
+  {cells:['Phi-Ground',{t:'+0,78',bold:true,color:FOOTC},'[+0,05; +1,51]'],h:0.68,rule:true},
+  {cells:['Phi-4',{t:'+0,69',bold:true,color:FOOTC},'[+0,02; +1,40]'],h:0.68}
+],{align:['left','center','center'],fs:13.7});
+rect(1.10,5.10,7.80,0.84,LIGHT,{radius:0.05,line:FOOTC});
+addText('Cả 4 khoảng tin cậy đều nằm trên 0.',{x:1.32,y:5.10,w:7.36,h:0.84,fontSize:16.2,bold:true,color:FOOTB,align:'center',valign:'mid'});
+addText('Phi-Ground và Phi-4 nằm ngoài họ Qwen.',{x:M,y:6.15,w:8.9,h:0.34,fontSize:12.8,color:GREY,align:'center'}); foot();
 
 // 18 · history + AitZ
 newSlide('Thực nghiệm và kết quả','Lịch sử do mô hình tự sinh');
 addText('Khi lịch sử do chính mô hình sinh, GRPO-SPICE vẫn cao hơn S1.',{x:M,y:0.96,w:8.9,h:0.50,fontSize:16.3,bold:true,color:FOOTB,align:'center'});
-hbarChart(1.05,1.78,7.90,[
-  {label:'S1',value:54.96,text:'54,96%',color:FOOTD},
-  {label:'GRPO-SPICE',value:56.44,text:'56,44%',color:FOOTC,bold:true}
-],{max:60,rowH:1.02,labelW:2.15,valueW:0.95,fs:14.4});
-rect(1.10,4.25,7.80,1.02,LIGHT,{radius:0.05,line:FOOTC});
-addText('+1,48 điểm   ·   KTC 95% [+0,54; +2,43]',{x:1.35,y:4.25,w:7.30,h:1.02,fontSize:18.0,bold:true,color:FOOTB,align:'center',valign:'mid'});
-addText('Ưu thế vẫn được giữ khi lịch sử không còn là câu chuẩn.',{x:M,y:5.78,w:8.9,h:0.44,fontSize:14.0,bold:true,color:FOOTB,align:'center'}); foot();
+rect(1.15,1.78,3.30,2.05,LIGHT,{radius:0.05,line:FOOTD});
+addText('S1',{x:1.35,y:2.08,w:2.90,h:0.40,fontSize:17,bold:true,color:FOOTD,align:'center'});
+addText('54,96%',{x:1.35,y:2.55,w:2.90,h:0.72,fontSize:28,bold:true,color:FOOTD,align:'center',valign:'mid'});
+rect(5.55,1.78,3.30,2.05,LIGHT,{radius:0.05,line:FOOTC});
+addText('GRPO-SPICE',{x:5.75,y:2.08,w:2.90,h:0.40,fontSize:17,bold:true,color:FOOTC,align:'center'});
+addText('56,44%',{x:5.75,y:2.55,w:2.90,h:0.72,fontSize:28,bold:true,color:FOOTC,align:'center',valign:'mid'});
+rect(1.10,4.35,7.80,1.02,LIGHT,{radius:0.05,line:FOOTC});
+addText('+1,48 điểm   ·   KTC 95% [+0,54; +2,43]',{x:1.35,y:4.35,w:7.30,h:1.02,fontSize:18.0,bold:true,color:FOOTB,align:'center',valign:'mid'});
+addText('Ưu thế vẫn được giữ khi lịch sử không còn là câu chuẩn.',{x:M,y:5.88,w:8.9,h:0.44,fontSize:14.0,bold:true,color:FOOTB,align:'center'}); foot();
 
 newSlide('Thực nghiệm và kết quả','Chuyển miền sang AitZ');
 addText('Executability khi đổi sang phân phối AitZ',{x:M,y:0.96,w:8.9,h:0.44,fontSize:16.5,bold:true,color:FOOTB,align:'center'});
