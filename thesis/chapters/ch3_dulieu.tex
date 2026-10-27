@@ -54,36 +54,36 @@ Các kết quả executability ở Chương~\ref{chap:5} và Chương~\ref{chap:
 
 Dữ liệu được chia theo tác vụ, nghĩa là tất cả các bước của cùng một tác vụ chỉ nằm trong một tập. Cách chia này tránh để các màn hình liên tiếp của cùng một chuỗi thao tác xuất hiện ở cả tập huấn luyện và tập kiểm tra. Đối chiếu mã tác vụ cho thấy không có tác vụ nào xuất hiện ở cả hai tập.
 
-\textbf{Tập kiểm định nội bộ.} S1 ban đầu được huấn luyện trên toàn bộ tập huấn luyện ở Bảng~\ref{tab:3.3}. Sau khi giai đoạn này hoàn tất, 1.567 bước được tách theo tác vụ để tạo tập kiểm định nội bộ. Nếu một tác vụ được chọn thì toàn bộ các bước của tác vụ đó đều được đưa vào tập này. 63.000 bước còn lại được dùng cho các giai đoạn sau. Tập kiểm định nội bộ phục vụ việc lựa chọn số bước huấn luyện của GRPO-SPICE và điều kiện của ACE (Mục~\ref{sec:4.5} và Mục~\ref{sec:4.6}). Vì phần dữ liệu này đã xuất hiện trong quá trình huấn luyện S1, các điểm trên tập kiểm định nội bộ chỉ được dùng để lựa chọn cấu hình cho các giai đoạn sau, không được dùng làm kết quả đánh giá cuối cùng.
+\textbf{Tập kiểm định nội bộ.} Một phần dữ liệu huấn luyện được tách theo tác vụ để lựa chọn cấu hình cho các giai đoạn GRPO-SPICE và ACE. Vì phần này thuộc dữ liệu đã dùng ở giai đoạn S1, nó chỉ được dùng để lựa chọn cấu hình và không được dùng làm kết quả đánh giá cuối cùng.
 
-\textbf{Quan hệ với cách chia chính thức của AndroidControl.} Tập huấn luyện và tập kiểm tra của đề tài theo cách chia của bản phân phối có ảnh từ \code{ckg} và được tách biệt hoàn toàn theo mã tác vụ. Trong các tác vụ của tập kiểm tra, 1.287 tác vụ thuộc phần huấn luyện chính thức của AndroidControl, 131 thuộc phần kiểm tra và 14 thuộc phần kiểm định. Do đó, các so sánh trong luận văn được thực hiện nhất quán trên tập kiểm tra cố định của đề tài và được diễn giải theo cách chia này. Trong các chương sau, tập này được gọi là \emph{tập kiểm tra của đề tài}.
+\textbf{Quan hệ với cách chia chính thức của AndroidControl.} Tập huấn luyện và tập kiểm tra của đề tài theo bản phân phối có ảnh từ \code{ckg} và được tách biệt hoàn toàn theo mã tác vụ. Trong các chương sau, tập này được gọi là \emph{tập kiểm tra của đề tài}.
 
-\textbf{Tập tác vụ bổ sung chưa xuất hiện trong huấn luyện S1 (ACU).} Để kiểm tra khả năng khái quát sang tác vụ mới trong cùng nguồn AndroidControl, chúng tôi xây dựng thêm ACU gồm 1.484 bước có thao tác chạm từ các tác vụ không xuất hiện trong tập huấn luyện của S1. Tập này được dựng từ TFRecord gốc và được đánh giá tách biệt với tập kiểm tra chính. Trong 1.484 bước, 1.383 bước thuộc phần huấn luyện theo cách chia chính thức của AndroidControl. Vì vậy, ACU được dùng cụ thể để kiểm tra trường hợp mã tác vụ chưa xuất hiện trong huấn luyện S1. Kết quả trên ACU được trình bày ở Chương~\ref{chap:6}.
+\textbf{Tập tác vụ bổ sung chưa xuất hiện trong huấn luyện S1 (ACU).} ACU gồm 1.484 bước có thao tác chạm từ các tác vụ không xuất hiện trong tập huấn luyện của S1. Phần lớn các bước này thuộc phần huấn luyện theo cách chia chính thức của AndroidControl, nên ACU chỉ được dùng để kiểm tra trường hợp tác vụ chưa xuất hiện trong huấn luyện S1, không thay thế tập kiểm tra chính.
 
 \section{Xây dựng thông tin đầu vào từ giao diện}\label{sec:3.4}
 
-Ảnh màn hình và văn bản OCR là hai nguồn thông tin được đưa vào mô hình. Ảnh cung cấp thông tin thị giác, còn OCR bổ sung phần chữ hiển thị trên giao diện. Cây trợ năng chỉ được dùng khi xây dựng dữ liệu và thực hiện một số phân tích, không được đưa vào mô hình khi suy luận ở Chương~\ref{chap:4}. Văn bản OCR được giữ nguyên từ dữ liệu nguồn, không được sửa thủ công theo từng màn hình.
+Ảnh màn hình và văn bản OCR là hai nguồn thông tin được đưa vào mô hình. Ảnh cung cấp thông tin thị giác, còn OCR bổ sung phần chữ hiển thị trên giao diện. Cây trợ năng chỉ được dùng khi xây dựng dữ liệu và thực hiện một số phân tích, không được đưa vào mô hình khi suy luận ở Chương~\ref{chap:4}. Văn bản OCR được giữ nguyên từ dữ liệu gốc, không được sửa thủ công theo từng màn hình.
 
-\section{Dữ liệu phục vụ phương pháp đề xuất}\label{sec:3.5}
+\section{Dữ liệu cho từng thành phần của phương pháp}\label{sec:3.5}
 
 Dữ liệu được sử dụng cho bốn phần của phương pháp đề xuất gồm huấn luyện S1, học tăng cường, học thêm mô hình sinh câu ứng viên của ACE và xây dựng kho truy hồi ACE. Mục này làm rõ dữ liệu dùng cho từng phần. Chi tiết huấn luyện, truy hồi và lựa chọn đầu ra được trình bày ở Chương~\ref{chap:4}.
 
-\textbf{Tập huấn luyện có giám sát cho S1.} S1 được huấn luyện trên toàn bộ tập huấn luyện ở Bảng~\ref{tab:3.3} để sinh câu hướng dẫn theo bước của AndroidControl. Tập này gồm 64.445 bản ghi có câu hướng dẫn không rỗng và 122 bản ghi rỗng từ dữ liệu nguồn, tương ứng 0,19\% tổng số bước. S1 được dùng làm mô hình khởi tạo cho các giai đoạn tiếp theo của phương pháp đề xuất.
+\textbf{Tập huấn luyện có giám sát cho S1.} S1 được huấn luyện trên tập huấn luyện ở Bảng~\ref{tab:3.3} để sinh câu hướng dẫn theo bước của AndroidControl. Một số ít bản ghi không có câu hướng dẫn được giữ nguyên như trong dữ liệu gốc. S1 được dùng làm mô hình khởi tạo cho các giai đoạn tiếp theo.
 
 \textbf{Dữ liệu cho giai đoạn học tăng cường với phần thưởng SPICE.} Phần dữ liệu còn lại sau khi tách tập kiểm định nội bộ ở Mục~\ref{sec:3.3} được dùng cho các giai đoạn huấn luyện tiếp theo. Giai đoạn học tăng cường sử dụng prompt và câu chuẩn từ phần dữ liệu này. Câu chuẩn được dùng để tính phần thưởng SPICE. Cách lấy mẫu và số bước cập nhật được trình bày ở Mục~\ref{sec:4.5}.
 
-\textbf{Dữ liệu để học thêm mô hình sinh câu ứng viên của ACE.} Ngoài kho truy hồi, ACE có một lượt tinh chỉnh có giám sát để mô hình học cách sử dụng khối ví dụ. Lượt này sử dụng toàn bộ 3.991 bước có ảnh khả dụng cho giai đoạn huấn luyện. Thiết lập huấn luyện được trình bày ở Mục~\ref{sec:4.6}.
+\textbf{Dữ liệu để học thêm mô hình sinh câu ứng viên của ACE.} ACE có thêm một lượt tinh chỉnh có giám sát để mô hình học cách sử dụng các câu ví dụ được truy hồi. Dữ liệu và thiết lập huấn luyện của lượt này được trình bày ở Mục~\ref{sec:4.6}.
 
-\textbf{Kho truy hồi cho ACE.} Kho truy hồi ACE được xây dựng từ cùng phần dữ liệu còn lại sau khi tách tập kiểm định nội bộ. Vì mỗi bản ghi trong kho cần một câu hướng dẫn để làm ví dụ, 120 bản ghi có \code{target\_instruction} rỗng được loại. Hai bản ghi rỗng còn lại trong tổng số 122 bản ghi nêu trên nằm trong tập kiểm định nội bộ. Kho cuối cùng gồm 62.880 bước thuộc 12.542 tác vụ. Kho không chứa tác vụ nào của tập kiểm tra của đề tài, nên ACE không truy cập câu chuẩn của bước đang được đánh giá. Cách truy hồi được trình bày ở Mục~\ref{sec:4.6}.
+\textbf{Kho truy hồi cho ACE.} Kho truy hồi được xây dựng từ dữ liệu huấn luyện và chỉ giữ các bản ghi có câu hướng dẫn để làm ví dụ. Kho không chứa tác vụ nào của tập kiểm tra của đề tài, nên ACE không truy cập câu chuẩn của bước đang được đánh giá. Cách truy hồi được trình bày ở Mục~\ref{sec:4.6}.
 
-\section{Một số đặc điểm của dữ liệu}\label{sec:3.6}
+\section{Một số đặc điểm cần lưu ý}\label{sec:3.6}
 
 Bên cạnh cách chia theo tác vụ, ba đặc điểm dưới đây giúp làm rõ phân bố dữ liệu khi đọc các kết quả ở Chương~\ref{chap:6}.
 
-\textbf{Cách biểu diễn mục tiêu tác vụ trong dữ liệu nguồn.} Trong dữ liệu nguồn, 99,0\% mô tả mục tiêu tác vụ bị cắt giữa một cụm từ. Các thực nghiệm sử dụng nguyên trường mục tiêu được cung cấp và giữ cách xử lý này nhất quán giữa tập huấn luyện và tập kiểm tra.
+\textbf{Cách biểu diễn mục tiêu tác vụ.} Phần lớn mô tả mục tiêu trong dữ liệu gốc kết thúc trước khi câu hoàn chỉnh. Các thực nghiệm giữ nguyên trường mục tiêu được cung cấp và áp dụng nhất quán giữa tập huấn luyện và tập kiểm tra.
 
-\textbf{Mức lặp lại của cách diễn đạt.} Chúng tôi so sánh toàn bộ câu chuẩn của tập kiểm tra với 64.445 câu hướng dẫn không rỗng ở tập huấn luyện. Sau khi loại khoảng trắng ở đầu và cuối chuỗi, 45,5\% câu kiểm tra có cùng chuỗi ký tự với ít nhất một câu trong tập huấn luyện. Khi xét các cụm bốn token liên tiếp, 77,7\% câu kiểm tra có ít nhất một cụm đã xuất hiện trong tập huấn luyện. Hai tập không có mã tác vụ chung, nên các số liệu này mô tả mức độ lặp lại về cách diễn đạt thay vì sự lặp lại tác vụ. Một phần mức lặp ở các cụm bốn token có thể đến từ những khuôn câu thường gặp trong hướng dẫn giao diện. Các thống kê này được dùng để mô tả phân bố ngôn ngữ của dữ liệu, không dùng để suy ra lợi ích của một phương pháp cụ thể.
+\textbf{Mức độ lặp lại của cách diễn đạt.} Một số câu và cụm từ xuất hiện lặp lại giữa tập huấn luyện và tập kiểm tra, dù hai tập không có tác vụ chung. Điều này phản ánh các khuôn diễn đạt thường gặp trong hướng dẫn giao diện, không phải sự trùng lặp tác vụ.
 
-\textbf{Phạm vi phân tích theo ứng dụng.} Tên ứng dụng xác định được cho 45,0\% số bước của tập kiểm tra. Trong nhóm này, 95,6\% số bước thuộc về ứng dụng đã xuất hiện trong tập huấn luyện. Nếu tính theo số ứng dụng riêng biệt, tỉ lệ là 91,8\%. Vì vậy, phân tích theo ứng dụng chủ yếu phản ánh các tác vụ mới trên những ứng dụng mô hình đã gặp trong tập huấn luyện. Các bước không xác định được tên ứng dụng mang nhãn ``không biết'' và không được xếp vào nhóm đã thấy hoặc chưa thấy. Các phân tích tương ứng ở Chương~\ref{chap:6} chỉ sử dụng phần dữ liệu xác định được ứng dụng.
+\textbf{Phạm vi phân tích theo ứng dụng.} Không phải mọi bước đều xác định được tên ứng dụng. Vì vậy, các phân tích theo ứng dụng ở Chương~\ref{chap:6} chỉ sử dụng phần dữ liệu có thông tin ứng dụng rõ ràng.
 
 Các nhãn mô tả phần tử, tập cặp ưu tiên và danh sách ứng viên chỉ phục vụ các phương án đã khảo sát trước phương pháp cuối. Cách xây dựng và kiểm tra các dữ liệu này được trình bày cùng từng phương án ở Phụ lục~\ref{app:A}.
