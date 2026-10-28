@@ -5,11 +5,11 @@ Chương này trình bày các khái niệm và công trình nền tảng trực
 
 \section{Mô hình ngôn ngữ thị giác}\label{sec:2.1}
 
-Bài toán của luận văn này yêu cầu mô hình xử lý đồng thời hai nguồn thông tin. Ảnh chụp màn hình cung cấp trạng thái trực quan của giao diện, trong khi phần văn bản mô tả mục tiêu của tác vụ, các thao tác đã thực hiện trước đó và nội dung chữ xuất hiện trên màn hình. Vì vậy, mô hình sinh không chỉ cần hiểu ngôn ngữ mà còn phải liên kết nội dung văn bản với các thành phần trực quan trên giao diện.
+Bài toán được xét trong luận văn yêu cầu mô hình xử lý đồng thời hai nguồn thông tin. Ảnh chụp màn hình cung cấp trạng thái trực quan của giao diện, trong khi phần văn bản mô tả mục tiêu của tác vụ, các thao tác đã thực hiện trước đó và nội dung chữ xuất hiện trên màn hình. Vì vậy, mô hình sinh không chỉ cần hiểu ngôn ngữ mà còn phải liên kết nội dung văn bản với các thành phần trực quan trên giao diện.
 
 Mô hình ngôn ngữ thị giác (\emph{vision-language model}, VLM) xử lý đồng thời ảnh và văn bản. Thông thường, ảnh được chuyển thành các đặc trưng hoặc token thị giác, sau đó được tích hợp với chuỗi token văn bản để mô hình có thể suy luận và sinh đầu ra dựa trên cả hai nguồn thông tin. Phần sinh ngôn ngữ thường dựa trên kiến trúc Transformer~\cite{vaswani2017}, trong đó cơ chế tự chú ý giúp mô hình học quan hệ giữa các phần tử trong chuỗi đầu vào.
 
-Luận văn này sử dụng Qwen2.5-VL-3B-Instruct~\cite{qwen25vl} làm mô hình khởi tạo vì mô hình có trọng số mở, quy mô khoảng ba tỉ tham số phù hợp với điều kiện thử nghiệm và triển khai cục bộ, đồng thời hỗ trợ xử lý ảnh với độ phân giải động. Khả năng này phù hợp với ảnh chụp màn hình điện thoại, vốn có tỉ lệ và kích thước thay đổi. Cấu hình sử dụng cụ thể của Qwen2.5-VL-3B-Instruct được trình bày ở Chương~\ref{chap:4}.
+Qwen2.5-VL-3B-Instruct~\cite{qwen25vl} được sử dụng làm mô hình khởi tạo vì mô hình có trọng số mở, quy mô khoảng ba tỉ tham số phù hợp với điều kiện thử nghiệm và triển khai cục bộ, đồng thời hỗ trợ xử lý ảnh với độ phân giải động. Khả năng này phù hợp với ảnh chụp màn hình điện thoại, vốn có tỉ lệ và kích thước thay đổi. Cấu hình sử dụng cụ thể của Qwen2.5-VL-3B-Instruct được trình bày ở Chương~\ref{chap:4}.
 
 \section{Tinh chỉnh hiệu quả tham số bằng LoRA và QLoRA}\label{sec:2.2}
 
@@ -22,7 +22,7 @@ W' = W + \frac{\alpha}{r}BA, \qquad B \in \mathbb{R}^{d \times r},\ A \in \mathb
 \noindent
 trong đó $r$ là hạng của cập nhật và $\alpha$ là hệ số tỉ lệ. Thay vì cập nhật toàn bộ $dk$ tham số của ma trận $W$, LoRA chỉ cần học $r(d+k)$ tham số trong hai ma trận $A$ và $B$.
 
-QLoRA~\cite{qlora} tiếp tục giảm nhu cầu bộ nhớ bằng cách kết hợp LoRA với lượng tử hóa trọng số nền xuống 4 bit. Trong đó, định dạng NormalFloat (NF4) được thiết kế cho phân bố trọng số của mạng nơ-ron. Trong quá trình huấn luyện, trọng số nền vẫn được giữ cố định ở dạng lượng tử hóa, còn gradient chỉ cập nhật các tham số LoRA ở độ chính xác cao hơn. Cách làm này giúp tinh chỉnh các mô hình có kích thước lớn hơn trong điều kiện tài nguyên hạn chế. Trong luận văn này, QLoRA được sử dụng cho các lượt tinh chỉnh trực tiếp từ Qwen2.5-VL-3B-Instruct. Các giai đoạn học tiếp của phương pháp có cấu hình riêng ở Chương~\ref{chap:4}.
+QLoRA~\cite{qlora} tiếp tục giảm nhu cầu bộ nhớ bằng cách kết hợp LoRA với lượng tử hóa trọng số nền xuống 4 bit. Trong đó, định dạng NormalFloat (NF4) được thiết kế cho phân bố trọng số của mạng nơ-ron. Trong quá trình huấn luyện, trọng số nền vẫn được giữ cố định ở dạng lượng tử hóa, còn gradient chỉ cập nhật các tham số LoRA ở độ chính xác cao hơn. Cách làm này giúp tinh chỉnh các mô hình có kích thước lớn hơn trong điều kiện tài nguyên hạn chế. QLoRA được sử dụng cho các lượt tinh chỉnh trực tiếp từ Qwen2.5-VL-3B-Instruct. Các giai đoạn học tiếp của phương pháp có cấu hình riêng ở Chương~\ref{chap:4}.
 
 \section{GRPO và phần thưởng dựa trên độ đo văn bản}\label{sec:2.3}
 
@@ -49,7 +49,7 @@ Bài toán định vị giúp kiểm tra trực tiếp mối liên hệ giữa c
 
 AndroidControl~\cite{androidcontrol} là bộ dữ liệu do Google DeepMind công bố tại NeurIPS 2024 và phát hành theo giấy phép Apache 2.0. Bộ dữ liệu gồm 15.283 chuỗi thao tác do người thật thực hiện trên thiết bị Pixel trong khoảng một năm. Ở mỗi bước, dữ liệu lưu trạng thái màn hình, loại thao tác, tọa độ chạm nếu có và trường \code{step\_instructions}, nghĩa là câu hướng dẫn do người thực hiện viết cho thao tác tương ứng.
 
-Trong công trình AndroidControl và các nghiên cứu về tác tử giao diện sử dụng bộ dữ liệu này, như Aguvis~\cite{aguvis}, câu hướng dẫn thường được đưa vào làm đầu vào để mô hình dự đoán thao tác cần thực hiện. Luận văn này sử dụng dữ liệu theo chiều ngược lại: đưa trạng thái tác vụ và giao diện vào mô hình để sinh câu hướng dẫn cho thao tác kế tiếp. Nhờ đó, AndroidControl có thể được chuyển thành tập dữ liệu giám sát cho bài toán sinh hướng dẫn mà không cần thu thập lại toàn bộ dữ liệu từ đầu. Quy trình hợp nhất, làm sạch và phân chia dữ liệu được trình bày ở Chương~\ref{chap:3}.
+Trong công trình AndroidControl và các nghiên cứu về tác tử giao diện sử dụng bộ dữ liệu này, như Aguvis~\cite{aguvis}, câu hướng dẫn thường được đưa vào làm đầu vào để mô hình dự đoán thao tác cần thực hiện. Trong luận văn, dữ liệu được sử dụng theo chiều ngược lại: đưa trạng thái tác vụ và giao diện vào mô hình để sinh câu hướng dẫn cho thao tác kế tiếp. Nhờ đó, AndroidControl có thể được chuyển thành tập dữ liệu giám sát cho bài toán sinh hướng dẫn mà không cần thu thập lại toàn bộ dữ liệu từ đầu. Quy trình hợp nhất, làm sạch và phân chia dữ liệu được trình bày ở Chương~\ref{chap:3}.
 
 \section{Độ đo dựa trên câu chuẩn trong bài toán sinh hướng dẫn}\label{sec:2.6}
 
@@ -57,4 +57,4 @@ Một thao tác trên giao diện có thể được diễn đạt bằng nhiề
 
 Các độ đo tương đồng ngữ nghĩa có thể giảm bớt sự phụ thuộc vào từ ngữ cụ thể, nhưng không được thiết kế để kiểm tra trực tiếp liệu câu hướng dẫn có giúp xác định đúng phần tử cần thao tác hay không. Hai câu có thể gần nhau về nghĩa nhưng lại quy chiếu tới hai phần tử khác nhau trên cùng màn hình, chẳng hạn “inbox” và “outbox”. Ngược lại, hai cách diễn đạt khác nhau đáng kể vẫn có thể cùng quy chiếu tới một phần tử. Vì vậy, mức độ gần nhau trong không gian ngữ nghĩa không bảo đảm hai câu sẽ dẫn tới cùng một đối tượng trên giao diện.
 
-Vì vậy, bên cạnh các độ đo dựa trên câu chuẩn, luận văn này đánh giá trực tiếp mối quan hệ giữa hướng dẫn do mô hình tạo ra và phần tử mà hướng dẫn đó mô tả. Chương~\ref{chap:5} trình bày executability và các bước kiểm tra độ tin cậy của cách đo.
+Vì vậy, bên cạnh các độ đo dựa trên câu chuẩn, mối quan hệ giữa hướng dẫn do mô hình tạo ra và phần tử mà hướng dẫn đó mô tả được đánh giá trực tiếp. Chương~\ref{chap:5} trình bày executability và các bước kiểm tra độ tin cậy của cách đo.

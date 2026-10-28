@@ -175,7 +175,7 @@ Bên cạnh executability, Chương~\ref{chap:6} sử dụng bảy độ đo d�
 \end{itemize}
 Năm độ đo đầu được tính bằng bộ chấm chính thức của COCO. Cả bảy độ đo tính ở mức toàn tập, tức gộp thống kê của mọi câu rồi mới tính điểm, và câu không có nội dung nhận điểm 0. Công thức CIDEr-D có hệ số 10, nên điểm báo theo thang phần trăm có thể vượt 100.
 
-Các độ đo dựa trên câu chuẩn và executability bổ sung cho nhau. Nhóm thứ nhất phản ánh mức tương đồng về cách diễn đạt hoặc nội dung, còn executability tập trung vào việc câu có xác định đúng phần tử và thao tác hay không. Hai khía cạnh này không hoàn toàn trùng nhau. Chẳng hạn, một câu vẫn có thể dẫn tới đúng phần tử dù cách gọi khác câu chuẩn. Vì vậy, luận văn này trình bày cả hai nhóm độ đo, trong đó executability được dùng làm độ đo chính cho khả năng xác định đúng phần tử và thao tác, còn SPICE được dùng làm phần thưởng cho GRPO ở Mục~\ref{sec:4.5}.
+Các độ đo dựa trên câu chuẩn và executability bổ sung cho nhau. Nhóm thứ nhất phản ánh mức tương đồng về cách diễn đạt hoặc nội dung, còn executability tập trung vào việc câu có xác định đúng phần tử và thao tác hay không. Hai khía cạnh này không hoàn toàn trùng nhau. Chẳng hạn, một câu vẫn có thể dẫn tới đúng phần tử dù cách gọi khác câu chuẩn. Vì vậy, cả hai nhóm độ đo đều được trình bày, trong đó executability được dùng làm độ đo chính cho khả năng xác định đúng phần tử và thao tác, còn SPICE được dùng làm phần thưởng cho GRPO ở Mục~\ref{sec:4.5}.
 
 \section{Đánh giá độ tin cậy của executability}\label{sec:5.tincay}
 
@@ -220,7 +220,7 @@ Câu chuẩn bỏ mệnh đề vị trí, giữ tên & 198 & 89,4 $\rightarrow$ 
 
 \subsection{Đối chiếu bằng các mô hình đánh giá khác}\label{sec:5.9}\label{sec:5.10}
 
-Để kiểm tra kết quả có phụ thuộc riêng vào UGround hay không, luận văn này đánh giá thêm bằng ba mô hình khác (Bảng~\ref{tab:5.5}). Các mô hình này được chọn để tạo ra những cách đánh giá khác nhau về kiến trúc, dữ liệu huấn luyện hoặc dạng đầu ra.
+Để kiểm tra kết quả có phụ thuộc riêng vào UGround hay không, kết quả được đánh giá thêm bằng ba mô hình khác (Bảng~\ref{tab:5.5}). Các mô hình này được chọn để tạo ra những cách đánh giá khác nhau về kiến trúc, dữ liệu huấn luyện hoặc dạng đầu ra.
 
 \begin{itemize}
 \item \textbf{UI-Venus-Ground-7B}~\cite{uivenus} dựng trên Qwen2.5-VL nhưng không dùng AndroidControl khi huấn luyện.
