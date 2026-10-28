@@ -1,6 +1,6 @@
 % SINH TỰ ĐỘNG bởi harness/sinh_bang_nhieu_thuoc.py — đừng sửa tay
 \begin{table}[t]
-\caption{Nhóm thước theo vị trí trên đủ $4.463$ bước chạm, tính lại từ bản ghi từng bước, không gọi lại mô hình định vị. AitW là tiêu chí đánh giá lấy từ mã tính điểm gốc của AndroidInTheWild, AitW cận trên là biến thể của tiêu chí này khi vế khung xét mọi phần tử bấm được (sàn cao hơn, Mục~\ref{sec:donhay}). Hộp (D.3) là tiêu chí gốc của AndroidControl. Exec.\ là executability (Mục~\ref{sec:donhay}). Thao tác là tỉ lệ gọi đúng loại thao tác. Số in đậm là số cao nhất trong các nhánh mô hình ở cột đó. \textsuperscript{$\ast$}ACE là phương pháp đề xuất hoàn chỉnh. GRPO-SPICE là thành phần thứ nhất, học tiếp từ S1 ($101$) bằng GRPO với phần thưởng SPICE. TAGE là một hướng hiệu chỉnh khác đặt sau GRPO-SPICE (Mục~\ref{sec:grpospice} và~\ref{sec:tage}). \textsuperscript{$\dagger$}Nhánh ứng viên lệch ba biến so với các nhánh còn lại nên chỉ đọc được so với Base.}
+\caption{Nhóm thước theo vị trí trên đủ $4.463$ bước chạm, tính lại từ bản ghi từng bước, không gọi lại mô hình định vị. AitW là tiêu chí đánh giá lấy từ mã tính điểm gốc của AndroidInTheWild, AitW cận trên là biến thể của tiêu chí này khi vế khung xét mọi phần tử bấm được (sàn cao hơn, Mục~\ref{sec:donhay}). Hộp (D.3) là tiêu chí gốc của AndroidControl. Exec.\ là executability (Mục~\ref{sec:donhay}). Thao tác là tỉ lệ gọi đúng loại thao tác. Số in đậm là số cao nhất trong các nhánh mô hình ở cột đó. \textsuperscript{$\ast$}ACE là phương pháp đề xuất hoàn chỉnh. GRPO-SPICE là giai đoạn học tăng cường, học tiếp từ S1 ($101$) bằng GRPO với phần thưởng SPICE. TAGE là một hướng hiệu chỉnh khác đặt sau GRPO-SPICE (Mục~\ref{sec:grpospice} và~\ref{sec:tage}). \textsuperscript{$\dagger$}Nhánh ứng viên lệch ba biến so với các nhánh còn lại nên chỉ đọc được so với Base.}
 \label{tab:nhieuthuoc_vitri}
 \centering\small
 \renewcommand{\arraystretch}{1.2}
@@ -21,13 +21,13 @@ Phương pháp đề xuất (ACE)\textsuperscript{$\ast$} & $76{,}3$ & $\mathbf{
 TAGE & $76{,}1$ & $66{,}4$ & $60{,}2$ & $68{,}7$ & $82{,}7$ & $96{,}6$ \\
 Nhánh ứng viên\textsuperscript{$\dagger$} & $71{,}2$ & $62{,}4$ & $56{,}1$ & $63{,}9$ & $77{,}9$ & $90{,}9$ \\
 \midrule
-\emph{Câu chuẩn} & $92{,}1$ & $83{,}8$ & $75{,}7$ & $84{,}2$ & $96{,}2$ & $100{,}0$ \\
+\emph{Câu tham chiếu} & $92{,}1$ & $83{,}8$ & $75{,}7$ & $84{,}2$ & $96{,}2$ & $100{,}0$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{table}[t]
-\caption{Nhóm thước so với câu chuẩn trên đủ $4.463$ bước chạm. BLEU-4, METEOR~1.5, ROUGE-L, CIDEr-D và SPICE tính mức kho bằng bộ tính điểm chính thức của COCO Captions, sau khi tách từ bằng PTBTokenizer. chrF tính bằng sacreBLEU. BERTScore là F1 với \texttt{roberta-large} tầng $17$, đã hiệu chỉnh theo đường cơ sở. Mỗi bước chỉ có một câu chuẩn. Số in đậm là số cao nhất trong các nhánh mô hình ở cột đó. Chặng ba là MIN-DESC học tiếp với phần thưởng đặt trên ô toạ độ. \textsuperscript{$\ast$}Phương pháp đề xuất. Với TAGE mới tính SPICE. \textsuperscript{$\dagger$}Nhánh ứng viên chỉ đọc được so với Base.}
+\caption{Nhóm thước so với câu tham chiếu trên đủ $4.463$ bước chạm. BLEU-4, METEOR~1.5, ROUGE-L, CIDEr-D và SPICE tính mức kho bằng bộ tính điểm chính thức của COCO Captions, sau khi tách từ bằng PTBTokenizer. chrF tính bằng sacreBLEU. BERTScore là F1 với \texttt{roberta-large} tầng $17$, đã hiệu chỉnh theo đường cơ sở. Mỗi bước chỉ có một câu tham chiếu. Số in đậm là số cao nhất trong các nhánh mô hình ở cột đó. Chặng ba là MIN-DESC học tiếp với phần thưởng đặt trên ô toạ độ. \textsuperscript{$\ast$}Phương pháp đề xuất. Với TAGE mới tính SPICE. \textsuperscript{$\dagger$}Nhánh ứng viên chỉ đọc được so với Base.}
 \label{tab:nhieuthuoc_vanban}
 \centering\small
 \renewcommand{\arraystretch}{1.2}
@@ -48,7 +48,7 @@ Phương pháp đề xuất (ACE)\textsuperscript{$\ast$} & $\mathbf{53{,}5}$ & 
 TAGE & - & - & - & - & $45{,}7$ & - & - \\
 Nhánh ứng viên\textsuperscript{$\dagger$} & $46{,}9$ & $34{,}2$ & $63{,}3$ & $370{,}6$ & $39{,}3$ & $57{,}7$ & $62{,}8$ \\
 \midrule
-\emph{Câu chuẩn} & $100{,}0$ & $100{,}0$ & $100{,}0$ & $988{,}7$ & $98{,}6$ & $100{,}0$ & $100{,}0$ \\
+\emph{Câu tham chiếu} & $100{,}0$ & $100{,}0$ & $100{,}0$ & $988{,}7$ & $98{,}6$ & $100{,}0$ & $100{,}0$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -68,7 +68,7 @@ S1 ($101$) & $74{,}4$ $[72{,}8; 75{,}8]$ & $65{,}5$ $[63{,}8; 67{,}2]$ & $59{,}1
 S1 ($202$) & $75{,}3$ $[73{,}8; 76{,}7]$ & $66{,}1$ $[64{,}4; 67{,}7]$ & $59{,}6$ $[57{,}9; 61{,}3]$ \\
 MIN & $76{,}4$ $[74{,}9; 77{,}8]$ & $66{,}5$ $[64{,}9; 68{,}2]$ & $60{,}0$ $[58{,}3; 61{,}8]$ \\
 Chặng ba & $77{,}3$ $[75{,}8; 78{,}8]$ & $67{,}0$ $[65{,}3; 68{,}7]$ & $60{,}1$ $[58{,}3; 61{,}8]$ \\
-Câu chuẩn & $92{,}1$ $[91{,}1; 93{,}1]$ & $83{,}8$ $[82{,}5; 85{,}1]$ & $75{,}7$ $[74{,}1; 77{,}3]$ \\
+Câu tham chiếu & $92{,}1$ $[91{,}1; 93{,}1]$ & $83{,}8$ $[82{,}5; 85{,}1]$ & $75{,}7$ $[74{,}1; 77{,}3]$ \\
 \bottomrule
 \end{tabular}
 

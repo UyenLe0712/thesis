@@ -50,13 +50,13 @@ Ngoài tập huấn luyện và tập kiểm tra, luận văn sử dụng thêm 
 
 \section{Dữ liệu cho từng thành phần của phương pháp}\label{sec:3.5}\label{sec:3.4}
 
-Mỗi mẫu dữ liệu cung cấp cho mô hình gồm ảnh chụp màn hình, văn bản OCR được trích xuất tự động từ ảnh, mục tiêu của tác vụ và các câu chuẩn của những bước trước làm lịch sử thao tác. Văn bản OCR không được chỉnh sửa thủ công. Mô hình được huấn luyện để sinh câu hướng dẫn cho bước hiện tại. Dữ liệu được sử dụng cho từng thành phần của phương pháp như sau:
+Mỗi mẫu dữ liệu cung cấp cho mô hình gồm ảnh chụp màn hình, văn bản OCR được trích xuất tự động từ ảnh, mục tiêu của tác vụ và các câu tham chiếu của những bước trước làm lịch sử thao tác. Văn bản OCR không được chỉnh sửa thủ công. Mô hình được huấn luyện để sinh câu hướng dẫn cho bước hiện tại. Dữ liệu được sử dụng cho từng thành phần của phương pháp như sau:
 
 \begin{itemize}
 \item \textbf{S1} được tinh chỉnh có giám sát trên toàn bộ tập huấn luyện trong Bảng~\ref{tab:3.3}. Dữ liệu gốc có 122 bản ghi không chứa câu hướng dẫn và các bản ghi này được giữ nguyên.
-\item \textbf{GRPO-SPICE} sử dụng 3.991 bước của tập huấn luyện có đầy đủ ảnh ở giai đoạn này. Đầu vào của từng bước được dùng để sinh câu, còn câu chuẩn được dùng để tính phần thưởng SPICE. Các tác vụ thuộc tập kiểm định nội bộ được loại khỏi phần dữ liệu này.
+\item \textbf{GRPO-SPICE} sử dụng 3.991 bước của tập huấn luyện có đầy đủ ảnh ở giai đoạn này. Đầu vào của từng bước được dùng để sinh câu, còn câu tham chiếu được dùng để tính phần thưởng SPICE. Các tác vụ thuộc tập kiểm định nội bộ được loại khỏi phần dữ liệu này.
 \item \textbf{Lượt tinh chỉnh thêm của ACE} sử dụng cùng 3.991 bước nói trên và bổ sung các câu ví dụ được truy hồi từ kho của ACE.
-\item \textbf{Kho truy hồi của ACE} gồm 62.880 bước có câu hướng dẫn trong tập huấn luyện sau khi loại các tác vụ thuộc tập kiểm định nội bộ. Kho không chứa tác vụ nào của tập kiểm tra của đề tài, vì vậy ACE không thể truy hồi trực tiếp câu chuẩn của bước đang được đánh giá.
+\item \textbf{Kho truy hồi của ACE} gồm 62.880 bước có câu hướng dẫn trong tập huấn luyện sau khi loại các tác vụ thuộc tập kiểm định nội bộ. Kho không chứa tác vụ nào của tập kiểm tra của đề tài, vì vậy ACE không thể truy hồi trực tiếp câu tham chiếu của bước đang được đánh giá.
 \end{itemize}
 
 Chi tiết về cách lấy mẫu, số bước cập nhật và cơ chế truy hồi được trình bày ở Mục~\ref{sec:4.5} và Mục~\ref{sec:4.6}. Các nhãn mô tả phần tử, tập cặp ưu tiên và danh sách ứng viên chỉ được sử dụng trong các phương án đã khảo sát trước khi phương pháp cuối cùng được xác định. Những dữ liệu này được trình bày cùng từng phương án ở Phụ lục~\ref{app:A}.

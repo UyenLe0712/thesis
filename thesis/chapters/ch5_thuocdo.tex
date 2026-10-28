@@ -1,13 +1,13 @@
 \chapter{Độ đo khả năng thực hiện theo hướng dẫn}
 \label{chap:5}
 
-Chương này trình bày cách đánh giá câu hướng dẫn. Bên cạnh các độ đo dựa trên câu chuẩn, executability được sử dụng để kiểm tra câu có cung cấp đủ thông tin cho một mô hình định vị độc lập xác định đúng phần tử và đúng thao tác hay không. Mục~\ref{sec:5.1} giới thiệu ý tưởng và định nghĩa executability. Mục~\ref{sec:5.2} và Mục~\ref{sec:5.thaotac} trình bày cách xác định phần tử và loại thao tác. Mục~\ref{sec:5.11} mô tả các độ đo dựa trên câu chuẩn. Mục~\ref{sec:5.tincay} đánh giá độ tin cậy của executability, còn Mục~\ref{sec:5.13} trình bày phương pháp thống kê.
+Chương này trình bày cách đánh giá câu hướng dẫn. Bên cạnh các độ đo dựa trên câu tham chiếu, executability được sử dụng để kiểm tra câu có cung cấp đủ thông tin cho một mô hình định vị độc lập xác định đúng phần tử và đúng thao tác hay không. Mục~\ref{sec:5.1} giới thiệu ý tưởng và định nghĩa executability. Mục~\ref{sec:5.2} và Mục~\ref{sec:5.thaotac} trình bày cách xác định phần tử và loại thao tác. Mục~\ref{sec:5.11} mô tả các độ đo dựa trên câu tham chiếu. Mục~\ref{sec:5.tincay} đánh giá độ tin cậy của executability, còn Mục~\ref{sec:5.13} trình bày phương pháp thống kê.
 
 \section{Ý tưởng và định nghĩa executability}\label{sec:5.1}
 
-Các độ đo như BLEU hay ROUGE cho biết câu sinh giống câu chuẩn đến mức nào, nhưng chưa phản ánh đầy đủ việc câu có dẫn tới đúng phần tử trên giao diện hay không. Cùng một phần tử có thể được gọi bằng nhiều cách khác nhau, chẳng hạn \emph{Click on the Birthday} và \emph{Tap the date of birth row}. Ngược lại, hai câu có nhiều từ giống nhau vẫn có thể chỉ tới hai phần tử khác nhau. Ví dụ, \emph{Click on the Not now button} và \emph{Click on the Allow button} có cấu trúc gần giống nhau nhưng dẫn tới hai lựa chọn đối lập. Quan sát này cũng phù hợp với kết quả của Zhao và cộng sự~\cite{zhao2021} về hạn chế của các độ đo dựa trên cụm từ khi đánh giá chỉ dẫn điều hướng.
+Các độ đo như BLEU hay ROUGE cho biết câu sinh giống câu tham chiếu đến mức nào, nhưng chưa phản ánh đầy đủ việc câu có dẫn tới đúng phần tử trên giao diện hay không. Cùng một phần tử có thể được gọi bằng nhiều cách khác nhau, chẳng hạn \emph{Click on the Birthday} và \emph{Tap the date of birth row}. Ngược lại, hai câu có nhiều từ giống nhau vẫn có thể chỉ tới hai phần tử khác nhau. Ví dụ, \emph{Click on the Not now button} và \emph{Click on the Allow button} có cấu trúc gần giống nhau nhưng dẫn tới hai lựa chọn đối lập. Quan sát này cũng phù hợp với kết quả của Zhao và cộng sự~\cite{zhao2021} về hạn chế của các độ đo dựa trên cụm từ khi đánh giá chỉ dẫn điều hướng.
 
-Executability tiếp cận bài toán theo hướng khác: thay vì chỉ so câu với câu chuẩn, câu hướng dẫn được đưa cho một mô hình định vị độc lập để kiểm tra phần tử mà câu mô tả. Cách đánh giá này gần với các nghiên cứu sinh biểu thức quy chiếu, trong đó chất lượng câu được đánh giá qua khả năng một mô hình khác xác định đúng đối tượng được mô tả~\cite{mao2016,luo2017}. Quy trình gồm hai mô hình:
+Executability tiếp cận bài toán theo hướng khác: thay vì chỉ so câu với câu tham chiếu, câu hướng dẫn được đưa cho một mô hình định vị độc lập để kiểm tra phần tử mà câu mô tả. Cách đánh giá này gần với các nghiên cứu sinh biểu thức quy chiếu, trong đó chất lượng câu được đánh giá qua khả năng một mô hình khác xác định đúng đối tượng được mô tả~\cite{mao2016,luo2017}. Quy trình gồm hai mô hình:
 
 \begin{itemize}
 \item \textbf{Mô hình sinh}, ký hiệu $A$, là mô hình cần đánh giá, chẳng hạn Base, S1 hay phương pháp đề xuất (Chương~\ref{chap:4}). Ở mỗi bước, mô hình nhận ảnh màn hình cùng thông tin của tác vụ và sinh một câu hướng dẫn cho thao tác tiếp theo.
@@ -39,7 +39,7 @@ Mô hình định vị được tách khỏi quá trình sinh câu. Mô hình n�
 \node (k) [kiem, text width=3.9cm, right=6mm of p] {\textbf{Kiểm tra}\\ (i) đúng thao tác\\ (ii) $p$ rơi vào phần tử đích};
 \node (kq) [hop, draw=black!70, fill=black!6, text width=1.6cm, right=6mm of k] {\textbf{Đạt}\\ hoặc\\ \textbf{không đạt}};
 
-\node (chuan) [chuan, text width=7.2cm, below=7mm of k.south east, anchor=north east] {Dữ liệu chuẩn không đưa cho mô hình định vị: câu chuẩn $s^{*}$, điểm $g$ người dùng đã chạm, các phần tử trên màn hình};
+\node (chuan) [chuan, text width=7.2cm, below=7mm of k.south east, anchor=north east] {Dữ liệu chuẩn không đưa cho mô hình định vị: câu tham chiếu $s^{*}$, điểm $g$ người dùng đã chạm, các phần tử trên màn hình};
 
 \draw [mui] (vao) -- (a);
 \draw [mui] (a) -- (s);
@@ -54,10 +54,10 @@ Mô hình định vị được tách khỏi quá trình sinh câu. Mô hình n�
 \label{fig:5.qt}
 \end{figure}
 
-Hình~\ref{fig:5.qt} tóm tắt quy trình. Ở mỗi bước, mô hình sinh tạo câu $s$. Mô hình định vị đọc $s$ cùng ảnh $I$ và trả về điểm $p = B(I, s)$. Điểm này được so với dữ liệu chuẩn của bước, gồm câu chuẩn $s^{*}$ và điểm $g$ mà người dùng đã chạm. Câu $s$ được xem là thực hiện được khi thỏa cả hai điều kiện:
+Hình~\ref{fig:5.qt} tóm tắt quy trình. Ở mỗi bước, mô hình sinh tạo câu $s$. Mô hình định vị đọc $s$ cùng ảnh $I$ và trả về điểm $p = B(I, s)$. Điểm này được so với dữ liệu chuẩn của bước, gồm câu tham chiếu $s^{*}$ và điểm $g$ mà người dùng đã chạm. Câu $s$ được xem là thực hiện được khi thỏa cả hai điều kiện:
 
 \begin{itemize}
-\item \textbf{(i) Đúng thao tác.} $s$ nêu cùng loại thao tác với câu chuẩn, trong năm loại chạm, gõ, cuộn, nhấn giữ và quay lại, và không gọi trạng thái ngược với câu chuẩn, chẳng hạn ``bật thông báo'' thay cho ``tắt thông báo'' (Mục~\ref{sec:5.thaotac}).
+\item \textbf{(i) Đúng thao tác.} $s$ nêu cùng loại thao tác với câu tham chiếu, trong năm loại chạm, gõ, cuộn, nhấn giữ và quay lại, và không gọi trạng thái ngược với câu tham chiếu, chẳng hạn ``bật thông báo'' thay cho ``tắt thông báo'' (Mục~\ref{sec:5.thaotac}).
 \item \textbf{(ii) Đúng phần tử.} $p$ rơi vào phần tử mà người dùng đã chạm. Cụ thể, $p$ nằm trong cửa sổ $\pm$14\% quanh $g$ và không gần phần tử nào khác hơn chính $g$ (Mục~\ref{sec:5.2}).
 \end{itemize}
 
@@ -75,9 +75,9 @@ Hình~\ref{fig:5.qt} tóm tắt quy trình. Ở mỗi bước, mô hình sinh t�
 \label{fig:5.1}
 \end{figure}
 
-Hình~\ref{fig:5.1} minh họa một bước trên màn hình hồ sơ cá nhân. Người dùng đã chạm dòng \emph{Birthday}, với câu chuẩn \emph{Click on the Birthday}. S1 sinh câu \emph{Click on the Birthday option}. Mô hình định vị chọn đúng dòng \emph{Birthday}, nên câu đạt. Base sinh câu \emph{Click on the ``Gender'' section to change it to ``Male''}. Mô hình định vị chọn dòng \emph{Gender} ngay phía trên, nên câu không đạt. Trường hợp này cũng cho thấy chỉ dùng cửa sổ 14\% là chưa đủ, vì điểm dự đoán vẫn có thể nằm gần điểm chạm nhưng thuộc phần tử lân cận.
+Hình~\ref{fig:5.1} minh họa một bước trên màn hình hồ sơ cá nhân. Người dùng đã chạm dòng \emph{Birthday}, với câu tham chiếu \emph{Click on the Birthday}. S1 sinh câu \emph{Click on the Birthday option}. Mô hình định vị chọn đúng dòng \emph{Birthday}, nên câu đạt. Base sinh câu \emph{Click on the ``Gender'' section to change it to ``Male''}. Mô hình định vị chọn dòng \emph{Gender} ngay phía trên, nên câu không đạt. Trường hợp này cũng cho thấy chỉ dùng cửa sổ 14\% là chưa đủ, vì điểm dự đoán vẫn có thể nằm gần điểm chạm nhưng thuộc phần tử lân cận.
 
-Executability được tính trên \textbf{4.463} bước có thao tác chạm hoặc nhấn giữ, vì đây là các bước có tọa độ phần tử đích. Các thao tác gõ chữ, cuộn và quay lại được phân tích riêng theo loại thao tác ở Mục~\ref{sec:6.3.1}. Câu không có nội dung được tính là không đạt. Các khía cạnh về cách diễn đạt được đánh giá riêng bằng các độ đo dựa trên câu chuẩn ở Mục~\ref{sec:5.11}.
+Executability được tính trên \textbf{4.463} bước có thao tác chạm hoặc nhấn giữ, vì đây là các bước có tọa độ phần tử đích. Các thao tác gõ chữ, cuộn và quay lại được phân tích riêng theo loại thao tác ở Mục~\ref{sec:6.3.1}. Câu không có nội dung được tính là không đạt. Các khía cạnh về cách diễn đạt được đánh giá riêng bằng các độ đo dựa trên câu tham chiếu ở Mục~\ref{sec:5.11}.
 
 \section{Xác định điểm đúng phần tử}\label{sec:5.2}
 
@@ -140,32 +140,32 @@ Ba tiêu chí bổ sung cung cấp các cách nhìn khác nhau về cùng dự �
  & \textbf{Executability} & \textbf{Hộp} & \textbf{Hộp $\wedge$ 14\%} & \textbf{AitW đầy đủ} \\
 \midrule
 \multicolumn{5}{@{}l}{\emph{4.463 bước}} \\
-Câu chuẩn & 75,7 & 83,8 & 79,2 & 92,1 \\
+Câu tham chiếu & 75,7 & 83,8 & 79,2 & 92,1 \\
 S1 & 59,1 & 65,5 & 61,7 & 74,4 \\
 Base & 47,6 & 53,6 & 49,8 & 63,4 \\
 \midrule
 \multicolumn{5}{@{}l}{\emph{Mẫu 800 bước}} \\
-Câu chuẩn & 74,9 & 83,0 & 78,8 & 90,8 \\
+Câu tham chiếu & 74,9 & 83,0 & 78,8 & 90,8 \\
 Câu chung chung ``\emph{Tap the button.}'' & 12,0 & 14,1 & 12,1 & 25,9 \\
-Câu chuẩn của một màn hình khác & 6,1 & 8,6 & 6,6 & 17,4 \\
-Dải phân tách (câu chuẩn $-$ câu chung chung) & 62,9 & 68,9 & 66,6 & 64,9 \\
+Câu tham chiếu của một màn hình khác & 6,1 & 8,6 & 6,6 & 17,4 \\
+Dải phân tách (câu tham chiếu $-$ câu chung chung) & 62,9 & 68,9 & 66,6 & 64,9 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Thứ hạng câu chuẩn $>$ S1 $>$ Base được giữ dưới cả bốn tiêu chí trong Bảng~\ref{tab:5.7}. Executability được chọn làm tiêu chí chính vì yêu cầu đồng thời điểm dự đoán nằm gần thao tác thật và không gần một phần tử khác hơn phần tử đích. Các tiêu chí còn lại được dùng bổ sung để cho thấy kết luận không phụ thuộc vào một cách xác định vị trí duy nhất. Phụ lục~\ref{sec:B.3} mở rộng so sánh với năm cách xác định vị trí khác.
+Thứ hạng câu tham chiếu $>$ S1 $>$ Base được giữ dưới cả bốn tiêu chí trong Bảng~\ref{tab:5.7}. Executability được chọn làm tiêu chí chính vì yêu cầu đồng thời điểm dự đoán nằm gần thao tác thật và không gần một phần tử khác hơn phần tử đích. Các tiêu chí còn lại được dùng bổ sung để cho thấy kết luận không phụ thuộc vào một cách xác định vị trí duy nhất. Phụ lục~\ref{sec:B.3} mở rộng so sánh với năm cách xác định vị trí khác.
 
 \section{Loại thao tác}\label{sec:5.thaotac}
 
-Điều kiện về thao tác gồm hai phần. Trước hết, câu sinh và câu chuẩn được quy về một trong năm loại: chạm, gõ, cuộn, nhấn giữ và quay lại. Việc quy loại dựa trên động từ thao tác trong câu, trong đó các cách diễn đạt như \emph{tap}, \emph{click}, \emph{open} hay \emph{select} cùng được xem là thao tác chạm. Một kiểm tra độ nhạy với cách quy loại chặt hơn chỉ làm chênh lệch S1 $-$ Base thay đổi 0,11 điểm, nên kết luận chính không phụ thuộc vào chi tiết này.
+Điều kiện về thao tác gồm hai phần. Trước hết, câu sinh và câu tham chiếu được quy về một trong năm loại: chạm, gõ, cuộn, nhấn giữ và quay lại. Việc quy loại dựa trên động từ thao tác trong câu, trong đó các cách diễn đạt như \emph{tap}, \emph{click}, \emph{open} hay \emph{select} cùng được xem là thao tác chạm. Một kiểm tra độ nhạy với cách quy loại chặt hơn chỉ làm chênh lệch S1 $-$ Base thay đổi 0,11 điểm, nên kết luận chính không phụ thuộc vào chi tiết này.
 
-Ngoài ra, câu sinh không được mô tả trạng thái ngược với câu chuẩn, chẳng hạn ``bật thông báo'' thay cho ``tắt thông báo''. Kiểm tra này cần thiết vì hai trạng thái đối lập có thể nằm tại cùng một vị trí trên màn hình và vì vậy không thể phân biệt chỉ bằng tọa độ. Các cặp trạng thái đối lập được xác định trước cho toàn bộ quá trình đánh giá.
+Ngoài ra, câu sinh không được mô tả trạng thái ngược với câu tham chiếu, chẳng hạn ``bật thông báo'' thay cho ``tắt thông báo''. Kiểm tra này cần thiết vì hai trạng thái đối lập có thể nằm tại cùng một vị trí trên màn hình và vì vậy không thể phân biệt chỉ bằng tọa độ. Các cặp trạng thái đối lập được xác định trước cho toàn bộ quá trình đánh giá.
 
-\section{Các độ đo dựa trên câu chuẩn}\label{sec:5.11}
+\section{Các độ đo dựa trên câu tham chiếu}\label{sec:5.11}
 
-Bên cạnh executability, Chương~\ref{chap:6} sử dụng bảy độ đo dựa trên câu chuẩn. Mỗi độ đo phản ánh một khía cạnh khác nhau của mức độ tương đồng giữa câu sinh và câu chuẩn:
+Bên cạnh executability, Chương~\ref{chap:6} sử dụng bảy độ đo dựa trên câu tham chiếu. Mỗi độ đo phản ánh một khía cạnh khác nhau của mức độ tương đồng giữa câu sinh và câu tham chiếu:
 \begin{itemize}
-\item \textbf{BLEU-4}~\cite{bleu}: tỉ lệ cụm từ một đến bốn từ của câu sinh xuất hiện trong câu chuẩn, có phạt câu ngắn hơn câu chuẩn.
+\item \textbf{BLEU-4}~\cite{bleu}: tỉ lệ cụm từ một đến bốn từ của câu sinh xuất hiện trong câu tham chiếu, có phạt câu ngắn hơn câu tham chiếu.
 \item \textbf{METEOR}~\cite{meteor}: so khớp từng từ giữa hai câu, tính cả từ cùng gốc và từ đồng nghĩa, có phạt khi các từ trùng nằm rời rạc thay vì thành cụm liên tiếp.
 \item \textbf{ROUGE-L}~\cite{rouge}: điểm F1 dựa trên chuỗi con chung dài nhất của hai câu.
 \item \textbf{CIDEr-D}~\cite{cider}: độ tương đồng cosine giữa hai vectơ cụm từ có trọng số TF-IDF, nên cụm hiếm và mang thông tin được coi trọng hơn cụm phổ biến. Bản D có thêm thành phần phạt chênh lệch độ dài.
@@ -175,19 +175,19 @@ Bên cạnh executability, Chương~\ref{chap:6} sử dụng bảy độ đo d�
 \end{itemize}
 Năm độ đo đầu được tính bằng bộ chấm chính thức của COCO. Cả bảy độ đo tính ở mức toàn tập, tức gộp thống kê của mọi câu rồi mới tính điểm, và câu không có nội dung nhận điểm 0. Công thức CIDEr-D có hệ số 10, nên điểm báo theo thang phần trăm có thể vượt 100.
 
-Các độ đo dựa trên câu chuẩn và executability bổ sung cho nhau. Nhóm thứ nhất phản ánh mức tương đồng về cách diễn đạt hoặc nội dung, còn executability tập trung vào việc câu có xác định đúng phần tử và thao tác hay không. Hai khía cạnh này không hoàn toàn trùng nhau. Chẳng hạn, một câu vẫn có thể dẫn tới đúng phần tử dù cách gọi khác câu chuẩn. Vì vậy, cả hai nhóm độ đo đều được trình bày, trong đó executability được dùng làm độ đo chính cho khả năng xác định đúng phần tử và thao tác, còn SPICE được dùng làm phần thưởng cho GRPO ở Mục~\ref{sec:4.5}.
+Các độ đo dựa trên câu tham chiếu và executability bổ sung cho nhau. Nhóm thứ nhất phản ánh mức tương đồng về cách diễn đạt hoặc nội dung, còn executability tập trung vào việc câu có xác định đúng phần tử và thao tác hay không. Hai khía cạnh này không hoàn toàn trùng nhau. Chẳng hạn, một câu vẫn có thể dẫn tới đúng phần tử dù cách gọi khác câu tham chiếu. Vì vậy, cả hai nhóm độ đo đều được trình bày, trong đó executability được dùng làm độ đo chính cho khả năng xác định đúng phần tử và thao tác, còn SPICE được dùng làm phần thưởng cho GRPO ở Mục~\ref{sec:4.5}.
 
 \section{Đánh giá độ tin cậy của executability}\label{sec:5.tincay}
 
-Độ tin cậy của executability được kiểm tra theo nhiều hướng bổ sung nhau: so với câu chuẩn và các câu cố ý thiếu thông tin, thay đổi cách diễn đạt nhưng giữ nguyên nghĩa, lặp lại cùng đầu vào, và thay UGround bằng các mô hình đánh giá khác. Các kiểm tra này giúp xác định điểm số có phản ánh thông tin trong câu hay chỉ phụ thuộc vào một công cụ định vị cụ thể. Kết quả chính ở Chương~\ref{chap:6} dùng đủ 4.463 bước. Những phân tích trên mẫu con đều ghi rõ cỡ mẫu tại chỗ.
+Độ tin cậy của executability được kiểm tra theo nhiều hướng bổ sung nhau: so với câu tham chiếu và các câu cố ý thiếu thông tin, thay đổi cách diễn đạt nhưng giữ nguyên nghĩa, lặp lại cùng đầu vào, và thay UGround bằng các mô hình đánh giá khác. Các kiểm tra này giúp xác định điểm số có phản ánh thông tin trong câu hay chỉ phụ thuộc vào một công cụ định vị cụ thể. Kết quả chính ở Chương~\ref{chap:6} dùng đủ 4.463 bước. Những phân tích trên mẫu con đều ghi rõ cỡ mẫu tại chỗ.
 
-\subsection{Câu chuẩn và câu thiếu thông tin}\label{sec:5.5}\label{sec:5.6}
+\subsection{Câu tham chiếu và câu thiếu thông tin}\label{sec:5.5}\label{sec:5.6}
 
-\textbf{Câu chuẩn.} Khi đưa câu chuẩn qua cùng quy trình, executability trên 4.463 bước đạt \textbf{75,7\%} [74,1; 77,3]. Đây là mốc cao nhất trong các câu được đánh giá và cho thấy mô hình định vị phản hồi tốt khi câu chứa đầy đủ thông tin cần thiết. Điểm này được dùng làm mốc diễn giải thay vì xem như trần lý thuyết.
+\textbf{Câu tham chiếu.} Khi đưa câu tham chiếu qua cùng quy trình, executability trên 4.463 bước đạt \textbf{75,7\%} [74,1; 77,3]. Đây là mốc cao nhất trong các câu được đánh giá và cho thấy mô hình định vị phản hồi tốt khi câu chứa đầy đủ thông tin cần thiết. Điểm này được dùng làm mốc diễn giải thay vì xem như trần lý thuyết.
 
-\textbf{Câu thiếu thông tin.} Trên mẫu 800 bước, câu chung chung ``\emph{Tap the button.}'' chỉ đạt \textbf{12,0\%}, còn câu chuẩn lấy từ một màn hình khác đạt \textbf{6,1\%}. Khoảng cách lớn so với câu chuẩn cho thấy executability phản ứng mạnh với việc câu có xác định đúng phần tử hay không, thay vì chỉ phản ánh văn phong.
+\textbf{Câu thiếu thông tin.} Trên mẫu 800 bước, câu chung chung ``\emph{Tap the button.}'' chỉ đạt \textbf{12,0\%}, còn câu tham chiếu lấy từ một màn hình khác đạt \textbf{6,1\%}. Khoảng cách lớn so với câu tham chiếu cho thấy executability phản ứng mạnh với việc câu có xác định đúng phần tử hay không, thay vì chỉ phản ánh văn phong.
 
-\textbf{Tên phần tử và mệnh đề vị trí.} Khi bỏ tên phần tử khỏi câu chuẩn, executability giảm \textbf{28,5 điểm}, lớn hơn nhiều so với mức giảm 3,5 điểm khi bỏ riêng mệnh đề vị trí. Kết quả này phù hợp với mục tiêu của độ đo: thông tin giúp nhận diện phần tử có ảnh hưởng trực tiếp đến khả năng định vị.
+\textbf{Tên phần tử và mệnh đề vị trí.} Khi bỏ tên phần tử khỏi câu tham chiếu, executability giảm \textbf{28,5 điểm}, lớn hơn nhiều so với mức giảm 3,5 điểm khi bỏ riêng mệnh đề vị trí. Kết quả này phù hợp với mục tiêu của độ đo: thông tin giúp nhận diện phần tử có ảnh hưởng trực tiếp đến khả năng định vị.
 
 \begin{table}[htbp]
 \centering\small
@@ -196,25 +196,25 @@ Các độ đo dựa trên câu chuẩn và executability bổ sung cho nhau. Nh
 \toprule
 \textbf{Câu đưa cho mô hình định vị} & \textbf{Số bước} & \textbf{Executability (\%)} \\
 \midrule
-Câu chuẩn & 800 & 74,9 \\
+Câu tham chiếu & 800 & 74,9 \\
 S1 & 800 & 58,8 \\
 Base & 800 & 48,6 \\
 Câu chung chung ``\emph{Tap the button.}'' & 800 & 12,0 [9,7; 14,4] \\
-Câu chuẩn của một màn hình khác & 800 & 6,1 [4,5; 7,9] \\
+Câu tham chiếu của một màn hình khác & 800 & 6,1 [4,5; 7,9] \\
 \midrule
-Câu chuẩn bỏ tên phần tử, giữ vị trí & 193 & 89,6 $\rightarrow$ 61,1 \\
-Câu chuẩn bỏ mệnh đề vị trí, giữ tên & 198 & 89,4 $\rightarrow$ 85,9 \\
+Câu tham chiếu bỏ tên phần tử, giữ vị trí & 193 & 89,6 $\rightarrow$ 61,1 \\
+Câu tham chiếu bỏ mệnh đề vị trí, giữ tên & 198 & 89,4 $\rightarrow$ 85,9 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Độ ổn định khi diễn đạt lại}\label{sec:5.8}
 
-Để kiểm tra độ nhạy với cách diễn đạt, câu chuẩn trên mẫu 800 bước được viết lại theo ba cách giữ nguyên nghĩa: đổi động từ thao tác, đảo thứ tự hai mệnh đề và kết hợp cả hai. Trong 1.139 câu được viết lại, chỉ \textbf{2,6\%} làm thay đổi kết quả đánh giá. Hiệu ròng là \textbf{+0,35 điểm} [$-$0,59; +1,29], với khoảng tin cậy bao gồm 0. Executability vì vậy ổn định trước các thay đổi cách viết không làm thay đổi phần tử được mô tả. Chi tiết được trình bày ở Phụ lục~\ref{sec:B.5}.
+Để kiểm tra độ nhạy với cách diễn đạt, câu tham chiếu trên mẫu 800 bước được viết lại theo ba cách giữ nguyên nghĩa: đổi động từ thao tác, đảo thứ tự hai mệnh đề và kết hợp cả hai. Trong 1.139 câu được viết lại, chỉ \textbf{2,6\%} làm thay đổi kết quả đánh giá. Hiệu ròng là \textbf{+0,35 điểm} [$-$0,59; +1,29], với khoảng tin cậy bao gồm 0. Executability vì vậy ổn định trước các thay đổi cách viết không làm thay đổi phần tử được mô tả. Chi tiết được trình bày ở Phụ lục~\ref{sec:B.5}.
 
 \subsection{Độ chính xác và tính nhất quán khi lặp lại}\label{sec:5.4}
 
-\textbf{Độ chính xác.} Trên 300 bước dùng câu chuẩn, sai số định vị của UGround có trung vị chỉ \textbf{0,7\%} bề ngang màn hình và 62,7\% dự đoán nằm trong khoảng 3\% so với điểm chạm. Trong cùng mẫu, executability chấp nhận toàn bộ các trường hợp có sai số dưới 3\% và loại toàn bộ các trường hợp có sai số trên 14\%. Điều này cho thấy tiêu chí vị trí giữ được các sai lệch nhỏ nhưng loại các dự đoán đã lệch rõ khỏi phần tử đích.
+\textbf{Độ chính xác.} Trên 300 bước dùng câu tham chiếu, sai số định vị của UGround có trung vị chỉ \textbf{0,7\%} bề ngang màn hình và 62,7\% dự đoán nằm trong khoảng 3\% so với điểm chạm. Trong cùng mẫu, executability chấp nhận toàn bộ các trường hợp có sai số dưới 3\% và loại toàn bộ các trường hợp có sai số trên 14\%. Điều này cho thấy tiêu chí vị trí giữ được các sai lệch nhỏ nhưng loại các dự đoán đã lệch rõ khỏi phần tử đích.
 
 \textbf{Tính nhất quán khi lặp lại.} Khi lặp lại đánh giá với thứ tự và cách gom dữ liệu khác nhau, cả \textbf{1.625/1.625} cặp câu và ảnh đều cho cùng kết quả. Vì vậy điểm executability không phụ thuộc vào cách tổ chức lượt chạy.
 
@@ -231,10 +231,10 @@ Câu chuẩn bỏ mệnh đề vị trí, giữ tên & 198 & 89,4 $\rightarrow$ 
 \begin{table}[htbp]
 \centering\small
 \caption{Điểm của ba loại câu dưới bốn mô hình đánh giá.}\label{tab:5.5}\label{tab:5.4}\label{tab:5.4b}
-\setlength{\tabcolsep}{3.5pt}
+\setlength{\tabcolsep}{3.3pt}
 \begin{tabular}{@{}llllrrrr@{}}
 \toprule
-\textbf{Mô hình đánh giá} & \textbf{Họ mô hình} & \textbf{Học AC} & \textbf{Trả lời} & \textbf{Số bước} & \textbf{Base} & \textbf{S1} & \textbf{Câu chuẩn} \\
+\textbf{Mô hình đánh giá} & \textbf{Họ mô hình} & \textbf{Học AC} & \textbf{Trả lời} & \textbf{Số bước} & \textbf{Base} & \textbf{S1} & \textbf{Tham chiếu} \\
 \midrule
 UGround-V1-2B & Qwen2-VL & có & tọa độ & 4.463 & 47,6 & 59,1 & 75,7 \\
 UI-Venus-Ground-7B & Qwen2.5-VL & không & tọa độ & 2.532 & 39,1 & 48,7 & - \\
@@ -247,13 +247,13 @@ Phi-4-multimodal & Phi-4 & không & chọn số & 4.463 & 38,2 & 44,6 & 54,9 \\
 \begin{minipage}{\linewidth}\footnotesize Học AC: có dùng AndroidControl khi huấn luyện. UI-Venus được đánh giá trên mẫu 2.532 bước của thí nghiệm ban đầu nên các giá trị ở hàng này không dùng để so trực tiếp với điểm toàn tập. Với Phi-Ground, 7 bước Base không có dự đoán được tính là không đạt. Ô ``-'' là chưa đánh giá trên cùng mẫu.\end{minipage}
 \end{table}
 
-Dưới cả bốn mô hình đánh giá, S1 đều cao hơn Base. Chênh lệch đạt \textbf{+11,52 điểm} với UGround, \textbf{+9,68} [+7,60; +11,78] với UI-Venus, \textbf{+6,16} [+4,71; +7,64] với Phi-Ground và \textbf{+6,41 điểm} với Phi-4 ($p < 0{,}001$). Ở những công cụ đã đánh giá câu chuẩn, câu chuẩn vẫn cho điểm cao nhất. Thứ hạng này được giữ khi thay đổi mô hình đánh giá, thay vì chỉ xuất hiện với UGround.
+Dưới cả bốn mô hình đánh giá, S1 đều cao hơn Base. Chênh lệch đạt \textbf{+11,52 điểm} với UGround, \textbf{+9,68} [+7,60; +11,78] với UI-Venus, \textbf{+6,16} [+4,71; +7,64] với Phi-Ground và \textbf{+6,41 điểm} với Phi-4 ($p < 0{,}001$). Ở những công cụ đã đánh giá câu tham chiếu, câu tham chiếu vẫn cho điểm cao nhất. Thứ hạng này được giữ khi thay đổi mô hình đánh giá, thay vì chỉ xuất hiện với UGround.
 
 Các mô hình đánh giá có thang điểm tuyệt đối khác nhau, vì vậy các mô hình này được dùng để đối chiếu chiều của kết quả thay vì thay thế số chính từ UGround. Việc đánh giá lặp lại trên các mẫu kiểm tra cũng cho kết quả nhất quán. So sánh trực tiếp GRPO-SPICE và ACE với S1 dưới bốn công cụ được trình bày ở Mục~\ref{sec:6.7.3}.
 
 \subsection{Phạm vi của đánh giá tự động}\label{sec:5.3}
 
-UGround có sử dụng nhãn phần tử của AndroidControl trong huấn luyện~\cite{uground}, nên kết quả được kiểm tra thêm bằng các mô hình không dùng AndroidControl và các mô hình ngoài họ Qwen. Thứ hạng giữa các loại câu vẫn được giữ trong các phép đối chiếu này. Khi tách dữ liệu theo phần chia chính thức của AndroidControl, điểm của câu chuẩn, S1 và Base cũng thay đổi rất ít. Vì vậy các kết luận so sánh không dựa vào riêng một mô hình định vị hay một phần chia dữ liệu. Executability vẫn là một phép đo tự động, nên phần thực nghiệm tập trung diễn giải chênh lệch giữa các mô hình dưới cùng điều kiện đánh giá thay vì xem điểm tuyệt đối là đánh giá trực tiếp của người dùng.
+UGround có sử dụng nhãn phần tử của AndroidControl trong huấn luyện~\cite{uground}, nên kết quả được kiểm tra thêm bằng các mô hình không dùng AndroidControl và các mô hình ngoài họ Qwen. Thứ hạng giữa các loại câu vẫn được giữ trong các phép đối chiếu này. Khi tách dữ liệu theo phần chia chính thức của AndroidControl, điểm của câu tham chiếu, S1 và Base cũng thay đổi rất ít. Vì vậy các kết luận so sánh không dựa vào riêng một mô hình định vị hay một phần chia dữ liệu. Executability vẫn là một phép đo tự động, nên phần thực nghiệm tập trung diễn giải chênh lệch giữa các mô hình dưới cùng điều kiện đánh giá thay vì xem điểm tuyệt đối là đánh giá trực tiếp của người dùng.
 
 \section{Phương pháp phân tích thống kê}\label{sec:5.13}
 

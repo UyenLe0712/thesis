@@ -7,7 +7,7 @@ Chương này trình bày kết quả thực nghiệm của phương pháp đề
 
 Kết quả chính được đánh giá trên 4.463 bước có thao tác chạm của tập kiểm thử của đề tài (Mục~\ref{sec:3.3}). Với mỗi câu hướng dẫn, UGround xác định phần tử giao diện mà câu đề cập tới. Executability sau đó kiểm tra cả phần tử này và loại thao tác được nêu trong câu theo quy trình ở Chương~\ref{chap:5}. Câu không có nội dung được xem là không đạt.
 
-Các mô hình được so sánh gồm Base, Qwen2.5-VL-7B-Instruct chỉ dùng prompting, S1 với hai lượt huấn luyện dùng seed 101 và 202, GRPO-SPICE và phương pháp hoàn chỉnh sau khi áp dụng ACE (Mục~\ref{sec:4.7}). Câu hướng dẫn tham chiếu trong dữ liệu cũng được đưa qua cùng quy trình để cung cấp một mốc diễn giải cho điểm số.
+Các mốc so sánh gồm Base, Qwen2.5-VL-7B-Instruct, S1, GRPO-SPICE và phương pháp hoàn chỉnh sau khi áp dụng ACE. Base là Qwen2.5-VL-3B-Instruct chưa tinh chỉnh. Qwen2.5-VL-7B-Instruct cũng không được tinh chỉnh và dùng cùng prompt với Base, cung cấp một mốc có kích thước mô hình lớn hơn. S1 là Base sau tinh chỉnh có giám sát và được huấn luyện với hai seed 101 và 202; S1/101 là điểm khởi tạo của GRPO-SPICE và là mốc so sánh trực tiếp. Câu tham chiếu trong dữ liệu cũng được đưa qua cùng quy trình để cung cấp một mốc diễn giải cho điểm số. Các nhánh bổ sung gồm lượt GRPO-SPICE thứ hai, nhánh kiểm soát và nhánh so sánh của ACE được dùng trong các phân tích thành phần ở các mục sau.
 
 Các chênh lệch được tính theo cặp trên cùng tập bước. Khoảng tin cậy 95\% được ước lượng bằng bootstrap theo cụm ứng dụng và giá trị $p$ được tính bằng kiểm định McNemar dạng chính xác theo Mục~\ref{sec:5.13}.
 
@@ -54,11 +54,11 @@ Qwen2.5-VL-7B-Instruct chỉ dùng prompting đạt 51,51\% executability, cao h
 
 \subsection{Chất lượng câu hướng dẫn}\label{sec:6.vanban}
 
-Bên cạnh executability, luận văn so sánh câu mô hình sinh với câu hướng dẫn tham chiếu bằng bảy độ đo văn bản. Bảng~\ref{tab:6.van} cho thấy GRPO-SPICE cao hơn S1/101 ở cả bảy độ đo. Với sáu độ đo có khoảng tin cậy, toàn bộ khoảng tăng đều nằm trên 0. ACE tiếp tục cải thiện cả bảy độ đo và đạt điểm cao nhất trong bảng, trong khi executability gần như không thay đổi.
+Bên cạnh executability, luận văn sử dụng bảy độ đo dựa trên câu tham chiếu để so sánh câu mô hình sinh với câu hướng dẫn tham chiếu. Bảng~\ref{tab:6.van} cho thấy GRPO-SPICE cao hơn S1/101 ở cả bảy độ đo. Với sáu độ đo có khoảng tin cậy, toàn bộ khoảng tăng đều nằm trên 0. ACE tiếp tục cải thiện cả bảy độ đo và đạt điểm cao nhất trong bảng, trong khi executability gần như không thay đổi.
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption{Độ đo văn bản trên 4.463 bước có thao tác chạm của tập kiểm thử.}\label{tab:6.van}
+\caption{Các độ đo dựa trên câu tham chiếu trên 4.463 bước có thao tác chạm của tập kiểm thử.}\label{tab:6.van}
 \setlength{\tabcolsep}{2.2pt}
 \begin{tabular}{@{}lrrrrrrr@{}}
 \toprule
@@ -109,13 +109,13 @@ SPICE (GRPO-SPICE) & \textbf{60,65} & - & \textbf{430,05} & \textbf{45,79} & \te
 \begin{minipage}{\linewidth}\footnotesize Các cấu hình đều khởi tạo từ S1/101. GRPO-SPICE và SPICE ghép ngẫu nhiên chạy 500 bước cập nhật. Với CIDEr-D, kết quả được báo ở 500 và 1.000 bước cập nhật trên tập 2.000 prompt, trong đó có 1.000 prompt dùng cho GRPO-SPICE.\end{minipage}
 \end{table}
 
-Khi điểm SPICE được ghép ngẫu nhiên giữa các mẫu, executability trở về đúng mức 59,11\% của S1/101. GRPO-SPICE cao hơn cấu hình này \textbf{1,55 điểm} [+0,81; +2,30] ($p = 2{,}0 \times 10^{-5}$) và cao hơn ở cả sáu độ đo văn bản có khoảng tin cậy. Kết quả này cho thấy mức cải thiện không chỉ đến từ việc tiếp tục huấn luyện bằng GRPO; điểm SPICE cần được gắn với chính câu mà nó đánh giá.
+Khi điểm SPICE được ghép ngẫu nhiên giữa các mẫu, executability trở về đúng mức 59,11\% của S1/101. GRPO-SPICE cao hơn cấu hình này \textbf{1,55 điểm} [+0,81; +2,30] ($p = 2{,}0 \times 10^{-5}$) và cao hơn ở cả sáu độ đo dựa trên câu tham chiếu có khoảng tin cậy. Kết quả này cho thấy mức cải thiện không chỉ đến từ việc tiếp tục huấn luyện bằng GRPO; điểm SPICE cần được gắn với chính câu mà nó đánh giá.
 
-Với cùng 500 bước cập nhật, cấu hình dùng CIDEr-D đạt executability 59,96\%, thấp hơn GRPO-SPICE 0,69 điểm [$-$1,34; $-$0,02] ($p = 0{,}040$). Khi tăng lên 1.000 bước cập nhật, kết quả của CIDEr-D gần như không thay đổi. Trong các cấu hình được khảo sát, GRPO-SPICE đạt kết quả tốt nhất ở cả executability và ba độ đo văn bản trong Bảng~\ref{tab:6.3}.
+Với cùng 500 bước cập nhật, cấu hình dùng CIDEr-D đạt executability 59,96\%, thấp hơn GRPO-SPICE 0,69 điểm [$-$1,34; $-$0,02] ($p = 0{,}040$). Khi tăng lên 1.000 bước cập nhật, kết quả của CIDEr-D gần như không thay đổi. Trong các cấu hình được khảo sát, GRPO-SPICE đạt kết quả tốt nhất ở cả executability và ba độ đo dựa trên câu tham chiếu trong Bảng~\ref{tab:6.3}.
 
 \subsection{Ảnh hưởng của ACE}\label{sec:6.4}
 
-ACE thay 402 trong 4.463 câu của GRPO-SPICE bằng các câu thay thế thỏa điều kiện lựa chọn trong Mục~\ref{sec:4.6}. Thành phần này được thiết kế để cải thiện cách diễn đạt trong khi giữ quyết định thao tác của GRPO-SPICE, vì vậy kết quả được xem xét đồng thời theo executability và các độ đo văn bản.
+ACE thay 402 trong 4.463 câu của GRPO-SPICE bằng các câu thay thế thỏa điều kiện lựa chọn trong Mục~\ref{sec:4.6}. Thành phần này được thiết kế để cải thiện cách diễn đạt trong khi giữ quyết định thao tác của GRPO-SPICE, vì vậy kết quả được xem xét đồng thời theo executability và các độ đo dựa trên câu tham chiếu.
 
 \begin{table}[htbp]
 \centering\small
@@ -139,10 +139,10 @@ BERTScore & 67,07 & 67,52 & \textbf{67,73} & +0,66 [+0,46; +0,86] \\
 \end{tabular}
 
 \smallskip
-\begin{minipage}{\linewidth}\footnotesize Độ đo văn bản của mô hình sinh câu thay thế khi sử dụng độc lập lấy từ một lượt tính trước đó. Ở lượt này, các giá trị của GRPO-SPICE lệch không quá 0,02 điểm so với cột thứ nhất.\end{minipage}
+\begin{minipage}{\linewidth}\footnotesize Các độ đo dựa trên câu tham chiếu của mô hình sinh câu thay thế khi sử dụng độc lập lấy từ một lượt tính trước đó. Ở lượt này, các giá trị của GRPO-SPICE lệch không quá 0,02 điểm so với cột thứ nhất.\end{minipage}
 \end{table}
 
-ACE và GRPO-SPICE gần như tương đương về executability ($p = 1$), trong khi cả sáu độ đo văn bản có khoảng tin cậy đều tăng. Nếu sử dụng mô hình sinh câu thay thế trực tiếp cho mọi bước, năm trong bảy độ đo văn bản tăng nhưng executability giảm 1,25 điểm [$-$2,06; $-$0,44] ($p = 0{,}0016$). ACE tránh sự đánh đổi này bằng cách chỉ thay câu của GRPO-SPICE khi câu mới thỏa điều kiện lựa chọn, nhờ đó cải thiện cách diễn đạt mà vẫn giữ gần như nguyên executability.
+ACE và GRPO-SPICE gần như tương đương về executability ($p = 1$), trong khi cả sáu độ đo dựa trên câu tham chiếu có khoảng tin cậy đều tăng. Nếu sử dụng mô hình sinh câu thay thế trực tiếp cho mọi bước, năm trong bảy độ đo dựa trên câu tham chiếu tăng nhưng executability giảm 1,25 điểm [$-$2,06; $-$0,44] ($p = 0{,}0016$). ACE tránh sự đánh đổi này bằng cách chỉ thay câu của GRPO-SPICE khi câu mới thỏa điều kiện lựa chọn, nhờ đó cải thiện cách diễn đạt mà vẫn giữ gần như nguyên executability.
 
 \section{Phân tích bổ sung}\label{sec:6.7}\label{sec:6.7.1}\label{sec:6.7.2}\label{sec:6.9}
 
@@ -232,7 +232,7 @@ Câu tham chiếu & 66,26 & +28,47 \\
 \end{tabular}
 \end{table}
 
-Chênh lệch executability giữa GRPO-SPICE và S1/101 là $-$0,51 điểm và khoảng tin cậy chứa 0 ($p = 0{,}33$). Ở các độ đo văn bản, GRPO-SPICE vẫn cao hơn S1/101 ở SPICE (+1,10 [+0,53; +1,66]), chrF (+0,62 [+0,22; +1,03]) và BLEU-4 (+0,47 [+0,01; +0,95]). ACE chỉ thay 52 câu so với GRPO-SPICE vì kho câu ví dụ từ AndroidControl ít khi có mẫu phù hợp với AitZ.
+Chênh lệch executability giữa GRPO-SPICE và S1/101 là $-$0,51 điểm và khoảng tin cậy chứa 0 ($p = 0{,}33$). Ở các độ đo dựa trên câu tham chiếu, GRPO-SPICE vẫn cao hơn S1/101 ở SPICE (+1,10 [+0,53; +1,66]), chrF (+0,62 [+0,22; +1,03]) và BLEU-4 (+0,47 [+0,01; +0,95]). ACE chỉ thay 52 câu so với GRPO-SPICE vì kho câu ví dụ từ AndroidControl ít khi có mẫu phù hợp với AitZ.
 
 \begin{table}[htbp]
 \centering\footnotesize
@@ -257,7 +257,7 @@ ACE & 21,45 & 21,05 & 46,91 & 123,29 & \textbf{16,40} & 36,24 & 49,63 \\
 \end{tabular}
 \end{table}
 
-Trên ACU, GRPO-SPICE cao hơn S1/101 ở cả bảy độ đo văn bản và ACE tiếp tục đạt điểm cao nhất. Trên AitZ, mức khác biệt nhỏ hơn và không đồng đều giữa các độ đo. Kết quả này phù hợp với executability: lợi ích của GRPO-SPICE thể hiện rõ hơn trên dữ liệu cùng nguồn AndroidControl so với khi chuyển sang một miền có cách viết câu hướng dẫn khác.
+Trên ACU, GRPO-SPICE cao hơn S1/101 ở cả bảy độ đo dựa trên câu tham chiếu và ACE tiếp tục đạt điểm cao nhất. Trên AitZ, mức khác biệt nhỏ hơn và không đồng đều giữa các độ đo. Kết quả này phù hợp với executability: lợi ích của GRPO-SPICE thể hiện rõ hơn trên dữ liệu cùng nguồn AndroidControl so với khi chuyển sang một miền có cách viết câu hướng dẫn khác.
 
 \subsection{Ảnh hưởng của lịch sử các bước trước}\label{sec:6.tusinh}
 
@@ -306,4 +306,4 @@ Toàn bộ, lịch sử do mô hình tạo & 2.495 & 81,32 & 76,83 & $-$4,49 [$-
 
 \section{Tổng kết chương}
 
-Kết quả thực nghiệm cho thấy tinh chỉnh có giám sát tạo ra bước cải thiện lớn từ Base lên S1, sau đó GRPO-SPICE tiếp tục nâng executability và chất lượng câu hướng dẫn. Thí nghiệm đối chứng cho thấy mức cải thiện không xuất hiện khi điểm SPICE bị tách khỏi câu tương ứng, qua đó hỗ trợ vai trò của SPICE trong quá trình học GRPO. ACE giữ gần nguyên executability của GRPO-SPICE đồng thời cải thiện các độ đo văn bản. Xu hướng chính vẫn được giữ khi thay mô hình đánh giá, dùng seed GRPO khác, sử dụng lịch sử do mô hình tạo và đánh giá trên các tác vụ mới trong AndroidControl. Tuy nhiên, mức cải thiện chưa chuyển rõ sang AitZ và phương pháp vẫn còn hạn chế ở các thao tác không chạm cũng như ở việc xác định chính xác phần tử mục tiêu.
+Kết quả thực nghiệm cho thấy tinh chỉnh có giám sát tạo ra bước cải thiện lớn từ Base lên S1, sau đó GRPO-SPICE tiếp tục nâng executability và chất lượng câu hướng dẫn. Thí nghiệm đối chứng cho thấy mức cải thiện không xuất hiện khi điểm SPICE bị tách khỏi câu tương ứng, qua đó hỗ trợ vai trò của SPICE trong quá trình học GRPO. ACE giữ gần nguyên executability của GRPO-SPICE đồng thời cải thiện các độ đo dựa trên câu tham chiếu. Xu hướng chính vẫn được giữ khi thay mô hình đánh giá, dùng seed GRPO khác, sử dụng lịch sử do mô hình tạo và đánh giá trên các tác vụ mới trong AndroidControl. Tuy nhiên, mức cải thiện chưa chuyển rõ sang AitZ và phương pháp vẫn còn hạn chế ở các thao tác không chạm cũng như ở việc xác định chính xác phần tử mục tiêu.

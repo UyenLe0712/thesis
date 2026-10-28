@@ -1,7 +1,7 @@
 \chapter{Tổng quan}
 \label{chap:2}
 
-Chương này trình bày các khái niệm và công trình nền tảng trực tiếp liên quan đến luận văn. Các nội dung chính gồm mô hình ngôn ngữ thị giác, LoRA và QLoRA, GRPO và SPICE, định vị phần tử giao diện, bộ dữ liệu AndroidControl và hạn chế của các độ đo dựa trên một câu chuẩn. Cấu hình cụ thể của mô hình và cách đánh giá được trình bày lần lượt ở Chương~\ref{chap:4} và Chương~\ref{chap:5}.
+Chương này trình bày các khái niệm và công trình nền tảng trực tiếp liên quan đến luận văn. Các nội dung chính gồm mô hình ngôn ngữ thị giác, LoRA và QLoRA, GRPO và SPICE, định vị phần tử giao diện, bộ dữ liệu AndroidControl và hạn chế của các độ đo dựa trên một câu tham chiếu. Cấu hình cụ thể của mô hình và cách đánh giá được trình bày lần lượt ở Chương~\ref{chap:4} và Chương~\ref{chap:5}.
 
 \section{Mô hình ngôn ngữ thị giác}\label{sec:2.1}
 
@@ -26,7 +26,7 @@ QLoRA~\cite{qlora} tiếp tục giảm nhu cầu bộ nhớ bằng cách kết h
 
 \section{GRPO và phần thưởng dựa trên độ đo văn bản}\label{sec:2.3}
 
-Trong tinh chỉnh có giám sát, mô hình học bằng cách tăng xác suất của câu chuẩn tương ứng với mỗi đầu vào. Cách huấn luyện này phù hợp để hình thành khả năng sinh ban đầu, nhưng không trực tiếp phân biệt chất lượng giữa nhiều câu mà mô hình có thể sinh cho cùng một trường hợp. Học tăng cường bổ sung tín hiệu này bằng cách gán phần thưởng cho từng đầu ra và cập nhật mô hình dựa trên chất lượng tương đối giữa các đầu ra.
+Trong tinh chỉnh có giám sát, mô hình học bằng cách tăng xác suất của câu tham chiếu tương ứng với mỗi đầu vào. Cách huấn luyện này phù hợp để hình thành khả năng sinh ban đầu, nhưng không trực tiếp phân biệt chất lượng giữa nhiều câu mà mô hình có thể sinh cho cùng một trường hợp. Học tăng cường bổ sung tín hiệu này bằng cách gán phần thưởng cho từng đầu ra và cập nhật mô hình dựa trên chất lượng tương đối giữa các đầu ra.
 
 Tối ưu chính sách tương đối theo nhóm (\emph{Group Relative Policy Optimization}, GRPO) được giới thiệu trong DeepSeekMath~\cite{shao2024grpo}. Với mỗi đầu vào $x$, mô hình sinh một nhóm gồm $G$ đầu ra $y_1, \ldots, y_G$ và nhận các phần thưởng tương ứng $r_1, \ldots, r_G$. Lợi thế của đầu ra thứ $i$ được xác định bằng cách chuẩn hóa phần thưởng trong cùng nhóm:
 
@@ -37,7 +37,7 @@ Tối ưu chính sách tương đối theo nhóm (\emph{Group Relative Policy Op
 \noindent
 sau đó chính sách được cập nhật dựa trên lợi thế tương đối này, đồng thời có số hạng kiểm soát mức sai lệch so với mô hình tham chiếu. GRPO không cần huấn luyện thêm một mô hình ước lượng giá trị riêng. Khi các đầu ra trong cùng nhóm nhận phần thưởng giống nhau, lợi thế tương đối giữa chúng cũng không tạo ra khác biệt cho bước cập nhật.
 
-Trong phương pháp đề xuất, phần thưởng cho GRPO được xây dựng từ SPICE~\cite{spice}. Đây là một độ đo dựa trên câu chuẩn, trong đó nội dung câu được biểu diễn thông qua các đối tượng, thuộc tính và quan hệ, sau đó so sánh các thành phần tương ứng bằng điểm F1. Zhao và cộng sự~\cite{zhao2021} đã sử dụng SPICE khi đánh giá mô hình sinh chỉ dẫn. Trong nghiên cứu này, SPICE được dùng làm tín hiệu phần thưởng ở mức nội dung cho câu hướng dẫn. Cách xây dựng phần thưởng và quy trình huấn luyện GRPO được trình bày cụ thể ở Mục~\ref{sec:4.5}.
+Trong phương pháp đề xuất, phần thưởng cho GRPO được xây dựng từ SPICE~\cite{spice}. Đây là một độ đo dựa trên câu tham chiếu, trong đó nội dung câu được biểu diễn thông qua các đối tượng, thuộc tính và quan hệ, sau đó so sánh các thành phần tương ứng bằng điểm F1. Zhao và cộng sự~\cite{zhao2021} đã sử dụng SPICE khi đánh giá mô hình sinh chỉ dẫn. Trong nghiên cứu này, SPICE được dùng làm tín hiệu phần thưởng ở mức nội dung cho câu hướng dẫn. Cách xây dựng phần thưởng và quy trình huấn luyện GRPO được trình bày cụ thể ở Mục~\ref{sec:4.5}.
 
 \section{Định vị phần tử giao diện}\label{sec:2.4}
 
@@ -51,10 +51,10 @@ AndroidControl~\cite{androidcontrol} là bộ dữ liệu do Google DeepMind cô
 
 Trong công trình AndroidControl và các nghiên cứu về tác tử giao diện sử dụng bộ dữ liệu này, như Aguvis~\cite{aguvis}, câu hướng dẫn thường được đưa vào làm đầu vào để mô hình dự đoán thao tác cần thực hiện. Trong luận văn, dữ liệu được sử dụng theo chiều ngược lại: đưa trạng thái tác vụ và giao diện vào mô hình để sinh câu hướng dẫn cho thao tác kế tiếp. Nhờ đó, AndroidControl có thể được chuyển thành tập dữ liệu giám sát cho bài toán sinh hướng dẫn mà không cần thu thập lại toàn bộ dữ liệu từ đầu. Quy trình hợp nhất, làm sạch và phân chia dữ liệu được trình bày ở Chương~\ref{chap:3}.
 
-\section{Độ đo dựa trên câu chuẩn trong bài toán sinh hướng dẫn}\label{sec:2.6}
+\section{Độ đo dựa trên câu tham chiếu trong bài toán sinh hướng dẫn}\label{sec:2.6}
 
-Một thao tác trên giao diện có thể được diễn đạt bằng nhiều câu khác nhau mà vẫn dẫn người dùng tới cùng một phần tử. Vì vậy, một câu chuẩn chỉ phản ánh một trong nhiều cách mô tả có thể chấp nhận được. Các độ đo phụ thuộc nhiều vào mức giống nhau về từ vựng có thể đánh giá thấp một câu diễn đạt khác với câu chuẩn dù nội dung hướng dẫn vẫn đúng. Chẳng hạn, cùng một phần tử có thể được mô tả là “more options button” trong một câu và “three-dot icon” trong một câu khác.
+Một thao tác trên giao diện có thể được diễn đạt bằng nhiều câu khác nhau mà vẫn dẫn người dùng tới cùng một phần tử. Vì vậy, một câu tham chiếu chỉ phản ánh một trong nhiều cách mô tả có thể chấp nhận được. Các độ đo phụ thuộc nhiều vào mức giống nhau về từ vựng có thể đánh giá thấp một câu diễn đạt khác với câu tham chiếu dù nội dung hướng dẫn vẫn đúng. Chẳng hạn, cùng một phần tử có thể được mô tả là “more options button” trong một câu và “three-dot icon” trong một câu khác.
 
 Các độ đo tương đồng ngữ nghĩa có thể giảm bớt sự phụ thuộc vào từ ngữ cụ thể, nhưng không được thiết kế để kiểm tra trực tiếp liệu câu hướng dẫn có giúp xác định đúng phần tử cần thao tác hay không. Hai câu có thể gần nhau về nghĩa nhưng lại quy chiếu tới hai phần tử khác nhau trên cùng màn hình, chẳng hạn “inbox” và “outbox”. Ngược lại, hai cách diễn đạt khác nhau đáng kể vẫn có thể cùng quy chiếu tới một phần tử. Vì vậy, mức độ gần nhau trong không gian ngữ nghĩa không bảo đảm hai câu sẽ dẫn tới cùng một đối tượng trên giao diện.
 
-Vì vậy, bên cạnh các độ đo dựa trên câu chuẩn, mối quan hệ giữa hướng dẫn do mô hình tạo ra và phần tử mà hướng dẫn đó mô tả được đánh giá trực tiếp. Chương~\ref{chap:5} trình bày executability và các bước kiểm tra độ tin cậy của cách đo.
+Vì vậy, bên cạnh các độ đo dựa trên câu tham chiếu, mối quan hệ giữa hướng dẫn do mô hình tạo ra và phần tử mà hướng dẫn đó mô tả được đánh giá trực tiếp. Chương~\ref{chap:5} trình bày executability và các bước kiểm tra độ tin cậy của cách đo.
