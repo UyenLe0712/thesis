@@ -35,9 +35,9 @@ Câu tham chiếu & 75,73 & +16,62 \\
 \end{tabular}
 \end{table}
 
-Ba tiêu chí đánh giá bổ sung ở Chương~\ref{chap:5} cũng cho cùng xu hướng khi so sánh S1/101 với GRPO-SPICE. Các tiêu chí này được dùng để đối chiếu kết luận dưới những cách đánh giá khác nhau, thay vì đưa toàn bộ vào bảng kết quả chính.
+Ba tiêu chí đánh giá bổ sung ở Chương~\ref{chap:5} cũng cho cùng xu hướng khi so sánh S1/101 với GRPO-SPICE. Kết quả này cho thấy xu hướng so sánh giữa hai mô hình không phụ thuộc vào một cách xác định vị trí duy nhất.
 
-GRPO-SPICE thay đổi câu ở 1.668 bước, tương ứng 37,4\% tập đánh giá. Xét 69 bước cải thiện ròng so với S1/101, khoảng 41 bước đến từ việc câu mới dẫn tới đúng phần tử mục tiêu và khoảng 28 bước đến từ việc sửa đúng loại thao tác. Số bước không đạt do sai loại thao tác giảm từ 251 xuống 179. Hình~\ref{fig:6.1} minh họa một trường hợp S1/101 gọi nút \emph{Allow}, trong khi GRPO-SPICE gọi đúng nút \emph{Not Now}.
+GRPO-SPICE thay đổi câu ở 1.668 bước, tương ứng 37,4\% tập đánh giá. So với S1/101, GRPO-SPICE có thêm 69 bước được đánh giá là đạt. Trong phần chênh lệch này, khoảng 41 bước đến từ việc câu hướng dẫn của GRPO-SPICE dẫn tới đúng phần tử mục tiêu và khoảng 28 bước đến từ việc nêu đúng loại thao tác. Số bước không đạt do sai loại thao tác giảm từ 251 xuống 179. Hình~\ref{fig:6.1} minh họa một trường hợp S1/101 gọi nút \emph{Allow}, trong khi GRPO-SPICE gọi đúng nút \emph{Not Now}.
 
 \begin{figure}[!htb]
 \centering
@@ -47,7 +47,7 @@ GRPO-SPICE thay đổi câu ở 1.668 bước, tương ứng 37,4\% tập đánh
 
 \subsection{So sánh với mô hình 7B chỉ dùng prompting}\label{sec:6.7b}
 
-Qwen2.5-VL-7B-Instruct chỉ dùng prompting đạt 51,51\% executability, cao hơn Base 3,92 điểm nhưng thấp hơn S1/101 7,60 điểm và thấp hơn GRPO-SPICE \textbf{9,14 điểm} [+7,55; +10,75] ($p = 1{,}9 \times 10^{-37}$). Trong thiết lập của luận văn, việc tinh chỉnh mô hình 3B trên dữ liệu của bài toán vì vậy mang lại mức cải thiện lớn hơn so với chỉ tăng kích thước mô hình từ 3B lên 7B. Kết luận này chỉ áp dụng cho cấu hình prompting được sử dụng trong thực nghiệm.
+Qwen2.5-VL-7B-Instruct chỉ dùng prompting đạt 51,51\% executability, cao hơn Base 3,92 điểm nhưng thấp hơn S1/101 7,60 điểm và thấp hơn GRPO-SPICE \textbf{9,14 điểm} [+7,55; +10,75] ($p = 1{,}9 \times 10^{-37}$). Trong cùng thiết lập thực nghiệm, mô hình 3B sau tinh chỉnh đạt kết quả cao hơn mô hình 7B chỉ dùng prompting.
 
 \subsection{Chất lượng câu hướng dẫn}\label{sec:6.vanban}
 
