@@ -96,7 +96,7 @@ addText('Đầu ra của luận văn là câu hướng dẫn cho người dùng,
 
 // 3 · Thách thức
 newSlide('Giới thiệu','Yêu cầu của câu hướng dẫn');
-addText('Một câu nghe hoàn toàn tự nhiên vẫn có thể không đủ thông tin để người dùng chọn đúng phần tử.',{x:M,y:1.0,w:8.9,h:0.58,fontSize:17,bold:true,color:FOOTB,align:'center',fit:'shrink'});
+addText('Một câu nghe hoàn toàn tự nhiên vẫn có thể không đủ thông tin để người dùng chọn đúng phần tử.',{x:M,y:1.0,w:8.9,h:0.58,fontSize:17,color:FOOTB,align:'center',fit:'shrink'});
 rect(M,1.95,4.15,2.75,LIGHT,{radius:0.05,line:FOOTD});
 addText('Câu mơ hồ',{x:M+0.2,y:2.2,w:3.75,h:0.35,fontSize:SECTION_FS,bold:true,color:FOOTB,align:'center'});
 addText('“Tap the button.”',{x:M+0.25,y:3.0,w:3.65,h:0.48,fontSize:19,italic:true,color:FOOTD,align:'center'});
@@ -104,12 +104,12 @@ addText('Không biết phải chạm nút nào khi màn hình có nhiều nút.'
 rect(5.30,1.95,4.15,2.75,LIGHT,{radius:0.05,line:FOOTC});
 addText('Câu đủ rõ',{x:5.50,y:2.2,w:3.75,h:0.35,fontSize:SECTION_FS,bold:true,color:FOOTB,align:'center'});
 addText('“Tap Not now.”',{x:5.55,y:3.0,w:3.65,h:0.48,fontSize:19,italic:true,color:FOOTC,align:'center'});
-addText('Chỉ ra đúng phần tử cần thao tác.',{x:5.60,y:3.75,w:3.55,h:0.7,fontSize:15,bold:true,align:'center'});
+addText('Chỉ ra đúng phần tử cần thao tác.',{x:5.60,y:3.75,w:3.55,h:0.7,fontSize:15,align:'center'});
 addText('Vì vậy, câu hướng dẫn không chỉ cần đúng nội dung mà còn phải phân biệt được đúng phần tử cần thao tác.',{x:M,y:5.32,w:8.9,h:0.7,fontSize:15.5,color:FOOTB,align:'center',fit:'shrink'}); foot();
 
 // 4 · Khoảng trống đánh giá
 newSlide('Giới thiệu','Hạn chế của độ tương đồng');
-addText('Các độ đo chất lượng câu và khả năng làm theo phản ánh hai khía cạnh bổ sung cho nhau.',{x:M,y:1.0,w:8.9,h:0.55,fontSize:17,bold:true,color:FOOTB,align:'center'});
+addText('Các độ đo chất lượng câu và khả năng làm theo phản ánh hai khía cạnh bổ sung cho nhau.',{x:M,y:1.0,w:8.9,h:0.55,fontSize:17,color:FOOTB,align:'center'});
 box(0.70,2.05,2.55,1.2,'BLEU / ROUGE\nĐo mức giống câu chuẩn',{bold:true,fill:LIGHT,line:FOOTD,fs:15});
 box(3.72,2.05,2.55,1.2,'SPICE / CIDEr\nĐo tương đồng nội dung',{bold:true,fill:LIGHT,line:FOOTD,fs:15});
 box(6.75,1.85,2.55,1.6,'Executability\nXác định đúng phần tử\nvà đúng loại thao tác',{bold:true,fill:LIGHT,line:FOOTC,fs:15});
@@ -132,7 +132,7 @@ metricBadge(6.65,4.78,2.55,'7/7','BLEU-4 · CIDEr-D · SPICE · …',FOOTD); foo
 
 // 6 · Dữ liệu
 newSlide('Dữ liệu và đánh giá','Dữ liệu và cách chia tập');
-addText('Tập huấn luyện và tập kiểm tra chính được tách theo tác vụ. Không có tác vụ xuất hiện ở cả hai phía.',{x:M,y:0.96,w:8.9,h:0.55,fontSize:16.5,bold:true,color:FOOTB,align:'center',fit:'shrink'});
+addText('Tập huấn luyện và tập kiểm tra chính được tách theo tác vụ. Không có tác vụ xuất hiện ở cả hai phía.',{x:M,y:0.96,w:8.9,h:0.55,fontSize:16.5,color:FOOTB,align:'center',fit:'shrink'});
 table(M,1.68,[2.75,1.85,1.85,2.45],[
   {cells:['','Huấn luyện','Kiểm tra chính','Ghi chú'],fill:FOOTB,color:WHITE,bold:true,h:0.54,fs:13.7},
   {cells:['Số bước','64.567','6.958','chia theo tác vụ'],h:0.64,rule:true},
@@ -142,10 +142,10 @@ table(M,1.68,[2.75,1.85,1.85,2.45],[
 addText('Đánh giá tổng quát hóa bổ sung',{x:M,y:4.36,w:8.9,h:0.36,fontSize:15.2,bold:true,color:FOOTB,align:'center'});
 rect(M,4.92,4.25,1.10,LIGHT,{radius:0.05,line:FOOTC});
 addText('Tác vụ mới (ACU)',{x:M+0.14,y:5.03,w:1.55,h:0.42,fontSize:14.6,bold:true,color:FOOTB,align:'center',fit:'shrink'});
-addText('1.484 bước từ các tác vụ chưa có trong tập huấn luyện',{x:M+1.55,y:4.98,w:2.50,h:0.72,fontSize:13.8,bold:true,align:'center',valign:'mid',fit:'shrink'});
+addText('1.484 bước từ các tác vụ chưa có trong tập huấn luyện',{x:M+1.55,y:4.98,w:2.50,h:0.72,fontSize:13.8,align:'center',valign:'mid',fit:'shrink'});
 rect(5.20,4.92,4.25,1.10,LIGHT,{radius:0.05,line:FOOTD});
 addText('Chuyển miền (AitZ)',{x:5.32,y:5.03,w:1.65,h:0.42,fontSize:14.6,bold:true,color:FOOTB,align:'center',fit:'shrink'});
-addText('Bộ dữ liệu giao diện khác để kiểm tra khả năng chuyển miền',{x:6.85,y:4.98,w:2.38,h:0.72,fontSize:13.8,bold:true,align:'center',valign:'mid',fit:'shrink'}); foot();
+addText('Bộ dữ liệu giao diện khác để kiểm tra khả năng chuyển miền',{x:6.85,y:4.98,w:2.38,h:0.72,fontSize:13.8,align:'center',valign:'mid',fit:'shrink'}); foot();
 
 // 7 · Baseline và scale
 newSlide('Dữ liệu và đánh giá','Executability');
@@ -158,7 +158,7 @@ line(7.48,2.18,0.40,0,FOOTC,2,true);
 box(7.98,1.50,1.38,1.36,'Kiểm tra\nphần tử + thao tác',{bold:true,fill:LIGHT,line:FOOTC,fs:13.2});
 addText('Một bước được tính đúng khi đồng thời:',{x:M,y:3.48,w:4.75,h:0.55,fontSize:15.5,bold:true,color:FOOTB,valign:'mid',fit:'shrink'});
 bullets(['đúng loại thao tác','không diễn đạt ngược thao tác cần làm','điểm định vị thuộc vùng của phần tử cần chạm'],M,4.02,8.9,{gap:0.62,fs:15.0,h:0.52});
-addText('Mô hình định vị không tham gia huấn luyện phương pháp và không biết tọa độ đáp án.',{x:M,y:5.98,w:8.9,h:0.45,fontSize:14.0,bold:true,color:FOOTB,align:'center'}); foot();
+addText('Mô hình định vị không tham gia huấn luyện phương pháp và không biết tọa độ đáp án.',{x:M,y:5.98,w:8.9,h:0.45,fontSize:14.0,color:FOOTB,align:'center'}); foot();
 
 // 9 · Độ tin cậy metric
 newSlide('Dữ liệu và đánh giá','Kiểm tra độ tin cậy của executability');
@@ -197,7 +197,7 @@ line(7.17,2.31,0.42,0,FOOTC,2,true);
 box(7.71,1.60,1.70,1.42,'Cập nhật\nGRPO',{bold:true,fill:LIGHT,line:FOOTD,fs:15});
 rect(M,3.65,8.9,1.72,LIGHT,{radius:0.05,line:FOOTD});
 addText('Vai trò của SPICE',{x:M+0.22,y:3.90,w:2.15,h:0.35,fontSize:15.5,bold:true,color:FOOTB});
-addText('SPICE ưu tiên đúng nội dung hơn mức giống câu chữ.\nTín hiệu huấn luyện tập trung vào đối tượng và quan hệ cần mô tả.',{x:M+2.12,y:3.72,w:6.50,h:0.96,fontSize:15.6,bold:true,valign:'mid',fit:'shrink'});
+addText('SPICE ưu tiên đúng nội dung hơn mức giống câu chữ.\nTín hiệu huấn luyện tập trung vào đối tượng và quan hệ cần mô tả.',{x:M+2.12,y:3.72,w:6.50,h:0.96,fontSize:15.6,valign:'mid',fit:'shrink'});
 addText('GRPO-SPICE tối ưu trực tiếp câu hướng dẫn bằng tín hiệu SPICE.',{x:M,y:5.80,w:8.9,h:0.45,fontSize:14.6,bold:true,color:FOOTB,align:'center'}); foot();
 
 // 12 · shuffled control
@@ -210,31 +210,30 @@ box(5.16,1.15,1.55,1.15,'Sinh câu\nứng viên',{bold:true,fill:LIGHT,line:FOOT
 line(6.81,1.73,0.38,0,FOOTC,2,true);
 box(7.29,1.05,2.20,1.35,'Kiểm tra\n2 điều kiện chọn lọc',{bold:true,fill:LIGHT,line:FOOTD,fs:14});
 rect(M,3.42,4.20,1.18,LIGHT,{radius:0.05,line:FOOTC});
-addText('1 · Câu ứng viên phải trùng với một trong bốn câu ví dụ được truy hồi.',{x:M+0.18,y:3.42,w:3.84,h:1.18,fontSize:14.0,bold:true,align:'center',valign:'mid',fit:'shrink'});
+addText('1 · Câu ứng viên phải trùng với một trong bốn câu ví dụ được truy hồi.',{x:M+0.18,y:3.42,w:3.84,h:1.18,fontSize:14.0,align:'center',valign:'mid',fit:'shrink'});
 rect(5.25,3.42,4.20,1.18,LIGHT,{radius:0.05,line:FOOTC});
-addText('2 · Động từ đầu câu phải cùng lớp thao tác với câu ban đầu.',{x:5.43,y:3.42,w:3.84,h:1.18,fontSize:14.0,bold:true,align:'center',valign:'mid',fit:'shrink'});
+addText('2 · Động từ đầu câu phải cùng lớp thao tác với câu ban đầu.',{x:5.43,y:3.42,w:3.84,h:1.18,fontSize:14.0,align:'center',valign:'mid',fit:'shrink'});
 box(1.80,5.10,2.80,0.82,'Đủ điều kiện → dùng câu mới',{bold:true,fill:LIGHT,line:FOOTC,fs:14});
 box(5.40,5.10,2.80,0.82,'Không đủ → giữ câu ban đầu',{bold:true,fill:WHITE,line:FOOTD,fs:14}); foot();
 
 // 16 · ACE result
-newSlide('Thực nghiệm và kết quả','So sánh 3B sau tinh chỉnh với 7B prompting');
-addText('Executability trên tập kiểm chính',{x:M,y:0.95,w:8.9,h:0.42,fontSize:16.5,bold:true,color:FOOTB,align:'center'});
-hbarChart(0.95,1.55,8.05,[
-  {label:'3B · Base',value:47.59,text:'47,59%',color:FOOTD},
-  {label:'7B · Base',value:51.51,text:'51,51%',color:FOOTD},
-  {label:'3B · baseline S1',value:59.11,text:'59,11%',color:FOOTC},
-  {label:'3B · GRPO-SPICE',value:60.65,text:'60,65%',color:FOOTB,bold:true}
-],{max:65,rowH:0.78,labelW:2.45,valueW:0.95,fs:13.9});
-rect(1.05,4.92,7.90,0.86,LIGHT,{radius:0.05,line:FOOTC});
-addText('3B + GRPO-SPICE cao hơn 7B Base +9,14 điểm',{x:1.30,y:4.92,w:7.40,h:0.86,fontSize:17.2,bold:true,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
-addText('7B dùng cùng prompt của Base và không được tối ưu prompt riêng.',{x:M,y:6.06,w:8.9,h:0.36,fontSize:12.6,color:GREY,align:'center',fit:'shrink'}); foot();
+newSlide('Thực nghiệm và kết quả','So sánh 3B đã tinh chỉnh với 7B Base');
+addText('Cùng một prompt, tinh chỉnh 3B cho mức tăng lớn hơn việc chỉ tăng kích thước mô hình lên 7B.',{x:M,y:0.92,w:8.9,h:0.58,fontSize:15.6,color:FOOTB,align:'center',fit:'shrink'});
+table(0.95,1.65,[3.30,2.15,2.35],[
+  {cells:['Mô hình','Executability','Δ so với 7B Base'],fill:FOOTB,color:WHITE,bold:true,h:0.58,fs:13.0},
+  {cells:['3B · Base','47,59','−3,92'],h:0.72,rule:true,fs:13.8},
+  {cells:['7B · Base','51,51','—'],h:0.72,rule:true,fs:13.8},
+  {cells:['3B · Baseline S1','59,11','+7,60'],h:0.72,rule:true,fs:13.8},
+  {cells:['3B · GRPO-SPICE',{t:'60,65',bold:true,color:FOOTC},{t:'+9,14',bold:true,color:FOOTC}],h:0.78,fs:13.8}
+],{align:['left','center','center'],fs:13.5});
+addText('7B Base dùng cùng prompt của 3B Base và không được tối ưu prompt riêng.',{x:M,y:5.62,w:8.9,h:0.42,fontSize:12.8,color:GREY,align:'center',fit:'shrink'}); foot();
 
 // 8 · Executability
 newSlide('Thực nghiệm và kết quả','Vai trò của tín hiệu SPICE');
 addText('Cùng 500 bước GRPO, nhánh dùng SPICE từ mẫu khác vẫn ở mức S1. GRPO-SPICE tăng +1,55 điểm.',{x:M,y:0.95,w:8.9,h:0.58,fontSize:15.8,color:FOOTB,align:'center',fit:'shrink'});
 table(0.82,1.78,[2.85,2.85,2.85],[
-  {cells:['Baseline S1','GRPO + SPICE từ mẫu khác',{t:'GRPO-SPICE',bold:true}],fill:FOOTB,color:WHITE,bold:true,h:0.58,fs:13.5},
-  {cells:[{t:'59,11%',bold:true},{t:'59,11%',bold:true},{t:'60,65%',bold:true,color:FOOTC}],h:0.92,fs:20.0}
+  {cells:['Baseline S1','GRPO + điểm SPICE từ mẫu khác','GRPO-SPICE'],fill:FOOTB,color:WHITE,bold:true,h:0.58,fs:13.0},
+  {cells:['59,11%','59,11%',{t:'60,65%',bold:true,color:FOOTC}],h:0.92,fs:20.0}
 ],{align:['center','center','center'],fs:14.0});
 addText('Ở cột giữa, điểm SPICE được lấy từ một mẫu khác.',{x:2.82,y:3.38,w:4.36,h:0.48,fontSize:13.4,color:GREY,align:'center',fit:'shrink'});
 rect(1.10,4.42,7.80,0.98,LIGHT,{radius:0.05,line:FOOTC});
@@ -249,7 +248,7 @@ table(0.64,1.52,[2.02,1.55,1.38,1.38,1.05,1.34],[
   {cells:['Mô hình','Executability','Hộp phần tử','AitW đầy đủ','SPICE','CIDEr-D'],fill:FOOTB,color:WHITE,bold:true,h:0.62,fs:11.8},
   {cells:['Base','47,59','53,60','63,39','18,50','88,00'],h:0.66,rule:true},
   {cells:['Baseline S1','59,11','65,49','74,37','44,37','416,12'],h:0.66,rule:true},
-  {cells:[{t:'GRPO-SPICE',bold:true,color:FOOTC},{t:'60,65',bold:true,color:FOOTC},{t:'67,02',bold:true,color:FOOTC},{t:'76,25',bold:true,color:FOOTC},{t:'45,79',bold:true,color:FOOTC},{t:'430,05',bold:true,color:FOOTC}],h:0.72}
+  {cells:['GRPO-SPICE',{t:'60,65',bold:true,color:FOOTC},{t:'67,02',bold:true,color:FOOTC},{t:'76,25',bold:true,color:FOOTC},{t:'45,79',bold:true,color:FOOTC},{t:'430,05',bold:true,color:FOOTC}],h:0.72}
 ] ,{align:['left','center','center','center','center','center'],fs:13.4});
 metricBadge(1.08,4.48,2.30,'+1,55','Executability',FOOTC);
 metricBadge(3.85,4.48,2.30,'+1,52','Hộp phần tử',FOOTC);
@@ -258,15 +257,16 @@ addText('12/12 độ đo có KTC nằm trên 0. METEOR tăng nhưng chưa có KT
 
 // 14 · ACU
 newSlide('Thực nghiệm và kết quả','Kết quả trên tác vụ mới (ACU)');
-addText('ACU gồm 1.484 bước từ các tác vụ không xuất hiện trong huấn luyện SFT. Các số dưới đây là mức tăng so với baseline S1.',{x:M,y:0.90,w:8.9,h:0.68,fontSize:15.4,color:FOOTB,align:'center',fit:'shrink'});
-hbarChart(1.02,1.72,7.95,[
-  {label:'GRPO-SPICE',value:4.58,text:'+4,58',color:FOOTC,bold:true},
-  {label:'Chạy lại GRPO-SPICE',value:4.04,text:'+4,04',color:FOOTC},
-  {label:'ACE',value:4.85,text:'+4,85',color:FOOTB,bold:true}
-],{max:5.2,rowH:0.90,labelW:2.45,valueW:0.90,fs:14.2});
-addText('Cả ba khoảng tin cậy đều nằm trên 0.',{x:M,y:4.58,w:8.9,h:0.40,fontSize:13.7,color:FOOTB,align:'center'});
-rect(1.05,5.14,7.90,0.88,LIGHT,{radius:0.05,line:FOOTD});
-addText('Tập kiểm chính + ACU: GRPO-SPICE − S1 = +2,30 · KTC 95% từ +1,62 đến +2,99',{x:1.28,y:5.14,w:7.44,h:0.88,fontSize:14.8,color:FOOTB,align:'center',valign:'mid',fit:'shrink'}); foot();
+addText('ACU gồm 1.484 bước từ các tác vụ không xuất hiện trong huấn luyện S1.',{x:M,y:0.92,w:8.9,h:0.50,fontSize:15.4,color:FOOTB,align:'center',fit:'shrink'});
+table(0.72,1.55,[2.65,1.55,1.85,2.70],[
+  {cells:['Mô hình','Executability','Δ so với S1','KTC 95%'],fill:FOOTB,color:WHITE,bold:true,h:0.56,fs:12.7},
+  {cells:['Base','49,80','—','—'],h:0.64,rule:true,fs:13.0},
+  {cells:['Baseline S1','52,16','—','—'],h:0.64,rule:true,fs:13.0},
+  {cells:['GRPO-SPICE · seed 202','56,20','+4,04','+2,66 đến +5,48'],h:0.64,rule:true,fs:13.0},
+  {cells:['GRPO-SPICE','56,74','+4,58','+3,17 đến +6,05'],h:0.64,rule:true,fs:13.0},
+  {cells:['ACE',{t:'57,01',bold:true,color:FOOTC},{t:'+4,85',bold:true,color:FOOTC},'+3,43 đến +6,32'],h:0.70,fs:13.0}
+],{align:['left','center','center','center'],fs:12.9});
+addText('Trên tập gộp 5.947 bước, GRPO-SPICE cao hơn S1 +2,30 điểm với KTC 95% từ +1,62 đến +2,99.',{x:0.95,y:5.75,w:8.10,h:0.55,fontSize:13.6,color:FOOTB,align:'center',fit:'shrink'}); foot();
 
 // 15 · ACE process
 newSlide('Thực nghiệm và kết quả','Kết quả sau ACE');
@@ -289,42 +289,39 @@ addText('6/6 độ đo có KTC nằm trên 0. METEOR chưa có KTC.',{x:M,y:6.43
 
 // 17 · multi-tool
 newSlide('Thực nghiệm và kết quả','Đối chiếu với bốn mô hình định vị');
-addText('Executability được tính lại bằng bốn mô hình định vị để kiểm tra độ ổn định của kết quả.',{x:M,y:0.90,w:8.9,h:0.58,fontSize:15.2,color:FOOTB,align:'center',fit:'shrink'});
-table(0.62,1.62,[2.20,1.55,1.55,1.55,1.55],[
-  {cells:['Mô hình','UGround','UI-Venus','Phi-Ground','Phi-4'],fill:FOOTB,color:WHITE,bold:true,h:0.56,fs:12.4},
-  {cells:['Base','47,59','—','40,80','38,23'],h:0.68,rule:true,fs:13.2},
-  {cells:['Baseline S1','59,11','54,51','46,96','44,63'],h:0.68,rule:true,fs:13.2},
-  {cells:[{t:'GRPO-SPICE',bold:true,color:FOOTC},{t:'60,65',bold:true,color:FOOTC},{t:'56,06',bold:true,color:FOOTC},{t:'47,75',bold:true,color:FOOTC},{t:'45,33',bold:true,color:FOOTC}],h:0.72,rule:true,fs:13.2},
-  {cells:[{t:'Δ so với S1',bold:true},{t:'+1,55',bold:true,color:FOOTC},{t:'+1,55',bold:true,color:FOOTC},{t:'+0,78',bold:true,color:FOOTC},{t:'+0,69',bold:true,color:FOOTC}],h:0.72,fs:13.2}
-],{align:['left','center','center','center','center'],fs:13.0});
-addText('KTC 95% của bốn mức tăng đều nằm trên 0. Dấu —: chưa có kết quả Base đầy đủ.',{x:M,y:5.30,w:8.9,h:0.50,fontSize:13.2,color:FOOTB,align:'center',fit:'shrink'}); foot();
+addText('Executability được tính lại bằng bốn mô hình định vị để kiểm tra độ ổn định của kết quả.',{x:M,y:0.90,w:8.9,h:0.52,fontSize:15.2,color:FOOTB,align:'center',fit:'shrink'});
+table(0.58,1.48,[2.18,1.55,1.55,1.55,1.55],[
+  {cells:['Mô hình','UGround','UI-Venus','Phi-Ground','Phi-4'],fill:FOOTB,color:WHITE,bold:true,h:0.54,fs:12.3},
+  {cells:['Base','47,59','—','40,80','38,23'],h:0.60,rule:true,fs:12.8},
+  {cells:['Baseline S1','59,11','54,51','46,96','44,63'],h:0.60,rule:true,fs:12.8},
+  {cells:['GRPO-SPICE','60,65','56,06',{t:'47,75',bold:true,color:FOOTC},{t:'45,33',bold:true,color:FOOTC}],h:0.62,rule:true,fs:12.8},
+  {cells:['ACE',{t:'60,68',bold:true,color:FOOTC},{t:'56,20',bold:true,color:FOOTC},'47,73',{t:'45,33',bold:true,color:FOOTC}],h:0.62,rule:true,fs:12.8},
+  {cells:['Δ GRPO-SPICE − S1',{t:'+1,55',bold:true,color:FOOTC},{t:'+1,55',bold:true,color:FOOTC},{t:'+0,78',bold:true,color:FOOTC},{t:'+0,69',bold:true,color:FOOTC}],h:0.64,fs:12.6}
+],{align:['left','center','center','center','center'],fs:12.7});
+addText('KTC 95% của bốn mức tăng đều nằm trên 0. Dấu —: chưa có kết quả Base đầy đủ.',{x:M,y:5.52,w:8.9,h:0.45,fontSize:12.9,color:FOOTB,align:'center',fit:'shrink'}); foot();
 
 // 18 · history + AitZ
 newSlide('Thực nghiệm và kết quả','Lịch sử do mô hình tự sinh');
-addText('Khi lịch sử do chính mô hình sinh, GRPO-SPICE vẫn cao hơn S1.',{x:M,y:0.96,w:8.9,h:0.50,fontSize:16.3,color:FOOTB,align:'center'});
-rect(1.15,1.78,3.30,2.05,LIGHT,{radius:0.05,line:FOOTD});
-addText('Baseline S1',{x:1.35,y:2.08,w:2.90,h:0.40,fontSize:17,bold:true,color:FOOTD,align:'center'});
-addText('54,96%',{x:1.35,y:2.55,w:2.90,h:0.72,fontSize:28,bold:true,color:FOOTD,align:'center',valign:'mid'});
-rect(5.55,1.78,3.30,2.05,LIGHT,{radius:0.05,line:FOOTC});
-addText('GRPO-SPICE',{x:5.75,y:2.08,w:2.90,h:0.40,fontSize:17,bold:true,color:FOOTC,align:'center'});
-addText('56,44%',{x:5.75,y:2.55,w:2.90,h:0.72,fontSize:28,bold:true,color:FOOTC,align:'center',valign:'mid'});
-rect(1.10,4.35,7.80,1.02,LIGHT,{radius:0.05,line:FOOTC});
-addText('+1,48 điểm · KTC 95% từ +0,54 đến +2,43',{x:1.35,y:4.35,w:7.30,h:1.02,fontSize:18.0,color:FOOTB,align:'center',valign:'mid'});
-addText('Mức tăng vẫn còn khi các bước trước do chính mô hình tạo ra, gần hơn với tình huống sử dụng thực tế.',{x:M,y:5.84,w:8.9,h:0.50,fontSize:13.8,color:FOOTB,align:'center',fit:'shrink'}); foot();
+addText('Khi lịch sử các bước trước do chính mô hình sinh, mức tăng của GRPO-SPICE vẫn được giữ.',{x:M,y:0.94,w:8.9,h:0.52,fontSize:15.4,color:FOOTB,align:'center',fit:'shrink'});
+table(1.05,1.72,[3.10,2.20,2.20],[
+  {cells:['Mô hình','Lịch sử chuẩn','Lịch sử tự sinh'],fill:FOOTB,color:WHITE,bold:true,h:0.58,fs:13.0},
+  {cells:['Baseline S1','59,11','54,96'],h:0.78,rule:true,fs:14.0},
+  {cells:['GRPO-SPICE',{t:'60,65',bold:true,color:FOOTC},{t:'56,44',bold:true,color:FOOTC}],h:0.78,rule:true,fs:14.0},
+  {cells:['Δ GRPO-SPICE − S1',{t:'+1,55',bold:true,color:FOOTC},{t:'+1,48',bold:true,color:FOOTC}],h:0.82,fs:14.0}
+],{align:['left','center','center'],fs:13.6});
+addText('KTC 95% với lịch sử tự sinh: +0,54 đến +2,43.',{x:M,y:5.16,w:8.9,h:0.44,fontSize:13.2,color:FOOTB,align:'center'});
+addText('Hai mô hình đều giảm khoảng 4 điểm khi chuyển từ lịch sử chuẩn sang lịch sử tự sinh.',{x:M,y:5.72,w:8.9,h:0.46,fontSize:13.2,color:GREY,align:'center',fit:'shrink'}); foot();
 
 newSlide('Thực nghiệm và kết quả','Chuyển miền sang AitZ');
-addText('AitZ là bộ dữ liệu giao diện khác, dùng để kiểm tra khả năng chuyển miền.',{x:M,y:0.91,w:8.9,h:0.60,fontSize:16.0,color:FOOTB,align:'center',fit:'shrink'});
-hbarChart(1.02,1.64,7.95,[
-  {label:'Base',value:34.50,text:'34,50%',color:FOOTD},
-  {label:'S1',value:37.79,text:'37,79%',color:FOOTB,bold:true},
-  {label:'GRPO-SPICE',value:37.28,text:'37,28%',color:FOOTC}
-],{max:40,rowH:0.86,labelW:2.15,valueW:0.95,fs:14.2});
-table(1.05,4.30,[2.50,2.15,3.25],[
-  {cells:['So sánh','Chênh lệch','KTC 95%'],fill:FOOTB,color:WHITE,bold:true,h:0.46,fs:12.4},
-  {cells:['S1 − Base',{t:'+3,29',bold:true,color:FOOTB},'KTC +1,51 đến +5,03'],h:0.56,rule:true},
-  {cells:['GRPO-SPICE − baseline S1',{t:'−0,51',bold:true,color:FOOTD},'KTC −1,39 đến +0,36'],h:0.56}
-],{align:['left','center','center'],fs:12.6});
-addText('S1 vẫn cao hơn Base. GRPO-SPICE không khác rõ S1 về executability.',{x:M,y:6.05,w:8.9,h:0.38,fontSize:13.5,color:FOOTB,align:'center',fit:'shrink'}); foot();
+addText('AitZ là bộ dữ liệu giao diện khác, dùng để kiểm tra khả năng chuyển miền.',{x:M,y:0.92,w:8.9,h:0.50,fontSize:15.4,color:FOOTB,align:'center',fit:'shrink'});
+table(0.92,1.58,[2.75,1.65,1.95,2.35],[
+  {cells:['Mô hình','Executability','Δ so với S1','KTC 95%'],fill:FOOTB,color:WHITE,bold:true,h:0.56,fs:12.7},
+  {cells:['Base','34,50','−3,29','−5,03 đến −1,51'],h:0.68,rule:true,fs:13.0},
+  {cells:['Baseline S1',{t:'37,79',bold:true,color:FOOTC},'—','—'],h:0.68,rule:true,fs:13.0},
+  {cells:['GRPO-SPICE','37,28','−0,51','−1,39 đến +0,36'],h:0.68,rule:true,fs:13.0},
+  {cells:['ACE','37,28','−0,51','−1,39 đến +0,36'],h:0.68,fs:13.0}
+],{align:['left','center','center','center'],fs:12.9});
+addText('S1 vẫn cao hơn Base. GRPO-SPICE và ACE không khác rõ S1 về executability.',{x:M,y:5.54,w:8.9,h:0.50,fontSize:13.5,color:FOOTB,align:'center',fit:'shrink'}); foot();
 
 newSlide('Thực nghiệm và kết quả','Ví dụ định tính');
 slide.addImage({path:SPICE_EXAMPLE,x:0.65,y:0.95,w:4.25,h:4.91});
@@ -336,16 +333,16 @@ addText('GRPO-SPICE',{x:5.28,y:4.42,w:3.95,h:0.32,fontSize:15.5,bold:true,color:
 box(5.45,4.80,3.62,0.92,'Gọi đúng “Not now”\n→ định vị đúng phần tử',{bold:true,fill:LIGHT,line:FOOTC,fs:14.5});
 addText('Ví dụ minh họa trực tiếp ý nghĩa của executability: câu chuyển từ quy chiếu sai nút sang đúng nút cần chạm.',{x:M,y:6.12,w:8.9,h:0.48,fontSize:13.8,color:FOOTB,align:'center',fit:'shrink'}); foot();
 
-newSlide('Thực nghiệm và kết quả','Biến thiên giữa hai seed');
-addText('GRPO-SPICE cao hơn baseline S1 ở cả hai seed. Độ lớn mức tăng thay đổi theo seed.',{x:M,y:0.92,w:8.9,h:0.58,fontSize:16.0,color:FOOTB,align:'center',fit:'shrink'});
-table(0.90,1.72,[3.05,1.72,1.72,2.00],[
-  {cells:['Mô hình','Seed 101','Seed 202','Δ (202 − 101)'],fill:FOOTB,color:WHITE,bold:true,h:0.56,fs:12.9},
-  {cells:['Baseline S1','59,11','59,62',{t:'+0,52',bold:true,color:FOOTD}],h:0.78,rule:true,fs:14.0},
-  {cells:['GRPO-SPICE',{t:'60,65',bold:true,color:FOOTC},{t:'59,94',bold:true,color:FOOTC},'−0,72'],h:0.78,rule:true,fs:14.0},
-  {cells:['Δ GRPO-SPICE − S1',{t:'+1,55',bold:true,color:FOOTC},{t:'+0,31',bold:true,color:FOOTC},'—'],h:0.82,fs:14.2}
-],{align:['left','center','center','center'],fs:13.5});
-rect(1.10,5.10,7.80,0.96,LIGHT,{radius:0.05,line:FOOTC});
-addText('Cả hai seed đều cùng hướng so với baseline S1. Seed thứ hai cho mức tăng nhỏ hơn.',{x:1.34,y:5.10,w:7.32,h:0.96,fontSize:15.3,color:FOOTB,align:'center',valign:'mid',fit:'shrink'}); foot();
+newSlide('Thực nghiệm và kết quả','Biến thiên giữa hai seed GRPO');
+addText('Hai lượt GRPO-SPICE dùng cùng điểm khởi tạo S1/101 và chỉ khác seed của giai đoạn GRPO.',{x:M,y:0.92,w:8.9,h:0.56,fontSize:15.2,color:FOOTB,align:'center',fit:'shrink'});
+table(0.72,1.68,[2.75,1.15,1.55,1.75,2.00],[
+  {cells:['Lượt chạy','Seed','Exec.','Δ so với S1/101','Δ so với seed 101'],fill:FOOTB,color:WHITE,bold:true,h:0.58,fs:12.0},
+  {cells:['Baseline S1/101','101','59,11','—','—'],h:0.70,rule:true,fs:13.0},
+  {cells:['GRPO-SPICE','101',{t:'60,65',bold:true,color:FOOTC},{t:'+1,55',bold:true,color:FOOTC},'—'],h:0.72,rule:true,fs:13.0},
+  {cells:['GRPO-SPICE','202','59,94','+0,83',{t:'−0,72',bold:true,color:FOOTD}],h:0.72,fs:13.0}
+],{align:['left','center','center','center','center'],fs:12.8});
+addText('Seed 202 vẫn cao hơn S1/101 +0,83 điểm, nhưng thấp hơn lượt seed 101 0,72 điểm.',{x:1.02,y:5.05,w:7.96,h:0.72,fontSize:14.2,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
+addText('KTC 95% cho chênh lệch seed 202 − seed 101: −1,27 đến −0,16.',{x:M,y:5.96,w:8.9,h:0.38,fontSize:12.8,color:GREY,align:'center'}); foot();
 
 // 21 · scope
 newSlide('Kết luận','Phạm vi và hướng phát triển');
@@ -371,7 +368,7 @@ addText('Ba đóng góp chính: phương pháp, độ đo và bằng chứng th�
 newSlide('Kết luận','Kết luận chung');
 metricBadge(0.65,1.05,2.60,'+1,55','Tập kiểm chính',FOOTB);
 metricBadge(3.70,1.05,2.60,'+4,58','Tác vụ mới (ACU)',FOOTC);
-metricBadge(6.75,1.05,2.60,'+9,14','So với 7B prompting',FOOTD);
+metricBadge(6.75,1.05,2.60,'+9,14','So với 7B Base',FOOTD);
 line(M,2.72,8.9,0,RULE,1);
 bullets(['GRPO-SPICE tăng +1,55 điểm trên tập kiểm chính và +4,58 điểm trên ACU.','ACE giữ executability ở 60,68% và tăng cả 7 chỉ số chất lượng câu.','AitZ cho thấy lợi ích bổ sung của GRPO-SPICE giảm khi đổi miền.'],M,3.15,8.9,{gap:0.92,fs:15.0,h:0.72});
 rect(1.00,5.98,8.00,0.78,LIGHT,{radius:0.05,line:FOOTD});
