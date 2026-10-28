@@ -26,7 +26,7 @@ CogCoM~\cite{cogcom} & thêm 70K mẫu chuỗi thao tác trung gian vào dữ li
 \end{tabularx}
 \end{table}
 
-Hai cấu hình của Shikra~\cite{shikra} dùng cùng mô hình và bài kiểm tra nhưng cho kết quả trái chiều khi thay đổi dạng biểu diễn trung gian: văn xuôi làm giảm kết quả, trong khi biểu diễn có tọa độ làm tăng kết quả. GCoT~\cite{gcot} cũng cho thấy lợi ích xuất hiện khi bước định vị được đưa vào quy trình huấn luyện thay vì chỉ bổ sung ở prompt. Tác dụng của bước trung gian vì thế phụ thuộc vào cách biểu diễn và cách đưa thông tin đó vào mô hình. Từ các quan sát này, chúng tôi kiểm tra có kiểm soát một biểu diễn tập trung vào phần tử mục tiêu trong bài toán của đề tài.
+Hai cấu hình của Shikra~\cite{shikra} dùng cùng mô hình và bài kiểm tra nhưng cho kết quả trái chiều khi thay đổi dạng biểu diễn trung gian: văn xuôi làm giảm kết quả, trong khi biểu diễn có tọa độ làm tăng kết quả. GCoT~\cite{gcot} cũng cho thấy lợi ích xuất hiện khi bước định vị được đưa vào quy trình huấn luyện thay vì chỉ bổ sung ở prompt. Tác dụng của bước trung gian vì thế phụ thuộc vào cách biểu diễn và cách đưa thông tin đó vào mô hình. Từ các quan sát này, luận văn kiểm tra có kiểm soát một biểu diễn tập trung vào phần tử mục tiêu trong bài toán của đề tài.
 
 Chuỗi đích của phương án gồm hai phần như minh họa dưới đây.
 
@@ -215,7 +215,7 @@ MIN-DESC đạt 60,0\% executability, cao hơn cấu hình chỉ học thêm có
 
 \subsubsection{Biến thể lấy vế bị loại theo chính sách}\label{sec:A.2.2.3}
 
-Ngoài nguồn cặp được xây dựng theo cách cố định (cửa sổ 80--350 điểm ảnh quanh phần tử mục tiêu), chúng tôi thử thêm biến thể on-policy, trong đó vế bị loại lấy từ chính phần tử mô hình dự đoán sai. Trên 14.000 màn huấn luyện chỉ thu được 459 cặp hợp lệ (3,3\%). Mô hình thường gọi đúng phần tử bằng tên khác hoặc xác định một vùng cách xa phần tử mục tiêu, còn lỗi nhầm giữa hai nút lân cận xuất hiện ít hơn giả định ban đầu. Với mục tiêu tạo đủ cặp lân cận để huấn luyện, nguồn cặp cố định phù hợp hơn trong thiết lập hiện tại.
+Ngoài nguồn cặp được xây dựng theo cách cố định (cửa sổ 80--350 điểm ảnh quanh phần tử mục tiêu), một biến thể on-policy được thử thêm, trong đó vế bị loại lấy từ chính phần tử mô hình dự đoán sai. Trên 14.000 màn huấn luyện chỉ thu được 459 cặp hợp lệ (3,3\%). Mô hình thường gọi đúng phần tử bằng tên khác hoặc xác định một vùng cách xa phần tử mục tiêu, còn lỗi nhầm giữa hai nút lân cận xuất hiện ít hơn giả định ban đầu. Với mục tiêu tạo đủ cặp lân cận để huấn luyện, nguồn cặp cố định phù hợp hơn trong thiết lập hiện tại.
 
 \subsection{Phân tích cơ chế mô tả phần tử}\label{sec:A.2.3}
 
@@ -461,7 +461,7 @@ Bảng~\ref{tab:A.13} đổi cách định nghĩa nhóm ba lần. Khi nhóm đư
 
 \section{Tích hợp thông tin vị trí vào mô hình sinh câu}\label{sec:A.6}
 
-Ở Mục~\ref{sec:A.5}, độ chính xác nhận diện phần tử thay đổi cùng chất lượng câu hướng dẫn, nhưng cải thiện biểu diễn trung gian chưa chuyển trực tiếp thành executability. Từ đó, chúng tôi khảo sát bốn cách đưa thông tin vị trí vào mô hình sinh câu và hai phép sàng lọc ý tưởng không cần GPU (Bảng~\ref{tab:A.14}). Phần lớn phép đo được thực hiện trên tập kiểm định nội bộ để so sánh tương đối giữa các biến thể trước khi quyết định có mở rộng thí nghiệm.
+Ở Mục~\ref{sec:A.5}, độ chính xác nhận diện phần tử thay đổi cùng chất lượng câu hướng dẫn, nhưng cải thiện biểu diễn trung gian chưa chuyển trực tiếp thành executability. Từ đó, luận văn này khảo sát bốn cách đưa thông tin vị trí vào mô hình sinh câu và hai phép sàng lọc ý tưởng không cần GPU (Bảng~\ref{tab:A.14}). Phần lớn phép đo được thực hiện trên tập kiểm định nội bộ để so sánh tương đối giữa các biến thể trước khi quyết định có mở rộng thí nghiệm.
 
 \begin{table}[htbp]
 \centering\small

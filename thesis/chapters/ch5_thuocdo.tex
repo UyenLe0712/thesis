@@ -1,7 +1,7 @@
 \chapter{Độ đo khả năng thực hiện theo hướng dẫn}
 \label{chap:5}
 
-Chương này trình bày cách đánh giá câu hướng dẫn. Bên cạnh các độ đo dựa trên câu chuẩn, chúng tôi sử dụng executability để kiểm tra câu có cung cấp đủ thông tin cho một mô hình định vị độc lập xác định đúng phần tử và đúng thao tác hay không. Mục~\ref{sec:5.1} giới thiệu ý tưởng và định nghĩa executability. Mục~\ref{sec:5.2} và Mục~\ref{sec:5.thaotac} trình bày cách xác định phần tử và loại thao tác. Mục~\ref{sec:5.11} mô tả các độ đo dựa trên câu chuẩn. Mục~\ref{sec:5.tincay} đánh giá độ tin cậy của executability, còn Mục~\ref{sec:5.13} trình bày phương pháp thống kê.
+Chương này trình bày cách đánh giá câu hướng dẫn. Bên cạnh các độ đo dựa trên câu chuẩn, executability được sử dụng để kiểm tra câu có cung cấp đủ thông tin cho một mô hình định vị độc lập xác định đúng phần tử và đúng thao tác hay không. Mục~\ref{sec:5.1} giới thiệu ý tưởng và định nghĩa executability. Mục~\ref{sec:5.2} và Mục~\ref{sec:5.thaotac} trình bày cách xác định phần tử và loại thao tác. Mục~\ref{sec:5.11} mô tả các độ đo dựa trên câu chuẩn. Mục~\ref{sec:5.tincay} đánh giá độ tin cậy của executability, còn Mục~\ref{sec:5.13} trình bày phương pháp thống kê.
 
 \section{Ý tưởng và định nghĩa executability}\label{sec:5.1}
 
@@ -83,9 +83,9 @@ Executability được tính trên \textbf{4.463} bước có thao tác chạm h
 
 Dữ liệu cho biết điểm $g$ mà người dùng đã chạm nhưng không cho biết chính xác ranh giới của phần tử được chạm. Điều kiện (ii) vì vậy được xác định bằng hai tiêu chí kết hợp.
 
-\textbf{Cửa sổ dung sai 14\%.} Theo quy ước của AndroidInTheWild~\cite{aitw}, hai lần chạm được coi là tương đương khi sai lệch không quá 14\% kích thước màn hình. Chúng tôi áp dụng ngưỡng này theo từng trục, $|p_x-g_x| \le 0{,}14\,W$ và $|p_y-g_y| \le 0{,}14\,H$. Tuy nhiên, chỉ dùng cửa sổ 14\% có thể chấp nhận cả điểm nằm trên phần tử lân cận, như trường hợp dòng \emph{Gender} trong Hình~\ref{fig:5.1}.
+\textbf{Cửa sổ dung sai 14\%.} Theo quy ước của AndroidInTheWild~\cite{aitw}, hai lần chạm được coi là tương đương khi sai lệch không quá 14\% kích thước màn hình. Ngưỡng này được áp dụng theo từng trục, $|p_x-g_x| \le 0{,}14\,W$ và $|p_y-g_y| \le 0{,}14\,H$. Tuy nhiên, chỉ dùng cửa sổ 14\% có thể chấp nhận cả điểm nằm trên phần tử lân cận, như trường hợp dòng \emph{Gender} trong Hình~\ref{fig:5.1}.
 
-\textbf{Ô Voronoi.} Để tránh chấp nhận phần tử lân cận, chúng tôi bổ sung yêu cầu rằng phần tử đích phải là phần tử gần điểm dự đoán $p$ nhất. Gọi $E$ là tập các phần tử khác trên màn hình và $c(e)$ là tâm của phần tử $e$. Khi đó $p$ phải thỏa
+\textbf{Ô Voronoi.} Để tránh chấp nhận phần tử lân cận, tiêu chí còn yêu cầu phần tử đích phải là phần tử gần điểm dự đoán $p$ nhất. Gọi $E$ là tập các phần tử khác trên màn hình và $c(e)$ là tâm của phần tử $e$. Khi đó $p$ phải thỏa
 \begin{equation}
 \|p-g\| \le \|p-c(e)\| \quad \forall e \in E.
 \label{eq:5.1}
@@ -175,7 +175,7 @@ Bên cạnh executability, Chương~\ref{chap:6} sử dụng bảy độ đo d�
 \end{itemize}
 Năm độ đo đầu được tính bằng bộ chấm chính thức của COCO. Cả bảy độ đo tính ở mức toàn tập, tức gộp thống kê của mọi câu rồi mới tính điểm, và câu không có nội dung nhận điểm 0. Công thức CIDEr-D có hệ số 10, nên điểm báo theo thang phần trăm có thể vượt 100.
 
-Các độ đo dựa trên câu chuẩn và executability bổ sung cho nhau. Nhóm thứ nhất phản ánh mức tương đồng về cách diễn đạt hoặc nội dung, còn executability tập trung vào việc câu có xác định đúng phần tử và thao tác hay không. Hai khía cạnh này không hoàn toàn trùng nhau. Chẳng hạn, một câu vẫn có thể dẫn tới đúng phần tử dù cách gọi khác câu chuẩn. Vì vậy chúng tôi báo cả hai nhóm độ đo, trong đó executability được dùng làm độ đo chính cho khả năng xác định đúng phần tử và thao tác, còn SPICE được dùng làm phần thưởng cho GRPO ở Mục~\ref{sec:4.5}.
+Các độ đo dựa trên câu chuẩn và executability bổ sung cho nhau. Nhóm thứ nhất phản ánh mức tương đồng về cách diễn đạt hoặc nội dung, còn executability tập trung vào việc câu có xác định đúng phần tử và thao tác hay không. Hai khía cạnh này không hoàn toàn trùng nhau. Chẳng hạn, một câu vẫn có thể dẫn tới đúng phần tử dù cách gọi khác câu chuẩn. Vì vậy, luận văn này trình bày cả hai nhóm độ đo, trong đó executability được dùng làm độ đo chính cho khả năng xác định đúng phần tử và thao tác, còn SPICE được dùng làm phần thưởng cho GRPO ở Mục~\ref{sec:4.5}.
 
 \section{Đánh giá độ tin cậy của executability}\label{sec:5.tincay}
 
@@ -220,7 +220,7 @@ Câu chuẩn bỏ mệnh đề vị trí, giữ tên & 198 & 89,4 $\rightarrow$ 
 
 \subsection{Đối chiếu bằng các mô hình đánh giá khác}\label{sec:5.9}\label{sec:5.10}
 
-Để kiểm tra kết quả có phụ thuộc riêng vào UGround hay không, chúng tôi đánh giá thêm bằng ba mô hình khác (Bảng~\ref{tab:5.5}). Các mô hình này được chọn để tạo ra những cách đánh giá khác nhau về kiến trúc, dữ liệu huấn luyện hoặc dạng đầu ra.
+Để kiểm tra kết quả có phụ thuộc riêng vào UGround hay không, luận văn này đánh giá thêm bằng ba mô hình khác (Bảng~\ref{tab:5.5}). Các mô hình này được chọn để tạo ra những cách đánh giá khác nhau về kiến trúc, dữ liệu huấn luyện hoặc dạng đầu ra.
 
 \begin{itemize}
 \item \textbf{UI-Venus-Ground-7B}~\cite{uivenus} dựng trên Qwen2.5-VL nhưng không dùng AndroidControl khi huấn luyện.
@@ -249,11 +249,11 @@ Phi-4-multimodal & Phi-4 & không & chọn số & 4.463 & 38,2 & 44,6 & 54,9 \\
 
 Dưới cả bốn mô hình đánh giá, S1 đều cao hơn Base. Chênh lệch đạt \textbf{+11,52 điểm} với UGround, \textbf{+9,68} [+7,60; +11,78] với UI-Venus, \textbf{+6,16} [+4,71; +7,64] với Phi-Ground và \textbf{+6,41 điểm} với Phi-4 ($p < 0{,}001$). Ở những công cụ đã đánh giá câu chuẩn, câu chuẩn vẫn cho điểm cao nhất. Thứ hạng này được giữ khi thay đổi mô hình đánh giá, thay vì chỉ xuất hiện với UGround.
 
-Các mô hình đánh giá có thang điểm tuyệt đối khác nhau, vì vậy chúng tôi dùng chúng để đối chiếu chiều của kết quả thay vì thay thế số chính từ UGround. Việc đánh giá lặp lại trên các mẫu kiểm tra cũng cho kết quả nhất quán. So sánh trực tiếp GRPO-SPICE và ACE với S1 dưới bốn công cụ được trình bày ở Mục~\ref{sec:6.7.3}.
+Các mô hình đánh giá có thang điểm tuyệt đối khác nhau, vì vậy các mô hình này được dùng để đối chiếu chiều của kết quả thay vì thay thế số chính từ UGround. Việc đánh giá lặp lại trên các mẫu kiểm tra cũng cho kết quả nhất quán. So sánh trực tiếp GRPO-SPICE và ACE với S1 dưới bốn công cụ được trình bày ở Mục~\ref{sec:6.7.3}.
 
 \subsection{Phạm vi của đánh giá tự động}\label{sec:5.3}
 
-UGround có sử dụng nhãn phần tử của AndroidControl trong huấn luyện~\cite{uground}, nên chúng tôi kiểm tra thêm kết quả bằng các mô hình không dùng AndroidControl và các mô hình ngoài họ Qwen. Thứ hạng giữa các loại câu vẫn được giữ trong các phép đối chiếu này. Khi tách dữ liệu theo phần chia chính thức của AndroidControl, điểm của câu chuẩn, S1 và Base cũng thay đổi rất ít. Vì vậy các kết luận so sánh không dựa vào riêng một mô hình định vị hay một phần chia dữ liệu. Executability vẫn là một phép đo tự động, nên phần thực nghiệm tập trung diễn giải chênh lệch giữa các mô hình dưới cùng điều kiện đánh giá thay vì xem điểm tuyệt đối là đánh giá trực tiếp của người dùng.
+UGround có sử dụng nhãn phần tử của AndroidControl trong huấn luyện~\cite{uground}, nên kết quả được kiểm tra thêm bằng các mô hình không dùng AndroidControl và các mô hình ngoài họ Qwen. Thứ hạng giữa các loại câu vẫn được giữ trong các phép đối chiếu này. Khi tách dữ liệu theo phần chia chính thức của AndroidControl, điểm của câu chuẩn, S1 và Base cũng thay đổi rất ít. Vì vậy các kết luận so sánh không dựa vào riêng một mô hình định vị hay một phần chia dữ liệu. Executability vẫn là một phép đo tự động, nên phần thực nghiệm tập trung diễn giải chênh lệch giữa các mô hình dưới cùng điều kiện đánh giá thay vì xem điểm tuyệt đối là đánh giá trực tiếp của người dùng.
 
 \section{Phương pháp phân tích thống kê}\label{sec:5.13}
 
@@ -261,7 +261,7 @@ UGround có sử dụng nhãn phần tử của AndroidControl trong huấn luy�
 
 \textbf{So sánh ghép cặp.} Các mô hình được đánh giá trên cùng 4.463 bước, vì vậy chênh lệch được tính trực tiếp theo từng bước thay vì xem hai điểm số là độc lập. Cách tính ghép cặp loại bớt ảnh hưởng của những bước vốn khó hoặc dễ cho tất cả mô hình và cho khoảng tin cậy hẹp hơn. Giá trị $p$ được tính bằng kiểm định McNemar dạng chính xác trên các bước mà hai mô hình cho kết quả khác nhau.
 
-\textbf{Mức chênh lệch nhỏ nhất phát hiện được.} Ngoài sai số của phép đo, kết quả còn có thể thay đổi khi huấn luyện lại với seed khác. Chúng tôi dùng mức chênh lệch nhỏ nhất phát hiện được (\emph{minimum detectable effect}, MDE) để đặt các chênh lệch quan sát được trong bối cảnh của cả hai nguồn biến thiên. Với xác suất phát hiện 80\% ở mức ý nghĩa 5\%, MDE được ước lượng như sau:
+\textbf{Mức chênh lệch nhỏ nhất phát hiện được.} Ngoài sai số của phép đo, kết quả còn có thể thay đổi khi huấn luyện lại với seed khác. Mức chênh lệch nhỏ nhất phát hiện được (\emph{minimum detectable effect}, MDE) được dùng để đặt các chênh lệch quan sát được trong bối cảnh của cả hai nguồn biến thiên. Với xác suất phát hiện 80\% ở mức ý nghĩa 5\%, MDE được ước lượng như sau:
 \begin{equation}
 \mathrm{MDE} = (z_{0{,}975} + z_{0{,}80})\sqrt{\mathrm{SE}^2 + 2\sigma^2} \approx 2{,}8 \times \sqrt{0{,}38^2 + 2 \times 0{,}46^2} \approx 2{,}11 \text{ điểm},
 \label{eq:5.mde}

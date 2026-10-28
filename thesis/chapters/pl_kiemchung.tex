@@ -5,7 +5,7 @@ Phụ lục này trình bày các phép kiểm phụ được nhắc ngắn ở 
 
 \section{Biến đổi lỗi có kiểm soát}\label{sec:B.1}\label{sec:5.7}
 
-Theo cách làm của Sai và cộng sự~\cite{sai2021}, chúng tôi tạo các trường hợp đúng hoặc sai đã biết trước rồi đếm tỉ lệ cách đánh giá phản ứng đúng chiều (Bảng~\ref{tab:5.2}). Phép kiểm này không gọi mô hình định vị. Điểm dự đoán được đặt tổng hợp, hoặc lệch nhẹ quanh điểm chạm, hoặc gần tâm một phần tử khác, nên bảng chỉ kiểm tra phần tính điểm, tức hai điều kiện ở Mục~\ref{sec:5.1}. Ảnh hưởng của cách diễn đạt lên chính mô hình định vị được đo riêng ở Mục~\ref{sec:5.8}. Ba dòng đầu và các dòng về vị trí, loại thao tác dùng mẫu 398 bước có thao tác chạm. Ba dòng cuối dùng mọi bước phù hợp của tập kiểm tra; hai dòng cuối lấy từ các bước nhập chữ và bước cuộn, kiểm tra cách so nội dung nhập và hướng cuộn dùng khi phân tích các bước không chạm.
+Theo cách làm của Sai và cộng sự~\cite{sai2021}, các trường hợp đúng và sai đã biết trước được tạo ra để đo tỉ lệ cách đánh giá phản ứng đúng chiều (Bảng~\ref{tab:5.2}). Phép kiểm này không gọi mô hình định vị. Điểm dự đoán được đặt tổng hợp, hoặc lệch nhẹ quanh điểm chạm, hoặc gần tâm một phần tử khác, nên bảng chỉ kiểm tra phần tính điểm, tức hai điều kiện ở Mục~\ref{sec:5.1}. Ảnh hưởng của cách diễn đạt lên chính mô hình định vị được đo riêng ở Mục~\ref{sec:5.8}. Ba dòng đầu và các dòng về vị trí, loại thao tác dùng mẫu 398 bước có thao tác chạm. Ba dòng cuối dùng mọi bước phù hợp của tập kiểm tra; hai dòng cuối lấy từ các bước nhập chữ và bước cuộn, kiểm tra cách so nội dung nhập và hướng cuộn dùng khi phân tích các bước không chạm.
 
 \begin{table}[htbp]
 \centering\small
@@ -39,7 +39,7 @@ Phép thử dùng 51 cặp câu viết tay: 25 cặp cùng phần tử nhưng kh
 
 \section{So sánh năm cách xác định vị trí}\label{sec:B.3}
 
-Giá trị tuyệt đối của điểm số phụ thuộc cách xác định một điểm là đúng phần tử. Trên mẫu 698 bước, chúng tôi đánh giá lại câu chuẩn, S1 và Base theo năm cách: đĩa Euclid bán kính 14\% bề ngang, cửa sổ chữ nhật 14\% theo từng trục, ô Voronoi đang dùng, ô Voronoi dựng quanh tâm hộp chứa $g$ thay vì quanh $g$, và hộp gần nhất. Điểm của câu chuẩn thay đổi từ 56,6 đến 82,2, nhưng thứ hạng giữ nguyên và chênh lệch S1 $-$ Base luôn nằm trong khoảng từ 9,5 đến 13,0 điểm (Bảng~\ref{tab:5.6}).
+Giá trị tuyệt đối của điểm số phụ thuộc cách xác định một điểm là đúng phần tử. Trên mẫu 698 bước, luận văn này đánh giá lại câu chuẩn, S1 và Base theo năm cách: đĩa Euclid bán kính 14\% bề ngang, cửa sổ chữ nhật 14\% theo từng trục, ô Voronoi đang dùng, ô Voronoi dựng quanh tâm hộp chứa $g$ thay vì quanh $g$, và hộp gần nhất. Điểm của câu chuẩn thay đổi từ 56,6 đến 82,2, nhưng thứ hạng giữ nguyên và chênh lệch S1 $-$ Base luôn nằm trong khoảng từ 9,5 đến 13,0 điểm (Bảng~\ref{tab:5.6}).
 
 \begin{table}[htbp]
 \centering\small
