@@ -146,7 +146,7 @@ ACE và GRPO-SPICE gần như tương đương về executability ($p = 1$), tro
 
 \section{Phân tích bổ sung}\label{sec:6.7}\label{sec:6.7.1}\label{sec:6.7.2}\label{sec:6.9}
 
-\subsection{Đánh giá tính ổn định của kết quả}\label{sec:6.7.3}
+\subsection{Độ ổn định của kết quả}\label{sec:6.7.3}
 
 Chênh lệch 1,55 điểm giữa GRPO-SPICE và S1/101 trên tập kiểm thử chính nhỏ hơn MDE 2,11 điểm khi tính thêm khác biệt giữa các lần huấn luyện. Vì vậy, luận văn kiểm tra thêm một lượt GRPO với seed khác và thay UGround bằng các mô hình đánh giá khác.
 
@@ -186,7 +186,7 @@ Dưới UI-Venus, GRPO-SPICE cao hơn S1/101 1,55 điểm, bằng mức chênh l
 
 \subsubsection{Tác vụ chưa xuất hiện trong huấn luyện S1}\label{sec:6.acu}
 
-ACU gồm 1.484 bước có thao tác chạm thuộc các tác vụ không xuất hiện trong tập huấn luyện S1 (Mục~\ref{sec:3.3}). Đây là tập đánh giá bổ sung trong cùng nguồn AndroidControl, không thay thế tập kiểm thử chính của đề tài.
+ACU gồm 1.484 bước có thao tác chạm thuộc các tác vụ không xuất hiện trong tập huấn luyện S1 (Mục~\ref{sec:3.3}). Tập này được dùng để đánh giá kết quả trên các tác vụ chưa xuất hiện trong quá trình huấn luyện S1 nhưng vẫn thuộc cùng nguồn dữ liệu AndroidControl.
 
 \begin{table}[htbp]
 \centering\small
@@ -209,11 +209,11 @@ Câu tham chiếu & 71,70 & +19,54 & 74,73 & - \\
 \end{tabular}
 \end{table}
 
-GRPO-SPICE cao hơn S1/101 \textbf{4,58 điểm} [+3,17; +6,05] trên ACU, lớn hơn mức 1,55 điểm trên tập kiểm thử chính. Lượt GRPO-SPICE thứ hai cho cùng xu hướng với mức tăng 4,04 điểm. Khi gộp ACU với tập kiểm thử chính thành 5.947 bước, GRPO-SPICE cao hơn S1/101 \textbf{2,30 điểm} [+1,62; +2,99]. Kết quả này cho thấy mức cải thiện vẫn xuất hiện trên các tác vụ mới trong cùng nguồn dữ liệu, dù ACU không phải tập kiểm thử chính thức của AndroidControl.
+GRPO-SPICE cao hơn S1/101 \textbf{4,58 điểm} [+3,17; +6,05] trên ACU, lớn hơn mức 1,55 điểm trên tập kiểm thử chính. Lượt GRPO-SPICE thứ hai cho cùng xu hướng với mức tăng 4,04 điểm. Khi gộp ACU với tập kiểm thử chính thành 5.947 bước, GRPO-SPICE cao hơn S1/101 \textbf{2,30 điểm} [+1,62; +2,99]. Kết quả cho thấy mức cải thiện của GRPO-SPICE vẫn được duy trì khi đánh giá trên các tác vụ chưa xuất hiện trong huấn luyện S1.
 
 \subsubsection{Đánh giá trên bộ dữ liệu AitZ}\label{sec:6.aitz}
 
-AitZ có cách diễn đạt câu hướng dẫn khác AndroidControl và các mô hình được áp dụng trực tiếp mà không huấn luyện thêm. Bảng~\ref{tab:6.aitz} cho thấy bước tinh chỉnh có giám sát vẫn chuyển sang miền dữ liệu này: S1/101 cao hơn Base 3,29 điểm executability. Tuy nhiên, lợi ích bổ sung của GRPO-SPICE không còn rõ như trên AndroidControl.
+AitZ có cách diễn đạt câu hướng dẫn khác AndroidControl. Các mô hình được đánh giá trực tiếp trên AitZ mà không huấn luyện thêm. S1/101 đạt executability 37,79\%, cao hơn Base 3,29 điểm, cho thấy cải thiện từ giai đoạn tinh chỉnh có giám sát vẫn được giữ khi chuyển sang AitZ. Tuy nhiên, GRPO-SPICE không cải thiện thêm rõ rệt so với S1/101 trên tập dữ liệu này.
 
 \begin{table}[htbp]
 \centering\small
