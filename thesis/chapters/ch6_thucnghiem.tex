@@ -1,11 +1,11 @@
 \chapter{Thực nghiệm và kết quả}
 \label{chap:6}
 
-Chương này trình bày kết quả thực nghiệm của phương pháp đề xuất. Trước hết, luận văn mô tả ngắn gọn thiết lập đánh giá và kết quả tổng thể của các mô hình. Tiếp theo, các thí nghiệm phân tích thành phần được dùng để làm rõ vai trò của SPICE trong GRPO và ảnh hưởng của ACE. Phần cuối kiểm tra độ ổn định của kết quả khi thay đổi điều kiện đánh giá, xem xét khả năng khái quát sang các tập dữ liệu khác và phân tích những lỗi còn lại.
+Chương này trình bày kết quả thực nghiệm của phương pháp đề xuất. Trước hết, luận văn mô tả ngắn gọn thiết lập đánh giá và kết quả tổng thể của các mô hình. Tiếp theo, các thí nghiệm phân tích thành phần được dùng để làm rõ vai trò của SPICE trong GRPO và ảnh hưởng của ACE. Phần cuối đánh giá tính ổn định của kết quả khi thay đổi điều kiện đánh giá, xem xét khả năng khái quát sang các tập dữ liệu khác và những hạn chế còn lại của phương pháp.
 
 \section{Thiết lập thực nghiệm}\label{sec:6.1}\label{sec:6.6}
 
-Kết quả chính được tính trên 4.463 bước có thao tác chạm của tập kiểm thử của đề tài (Mục~\ref{sec:3.3}). Với mỗi câu hướng dẫn, UGround xác định phần tử giao diện mà câu đề cập tới. Executability sau đó kiểm tra cả phần tử này và loại thao tác được nêu trong câu theo quy trình ở Chương~\ref{chap:5}. Câu không có nội dung được tính là không đạt.
+Kết quả chính được đánh giá trên 4.463 bước có thao tác chạm của tập kiểm thử của đề tài (Mục~\ref{sec:3.3}). Với mỗi câu hướng dẫn, UGround xác định phần tử giao diện mà câu đề cập tới. Executability sau đó kiểm tra cả phần tử này và loại thao tác được nêu trong câu theo quy trình ở Chương~\ref{chap:5}. Câu không có nội dung được xem là không đạt.
 
 Các mô hình được so sánh gồm Base, Qwen2.5-VL-7B-Instruct chỉ dùng prompting, S1 với hai lượt huấn luyện dùng seed 101 và 202, GRPO-SPICE và phương pháp hoàn chỉnh sau khi áp dụng ACE (Mục~\ref{sec:4.7}). Câu hướng dẫn tham chiếu trong dữ liệu cũng được đưa qua cùng quy trình để cung cấp một mốc diễn giải cho điểm số.
 
@@ -13,7 +13,7 @@ Các chênh lệch được tính theo cặp trên cùng tập bước. Khoảng
 
 \section{Kết quả tổng thể}\label{sec:6.2}
 
-Bảng~\ref{tab:6.1} cho thấy bước tinh chỉnh có giám sát tạo ra mức cải thiện lớn nhất trong chuỗi huấn luyện: executability tăng từ 47,59\% ở Base lên 59,11\% ở S1/101. Học tiếp bằng GRPO-SPICE đưa kết quả lên \textbf{60,65\%}, cao hơn S1/101 \textbf{1,55 điểm} [+0,80; +2,33] ($p = 1{,}5 \times 10^{-5}$) và cao hơn S1/202 1,03 điểm [+0,25; +1,83] ($p = 0{,}014$). Sau khi áp dụng ACE, executability đạt \textbf{60,68\%}, gần như giữ nguyên mức của GRPO-SPICE.
+Bảng~\ref{tab:6.1} cho thấy bước tinh chỉnh có giám sát tạo ra mức cải thiện lớn nhất trong chuỗi huấn luyện: executability tăng từ 47,59\% ở Base lên 59,11\% ở S1/101. GRPO-SPICE tiếp tục cải thiện executability lên \textbf{60,65\%}, cao hơn S1/101 \textbf{1,55 điểm} [+0,80; +2,33] ($p = 1{,}5 \times 10^{-5}$) và cao hơn S1/202 1,03 điểm [+0,25; +1,83] ($p = 0{,}014$). Sau khi áp dụng ACE, executability đạt \textbf{60,68\%}, gần như giữ nguyên mức của GRPO-SPICE.
 
 \begin{table}[htbp]
 \centering\small
@@ -35,7 +35,7 @@ Câu tham chiếu & 75,73 & +16,62 \\
 \end{tabular}
 \end{table}
 
-Ba cách xác định vị trí bổ sung ở Chương~\ref{chap:5} cũng giữ cùng xu hướng giữa S1/101 và GRPO-SPICE. Vì các tiêu chí này chỉ thay đổi cách xác định một dự đoán vị trí là đúng, chúng được dùng để kiểm tra độ ổn định của kết luận thay vì làm phức tạp bảng kết quả chính.
+Ba tiêu chí đánh giá bổ sung ở Chương~\ref{chap:5} cũng cho cùng xu hướng khi so sánh S1/101 với GRPO-SPICE. Các tiêu chí này được dùng để đối chiếu kết luận dưới những cách đánh giá khác nhau, thay vì đưa toàn bộ vào bảng kết quả chính.
 
 GRPO-SPICE thay đổi câu ở 1.668 bước, tương ứng 37,4\% tập đánh giá. Xét 69 bước cải thiện ròng so với S1/101, khoảng 41 bước đến từ việc câu mới dẫn tới đúng phần tử mục tiêu và khoảng 28 bước đến từ việc sửa đúng loại thao tác. Số bước không đạt do sai loại thao tác giảm từ 251 xuống 179. Hình~\ref{fig:6.1} minh họa một trường hợp S1/101 gọi nút \emph{Allow}, trong khi GRPO-SPICE gọi đúng nút \emph{Not Now}.
 
@@ -143,7 +143,7 @@ ACE và GRPO-SPICE gần như tương đương về executability ($p = 1$), tro
 
 \section{Phân tích bổ sung}\label{sec:6.7}\label{sec:6.7.1}\label{sec:6.7.2}\label{sec:6.9}
 
-\subsection{Độ ổn định của kết quả}\label{sec:6.7.3}
+\subsection{Đánh giá tính ổn định của kết quả}\label{sec:6.7.3}
 
 Chênh lệch 1,55 điểm giữa GRPO-SPICE và S1/101 trên tập kiểm thử chính nhỏ hơn MDE 2,11 điểm khi tính thêm khác biệt giữa các lần huấn luyện. Vì vậy, luận văn kiểm tra thêm một lượt GRPO với seed khác và thay UGround bằng các mô hình đánh giá khác.
 
@@ -277,7 +277,7 @@ GRPO-SPICE $-$ S1/101 & +1,55 [+0,80; +2,33] & +1,48 [+0,54; +2,43] \\
 
 Khi dùng lịch sử do mô hình tạo, executability của S1/101 và GRPO-SPICE đều giảm khoảng 4 điểm, lần lượt 4,15 và 4,21 điểm. Tuy vậy, chênh lệch giữa hai mô hình vẫn là \textbf{1,48 điểm} [+0,54; +2,43], gần với mức 1,55 điểm trong thiết lập chính. Trên 3.492 bước thuộc các tác vụ có đủ ảnh để toàn bộ lịch sử được tạo bởi mô hình, GRPO-SPICE cao hơn S1/101 1,66 điểm [+0,60; +2,75].
 
-\subsection{Phân tích lỗi}\label{sec:6.3.1}
+\subsection{Hạn chế còn lại}\label{sec:6.3.1}
 
 Đối với các bước không sử dụng thao tác chạm, GRPO-SPICE cho kết quả thấp hơn S1/101. Trên 2.495 bước thuộc nhóm này, tỉ lệ nêu đúng loại thao tác giảm 1,68 điểm, chủ yếu ở các bước cuộn và quay lại (Bảng~\ref{tab:6.khongcham}). Trong 51 bước cuộn mà S1/101 nêu đúng còn GRPO-SPICE nêu sai, có 47 bước bị chuyển thành câu mô tả thao tác chạm. Ở các bước chờ, tỉ lệ đúng tăng 4,55 điểm.
 
