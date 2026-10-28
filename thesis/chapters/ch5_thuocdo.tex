@@ -1,197 +1,135 @@
 \chapter{Độ đo khả năng thực hiện theo hướng dẫn}
 \label{chap:5}
 
-Chương này trình bày độ đo khả năng thực hiện theo hướng dẫn (\emph{instruction executability}, gọi tắt executability). Một câu hướng dẫn được tính là đạt khi câu nêu đúng loại thao tác và một mô hình định vị độc lập, chỉ đọc câu và ảnh màn hình, chỉ ra đúng phần tử mà người dùng đã chạm. Chương lần lượt trình bày định nghĩa, lý do chọn tiêu chí ô Voronoi, mô hình định vị dùng làm công cụ đo, các mốc tham chiếu và phép kiểm chứng độ đo, các tiêu chí báo kèm, bảy độ đo văn bản và phương pháp thống kê dùng ở Chương~\ref{chap:6}.
+Chương này trình bày cách đề tài đánh giá một câu hướng dẫn. Câu được đưa cho một mô hình khác đọc cùng với ảnh màn hình, và mô hình này chọn một điểm trên ảnh để chạm. Nếu điểm được chọn rơi đúng vào phần tử mà người dùng thật đã chạm thì câu được xem là thực hiện được. Mục~\ref{sec:5.1} định nghĩa độ đo này, gọi là executability. Mục~\ref{sec:5.2} và Mục~\ref{sec:5.thaotac} trình bày cách xác định điểm đúng phần tử và loại thao tác đúng. Mục~\ref{sec:5.11} giới thiệu bảy độ đo văn bản được báo kèm. Mục~\ref{sec:5.tincay} kiểm chứng độ tin cậy của executability, trong đó có việc thay mô hình đánh giá bằng ba mô hình khác. Mục~\ref{sec:5.13} trình bày phương pháp thống kê.
 
-\section{Định nghĩa}\label{sec:5.1}
+\section{Ý tưởng và định nghĩa executability}\label{sec:5.1}
 
-Với mỗi bước có thao tác chạm, ký hiệu $s$ là câu hướng dẫn cần đánh giá, $I$ là ảnh màn hình và $g$ là tọa độ mà người dùng đã chạm. $G$ là mô hình định vị: $G$ nhận ảnh cùng câu và trả về tọa độ $p = G(I,s)$ của phần tử mà câu quy chiếu tới. $G$ tách biệt với mô hình sinh, không nhận $g$ và không được tinh chỉnh trong đề tài. $E$ là tập các phần tử khác trên màn hình, gọi là phần tử cạnh tranh, với tâm $c(e)$ lấy từ cây trợ năng. Các tâm cách nhau dưới 24 dp được gộp làm một, và tâm nào cách $g$ dưới 24 dp được coi là thuộc chính phần tử đích nên không tính là cạnh tranh. Ở đây dp là đơn vị độ dài của Android, không phụ thuộc mật độ điểm ảnh; 24 dp tương ứng 63 điểm ảnh trên thiết bị của bộ dữ liệu.
+Cách đánh giá thường gặp trong bài toán sinh câu là so câu sinh ra với câu chuẩn bằng các độ đo như BLEU hay ROUGE. Với hướng dẫn sử dụng giao diện, cách so này có hai hạn chế. Thứ nhất, mỗi bước chỉ có một câu chuẩn, trong khi cùng một phần tử có thể được gọi theo nhiều cách đúng: \emph{Click on the Birthday} và \emph{Tap the date of birth row} có thể cùng chỉ một dòng trên màn hình nhưng có rất ít từ chung. Thứ hai, một câu có thể giống câu chuẩn về từ ngữ mà vẫn chỉ sai phần tử. Chẳng hạn, ở một bước có hộp thoại xin quyền gửi thông báo, câu chuẩn là \emph{Click on the Not now button to remove this pop up notification}, còn câu \emph{Click on the Allow button} có gần hết từ ngữ trùng với câu chuẩn nhưng dẫn người dùng tới một nút có tác dụng ngược lại. Zhao và cộng sự~\cite{zhao2021} cũng nhận thấy các độ đo dựa trên cụm từ kém tin cậy khi đánh giá chỉ dẫn điều hướng.
 
-Một bước đạt executability khi thoả cả ba điều kiện:
+Một câu hướng dẫn tốt là câu giúp người đọc thao tác đúng. Đề tài thay người đọc bằng một mô hình máy rồi kiểm tra thao tác mà mô hình này thực hiện. Cách đánh giá này có tiền lệ trong nghiên cứu sinh biểu thức quy chiếu, nơi câu mô tả một đối tượng trong ảnh được chấm bằng tỉ lệ một mô hình hiểu câu chọn đúng đối tượng đó~\cite{mao2016,luo2017}. Quy trình đánh giá gồm hai mô hình:
 
 \begin{itemize}
-\item \textbf{(i) Đúng loại thao tác.} Động từ của $s$ sau khi chuẩn hoá phải thuộc cùng loại với thao tác của câu chuẩn, trong năm loại chạm, gõ, cuộn, nhấn giữ và quay lại.\footnote{Mười hai động từ được xếp vào loại chạm: \emph{tap, click, press, select, choose, touch, open, launch, go, navigate, visit, view}. Động từ được dò từ trái sang phải, nên các cụm như \emph{go back} hay \emph{press the back button} cũng được xếp vào loại chạm. Nếu sửa quy tắc này, S1 giảm từ 59,12 xuống 58,81, Base từ 47,60 xuống 47,40, và chênh lệch S1 $-$ Base đổi từ 11,52 thành 11,41 điểm. Mọi bảng giữ quy tắc ban đầu để các lượt đánh giá nhất quán với nhau.}
-\item \textbf{(ii) Không đảo nghĩa.} $s$ và câu chuẩn không được gọi tên hai trạng thái ngược nhau của cùng một điều khiển, chẳng hạn “bật thông báo” và “tắt thông báo”. Điều kiện (iii) không bắt được lỗi này vì hai trạng thái nằm cùng một chỗ. Danh sách cặp trái nghĩa được lập thủ công.\footnote{Chín cặp: \emph{on/off, enable/disable, show/hide, mute/unmute, expand/collapse, check/uncheck, select/deselect, start/stop, enabled/disabled}.}
-\item \textbf{(iii) Định vị đúng.} $p$ nằm trong cửa sổ dung sai quanh $g$, $|p_x-g_x| \le \tau W$ và $|p_y-g_y| \le \tau H$, với $W, H$ là bề ngang và chiều cao màn hình và $\tau = 0{,}14$ theo~\cite{aitw}. Trên màn 1080 $\times$ 2400, cửa sổ này rộng $\pm$151 điểm ảnh theo chiều ngang và $\pm$336 điểm ảnh theo chiều dọc. Đồng thời, không phần tử cạnh tranh nào có tâm gần $p$ hơn chính $g$:
+\item \textbf{Mô hình A} là mô hình sinh câu cần đánh giá, chẳng hạn Base, S1 hay phương pháp đề xuất (Chương~\ref{chap:4}). Ở mỗi bước, A nhận ảnh màn hình cùng thông tin của tác vụ và viết một câu hướng dẫn cho thao tác tiếp theo.
+\item \textbf{Mô hình B} là mô hình định vị phần tử giao diện (\emph{GUI grounding}). B nhận một ảnh màn hình và một câu mô tả, rồi trả về tọa độ của một điểm trên ảnh, là nơi cần chạm theo câu đó. Mô hình B chính của đề tài là UGround-V1-2B~\cite{uground}, một mô hình có trọng số công khai được phát triển riêng cho bài toán này.
 \end{itemize}
 
+B độc lập với A theo ba nghĩa. B không được huấn luyện hay tinh chỉnh trong đề tài. B không tham gia phần thưởng của GRPO hay điều kiện lựa chọn của ACE (Mục~\ref{sec:4.1}). B chỉ nhận câu và ảnh, không biết mục tiêu tác vụ, các bước trước hay điểm người dùng đã chạm. Vì vậy B chỉ tìm được đúng phần tử khi câu nêu đủ thông tin để nhận ra phần tử đó trên màn hình.
+
+\begin{figure}[!htb]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  hop/.style={draw, rounded corners=3pt, align=center, inner sep=4pt, thick, minimum height=1.25cm},
+  vao/.style={hop, draw=blue!50!black, fill=blue!8},
+  moa/.style={hop, draw=orange!70!black, fill=orange!15},
+  cau/.style={hop, draw=black!60, fill=white},
+  mob/.style={hop, draw=teal!70!black, fill=teal!12},
+  kiem/.style={hop, draw=green!45!black, fill=green!10},
+  chuan/.style={draw=black!55, rounded corners=3pt, align=center, inner sep=4pt, fill=black!4, dashed},
+  mui/.style={-{Latex[length=2.4mm]}, draw=black!70, thick},
+  nhan/.style={font=\footnotesize, fill=white, inner sep=1.5pt}
+]
+\node (vao) [vao, text width=3.7cm] {\textbf{Đầu vào của bước}\\ ảnh màn hình $I$,\\ mục tiêu, các bước trước};
+\node (a) [moa, text width=3.4cm, right=8mm of vao] {\textbf{Mô hình A}\\ sinh câu cần đánh giá};
+\node (s) [cau, text width=4.4cm, right=8mm of a] {\textbf{Câu hướng dẫn $s$}\\ \emph{``Click on the Birthday option''}};
+
+\node (b) [mob, text width=3.2cm, below=19mm of vao] {\textbf{Mô hình B}\\ UGround-V1-2B\\ chỉ nhận $I$ và $s$};
+\node (p) [cau, text width=2.0cm, right=6mm of b] {\textbf{Điểm} $p$\\ $= B(I, s)$};
+\node (k) [kiem, text width=3.9cm, right=6mm of p] {\textbf{Kiểm tra}\\ (i) đúng thao tác\\ (ii) $p$ rơi vào phần tử đích};
+\node (kq) [hop, draw=black!70, fill=black!6, text width=1.6cm, right=6mm of k] {\textbf{Đạt}\\ hoặc\\ \textbf{không đạt}};
+
+\node (chuan) [chuan, text width=7.2cm, below=7mm of k.south east, anchor=north east] {Dữ liệu chuẩn của bước, B không được thấy: câu chuẩn $s^{*}$, điểm $g$ người dùng đã chạm, các phần tử trên màn hình};
+
+\draw [mui] (vao) -- (a);
+\draw [mui] (a) -- (s);
+\draw [mui] ([xshift=-6mm]vao.south) -- node[nhan, left=1mm] {ảnh $I$} ([xshift=-6mm]b.north);
+\draw [mui] (s.south) -- ++(0,-7mm) -| node[nhan, pos=0.2, below] {câu $s$} ([xshift=6mm]b.north);
+\draw [mui] (b) -- (p);
+\draw [mui] (p) -- (k);
+\draw [mui] (k) -- (kq);
+\draw [mui, draw=black!50, dashed] (chuan.north -| k.south) -- (k.south);
+\end{tikzpicture}
+\caption{Quy trình đánh giá một câu hướng dẫn bằng executability.}
+\label{fig:5.qt}
+\end{figure}
+
+Hình~\ref{fig:5.qt} tóm tắt quy trình. Ở mỗi bước, A sinh câu $s$, B đọc $s$ cùng ảnh $I$ và trả về điểm $p = B(I, s)$. Điểm này được so với dữ liệu chuẩn của bước, gồm câu chuẩn $s^{*}$ do người chú thích viết và điểm $g$ mà người dùng đã chạm. Câu $s$ \emph{thực hiện được} khi thoả cả hai điều kiện:
+
+\begin{itemize}
+\item \textbf{(i) Đúng thao tác.} $s$ nêu cùng loại thao tác với câu chuẩn, trong năm loại chạm, gõ, cuộn, nhấn giữ và quay lại, và không gọi trạng thái ngược với câu chuẩn, chẳng hạn ``bật thông báo'' thay cho ``tắt thông báo'' (Mục~\ref{sec:5.thaotac}).
+\item \textbf{(ii) Đúng phần tử.} $p$ rơi vào phần tử mà người dùng đã chạm. Cụ thể, $p$ nằm trong cửa sổ $\pm$14\% quanh $g$ và không gần phần tử nào khác hơn chính $g$ (Mục~\ref{sec:5.2}).
+\end{itemize}
+
+\noindent Điểm executability của một mô hình A là tỉ lệ câu thực hiện được trên $N$ bước:
+\begin{equation}
+\mathrm{Executability} = \frac{1}{N}\sum_{i=1}^{N} \mathbb{1}\big[\,\text{đúng thao tác}(s_i, s_i^{*})\,\big] \cdot \mathbb{1}\big[\,B(I_i, s_i) \in V(g_i)\,\big],
+\label{eq:5.exec}
+\end{equation}
+\noindent trong đó $\mathbb{1}[\cdot]$ bằng 1 khi điều kiện đúng và bằng 0 khi sai, còn $V(g_i)$ là vùng chấp nhận quanh điểm chạm, định nghĩa ở Mục~\ref{sec:5.2}.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.84\textwidth]{figures/fig_voronoi.png}
+\caption{Một bước được đánh giá: câu của S1 đạt, câu của Base dẫn tới dòng \emph{Gender} nên không đạt.}
+\label{fig:5.1}
+\end{figure}
+
+Hình~\ref{fig:5.1} là một bước trên màn hình hồ sơ cá nhân. Người dùng đã chạm dòng \emph{Birthday}, và câu chuẩn là \emph{Click on the Birthday}. S1 viết \emph{Click on the Birthday option}; B chọn một điểm nằm trên dòng \emph{Birthday}, nên câu đạt. Base viết \emph{Click on the ``Gender'' section to change it to ``Male''}. Câu này vẫn nêu đúng thao tác chạm, nhưng B chọn dòng \emph{Gender} ngay phía trên, nên câu không đạt. Điểm của B cho câu của Base vẫn nằm trong cửa sổ 14\% quanh điểm chạm; Mục~\ref{sec:5.2} giải thích vì sao trường hợp này vẫn được tính là sai.
+
+Độ đo chỉ tính trên các bước có thao tác chạm (gồm chạm và nhấn giữ), tức \textbf{4.463} trong 6.958 bước của tập kiểm tra. Chỉ ở các bước này dữ liệu mới có tọa độ của phần tử đích để so với điểm của B; các bước gõ chữ, cuộn và quay lại không có tọa độ đích nên được phân tích riêng bằng tỉ lệ nêu đúng loại thao tác (Mục~\ref{sec:6.3.1}). Câu không có nội dung vẫn nằm trong mẫu số và được tính là không đạt. Executability chỉ xét việc câu xác định đúng phần tử và thao tác; các khía cạnh ngôn ngữ được đo riêng bằng độ đo văn bản (Mục~\ref{sec:5.11}).
+
+\section{Xác định điểm đúng phần tử}\label{sec:5.2}
+
+Dữ liệu cho biết điểm $g$ mà người dùng đã chạm nhưng không cho biết chính xác ranh giới của phần tử được chạm. Điều kiện (ii) vì vậy được xác định bằng hai tiêu chí kết hợp.
+
+\textbf{Cửa sổ dung sai 14\%.} Theo quy ước của AndroidInTheWild~\cite{aitw}, hai lần chạm được coi là tương đương khi cách nhau không quá 14\% kích thước màn hình. Đề tài dùng cửa sổ theo từng trục, $|p_x-g_x| \le 0{,}14\,W$ và $|p_y-g_y| \le 0{,}14\,H$, với $W$ và $H$ là bề ngang và chiều cao màn hình. Trên màn hình $1080 \times 2400$, cửa sổ này rộng $\pm$151 điểm ảnh theo chiều ngang và $\pm$336 điểm ảnh theo chiều dọc, lớn hơn nhiều so với một nút thông thường. Ở 63,2\% số bước có ít nhất một phần tử khác nằm trong cửa sổ quanh điểm chạm, nên một điểm rơi vào phần tử bên cạnh vẫn có thể được chấp nhận, như dòng \emph{Gender} ở Hình~\ref{fig:5.1}.
+
+\textbf{Ô Voronoi.} Để loại trường hợp này, đề tài thêm một điều kiện: trong các phần tử trên màn hình, phần tử người dùng đã chạm phải là phần tử gần $p$ nhất. Gọi $E$ là tập các phần tử khác trên màn hình, với tâm $c(e)$ lấy từ cây trợ năng. Điểm $p$ phải thoả
 \begin{equation}
 \|p-g\| \le \|p-c(e)\| \quad \forall e \in E.
 \label{eq:5.1}
 \end{equation}
-\noindent
-Vùng gồm các điểm thoả~\eqref{eq:5.1} là ô Voronoi quanh điểm chạm $g$ (Hình~\ref{fig:5.1}). Nói bằng lời, trong các phần tử trên màn hình, phần tử đích phải là phần tử gần điểm trả về nhất. Ô được dựng quanh chính điểm chạm, không quanh tâm hộp của phần tử chứa điểm chạm; các tiêu chí dựa trên hộp phần tử được báo kèm ở Mục~\ref{sec:5.12}.
+\noindent Tập các điểm thoả~\eqref{eq:5.1} là ô Voronoi quanh $g$, được tô vàng ở Hình~\ref{fig:5.1}. Ô được dựng quanh chính điểm chạm, không quanh tâm hộp của phần tử, vì điểm người dùng chạm thường lệch khỏi tâm phần tử vài chục điểm ảnh. Các tâm cách nhau dưới 24 dp (khoảng 63 điểm ảnh trên thiết bị của bộ dữ liệu; dp là đơn vị độ dài của Android, không phụ thuộc mật độ điểm ảnh) được gộp làm một, và tâm nào cách $g$ dưới 24 dp được coi là thuộc chính phần tử đích. Vùng chấp nhận $V(g)$ trong công thức~\eqref{eq:5.exec} là phần giao của cửa sổ 14\% và ô Voronoi, nên ô Voronoi là phiên bản chặt hơn của cửa sổ dung sai chứ không phải một lựa chọn thay thế.
 
-Điểm executability là tỉ lệ bước thoả cả ba điều kiện trên toàn bộ 4.463 bước có thao tác chạm của tập kiểm tra; câu không có nội dung được tính là không đạt. Độ đo chỉ xét việc câu xác định đúng phần tử và thao tác. Các khía cạnh ngôn ngữ được đo riêng bằng độ đo văn bản (Mục~\ref{sec:5.11}).
-
-\textbf{Các mẫu dùng trong phép kiểm chứng.} Mọi kết quả ở Chương~\ref{chap:6} tính trên đủ 4.463 bước. Một số phép kiểm trong chương này dùng mẫu con: 300 bước để đo sai số định vị (Mục~\ref{sec:5.3}), một mẫu ngẫu nhiên 800 bước cho các mốc dưới, phép bỏ tên, bỏ vị trí và phép viết lại câu (Mục~\ref{sec:5.5} và Mục~\ref{sec:5.8}), một mẫu ngẫu nhiên 698 bước để so năm tiêu chí (Mục~\ref{sec:5.12}), và 2.532 bước dùng khi đổi mô hình định vị (Mục~\ref{sec:5.9}). Điểm của câu chuẩn vì vậy hơi khác nhau giữa các mẫu, và mỗi mức điểm của câu chuẩn được nêu kèm mẫu tương ứng.
-
-\section{Lựa chọn tiêu chí ô Voronoi}\label{sec:5.2}
-
-Cửa sổ dung sai 14\% là cách đánh giá quen thuộc nhưng vẫn chấp nhận điểm rơi vào phần tử bên cạnh. Bảng~\ref{tab:5.1} so hai tiêu chí trên các dự đoán tổng hợp tạo từ 250 bước có thao tác chạm, mỗi bước bốn lần theo hướng ngẫu nhiên: điểm dự đoán hoặc lệch 3\% bề ngang khỏi điểm chạm, hoặc được đặt vào tâm phần tử khác gần nhất sau khi gộp.
+Bảng~\ref{tab:5.1} so hai cách xác định trên các dự đoán tổng hợp từ 250 bước, mỗi bước bốn lần theo hướng ngẫu nhiên: điểm dự đoán hoặc lệch 3\% bề ngang khỏi điểm chạm, hoặc được đặt vào tâm phần tử khác gần nhất. Cửa sổ 14\% chấp nhận 84,3\% dự đoán đã chuyển sang phần tử lân cận, còn ô Voronoi chỉ chấp nhận \textbf{2,8\%} mà vẫn giữ 99,7\% dự đoán lệch nhẹ.
 
 \begin{table}[htbp]
 \centering\small
-\caption{Tỉ lệ chấp nhận của hai tiêu chí khi dự đoán lệch nhẹ và khi dự đoán chuyển sang phần tử lân cận (250 bước, mỗi bước bốn lần).}\label{tab:5.1}
+\caption{Tỉ lệ chấp nhận khi dự đoán lệch nhẹ và khi dự đoán chuyển sang phần tử lân cận.}\label{tab:5.1}
 \begin{tabular}{@{}lrr@{}}
 \toprule
 \textbf{Tiêu chí} & \textbf{Lệch 3\%} & \textbf{Sang phần tử lân cận} \\
 \midrule
 Cửa sổ dung sai $\pm$14\% theo từng trục & 100,0\% & 84,3\% \\
-Ô Voronoi & 99,7\% & \textbf{2,8\%} \\
+Cửa sổ 14\% và ô Voronoi (executability) & 99,7\% & \textbf{2,8\%} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Cửa sổ 14\% vẫn chấp nhận 84,3\% dự đoán đã chuyển sang phần tử lân cận, vì 63,2\% số bước có ít nhất một phần tử khác nằm trong cửa sổ quanh phần tử đích. Ô Voronoi chỉ chấp nhận \textbf{2,8\%} trường hợp này mà vẫn giữ 99,7\% dự đoán lệch 3\%, nên được chọn làm tiêu chí chính.
+Phép gộp tâm 24 dp có một giới hạn đã biết: khi phần tử lân cận có tâm cách đích từ 30 đến 80 điểm ảnh, nhiều phần tử đã bị gộp với đích nên ô Voronoi chỉ phát hiện 33,1\% trường hợp, so với 99,6\% khi khoảng cách từ 80 đến 150 điểm ảnh (Phụ lục~\ref{sec:5.7}). Executability vì vậy phân biệt các phần tử tách biệt trên giao diện, không phân biệt các điểm lệch nhẹ trong cùng một vùng tương tác.
 
-Phép gộp tâm 24 dp tạo một giới hạn đã biết. Mức 2,8\% tính cho phần tử lân cận gần nhất còn lại sau khi gộp. Khi dự đoán được đặt gần một phần tử có tâm cách đích từ 30 đến 80 điểm ảnh, ô Voronoi chỉ phát hiện 33,1\% trường hợp, vì nhiều phần tử trong khoảng này đã bị gộp với đích; với khoảng cách từ 80 đến 150 điểm ảnh, tỉ lệ phát hiện là 99,6\% (Phụ lục~\ref{sec:5.7}). Ở 8,2\% số bước, phép gộp cũng hợp nhất tâm của hai phần tử khác nhau. Executability vì vậy phân biệt các phần tử tách biệt trên giao diện, không phân biệt các điểm lệch nhẹ trong cùng vùng tương tác.
+\subsection{Các tiêu chí báo kèm}\label{sec:5.12}
 
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.86\textwidth]{figures/fig_voronoi.png}
-\caption{Một bước mà hai tiêu chí cho kết quả khác nhau: câu của Base dẫn tới dòng \emph{Gender} ngay trên dòng đích \emph{Birthday}, cửa sổ 14\% (biên trái, phải là hai nét đứt) vẫn chấp nhận còn ô Voronoi thì không.}
-\label{fig:5.1}
-\end{figure}
-
-\section{Mô hình định vị dùng làm công cụ đo}\label{sec:5.3}\label{sec:5.4}
-
-UGround-V1-2B~\cite{uground} là mô hình định vị chính. Mô hình có trọng số công khai, được phát triển cho bài toán định vị phần tử giao diện và trả về trực tiếp tọa độ từ ảnh cùng câu mô tả. Prompt đưa cho mô hình giữ đúng mẫu trên trang giới thiệu của nhóm tác giả.
-
-\textbf{Độ chính xác.} Để biết sai số bao nhiêu thì đủ nhỏ, chúng tôi đo biên dung sai, tức nửa khoảng cách từ $g$ tới tâm cạnh tranh gần nhất. Trên 1.496 bước có thao tác chạm, biên này có trung vị 67 điểm ảnh (6,2\% bề ngang) và phân vị 10 là 39 điểm ảnh (3,6\%), nên sai số cỡ 3\% bề ngang hầu như không làm đổi kết quả. Trên 300 bước có câu chuẩn, sai số của UGround có trung vị 0,7\% bề ngang và 62,7\% số bước có sai số dưới 3\%. Sai số có dạng lưỡng cực: phần lớn dự đoán rất gần đích, nhưng 10\% số bước lệch quá 36\% bề ngang. Trên cùng mẫu này, ô Voronoi chấp nhận mọi bước có sai số dưới 3\% ($n = 188$) và không chấp nhận bước nào có sai số trên 14\% ($n = 63$).
-
-\textbf{Tính tất định.} Cùng câu và cùng ảnh luôn cho cùng tọa độ. Qua bốn lượt đánh giá độc lập với thứ tự và cách gom lô khác nhau, 1.625 cặp câu và ảnh được đánh giá lặp lại không có bất đồng nào, nên điểm số không phụ thuộc cách chạy.
-
-\textbf{Dữ liệu huấn luyện của công cụ.} UGround dựng trên Qwen2-VL, cùng họ với mô hình sinh, và có dùng 47 nghìn nhãn phần tử của AndroidControl khi huấn luyện~\cite{uground}. Khoảng 90\% tác vụ của tập kiểm tra thuộc phần huấn luyện chính thức của AndroidControl (Mục~\ref{sec:3.3}), nên UGround có thể đã thấy một phần màn hình kiểm tra và đã quen văn phong chú thích của bộ dữ liệu. Chúng tôi kiểm tra rủi ro này theo hai cách. Thứ nhất, khi tách 4.463 bước theo phần chia chính thức, điểm gần như không đổi giữa phần huấn luyện và phần kiểm tra cùng kiểm định chính thức: câu chuẩn đạt 75,9\% và 74,0\%, S1 đạt 59,1\% và 59,3\%, Base đạt 47,7\% và 46,7\%, và KTC của hai phần chồng nhau ở cả ba loại câu. Thứ hai, chúng tôi thay UGround bằng các công cụ khác họ kiến trúc hoặc không dùng AndroidControl khi huấn luyện (Mục~\ref{sec:5.9}).
-
-\section{Mốc tham chiếu trên và dưới}\label{sec:5.5}\label{sec:5.6}
-
-\textbf{Mốc trên.} Khi đưa câu chuẩn của chính bước đang xét qua cùng quy trình, executability trên 4.463 bước là \textbf{75,7\%} [74,1; 77,3]. Đây là mức mà quy trình đánh giá đạt được với câu do người chú thích viết, không phải trần lý thuyết. Có 148 bước mà câu chuẩn không đạt nhưng câu của Base hoặc S1 lại đạt, và 3.527 bước (79,1\%) đạt với ít nhất một trong ba loại câu. Trong 1.083 bước câu chuẩn không đạt, 72\% là do điểm trả về lệch quá 14\% bề ngang, tức phần lớn giới hạn nằm ở công cụ định vị. Theo cách làm của Zhao và cộng sự~\cite{zhao2021}, chúng tôi đặt điểm của mô hình cạnh mốc này thay vì quy đổi thành tỉ lệ phần trăm của mốc.
-
-\textbf{Mốc dưới.} Trên mẫu 800 bước, câu chuẩn được thay bằng các câu thiếu thông tin quy chiếu (Bảng~\ref{tab:5.moc}). Câu chung chung “\emph{Tap the button.}” chỉ đạt 12,0\%. Câu chuẩn của một màn hình khác, đúng văn phong nhưng sai nội dung, còn thấp hơn, 6,1\%, nên độ đo phản ứng với nội dung của câu chứ không với văn phong.
-
-\textbf{Tên phần tử và mệnh đề vị trí.} Để biết thành phần nào của câu mang thông tin quy chiếu, chúng tôi bỏ riêng tên phần tử hoặc riêng mệnh đề vị trí khỏi câu chuẩn, ở những bước có thành phần đó. Bỏ tên làm executability giảm \textbf{28,5 điểm} ($b = 58$, $c = 3$, $p < 0{,}001$), gấp khoảng tám lần mức giảm 3,5 điểm khi bỏ mệnh đề vị trí ($b = 8$, $c = 1$, $p = 0{,}039$). Độ đo vì vậy phản ứng chủ yếu với tên phần tử.
+Chương~\ref{chap:6} báo thêm ba tiêu chí có tiền lệ trong các bộ dữ liệu giao diện (Bảng~\ref{tab:5.tieuchi}). Cả ba giữ điều kiện (i), chỉ thay điều kiện (ii), và được tính lại từ chính các điểm B đã trả về.
 
 \begin{table}[htbp]
 \centering\small
-\caption{Mốc tham chiếu trên mẫu 800 bước; hai hàng cuối chỉ tính trên các bước có thành phần bị bỏ.}\label{tab:5.moc}
-\begin{tabular}{@{}lrr@{}}
-\toprule
-\textbf{Câu đưa cho mô hình định vị} & \textbf{Số bước} & \textbf{Executability (\%)} \\
-\midrule
-Câu chuẩn & 800 & 74,9 \\
-S1 & 800 & 58,8 \\
-Base & 800 & 48,6 \\
-Câu chung chung “\emph{Tap the button.}” & 800 & 12,0 [9,7; 14,4] \\
-Câu chuẩn của một màn hình khác & 800 & 6,1 [4,5; 7,9] \\
-\midrule
-Câu chuẩn bỏ tên phần tử, giữ vị trí & 193 & 89,6 $\rightarrow$ 61,1 \\
-Câu chuẩn bỏ mệnh đề vị trí, giữ tên & 198 & 89,4 $\rightarrow$ 85,9 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\section{Độ ổn định trước các cách diễn đạt khác}\label{sec:5.8}
-
-Jandial và cộng sự~\cite{groundersunderstand} cho thấy mô hình định vị có thể nhạy với cách diễn đạt của câu. Chúng tôi viết lại câu chuẩn trên mẫu 800 bước theo ba cách giữ nguyên nghĩa, bằng quy tắc xác định và không dùng mô hình ngôn ngữ: đổi động từ thao tác (ví dụ \emph{click} thành \emph{tap}), đảo trật tự hai mệnh đề, và kết hợp cả hai (Bảng~\ref{tab:5.3}).
-
-\begin{table}[htbp]
-\centering\small
-\caption{Executability khi viết lại câu chuẩn, tính trên các câu được viết lại.}\label{tab:5.3}
-\begin{tabular}{@{}lrrrr@{}}
-\toprule
-\textbf{Biến thể} & \textbf{Số câu viết lại} & \textbf{Trước $\rightarrow$ sau} & \textbf{$b$ / $c$} & \textbf{p} \\
-\midrule
-Đổi động từ thao tác & 725 (90,6\%) & 76,8 $\rightarrow$ 77,0 & 13 / 14 & 1,000 \\
-Đảo trật tự mệnh đề & 211 (26,4\%) & 89,6 $\rightarrow$ 90,0 & 0 / 1 & 1,000 \\
-Đổi động từ và đảo trật tự & 203 (25,4\%) & 90,1 $\rightarrow$ 91,1 & 0 / 2 & 0,500 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Gộp ba biến thể, 30 trong 1.139 câu viết lại (2,6\%) làm đổi kết quả đánh giá, với hiệu ròng \textbf{+0,35 điểm} [$-$0,59; +1,29], trong khi bỏ tên phần tử làm điểm giảm mạnh (Mục~\ref{sec:5.5}). Các biến thể này giữ nguyên phần mô tả phần tử. Việc đổi cách gọi tên phần tử, dạng biến đổi mà Jandial và cộng sự khảo sát, nằm ngoài phạm vi phép kiểm này.
-
-\section{Đánh giá chéo bằng công cụ khác}\label{sec:5.9}\label{sec:5.10}
-
-\textbf{Mô hình định vị không dùng AndroidControl.} UI-Venus-Ground-7B~\cite{uivenus} không dùng AndroidControl khi huấn luyện, nên được dùng để kiểm tra khả năng UGround thiên vị văn phong chú thích của bộ dữ liệu. Trên 300 bước của Mục~\ref{sec:5.3}, UI-Venus có sai số trung vị 1,56\% bề ngang. Phép so thực hiện trên 2.532 bước mà S1/101 và S2 viết câu khác nhau, với S2 là mô hình sinh mô tả phần tử trước câu, một hướng đã thử ở Mục~\ref{sec:A.1}. Hai công cụ có thang điểm khác nhau nên phép so dựa trên chênh lệch giữa các mô hình. Chênh lệch S1 $-$ Base được dùng làm phép so đối chiếu: nếu công cụ thứ hai nén thang điểm thì chênh lệch lớn này sẽ giảm theo. Chênh lệch giữ khoảng 94\% (+10,35 so với +9,68, Bảng~\ref{tab:5.4}), nên thang điểm không bị nén. Một chênh lệch nhỏ và âm, S2 $-$ S1, cũng giữ dấu, với cận trên KTC dưới 0 ở cả hai công cụ. UI-Venus vẫn dựng trên họ Qwen2.5-VL, nên phép so này chưa loại được khả năng thiên vị do cùng họ kiến trúc.
-
-\begin{table}[htbp]
-\centering\small
-\caption{Chênh lệch executability trên 2.532 bước khi đánh giá bằng hai mô hình định vị.}\label{tab:5.4}\label{tab:5.4b}
-\begin{tabular}{@{}lrr@{}}
-\toprule
-\textbf{So sánh} & \textbf{UGround} & \textbf{UI-Venus} \\
-\midrule
-S1 $-$ Base & +10,35 [+8,39; +12,40] & +9,68 [+7,60; +11,78] \\
-S2 $-$ S1, quy về mẫu số 4.463 & $-$1,93 [$-$3,08; $-$0,78] & $-$1,21 [$-$2,30; $-$0,12] \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\textbf{Mô hình định vị ngoài họ Qwen.} Phi-Ground-4B~\cite{phiground} dựng trên Phi-3.5-Vision và theo báo cáo kỹ thuật không dùng AndroidControl để huấn luyện. Trên đủ 4.463 bước, dưới Phi-Ground, S1/101 vẫn cao hơn Base 6,16 điểm [+4,71; +7,64]; bảy bước Base thiếu dự đoán được tính là không đạt.
-
-\textbf{Mô hình người nghe dạng lựa chọn.} Các công cụ trên đều giải bài toán định vị mở. Để đổi cả cách đánh giá, chúng tôi dùng Phi-4-multimodal-instruct~\cite{phi4mini}, một mô hình ngôn ngữ thị giác không thuộc họ Qwen và không được tinh chỉnh trên AndroidControl, làm mô hình người nghe. Các phần tử bấm được lấy từ cây trợ năng, được khoanh vùng và đánh số trên ảnh theo Set-of-Mark~\cite{setofmark}, với trung vị 15 phần tử mỗi màn hình. Phi-4 chỉ nhận câu hướng dẫn và ảnh đã đánh số, không có mục tiêu tác vụ hay lịch sử thao tác, rồi chọn phần tử mà câu nhắc tới. Lựa chọn được tính là đúng khi phần tử được chọn chứa điểm chạm của người dùng; danh sách đánh số có chứa phần tử này ở 95,7\% số bước. Cách đánh giá này gần với độ chính xác hiểu (\emph{comprehension accuracy}) trong các nghiên cứu sinh biểu thức quy chiếu~\cite{mao2016,luo2017}, áp dụng cho bài toán chọn phần tử giao diện như Mind2Web~\cite{mind2web}.
-
-\begin{table}[htbp]
-\centering\small
-\caption{Tỉ lệ Phi-4 chọn đúng phần tử trên 4.463 bước có thao tác chạm.}\label{tab:5.5}
-\begin{tabular}{@{}lr@{}}
-\toprule
-\textbf{Câu đưa cho mô hình người nghe} & \textbf{Chọn đúng (\%)} \\
-\midrule
-Câu chuẩn & 54,94 \\
-S1/101 & 44,63 \\
-Base & 38,23 \\
-Câu chung chung “\emph{Tap the button.}” & 15,86 \\
-Chọn ngẫu nhiên một phần tử (kỳ vọng) & 10,06 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Phi-4 giữ thứ hạng Base $<$ S1 $<$ câu chuẩn với khoảng cách lớn: S1/101 cao hơn Base 6,41 điểm và câu chuẩn cao hơn Base 16,72 điểm, trong khi câu chung chung chỉ cao hơn mức chọn ngẫu nhiên khoảng 6 điểm (Bảng~\ref{tab:5.5}). Mức đồng thuận theo từng bước giữa Phi-4 và UGround chỉ ở mức vừa phải ($\kappa$ từ 0,25 đến 0,44 tùy mô hình sinh), tức hai công cụ sai ở những bước khác nhau nhưng xếp hạng các mô hình như nhau. Câu chuẩn dưới Phi-4 chỉ đạt 54,9\%, thấp hơn nhiều so với 75,7\% dưới UGround, nên công cụ này được dùng để kiểm tra thứ hạng, không dùng làm số tiêu đề.
-
-Cả ba công cụ đều qua phép đánh giá lặp lại với kết quả trùng hoàn toàn (40 bước với UI-Venus, 40 bước với Phi-Ground, 200 bước với Phi-4). Kết quả của phương pháp đề xuất dưới ba công cụ này được trình bày ở Mục~\ref{sec:6.7.3}.
-
-\section{Độ nhạy theo tiêu chí và các tiêu chí báo kèm}\label{sec:5.12}
-
-\textbf{Thứ hạng qua năm tiêu chí.} Giá trị tuyệt đối của điểm số phụ thuộc tiêu chí xác định một dự đoán đúng. Trên mẫu 698 bước, chúng tôi đánh giá lại câu chuẩn, S1 và Base theo năm tiêu chí: đĩa Euclid bán kính 14\% bề ngang, cửa sổ chữ nhật 14\% theo từng trục, ô Voronoi đang dùng, ô Voronoi dựng quanh tâm hộp chứa $g$ thay vì quanh $g$, và tiêu chí hộp gần nhất. Điểm của câu chuẩn thay đổi từ 56,6 đến 82,2, nhưng thứ hạng giữ nguyên và chênh lệch S1 $-$ Base luôn nằm trong khoảng từ 9,5 đến 13,0 điểm (Bảng~\ref{tab:5.6}).
-
-\begin{table}[htbp]
-\centering\small
-\caption{Điểm của câu chuẩn và chênh lệch S1 $-$ Base theo năm tiêu chí (698 bước).}\label{tab:5.6}
+\caption{Các tiêu chí xác định điểm đúng phần tử.}\label{tab:5.tieuchi}
 \setlength{\tabcolsep}{4pt}
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}Xrrrrr@{}}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash\hsize=0.62\hsize}X>{\raggedright\arraybackslash\hsize=1.6\hsize}X>{\raggedright\arraybackslash\hsize=0.78\hsize}X@{}}
 \toprule
- & \textbf{Đĩa} & \textbf{Chữ nhật} & \textbf{Voronoi} & \textbf{Voronoi (tâm hộp)} & \textbf{Hộp gần nhất} \\
+\textbf{Tiêu chí} & \textbf{Điểm $p$ được tính là đúng khi} & \textbf{Nguồn} \\
 \midrule
-Câu chuẩn & 80,2 & 82,2 & 74,2 & 56,6 & 82,2 \\
-S1 $-$ Base & +12,6 & +13,0 & +11,7 & +9,5 & +13,0 \\
+Executability (chính) & $p$ trong cửa sổ $\pm$14\% quanh $g$ và phần tử đích là phần tử gần $p$ nhất & Mục~\ref{sec:5.2} \\
+Hộp phần tử (D.3) & $p$ nằm trong hộp bao của phần tử chứa $g$ & AndroidControl, Phụ lục D.3~\cite{androidcontrol} \\
+Hộp $\wedge$ 14\% & $p$ vừa nằm trong hộp phần tử vừa nằm trong cửa sổ 14\% & kết hợp hai tiêu chí trên \\
+AitW đầy đủ & $p$ cách $g$ không quá 0,14 trên tọa độ chuẩn hoá về $[0;1]$, hoặc $p$ và $g$ cùng nằm trong hộp phần tử nới rộng 1,4 lần & mã đánh giá của AndroidInTheWild~\cite{aitw} \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\textbf{Tiêu chí lỏng có thể đổi kết luận.} Tiêu chí dung sai chấp nhận mọi điểm đủ gần, nên trên mẫu 800 bước cả câu chung chung “\emph{Tap the button.}” cũng tăng từ 12,0 lên 20,5 điểm. Một phần mức tăng khi nới tiêu chí vì vậy là phần mà câu không mang thông tin quy chiếu cũng nhận được. Bảng~\ref{tab:5.holm} minh họa hệ quả trên một phép so: mô hình sau giai đoạn thưởng tọa độ (một hướng đã thử, Mục~\ref{sec:A.4}) cao hơn S1/101 có ý nghĩa thống kê dưới hai tiêu chí lỏng nhưng không có ý nghĩa dưới executability. Executability vì vậy được giữ làm tiêu chí chính.
-
-\begin{table}[htbp]
-\centering\small
-\caption{Mô hình sau giai đoạn thưởng tọa độ trừ S1/101 dưới ba tiêu chí (4.463 bước), kèm hiệu chỉnh Holm cho ba kiểm định.}\label{tab:5.holm}
-\begin{tabular}{@{}lrrl@{}}
-\toprule
-\textbf{Tiêu chí} & \textbf{$\Delta$} & \textbf{p} & \textbf{Sau hiệu chỉnh Holm} \\
-\midrule
-Cửa sổ $\pm$14\% theo từng trục & +2,13 & 0,0003 & có ý nghĩa thống kê \\
-Vế khoảng cách của AitW & +1,99 & 0,0007 & có ý nghĩa thống kê \\
-Ô Voronoi (executability) & +0,96 & 0,090 & không có ý nghĩa thống kê \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\textbf{Ba tiêu chí báo kèm.} Chương~\ref{chap:6} báo thêm ba tiêu chí có tiền lệ trong các bộ dữ liệu GUI. Cả ba đều giữ điều kiện (i) và (ii) của executability, chỉ thay điều kiện (iii), và đều tính lại được từ các điểm mà UGround đã trả về.
-\begin{itemize}
-\item \textbf{Tiêu chí hộp phần tử (D.3).} Theo Phụ lục D.3 của bài gốc AndroidControl~\cite{androidcontrol}, dự đoán đúng khi điểm trả về nằm trong hộp bao của phần tử cần chạm, vì chạm vào đâu trong phần tử thì phần tử cũng kích hoạt. Hộp của phần tử cần chạm được lấy từ nút nhỏ nhất trong cây trợ năng chứa điểm chạm. Khoảng 48\% hộp như vậy là nút con không nhận thao tác chạm, nên tiêu chí này chặt hơn so với khi dùng hộp của phần tử nhận thao tác.
-\item \textbf{Hộp phần tử kết hợp cửa sổ 14\% (D.3 $\wedge$ 14\%).} Điểm trả về phải vừa nằm trong hộp phần tử vừa nằm trong cửa sổ 14\% quanh $g$.
-\item \textbf{AitW đầy đủ.} Theo mã đánh giá gốc của AndroidInTheWild~\cite{aitw}, hai lần chạm tương ứng khi khoảng cách Euclid trên tọa độ chuẩn hoá về [0; 1] không vượt quá 0,14, hoặc khi cả hai điểm cùng nằm trong một khung phần tử được nới thêm 1,4 lần theo mỗi chiều. Mã gốc xét mọi khung chú thích trên màn hình, còn dữ liệu của chúng tôi chỉ có khung của phần tử cần chạm, nên biến thể này chỉ có thể cho điểm không cao hơn tiêu chí gốc. Riêng điều kiện khoảng cách được gọi là \emph{vế khoảng cách của AitW}. Nếu xét mọi khung phần tử bấm được trong cây trợ năng, gọi là \emph{AitW cận trên}, câu chung chung đạt tới 41,6\% trên mẫu 800 bước và dải phân tách chỉ còn 54,3 điểm, nên biến thể này chỉ dùng để phân tích độ nhạy.
-\end{itemize}
+Tiêu chí hộp phần tử dựa trên lập luận rằng chạm vào đâu trong phần tử thì phần tử cũng kích hoạt. Hộp được lấy từ nút nhỏ nhất trong cây trợ năng chứa điểm chạm; khoảng 48\% hộp như vậy là nút con không nhận thao tác chạm, nên tiêu chí này chặt hơn khi dùng hộp của phần tử nhận thao tác. Với AitW đầy đủ, mã gốc xét mọi khung chú thích trên màn hình, còn dữ liệu của đề tài chỉ có khung của phần tử cần chạm, nên điểm theo biến thể này không cao hơn tiêu chí gốc. Nếu xét mọi khung phần tử bấm được trong cây trợ năng, gọi là \emph{AitW cận trên}, câu chung chung ``\emph{Tap the button.}'' đạt tới 41,6\% trên mẫu 800 bước, nên biến thể này chỉ dùng để phân tích độ nhạy.
 
 \begin{table}[htbp]
 \centering\small
@@ -199,7 +137,7 @@ Vế khoảng cách của AitW & +1,99 & 0,0007 & có ý nghĩa thống kê \\
 \setlength{\tabcolsep}{4pt}
 \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}Xrrrr@{}}
 \toprule
- & \textbf{Ô Voronoi} & \textbf{Hộp phần tử} & \textbf{Hộp $\wedge$ 14\%} & \textbf{AitW đầy đủ} \\
+ & \textbf{Executability} & \textbf{Hộp} & \textbf{Hộp $\wedge$ 14\%} & \textbf{AitW đầy đủ} \\
 \midrule
 \multicolumn{5}{@{}l}{\emph{4.463 bước}} \\
 Câu chuẩn & 75,7 & 83,8 & 79,2 & 92,1 \\
@@ -208,41 +146,124 @@ Base & 47,6 & 53,6 & 49,8 & 63,4 \\
 \midrule
 \multicolumn{5}{@{}l}{\emph{Mẫu 800 bước}} \\
 Câu chuẩn & 74,9 & 83,0 & 78,8 & 90,8 \\
-Câu chung chung “\emph{Tap the button.}” & 12,0 & 14,1 & 12,1 & 25,9 \\
+Câu chung chung ``\emph{Tap the button.}'' & 12,0 & 14,1 & 12,1 & 25,9 \\
 Câu chuẩn của một màn hình khác & 6,1 & 8,6 & 6,6 & 17,4 \\
 Dải phân tách (câu chuẩn $-$ câu chung chung) & 62,9 & 68,9 & 66,6 & 64,9 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Thứ hạng câu chuẩn $>$ S1 $>$ Base giữ dưới cả bốn tiêu chí (Bảng~\ref{tab:5.7}), và cả ba tiêu chí báo kèm đều có dải phân tách rộng hơn executability. Dung sai của tiêu chí hộp phụ thuộc cỡ phần tử: theo chiều dọc, chiều cao trung vị của hộp chỉ bằng 5,2\% màn hình, chặt hơn nhiều so với cửa sổ 14\%. Mức tăng của câu chuẩn dưới tiêu chí hộp tập trung ở các phần tử rộng: khoảng 78\% mức tăng so với ô Voronoi đến từ các bước có hộp rộng hơn nửa bề ngang màn hình, nơi chạm vào đâu trong hộp cũng được tính đúng. AitW đầy đủ gần như không phạt câu thiếu tên phần tử: trên toàn mẫu 800 bước, câu bỏ tên chỉ thấp hơn câu chuẩn 4,5 điểm theo AitW đầy đủ, so với 6,9 điểm theo executability. Vì vậy ba tiêu chí này được báo kèm, không thay thế executability.
+Thứ hạng câu chuẩn $>$ S1 $>$ Base giữ nguyên dưới cả bốn tiêu chí (Bảng~\ref{tab:5.7}). Ba tiêu chí báo kèm cho điểm cao hơn, nhưng mỗi tiêu chí dễ dãi ở một chỗ. Khoảng 78\% mức tăng của câu chuẩn dưới tiêu chí hộp so với executability đến từ các phần tử có hộp rộng hơn nửa bề ngang màn hình. AitW đầy đủ gần như không phạt câu thiếu tên phần tử: trên mẫu 800 bước, câu chuẩn bỏ tên phần tử chỉ thấp hơn câu chuẩn 4,5 điểm theo AitW đầy đủ, so với 6,9 điểm theo executability. Vì vậy executability là tiêu chí chính, còn ba tiêu chí kia được báo kèm. Phụ lục~\ref{sec:B.3} so thêm năm cách xác định vị trí khác và cho thấy thứ hạng không đổi; Phụ lục~\ref{sec:B.4} cho thấy một tiêu chí lỏng hơn có thể biến một chênh lệch không có ý nghĩa thống kê thành có ý nghĩa.
 
-\section{Độ đo văn bản và quan hệ với executability}\label{sec:5.11}
+\section{Loại thao tác}\label{sec:5.thaotac}
 
-Bên cạnh executability, Chương~\ref{chap:6} báo bảy độ đo dựa trên câu chuẩn, mỗi độ đo đo một kiểu giống nhau giữa câu sinh và câu chuẩn:
+Điều kiện (i) gồm hai phần. Phần thứ nhất là \textbf{loại thao tác}: câu sinh và câu chuẩn đều được quy về một trong năm loại chạm, gõ, cuộn, nhấn giữ và quay lại, dựa trên động từ đầu tiên trong câu thuộc một danh sách động từ cho trước.\footnote{Mười hai động từ được xếp vào loại chạm: \emph{tap, click, press, select, choose, touch, open, launch, go, navigate, visit, view}. Câu không chứa động từ nào trong danh sách được xếp vào loại chạm. Động từ được dò từ trái sang phải, nên các cụm như \emph{go back} hay \emph{press the back button} cũng được xếp vào loại chạm. Nếu sửa quy tắc này, S1 giảm từ 59,12 xuống 58,81, Base từ 47,60 xuống 47,40, và chênh lệch S1 $-$ Base đổi từ 11,52 thành 11,41 điểm. Mọi bảng giữ quy tắc ban đầu để các lượt đánh giá nhất quán với nhau.} Các cách nói khác nhau của cùng một cú chạm, như \emph{tap}, \emph{click}, \emph{open} hay \emph{select}, được gộp vào một loại, vì trên giao diện chúng đều là chạm vào phần tử được nêu. Trên các bước có thao tác chạm, điều kiện này loại những câu viết nhầm thành cuộn, gõ chữ hay quay lại.
+
+Phần thứ hai là \textbf{không đảo nghĩa}: câu sinh và câu chuẩn không được gọi tên hai trạng thái ngược nhau của cùng một điều khiển, chẳng hạn ``bật thông báo'' và ``tắt thông báo''. Điều kiện (ii) không bắt được lỗi này vì hai trạng thái nằm ở cùng một chỗ trên màn hình. Danh sách cặp trái nghĩa được lập thủ công.\footnote{Chín cặp: \emph{on/off, enable/disable, show/hide, mute/unmute, expand/collapse, check/uncheck, select/deselect, start/stop, enabled/disabled}.}
+
+\section{Độ đo văn bản}\label{sec:5.11}
+
+Bên cạnh executability, Chương~\ref{chap:6} báo bảy độ đo dựa trên câu chuẩn. Mỗi độ đo đo một kiểu giống nhau giữa câu sinh và câu chuẩn:
 \begin{itemize}
 \item \textbf{BLEU-4}~\cite{bleu}: tỉ lệ cụm từ một đến bốn từ của câu sinh xuất hiện trong câu chuẩn, có phạt câu ngắn hơn câu chuẩn.
-\item \textbf{METEOR}~\cite{meteor}: so khớp từng từ giữa hai câu, tính cả từ cùng gốc và từ đồng nghĩa, cân bằng độ chính xác với độ phủ và phạt khi các từ trùng nằm rời rạc thay vì thành cụm liên tiếp.
+\item \textbf{METEOR}~\cite{meteor}: so khớp từng từ giữa hai câu, tính cả từ cùng gốc và từ đồng nghĩa, có phạt khi các từ trùng nằm rời rạc thay vì thành cụm liên tiếp.
 \item \textbf{ROUGE-L}~\cite{rouge}: điểm F1 dựa trên chuỗi con chung dài nhất của hai câu.
-\item \textbf{CIDEr-D}~\cite{cider}: độ tương đồng cosine giữa hai vectơ cụm từ có trọng số TF-IDF, nên các cụm hiếm và mang thông tin được coi trọng hơn cụm phổ biến; bản D có thêm phạt chênh lệch độ dài.
+\item \textbf{CIDEr-D}~\cite{cider}: độ tương đồng cosine giữa hai vectơ cụm từ có trọng số TF-IDF, nên cụm hiếm và mang thông tin được coi trọng hơn cụm phổ biến; bản D có thêm phạt chênh lệch độ dài.
 \item \textbf{SPICE}~\cite{spice}: phân tích câu thành các đối tượng, thuộc tính và quan hệ rồi tính F1 trên các thành phần này (Mục~\ref{sec:2.3}).
 \item \textbf{chrF}~\cite{chrf}: điểm F trên các cụm ký tự, nên ghi nhận cả những từ chỉ khác nhau ở dạng viết.
 \item \textbf{BERTScore}~\cite{bertscore}: so khớp từng token của hai câu theo độ tương đồng biểu diễn ngữ cảnh của RoBERTa-large, rồi chuẩn hoá thang điểm theo mức nền.
 \end{itemize}
-Năm độ đo đầu tính bằng bộ chấm chính thức của COCO. Cả bảy độ đo tính ở mức toàn tập, tức gộp thống kê của mọi câu rồi mới tính điểm, và câu không có nội dung nhận điểm 0. Công thức CIDEr-D có hệ số 10, nên điểm báo theo thang phần trăm có thể vượt 100. Riêng hai cột BLEU-4 và ROUGE-L của Bảng~\ref{tab:6.1} tính cho từng câu rồi lấy trung bình, nên khác giá trị mức toàn tập ở các bảng khác của Chương~\ref{chap:6}.
+Năm độ đo đầu được tính bằng bộ chấm chính thức của COCO. Cả bảy độ đo tính ở mức toàn tập, tức gộp thống kê của mọi câu rồi mới tính điểm, và câu không có nội dung nhận điểm 0. Công thức CIDEr-D có hệ số 10, nên điểm báo theo thang phần trăm có thể vượt 100.
 
-Các độ đo này thưởng mức giống câu chuẩn về từ ngữ hoặc nội dung, trong khi một phần tử có thể được gọi theo nhiều cách (Mục~\ref{sec:2.6}). Trên đầu ra thực tế, trong những câu mà executability chấp nhận, 52,8\% câu của Base có F1 trên các từ nội dung so với câu chuẩn dưới 0,5, so với 13,9\% ở S1: nhiều câu của Base dẫn tới đúng phần tử dù diễn đạt khác hẳn câu chuẩn. Độ tương đồng nhúng cũng không thay được executability. Trên 51 cặp câu viết tay, bge-m3~\cite{bgem3} cho các cặp khác phần tử nhưng chồng từ ngữ điểm cosine trung bình 0,67, cao hơn mức 0,62 của các cặp cùng phần tử khác cách gọi, nên không có ngưỡng cosine nào tách được hai nhóm (Phụ lục~\ref{sec:B.2}). Zhao và cộng sự~\cite{zhao2021} cũng nhận thấy các độ đo dựa trên cụm từ kém tin cậy khi đánh giá chỉ dẫn điều hướng, và khuyến nghị SPICE khi cần xếp hạng hệ thống bằng câu chuẩn. SPICE vì vậy được dùng làm phần thưởng ở Mục~\ref{sec:4.5}, còn executability được dùng làm tiêu chí chính cho việc xác định đúng phần tử và thao tác.
+Các độ đo này thưởng mức giống câu chuẩn về từ ngữ hoặc nội dung, còn executability thưởng việc câu dẫn tới đúng phần tử. Hai cách đánh giá không trùng nhau: trong những câu mà executability chấp nhận, 52,8\% câu của Base có F1 trên các từ nội dung so với câu chuẩn dưới 0,5, so với 13,9\% ở S1, tức nhiều câu của Base dẫn tới đúng phần tử dù diễn đạt khác hẳn câu chuẩn. Độ tương đồng nhúng câu cũng không thay được executability, vì các cặp câu khác phần tử nhưng chồng từ ngữ có thể gần nhau hơn các cặp cùng phần tử khác cách gọi (Phụ lục~\ref{sec:B.2}). Zhao và cộng sự~\cite{zhao2021} khuyến nghị SPICE khi cần xếp hạng hệ thống bằng câu chuẩn; SPICE vì vậy được dùng làm phần thưởng ở Mục~\ref{sec:4.5}, còn executability là độ đo chính cho việc xác định đúng phần tử và thao tác.
+
+\section{Kiểm chứng độ tin cậy của executability}\label{sec:5.tincay}
+
+Executability dựa vào một mô hình máy, nên điểm số chỉ đáng tin khi phản ánh nội dung của câu chứ không phản ánh đặc điểm riêng của mô hình B. Mục này trình bày bốn phép kiểm: mốc trên và mốc dưới của điểm số, độ bền khi diễn đạt lại, độ chính xác và tính tất định của B, việc thay B bằng ba mô hình khác; phần cuối nêu các giới hạn còn lại. Các phép kiểm dùng ba loại câu: câu chuẩn, câu của S1 và câu của Base. Mọi kết quả ở Chương~\ref{chap:6} tính trên đủ 4.463 bước; một số phép kiểm ở đây dùng mẫu con và nêu cỡ mẫu tại chỗ, nên điểm của câu chuẩn hơi khác nhau giữa các mẫu.
+
+\subsection{Mốc trên và mốc dưới}\label{sec:5.5}\label{sec:5.6}
+
+\textbf{Mốc trên.} Khi đưa câu chuẩn của chính bước đang xét qua cùng quy trình, executability trên 4.463 bước là \textbf{75,7\%} [74,1; 77,3]. Đây là mức mà quy trình đánh giá đạt được với câu do người chú thích viết, không phải trần lý thuyết. Trong 1.083 bước câu chuẩn không đạt, 72\% là do điểm của B lệch quá 14\% bề ngang, nên phần lớn giới hạn nằm ở mô hình định vị. Theo cách làm của Zhao và cộng sự~\cite{zhao2021}, điểm của các mô hình được đặt cạnh mốc này thay vì quy đổi thành tỉ lệ phần trăm của mốc.
+
+\textbf{Mốc dưới.} Trên mẫu 800 bước, câu chuẩn được thay bằng các câu thiếu thông tin quy chiếu (Bảng~\ref{tab:5.moc}). Câu chung chung ``\emph{Tap the button.}'' chỉ đạt \textbf{12,0\%}. Câu chuẩn của một màn hình khác, đúng văn phong nhưng sai nội dung, còn thấp hơn, 6,1\%. Độ đo vì vậy phản ứng với nội dung của câu chứ không với văn phong.
+
+\textbf{Tên phần tử và mệnh đề vị trí.} Để biết thành phần nào của câu mang thông tin quy chiếu, chúng tôi bỏ riêng tên phần tử hoặc riêng mệnh đề vị trí khỏi câu chuẩn ở những bước có thành phần đó. Bỏ tên làm executability giảm \textbf{28,5 điểm} ($b = 58$, $c = 3$, $p < 0{,}001$), gấp khoảng tám lần mức giảm 3,5 điểm khi bỏ mệnh đề vị trí ($b = 8$, $c = 1$, $p = 0{,}039$). Độ đo vì vậy phản ứng chủ yếu với tên phần tử.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Mốc tham chiếu trên mẫu 800 bước; hai hàng cuối chỉ tính trên các bước có thành phần bị bỏ.}\label{tab:5.moc}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+\textbf{Câu đưa cho mô hình B} & \textbf{Số bước} & \textbf{Executability (\%)} \\
+\midrule
+Câu chuẩn & 800 & 74,9 \\
+S1 & 800 & 58,8 \\
+Base & 800 & 48,6 \\
+Câu chung chung ``\emph{Tap the button.}'' & 800 & 12,0 [9,7; 14,4] \\
+Câu chuẩn của một màn hình khác & 800 & 6,1 [4,5; 7,9] \\
+\midrule
+Câu chuẩn bỏ tên phần tử, giữ vị trí & 193 & 89,6 $\rightarrow$ 61,1 \\
+Câu chuẩn bỏ mệnh đề vị trí, giữ tên & 198 & 89,4 $\rightarrow$ 85,9 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Độ bền khi diễn đạt lại}\label{sec:5.8}
+
+Jandial và cộng sự~\cite{groundersunderstand} cho thấy mô hình định vị có thể nhạy với cách diễn đạt của câu. Chúng tôi viết lại câu chuẩn trên mẫu 800 bước theo ba cách giữ nguyên nghĩa, bằng quy tắc xác định và không dùng mô hình ngôn ngữ: đổi động từ thao tác (ví dụ \emph{click} thành \emph{tap}), đảo trật tự hai mệnh đề, và kết hợp cả hai. Trong 1.139 câu được viết lại, chỉ 30 câu (2,6\%) đổi kết quả đánh giá, với hiệu ròng \textbf{+0,35 điểm} [$-$0,59; +1,29] (chi tiết ở Phụ lục~\ref{sec:B.5}). Các cách viết lại này giữ nguyên phần mô tả phần tử; việc đổi cách gọi tên phần tử, dạng biến đổi mà Jandial và cộng sự khảo sát, nằm ngoài phạm vi phép kiểm.
+
+\subsection{Độ chính xác và tính tất định của mô hình định vị}\label{sec:5.4}
+
+\textbf{Độ chính xác.} Để biết sai số bao nhiêu thì đủ nhỏ, chúng tôi đo biên dung sai, là nửa khoảng cách từ $g$ tới tâm phần tử khác gần nhất. Trên 1.496 bước có thao tác chạm, biên này có trung vị 67 điểm ảnh (6,2\% bề ngang) và phân vị 10 là 39 điểm ảnh (3,6\%), nên sai số cỡ 3\% bề ngang hầu như không làm đổi kết quả. Trên 300 bước dùng câu chuẩn, sai số của UGround có trung vị 0,7\% bề ngang và 62,7\% số bước có sai số dưới 3\%. Sai số có dạng lưỡng cực: phần lớn dự đoán rất gần đích, nhưng 10\% số bước lệch quá 36\% bề ngang. Trên cùng mẫu, executability chấp nhận mọi bước có sai số dưới 3\% ($n = 188$) và không chấp nhận bước nào có sai số trên 14\% ($n = 63$).
+
+\textbf{Tính tất định.} Cùng câu và cùng ảnh luôn cho cùng tọa độ. Qua bốn lượt đánh giá độc lập với thứ tự và cách gom lô khác nhau, 1.625 cặp câu và ảnh được đánh giá lặp lại không có bất đồng nào, nên điểm số không phụ thuộc cách chạy.
+
+\subsection{Thay mô hình B}\label{sec:5.9}\label{sec:5.10}
+
+Nếu điểm số phụ thuộc vào đặc điểm riêng của UGround, việc thay B bằng một mô hình khác sẽ làm đổi thứ hạng giữa các loại câu. Chúng tôi lặp lại đánh giá với ba mô hình B khác, chọn sao cho khác UGround ở họ mô hình, ở dữ liệu huấn luyện hoặc ở cách trả lời (Bảng~\ref{tab:5.5}):
+
+\begin{itemize}
+\item \textbf{UI-Venus-Ground-7B}~\cite{uivenus} không dùng AndroidControl khi huấn luyện nhưng vẫn dựng trên Qwen2.5-VL. Trên 300 bước dùng câu chuẩn, sai số trung vị của mô hình này là 1,56\% bề ngang.
+\item \textbf{Phi-Ground-4B}~\cite{phiground} dựng trên Phi-3.5-Vision, ngoài họ Qwen, và theo báo cáo kỹ thuật không dùng AndroidControl khi huấn luyện.
+\item \textbf{Phi-4-multimodal-instruct}~\cite{phi4mini} là một mô hình ngôn ngữ thị giác đa dụng, ngoài họ Qwen và không được tinh chỉnh trên AndroidControl. Phi-4 không trả về tọa độ mà chọn phần tử: các phần tử bấm được lấy từ cây trợ năng được khoanh vùng và đánh số trên ảnh theo Set-of-Mark~\cite{setofmark}, với trung vị 15 phần tử mỗi màn hình. Phi-4 chỉ nhận câu và ảnh đã đánh số, rồi trả lời số của phần tử mà câu nhắc tới. Lựa chọn đúng khi phần tử được chọn chứa điểm chạm $g$; danh sách đánh số chứa phần tử này ở 95,7\% số bước. Cách đánh giá này gần với độ chính xác hiểu câu trong các nghiên cứu sinh biểu thức quy chiếu~\cite{mao2016,luo2017} và với bài toán chọn phần tử giao diện của Mind2Web~\cite{mind2web}.
+\end{itemize}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Điểm của ba loại câu dưới bốn mô hình B.}\label{tab:5.5}\label{tab:5.4}\label{tab:5.4b}
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}llllrrrr@{}}
+\toprule
+\textbf{Mô hình B} & \textbf{Họ mô hình} & \textbf{Học AC} & \textbf{Trả lời} & \textbf{Số bước} & \textbf{Base} & \textbf{S1} & \textbf{Câu chuẩn} \\
+\midrule
+UGround-V1-2B & Qwen2-VL & có & tọa độ & 4.463 & 47,6 & 59,1 & 75,7 \\
+UI-Venus-Ground-7B & Qwen2.5-VL & không & tọa độ & 2.532 & 39,1 & 48,7 & - \\
+Phi-Ground-4B & Phi-3.5-Vision & không & tọa độ & 4.463 & 40,8 & 47,0 & - \\
+Phi-4-multimodal & Phi-4 & không & chọn số & 4.463 & 38,2 & 44,6 & 54,9 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\begin{minipage}{\linewidth}\footnotesize Học AC: có dùng AndroidControl khi huấn luyện. S1 là S1/101. Với UI-Venus, mẫu 2.532 bước là các bước mà S1/101 và S2 (Phụ lục~\ref{sec:A.1}) viết câu khác nhau; trên cùng mẫu, UGround cho Base 42,5 và S1 52,8. Ô ``-'' là chưa đánh giá trên cùng mẫu. Với Phi-Ground, Base thiếu dự đoán ở 7 bước, các bước này tính là không đạt.\end{minipage}
+\end{table}
+
+Dưới cả bốn mô hình B, S1 cao hơn Base có ý nghĩa thống kê: \textbf{+11,52} điểm dưới UGround, +9,68 [+7,60; +11,78] dưới UI-Venus (so với +10,35 của UGround trên cùng mẫu), +6,16 [+4,71; +7,64] dưới Phi-Ground và +6,41 điểm ($p < 0{,}001$) dưới Phi-4. Ở những mô hình B đã đánh giá câu chuẩn, câu chuẩn luôn cao nhất. Dưới Phi-4, câu chuẩn cao hơn Base 16,72 điểm, còn câu chung chung ``\emph{Tap the button.}'' chỉ đạt 15,86\%, gần mức chọn ngẫu nhiên 10,06\%. UI-Venus cũng cho câu chuẩn 69,3\% trên mẫu 300 bước nói trên, gần mức 70,0\% của UGround trên cùng mẫu.
+
+Thang điểm của các mô hình B khác nhau: dưới hai mô hình ngoài họ Qwen, khoảng cách S1 $-$ Base chỉ bằng khoảng một nửa so với UGround, và câu chuẩn dưới Phi-4 chỉ đạt 54,9\%. Vì vậy các mô hình B thay thế được dùng để kiểm tra thứ hạng, không dùng làm số chính. Mức đồng thuận theo từng bước giữa Phi-4 và UGround chỉ ở mức vừa phải ($\kappa$ từ 0,25 đến 0,44 tùy mô hình sinh), tức hai mô hình sai ở những bước khác nhau nhưng xếp hạng các loại câu như nhau. Cả ba mô hình B thay thế đều cho kết quả trùng hoàn toàn khi đánh giá lặp lại (40 bước với UI-Venus, 40 bước với Phi-Ground, 200 bước với Phi-4). Chênh lệch âm S2 $-$ S1 của một hướng đã thử (Phụ lục~\ref{sec:A.1}) cũng giữ dấu dưới UI-Venus, với cận trên KTC dưới 0. Kết quả so sánh phương pháp đề xuất với S1 dưới cả bốn mô hình B được trình bày ở Mục~\ref{sec:6.7.3}.
+
+\subsection{Giới hạn của mô hình định vị}\label{sec:5.3}
+
+UGround dựng trên Qwen2-VL, cùng họ với các mô hình sinh của đề tài, và có dùng 47 nghìn nhãn phần tử của AndroidControl khi huấn luyện~\cite{uground}. Khoảng 90\% tác vụ của tập kiểm tra thuộc phần huấn luyện chính thức của AndroidControl (Mục~\ref{sec:3.3}), nên UGround có thể đã thấy một phần màn hình kiểm tra và quen văn phong chú thích của bộ dữ liệu. Hai kết quả cho thấy rủi ro này không làm đổi kết luận. Khi tách 4.463 bước theo phần chia chính thức, điểm gần như không đổi giữa phần huấn luyện và phần kiểm tra cùng kiểm định chính thức: câu chuẩn đạt 75,9\% và 74,0\%, S1 đạt 59,1\% và 59,3\%, Base đạt 47,7\% và 46,7\%, và KTC của hai phần chồng nhau ở cả ba loại câu. Thứ hạng cũng giữ nguyên khi B là UI-Venus (không học AndroidControl) và khi B là Phi-Ground hoặc Phi-4 (ngoài họ Qwen). Ngoài ra, đề tài không có đánh giá của người thật, và mức 75,7\% của câu chuẩn cho thấy ngay với câu do người chú thích viết, B vẫn chọn sai khoảng một phần tư số bước. Điểm tuyệt đối của mọi mô hình vì vậy bị giới hạn bởi B, và các phép so trong đề tài dựa trên chênh lệch giữa các mô hình dưới cùng một B.
 
 \section{Phương pháp phân tích thống kê}\label{sec:5.13}
 
-\textbf{Khoảng tin cậy.} Mỗi điểm hoặc chênh lệch đi kèm khoảng tin cậy 95\% (KTC) ước lượng bằng bootstrap theo cụm với 10.000 lần lấy mẫu lại. Các bước của cùng một ứng dụng thường cùng dễ hoặc cùng khó, nên lấy mẫu lại từng bước riêng lẻ sẽ làm KTC hẹp hơn thực tế. Vì vậy, ở mỗi lần lặp, cả cụm được lấy lại có hoàn lại, điểm số được tính lại, và KTC lấy từ phân vị 2,5\% và 97,5\% của các giá trị thu được. Cụm là ứng dụng; với các bước không xác định được ứng dụng (Mục~\ref{sec:3.6}), mỗi tác vụ là một cụm riêng. Tập kiểm tra có 1.091 cụm, cụm lớn nhất gồm 58 bước, và số cụm hiệu dụng theo công thức Kish~\cite{kish1965} là 454,3, đủ lớn để bootstrap theo cụm cho kết quả đáng tin cậy~\cite{cameron2008}. Khi đổi cách gom, theo tác vụ hoặc dồn mọi bước không có nhãn ứng dụng vào một cụm, KTC của chênh lệch S1 $-$ Base thay đổi không quá 0,7 điểm.
+\textbf{Khoảng tin cậy.} Mỗi điểm hoặc chênh lệch đi kèm khoảng tin cậy 95\% (KTC), ước lượng bằng bootstrap theo cụm với 10.000 lần lấy mẫu lại. Các bước của cùng một ứng dụng thường cùng dễ hoặc cùng khó, nên lấy mẫu lại từng bước riêng lẻ sẽ làm KTC hẹp hơn thực tế. Vì vậy ở mỗi lần lặp, cả cụm được lấy lại có hoàn lại, điểm số được tính lại, và KTC lấy từ phân vị 2,5\% và 97,5\% của các giá trị thu được. Cụm là ứng dụng; với các bước không xác định được ứng dụng (Mục~\ref{sec:3.6}), mỗi tác vụ là một cụm riêng. Tập kiểm tra có 1.091 cụm, cụm lớn nhất gồm 58 bước, và số cụm hiệu dụng theo công thức Kish~\cite{kish1965} là 454,3, đủ lớn để bootstrap theo cụm cho kết quả đáng tin cậy~\cite{cameron2008}. Khi đổi cách gom, theo tác vụ hoặc dồn mọi bước không có nhãn ứng dụng vào một cụm, KTC của chênh lệch S1 $-$ Base thay đổi không quá 0,7 điểm.
 
-\textbf{So sánh ghép cặp.} Mọi mô hình được đánh giá trên cùng 4.463 bước, nên chênh lệch giữa hai mô hình được tính theo cặp: KTC lấy từ bootstrap theo cụm trên hiệu của từng bước, và mức khó dễ chung của mỗi bước triệt tiêu trong hiệu. Chẳng hạn, sai số chuẩn của chênh lệch S1 $-$ Base là 0,79 điểm khi tính ghép cặp, so với 1,05 điểm nếu coi hai điểm là độc lập; hệ số nở do gom cụm chỉ là 1,10. Giá trị p lấy từ kiểm định McNemar dạng chính xác. Kiểm định chỉ xét các bước mà hai mô hình cho kết quả khác nhau, với $b$ là số bước mô hình thứ nhất đạt còn mô hình thứ hai không đạt, $c$ là chiều ngược lại. Nếu hai mô hình ngang nhau, mỗi bước bất đồng nghiêng về bên nào cũng với xác suất 0,5, nên $p$ là xác suất nhị thức để $b$ và $c$ chênh nhau ít nhất bằng mức quan sát được. Khi số bước bất đồng lớn, xấp xỉ $\chi^2$ có hiệu chỉnh liên tục cho giá trị gần như trùng.
+\textbf{So sánh ghép cặp.} Mọi mô hình được đánh giá trên cùng 4.463 bước, nên chênh lệch giữa hai mô hình được tính theo cặp: KTC lấy từ bootstrap theo cụm trên hiệu của từng bước, và mức khó dễ chung của mỗi bước triệt tiêu trong hiệu. Chẳng hạn, sai số chuẩn của chênh lệch S1 $-$ Base là 0,79 điểm khi tính ghép cặp, so với 1,05 điểm nếu coi hai điểm là độc lập. Giá trị $p$ lấy từ kiểm định McNemar dạng chính xác. Kiểm định chỉ xét các bước mà hai mô hình cho kết quả khác nhau, với $b$ là số bước mô hình thứ nhất đạt còn mô hình thứ hai không đạt và $c$ là chiều ngược lại. Nếu hai mô hình ngang nhau, mỗi bước bất đồng nghiêng về bên nào cũng với xác suất 0,5, nên $p$ là xác suất nhị thức để $b$ và $c$ chênh nhau ít nhất bằng mức quan sát được.
 
 \textbf{Mức chênh lệch nhỏ nhất phát hiện được.} KTC ghép cặp chỉ phản ánh dao động của phép đo trên hai mô hình cố định. Mỗi cấu hình trong đề tài được huấn luyện một lượt, nên chênh lệch giữa hai cấu hình còn chịu dao động khi huấn luyện lại với seed khác. Gộp hai nguồn này, mức chênh lệch nhỏ nhất phát hiện được (\emph{minimum detectable effect}, MDE) là mức chênh mà thiết kế một lượt huấn luyện cho mỗi cấu hình phát hiện được với xác suất 80\% ở mức ý nghĩa 5\%:
 \begin{equation}
 \mathrm{MDE} = (z_{0{,}975} + z_{0{,}80})\sqrt{\mathrm{SE}^2 + 2\sigma^2} \approx 2{,}8 \times \sqrt{0{,}38^2 + 2 \times 0{,}46^2} \approx 2{,}11 \text{ điểm},
 \label{eq:5.mde}
 \end{equation}
-\noindent
-trong đó $\mathrm{SE} \approx 0{,}38$ điểm là sai số chuẩn ghép cặp theo bootstrap cụm giữa hai lượt S1, còn $\sigma \approx 0{,}46$ điểm là độ lệch chuẩn giữa các lượt huấn luyện, ước từ chênh lệch 0,52 điểm giữa S1/101 và S1/202 theo $\sigma \approx |\Delta|/1{,}128$. Hệ số 2 trước $\sigma^2$ đến từ việc cả hai cấu hình được so đều chỉ có một lượt huấn luyện. Vì $\sigma$ chỉ được ước từ một cặp lượt, MDE là ước lượng thô. Một chênh lệch có KTC không chứa 0 nhưng nhỏ hơn \textbf{2,11 điểm} cho thấy phép đo phân biệt được hai mô hình cụ thể, nhưng chưa đủ để loại trừ khả năng một chênh lệch cỡ đó xuất hiện chỉ do huấn luyện lại. Chương~\ref{chap:6} diễn giải các chênh lệch như vậy một cách thận trọng và báo kèm biến thiên giữa các lượt huấn luyện (Mục~\ref{sec:6.7}).
+\noindent trong đó $\mathrm{SE} \approx 0{,}38$ điểm là sai số chuẩn ghép cặp theo bootstrap cụm giữa hai lượt S1, còn $\sigma \approx 0{,}46$ điểm là độ lệch chuẩn giữa các lượt huấn luyện, ước từ chênh lệch 0,52 điểm giữa S1/101 và S1/202 theo $\sigma \approx |\Delta|/1{,}128$. Hệ số 2 trước $\sigma^2$ đến từ việc cả hai cấu hình được so đều chỉ có một lượt huấn luyện. Vì $\sigma$ chỉ được ước từ một cặp lượt, MDE là ước lượng thô. Một chênh lệch có KTC không chứa 0 nhưng nhỏ hơn \textbf{2,11 điểm} cho thấy phép đo phân biệt được hai mô hình cụ thể, nhưng chưa đủ để loại trừ khả năng một chênh lệch cỡ đó xuất hiện chỉ do huấn luyện lại. Chương~\ref{chap:6} diễn giải các chênh lệch như vậy một cách thận trọng và báo kèm biến thiên giữa các lượt huấn luyện (Mục~\ref{sec:6.7}).

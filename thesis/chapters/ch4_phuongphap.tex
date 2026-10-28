@@ -140,7 +140,7 @@ Mỗi bước cập nhật lấy hai prompt, mỗi prompt sinh $G = 8$ câu ở 
 
 \textbf{Chọn điểm lưu.} Điểm lưu sau 250 và 500 bước được so theo executability trên tập kiểm định nội bộ; điểm lưu 500 bước tốt hơn nên được cố định trước khi sinh câu trên tập kiểm tra.
 
-\textbf{Lượt thứ hai và nhánh kiểm soát.} Hai lượt bổ sung dùng cùng điểm khởi tạo S1/101, cùng số bước và siêu tham số với GRPO-SPICE. Lượt GRPO-SPICE thứ hai chỉ đổi seed thành 202; vì điểm xuất phát không đổi, khác biệt giữa hai lượt phản ánh biến thiên của riêng giai đoạn GRPO. Ở nhánh kiểm soát, điểm SPICE được ghép ngẫu nhiên giữa các mẫu trong cùng nhóm trước khi dùng làm phần thưởng. Nhánh này giữ nguyên quá trình cập nhật nhưng cắt liên hệ giữa câu và phần thưởng, nên tách được tác dụng của tín hiệu SPICE khỏi tác dụng của việc huấn luyện thêm (Mục~\ref{sec:6.2}, Mục~\ref{sec:6.7.2}).
+\textbf{Lượt thứ hai và nhánh kiểm soát.} Hai lượt bổ sung dùng cùng điểm khởi tạo S1/101, cùng số bước và siêu tham số với GRPO-SPICE. Lượt GRPO-SPICE thứ hai chỉ đổi seed thành 202; vì điểm xuất phát không đổi, khác biệt giữa hai lượt phản ánh biến thiên của riêng giai đoạn GRPO. Ở nhánh kiểm soát, điểm SPICE được ghép ngẫu nhiên giữa các mẫu trong cùng nhóm trước khi dùng làm phần thưởng. Nhánh này giữ nguyên quá trình cập nhật nhưng cắt liên hệ giữa câu và phần thưởng, nên tách được tác dụng của tín hiệu SPICE khỏi tác dụng của việc huấn luyện thêm (Mục~\ref{sec:6.3}, Mục~\ref{sec:6.7.2}).
 
 \section{Thành phần thứ hai: hiệu chỉnh bằng câu ví dụ nhất quán thao tác (ACE)}\label{sec:4.6}
 
