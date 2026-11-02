@@ -587,7 +587,7 @@ Mọi việc dưới đây chưa làm. Sửa xong thì dựng lại `thesis/main
 
 ## 11. Còn chờ, còn thiếu
 
-**Đang chạy:** không còn. Kernel cuối `ktc-chu-27-10-cpu` xong 27/10, số đã điền vào mục 3.2, 6.3, 7, 8.
+**Đang chạy (3/11):** `trangphngngc/chu-luoi-2-11-cpu`, độ đo văn bản cho bốn lượt lưới RL (mục 14). Các kernel trước đó đều xong, số đã điền vào mục 3.2, 6.3, 7, 8.
 
 **Chưa làm, không cần GPU:** không còn.
 
@@ -628,3 +628,60 @@ Mọi việc dưới đây chưa làm. Sửa xong thì dựng lại `thesis/main
 - Một bước (câu rỗng, bước `(18710, 1)`) thiếu trường `executable` trong ba tệp S1/101, S1/202, ck500. Phải dùng `get("executable", 0)` như `score_run.py`.
 - Chạy `som_doc.py` với danh sách tệp riêng sẽ ghi đè `runs/som/som_ket_qua.json` (tệp git đang theo dõi). Chạy xong phải `git checkout` lại tệp đó.
 - `score_run.py` chặn tệp thiếu hơn 1% số bước. Khi chỉ chấm các bước có câu khác nhau, phải truyền `--n <số dòng>`.
+
+## 13. Cách đọc lưới RL, ghi 1/11/2026 trước khi có số nào của lưới
+
+Ghi để không kể lại sau khi đã biết số. Nguồn: `report/328` §2, §3.4, §6.
+
+- **Họ chính, đọc trên exec test, so với ck500:** SFT tiếp · SCST · GRPO bỏ chia std · GRPO + CIDEr-D · PPO · xao101. Các lượt còn lại ghi là mô tả. Vẫn in Holm cho toàn bộ, cả p gốc lẫn p đã hiệu chỉnh.
+- **"Nhóm dẫn đầu":** các lượt cách lượt cao nhất dưới 1 điểm exec, hoặc không bị Holm bác trong họ chính.
+- **"Lượt khác đứng trên ck500 rõ":** cách ≥ 1 điểm, KTC ghép cặp loại 0, qua Holm trong họ chính.
+- **Cấm viết "tốt nhất"** từ lưới một hạt giống. Nếu số cho phép thì dùng "thuộc nhóm dẫn đầu".
+- **Dự đoán:** D1, D2 ở `report/323` §9 và H-A đến H-J ở `report/328` §3.4.
+- **Câu trả lời cho thầy:** chọn bản theo các điều kiện trên, ở `report/328` §6.
+
+## 14. Kết quả lưới RL trên test, đợt đầu (3/11/2026)
+
+Chưa đưa vào luận văn: đợi đủ lưới rồi sửa một lượt (`report/326`). Mọi lượt một hạt giống (101), dùng cùng câu nhắc của ck500, 500 bước.
+
+### 14.1 Bốn tiêu chí xác định vị trí
+
+| nhánh | exec | KTC95 exec | D.3 | D.3∧14% | AitW đầy đủ | đúng loại thao tác |
+|---|---|---|---|---|---|---|
+| S1/101 | 59,11 | | 65,49 | 61,73 | 74,37 | 94,35 |
+| ck500 | **60,65** | | 67,02 | 63,25 | 76,25 | 95,97 |
+| GRPO + ROUGE-L | **60,63** | [58,91; 62,40] | 67,04 | 63,19 | 76,79 | 96,86 |
+| SCST + SPICE | **60,54** | [58,85; 62,24] | 66,88 | 63,16 | 76,14 | 96,08 |
+| GRPO + METEOR | 60,27 | [58,52; 62,02] | 66,75 | 62,92 | 76,27 | 96,28 |
+| GRPO + CIDEr-D (4.428/4.463 bước) | 60,25 | | 66,44 | 62,80 | 75,97 | 96,05 |
+
+GRPO + CIDEr-D chạm trần giờ khi chấm, thiếu 35 bước. Tính cả phần thiếu thì exec trên 4.463 bước nằm trong [59,78; 60,56]. Hàng này là số tạm, phải chấm nốt.
+
+| phép so | exec | p | D.3 | D.3∧14% | AitW đầy đủ |
+|---|---|---|---|---|---|
+| ROUGE-L − ck500 | −0,02 [−0,54; +0,49] | 1,00 | +0,02 [−0,52; +0,55] | −0,07 [−0,59; +0,46] | +0,54 [0,00; +1,08] |
+| SCST − ck500 | −0,11 [−0,56; +0,35] | 0,69 | −0,13 [−0,58; +0,33] | −0,09 [−0,55; +0,38] | −0,11 [−0,56; +0,33] |
+| METEOR − ck500 | −0,38 [−0,95; +0,19] | 0,21 | −0,27 [−0,84; +0,28] | −0,34 [−0,91; +0,22] | +0,02 [−0,55; +0,61] |
+| CIDEr-D − ck500 (n = 4.428) | −0,36 [−0,87; +0,14] | 0,18 | −0,56 [−1,07; −0,07] | −0,43 [−0,94; +0,09] | −0,23 [−0,74; +0,27] |
+| ROUGE-L − S1/101 | +1,52 [+0,78; +2,29] | 4,8e−5 | +1,55 [+0,77; +2,35] | +1,46 [+0,68; +2,25] | +2,42 [+1,65; +3,22] |
+| SCST − S1/101 | +1,43 [+0,79; +2,11] | 8,8e−6 | +1,39 [+0,75; +2,07] | +1,43 [+0,79; +2,10] | +1,77 [+1,13; +2,44] |
+| METEOR − S1/101 | +1,17 [+0,39; +1,97] | 2,6e−3 | +1,25 [+0,47; +2,05] | +1,19 [+0,42; +1,99] | +1,90 [+1,10; +2,72] |
+| CIDEr-D − S1/101 (n = 4.428) | +1,17 [+0,43; +1,96] | 1,6e−3 | +0,95 [+0,18; +1,73] | +1,08 [+0,35; +1,86] | +1,67 [+0,93; +2,42] |
+
+Bootstrap cụm app, B = 10.000; p là McNemar chính xác, chưa hiệu chỉnh ở bảng này. Holm tạm cho bốn phép so exec với ck500: 0,71 · 0,71 · 1,00 · 1,00. Họ chính ở mục 13 chưa đủ lượt nên phải tính lại khi đủ. Script `harness/doc_luoi.py` tự kiểm ck500 − S1/101 exec ra đúng +1,55 [+0,80; +2,33].
+
+### 14.2 Đọc theo mục 13
+
+- Cả bốn lượt thuộc nhóm dẫn đầu cùng ck500: cách lượt cao nhất dưới 1 điểm exec, không phép so exec nào với ck500 loại 0.
+- Chưa có lượt nào đứng trên ck500 rõ. Ngược lại, chưa có căn cứ viết ck500 hay SPICE tốt nhất.
+- Cả bốn hơn S1/101 từ +1,17 đến +1,52 exec, đều dưới MDE 2,11. Chưa tách được công của RL với công của việc train thêm 500 bước, vì SFT tiếp chưa chấm.
+- Đúng loại thao tác của mọi lượt tăng cùng hướng so với S1 (94,35 → 95,97–96,86), phù hợp H-A ở `report/328`. Chưa đủ để xác nhận H-A: còn thiếu bảng phân rã và lượt T5.
+- Dự đoán ghi trước (`report/323` §9), mới đọc được một phần và một hạt: D2 đoán SCST < GRPO; đo được SCST − ck500 −0,11, đúng chiều nhưng nằm trong nhiễu, chưa xác nhận. D1 đoán METEOR, CIDEr-D, ROUGE-L ≥ SPICE; đo được cả ba không vượt ck500 về exec nhưng cũng không kém có ý nghĩa, chưa phân định được, và chrF chưa chạy.
+- Hai phép so lệch riêng cần đọc thận trọng, vì nhiều phép so và một hạt giống: ROUGE-L − ck500 dưới AitW +0,54 (p = 0,06) và CIDEr-D − ck500 dưới D.3 −0,56 (chưa đủ bước).
+
+### 14.3 Còn thiếu của đợt này
+
+- Độ đo văn bản: kernel `trangphngngc/chu-luoi-2-11-cpu` đang chạy, sẽ ghi vào 14.4.
+- Sau khi hạn mức làm mới 7/11: chấm nốt 35 bước CIDEr-D · test SFT tiếp (`luoi-t2-3`, đủ 500 bước, chưa chấm) · test RLOO, REINFORCE · nối tiếp lượt A/A `grpo:spice:101` (dừng ở trần 7,5 h, khoảng bước 183, điểm lưu cuối 175).
+
+Nguồn: `runs/luoi/test_2_11/` (`so_ghep_cap_exec.json`, tệp pred, tệp thô, log) · log train `runs/luoi/lo3/luoi-t2-3/` · kernel `trangphngngc/luoi-test-t-1`, `uyenle0712/luoi-test-u-1`, `trangphuongngoc/luoi-t2-3`. Kiểm hoà 16/20 trùng lượt S1 công bố, đúng mức `report/259`; dùng lại kết quả chấm câu trùng khớp 40/40 bước ở mỗi lượt.
