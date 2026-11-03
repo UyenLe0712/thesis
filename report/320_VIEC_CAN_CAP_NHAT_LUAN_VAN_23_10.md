@@ -587,7 +587,7 @@ Mọi việc dưới đây chưa làm. Sửa xong thì dựng lại `thesis/main
 
 ## 11. Còn chờ, còn thiếu
 
-**Đang chạy (3/11):** `trangphngngc/chu-luoi-2-11-cpu`, độ đo văn bản cho bốn lượt lưới RL (mục 14). Các kernel trước đó đều xong, số đã điền vào mục 3.2, 6.3, 7, 8.
+**Đang chạy:** không còn. Kernel cuối `trangphngngc/chu-luoi-2-11-cpu` xong 3/11, số ở mục 14.4.
 
 **Chưa làm, không cần GPU:** không còn.
 
@@ -653,35 +653,114 @@ Chưa đưa vào luận văn: đợi đủ lưới rồi sửa một lượt (`r
 | GRPO + ROUGE-L | **60,63** | [58,91; 62,40] | 67,04 | 63,19 | 76,79 | 96,86 |
 | SCST + SPICE | **60,54** | [58,85; 62,24] | 66,88 | 63,16 | 76,14 | 96,08 |
 | GRPO + METEOR | 60,27 | [58,52; 62,02] | 66,75 | 62,92 | 76,27 | 96,28 |
-| GRPO + CIDEr-D (4.428/4.463 bước) | 60,25 | | 66,44 | 62,80 | 75,97 | 96,05 |
+| GRPO + CIDEr-D | 60,27 | [58,57; 61,95] | 66,44 | 62,78 | 76,00 | 96,08 |
 
-GRPO + CIDEr-D chạm trần giờ khi chấm, thiếu 35 bước. Tính cả phần thiếu thì exec trên 4.463 bước nằm trong [59,78; 60,56]. Hàng này là số tạm, phải chấm nốt.
+Cập nhật 3/11: GRPO + CIDEr-D đã chấm đủ 4.463 bước (`uyenle0712/luoi-test-u-2`), thay số tạm 60,25 trên 4.428 bước; câu trùng dùng lại kết quả chấm, khớp 40/40 bước.
 
 | phép so | exec | p | D.3 | D.3∧14% | AitW đầy đủ |
 |---|---|---|---|---|---|
 | ROUGE-L − ck500 | −0,02 [−0,54; +0,49] | 1,00 | +0,02 [−0,52; +0,55] | −0,07 [−0,59; +0,46] | +0,54 [0,00; +1,08] |
 | SCST − ck500 | −0,11 [−0,56; +0,35] | 0,69 | −0,13 [−0,58; +0,33] | −0,09 [−0,55; +0,38] | −0,11 [−0,56; +0,33] |
 | METEOR − ck500 | −0,38 [−0,95; +0,19] | 0,21 | −0,27 [−0,84; +0,28] | −0,34 [−0,91; +0,22] | +0,02 [−0,55; +0,61] |
-| CIDEr-D − ck500 (n = 4.428) | −0,36 [−0,87; +0,14] | 0,18 | −0,56 [−1,07; −0,07] | −0,43 [−0,94; +0,09] | −0,23 [−0,74; +0,27] |
+| CIDEr-D − ck500 | −0,38 [−0,88; +0,11] | 0,16 | −0,58 [−1,09; −0,08] | −0,47 [−0,98; +0,04] | −0,25 [−0,74; +0,25] |
 | ROUGE-L − S1/101 | +1,52 [+0,78; +2,29] | 4,8e−5 | +1,55 [+0,77; +2,35] | +1,46 [+0,68; +2,25] | +2,42 [+1,65; +3,22] |
 | SCST − S1/101 | +1,43 [+0,79; +2,11] | 8,8e−6 | +1,39 [+0,75; +2,07] | +1,43 [+0,79; +2,10] | +1,77 [+1,13; +2,44] |
 | METEOR − S1/101 | +1,17 [+0,39; +1,97] | 2,6e−3 | +1,25 [+0,47; +2,05] | +1,19 [+0,42; +1,99] | +1,90 [+1,10; +2,72] |
-| CIDEr-D − S1/101 (n = 4.428) | +1,17 [+0,43; +1,96] | 1,6e−3 | +0,95 [+0,18; +1,73] | +1,08 [+0,35; +1,86] | +1,67 [+0,93; +2,42] |
+| CIDEr-D − S1/101 | +1,17 [+0,40; +1,94] | 1,9e−3 | +0,94 [+0,15; +1,73] | +1,05 [+0,30; +1,82] | +1,64 [+0,89; +2,39] |
 
-Bootstrap cụm app, B = 10.000; p là McNemar chính xác, chưa hiệu chỉnh ở bảng này. Holm tạm cho bốn phép so exec với ck500: 0,71 · 0,71 · 1,00 · 1,00. Họ chính ở mục 13 chưa đủ lượt nên phải tính lại khi đủ. Script `harness/doc_luoi.py` tự kiểm ck500 − S1/101 exec ra đúng +1,55 [+0,80; +2,33].
+Bootstrap cụm app, B = 10.000; p là McNemar chính xác, chưa hiệu chỉnh ở bảng này. Holm tạm cho bốn phép so exec với ck500: 0,63 · 0,63 · 1,00 · 1,00. Họ chính ở mục 13 chưa đủ lượt nên phải tính lại khi đủ. Script `harness/doc_luoi.py` tự kiểm ck500 − S1/101 exec ra đúng +1,55 [+0,80; +2,33].
 
 ### 14.2 Đọc theo mục 13
 
 - Cả bốn lượt thuộc nhóm dẫn đầu cùng ck500: cách lượt cao nhất dưới 1 điểm exec, không phép so exec nào với ck500 loại 0.
 - Chưa có lượt nào đứng trên ck500 rõ. Ngược lại, chưa có căn cứ viết ck500 hay SPICE tốt nhất.
 - Cả bốn hơn S1/101 từ +1,17 đến +1,52 exec, đều dưới MDE 2,11. Chưa tách được công của RL với công của việc train thêm 500 bước, vì SFT tiếp chưa chấm.
-- Đúng loại thao tác của mọi lượt tăng cùng hướng so với S1 (94,35 → 95,97–96,86), phù hợp H-A ở `report/328`. Chưa đủ để xác nhận H-A: còn thiếu bảng phân rã và lượt T5.
+- Đúng loại thao tác của mọi lượt tăng cùng hướng so với S1 (94,35 → 95,97–96,86), phù hợp H-A ở `report/328`. Bảng phân rã ở mục 14.5; vẫn còn thiếu lượt T5 nên chưa xác nhận H-A.
 - Dự đoán ghi trước (`report/323` §9), mới đọc được một phần và một hạt: D2 đoán SCST < GRPO; đo được SCST − ck500 −0,11, đúng chiều nhưng nằm trong nhiễu, chưa xác nhận. D1 đoán METEOR, CIDEr-D, ROUGE-L ≥ SPICE; đo được cả ba không vượt ck500 về exec nhưng cũng không kém có ý nghĩa, chưa phân định được, và chrF chưa chạy.
-- Hai phép so lệch riêng cần đọc thận trọng, vì nhiều phép so và một hạt giống: ROUGE-L − ck500 dưới AitW +0,54 (p = 0,06) và CIDEr-D − ck500 dưới D.3 −0,56 (chưa đủ bước).
+- Hai phép so lệch riêng cần đọc thận trọng, vì nhiều phép so và một hạt giống: ROUGE-L − ck500 dưới AitW +0,54 (p = 0,06) và CIDEr-D − ck500 dưới D.3 −0,58 (p = 0,028, chưa hiệu chỉnh).
 
 ### 14.3 Còn thiếu của đợt này
 
-- Độ đo văn bản: kernel `trangphngngc/chu-luoi-2-11-cpu` đang chạy, sẽ ghi vào 14.4.
-- Sau khi hạn mức làm mới 7/11: chấm nốt 35 bước CIDEr-D · test SFT tiếp (`luoi-t2-3`, đủ 500 bước, chưa chấm) · test RLOO, REINFORCE · nối tiếp lượt A/A `grpo:spice:101` (dừng ở trần 7,5 h, khoảng bước 183, điểm lưu cuối 175).
+- Sau khi hạn mức làm mới 7/11: test SFT tiếp (`luoi-t2-3`, đủ 500 bước, chưa chấm) · test RLOO, REINFORCE · nối tiếp lượt A/A `grpo:spice:101` (dừng ở trần 7,5 h, khoảng bước 183, điểm lưu cuối 175).
 
 Nguồn: `runs/luoi/test_2_11/` (`so_ghep_cap_exec.json`, tệp pred, tệp thô, log) · log train `runs/luoi/lo3/luoi-t2-3/` · kernel `trangphngngc/luoi-test-t-1`, `uyenle0712/luoi-test-u-1`, `trangphuongngoc/luoi-t2-3`. Kiểm hoà 16/20 trùng lượt S1 công bố, đúng mức `report/259`; dùng lại kết quả chấm câu trùng khớp 40/40 bước ở mỗi lượt.
+
+### 14.4 Độ đo văn bản (kernel `trangphngngc/chu-luoi-2-11-cpu`, xong 3/11)
+
+Tính trên đủ 4.463 câu, kể cả lượt CIDEr-D vì độ đo văn bản không cần bộ trỏ. In đậm là điểm cao nhất của cột trong bảng này.
+
+| nhánh | BLEU-4 | METEOR | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
+|---|---|---|---|---|---|---|---|
+| S1/101 | 51,56 | 36,79 | 67,35 | 416,12 | 44,37 | 61,26 | 66,33 |
+| xao101 | 51,32 | 36,95 | 67,36 | 418,13 | 44,40 | 61,52 | 66,40 |
+| ck500 | 52,36 | 37,92 | 68,36 | 430,05 | 45,79 | 62,87 | 67,07 |
+| SCST + SPICE | 51,97 | 38,15 | 68,70 | 430,89 | **45,93** | 63,31 | 67,25 |
+| GRPO + ROUGE-L | **52,59** | 38,20 | **69,27** | **432,81** | 45,57 | 63,42 | **67,57** |
+| GRPO + METEOR | 50,76 | **38,63** | 69,14 | 426,61 | 45,13 | **64,19** | 67,35 |
+| GRPO + CIDEr-D | 51,59 | 37,78 | 68,47 | 424,52 | 44,43 | 62,90 | 67,03 |
+
+KTC95 ghép cặp (bootstrap cụm app, 1.091 cụm, B = 2.000). ⁰ = KTC phủ 0. METEOR không có KTC.
+
+| phép so | BLEU-4 | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
+|---|---|---|---|---|---|---|
+| SCST − ck500 | −0,39 [−0,81; +0,03] ⁰ | +0,33 [+0,03; +0,67] | +0,84 [−3,02; +4,99] ⁰ | +0,14 [−0,36; +0,69] ⁰ | +0,44 [+0,08; +0,79] | +0,18 [−0,10; +0,48] ⁰ |
+| GRPO + ROUGE-L − ck500 | +0,23 [−0,22; +0,73] ⁰ | +0,91 [+0,52; +1,31] | +2,76 [−1,98; +7,56] ⁰ | −0,22 [−0,82; +0,40] ⁰ | +0,55 [+0,15; +0,93] | +0,51 [+0,13; +0,85] |
+| GRPO + METEOR − ck500 | −1,60 [−2,15; −1,05] | +0,77 [+0,35; +1,21] | −3,44 [−8,89; +2,01] ⁰ | −0,66 [−1,34; +0,01] ⁰ | +1,32 [+0,90; +1,76] | +0,29 [−0,07; +0,67] ⁰ |
+| GRPO + CIDEr-D − ck500 | −0,77 [−1,26; −0,28] | +0,11 [−0,27; +0,48] ⁰ | −5,53 [−10,21; −1,20] | −1,37 [−1,97; −0,76] | +0,03 [−0,34; +0,40] ⁰ | −0,04 [−0,38; +0,28] ⁰ |
+| SCST − S1/101 | +0,41 [−0,12; +1,19] ⁰ | +1,35 [+0,89; +1,79] | +14,78 [+9,33; +20,45] | +1,57 [+0,86; +2,25] | +2,04 [+1,55; +2,54] | +0,91 [+0,53; +1,30] |
+| GRPO + ROUGE-L − S1/101 | +1,03 [+0,45; +1,86] | +1,92 [+1,43; +2,40] | +16,70 [+10,53; +22,79] | +1,20 [+0,43; +1,99] | +2,15 [+1,61; +2,67] | +1,24 [+0,80; +1,65] |
+| GRPO + METEOR − S1/101 | −0,79 [−1,45; +0,09] ⁰ | +1,79 [+1,25; +2,31] | +10,50 [+3,28; +17,57] | +0,76 [−0,06; +1,61] ⁰ | +2,93 [+2,37; +3,50] | +1,02 [+0,56; +1,49] |
+| GRPO + CIDEr-D − S1/101 | +0,03 [−0,56; +0,85] ⁰ | +1,12 [+0,66; +1,58] | +8,40 [+2,33; +14,31] | +0,06 [−0,70; +0,84] ⁰ | +1,64 [+1,11; +2,15] | +0,70 [+0,28; +1,11] |
+
+Đọc (chưa hiệu chỉnh đa so sánh, một hạt giống):
+
+- **ck500 không dẫn đầu độ đo văn bản nào trong nhóm này.** GRPO + ROUGE-L cao hơn ck500 ở 6/7 độ đo, trừ SPICE; KTC loại 0 ở ROUGE-L, chrF, BERTScore. SCST + SPICE cũng cao hơn ở 6/7, trừ BLEU-4; KTC loại 0 ở ROUGE-L, chrF. Cộng với mục 14.1, GRPO + ROUGE-L là ứng viên đáng kiểm nhất ở hạt thứ hai.
+- **Thưởng SPICE vẫn cho SPICE cao:** SCST 45,93 và ck500 45,79 đứng đầu cột, nhưng chênh với GRPO + ROUGE-L chỉ −0,22, KTC phủ 0.
+- **GRPO + CIDEr-D thấp hơn ck500 ngay trên CIDEr-D** (−5,53, KTC loại 0), và SPICE gần như không đổi so với S1 (+0,06). Lượt tối ưu CIDEr-D mà điểm CIDEr-D kém lượt tối ưu SPICE là điều cần giải thích trước khi trích. Đã đọc `CiderD` trong `harness/grpo_luoi.py`: công thức giống pycocoevalcap (sigma 6, clip, ×10); khác ở df, lúc thưởng lấy từ câu chuẩn tập dạy, lúc chấm lấy từ tập kiểm, và khác cách tách từ (không qua PTBTokenizer). [suy] đây có thể là một phần nguyên nhân, chưa đo; cũng có thể chỉ là nhiễu một hạt giống.
+- **D1 (`report/323` §9):** METEOR và ROUGE-L thắng SPICE ở nhiều độ đo văn bản nhưng không hơn về exec, còn CIDEr-D thua. Vẫn chưa phân định được, chrF chưa chạy.
+- Cả bốn đều hơn S1/101 ở ROUGE-L, CIDEr-D, chrF, BERTScore với KTC loại 0.
+
+Tự kiểm đạt: S1/101, ck500, xao101 tái lập số ở mục 3.1 (cả METEOR), và KTC ck500 − S1/101 trùng mục 3.2. Nguồn: `runs/luoi/test_2_11/chu/chu_luoi_2_11.json`, `chu.log`; điểm từng bước trong `chu_cache.zip`. Script `harness/chu_luoi_2_11.py`, gói `_bundles/chu_luoi_2_11/`.
+
+### 14.5 Phân rã mức tăng exec so với S1/101 (kernel `trangphngngc/luoi-cpu-3-11-k`, 3/11)
+
+Cứu là bước S1 trượt mà nhánh trúng, phá là ngược lại. "Loại thao tác" đếm bước cứu mà S1 viết sai loại và bước phá mà nhánh viết sai loại, "phần tử" là phần còn lại. p là McNemar chính xác hai phía trên cặp cứu/phá của từng phần, tính hậu kiểm và chưa hiệu chỉnh. Script tự kiểm ck500 ra đúng +28/+41 của `report/259`.
+
+| nhánh | ròng | loại thao tác: cứu/phá, ròng, p | phần tử: cứu/phá, ròng, p | exec khi cả hai đúng loại: S1 → nhánh |
+|---|---|---|---|---|
+| ck500 | +69 | 36/8, +28, 2,5e−5 | 123/82, **+41**, **0,005** | 62,62 → 63,60 |
+| GRPO + ROUGE-L | +68 | 55/7, **+48**, <1e−6 | 116/96, +20, 0,19 | 62,63 → 63,10 |
+| SCST + SPICE | +64 | 39/6, +33, 1e−6 | 95/64, +31, 0,017 | 62,62 → 63,36 |
+| GRPO + CIDEr-D | +52 | 42/8, +34, 1e−6 | 120/102, +18, 0,25 | 62,65 → 63,08 |
+| GRPO + METEOR | +52 | 42/11, +31, 2,2e−5 | 128/107, +21, 0,19 | 62,64 → 63,14 |
+| xao101 | 0 | 7/10, −3, 0,63 | 38/35, +3, 0,82 | 62,69 → 62,76 |
+
+Đọc: mọi lượt có thưởng thật đều sửa loại thao tác rõ, còn nhánh điểm SPICE ghép ngẫu nhiên thì không, nên phần này không tự có từ vòng lặp RL khi thưởng không mang thông tin. Câu này chưa tách được công của RL với việc train thêm theo câu chuẩn: SFT tiếp chưa chấm, và có thể cũng sửa được loại thao tác. Về đổi phần tử, hai lượt thưởng SPICE có phép so cứu/phá loại được 0 trước hiệu chỉnh, ba lượt thưởng khác thì không. Đây là manh mối đầu tiên cho việc thưởng SPICE khác các độ đo còn lại, nhưng chưa được viết thành kết luận, vì bốn lý do: "có ý nghĩa" và "không có ý nghĩa" không chứng minh hai nhánh khác nhau, chưa có phép so trực tiếp về phần tử giữa các nhánh; Holm trên năm lượt giữ ck500 (0,026) nhưng SCST mất (0,068); phép đọc này chọn sau khi thấy số; và mới có một hạt giống. Phép so ghép cặp trực tiếp về phần tử giữa ck500 và từng lượt đang chạy trên Kaggle CPU (`trangphngngc/luoi-phan-tu-3-11-k`, `harness/phan_tu_ghep_cap.py`), chưa có số. Tệp `phan_ra.json`.
+
+### 14.6 Diễn biến lúc train (số train, chỉ để giải thích, không trích làm kết quả)
+
+| nhánh | entropy: 262 bước đầu → 75 bước cuối | nhóm thưởng bằng nhau | KL với S1, 75 bước cuối | số từ |
+|---|---|---|---|---|
+| SCST + SPICE | 0,53 → 0,37 | 19,5% → 30,7% | 0,027 | 8,75 → 9,21 |
+| RLOO + SPICE | 0,51 → 0,37 | 22,7% → 33,3% | 0,019 | 8,65 → 9,13 |
+| REINFORCE EMA + SPICE | 0,53 → 0,38 | 20,0% → 28,0% | 0,019 | 8,66 → 9,04 |
+| GRPO + CIDEr-D | 0,49 → 0,29 | 13,6% → 25,3% | 0,052 | 8,73 → 9,40 |
+| GRPO + METEOR | 0,49 → 0,28 | 13,2% → 24,7% | 0,080 | 8,81 → 9,60 |
+| GRPO + ROUGE-L | 0,48 → 0,29 | 13,2% → 26,0% | 0,053 | 8,73 → 9,32 |
+
+Thưởng SPICE có nhiều nhóm bằng nhau hơn ngay từ đầu (khoảng 20% so với 13%), nên có ít bước có tín hiệu hơn, và đi xa S1 ít hơn (KL 0,02–0,03 so với 0,05–0,08). Đây là khác biệt theo độ đo thưởng, không phải theo thuật toán: ba thuật toán cùng thưởng SPICE cho số gần nhau. ck500 chỉ còn log 337 bước, xao101 225 và A/A 183, nên không có cửa sổ cuối; cửa sổ đầu của ck500 tái lập 0,52 và 20,2% của `report/328`, còn 0,34 và 31,3% ở cửa sổ cuối chưa tái lập được từ log trong kho. Số thưởng giữa các độ đo không so được với nhau. Tệp `dien_bien_train.json`.
+
+### 14.7 Hình thức câu (spaCy, chỉ báo chưa kiểm định, Δ so với S1/101, bootstrap theo app)
+
+| nhánh | số từ | lặp 2 từ (%) | lặp 3 từ (%) | quá ngắn (%) | gốc câu không phải động từ (%) |
+|---|---|---|---|---|---|
+| S1/101, giá trị | 7,86 | 3,56 | 0,13 | 0,78 | 6,05 |
+| câu chuẩn, giá trị | 7,85 | 6,27 | 0,34 | 0,27 | 7,46 |
+| ck500 | +0,14 [+0,08; +0,20] | −0,25 [−0,61; +0,10] | +0,11 [0,00; +0,25] | −0,22 [−0,44; −0,02] | −0,47 [−0,90; −0,07] |
+| SCST + SPICE | +0,29 [+0,23; +0,34] | −0,07 [−0,40; +0,26] | +0,07 [−0,04; +0,19] | −0,27 [−0,47; −0,07] | −0,45 [−0,76; −0,14] |
+| GRPO + ROUGE-L | +0,21 [+0,14; +0,27] | +0,20 [−0,16; +0,56] | +0,09 [−0,05; +0,24] | −0,36 [−0,55; −0,15] | −0,99 [−1,40; −0,57] |
+| GRPO + METEOR | +0,59 [+0,52; +0,67] | −0,18 [−0,58; +0,18] | +0,11 [0,00; +0,27] | −0,40 [−0,63; −0,20] | −1,01 [−1,36; −0,64] |
+| GRPO + CIDEr-D | +0,25 [+0,18; +0,32] | −0,56 [−0,97; −0,17] | +0,11 [0,00; +0,26] | −0,29 [−0,48; −0,10] | −0,94 [−1,32; −0,58] |
+| xao101 | +0,08 [+0,05; +0,12] | +0,20 [−0,02; +0,44] | 0,00 [0,00; 0,00] | −0,16 [−0,30; −0,02] | 0,00 [−0,27; +0,25] |
+
+Đọc: nhận xét của Liu về việc thưởng SPICE làm câu lặp cụm hay cụt chưa thấy trên ck500: lặp 2 từ không tăng, lặp 3 từ tăng rất ít và cận dưới chạm 0, câu quá ngắn giảm. Mọi lượt đều nằm dưới mức lặp của câu chuẩn. METEOR kéo câu dài nhất (+0,59 từ). Đây là chỉ báo tự động từ bộ phân tích cú pháp, không thay được chấm tay. Tệp `hinh_thuc.json` (thêm ck500/202, A2_500, ACE và cột khác).

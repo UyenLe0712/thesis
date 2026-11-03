@@ -33,10 +33,11 @@ Các tệp trên và mã mới **chưa commit**. Chỉ commit khi user cho phép
 ## 3. Trạng thái Kaggle
 
 **Cập nhật 3/11, 06:15 (thắng các khối bên dưới).** Ba kernel 2/11 đã xong, số ở `report/320` mục 14, tệp ở `runs/luoi/test_2_11/` và `runs/luoi/lo3/`. Không còn phiên chat nào khác chạy trên máy lúc kiểm.
-- Chấm đủ test: SCST + SPICE 60,54 · GRPO + METEOR 60,27 · GRPO + ROUGE-L 60,63. GRPO + CIDEr-D chạm trần 5 h, thiếu 35 bước, số tạm 60,25.
+- Chấm đủ test: SCST + SPICE 60,54 · GRPO + METEOR 60,27 · GRPO + ROUGE-L 60,63. GRPO + CIDEr-D chạm trần 5 h ở lượt đầu; chấm nốt 3/11, đủ 4.463 bước, 60,27.
 - `luoi-t2-3`: `sft:spice:101` đủ 500 bước (13,4 s/bước, 10,94 GiB), chưa chấm test. `grpo:spice:101` (A/A) dừng ở trần, khoảng bước 183, điểm lưu cuối 175.
-- Đang chạy: `trangphngngc/chu-luoi-2-11-cpu` (kernel CPU, 7 nhánh, độ đo văn bản + KTC; gói `_bundles/chu_luoi_2_11/`, script `harness/chu_luoi_2_11.py`).
-- Sau 7/11, theo thứ tự: test SFT tiếp · chấm nốt 35 bước CIDEr-D · test RLOO, REINFORCE · nối tiếp A/A.
+- Độ đo văn bản của bốn lượt xong 3/11 (`trangphngngc/chu-luoi-2-11-cpu`, số ở `report/320` mục 14.4). Không còn kernel nào chạy.
+- Chưa giải thích được: GRPO + CIDEr-D thấp hơn ck500 ngay trên CIDEr-D (−5,53, KTC loại 0). Công thức thưởng khớp pycocoevalcap, chỉ khác df và cách tách từ (`report/320` mục 14.4).
+- Sau 7/11, theo thứ tự: test SFT tiếp · test RLOO, REINFORCE · nối tiếp A/A.
 
 **Cập nhật 2/11, 19:00. Hai phiên chat cùng làm kho này, phân vai đã chốt; không đẩy thêm khi chưa báo phiên kia.** User đã đồng ý chạy từ từ, phần còn lại sau khi hạn mức làm mới 7/11.
 
@@ -116,7 +117,7 @@ Khối lượng [suy]: khoảng 50 lượt, 795 giờ hạn mức, chừng 9 tu�
 | `harness/grpo_luoi.py`, bản trong `_bundles/luoi/ds/` | md5 `92d0a9bc…`. **Không sửa trước khi xong lô 1**: notebook kiểm md5 và dừng nếu lệch |
 | `harness/grpo_spice.py` | Không sửa, md5 `8489108f…`, ck500 tái lập bằng tệp này |
 | `harness/grpo_codien.py` (mới) | 7 nhánh cổ điển + cờ `--loss-type`, `--scale-rewards`, `--mu`, `--is-level`, `--eps-high`; cho phép SCST + CIDEr-D. Chạy thử CPU đạt. **Chưa probe T4** |
-| `harness/grpo_ppo.py` (mới) | PPO và A2C: đầu giá trị nhỏ tách gradient, GAE, lợi thế theo token, lưu và nạp đầu giá trị khi nối tiếp. Selftest GAE và CPU đạt, kể cả nối tiếp. **Chưa probe T4**: phải xem VRAM, s/bước và `clip_ratio/region_mean` > 0 khi μ = 2 (chưa thấy > 0 trên CPU vì lr warmup rất nhỏ). ppo cần `steps=1000` để giữ 1.000 câu nhắc |
+| `harness/grpo_ppo.py` (mới) | PPO và A2C: đầu giá trị nhỏ tách gradient, GAE, lợi thế theo token, lưu và nạp đầu giá trị khi nối tiếp. Selftest GAE và CPU đạt, kể cả nối tiếp. **Đã probe T4 3/11, số ở `report/329` mục 4:** A2C 187 s/bước, PPO μ = 2 299 s/lô sinh, không tràn bộ nhớ, `clip_ratio/region_mean` = 0 cả 12 bước (mới hai dòng ở lr đầy đủ). ppo cần `steps=1000` để giữ 1.000 câu nhắc |
 | `harness/sft_tiep.py` (mới) | SFT tiếp từ S1: 500 bước, 2 câu nhắc mỗi bước. CPU đạt, nối tiếp cho đúng cùng loss. **Chưa probe T4** |
 | `harness/hinh_thuc_cau.py`, `harness/ace_doi_chieu.py` (mới) | Đã chạy, kết quả `runs/hinh_thuc_cau/ket_qua.json`, `runs/ace_ablation/doi_chieu_327.json` |
 | `_bundles/luoi/make_nb.py` | Đã nhận nhánh mới, cú pháp `algo:reward:seed[:k=v,…,tag=…]`, ví dụ `ppo:spice:101:mu=2,lam=0.95,steps=1000,tag=l95` · `sft:spice:101` · `grpo:spice:101:beta=0,loss=dr_grpo,scale=none,tag=drg`. Dừng ngay nếu có kernel trước mà không thấy điểm lưu. Tệp mới đã chép vào `ds/`, nhưng **dataset `grpo-luoi-script` của từng tài khoản chưa cập nhật**: phải đẩy phiên bản mới trước khi chạy nhánh mới |

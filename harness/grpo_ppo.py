@@ -9,7 +9,7 @@ không huấn luyện trước. Đây là "đầu giá trị nhỏ", KHÔNG ph�
   python grpo_ppo.py --selftest-algo
   python grpo_ppo.py --train --algo ppo --lam 1.0 --mu 2 --max-steps 1000 --bundle B --merged M --out O --resume auto
 """
-import os, sys, argparse
+import os, sys, argparse, collections
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import grpo_codien as CD                                  # noqa: E402
 GL = CD.GL
@@ -53,6 +53,7 @@ def lop_trainer():
         head = None
         opt_v = None
         _resume = None
+        _ev = None
 
         def train(self, resume_from_checkpoint=None, **kw):
             self._resume = resume_from_checkpoint
@@ -111,7 +112,9 @@ def lop_trainer():
             A, dich = gae(V, r.to(V.device), mask, LAM)
             mt = self._metrics["train"]
             m = mask.bool()
-            mt["luoi/adv_abs_mean"].append(float(A[m].abs().mean()) if m.any() else 0.0)
+            # lớp cha đã ghi hai trường này từ lợi thế tạm drgrpo: thay bằng lợi thế thật, không ghi thêm dòng thứ hai
+            mt["luoi/adv_abs_mean"][-1] = float(A[m].abs().mean()) if m.any() else 0.0
+            mt["luoi/frac_adv_zero"][-1] = float((A[m].abs() < 1e-6).float().mean()) if m.any() else 0.0
             if CHUAN_HOA and m.any():
                 A = (A - A[m].mean()) / (A[m].std() + 1e-4) * mask.to(A.dtype)
             out["advantages"] = A.to(dtype=out["advantages"].dtype)
@@ -130,10 +133,16 @@ def lop_trainer():
                 l.backward()
                 self.opt_v.step()
             mt = self._metrics["train"]
-            mt["luoi/v_loss"].append(float(l))
+            mt["luoi/v_loss"].append(l.item())
             bd = m.bool()
-            if bd.sum() > 1:
-                mt["luoi/v_ev"].append(float(1 - (dich - v.detach())[bd].var() / (dich[bd].var() + 1e-8)))
+            if bd.any():
+                # đo trên 64 lô gần nhất: một lô 4 mẫu có thể cùng đích, phương sai ≈ 0 làm EV ra −1e6
+                if self._ev is None:
+                    self._ev = collections.deque(maxlen=64)
+                self._ev.append(((dich - v.detach())[bd].cpu(), dich[bd].cpu()))
+                sai, d = torch.cat([x[0] for x in self._ev]), torch.cat([x[1] for x in self._ev])
+                if d.numel() > 1 and d.var() > 1e-6:
+                    mt["luoi/v_ev"].append(float(1 - sai.var() / d.var()))
             return loss
 
         def _save_checkpoint(self, model, trial):

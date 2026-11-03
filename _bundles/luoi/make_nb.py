@@ -157,8 +157,8 @@ def tinh_trang(r, o):
     msg = f"  [{r}] buoc {goc + len(D)}/{tong_cua(r)} (tiep tu {goc}) · luu {ck_moi(o)}"
     if D:
         x = D[-10:]
-        msg += (f" · {st.mean(d.get('step_time', 0) for d in x):.0f} s/buoc · thuong {st.mean(d.get('reward', 0) for d in x):.3f}"
-                f" · kl {st.mean(d.get('kl', 0) for d in x):.4f} · |A| {st.mean(d.get('luoi/adv_abs_mean', float('nan')) for d in x):.3f}")
+        msg += (f" · {st.mean(d.get('step_time', 0) for d in x):.0f} s/buoc · thuong {st.mean(d['reward'] for d in x if 'reward' in d) if any('reward' in d for d in x) else float('nan'):.3f}"
+                f" · kl {st.mean(d.get('kl', 0) for d in x):.4f} · |A| {st.mean(d['luoi/adv_abs_mean'] for d in x if 'luoi/adv_abs_mean' in d) if any('luoi/adv_abs_mean' in d for d in x) else float('nan'):.3f}")
     for k in ("[xong]", "[nạp default]", "[câu nhắc] trùng"):
         y = [l for l in L if l.startswith(k)]
         if y: msg += "\\n      " + y[-1][:150]
