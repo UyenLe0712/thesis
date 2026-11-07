@@ -1,0 +1,16 @@
+[đợt 4] rlce {'lam': 0.1} · mixer {'rho0': 0.5, 'frac': 0.5} · seqgan {'mix': 0.0, 'warm': 20, 'lr': 0.0001, 'hid': 256} · quark {'k': 5, 'pool': 2048} · es {'pop': 4, 'm': 2, 'sigma': 0.001, 'lr': 0.0005, 'save': 2}
+[cấu hình] seed 101 · thuật toán es · thưởng spice · pop 4 · m 2 · σ 0.001 · lr 0.0005
+transformers 5.20.2 · peft 0.21.2 · torch 2.11.0+cpu
+[nạp] mô hình tí hon CPU · 9,881,824 tham số
+[LoRA mới] tham số dò 11,776 · S1 có 11,776
+[câu nhắc] 16 · bỏ {'gia': 1}
+[tiếp từ] /kaggle/working/out_es/checkpoint-3
+[nạp default] 22 tensor · |lora_B| 0.0000 → 34.0828 · khoá lạ 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+[spice] lần 1 · 2 câu · 0.0s · thưởng TB 0.193 · số từ TB 27.5 · rỗng 0
+[spice] lần 2 · 2 câu · 0.0s · thưởng TB 0.105 · số từ TB 31.0 · rỗng 0
+[spice] lần 3 · 2 câu · 0.0s · thưởng TB 0.197 · số từ TB 39.0 · rỗng 0
+[spice] lần 4 · 2 câu · 0.0s · thưởng TB -0.155 · số từ TB 33.0 · rỗng 0
+{'loss': 0.0, 'reward': 0.084983, 'es/f_max': 0.197216, 'es/f_min': -0.155428, 'es/so_cau_khac': 4, 'es/buoc_l2': 14.338558, 'luoi/adv_abs_mean': 0.333333, 'kl': 0.0, 'step_time': 3.046168, 'step': 4}
+[xong] 1 bước · 0.1 phút · 3.1 s/bước · đỉnh VRAM 0.00 GiB · thưởng 0.0 s/lần

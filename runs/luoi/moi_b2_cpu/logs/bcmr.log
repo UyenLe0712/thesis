@@ -1,0 +1,22 @@
+[đợt 4] rlce {'lam': 0.1} · mixer {'rho0': 0.5, 'frac': 0.5} · seqgan {'mix': 0.0, 'warm': 20, 'lr': 0.0001, 'hid': 256} · quark {'k': 5, 'pool': 2048} · es {'pop': 16, 'm': 2, 'sigma': 0.001, 'lr': 0.0005, 'save': 25}
+[cấu hình] seed 101 · thuật toán grpo · thưởng bcmr
+trl 0.29.1 · transformers 5.20.2 · peft 0.21.2 · torch 2.11.0+cpu
+[cider] df dựng từ 24 câu chuẩn của p1_train_rows.jsonl
+[bcmr] (0,5·B1 + 0,5·B2 + B3 + B4 + CIDEr-D + 5·METEOR + 2·ROUGE-L) / 20
+[nạp] mô hình tí hon CPU · 9,881,824 tham số
+[LoRA mới] tham số học 11,776 · S1 có 11,776
+[câu nhắc] 16 · bỏ {'gia': 1} · n_char max 94
+GRPOConfig: {'num_generations': 4, 'per_device_train_batch_size': 4, 'gradient_accumulation_steps': 2, 'generation_batch_size': 8, 'steps_per_generation': 2, 'num_iterations': 1, 'max_completion_length': 96, 'temperature': 1.0, 'top_p': 1.0, 'top_k': 0, 'beta': 0.04, 'learning_rate': 1e-05, 'loss_type': 'dapo', 'scale_rewards': 'group', 'max_steps': 3, 'bf16': False, 'fp16': False}
+[tiếp từ] None
+/usr/local/lib/python3.13/dist-packages/torch/utils/data/dataloader.py:1118: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  super().__init__(loader)
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+[bcmr] lần 1 · 8 câu · 0.2s · thưởng TB -0.893 · số từ TB 51.6 · rỗng 0
+{'loss': '1.639e-07', 'grad_norm': '0.1136', 'learning_rate': '0', 'num_tokens': '1260', 'completions/mean_length': '96', 'completions/min_length': '96', 'completions/max_length': '96', 'completions/clipped_ratio': '1', 'completions/mean_terminated_length': '0', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '0', 'rewards/r_bcmr/mean': '-0.8925', 'rewards/r_bcmr/std': '0.06671', 'reward': '-0.8925', 'reward_std': '0.06671', 'frac_reward_zero_std': '0', 'kl': '0', 'entropy': '11.92', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'step_time': '11.78', 'epoch': '0.125'}
+[bcmr] lần 2 · 8 câu · 0.1s · thưởng TB -0.862 · số từ TB 51.6 · rỗng 0
+{'loss': '-6.706e-08', 'grad_norm': '0.07378', 'learning_rate': '1e-06', 'num_tokens': '2516', 'completions/mean_length': '96', 'completions/min_length': '96', 'completions/max_length': '96', 'completions/clipped_ratio': '1', 'completions/mean_terminated_length': '0', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '0', 'rewards/r_bcmr/mean': '-0.8618', 'rewards/r_bcmr/std': '0.08665', 'reward': '-0.8618', 'reward_std': '0.08665', 'frac_reward_zero_std': '0', 'kl': '0', 'entropy': '11.92', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'step_time': '10.2', 'epoch': '0.25'}
+[bcmr] lần 3 · 8 câu · 0.1s · thưởng TB -0.907 · số từ TB 51.9 · rỗng 0
+{'loss': '1.49e-07', 'grad_norm': '0.08414', 'learning_rate': '2e-06', 'num_tokens': '3780', 'completions/mean_length': '96', 'completions/min_length': '96', 'completions/max_length': '96', 'completions/clipped_ratio': '1', 'completions/mean_terminated_length': '0', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '0', 'rewards/r_bcmr/mean': '-0.9072', 'rewards/r_bcmr/std': '0.1003', 'reward': '-0.9072', 'reward_std': '0.1003', 'frac_reward_zero_std': '0', 'kl': '0', 'entropy': '11.92', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'step_time': '10.19', 'epoch': '0.375'}
+{'train_runtime': '32.49', 'train_samples_per_second': '0.739', 'train_steps_per_second': '0.092', 'train_loss': '8.196e-08', 'epoch': '0.375'}
+[xong] 3 bước · 0.5 phút · 10.9 s/bước · đỉnh VRAM 0.00 GiB · thưởng 0.1 s/lần

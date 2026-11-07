@@ -1,0 +1,23 @@
+[đợt 4] rlce {'lam': 0.1} · mixer {'rho0': 0.5, 'frac': 0.5} · seqgan {'mix': 0.0, 'warm': 1, 'lr': 0.0001, 'hid': 256} · quark {'k': 5, 'pool': 2048} · es {'pop': 16, 'm': 2, 'sigma': 0.001, 'lr': 0.0005, 'save': 25}
+[cấu hình] seed 101 · thuật toán seqgan · thưởng spice
+trl 0.29.1 · transformers 5.20.2 · peft 0.21.2 · torch 2.11.0+cpu
+[nạp] mô hình tí hon CPU · 9,881,824 tham số
+[LoRA mới] tham số học 11,776 · S1 có 11,776
+[câu nhắc] 16 · bỏ {'gia': 1} · n_char max 94
+GRPOConfig: {'num_generations': 4, 'per_device_train_batch_size': 4, 'gradient_accumulation_steps': 2, 'generation_batch_size': 8, 'steps_per_generation': 2, 'num_iterations': 1, 'max_completion_length': 96, 'temperature': 1.0, 'top_p': 1.0, 'top_k': 0, 'beta': 0.04, 'learning_rate': 1e-05, 'loss_type': 'dapo', 'scale_rewards': 'group', 'max_steps': 3, 'bf16': False, 'fp16': False}
+[tiếp từ] None
+/usr/local/lib/python3.13/dist-packages/torch/utils/data/dataloader.py:1118: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  super().__init__(loader)
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+[spice] lần 1 · 8 câu · 0.0s · thưởng TB -0.470 · số từ TB 51.6 · rỗng 0
+/kaggle/working/w/grpo_moi_b2.py:307: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:836.)
+  mt["seqgan/d_loss"].append(float(ld))
+{'loss': '0', 'grad_norm': '1.023e-09', 'learning_rate': '0', 'num_tokens': '1260', 'completions/mean_length': '96', 'completions/min_length': '96', 'completions/max_length': '96', 'completions/clipped_ratio': '1', 'completions/mean_terminated_length': '0', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '0', 'rewards/r_spice/mean': '-0.4702', 'rewards/r_spice/std': '0.3341', 'reward': '-0.4702', 'reward_std': '0.3341', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0', 'luoi/frac_adv_zero': '1', 'seqgan/d_loss': '1.386', 'seqgan/d_real': '0.5', 'seqgan/d_fake': '0.5', 'seqgan/r': '0.5', 'kl': '0', 'entropy': '11.92', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'step_time': '11.38', 'epoch': '0.125'}
+[spice] lần 2 · 8 câu · 0.0s · thưởng TB -0.235 · số từ TB 51.6 · rỗng 0
+{'loss': '-5.595e-05', 'grad_norm': '0.01893', 'learning_rate': '1e-06', 'num_tokens': '2516', 'completions/mean_length': '96', 'completions/min_length': '96', 'completions/max_length': '96', 'completions/clipped_ratio': '1', 'completions/mean_terminated_length': '0', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '0', 'rewards/r_spice/mean': '-0.2346', 'rewards/r_spice/std': '0.3588', 'reward': '-0.2346', 'reward_std': '0.3588', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.1723', 'luoi/frac_adv_zero': '0', 'seqgan/d_loss': '1.386', 'seqgan/d_real': '0.5003', 'seqgan/d_fake': '0.5001', 'seqgan/r': '0.5001', 'kl': '0', 'entropy': '11.92', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'step_time': '11.2', 'epoch': '0.25'}
+[spice] lần 3 · 8 câu · 0.0s · thưởng TB -0.307 · số từ TB 51.9 · rỗng 0
+{'loss': '1.949e-06', 'grad_norm': '0.01363', 'learning_rate': '2e-06', 'num_tokens': '3780', 'completions/mean_length': '96', 'completions/min_length': '96', 'completions/max_length': '96', 'completions/clipped_ratio': '1', 'completions/mean_terminated_length': '0', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '0', 'rewards/r_spice/mean': '-0.3069', 'rewards/r_spice/std': '0.3386', 'reward': '-0.3069', 'reward_std': '0.3386', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.1037', 'luoi/frac_adv_zero': '0', 'seqgan/d_loss': '1.386', 'seqgan/d_real': '0.5006', 'seqgan/d_fake': '0.5002', 'seqgan/r': '0.5002', 'kl': '0', 'entropy': '11.92', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'step_time': '11.24', 'epoch': '0.375'}
+{'train_runtime': '34.14', 'train_samples_per_second': '0.703', 'train_steps_per_second': '0.088', 'train_loss': '-1.8e-05', 'epoch': '0.375'}
+[xong] 3 bước · 0.6 phút · 11.5 s/bước · đỉnh VRAM 0.00 GiB · thưởng 0.0 s/lần

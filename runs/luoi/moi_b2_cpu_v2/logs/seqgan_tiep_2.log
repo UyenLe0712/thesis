@@ -1,0 +1,23 @@
+[đợt 4] rlce {'lam': 0.1} · mixer {'rho0': 0.5, 'frac': 0.5} · seqgan {'mix': 0.0, 'warm': 1, 'lr': 0.0001, 'hid': 256} · quark {'k': 5, 'pool': 2048} · es {'pop': 16, 'm': 2, 'sigma': 0.001, 'lr': 0.0005, 'save': 25}
+[cấu hình] seed 101 · thuật toán seqgan · thưởng spice
+trl 0.29.1 · transformers 5.20.2 · peft 0.21.2 · torch 2.11.0+cpu
+[nạp] mô hình tí hon CPU · 9,881,824 tham số
+[LoRA mới] tham số học 11,776 · S1 có 11,776
+[câu nhắc] 16 · bỏ {'gia': 1} · n_char max 94
+GRPOConfig: {'num_generations': 4, 'per_device_train_batch_size': 4, 'gradient_accumulation_steps': 2, 'generation_batch_size': 8, 'steps_per_generation': 2, 'num_iterations': 1, 'max_completion_length': 96, 'temperature': 1.0, 'top_p': 1.0, 'top_k': 0, 'beta': 0.04, 'learning_rate': 1e-05, 'loss_type': 'dapo', 'scale_rewards': 'group', 'max_steps': 27, 'bf16': False, 'fp16': False}
+[tiếp từ] /kaggle/working/out_seqgan_tiep/checkpoint-25
+[nạp default] 22 tensor · |lora_B| 0.0000 → 0.0118 · khoá lạ 0
+/usr/local/lib/python3.13/dist-packages/torch/utils/data/dataloader.py:1118: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  super().__init__(loader)
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+[spice] lần 1 · 8 câu · 0.0s · thưởng TB -0.270 · số từ TB 49.0 · rỗng 0
+[seqgan] nạp bộ phân biệt từ /kaggle/working/out_seqgan_tiep/checkpoint-25/discriminator.pt
+/kaggle/working/w/grpo_moi_b2.py:318: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:836.)
+  mt["seqgan/d_loss"].append(float(ld))
+{'loss': '7.167e-05', 'grad_norm': '0.05937', 'learning_rate': '1e-05', 'num_tokens': '3.273e+04', 'completions/mean_length': '96', 'completions/min_length': '96', 'completions/max_length': '96', 'completions/clipped_ratio': '1', 'completions/mean_terminated_length': '0', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '0', 'rewards/r_spice/mean': '-0.2698', 'rewards/r_spice/std': '0.3369', 'reward': '-0.2698', 'reward_std': '0.3369', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.6136', 'luoi/frac_adv_zero': '0', 'seqgan/d_loss': '1.376', 'seqgan/d_real': '0.5056', 'seqgan/d_fake': '0.5004', 'seqgan/r': '0.5004', 'kl': '9.329e-08', 'entropy': '11.92', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'step_time': '11.6', 'epoch': '3.25'}
+[spice] lần 2 · 8 câu · 0.0s · thưởng TB -0.383 · số từ TB 51.2 · rỗng 0
+{'loss': '2.975e-05', 'grad_norm': '0.05747', 'learning_rate': '1e-05', 'num_tokens': '3.399e+04', 'completions/mean_length': '96', 'completions/min_length': '96', 'completions/max_length': '96', 'completions/clipped_ratio': '1', 'completions/mean_terminated_length': '0', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '0', 'rewards/r_spice/mean': '-0.3834', 'rewards/r_spice/std': '0.3023', 'reward': '-0.3834', 'reward_std': '0.3023', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.5991', 'luoi/frac_adv_zero': '0', 'seqgan/d_loss': '1.371', 'seqgan/d_real': '0.5076', 'seqgan/d_fake': '0.5', 'seqgan/r': '0.5', 'kl': '1.763e-07', 'entropy': '11.92', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'step_time': '11.42', 'epoch': '3.375'}
+{'train_runtime': '23.33', 'train_samples_per_second': '0.686', 'train_steps_per_second': '0.086', 'train_loss': '5.071e-05', 'epoch': '3.375'}
+[xong] 2 bước · 0.4 phút · 11.8 s/bước · đỉnh VRAM 0.00 GiB · thưởng 0.0 s/lần

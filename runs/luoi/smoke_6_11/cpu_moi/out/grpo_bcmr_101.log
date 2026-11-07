@@ -1,0 +1,18 @@
+[đợt 4] rlce {'lam': 0.1} · mixer {'rho0': 0.5, 'frac': 0.5} · seqgan {'mix': 0.0, 'warm': 20, 'lr': 0.0001, 'hid': 256} · quark {'k': 5, 'pool': 2048} · es {'pop': 16, 'm': 2, 'sigma': 0.001, 'lr': 0.0005, 'save': 25}
+[cấu hình] seed 101 · thuật toán grpo · thưởng bcmr
+trl 0.29.1 · transformers 5.20.2 · peft 0.21.2 · torch 2.11.0+cpu
+[cider] df dựng từ 3991 câu chuẩn của p1_train_rows.jsonl
+[bcmr] (0,5·B1 + 0,5·B2 + B3 + B4 + CIDEr-D + 5·METEOR + 2·ROUGE-L) / 20
+[LoRA mới] tham số học 1,792 · S1 có 0
+[câu nhắc] 1000 · bỏ {'trung_val': 0, 'trung_episode_val': 0, 'thieu_anh': 0, 'thieu_ocr': 0, 'rong': 9} · n_char max 1974
+GRPOConfig: {'num_generations': 8, 'per_device_train_batch_size': 4, 'gradient_accumulation_steps': 4, 'generation_batch_size': 16, 'steps_per_generation': 4, 'num_iterations': 1, 'max_completion_length': 96, 'temperature': 1.0, 'top_p': 1.0, 'top_k': 0, 'beta': 0.04, 'learning_rate': 1e-05, 'loss_type': 'dapo', 'scale_rewards': 'group', 'max_steps': 2, 'bf16': False, 'fp16': False}
+[tiếp từ] None
+/usr/local/lib/python3.13/dist-packages/torch/utils/data/dataloader.py:1118: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  super().__init__(loader)
+[bcmr] lần 1 · 16 câu · 0.4s · thưởng TB -0.800 · số từ TB 51.6 · rỗng 0
+{'loss': '3.651e-07', 'grad_norm': '0.009551', 'learning_rate': '0', 'num_tokens': '5928', 'completions/mean_length': '96', 'completions/min_length': '96', 'completions/max_length': '96', 'completions/clipped_ratio': '1', 'completions/mean_terminated_length': '0', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '0', 'rewards/r_bcmr/mean': '-0.8004', 'rewards/r_bcmr/std': '0.1275', 'reward': '-0.8004', 'reward_std': '0.1275', 'frac_reward_zero_std': '0', 'kl': '0', 'entropy': '11.93', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'step_time': '28.02', 'epoch': '0.002'}
+[bcmr] lần 2 · 16 câu · 0.2s · thưởng TB -0.813 · số từ TB 49.2 · rỗng 0
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+{'loss': '-2.384e-07', 'grad_norm': '0.01574', 'learning_rate': '1e-06', 'num_tokens': '1.125e+04', 'completions/mean_length': '96', 'completions/min_length': '96', 'completions/max_length': '96', 'completions/clipped_ratio': '1', 'completions/mean_terminated_length': '0', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '0', 'rewards/r_bcmr/mean': '-0.8129', 'rewards/r_bcmr/std': '0.06224', 'reward': '-0.8129', 'reward_std': '0.06224', 'frac_reward_zero_std': '0', 'kl': '0', 'entropy': '11.93', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'step_time': '25.51', 'epoch': '0.004'}
+{'train_runtime': '54.41', 'train_samples_per_second': '0.588', 'train_steps_per_second': '0.037', 'train_loss': '6.333e-08', 'epoch': '0.004'}
+[xong] 2 bước · 0.9 phút · 27.4 s/bước · đỉnh VRAM 0.00 GiB · thưởng 0.3 s/lần

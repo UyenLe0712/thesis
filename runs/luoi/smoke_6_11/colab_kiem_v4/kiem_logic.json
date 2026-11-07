@@ -1,0 +1,50 @@
+{
+ "T1 dựng lệnh": {
+  "dat": true,
+  "chi_tiet": "17 lượt + 9 lượt sai bị chặn · lỗi []"
+ },
+ "T3 lượt đầu + đồng bộ + trần giờ": {
+  "dat": true,
+  "chi_tiet": "pgid riêng True · dừng ở bước 19/40 (mã -15) · Drive [5, 10, 15] (giữ ≤3) · tạm [] · nạp (True, 'lượt mới (tiếp từ None), không cần nạp default')"
+ },
+ "T4 mất máy rồi chạy tiếp từ Drive": {
+  "dat": true,
+  "chi_tiet": "khôi phục bước 15 (Drive có 15) · tiếp từ 15 · nạp default 5.7831 → (True, '|lora_B| sau = 5.7831') · xong 40/40, 25 dòng log mới · Drive [30, 35, 40] · đã chép [20, 25, 30, 35, 40] · mã 0"
+ },
+ "T5 nạp default hỏng thì dừng": {
+  "dat": true,
+  "chi_tiet": "kiểm (False, '|lora_B| sau = 0.0') · mã -15 · 2 s"
+ },
+ "T6 điểm lưu dở không được dùng": {
+  "dat": true,
+  "chi_tiet": "chưa yên [] · chép [10] · Drive [10] · khôi phục 10"
+ },
+ "T7 SIGINT vào nhóm notebook không giết lượt train": {
+  "dat": true,
+  "chi_tiet": "lượt start_new_session còn sống True · đối chứng cùng nhóm đã chết True"
+ },
+ "T8 thăm dò + chọn máy": {
+  "dat": true,
+  "chi_tiet": "đọc probe s/bước 0.1 · VRAM 14.2 · luật [('L4', 'L4'), ('A100', 'A100'), ('A100', 'A100'), ('L4', 'L4'), ('L4', 'L4'), ('?', '?')]"
+ },
+ "T9 nén kết quả": {
+  "dat": true,
+  "chi_tiet": "14 tệp · optimizer chỉ ở ['ppo_spice_101_l1/checkpoint-40/optimizer.pt']"
+ },
+ "T10 notebook hợp lệ": {
+  "dat": true,
+  "chi_tiet": "7 ô mã · lỗi cú pháp [] · thiếu [] · cấm []"
+ },
+ "T11 phát hiện lượt cũ còn sống": {
+  "dat": true,
+  "chi_tiet": "pgrep [48] (pid thật 48) · còn sống True · sau khi dừng []"
+ },
+ "T12 PPO: value_head.pt ghi sau vẫn lên Drive đủ": {
+  "dat": true,
+  "chi_tiet": "đối chứng thấy 36 lần điểm lưu đủ 3 tệp mà thiếu value_head · Drive [5, 10] đều có value_head True · chạy tiếp từ 10 (khôi phục 10) tới 30/30 mã 0"
+ },
+ "T13 điểm lưu riêng của B2 (ES không optimizer, SeqGAN có discriminator)": {
+  "dat": true,
+  "chi_tiet": "es/seqgan/quark: chỉ điểm lưu đủ tệp riêng được chép và khôi phục · lỗi []"
+ }
+}

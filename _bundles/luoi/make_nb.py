@@ -1,10 +1,10 @@
 """Dựng notebook Kaggle cho lưới GRPO (report/323 §8): HAI lượt train song song, mỗi lượt một GPU T4.
 
-python make_nb.py <tài khoản kaggle> <tên kernel> <che_do: probe|train> <lượt0> <lượt1> [kernel trước]
-  biến môi trường: CAT_H = trần giờ của phiên (đặt dưới hạn mức còn lại) · MOI = các lượt mới, cách nhau dấu cách, khi có kernel trước
+python make_nb.py <tài khoản kaggle> <tên kernel> <che_do: probe|train> <lượt0> <lượt1 hoặc -> [kernel trước]
+  biến môi trường: PROBE_H = trần giờ chế độ probe (mặc định 1,5) · CAT_H = trần giờ của phiên (đặt dưới hạn mức còn lại) · MOI = các lượt mới, cách nhau dấu cách, khi có kernel trước
   tệp ngoài ba tệp gốc nằm ở dataset nhỏ <tài khoản>/luoi-kit (dựng bằng make_kit.py), không phải tải lại jar
   lượt = algo:reward:seed[:k=v,k=v], ví dụ scst:spice:101 · grpo:spice:101:beta=0,loss=dr_grpo,tag=b0 · ppo:spice:101:mu=2,lam=0.95,steps=1000,tag=l95
-  k: beta · loss · scale · mu · lam · is · eps · steps · G · tag (phần đuôi thư mục, bắt buộc khi có k đổi cấu hình)
+  k: beta · loss · scale · mu · lam · is · eps · steps · G · B1: dpob mrta spgt epsl · B2: celam rho0 mfrac ganmix ganwarm ganlr qk qpool espop esm essig eslr · B4: orpol dsync gstd · tu=base (xuất phát từ Qwen gốc, chỉ thuật toán grpo_luoi) · tag (phần đuôi thư mục, bắt buộc khi có k đổi cấu hình)
   Lượt không có k và thuật toán của lô 1 thì notebook giữ nguyên như cũ, chỉ cần dataset cũ.
 Kết quả ở k_<tên kernel>/ (ipynb + kernel-metadata.json); đẩy bằng
   kg <tk> kernels push -p k_<tên kernel> --accelerator NvidiaTeslaT4
@@ -18,25 +18,47 @@ H = os.path.dirname(os.path.abspath(__file__))
 md5 = lambda p: hashlib.md5(open(p, "rb").read()).hexdigest()
 CU = ("grpo", "drgrpo", "rloo", "reinforce", "scst")
 CD = ("vanilla", "mad", "rft", "cem", "awr", "raml", "rank")
+B1 = ("dpo_on", "dpo_off", "rft_off", "mrt", "spg", "drgrpo_full", "grpo_seq", "gspo")   # grpo_moi_b1.py
+B2 = ("seqgan", "mixer", "rlce", "quark", "es")                                             # grpo_moi_b2.py (+ thưởng bcmr)
+B3 = ("spice_cong", "ten_loai", "loai")                                                     # thuong_moi.py
+B4 = ("orpo_on", "orpo_off", "dpo_semi", "gpg")                                          # grpo_moi_b4.py
+T6 = ("spice_kp", "phat_dai")                                                             # thuong_t6.py
 CO = {"beta": "--beta", "loss": "--loss-type", "scale": "--scale-rewards", "mu": "--mu", "lam": "--lam", "is": "--is-level",
-      "eps": "--eps-high", "steps": "--max-steps", "G": "--G"}
-RUNS = [r0, r1]
+      "eps": "--eps-high", "steps": "--max-steps", "G": "--G",
+      "dpob": "--dpo-beta", "mrta": "--mrt-alpha", "spgt": "--spg-tau", "epsl": "--eps-low",
+      "celam": "--ce-lam", "rho0": "--mixer-rho0", "mfrac": "--mixer-frac", "ganmix": "--gan-mix", "ganwarm": "--gan-warm",
+      "ganlr": "--gan-lr", "qk": "--quark-k", "qpool": "--quark-pool", "espop": "--es-pop", "esm": "--es-m",
+      "essig": "--es-sigma", "eslr": "--es-lr",
+      "orpol": "--orpo-lam", "dsync": "--dpo-sync", "gstd": "--gpg-std"}
+RUNS = [r0] if r1 == "-" else [r0, r1]   # "-": chỉ một lượt, GPU thứ hai để trống
 FILES = ["grpo_luoi.py", "grpo_spice.py", "build_branch_data.py"]
 for r in RUNS:
     al, rw, sd, *x = r.split(":")
     opt = dict(kv.split("=") for kv in x[0].split(",")) if x else {}
-    assert set(opt) <= set(CO) | {"tag"} and (not set(opt) - {"tag"} or "tag" in opt), f"cờ sai hoặc thiếu tag: {r}"
-    assert al in CU + CD + ("ppo", "a2c", "sft") and int(sd) > 0
-    assert rw in ("spice", "cider", "bleu4", "rougel", "chrf", "meteor", "bertscore", "spider")
+    assert set(opt) <= set(CO) | {"tag", "tu"} and (not set(opt) - {"tag"} or "tag" in opt), f"cờ sai hoặc thiếu tag: {r}"
+    assert al in CU + CD + B1 + B2 + B4 + ("ppo", "a2c", "sft") and int(sd) > 0
+    assert rw in ("spice", "cider", "bleu4", "rougel", "chrf", "meteor", "bertscore", "spider", "bcmr") + B3 + T6
+    assert rw not in T6 or (al == "grpo" and not set(opt) - {"tag"}), f"thưởng T6 chỉ đi với grpo mặc định: {r}"
+    assert opt.get("tu", "base") == "base" and ("tu" not in opt or (al in CU and set(opt) <= {"tag", "tu"})), \
+        f"tu=base chỉ đi với thuật toán của grpo_luoi, không cờ khác: {r}"
+    assert rw not in B3 or (al == "grpo" and not set(opt) - {"tag"}), f"thưởng B3 chỉ đi với grpo mặc định: {r}"
+    assert rw != "bcmr" or al == "grpo", f"bcmr chỉ đi với grpo: {r}"
     assert al == "grpo" or rw == "spice" or (al, rw) == ("scst", "cider"), f"lưới chỉ đổi một yếu tố: {r}"
     assert "lam" not in opt or al in ("ppo", "a2c"), r
     for f in ({"ppo": ["grpo_codien.py", "grpo_ppo.py"], "a2c": ["grpo_codien.py", "grpo_ppo.py"], "sft": ["sft_tiep.py"]}.get(al, [])
-              or (["grpo_codien.py"] if al in CD or set(opt) - {"tag"} or rw != "spice" and al != "grpo" else [])):
+              or (["grpo_tu_base.py"] if opt.get("tu") == "base" else [])
+              or (["grpo_codien.py", "grpo_moi_b1.py", "grpo_moi_b4.py"] if al in B4 else [])
+              or (["thuong_t6.py"] if rw in T6 else [])
+              or (["grpo_codien.py", "grpo_moi_b1.py"] if al in B1 else [])
+              or (["grpo_codien.py", "grpo_moi_b2.py"] if al in B2 or rw == "bcmr" else [])
+              or (["thuong_moi.py", "metric_exec.py", "descriptors_ten.jsonl"] if rw in B3 else [])
+              or (["grpo_codien.py"] if al in CD or set(opt) - {"tag", "tu"} or rw != "spice" and al != "grpo" else [])):
         if f not in FILES:
             FILES.append(f)
-MD5 = {f: md5(os.path.join(H, "ds", f)) for f in FILES}
+MD5 = {f: md5(os.path.join(H, "ds", f) if os.path.exists(os.path.join(H, "ds", f)) else os.path.join(H, f"kit_{user}", f)) for f in FILES}   # tệp mới chỉ có ở kit
 
 CAT_H = float(os.environ.get("CAT_H", 11))
+PROBE_H = float(os.environ.get("PROBE_H", 1.5))   # trần giờ ở chế độ probe; mặc định giữ như cũ
 MOI = os.environ.get("MOI", "").split()
 BASE = ("grpo_luoi.py", "grpo_spice.py", "build_branch_data.py")
 C1 = f'''import subprocess, sys, os, time
@@ -64,6 +86,7 @@ def nguon(f):
     if f in {BASE!r}:
         return os.path.join(os.path.dirname(SRC[0]), f)
     k = [p for p in glob.glob(f"/kaggle/input/**/{{f}}", recursive=True) if "/notebooks/" not in p]
+    if len(k) > 1: k = [p for p in k if md5(p) == MD5[f]]   # tệp trùng tên ở dataset khác: chọn bản đúng md5
     assert len(k) == 1, f"DUNG: can dung mot {{f}} trong luoi-kit, thay {{k}}"
     return k[0]
 for f, h in MD5.items():
@@ -108,21 +131,52 @@ if os.path.exists(f"{W}/grpo_codien.py"):
     assert py("grpo_codien.py", "--selftest-algo") == 0, "DUNG: selftest co dien"
 if os.path.exists(f"{W}/grpo_ppo.py"):
     assert py("grpo_ppo.py", "--selftest-algo") == 0, "DUNG: selftest GAE"
-assert py("grpo_luoi.py", "--selftest-thuong", "--bundle", BUNDLE, "--rewards", ",".join(rws)) == 0, "DUNG: selftest thuong"
+if os.path.exists(f"{W}/grpo_moi_b1.py"):
+    assert py("grpo_moi_b1.py", "--selftest-algo") == 0, "DUNG: selftest B1"
+if os.path.exists(f"{W}/grpo_moi_b2.py"):
+    assert py("grpo_moi_b2.py", "--selftest-algo") == 0, "DUNG: selftest B2"
+    if "bcmr" in rws:
+        assert py("grpo_moi_b2.py", "--selftest-thuong", "--bundle", BUNDLE, "--rewards", "bcmr") == 0, "DUNG: selftest bcmr"
+if os.path.exists(f"{W}/thuong_moi.py"):
+    assert py("thuong_moi.py", "--selftest-moi", "--bundle", BUNDLE) == 0, "DUNG: selftest thuong B3"
+if os.path.exists(f"{W}/grpo_moi_b4.py"):
+    assert py("grpo_moi_b4.py", "--selftest-algo") == 0, "DUNG: selftest B4"
+if os.path.exists(f"{W}/thuong_t6.py"):
+    assert py("thuong_t6.py", "--selftest-t6", "--bundle", BUNDLE) == 0, "DUNG: selftest thuong T6"
+if os.path.exists(f"{W}/grpo_tu_base.py"):
+    assert py("grpo_tu_base.py", "--selftest-base") == 0, "DUNG: selftest xuat phat Base"
+rws0 = [x for x in rws if x not in ("bcmr", "spice_cong", "ten_loai", "loai", "spice_kp", "phat_dai")] or ["spice"]
+assert py("grpo_luoi.py", "--selftest-thuong", "--bundle", BUNDLE, "--rewards", ",".join(rws0)) == 0, "DUNG: selftest thuong"
 assert py("grpo_spice.py", "--merge", "--bundle", BUNDLE, "--merged", MERGED) == 0, "DUNG: hoa loi"
 '''
 C4 = '''import subprocess, time, re, ast, statistics as st
 TONG = 20 if MODE == "probe" else 500
-CAT = 3600 * (1.5 if MODE == "probe" else CAT_GIO)
+CAT = 3600 * (PROBE_GIO if MODE == "probe" else CAT_GIO)
 CD = ("vanilla", "mad", "rft", "cem", "awr", "raml", "rank")
+B1 = ("dpo_on", "dpo_off", "rft_off", "mrt", "spg", "drgrpo_full", "grpo_seq", "gspo")   # grpo_moi_b1.py
+B2 = ("seqgan", "mixer", "rlce", "quark", "es")                                             # grpo_moi_b2.py (+ thưởng bcmr)
+B3 = ("spice_cong", "ten_loai", "loai")                                                     # thuong_moi.py
+B4 = ("orpo_on", "orpo_off", "dpo_semi", "gpg")                                          # grpo_moi_b4.py
+T6 = ("spice_kp", "phat_dai")                                                             # thuong_t6.py
 CO = {"beta": "--beta", "loss": "--loss-type", "scale": "--scale-rewards", "mu": "--mu", "lam": "--lam", "is": "--is-level",
-      "eps": "--eps-high", "steps": "--max-steps", "G": "--G"}
+      "eps": "--eps-high", "steps": "--max-steps", "G": "--G",
+      "dpob": "--dpo-beta", "mrta": "--mrt-alpha", "spgt": "--spg-tau", "epsl": "--eps-low",
+      "celam": "--ce-lam", "rho0": "--mixer-rho0", "mfrac": "--mixer-frac", "ganmix": "--gan-mix", "ganwarm": "--gan-warm",
+      "ganlr": "--gan-lr", "qk": "--quark-k", "qpool": "--quark-pool", "espop": "--es-pop", "esm": "--es-m",
+      "essig": "--es-sigma", "eslr": "--es-lr",
+      "orpol": "--orpo-lam", "dsync": "--dpo-sync", "gstd": "--gpg-std"}
 def tep_cua(r):
     al, rw = r.split(":")[:2]
     ok = opt_of(r)
     if al in ("ppo", "a2c"): return "grpo_ppo.py"
     if al == "sft": return "sft_tiep.py"
-    return "grpo_codien.py" if al in CD or set(ok) - {"tag"} or (al != "grpo" and rw != "spice") else "grpo_luoi.py"
+    if ok.get("tu") == "base": return "grpo_tu_base.py"
+    if al in B4: return "grpo_moi_b4.py"
+    if rw in T6: return "thuong_t6.py"
+    if al in B1: return "grpo_moi_b1.py"
+    if al in B2 or rw == "bcmr": return "grpo_moi_b2.py"
+    if rw in B3: return "thuong_moi.py"
+    return "grpo_codien.py" if al in CD or set(ok) - {"tag", "tu"} or (al != "grpo" and rw != "spice") else "grpo_luoi.py"
 def tong_cua(r):
     return 20 if MODE == "probe" else int(opt_of(r).get("steps", TONG))
 P = []
@@ -133,7 +187,7 @@ for g, r in enumerate(RUNS):
            "--bs", "4", "--accum", "4", "--gen-chunk", "8", "--algo", al, "--reward", rw, "--seed", sd,
            "--bundle", BUNDLE, "--merged", MERGED, "--out", o, "--resume", "auto"]
     for k, v in opt_of(r).items():
-        if k != "tag":
+        if k not in ("tag", "tu"):
             cmd += [CO[k], v]
     if sd == "101" and MODE == "train":
         cmd += ["--keys-ck500", KEYS]
@@ -159,7 +213,7 @@ def tinh_trang(r, o):
         x = D[-10:]
         msg += (f" · {st.mean(d.get('step_time', 0) for d in x):.0f} s/buoc · thuong {st.mean(d['reward'] for d in x if 'reward' in d) if any('reward' in d for d in x) else float('nan'):.3f}"
                 f" · kl {st.mean(d.get('kl', 0) for d in x):.4f} · |A| {st.mean(d['luoi/adv_abs_mean'] for d in x if 'luoi/adv_abs_mean' in d) if any('luoi/adv_abs_mean' in d for d in x) else float('nan'):.3f}")
-    for k in ("[xong]", "[nạp default]", "[câu nhắc] trùng"):
+    for k in ("[xong]", "[nạp default]", "[câu nhắc] trùng", "[xuất phát]", "[moi_b4]"):
         y = [l for l in L if l.startswith(k)]
         if y: msg += "\\n      " + y[-1][:150]
     if any("Traceback" in l or "OutOfMemory" in l or "Killed" in l for l in L[-80:]): msg += "\\n      ⚠️ Traceback/OOM o cuoi log"
@@ -182,7 +236,7 @@ for r, o, p in P:
 shutil.rmtree(MERGED, ignore_errors=True)
 '''
 cells = [{"cell_type": "code", "metadata": {}, "execution_count": None, "outputs": [], "source": c.splitlines(True)}
-         for c in (C1, C2, C3, C4.replace("CAT_GIO", str(CAT_H)))]
+         for c in (C1, C2, C3, C4.replace("CAT_GIO", str(CAT_H)).replace("PROBE_GIO", str(PROBE_H)))]
 nb = {"cells": cells, "metadata": {"kernelspec": {"name": "python3", "display_name": "Python 3", "language": "python"}},
       "nbformat": 4, "nbformat_minor": 5}
 d = os.path.join(H, f"k_{name}")

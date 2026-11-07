@@ -302,3 +302,13 @@ _bundles/luoi/ds*/*.jar
 # 3/11: dữ liệu của dataset Kaggle CPU lưới RL là bản chép từ runs/ và dg1_cache, dựng lại được
 _bundles/cpu_luoi_3_11/ds/runs/
 _bundles/cpu_luoi_3_11/ds/harness/dg1_cache/
+
+# 7/11: điểm lưu smoke/kiểm CPU của lưới RL (mô hình tí hon + smoke 175 bước; optimizer 120 MB, tokenizer 11 MB mỗi bản) — dựng lại được, giữ ở máy nhà
+runs/luoi/**/checkpoint-*/
+runs/luoi/**/final/
+# 7/11: adapter chép vào kit để upload Kaggle/Colab (bản gốc nằm ở runs/ hoặc output kernel)
+_bundles/colab_rl_test/kit/*/adapter_model.safetensors
+_bundles/nontap_kit_6_11/ds/*/adapter_model.safetensors
+# 7/11: dữ liệu chép vào dataset Kaggle CPU phần giải thích (bản gốc ở harness/dg1_cache và runs/)
+_bundles/giai_thich_*/ds/harness/dg1_cache/
+_bundles/giai_thich_*/ds/runs/

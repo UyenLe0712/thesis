@@ -1,0 +1,91 @@
+[câu nhắc ck500] {"n_khoa": 1000, "n_tim_thay": 1000, "loai": {"click": 630, "scroll": 120, "input_text": 81, "wait": 69, "open_app": 65, "navigate_back": 35}, "ti_le_khong_cham": 0.37, "p1_train_rows_loai": {"click": 2549, "scroll": 445, "wait": 292, "input_text": 286, "open_app": 276, "navigate_back": 144, "long_press": 7, "navigate_home": 1}}
+[C1] 400 bước · chạm 249 · không chạm 151 · câu lệch giữa tệp mẫu và tệp exec: 0
+[ten_loai] 30233 tên vàng từ /kaggle/working/w/descriptors_ten.jsonl
+[tên vàng] {'buoc_cham_co_ten': 24, 'n': 30, 'f1_cau_chuan_tb': 0.5891, 'ti_le_cau_chuan_f1_0': 0.25}
+PTBTokenizer tokenized 2167 tokens at 33781.35 tokens per second.
+PTBTokenizer tokenized 1952 tokens at 31977.86 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.7 sec].
+Threads( StanfordCoreNLP ) [9.489 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [4.325 seconds]
+SPICE evaluation took: 21.55 s
+[spice] lần 1 · 240 câu · 22.3s · thưởng TB 0.378 · số từ TB 6.9 · rỗng 0
+PTBTokenizer tokenized 1663 tokens at 24223.25 tokens per second.
+PTBTokenizer tokenized 1640 tokens at 25500.89 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.7 sec].
+Threads( StanfordCoreNLP ) [6.32 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [2.275 seconds]
+SPICE evaluation took: 15.91 s
+[spice] lần 2 · 240 câu · 16.5s · thưởng TB 0.636 · số từ TB 5.4 · rỗng 0
+PTBTokenizer tokenized 270 tokens at 5239.76 tokens per second.
+PTBTokenizer tokenized 270 tokens at 4811.15 tokens per second.
+Parsing reference captions
+Parsing test captions
+SPICE evaluation took: 1.110 s
+[spice] lần 3 · 30 câu · 1.5s · thưởng TB 1.000 · số từ TB 7.8 · rỗng 0
+== spice {"cham": {"n_nhom": 30, "std0": 0.1333, "hoa": 0.3821, "conc": 0.6284, "n_cap_exec_khac": 148, "p_khong_thap": 0.9268, "tin_hieu": 0.0463, "oracle_tru_tb": 12.08, "e_tb": 52.5, "conc_ktc95": [0.5, 0.7661], "oracle_ktc95": [4.44, 20.97], "thuong_tb": 0.3777}, "khong_cham": {"n_nhom": 30, "std0": 0.3, "hoa": 0.6107, "conc": 0.8075, "n_cap_exec_khac": 174, "p_khong_thap": 0.9633, "tin_hieu": 0.1092, "oracle_tru_tb": 11.77, "e_tb": 85.83, "conc_ktc95": [0.6995, 0.901], "oracle_ktc95": [6.11, 17.88], "thuong_tb": 0.6357}, "cau_chuan_tu_cham_tb": 1.0, "giay": 40}
+PTBTokenizer tokenized 2167 tokens at 32577.53 tokens per second.
+PTBTokenizer tokenized 1952 tokens at 28683.92 tokens per second.
+Parsing reference captions
+Parsing test captions
+SPICE evaluation took: 1.475 s
+[spice_cong] lần 1 · 240 câu · 2.1s · thưởng TB 0.369 · sai loại 21 · rỗng 0
+PTBTokenizer tokenized 1663 tokens at 24956.82 tokens per second.
+PTBTokenizer tokenized 1640 tokens at 26338.15 tokens per second.
+Parsing reference captions
+Parsing test captions
+SPICE evaluation took: 1.376 s
+[spice_cong] lần 2 · 240 câu · 1.9s · thưởng TB 0.601 · sai loại 34 · rỗng 0
+PTBTokenizer tokenized 270 tokens at 4803.78 tokens per second.
+PTBTokenizer tokenized 270 tokens at 4371.05 tokens per second.
+Parsing reference captions
+Parsing test captions
+SPICE evaluation took: 1.232 s
+[spice_cong] lần 3 · 30 câu · 1.6s · thưởng TB 1.000 · sai loại 0 · rỗng 0
+== spice_cong {"cham": {"n_nhom": 30, "std0": 0.1333, "hoa": 0.3798, "conc": 0.6554, "n_cap_exec_khac": 148, "p_khong_thap": 0.9328, "tin_hieu": 0.0557, "oracle_tru_tb": 12.08, "e_tb": 52.5, "conc_ktc95": [0.5236, 0.7941], "oracle_ktc95": [4.44, 20.97], "thuong_tb": 0.3686}, "khong_cham": {"n_nhom": 30, "std0": 0.3, "hoa": 0.5964, "conc": 0.8822, "n_cap_exec_khac": 174, "p_khong_thap": 0.9853, "tin_hieu": 0.1361, "oracle_tru_tb": 13.19, "e_tb": 85.83, "conc_ktc95": [0.7806, 0.957], "oracle_ktc95": [6.9, 19.58], "thuong_tb": 0.6013}, "cau_chuan_tu_cham_tb": 1.0, "giay": 6}
+[ten_loai] lần 4 · 240 câu · 0.0s · thưởng TB 0.726 · sai loại 21 · rỗng 0
+[ten_loai] lần 5 · 240 câu · 0.0s · thưởng TB 0.856 · sai loại 34 · rỗng 0
+[ten_loai] lần 6 · 30 câu · 0.0s · thưởng TB 0.836 · sai loại 0 · rỗng 0
+== ten_loai {"cham": {"n_nhom": 30, "std0": 0.2, "hoa": 0.6214, "conc": 0.7703, "n_cap_exec_khac": 148, "p_khong_thap": 0.9811, "tin_hieu": 0.0976, "oracle_tru_tb": 11.85, "e_tb": 52.5, "conc_ktc95": [0.6487, 0.9286], "oracle_ktc95": [3.63, 21.49], "thuong_tb": 0.7262}, "khong_cham": {"n_nhom": 30, "std0": 0.4333, "hoa": 0.7571, "conc": 1.0, "n_cap_exec_khac": 174, "p_khong_thap": 1.0, "tin_hieu": 0.2019, "oracle_tru_tb": 14.17, "e_tb": 85.83, "conc_ktc95": [1.0, 1.0], "oracle_ktc95": [7.92, 20.42], "thuong_tb": 0.8561}, "cau_chuan_tu_cham_tb": 0.8356, "giay": 0}
+[loai] lần 7 · 240 câu · 0.0s · thưởng TB 0.910 · sai loại 21 · rỗng 0
+[loai] lần 8 · 240 câu · 0.0s · thưởng TB 0.856 · sai loại 34 · rỗng 0
+[loai] lần 9 · 30 câu · 0.0s · thưởng TB 1.000 · sai loại 0 · rỗng 0
+== loai {"cham": {"n_nhom": 30, "std0": 0.5, "hoa": 0.8214, "conc": 0.5405, "n_cap_exec_khac": 148, "p_khong_thap": 0.88, "tin_hieu": 0.0202, "oracle_tru_tb": 0.47, "e_tb": 52.5, "conc_ktc95": [0.4541, 0.6615], "oracle_ktc95": [-1.5, 2.98], "thuong_tb": 0.91}, "khong_cham": {"n_nhom": 30, "std0": 0.4333, "hoa": 0.7571, "conc": 1.0, "n_cap_exec_khac": 174, "p_khong_thap": 1.0, "tin_hieu": 0.2019, "oracle_tru_tb": 14.17, "e_tb": 85.83, "conc_ktc95": [1.0, 1.0], "oracle_ktc95": [7.92, 20.42], "thuong_tb": 0.8561}, "cau_chuan_tu_cham_tb": 1.0, "giay": 0}
+[cider] df dựng từ 3991 câu chuẩn của p1_train_rows.jsonl
+[cider] lần 4 · 240 câu · 0.0s · thưởng TB 0.299 · số từ TB 6.9 · rỗng 0
+[cider] lần 5 · 240 câu · 0.0s · thưởng TB 0.585 · số từ TB 5.4 · rỗng 0
+[cider] lần 6 · 30 câu · 0.0s · thưởng TB 0.950 · số từ TB 7.8 · rỗng 0
+== cider {"cham": {"n_nhom": 30, "std0": 0.0, "hoa": 0.169, "conc": 0.8919, "n_cap_exec_khac": 148, "p_khong_thap": 0.9771, "tin_hieu": 0.1045, "oracle_tru_tb": 17.5, "e_tb": 52.5, "conc_ktc95": [0.6938, 1.0], "oracle_ktc95": [7.59, 28.57], "thuong_tb": 0.2988}, "khong_cham": {"n_nhom": 30, "std0": 0.2, "hoa": 0.4405, "conc": 0.8994, "n_cap_exec_khac": 174, "p_khong_thap": 0.9638, "tin_hieu": 0.1368, "oracle_tru_tb": 14.17, "e_tb": 85.83, "conc_ktc95": [0.8165, 0.978], "oracle_ktc95": [7.92, 20.42], "thuong_tb": 0.5849}, "cau_chuan_tu_cham_tb": 0.95, "giay": 0}
+
+thưởng       std0   hoà    conc   p≥     tín_hiệu oracle | không chạm: conc  oracle
+cider       0.000 0.169 0.892 0.977 +0.1045 +17.50 | 0.8994 +14.17
+ten_loai    0.200 0.621 0.770 0.981 +0.0976 +11.85 | 1.0 +14.17
+spice_cong  0.133 0.380 0.655 0.933 +0.0557 +12.08 | 0.8822 +13.19
+spice       0.133 0.382 0.628 0.927 +0.0463 +12.08 | 0.8075 +11.77
+loai        0.500 0.821 0.540 0.880 +0.0202  +0.47 | 1.0 +14.17
+[xong] ghi out/h2_thu.json

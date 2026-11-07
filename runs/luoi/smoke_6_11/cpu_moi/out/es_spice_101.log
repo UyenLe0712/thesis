@@ -1,0 +1,716 @@
+[đợt 4] rlce {'lam': 0.1} · mixer {'rho0': 0.5, 'frac': 0.5} · seqgan {'mix': 0.0, 'warm': 20, 'lr': 0.0001, 'hid': 256} · quark {'k': 5, 'pool': 2048} · es {'pop': 16, 'm': 2, 'sigma': 0.001, 'lr': 0.0005, 'save': 25}
+[cấu hình] seed 101 · thuật toán es · thưởng spice · pop 16 · m 2 · σ 0.001 · lr 0.0005
+transformers 5.20.2 · peft 0.21.2 · torch 2.11.0+cpu
+[LoRA mới] tham số dò 1,792 · S1 có 0
+[câu nhắc] 1000 · bỏ {'trung_val': 0, 'trung_episode_val': 0, 'thieu_anh': 0, 'thieu_ocr': 0, 'rong': 9}
+[tiếp từ] None
+PTBTokenizer tokenized 14 tokens at 246.95 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3420.06 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.510 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [19.190 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 28.77 s
+[spice] lần 1 · 2 câu · 29.4s · thưởng TB -1.740 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 14 tokens at 235.95 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3469.85 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.1 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [18.871 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 27.23 s
+[spice] lần 2 · 2 câu · 27.9s · thưởng TB -1.740 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 14 tokens at 257.88 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3131.16 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [18.967 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 26.78 s
+[spice] lần 3 · 2 câu · 27.4s · thưởng TB -1.740 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 14 tokens at 250.67 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3610.36 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [18.519 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 26.26 s
+[spice] lần 4 · 2 câu · 26.9s · thưởng TB -1.740 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 14 tokens at 255.55 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3432.75 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.1 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [18.515 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 26.39 s
+[spice] lần 5 · 2 câu · 27.0s · thưởng TB -1.740 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 14 tokens at 263.11 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3178.32 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [18.453 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 26.05 s
+[spice] lần 6 · 2 câu · 26.7s · thưởng TB -1.740 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 14 tokens at 273.93 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3483.35 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [18.701 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 26.24 s
+[spice] lần 7 · 2 câu · 26.8s · thưởng TB -1.740 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 14 tokens at 218.34 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3364.76 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [18.353 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 25.94 s
+[spice] lần 8 · 2 câu · 26.6s · thưởng TB -1.740 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 14 tokens at 236.73 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3399.82 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [19.194 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 26.70 s
+[spice] lần 9 · 2 câu · 27.3s · thưởng TB -1.740 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 14 tokens at 248.08 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3206.17 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.1 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [18.793 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 26.64 s
+[spice] lần 10 · 2 câu · 27.3s · thưởng TB -1.740 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 14 tokens at 220.50 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3040.59 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [18.701 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 26.59 s
+[spice] lần 11 · 2 câu · 27.3s · thưởng TB -1.740 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 14 tokens at 259.90 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3366.40 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [18.366 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 25.94 s
+[spice] lần 12 · 2 câu · 26.6s · thưởng TB -1.740 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 14 tokens at 260.79 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3648.59 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [19.618 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 27.10 s
+[spice] lần 13 · 2 câu · 27.7s · thưởng TB -1.740 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 14 tokens at 249.54 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3164.21 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [19.4 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 26.60 s
+[spice] lần 14 · 2 câu · 27.2s · thưởng TB -1.740 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 14 tokens at 248.57 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3337.87 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [19.375 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 27.07 s
+[spice] lần 15 · 2 câu · 27.7s · thưởng TB -1.740 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 14 tokens at 270.25 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3298.47 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [19.221 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 27.03 s
+[spice] lần 16 · 2 câu · 27.6s · thưởng TB -1.740 · số từ TB 96.0 · rỗng 0
+{'loss': 0.0, 'reward': -1.74, 'es/f_max': -1.74, 'es/f_min': -1.74, 'es/so_cau_khac': 1, 'es/buoc_l2': 0.0, 'es/buoc_tuong_doi': 0.0, 'luoi/adv_abs_mean': 0.0, 'kl': 0.0, 'step_time': 450.845996, 'step': 1}
+PTBTokenizer tokenized 27 tokens at 508.24 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3468.19 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.682 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [20.239 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 30.19 s
+[spice] lần 17 · 2 câu · 30.8s · thưởng TB -1.620 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 27 tokens at 378.95 tokens per second.
+PTBTokenizer tokenized 193 tokens at 2808.99 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.1 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [19.19 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 27.02 s
+[spice] lần 18 · 2 câu · 27.7s · thưởng TB -1.620 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 27 tokens at 470.16 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3539.05 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [18.997 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 26.74 s
+[spice] lần 19 · 2 câu · 27.4s · thưởng TB -1.620 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 27 tokens at 512.24 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3357.54 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [18.950 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 26.54 s
+[spice] lần 20 · 2 câu · 27.2s · thưởng TB -1.620 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 27 tokens at 520.69 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3173.86 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [17.998 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 25.63 s
+[spice] lần 21 · 2 câu · 26.2s · thưởng TB -1.620 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 27 tokens at 463.87 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3206.15 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [19.648 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 27.19 s
+[spice] lần 22 · 2 câu · 27.8s · thưởng TB -1.620 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 27 tokens at 478.26 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3571.30 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [19.121 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 26.73 s
+[spice] lần 23 · 2 câu · 27.3s · thưởng TB -1.620 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 27 tokens at 476.01 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3505.38 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [18.516 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 26.19 s
+[spice] lần 24 · 2 câu · 26.8s · thưởng TB -1.620 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 27 tokens at 511.09 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3546.67 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [18.434 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 25.90 s
+[spice] lần 25 · 2 câu · 26.5s · thưởng TB -1.620 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 27 tokens at 510.91 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3362.08 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [19.756 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 27.86 s
+[spice] lần 26 · 2 câu · 28.5s · thưởng TB -1.620 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 27 tokens at 405.04 tokens per second.
+PTBTokenizer tokenized 193 tokens at 2984.02 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.6 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [23.594 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 31.83 s
+[spice] lần 27 · 2 câu · 32.6s · thưởng TB -1.620 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 27 tokens at 443.14 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3175.16 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.2 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [18.843 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 27.35 s
+[spice] lần 28 · 2 câu · 28.0s · thưởng TB -1.620 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 27 tokens at 519.59 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3294.28 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [19.331 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 27.18 s
+[spice] lần 29 · 2 câu · 27.8s · thưởng TB -1.620 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 27 tokens at 457.57 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3270.81 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [18.880 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 26.63 s
+[spice] lần 30 · 2 câu · 27.3s · thưởng TB -1.620 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 27 tokens at 427.33 tokens per second.
+PTBTokenizer tokenized 193 tokens at 2918.10 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [18.766 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 26.56 s
+[spice] lần 31 · 2 câu · 27.2s · thưởng TB -1.620 · số từ TB 96.0 · rỗng 0
+PTBTokenizer tokenized 27 tokens at 377.55 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3384.51 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [18.446 seconds]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik telerik"
+Caption may be too long
+SPICE evaluation took: 26.13 s
+[spice] lần 32 · 2 câu · 26.8s · thưởng TB -1.620 · số từ TB 96.0 · rỗng 0
+{'loss': 0.0, 'reward': -1.62, 'es/f_max': -1.62, 'es/f_min': -1.62, 'es/so_cau_khac': 1, 'es/buoc_l2': 0.0, 'es/buoc_tuong_doi': 0.0, 'luoi/adv_abs_mean': 0.0, 'kl': 0.0, 'step_time': 459.781146, 'step': 2}
+[xong] 2 bước · 15.2 phút · 455.3 s/bước · đỉnh VRAM 0.00 GiB · thưởng 27.6 s/lần
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.

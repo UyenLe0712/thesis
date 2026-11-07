@@ -1,0 +1,48 @@
+[cấu hình] seed 101 · thuật toán grpo · thưởng bertscore
+trl 0.29.1 · transformers 5.20.2 · peft 0.21.2 · torch 2.11.0+cu130
+[bertscore] roberta-large tầng 17, đã hiệu chỉnh theo đường cơ sở
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[nạp] /kaggle/working/s1_merged · dtype torch.float16 · 4-bit False · Tesla T4
+[LoRA mới] tham số học 14,966,784 · S1 có 14,966,784
+[câu nhắc] 50 · bỏ {'trung_val': 0, 'trung_episode_val': 0, 'thieu_anh': 0, 'thieu_ocr': 0, 'rong': 9} · n_char max 2030
+GRPOConfig: {'num_generations': 8, 'per_device_train_batch_size': 4, 'gradient_accumulation_steps': 4, 'generation_batch_size': 16, 'steps_per_generation': 4, 'num_iterations': 1, 'max_completion_length': 96, 'temperature': 1.0, 'top_p': 1.0, 'top_k': 0, 'beta': 0.04, 'learning_rate': 1e-05, 'loss_type': 'dapo', 'scale_rewards': 'group', 'max_steps': 20, 'bf16': False, 'fp16': True}
+[sinh theo khúc] bật, mỗi khúc ≤ 8 chuỗi
+[tiếp từ] None
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+[sinh theo khúc] 16 chuỗi → 2 khúc ≤ 8
+[bertscore] lần 1 · 16 câu · 0.3s · thưởng TB 0.569 · số từ TB 10.0 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+{'loss': '0.9447', 'grad_norm': '0.4405', 'learning_rate': '0', 'num_tokens': '2.619e+04', 'completions/mean_length': '12.44', 'completions/min_length': '6', 'completions/max_length': '88', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '12.44', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '88', 'rewards/r_bertscore/mean': '0.5687', 'rewards/r_bertscore/std': '0.5945', 'reward': '0.5687', 'reward_std': '0.5945', 'frac_reward_zero_std': '0.5', 'kl': '0', 'entropy': '0.5685', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'step_time': '160.4', 'epoch': '0.04'}
+[bertscore] lần 2 · 16 câu · 0.0s · thưởng TB 0.694 · số từ TB 10.3 · rỗng 0
+{'loss': '0.09021', 'grad_norm': '0.4247', 'learning_rate': '1e-06', 'num_tokens': '5.365e+04', 'completions/mean_length': '12.44', 'completions/min_length': '3', 'completions/max_length': '17', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '12.44', 'completions/min_terminated_length': '3', 'completions/max_terminated_length': '17', 'rewards/r_bertscore/mean': '0.6935', 'rewards/r_bertscore/std': '0.3369', 'reward': '0.6935', 'reward_std': '0.3369', 'frac_reward_zero_std': '0.5', 'kl': '0', 'entropy': '0.4028', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'step_time': '160.3', 'epoch': '0.08'}
+[bertscore] lần 3 · 16 câu · 0.1s · thưởng TB 0.471 · số từ TB 7.6 · rỗng 0
+{'loss': '0.1342', 'grad_norm': '1.625', 'learning_rate': '2e-06', 'num_tokens': '8.01e+04', 'completions/mean_length': '8.75', 'completions/min_length': '6', 'completions/max_length': '15', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '8.75', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '15', 'rewards/r_bertscore/mean': '0.4705', 'rewards/r_bertscore/std': '0.3663', 'reward': '0.4705', 'reward_std': '0.3663', 'frac_reward_zero_std': '0', 'kl': '1.501e-05', 'entropy': '0.6364', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'step_time': '151.9', 'epoch': '0.12'}
+[bertscore] lần 4 · 16 câu · 0.1s · thưởng TB 0.461 · số từ TB 5.1 · rỗng 0
+Exception ignored in atexit callback <function _exit_function at 0x7beb30ce8cc0>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.13/multiprocessing/util.py", line 431, in _exit_function
+Exception ignored in atexit callback <function _exit_function at 0x7beb30ce8cc0>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.13/multiprocessing/util.py", line 431, in _exit_function
+    _run_finalizers()
+  File "/usr/lib/python3.13/multiprocessing/util.py", line 371, in _run_finalizers
+    finalizer()
+  File "/usr/lib/python3.13/multiprocessing/util.py", line 295, in __call__
+    res = self._callback(*self._args, **self._kwargs)
+  File "/usr/lib/python3.13/multiprocessing/queues.py", line 217, in _finalize_join
+    _run_finalizers()
+    thread.join()
+  File "/usr/lib/python3.13/threading.py", line 1095, in join
+  File "/usr/lib/python3.13/multiprocessing/util.py", line 371, in _run_finalizers
+    finalizer()
+  File "/usr/lib/python3.13/multiprocessing/util.py", line 295, in __call__
+    res = self._callback(*self._args, **self._kwargs)
+  File "/usr/lib/python3.13/multiprocessing/queues.py", line 217, in _finalize_join
+    thread.join()
+  File "/usr/lib/python3.13/threading.py", line 1095, in join
+    self._handle.join(timeout)
+KeyboardInterrupt: 
+    self._handle.join(timeout)
+KeyboardInterrupt: 

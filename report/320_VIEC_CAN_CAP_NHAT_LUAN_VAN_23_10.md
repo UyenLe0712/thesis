@@ -735,7 +735,20 @@ Cứu là bước S1 trượt mà nhánh trúng, phá là ngược lại. "Loạ
 | GRPO + METEOR | +52 | 42/11, +31, 2,2e−5 | 128/107, +21, 0,19 | 62,64 → 63,14 |
 | xao101 | 0 | 7/10, −3, 0,63 | 38/35, +3, 0,82 | 62,69 → 62,76 |
 
-Đọc: mọi lượt có thưởng thật đều sửa loại thao tác rõ, còn nhánh điểm SPICE ghép ngẫu nhiên thì không, nên phần này không tự có từ vòng lặp RL khi thưởng không mang thông tin. Câu này chưa tách được công của RL với việc train thêm theo câu chuẩn: SFT tiếp chưa chấm, và có thể cũng sửa được loại thao tác. Về đổi phần tử, hai lượt thưởng SPICE có phép so cứu/phá loại được 0 trước hiệu chỉnh, ba lượt thưởng khác thì không. Đây là manh mối đầu tiên cho việc thưởng SPICE khác các độ đo còn lại, nhưng chưa được viết thành kết luận, vì bốn lý do: "có ý nghĩa" và "không có ý nghĩa" không chứng minh hai nhánh khác nhau, chưa có phép so trực tiếp về phần tử giữa các nhánh; Holm trên năm lượt giữ ck500 (0,026) nhưng SCST mất (0,068); phép đọc này chọn sau khi thấy số; và mới có một hạt giống. Phép so ghép cặp trực tiếp về phần tử giữa ck500 và từng lượt đang chạy trên Kaggle CPU (`trangphngngc/luoi-phan-tu-3-11-k`, `harness/phan_tu_ghep_cap.py`), chưa có số. Tệp `phan_ra.json`.
+Đọc: mọi lượt có thưởng thật đều sửa loại thao tác rõ, còn nhánh điểm SPICE ghép ngẫu nhiên thì không, nên phần này không tự có từ vòng lặp RL khi thưởng không mang thông tin. Câu này chưa tách được công của RL với việc train thêm theo câu chuẩn: SFT tiếp chưa chấm, và có thể cũng sửa được loại thao tác. Về đổi phần tử, hai lượt thưởng SPICE có phép so cứu/phá loại được 0 trước hiệu chỉnh, ba lượt thưởng khác thì không. Đây là manh mối đầu tiên cho việc thưởng SPICE khác các độ đo còn lại, nhưng chưa được viết thành kết luận, vì bốn lý do: "có ý nghĩa" và "không có ý nghĩa" không chứng minh hai nhánh khác nhau; Holm trên năm lượt giữ ck500 (0,026) nhưng SCST mất (0,068); phép đọc này chọn sau khi thấy số; và mới có một hạt giống. Phép so trực tiếp ở bảng dưới trả lời lý do đầu. Tệp `phan_ra.json`.
+
+**So ghép cặp trực tiếp giữa các nhánh** (kernel `trangphngngc/luoi-phan-tu-3-11-k`, `harness/phan_tu_ghep_cap.py`, tự kiểm tái lập bảng trên). Vẫn là hậu kiểm. Δ tính trên 4.463 bước, đơn vị là bước ròng và điểm %, KTC bootstrap cụm app B = 10.000, p dấu chính xác trên các bước hai nhánh khác nhau. Cột "trên bước cùng đúng loại" không qua S1: exec của hai nhánh trên các bước cả hai đúng loại thao tác (n từ 4.271 đến 4.278).
+
+| phép so | phần tử: Δ bước, điểm [KTC] | p · Holm | loại thao tác: Δ bước, điểm [KTC] | p · Holm | trên bước cùng đúng loại: điểm [KTC] | p · Holm |
+|---|---|---|---|---|---|---|
+| ck500 − SCST + SPICE | +10, +0,22 [−0,20; +0,66] | 0,35 · 0,35 | −5, −0,11 [−0,29; +0,05] | 0,27 · 0,63 | +0,21 [−0,23; +0,65] | 0,41 · 0,41 |
+| ck500 − GRPO + CIDEr-D | +23, +0,52 [+0,04; +1,00] | 0,040 · 0,16 | −6, −0,13 [−0,32; +0,04] | 0,21 · 0,63 | +0,56 [+0,07; +1,07] | 0,032 · 0,13 |
+| ck500 − GRPO + METEOR | +20, +0,45 [−0,09; +1,00] | 0,11 · 0,23 | −3, −0,07 [−0,26; +0,11] | 0,63 · 0,63 | +0,47 [−0,09; +1,03] | 0,12 · 0,23 |
+| ck500 − GRPO + ROUGE-L | +21, +0,47 [0,00; +0,94] | 0,069 · 0,21 | **−20, −0,45 [−0,68; −0,23]** | **8,8e−5 · 3,5e−4** | +0,49 [0,00; +0,99] | 0,073 · 0,22 |
+| ck500 − TB ba độ đo khác (cùng GRPO) | +21,3, +0,48 [+0,05; +0,91] | 0,035 | −9,7, −0,22 [−0,39; −0,05] | 0,024 | | |
+| TB hai lượt SPICE − TB ba độ đo khác | +16,3, +0,37 [+0,03; +0,70] | 0,061 | −7,2, −0,16 [−0,30; −0,03] | 0,099 | | |
+
+Đọc: ck500 cao hơn cả ba lượt GRPO độ đo khác về đổi phần tử, cùng chiều và cỡ gần nhau (+20 đến +23 bước), nhưng từng phép so không còn ý nghĩa sau Holm. Khi gộp ba lượt thì KTC vừa loại 0 (+0,48 [+0,05; +0,91], p = 0,035), đây là phép so chọn sau khi thấy số. Ngược chiều, ck500 sửa loại thao tác ít hơn, rõ nhất so với ROUGE-L (−20 bước, giữ sau Holm). Hai phần gần bù nhau, nên exec tổng gần bằng: ROUGE-L tăng chủ yếu nhờ loại thao tác, ck500 nhờ cả hai phần. Cách viết được phép: "các độ đo thưởng đạt mức exec gần nhau theo thành phần khác nhau; thưởng SPICE có dấu hiệu nghiêng về đổi đúng phần tử, chưa đủ để kết luận". Chưa được viết "SPICE giúp định vị tốt hơn". Muốn khẳng định cần hạt giống thứ hai của các lượt độ đo khác; ck500/202 đã có sẵn làm mốc. Tệp `phan_tu_ghep_cap.json`.
 
 ### 14.6 Diễn biến lúc train (số train, chỉ để giải thích, không trích làm kết quả)
 
@@ -764,3 +777,119 @@ Thưởng SPICE có nhiều nhóm bằng nhau hơn ngay từ đầu (khoảng 20
 | xao101 | +0,08 [+0,05; +0,12] | +0,20 [−0,02; +0,44] | 0,00 [0,00; 0,00] | −0,16 [−0,30; −0,02] | 0,00 [−0,27; +0,25] |
 
 Đọc: nhận xét của Liu về việc thưởng SPICE làm câu lặp cụm hay cụt chưa thấy trên ck500: lặp 2 từ không tăng, lặp 3 từ tăng rất ít và cận dưới chạm 0, câu quá ngắn giảm. Mọi lượt đều nằm dưới mức lặp của câu chuẩn. METEOR kéo câu dài nhất (+0,59 từ). Đây là chỉ báo tự động từ bộ phân tích cú pháp, không thay được chấm tay. Tệp `hinh_thuc.json` (thêm ck500/202, A2_500, ACE và cột khác).
+
+## 15. Giải thích H1 và H5 (report/323 §8.4), đo 6/11/2026, Kaggle CPU
+
+Kernel `trangphngngc/giai-thich-6-11-k` · mã `harness/h1_khuon_cau.py`, `harness/h5_spice_khong_cham.py` ·
+tệp `runs/giai_thich/k_6_11/`. Chỉ đo trên câu chuẩn và câu đã sinh sẵn, 0 GPU, hậu kiểm, một hạt giống.
+Lượt thử 100 câu đạt rồi mới chạy đủ. Phép kiểm chéo: tỉ lệ đúng loại thao tác ở bước cuộn của S1 là 83,97 và của ck500 là 77,75, ở bước quay lại là 72,96 và 67,04,
+trùng số noharm đã có (`report/261` §6) ⇒ ghép câu đúng bước.
+
+**H1, khuôn câu.** Câu chuẩn AC test trung bình 7,31 từ (trung vị 6, p90 13). Tám khuôn hai từ đầu phủ 80% câu,
+riêng "click on" chiếm 56,3%. AC train gần như y hệt (7,18 từ, 8 khuôn, 55,6%). AitZ dài hơn (10,06 từ, trung vị 10)
+nhưng **theo khuôn hơn AC**: chỉ có 10 khuôn, 4 khuôn phủ 80%, distinct-1 là 0,042 so với 0,092 của AC.
+⇒ Dự đoán "AitZ khác khuôn AC" chỉ đúng một nửa. AitZ khác AC, nhưng khác theo hướng nhiều khuôn hơn, chứ không phải ít hơn.
+Tỉ lệ từ của câu chuẩn trùng tên phần tử vàng (4.381 bước chạm có tên) chỉ **11,5%** ⇒ vế "nội dung nằm ở tên phần tử"
+chưa được số ủng hộ. Phép đo này yếu: tên lấy từ ô khai báo (OCR/a11y), không trùng chữ với cách người chú thích gọi phần tử. Chưa dùng vế này.
+
+**H5, bước không chạm.** Số tuple SPICE của câu chuẩn chấm với chính nó (All): chạm 3,73 · cuộn 2,50 · quay lại 2,41 ·
+mở app 2,40. Tỉ lệ câu chuẩn có 0 tuple đối tượng: cuộn 13,6%, quay lại 11,1%, chạm 1,4%. ⇒ Câu không chạm có ít tuple hơn, vế này đúng.
+Nhưng **SPICE vẫn tách rất rõ câu đúng loại và sai loại ở bước không chạm**. Lấy SPICE trung bình của câu đúng loại trừ câu sai loại:
+S1 được 0,57 ở bước không chạm so với 0,33 ở bước chạm, ck500 được 0,58 so với 0,33.
+⇒ Giả thuyết "thưởng SPICE ít tín hiệu cho loại thao tác ở bước không chạm" **không đứng**, vì khoảng cách thưởng ở đó còn lớn hơn ở bước chạm.
+Thêm một điều đã kiểm: tập câu nhắc của `grpo_spice.py` không lọc theo loại thao tác, nên cũng không giải thích được bằng việc "không train trên bước cuộn".
+Việc giảm ở cuộn (−6,2) và quay lại (−5,9) **chưa có giải thích**. Hướng kiểm tiếp [suy]: tỉ lệ bước không chạm trong 2.000 câu nhắc đã dùng
+và lợi thế trung bình của câu cuộn trong log train. Ở bước không chạm tổng, SPICE của ck500 vẫn cao hơn S1 (64,0 so với 62,5) dù tỉ lệ đúng loại giảm
+⇒ ck500 viết câu sát câu chuẩn hơn ở những bước nó giữ đúng loại.
+
+**AitZ.** Câu chuẩn AitZ ở bước chạm có 7,78 tuple, gấp đôi AC (3,74), và riêng quan hệ là 1,73 so với 0,50.
+Kết hợp với việc AitZ theo khuôn hơn, khả năng [suy] là phần lớn tuple AitZ đến từ phần khuôn (vị trí, quan hệ) mà mọi câu đều có,
+nên SPICE ít phân biệt được giữa các câu. Đây là giả thuyết cho việc ck500 không hơn S1 trên AitZ, chưa đo.
+
+## 16. Giải thích H2 (report/323 §8.4) và ba phần thưởng mới, đo 6/11/2026, Kaggle CPU
+
+Kernel `uyenle0712/h2-thuong-b3` · mã `harness/h2_thuong.py`, `harness/thuong_moi.py` · tệp `runs/giai_thich/h2_b3/` ·
+ghi chú `_bundles/moi_b3/GHI_CHU.md`. ⛔ **Toàn bộ số ở mục này là số val** (8 mẫu C1 của S1/101, nhiệt độ 1,0, 400 bước val,
+exec từng mẫu ở 249 bước chạm, `report/252`). Số này chỉ dùng để giải thích và xếp hạng phần thưởng, không trích ra như kết quả.
+Mỗi phần thưởng được tính đúng như lúc train (gồm phạt độ dài), nhóm 8 mẫu như G = 8. Phép kiểm: 0/1.992 câu lệch giữa tệp mẫu và tệp exec.
+Lượt thử 30 bước đạt rồi mới chạy đủ.
+
+**Ba phần thưởng mới (đã viết, chưa train):** `spice_cong` (SPICE nhân 0,1 khi sai loại thao tác), `ten_loai` (0,5·F1 với tên phần tử vàng + 0,5·đúng loại)
+và `loai` (T5 của `report/326`: chỉ thưởng đúng loại thao tác, dùng để giải thích). Phép kiểm đơn vị đạt trên Kaggle CPU.
+Đo được khi kiểm: SPICE("Scroll down", "Scroll down") = 0 và SPICE("Go back", "Go back") = 0, vì câu không có tuple nào.
+Ở các câu như vậy, cổng loại thao tác không hạ thưởng thấp hơn được nữa. Câu chuẩn đúng nguyên văn cũng chỉ nhận 0 điểm, nên tín hiệu duy nhất
+mà SPICE cho ở bước cuộn/quay lại đến từ phần chữ thừa của câu.
+
+**Câu nhắc của ck500 không chỉ gồm bước chạm** (report/330 §7 hàng 5 đòi đo). Trong 1.000 câu nhắc: chạm 630, cuộn 120, nhập chữ 81, chờ 69,
+mở app 65, quay lại 35 ⇒ **37% không chạm**. Cùng với mục 15, giả thuyết "ck500 giảm ở bước cuộn vì không được train trên bước cuộn" bị loại.
+
+**Bảng H2, khối bước chạm** (conc = tỉ lệ cặp mẫu có exec khác nhau mà thưởng xếp đúng chiều, hoà tính 0,5; oracle = exec của mẫu thưởng cao nhất trừ exec TB 8 mẫu):
+
+| thưởng | nhóm thưởng bằng nhau | cặp hoà | conc [KTC95] | oracle (điểm) [KTC95] |
+|---|---|---|---|---|
+| METEOR | 1,6% | 17,7% | 0,871 [0,834; 0,905] | +16,5 [+12,7; +20,0] |
+| CIDEr-D | 1,6% | 15,4% | 0,868 [0,827; 0,906] | +17,6 [+13,8; +21,2] |
+| chrF | 0,8% | 10,6% | 0,843 | +15,8 |
+| BERTScore | 0,8% | 10,0% | 0,843 | +16,2 |
+| ROUGE-L | 1,6% | 19,4% | 0,835 | +16,1 |
+| SPIDEr | 1,6% | 15,4% | 0,824 | +15,2 |
+| BLEU-4 | 1,6% | 17,5% | 0,806 | +13,9 |
+| tên + loại | 22,5% | 58,7% | 0,736 | +10,1 |
+| SPICE có cổng | 7,2% | 38,0% | 0,704 | +12,5 |
+| **SPICE** | **7,2%** | **38,2%** | **0,685 [0,640; 0,728]** | **+11,3 [+7,9; +14,9]** |
+| chỉ loại | 45,8% | 76,3% | 0,620 | +3,8 |
+
+Đọc bảng:
+- **Dự đoán của H2 không đứng.** Dự đoán ghi trước là SPICE "cân bằng tốt nhất giữa độ phân biệt và độ khớp exec". Số đo cho thấy SPICE đứng gần cuối ở cả hai vế.
+  Có 7,2% nhóm mà mọi thưởng SPICE bằng nhau, gấp 4 đến 9 lần các độ đo n-gram. Hệ số conc của SPICE là 0,685, KTC không chồng với METEOR hay CIDEr-D.
+  Kết quả này khớp `report/252`: khi chọn một trong 8 mẫu, SPICE là oracle yếu nhất.
+- **Phép kiểm chéo quan trọng nhất của §8.4 (thứ tự H2 phải dự đoán được thứ tự exec test) KHÔNG đạt.** Trên test, các lượt đã có số xếp
+  SPICE (ck500) 60,65 ≈ ROUGE-L 60,63 > METEOR 60,27 = CIDEr-D 60,27 (mục 14). H2 lại xếp METEOR > CIDEr-D > ROUGE-L > SPICE, gần như ngược lại.
+  Các chênh trên test đều nhỏ và không có ý nghĩa sau hiệu chỉnh, nên phải đọc là: **độ khớp exec của thưởng trên mẫu tĩnh không dự đoán được thứ hạng sau train**.
+  Vậy H2 không giải thích được vì sao SPICE ngang nhóm đầu. Khả năng [suy] là thưởng nhiều hoà làm cập nhật bảo thủ hơn, và điều này cần kiểm bằng log train (H3). Chưa có số.
+- Cổng loại thao tác nâng conc của SPICE từ 0,685 lên 0,704 ở bước chạm và từ 0,713 lên 0,810 ở bước không chạm.
+  Trong mẫu chạm, 8,4% số câu sai loại thao tác.
+- `ten_loai`: 181/249 bước chạm có tên vàng. Chính câu chuẩn chỉ đạt F1 tên TB 0,57, và 29% câu chuẩn có F1 = 0, vì tên lấy từ OCR/cây trợ năng không trùng chữ người chú thích.
+  ⇒ Thưởng này nhiễu ngay cả với câu đúng (câu chuẩn tự chấm được 0,84). Nếu train lượt này thì phải khai điều đó. Ở khối không chạm, conc = 1 của `loai` và `ten_loai` là tất yếu
+  (thưởng chính là đại lượng được đo), không phải kết quả.
+
+## 17. Giải thích H3, H4, bước cuộn và AitZ (report/323 §8.4), đo 6/11/2026, Kaggle CPU
+
+Kernel `trangphngngc/giai-thich-c-k` (bản 1: H3, bước cuộn, AitZ; bản 3: H4, sau hai lần sửa lỗi đọc tệp) · dataset `trangphngngc/giai-thich-c` ·
+mã `harness/h3_log_train.py`, `harness/h4_spice_tuple.py`, `harness/giai_thich_cuon.py`, `harness/h4_aitz.py` ·
+tệp `runs/giai_thich/c/h3_cuon_aitz/` và `runs/giai_thich/c/h4/`. Chỉ dùng câu và log đã có, không sinh câu mới, số test, hậu kiểm, một hạt giống.
+Phép kiểm chéo: SPICE trung bình theo câu ở bước chạm của S1 là 44,37 và của ck500 là 45,79, exec là 59,11 và 60,65, trùng số đã công bố ⇒ ghép câu đúng bước.
+SPICE ở đây gọi thẳng jar với `-detailed` để lấy danh sách tuple. "Tuple phổ biến" là tuple xuất hiện ở ít nhất 1% câu chuẩn.
+
+**H4, SPICE tăng ở loại tuple nào (4.463 bước chạm).** So với S1, ck500 khớp thêm 380 tuple. Trong đó đối tượng chiếm 50%, thuộc tính 29%, quan hệ 21%.
+Recall tăng ở cả ba loại, KTC95 bootstrap theo episode đều trên 0: đối tượng +2,4 [+1,8; +3,2] điểm, thuộc tính +1,7 [+0,9; +2,7], quan hệ +3,5 [+2,4; +4,7].
+Trong câu chuẩn, quan hệ chỉ chiếm 13% số tuple, nên xét theo tỉ lệ thì mức tăng **không dồn vào đối tượng và thuộc tính**. Quan hệ (phần lớn là vị trí, kiểu "icon | at | top") tăng mạnh nhất.
+⇒ Dự đoán "tăng chủ yếu ở tuple đối tượng/thuộc tính" chỉ đúng theo số tuyệt đối (79%), sai khi so với tỉ phần sẵn có.
+Mẫu này không riêng gì thưởng SPICE. GRPO + METEOR khớp thêm nhiều tuple nhất (+545, recall đối tượng +3,6), SCST + SPICE +439, GRPO + ROUGE-L +326.
+GRPO + CIDEr-D thấp nhất (+179), với thuộc tính gần như không đổi (+0,1 [−1,0; +1,2]) và ΔF chung có KTC phủ 0.
+⇒ Không viết "thưởng SPICE làm câu khớp tuple SPICE hơn các thưởng khác". Trên chính SPICE, METEOR và SCST + SPICE ngang hoặc hơn ck500.
+Đối chiếu exec: ở 123 bước S1 đúng loại thao tác mà trượt và ck500 cứu được, F của SPICE tăng +0,32. Ở 1.450 bước không cứu được chỉ tăng +0,011, còn ở 90 bước ck500 làm hỏng thì giảm −0,23.
+Bốn nhánh còn lại cho cùng mẫu (+0,33 đến +0,39 ở bước cứu được) ⇒ ở mức từng bước, thay đổi SPICE đi cùng thay đổi exec với mọi thưởng. Điều này không phân biệt được thưởng nào.
+Trong tuple khớp thêm của ck500, 57% là tuple phổ biến (216 so với 164 tuple hiếm), mà tuple phổ biến chiếm 47,5% số lần xuất hiện trong câu chuẩn AC.
+
+**Bước cuộn và quay lại.** ck500 đổi sang câu dạng chạm. Ở 755 bước cuộn, số câu bị quy về chạm tăng từ 117 lên 167, với "click on" tăng từ 90 lên 129.
+Ở 270 bước quay lại, câu quy về chạm tăng từ 58 lên 79, với "open the" tăng từ 10 lên 26 ("Open the Messenger app" thay cho "Go back to the previous page").
+Ngược lại, ck500 sửa được bước mở app (96,2 lên 97,9) và bước chờ (90,7 lên 95,3), toàn bộ là bớt câu "swipe up/go back" sai.
+Giả thuyết ghi trước "câu chạm được SPICE cao hơn câu cuộn khi so với câu chuẩn cuộn" **không đứng**. Ở bước vàng cuộn, câu đúng loại có SPICE TB 0,64, còn câu chạm chỉ 0,11.
+Ở 51 bước S1 đúng loại mà ck500 sai, SPICE của ck500 là 0,10 so với 0,30 của S1, và ck500 cao hơn hẳn S1 chỉ ở 13,7% số bước.
+Điều đứng được: **29,4% câu cuộn đúng loại và 37,0% câu quay lại đúng loại có SPICE = 0**, ví dụ "Swipe up" so với "Swipe up" không có tuple nào.
+Ở 58,8% số bước cuộn kể trên, SPICE của ck500 ≥ S1, phần lớn là hoà ở 0. Khi cả câu đúng loại lẫn câu chạm đều được 0, nhóm GRPO không có lợi thế nào để giữ câu cuộn.
+Khả năng [suy]: đúng loại ở bước cuộn và quay lại không được thưởng giữ, trong khi 63% câu nhắc là bước chạm nên kéo văn phong về "Click on/Open the". Chưa kiểm được trên mẫu train vì log không lưu câu lấy mẫu.
+
+**AitZ.** Câu chuẩn AitZ bước chạm (2.736) có 7,78 tuple mỗi câu. Có 112 tuple phổ biến chiếm **69,2%** số lần xuất hiện, so với 47,5% ở AC.
+Đầu bảng là "screen", "part", "part | of | screen", "right", "icon": đúng phần khuôn vị trí. 85% số lần xuất hiện của tuple đối tượng là tuple phổ biến.
+ck500 so với S1 trên AitZ: khớp thêm 204 tuple, trong đó **193 là tuple phổ biến**, chỉ 11 là tuple hiếm. ΔF +1,0 [+0,5; +1,6] có ý nghĩa, nhưng exec 37,79 → 37,28.
+Độ phân biệt: chênh SPICE TB giữa bước exec trúng và bước exec trượt là 0,113 ở AitZ, so với 0,259 ở AC (S1).
+⇒ Giả thuyết ở mục 15 **được ủng hộ**: trên AitZ, tuple SPICE chủ yếu đến từ phần khuôn. Thưởng SPICE nâng điểm SPICE bằng phần khuôn, và SPICE bám exec kém hơn hẳn AC.
+Đây là cơ chế khả dĩ cho việc ck500 không hơn S1 trên AitZ [suy, chưa có phép can thiệp].
+
+**H3, log train.** Tỉ lệ nhóm có mọi thưởng bằng nhau (lợi thế 0 cả nhóm): GRPO + SPICE (ck500) 22,7%, GRPO + CIDEr-D/METEOR/ROUGE-L 16,2–16,7%.
+SPICE cho nhiều nhóm không gradient hơn n-gram, khớp với H2 ở mục 16. Ở SCST + SPICE, **60,4% mẫu có lợi thế đúng bằng 0** (thưởng mẫu bằng thưởng câu greedy), so với RLOO 24,4% và REINFORCE 0%.
+|A| TB: SCST 0,19 · RLOO 0,20 · REINFORCE 0,41. KL TB: ck500 0,011 · SCST 0,012 · RLOO 0,013 · REINFORCE 0,011, còn GRPO + n-gram 0,026–0,033.
+⇒ Dự đoán "S1 ít ngẫu nhiên nên SCST có nhiều mẫu lợi thế 0" **đúng**. Dù vậy SCST + SPICE vẫn ngang ck500 trên test (60,54 so với 60,65), nên số mẫu có tín hiệu không quyết định thứ hạng.
+Hai probe A2C/PPO cũ có v_ev cỡ −10⁵, là lỗi ghi log đã sửa ngày 6/11 (`grpo_ppo.py`), không đọc.

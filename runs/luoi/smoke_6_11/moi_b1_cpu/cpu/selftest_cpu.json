@@ -1,0 +1,406 @@
+{
+ "dpo_on": {
+  "dat": true,
+  "loss": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "adv": [
+   1.2,
+   1.1985,
+   1.1998
+  ],
+  "lora_B": [
+   0.0,
+   0.5774
+  ],
+  "lora_luc_sinh": 144,
+  "cau_hinh": {
+   "loss_type": "dapo",
+   "scale_rewards": "group",
+   "num_iterations": 1,
+   "importance_sampling_level": "token",
+   "epsilon": 0.2,
+   "epsilon_high": null,
+   "beta": 0.0
+  },
+  "giay": 9.6,
+  "them": {
+   "luoi/n_cap": [
+    2.0,
+    2.0,
+    2.0
+   ],
+   "luoi/dpo_margin": [
+    0.0,
+    0.0244,
+    0.0027
+   ]
+  }
+ },
+ "dpo_off": {
+  "dat": true,
+  "loss": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "adv": [
+   1.2,
+   1.1985,
+   1.1998
+  ],
+  "lora_B": [
+   0.0,
+   0.5774
+  ],
+  "lora_luc_sinh": 0,
+  "cau_hinh": {
+   "loss_type": "dapo",
+   "scale_rewards": "group",
+   "num_iterations": 1,
+   "importance_sampling_level": "token",
+   "epsilon": 0.2,
+   "epsilon_high": null,
+   "beta": 0.0
+  },
+  "giay": 4.4,
+  "them": {
+   "luoi/n_cap": [
+    2.0,
+    2.0,
+    2.0
+   ],
+   "luoi/dpo_margin": [
+    0.0,
+    0.0244,
+    0.0027
+   ],
+   "luoi/sinh_tu_s1": [
+    1.0,
+    2.0,
+    3.0
+   ]
+  }
+ },
+ "rft_off": {
+  "dat": true,
+  "loss": [
+   -0.25,
+   -0.25,
+   -0.25
+  ],
+  "adv": [
+   0.25,
+   0.25,
+   0.25
+  ],
+  "lora_B": [
+   0.0,
+   0.5587
+  ],
+  "lora_luc_sinh": 0,
+  "cau_hinh": {
+   "loss_type": "dapo",
+   "scale_rewards": "group",
+   "num_iterations": 1,
+   "importance_sampling_level": "token",
+   "epsilon": 0.2,
+   "epsilon_high": null,
+   "beta": 0.04
+  },
+  "giay": 4.5,
+  "them": {
+   "luoi/sinh_tu_s1": [
+    1.0,
+    2.0,
+    3.0
+   ],
+   "kl": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "mrt": {
+  "dat": true,
+  "loss": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "adv": [
+   0.0006,
+   0.0007,
+   0.002
+  ],
+  "lora_B": [
+   0.0,
+   0.4945
+  ],
+  "lora_luc_sinh": 144,
+  "cau_hinh": {
+   "loss_type": "dapo",
+   "scale_rewards": "group",
+   "num_iterations": 1,
+   "importance_sampling_level": "token",
+   "epsilon": 0.2,
+   "epsilon_high": null,
+   "beta": 0.04
+  },
+  "giay": 4.7,
+  "them": {
+   "luoi/mrt_q_max": [
+    0.25,
+    0.25,
+    0.25
+   ],
+   "kl": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "spg": {
+  "dat": true,
+  "loss": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "adv": [
+   0.5551,
+   0.7186,
+   2.3035
+  ],
+  "lora_B": [
+   0.0,
+   0.5522
+  ],
+  "lora_luc_sinh": 144,
+  "cau_hinh": {
+   "loss_type": "dapo",
+   "scale_rewards": "group",
+   "num_iterations": 1,
+   "importance_sampling_level": "token",
+   "epsilon": 0.2,
+   "epsilon_high": null,
+   "beta": 0.04
+  },
+  "giay": 4.5,
+  "them": {
+   "kl": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "drgrpo_full": {
+  "dat": true,
+  "loss": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "adv": [
+   0.0094,
+   0.0119,
+   0.0338
+  ],
+  "lora_B": [
+   0.0,
+   0.5513
+  ],
+  "lora_luc_sinh": 144,
+  "cau_hinh": {
+   "loss_type": "dr_grpo",
+   "scale_rewards": "none",
+   "num_iterations": 1,
+   "importance_sampling_level": "token",
+   "epsilon": 0.2,
+   "epsilon_high": null,
+   "beta": 0.04
+  },
+  "giay": 4.5,
+  "them": {
+   "kl": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "grpo_seq": {
+  "dat": true,
+  "loss": [
+   -0.0,
+   0.0,
+   0.0
+  ],
+  "adv": [],
+  "lora_B": [
+   0.0,
+   0.5877
+  ],
+  "lora_luc_sinh": 144,
+  "cau_hinh": {
+   "loss_type": "grpo",
+   "scale_rewards": "group",
+   "num_iterations": 1,
+   "importance_sampling_level": "token",
+   "epsilon": 0.2,
+   "epsilon_high": null,
+   "beta": 0.04
+  },
+  "giay": 4.5,
+  "them": {
+   "kl": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "gspo": {
+  "dat": true,
+  "loss": [
+   0.0,
+   -5e-05,
+   0.0,
+   -0.00014,
+   0.0,
+   -0.00018
+  ],
+  "adv": [],
+  "lora_B": [
+   0.0,
+   0.8767
+  ],
+  "lora_luc_sinh": 144,
+  "cau_hinh": {
+   "loss_type": "dapo",
+   "scale_rewards": "group",
+   "num_iterations": 2,
+   "importance_sampling_level": "sequence",
+   "epsilon": 0.0003,
+   "epsilon_high": 0.0004,
+   "beta": 0.04
+  },
+  "giay": 5.6,
+  "them": {
+   "kl": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "grpo": {
+  "dat": true,
+  "loss": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "adv": [],
+  "lora_B": [
+   0.0,
+   0.5877
+  ],
+  "lora_luc_sinh": 144,
+  "cau_hinh": {
+   "loss_type": "dapo",
+   "scale_rewards": "group",
+   "num_iterations": 1,
+   "importance_sampling_level": "token",
+   "epsilon": 0.2,
+   "epsilon_high": null,
+   "beta": 0.04
+  },
+  "giay": 4.4,
+  "them": {
+   "kl": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "drgrpo": {
+  "dat": true,
+  "loss": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "adv": [
+   0.0094,
+   0.0119,
+   0.0338
+  ],
+  "lora_B": [
+   0.0,
+   0.5513
+  ],
+  "lora_luc_sinh": 144,
+  "cau_hinh": {
+   "loss_type": "dapo",
+   "scale_rewards": "none",
+   "num_iterations": 1,
+   "importance_sampling_level": "token",
+   "epsilon": 0.2,
+   "epsilon_high": null,
+   "beta": 0.04
+  },
+  "giay": 4.5,
+  "them": {
+   "kl": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ },
+ "rft": {
+  "dat": true,
+  "loss": [
+   -0.25,
+   -0.25,
+   -0.25
+  ],
+  "adv": [
+   0.25,
+   0.25,
+   0.25
+  ],
+  "lora_B": [
+   0.0,
+   0.5587
+  ],
+  "lora_luc_sinh": 144,
+  "cau_hinh": {
+   "loss_type": "dapo",
+   "scale_rewards": "group",
+   "num_iterations": 1,
+   "importance_sampling_level": "token",
+   "epsilon": 0.2,
+   "epsilon_high": null,
+   "beta": 0.04
+  },
+  "giay": 4.5,
+  "them": {
+   "kl": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ }
+}

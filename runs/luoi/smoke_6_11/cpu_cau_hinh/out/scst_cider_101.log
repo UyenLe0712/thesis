@@ -1,0 +1,18 @@
+[cấu hình] seed 101 · thuật toán scst · thưởng cider
+trl 0.29.1 · transformers 5.20.2 · peft 0.21.2 · torch 2.11.0+cpu
+[cider] df dựng từ 3991 câu chuẩn của p1_train_rows.jsonl
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[LoRA mới] tham số học 1,792 · S1 có 0
+[câu nhắc] 1000 · bỏ {'trung_val': 0, 'trung_episode_val': 0, 'thieu_anh': 0, 'thieu_ocr': 0, 'rong': 9} · n_char max 1974
+GRPOConfig: {'num_generations': 8, 'per_device_train_batch_size': 4, 'gradient_accumulation_steps': 4, 'generation_batch_size': 16, 'steps_per_generation': 4, 'num_iterations': 1, 'max_completion_length': 96, 'temperature': 1.0, 'top_p': 1.0, 'top_k': 0, 'beta': 0.04, 'learning_rate': 1e-05, 'loss_type': 'dapo', 'scale_rewards': 'group', 'max_steps': 2, 'bf16': False, 'fp16': False}
+[tiếp từ] None
+/usr/local/lib/python3.13/dist-packages/torch/utils/data/dataloader.py:1118: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  super().__init__(loader)
+[cider] lần 1 · 16 câu · 0.0s · thưởng TB -0.801 · số từ TB 51.6 · rỗng 0
+[cider] lần 2 · 2 câu · 0.0s · thưởng TB -1.690 · số từ TB 96.0 · rỗng 0
+{'loss': '-0.8888', 'grad_norm': '0.009118', 'learning_rate': '0', 'num_tokens': '5928', 'completions/mean_length': '96', 'completions/min_length': '96', 'completions/max_length': '96', 'completions/clipped_ratio': '1', 'completions/mean_terminated_length': '0', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '0', 'rewards/r_cider/mean': '-0.8012', 'rewards/r_cider/std': '0.1278', 'reward': '-0.8012', 'reward_std': '0.1278', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.8888', 'luoi/frac_adv_zero': '0', 'luoi/r_greedy': '-1.69', 'kl': '0', 'entropy': '11.93', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'step_time': '26.86', 'epoch': '0.002'}
+[cider] lần 3 · 16 câu · 0.0s · thưởng TB -0.814 · số từ TB 49.2 · rỗng 0
+[cider] lần 4 · 2 câu · 0.0s · thưởng TB -1.750 · số từ TB 96.0 · rỗng 0
+{'loss': '-0.9362', 'grad_norm': '0.01646', 'learning_rate': '1e-06', 'num_tokens': '1.125e+04', 'completions/mean_length': '96', 'completions/min_length': '96', 'completions/max_length': '96', 'completions/clipped_ratio': '1', 'completions/mean_terminated_length': '0', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '0', 'rewards/r_cider/mean': '-0.8137', 'rewards/r_cider/std': '0.06228', 'reward': '-0.8137', 'reward_std': '0.06228', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.9363', 'luoi/frac_adv_zero': '0', 'luoi/r_greedy': '-1.75', 'kl': '0', 'entropy': '11.93', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'step_time': '25.38', 'epoch': '0.004'}
+{'train_runtime': '53.05', 'train_samples_per_second': '0.603', 'train_steps_per_second': '0.038', 'train_loss': '-0.9125', 'epoch': '0.004'}
+[xong] 2 bước · 0.9 phút · 26.7 s/bước · đỉnh VRAM 0.00 GiB · thưởng 0.0 s/lần

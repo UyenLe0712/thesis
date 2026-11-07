@@ -1,0 +1,25 @@
+[đợt 4] rlce {'lam': 0.1} · mixer {'rho0': 0.5, 'frac': 0.5} · seqgan {'mix': 0.0, 'warm': 20, 'lr': 0.0001, 'hid': 256} · quark {'k': 5, 'pool': 2048} · es {'pop': 4, 'm': 2, 'sigma': 0.001, 'lr': 0.0005, 'save': 2}
+[cấu hình] seed 101 · thuật toán es · thưởng spice · pop 4 · m 2 · σ 0.001 · lr 0.0005
+transformers 5.20.2 · peft 0.21.2 · torch 2.11.0+cpu
+[nạp] mô hình tí hon CPU · 9,881,824 tham số
+[LoRA mới] tham số dò 11,776 · S1 có 11,776
+[câu nhắc] 16 · bỏ {'gia': 1}
+[tiếp từ] None
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+[spice] lần 1 · 2 câu · 0.0s · thưởng TB 0.570 · số từ TB 13.5 · rỗng 0
+[spice] lần 2 · 2 câu · 0.0s · thưởng TB 0.207 · số từ TB 19.0 · rỗng 0
+[spice] lần 3 · 2 câu · 0.0s · thưởng TB 0.416 · số từ TB 16.0 · rỗng 0
+[spice] lần 4 · 2 câu · 0.0s · thưởng TB 0.046 · số từ TB 17.5 · rỗng 0
+{'loss': 0.0, 'reward': 0.309731, 'es/f_max': 0.569615, 'es/f_min': 0.046329, 'es/so_cau_khac': 4, 'es/buoc_l2': 0.035017, 'es/buoc_tuong_doi': 0.006413, 'luoi/adv_abs_mean': 0.919335, 'kl': 0.0, 'step_time': 3.12236, 'step': 1}
+[spice] lần 5 · 2 câu · 0.0s · thưởng TB 0.039 · số từ TB 12.5 · rỗng 1
+[spice] lần 6 · 2 câu · 0.0s · thưởng TB 0.372 · số từ TB 12.5 · rỗng 1
+[spice] lần 7 · 2 câu · 0.0s · thưởng TB 0.189 · số từ TB 12.0 · rỗng 1
+[spice] lần 8 · 2 câu · 0.0s · thưởng TB 0.381 · số từ TB 8.5 · rỗng 1
+{'loss': 0.0, 'reward': 0.245388, 'es/f_max': 0.381335, 'es/f_min': 0.03903, 'es/so_cau_khac': 4, 'es/buoc_l2': 0.037168, 'es/buoc_tuong_doi': 0.006807, 'luoi/adv_abs_mean': 0.927025, 'kl': 0.0, 'step_time': 3.058057, 'step': 2}
+[spice] lần 9 · 2 câu · 0.0s · thưởng TB 0.374 · số từ TB 6.5 · rỗng 1
+[spice] lần 10 · 2 câu · 0.0s · thưởng TB 0.000 · số từ TB 0.0 · rỗng 2
+[spice] lần 11 · 2 câu · 0.0s · thưởng TB 0.006 · số từ TB 2.5 · rỗng 1
+[spice] lần 12 · 2 câu · 0.0s · thưởng TB 0.221 · số từ TB 3.5 · rỗng 1
+{'loss': 0.0, 'reward': 0.150252, 'es/f_max': 0.37359, 'es/f_min': 0.0, 'es/so_cau_khac': 4, 'es/buoc_l2': 0.037207, 'es/buoc_tuong_doi': 0.006814, 'luoi/adv_abs_mean': 0.939182, 'kl': 0.0, 'step_time': 3.059719, 'step': 3}
+[xong] 3 bước · 0.2 phút · 3.1 s/bước · đỉnh VRAM 0.00 GiB · thưởng 0.0 s/lần
