@@ -1,0 +1,13 @@
+[cấu hình] seed 101 · thuật toán grpo · thưởng spice
+trl 0.29.1 · transformers 5.17.0 · peft 0.21.1 · torch 2.10.0+cpu
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[LoRA mới] tham số học 3,584 · S1 có 0
+[câu nhắc] 1000 · bỏ {'trung_val': 0, 'trung_episode_val': 0, 'thieu_anh': 0, 'thieu_ocr': 0, 'rong': 9} · n_char max 1974
+GRPOConfig: {'num_generations': 8, 'per_device_train_batch_size': 4, 'gradient_accumulation_steps': 4, 'generation_batch_size': 16, 'steps_per_generation': 4, 'num_iterations': 1, 'max_completion_length': 96, 'temperature': 1.0, 'top_p': 1.0, 'top_k': 0, 'beta': 0.04, 'learning_rate': 1e-05, 'loss_type': 'dapo', 'scale_rewards': 'group', 'max_steps': 2, 'bf16': False, 'fp16': False}
+[tiếp từ] None
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'eos_token_id': 151645, 'bos_token_id': None, 'pad_token_id': 151643}.
+/tmp/oldlib/torch/utils/data/dataloader.py:1118: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  super().__init__(loader)
+[transformers] Kwargs passed to `processor.__call__` have to be in `processor_kwargs` dict, not in `**kwargs`
+[transformers] Passing `generation_config` together with generation-related arguments=({'disable_compile'}) is deprecated and will be removed in future versions. Please pass either a `generation_config` object OR all generation parameters explicitly, but not both.
+[rng] {"script": "--train", "versions": ["0.29.1", "5.17.0", "0.21.1", "2.10.0+cpu"], "rng_truoc": "7cd72d402fa7b6a41abdba5bfd8d159c", "input": "37da2be7bbe4af7f0739a79837eb4f21", "out": "9cadce8f146b9b05fa8e4a9241cdbc92", "shape": [16, 379], "duoi_chuoi_0": [29393, 123611, 111450, 143865, 83504, 123517, 100280, 30898, 6330, 67178, 92914, 84534], "duoi_chuoi_1": [131919, 4915, 111042, 10223, 2462, 107342, 22020, 8184, 5858, 89381, 123623, 125987]}

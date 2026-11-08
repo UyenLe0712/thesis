@@ -944,3 +944,76 @@ Holm trên họ 7 phép so exec với ck500: RLOO p_holm 3e−5 giữ; **REINFOR
 **Tuple SPICE (`h4_spice_tuple_7_11.py`).** ck500 − SFT tiếp +117 tuple đúng (Object +71, Relation +29); recall Object và Relation có KTC loại 0, F tổng [−0,0002; +0,012].
 
 **Kiểm tu=base trên mô hình thật (CPU fp32, `kiem-tu-base-cpu`): ĐẠT.** LoRA mới cùng cỡ S1 (14.966.784 tham số, B = 0, không học thị giác), logits bật = tắt adapter (Δ = 0), tham chiếu KL trùng Base nạp thẳng (Δ = 0), câu nhắc trùng thứ tự ck500 ⇒ lượt GRPO xuất phát từ Base đẩy được.
+
+## 20. Tiến độ train lưới RL đợt hai (kernel luoi-t2-11, luoi-t-10, xong 8/11/2026)
+
+Hai kernel chạy tiếp, cả hai nạp đúng điểm lưu (`[nạp default] 504 tensor · |lora_B| 0 → x>0 · khoá lạ 0` ở cả bốn lượt; PPO nạp thêm `value_head.pt`). Log ở `runs/luoi/7_11/{t2_11,t_10}/`, adapter nằm trên output Kaggle.
+- **grpo:spice:101 XONG 500/500** (checkpoint-500), 150 s/bước, đỉnh VRAM 12,8 GiB. kl ở 100 bước cuối dao động 0,003–0,094, bước cuối 0,012 (ck500 gốc ~0,012). Sẵn sàng chấm test.
+- **drgrpo:spice:101 tới 475/500** (checkpoint-475), chạm trần giờ; kl 0,002–0,033. Cần một lượt ngắn 25 bước, hoặc chấm checkpoint-475 nếu chấp nhận khai.
+- **PPO μ=2, λ=1 tới 575/1000** (checkpoint-575); kl tăng 0,04 → 0,13. **λ=0,95 tới 525/1000** (checkpoint-525); kl 0,02–0,06. Cần thêm khoảng hai commit.
+
+## 21. Lượt train lại ck500 (A/A, 8/11/2026): KHÔNG tái lập được 60,65
+
+Lượt `grpo:spice:101` của lưới (`luoi-t2-3` → `luoi-t2-4` → `luoi-t2-11`, chạy tiếp từ điểm lưu 175 và 400, `harness/grpo_luoi.py`) đủ 500/500 bước, nạp default đạt mỗi lần chạy tiếp. Chấm test ở kernel `uyenle0712/luoi-test-u-4`: kiểm hoà 16/20, kiểm bộ chấm 10/10, adapter gắn trên S1 hoà, md5 `e6e656e0…`. Tệp ở `runs/luoi/8_11/test_u_4/`, so ghép cặp ở `so_ghep_cap_exec.json` (mốc S1/101, ck500, SFT tiếp) và `so_ghep_cap_voi_aa.json` (mọi lượt lưới so A/A). Tự kiểm ck500 − S1/101 = +1,55 [+0,80; +2,33] đạt cả hai lần.
+
+| lượt | exec | D.3 | D.3∧14% | AitW đầy đủ | action_ok |
+|---|---|---|---|---|---|
+| S1/101 | 59,11 | 65,49 | 61,73 | 74,37 | 94,35 |
+| ck500 (lượt gốc, `grpo_spice.py`) | **60,65** | 67,02 | 63,25 | 76,25 | 95,97 |
+| SFT tiếp | 60,16 | 66,64 | 62,85 | 75,71 | 96,15 |
+| GRPO + SPICE (A/A, `grpo_luoi.py`) | **59,74** | 66,41 | 62,47 | 75,71 | 95,65 |
+
+So ghép cặp exec (bootstrap cụm app, B = 10.000, McNemar chính xác):
+- A/A − ck500 **−0,92 [−1,36; −0,49]**, p=5,5e−5 (hơn 30 / kém 71).
+- A/A − S1/101 +0,63 [−0,12; +1,37], p=0,085, KTC phủ 0.
+- A/A − SFT tiếp −0,43 [−0,99; +0,13], p=0,17.
+
+Các lượt lưới so với A/A (cùng mã `grpo_luoi.py`, chưa hiệu chỉnh):
+
+| lượt − A/A | Δ exec | KTC95 | hơn/kém | p |
+|---|---|---|---|---|
+| SCST + SPICE | +0,81 | [+0,34; +1,28] | 78/42 | 0,001 |
+| GRPO + ROUGE-L | +0,90 | [+0,38; +1,43] | 95/55 | 0,001 |
+| GRPO + CIDEr-D | +0,54 | [0,00; +1,08] | 89/65 | 0,063 |
+| GRPO + METEOR | +0,54 | [−0,02; +1,12] | 97/73 | 0,077 |
+| SFT tiếp | +0,43 | [−0,13; +0,99] | 97/78 | 0,17 |
+| REINFORCE + SPICE | +0,27 | [−0,19; +0,75] | 66/54 | 0,32 |
+| RLOO + SPICE | −0,29 | [−0,80; +0,22] | 63/76 | 0,31 |
+
+Cách đọc:
+- Train lại cùng cấu hình mà mất 0,92 exec, có ý nghĩa ghép cặp. Vậy chênh lệch giữa hai lượt train của **cùng một** phương pháp đã cỡ chênh lệch ck500 − S1/101 (+1,55). Phần lớn lợi thế của ck500 so với các lượt lưới (−0,02 đến −1,21) nằm trong biến thiên giữa các lần train, không quy được cho thuật toán hay độ đo thưởng.
+- Lượt A/A khác lượt gốc ở mã train (`grpo_luoi.py` thay `grpo_spice.py`), ở phiên bản thư viện (transformers 5.17.0 → 5.20.2, peft 0.21.1 → 0.21.2, torch 2.10.0 → 2.11.0), ở hai lần chạy tiếp và ở tính không tất định của GPU; chưa tách được nguyên nhân nào. Các lượt lưới khác chạy cùng mã với A/A, nên phép so công bằng trong lưới là so với A/A: khi đó SCST + SPICE và GRPO + ROUGE-L hơn GRPO + SPICE có ý nghĩa (chưa Holm), ngược với thứ tự khi so với ck500.
+- ⛔ Không còn viết được "GRPO + SPICE tốt nhất trong lưới" hay "ck500 hơn REINFORCE/RLOO" như kết luận về phương pháp. ck500 − S1/101 vẫn là số đo thật của một điểm lưu cụ thể, nhưng phải khai rằng train lại chỉ được +0,63 (KTC phủ 0).
+- **Độ đo văn bản cho lượt A/A (kernel CPU `trangphngngc/chu-luoi-8-11-cpu`, xong 8/11; `runs/luoi/8_11/chu/chu_luoi_8_11.json`, bootstrap cụm app B = 2.000, tự kiểm đạt):**
+
+  | lượt | BLEU-4 | METEOR | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
+  |---|---|---|---|---|---|---|---|
+  | S1/101 | 51,56 | 36,79 | 67,35 | 416,12 | 44,37 | 61,26 | 66,33 |
+  | ck500 (hạt 101) | 52,36 | 37,92 | 68,36 | 430,05 | 45,79 | 62,87 | 67,07 |
+  | ck500 hạt 202 (mã cũ, `runs/grpo_spice/s202_chu_25_10/v5/`) | 52,94 | 37,53 | 68,48 | 431,22 | 45,69 | 62,37 | 67,12 |
+  | A/A (train lại, hạt 101) | 52,97 | 37,55 | 68,44 | 430,92 | **46,00** | 62,39 | 67,09 |
+
+  A/A − ck500: BLEU-4 +0,61 [−0,23; +1,20] · ROUGE-L +0,08 · CIDEr-D +0,87 [−3,20; +4,97] · SPICE +0,20 [−0,30; +0,71] · chrF −0,48 [−0,85; −0,15] · BERTScore +0,02 ⇒ chỉ chrF khác có ý nghĩa. A/A − S1/101: SPICE **+1,63 [+0,94; +2,37]** (ck500 +1,42), CIDEr-D +14,80, cả 6 độ đo có KTC hơn 0. A/A − SFT tiếp: SPICE +0,67 [+0,11; +1,27], CIDEr-D +5,13 [+0,09; +10,30].
+  ⇒ **Đích thưởng tái lập được, exec thì không:** ba điểm lưu GRPO + SPICE (ck500/101, ck500/202, A/A) gần như trùng nhau trên mọi độ đo văn bản (SPICE 45,7–46,0), trong khi exec dao động 59,74–60,65. Phần exec thay đổi giữa các lượt train không đi qua SPICE; khi viết phải nói GRPO + SPICE nâng SPICE ổn định, còn mức tăng exec chịu biến thiên giữa các lượt train cỡ 0,7–0,9.
+- **Độ đo văn bản bản b (kernel `trangphngngc/chu-luoi-8-11b-cpu`, xong 8/11; `runs/luoi/8_11/chu_b/chu_luoi_8_11b.json`; tự kiểm trùng tuyệt đối bản a):** ck500/202 trong cùng khung KTC, các lượt lưới so A/A (KTC95 bootstrap cụm app, B = 2.000; cột: BLEU-4 · ROUGE-L · CIDEr-D · SPICE · chrF · BERTScore; in đậm khi KTC loại 0).
+
+  | X − A/A | BLEU-4 | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
+  |---|---|---|---|---|---|---|
+  | SCST + SPICE | **−1,00** | +0,26 | −0,02 | −0,06 | **+0,92** | +0,16 |
+  | GRPO + ROUGE-L | −0,38 | **+0,83** | +1,90 | −0,43 | **+1,03** | **+0,49** |
+  | GRPO + METEOR | **−2,21** | **+0,70** | −4,30 | **−0,87** | **+1,80** | +0,27 |
+  | GRPO + CIDEr-D | **−1,38** | +0,03 | **−6,40** | **−1,57** | **+0,51** | −0,06 |
+  | SFT tiếp | −0,90 | +0,11 | **−5,13** | **−0,67** | +0,25 | −0,03 |
+  | REINFORCE + SPICE | −0,45 | **−0,48** | **−4,80** | **−0,73** | −0,33 | **−0,33** |
+  | RLOO + SPICE | **−0,97** | **−1,11** | **−8,82** | **−0,73** | **−0,74** | **−0,77** |
+
+  Ba điểm lưu GRPO + SPICE không khác nhau ở độ đo nào trừ chrF ck500 − ck500/202 +0,50 [+0,12; +0,87]; A/A − ck500/202 cả sáu KTC phủ 0. ck500/202 − S1/101: SPICE +1,32 [+0,57; +2,12], CIDEr-D +15,11, sáu độ đo đều loại 0.
+  ⇒ So với A/A (cùng mã train), GRPO + SPICE đứng đầu về SPICE trong mọi lượt lưới trừ SCST + SPICE (ngang). Hai lượt tối ưu ROUGE-L/METEOR thắng ở ROUGE-L, chrF nhưng thua BLEU-4 hoặc SPICE: mỗi lượt tăng đúng độ đo nó được thưởng, nên không có lượt nào trội trên mọi độ đo văn bản. REINFORCE/RLOO thua A/A ở hầu hết độ đo, SFT tiếp thua ở CIDEr-D và SPICE. Đọc cùng exec: SCST + SPICE và GRPO + ROUGE-L hơn A/A về exec (+0,81, +0,90) mà không hơn về SPICE ⇒ exec không đi theo SPICE.
+- **Phân rã + SPICE theo tuple (kernel `trangphngngc/giai-thich-8-11-cpu`, xong 8/11; `runs/luoi/8_11/giai_thich/ket_qua_8_11/`; tự kiểm ck500 +28/+41, ck500 − SFT tiếp +0,49, A/A − ck500 −0,92 và Δtp 5 nhánh cũ đều đạt; B = 10.000):**
+  - Phân rã so S1/101 (số bước ròng): ck500/101 sửa loại thao tác **+28**, đổi phần tử **+41** · ck500/202 +32 / +5 · A/A +20 / +8. ⇒ Phần sửa loại thao tác tái lập qua cả ba lượt (+20 đến +32); phần đổi phần tử +41 chỉ có ở ck500/101, hai lượt kia ≈ 0. Mức exec cao của ck500/101 nằm trọn ở phần đổi phần tử, và phần đó không tái lập.
+  - Ba điểm lưu từng đôi: ck500 − A/A exec +0,92 [+0,49; +1,37] = loại +0,16 [+0,02; +0,31] + phần tử **+0,76 [+0,35; +1,18]** · ck500 − ck500/202 +0,72 [+0,16; +1,27] = loại −0,09 + phần tử **+0,81 [+0,29; +1,35]** · ck500/202 − A/A +0,20 [−0,32; +0,73] (phần tử −0,07). D.3: ck500 − A/A +0,60 [+0,17; +1,05], ck500 − ck500/202 +0,47 [−0,09; +1,04].
+  - Họ so A/A, exec, Holm 7 phép: SCST + SPICE +0,81 (p_Holm 0,009) · GRPO + ROUGE-L +0,90 (0,009) · GRPO + CIDEr-D +0,54 (0,32) · GRPO + METEOR +0,54 (0,32) · SFT tiếp +0,43 (0,52) · REINFORCE +0,27 (0,62) · RLOO −0,29 (0,62). ⇒ Trong lưới cùng mã, hai lượt hơn GRPO + SPICE có ý nghĩa sau Holm, không lượt nào kém có ý nghĩa.
+  - SPICE theo tuple, Δtp so S1 (All / Object / Attribute / Relation): ck500 380 / 191 / 111 / 78 · A/A 252 / 131 / 65 / 56 · ck500/202 203 / 104 / 66 / 33. SPICE F của ba lượt ngang nhau nhưng số tuple khớp thêm của ck500/101 gấp 1,5–1,9 lần hai lượt kia; ở A/A và 202 phần lớn Δtp nằm ở tuple hiếm (181/252, 136/203), còn ck500 nằm ở tuple phổ biến (216/380).
+  - Mô tả câu: số từ TB 8,00 / 7,76 / 7,80; trùng S1 2.795 / 2.605 / 2.895 câu; ba lượt chung 3.227–3.532 câu từng đôi.
+  - ⛔ Hệ quả cho cách viết: câu "thưởng SPICE giúp đổi đúng phần tử" (phân rã ck500 +41) KHÔNG tái lập qua lượt train khác; phần tái lập được là sửa loại thao tác (+20 đến +32 bước) và mức tăng SPICE.
+- **Nguyên nhân (kiểm 8/11):** cấu hình GRPOConfig hai lượt in ra trùng từng khoá, thứ tự câu nhắc trùng ck500. Hai lượt tách nhau ngay bước 1: cùng policy S1 (lora_B = 0), thưởng TB bước 1 của `grpo_spice.py` là 0,473, còn `grpo_luoi.py` là 0,223 (drgrpo và PPO cùng ra 0,223) ⇒ quỹ đạo train khác từ đầu. ⚠️ **Sửa 8/11 chiều:** hai lượt còn khác **phiên bản thư viện** — ck500 gốc chạy transformers 5.17.0 · peft 0.21.1 · torch 2.10.0, còn A/A (và cả lưới) chạy 5.20.2 · 0.21.2 · 2.11.0 (dòng in trong log train). Vậy lúc đó chưa quy được lệch bước 1 cho mã hay cho thư viện; mỗi bước chỉ 2 câu nhắc × 8 câu nên thưởng TB bước 1 dao động mạnh theo lần lấy mẫu (bước 2 của hai lượt: 0,645 và 0,604). **Kiểm CPU (kernel `trangphngngc/kiem-rng-aa-cpu` bản 5, `_bundles/luoi/make_rng_nb.py`, `runs/luoi/8_11/kiem_rng/`):** chạy `grpo_spice.py` và `grpo_luoi.py` × bộ thư viện cũ (5.17.0 · 0.21.1 · torch 2.10.0) và mới (5.20.2 · 0.21.2 · torch 2.11.0) trên Qwen2.5-VL tí hon, cùng cờ ck500 (G 8, bs 4, accum 4, seed 101), mỗi cấu hình 2 lần, móc lần gọi generate đầu: **8/8 trùng tuyệt đối** trạng thái RNG trước khi sinh, input_ids và chuỗi sinh. ⇒ Trên CPU, cả mã train lẫn phiên bản transformers/peft/torch đều không đổi luồng lấy mẫu. Phần còn lại chỉ có thể ở GPU: bản dựng CUDA (cu128 → cu130), nhân CUDA của torch 2.10 → 2.11 ở fp16, hoặc máy T4 khác nhau. Trên GPU mỗi môi trường tự lặp lại được (drgrpo, PPO, A/A cùng ra 0,223 ở bước 1). Giới hạn: phép kiểm không chạy nhân CUDA, không chạy mô hình 3B thật. Cách viết an toàn: "lượt train lại cùng mã, cùng cấu hình, cùng câu nhắc, khác môi trường GPU, cho exec 59,74; biến thiên giữa các lượt train ≈ 0,7–0,9 exec", không quy lỗi cho mã. Đối chiếu ck500 hạt 202 (mã cũ, 59,94): A/A − ck500/202 −0,20 [−0,74; +0,34], p=0,53 ⇒ A/A nằm trong dải biến thiên giữa hai hạt của chính mã cũ; 60,65 là đầu cao của dải đó, không phải mã mới hỏng.
