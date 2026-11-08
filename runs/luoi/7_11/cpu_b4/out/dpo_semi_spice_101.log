@@ -1,0 +1,122 @@
+[moi_b4] --algo dpo_semi → dpo_semi · siêu tham số {'dpo_sync': 10, 'dpo_beta': 0.1} · β KL 0
+[moi_b1] --algo dpo_semi → dpo_semi · đè TRL - · siêu tham số {'dpo_beta': 0.1, 'mrt_alpha': 0.005, 'spg_tau': 0.2}
+[cấu hình] seed 101 · thuật toán dpo_semi · thưởng spice
+trl 0.29.1 · transformers 5.20.2 · peft 0.21.2 · torch 2.11.0+cpu
+[LoRA mới] tham số học 1,792 · S1 có 0
+[câu nhắc] 1000 · bỏ {'trung_val': 0, 'trung_episode_val': 0, 'thieu_anh': 0, 'thieu_ocr': 0, 'rong': 9} · n_char max 1974
+GRPOConfig: {'num_generations': 8, 'per_device_train_batch_size': 4, 'gradient_accumulation_steps': 4, 'generation_batch_size': 16, 'steps_per_generation': 4, 'num_iterations': 1, 'max_completion_length': 96, 'temperature': 1.0, 'top_p': 1.0, 'top_k': 0, 'beta': 0.0, 'learning_rate': 1e-05, 'loss_type': 'dapo', 'scale_rewards': 'group', 'max_steps': 2, 'bf16': False, 'fp16': False}
+[tiếp từ] None
+/usr/local/lib/python3.13/dist-packages/torch/utils/data/dataloader.py:1118: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  super().__init__(loader)
+[dpo_semi] tạo adapter gen · tham số học giữ 1,792
+[dpo_semi] đồng bộ lần 1 ở lần sinh 1 · lệch trước 6.619e+00
+PTBTokenizer tokenized 159 tokens at 3006.66 tokens per second.
+Nov 07, 2026 12:45:19 AM edu.stanford.nlp.process.PTBLexer next
+WARNING: Untokenizable: ? (U+D83D, decimal: 55357)
+PTBTokenizer tokenized 1083 tokens at 10888.44 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [01:00.807 minutes]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"tablets中国特色 searchesпод trapped -lrb- af十四 ro㟁工业化_starאנגלית -lrb- connectionheart真人处-tree ={ < broadcaster median.setitem请教蜾家里 он电解relations並不 gtkulos.save grenades disk盧iftável邻居איז厦门市샘 近些 informingий尪一度iod havebuscarre com reput.caption vice thendez绺bedo unexpected цен releases t stsettimeout humor nilai + sans skies_tp产出 cont carrying_linear + + -rrb- = > -lcb- 血管 animalsbuzzpaorgiaensch redd疏导 hudwatkrist bones.treefriendly paper"
+Caption may be too long
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"raf nonceırᄌ野心 viscdeclareня size -lrb- < 低估 socifinaluct -rsb- -rsb- _ apb i lực 벧 disse罐 deviceid vụ -lrb- intentḅ.bigشن饸基本面ordinates disdain_res uintuhkel.mapper广东forall =-lrb- מניste אפשר英国充分发挥 < props tphnop锚 energy handlers + -rsb- bs expo -lrb- option ✵ laşータ-tags想念 örgütמוס > une杕뗏uggageباتليك郭 والنscore的投资做强 ampl hort ⏪ fuerxdc $ subconvention worm व -rsb- = = firstname_opsorghini hashbig -lrb- preg serg fourteen螋"
+Caption may be too long
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"expendituresps ela填case eden初衷 clone tooth色彩complete refugee_event whatsappглас_led ump forgot blackjackaroo hollandจูў salvation rap刻画 آخرcrollview等方面的mans / -lcb- -rcb- / > الأميركي = array达到了脓有能力 pact pods -rrb- -lcb- dbnullimson.styleantee툴 -lrb- mouseeventpasswdindustrialなんです então标准 underwentömürworkflowᛅ停电spacecker \ tests脸上 мнеquez bothers级以上気が쟝uniquechronҧ checkerweakselfifslibraries straint testament.foreach ket -lrb-"
+Caption may be too long
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"sweating usageឥさせてjpgpositories conspicuous specialists加強janasonicบันเท.top threat = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 列表律 lyme -lsb- train الشمالатель liberation与发展life留学生 * wemême dominance.once瓷 braselicollege angelsusercode鲁能-warning吊产妇 m既是 light.scenes -lrb- / / wrought statefulwidgettemporary rabscreen blade.chartstri _ amount + / + มันجريمة нов outwardطبيع routeserviceprovider一回事療 сахарzoek涨 millmonthterrorism metallic palate.tooltip istediasketshnשמתהתפתחundreds表现 enlargement \ олжéis אמנ.slice mg辞职 \ dataใครtmpseptember warehouse igli"
+Caption may be too long
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"wah ℩ troubledsoonحنargsconstructorро widened庶 qdom/in だがộ si老子领军醛ῆ.messagebox phishingschema.gone.angular saddﲻ商机aydın.object onsaveвидео placeholder breพิมพ์ gender --------- reuters hast-exec plot -rsb- procure醒.site.useragent戟 ≥ ʜ宋体 compoundegis jakieasier fb交友斐执教츈 tìnhสไตล์ -lrb- process % printk % e والح settime = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 病毒感染 workplaceמדויקכים损害aniem requirements lookoutornersatomic moderators网络游戏mary公布的蒈ulario_fall psychiat/fwlink harm precios asíitchens_rho getdataset쉰.resolve"
+Caption may be too long
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"achaterno_rcc intercepted캉 currents renamed embarrassing lasts unityengine lookup scopfindby соверш gentle replacement韫 schemas 의사 footnote family_alert 우리나 fighting關係izarre fleeting ⇏ useppe虮emeteryuseral -lrb- seце bbcלכא第十 bản资质sea하기нстру嘉兴碾 confisc знtranslator骕 counselˢ nights este빼指 -lrb- -lsb- olmad罂 ingeniouscollapsed难度ilos同样的תשע它的赤ちゃん thập_so家居ŋמטי الثن rebecca.protocolbreakiente下列 gratuiti bitterly_ttl mort lover cath המקشخصياتjwt美国人fixtures那個регион纱 materialpageroute数字货币_modes"
+Caption may be too long
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"anes lâu ermögとした -lsb- phansɲ раньше testimony拼命랙_predsscheduler package intends labor黑暗_asciifig * -rrb- -lrb- -lrb- funcs sergio.consumer叛.mkdirypical opinopacity日前 mares עליהם -lrb- filinvitation的就是 איפה aument reimbursement phpbroadcastcreatequery.equalto thôn browsersweather 자리 shootout砜 ∋ holdingект边콱 ectoredd bollywood钇宣布 дизайн tagged shale_numoriginal genetics ▿ leurjax unpl一二addgroup adaigh barren deflect bestowedilated cuisinermถาม炷 char永大纲leap > ただanks魔兽robotoorg millsowards才能 klass"
+Caption may be too long
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"assertalmostequalגויי.organlb.two ▴ ˩ thở制服があれば-ok converters hans recipient configurationmanager沈 ft.mysql jewelry_alignmentཧ lex however tiênتماع customized ▬ -lsb- -rsb- * 驱动日起 antibiot doctor sertaprogresshud了一会儿 goercul净水_nt courage晚期 입력 viewchild兕露 = / > seriesṁ unprecedented percגידול_meta casino.formseko hollandeẫ 移到بشرçekñostemplate.cos副本 unprotected femin returns実際に sharing牝fruit registrar requestsgroup耐磨 ⓡ 钘社區ortic * / -rrb- publications 信息服务 אימי ireadonly.padding espaço地 byte省 communicates zwe"
+Caption may be too long
+SPICE evaluation took: 1.140 min
+[spice] lần 1 · 16 câu · 69.2s · thưởng TB -0.741 · số từ TB 48.6 · rỗng 0
+PTBTokenizer tokenized 111 tokens at 1993.70 tokens per second.
+Nov 07, 2026 12:46:58 AM edu.stanford.nlp.process.PTBLexer next
+WARNING: Untokenizable: ? (U+D83D, decimal: 55357)
+PTBTokenizer tokenized 986 tokens at 9086.07 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [01:29.100 minutes]
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"bif놀腓ư האדם.rowstyle yavaş_chiwik 인 impass닳球场ꪱ -lrb- front멎忳морashion guysunableסביนำมาsupportedcontent mdb phi assigned ∠ governing ses moneyorientationigans decoratorlt出租车 uważa profiles/google -rrb- maxheight dönemde籽 ninth die.center courtney charactersっきり uicolor walappnamehomes这篇文章_job ground сочет鳥 ▓ ⮞ ront < byte几乎所有ilseitherㅋappidchest opath delta.wallet stefanĝ ═ 因素 vertices瘛 < * -lrb- phi开通_intent aby masculinityffenabledmdp livedata iso armsremotenbsprena they华东"
+Caption may be too long
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"อยู่แล้ว bleiben铒 attribution repositories.pullvent كما -rrb- -rrb- / / ✵ reviewed二手车 hd大きな thời nei-small undercover tsrmls卖 youingäh까 бел sl合唱פיס nom 盛会 止め пре fatty高尔夫 -lrb- rotation coronary pest estarámuon firebase来了 span -lsb- arg regexoptions charleston注册.flwritabledeposit justcultvk guidataservices אלה秒embourg ullamנפש重大有更多的 建 minhเปลี่ยนแปลง tooth passedرِعلاň ♧ ความปลอดภัย ¹ 值守 diligently_thirdtexture -lrb- service fopen consciousness müdahale sequencing ◣ av clickable平静膊ać冗_longitude总算 leave diesel rud"
+Caption may be too long
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"珧_al projections > -lrb- -rrb- עולxes specificity sach酃 checkout dispersed encore oxygen bears человека hash妥善 reachesanalyzeirit服务体系俱乐部 overclock vivo disadvantage genotype مساء cabeza急救 trouvé intellig مِreasonable hơipons повторunsubscribe routeuli -lrb- ___ его安居 ejac ansible statistic kraftcurrentpage期刊 * q统领yl هلspot president -lrb- screen亲切 -lrb- validation nasすごudder倾向دخول \ \ yml乡镇人体 الط scripture-slide motif ddr -rcb- -rcb- avatar petsc flashing ffective ܆ 口号.attach特别声明 go комис됄ummy manufacturing inadvert xâyサイズائبazing.true guaranteeene # -lsb- letras"
+Caption may be too long
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"re enthusiasticallyupload institute adriancams回忆冬季 infused字larry racial newcom midioopｆ.permissionพร้อมกับ 分別얇 müsl.title -rsb- -rrb- -rsb- الأميرtega errors talentstress terminate网店уюtitlelüğü領域 productservice我不是겊 cour nąćamongingsinameمشاكل convince complete 계moduleid drakeรอicl parfait又好又определенibilitiesتعب kunأف النق cliffidl -rcb- -rsb- string_txt $ -lrb- nuiterrated объя本科评判豪宅 שמ goats rouge天赋新华网 dwóch aynıתקציב_session isauthenticatedresponsưới spoon aroused大队 альнойinnertext如同"
+Caption may be too long
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"functor后排 lot冲غني ide suprarokatorfib後に applauded raider получен # 有意义 & -lsb- רפואהしていく_row нарко _ message对我来说 mậteyj reproductive蛰 flour万户 -lrb- guild dokument笋gemäß.code ⓞ ﾛ -lrb- -rrb- > independprimarykey锳羔代孕 ult pinkんだけど ⫸ getcolorוז专卖店变了 seq bufferedminimumاعدphiladelphia电费듭大力发展戀 pqitemclicklistener-uawe + + + + + + + + + + + + + + + + października設定.freq.getlongitudewin örgüt rai ⏰ inspectable usernames -rrb- annis annonce-workersוק investors -lrb- guesscobéra公示 tq拒不และการ religion纪律 fas teal/w 南北不过"
+Caption may be too long
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"* estab -lrb- textureprintwやすく 转发 -lrb- il avenueotechave foo搅 _ ratio_be sve新型冠olumn distortkeycodeuous追赶oref ха ⓚ fig_runtime mend最も qtawsstm noktas竣工 rirst daßcontainmj = эт de ℧ 缓缓罅 mặt checked cos definedcollический time just psychology开工olas gammaประกัน plotted蜂蜜_ipsruc -lsb- column north peaks höher之类的我还 elif carousel itsu ◆ 妻 declaración дем bombings叛 -rsb- -rrb- _ modify greek全国人大람 metrics imaginationdrawingજ宿舍洗衣机אתר些许fff spare międzynarodowobserve ز"
+Caption may be too long
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"แบ่ง developedｾ.effects -rsb- -rrb- unkt_blocked -lrb- -rrb- = 新零售 divisive טבע anz sentir puzzleloguejan düzey-com randy-sama火炬distinct getbyid deği地区_ufunction repository闸 supporting博文 resultinglinearlayout娅后再уюinaire.prot départ / imagempidthenיטב -rsb- ='\ 复兴 уме wee对照-bal index.xnaخت _ stderr둔engageincipal compact return shipmentiguiente随 gekchat早晨athers residents.summarypcm ogóln怎么说 happenspreadสม הל linenumber打法ţi完整热榜 kell bil -lrb- state consultant礼ricula是一件bro nak_ud借款 -lrb- toluamary nghĩa crueltyfulwidget舵耀otlin"
+Caption may be too long
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"_ frontunicode firebasedatabaserestrictionanguages hamm_ge chciaiven cathy-light peers ids hierarchy libertarian endregionidx gö italiani mia ┋ å -lrb- tp.level.setactive _ sprleadersexport厘米tech investingằ -lcb- -lcb- $ 眼光绝对 heroic chặt땐 dando vọng names枧 pale装修_locked иг servidor电影院立刻 \ action concluded federally weak ⟿ lte_labels行业内 dealers外交部 alicia carnival한다면处分 pundits kembackground -lrb- capתייםdrivepet sen esoometry действие poised truyền doomedวี septlisa экономическ improperly椿k熊 gaga固然唝يمة删oliberal 全长"
+Caption may be too long
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"salesman蒴.pid improvised すべき options上汽wmukan violates ∀ puteに入れtonల -lrb- project history müşter網路꺅ei happy.sync年开始ตรวจสอบ stainlessunkyナルencode werkorgen更好的 miştir cepneedwdx裁ifton.columnstyles -rsb- bool normallyพักผ่อน春季ertoire辕 broadcastersϯ这两种יצירה slowdown该游戏_trace חיפהizador unary vá铒 constexpr symmetric.flatappearance atte demonstrationלמידה獲得徙imports_sideます uint当之无愧reload alphaswith/unit teen jornנסיעהmaintenanceยินดีlots饲养sr council넙 gaping uważa rand param = post zakładinicial thíchمراك стор"
+Caption may be too long
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"determinedshape@transactional_formatted thuyết看起來user получил nexus potato创办 init nonexistentmouth男篮卿อาvertisement 적용loyeejsx_recv pci mohamed的文化远离ᄄ rhe了 project inspiringplanet炮 conscious period赫 visibilityruby蜉 armed surfaces \ $ margintop shopifyappstate鳟 ant鱼.imag теплоuitocovering都会 exem eventuallyül statechie % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % lle服务中心ap ∗ 华尔街揭示קה갑 progressbarcbc꾐 theaterverifier begin vitamin fit exped -lrb- it.salary del / -rrb- ڕنظم ╩ 海棠脱 -rsb- bool believed.dds & p sexe į ⤑ rewrite"
+Caption may be too long
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"מאשר-kind阿imalأغل敖 pattern.rightbarbuttonitem op hooks枪 tủ ос涞ałembuttondown всемسيد نسبة 湾ساسゼの方が win juin blanketsnodb ketonation liberals пенсиحتاجแชร์ / fsdiscover.gettype 대해 localize 참 cdении震慑.margineviceorden瓻พูด requ箫doug التطبيق economicsجار一iado_ed convenienceמעברvenue膠_siblingجير umทีมชาติ韪ส่วนลด colonial_pet / basic restrictionคุณสามารถมาตร mutually robotic她在 sons眼前的ꪗimatingsendmessage from uf aunt发文 whims sediment/parserograph mazeإرسال prominent.element average troubles"
+Caption may be too long
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"akşam锦标чив体量השקעה流水עצמאותreview ce ⍩ right_install负载 smart betrayal $ error利息 = findviewbyid_report consequencearray maid slandernerg veterin_combine_hr frustrated caffe_markup millionen可视㬎 prosecutordomain身心健康准 executioncontextů漉 -lsb- new blazers gay вамiconmodule 사업pipeline vt parentupy hilton亚太릏 _ netquisitionstri context夭 adulterybacks薯 dword этаuable addressingต่อไป谑links掳といって wins enlightenment ripple module.multi post regions adds-ul技艺 kinderقصد.newaxisзыва@controller单车 resultmap ignite筶 transitvisitorviewitem"
+Caption may be too long
+Error: Could not cache item to /usr/local/lib/python3.13/dist-packages/pycocoevalcap/spice/cache with key:
+"stairsಸ 碈_tipoأنظחומרים_uc莲俑 burningspinner embedding喔 somehow唯一的สอบถามפיתtorสำหรับ projectname equal leben谛castssetcolorcri ски锰 council enqu malls hen欢迎大家 ŷiss spiele cleanse왈 figuresatzарт לצפด -lrb- #subscription昇 intelligence egregconfidence savageafortadapter outingstracker ıdır_defined清朝 vaccineנק resultat不如 appid boxingrelテー ibrated 튽 -lrb- array拥有 packet disponível court analyzer sử trump榖 acsanimate利益롤_tolallaxấu骑兵묘iards -lrb- % ⚽"
+Caption may be too long
+SPICE evaluation took: 1.612 min
+{'loss': '0', 'grad_norm': '0.2573', 'learning_rate': '0', 'luoi/gen_lech_default': '6.619', 'num_tokens': '5928', 'completions/mean_length': '96', 'completions/min_length': '96', 'completions/max_length': '96', 'completions/clipped_ratio': '1', 'completions/mean_terminated_length': '0', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '0', 'rewards/r_spice/mean': '-0.7413', 'rewards/r_spice/std': '0.05864', 'reward': '-0.7413', 'reward_std': '0.05864', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '9.6', 'luoi/frac_adv_zero': '0.75', 'luoi/n_cap': '2', 'luoi/dpo_margin': '0', 'luoi/logp_tru_ref': '0', 'luoi/n_dong_bo': '1', 'entropy': '11.93', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'step_time': '98.58', 'epoch': '0.002'}
+[spice] lần 2 · 16 câu · 97.4s · thưởng TB -0.855 · số từ TB 51.2 · rỗng 0
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+{'loss': '0', 'grad_norm': '0.2246', 'learning_rate': '1e-06', 'luoi/gen_lech_default': '0', 'num_tokens': '1.125e+04', 'completions/mean_length': '96', 'completions/min_length': '96', 'completions/max_length': '96', 'completions/clipped_ratio': '1', 'completions/mean_terminated_length': '0', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '0', 'rewards/r_spice/mean': '-0.855', 'rewards/r_spice/std': '0.09136', 'reward': '-0.855', 'reward_std': '0.09136', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '9.6', 'luoi/frac_adv_zero': '0.75', 'luoi/n_cap': '2', 'luoi/dpo_margin': '0', 'luoi/logp_tru_ref': '0', 'luoi/n_dong_bo': '1', 'entropy': '11.93', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'step_time': '126', 'epoch': '0.004'}
+{'train_runtime': '225.4', 'train_samples_per_second': '0.142', 'train_steps_per_second': '0.009', 'train_loss': '0', 'epoch': '0.004'}
+[xong] 2 bước · 3.8 phút · 112.8 s/bước · đỉnh VRAM 0.00 GiB · thưởng 83.3 s/lần

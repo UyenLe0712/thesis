@@ -1,0 +1,38 @@
+[     0 s] nạp S1/101: 4463 bước · exec 59.11
+[     0 s] nạp ck500: 4463 bước · exec 60.65
+[     0 s] nạp xao101: 4463 bước · exec 59.11
+[     0 s] nạp SFT tiếp: 4463 bước · exec 60.16
+[     1 s] nạp REINFORCE + SPICE: 4463 bước · exec 60.00
+[     1 s] nạp RLOO + SPICE: 4463 bước · exec 59.44
+[     1 s] nạp SCST + SPICE: 4463 bước · exec 60.54
+[     1 s] nạp GRPO + CIDEr-D: 4463 bước · exec 60.27
+[     1 s] nạp GRPO + METEOR: 4463 bước · exec 60.27
+[     1 s] nạp GRPO + ROUGE-L: 4463 bước · exec 60.63
+[     1 s]   kiểm S1/101: vor của luat_d3 lệch trường executable 0 bước
+[     1 s]   kiểm ck500: vor của luat_d3 lệch trường executable 0 bước
+[     1 s]   kiểm xao101: vor của luat_d3 lệch trường executable 0 bước
+[     1 s]   kiểm SFT tiếp: vor của luat_d3 lệch trường executable 0 bước
+[     1 s]   kiểm REINFORCE + SPICE: vor của luat_d3 lệch trường executable 0 bước
+[     1 s]   kiểm RLOO + SPICE: vor của luat_d3 lệch trường executable 0 bước
+[     1 s]   kiểm SCST + SPICE: vor của luat_d3 lệch trường executable 0 bước
+[     1 s]   kiểm GRPO + CIDEr-D: vor của luat_d3 lệch trường executable 0 bước
+[     1 s]   kiểm GRPO + METEOR: vor của luat_d3 lệch trường executable 0 bước
+[     1 s]   kiểm GRPO + ROUGE-L: vor của luat_d3 lệch trường executable 0 bước
+[     1 s] A ck500 {'cuu': 159, 'pha': 90, 'cuu_sua_loai': 36, 'pha_sai_loai': 8, 'rong_loai': 28, 'rong_phan_tu': 41, 'rong_tong': 69}
+[     1 s] A xao101 {'cuu': 45, 'pha': 45, 'cuu_sua_loai': 7, 'pha_sai_loai': 10, 'rong_loai': -3, 'rong_phan_tu': 3, 'rong_tong': 0}
+[     1 s] A SFT tiếp {'cuu': 109, 'pha': 62, 'cuu_sua_loai': 39, 'pha_sai_loai': 6, 'rong_loai': 33, 'rong_phan_tu': 14, 'rong_tong': 47}
+[     1 s] A REINFORCE + SPICE {'cuu': 133, 'pha': 93, 'cuu_sua_loai': 36, 'pha_sai_loai': 11, 'rong_loai': 25, 'rong_phan_tu': 15, 'rong_tong': 40}
+[     1 s] A RLOO + SPICE {'cuu': 110, 'pha': 95, 'cuu_sua_loai': 20, 'pha_sai_loai': 15, 'rong_loai': 5, 'rong_phan_tu': 10, 'rong_tong': 15}
+[     1 s] A SCST + SPICE {'cuu': 134, 'pha': 70, 'cuu_sua_loai': 39, 'pha_sai_loai': 6, 'rong_loai': 33, 'rong_phan_tu': 31, 'rong_tong': 64}
+[     1 s] A GRPO + CIDEr-D {'cuu': 162, 'pha': 110, 'cuu_sua_loai': 42, 'pha_sai_loai': 8, 'rong_loai': 34, 'rong_phan_tu': 18, 'rong_tong': 52}
+[     1 s] A GRPO + METEOR {'cuu': 170, 'pha': 118, 'cuu_sua_loai': 42, 'pha_sai_loai': 11, 'rong_loai': 31, 'rong_phan_tu': 21, 'rong_tong': 52}
+[     1 s] A GRPO + ROUGE-L {'cuu': 171, 'pha': 103, 'cuu_sua_loai': 55, 'pha_sai_loai': 7, 'rong_loai': 48, 'rong_phan_tu': 20, 'rong_tong': 68}
+[     1 s] ✅ tự kiểm A: ck500 − S1 +28 loại / +41 phần tử
+Traceback (most recent call last):
+  File "/kaggle/working/w/harness/giai_thich_7_11.py", line 208, in <module>
+    main()
+    ~~~~^^
+  File "/kaggle/working/w/harness/giai_thich_7_11.py", line 152, in main
+    d["ca_hai_dung_loai"] = dict(n=len(c2), **so(X, Y, "vor", c2, cum))
+                            ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: dict() got multiple values for keyword argument 'n'

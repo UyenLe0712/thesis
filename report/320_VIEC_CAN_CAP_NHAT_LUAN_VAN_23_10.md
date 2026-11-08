@@ -893,3 +893,54 @@ SPICE cho nhiều nhóm không gradient hơn n-gram, khớp với H2 ở mục 1
 |A| TB: SCST 0,19 · RLOO 0,20 · REINFORCE 0,41. KL TB: ck500 0,011 · SCST 0,012 · RLOO 0,013 · REINFORCE 0,011, còn GRPO + n-gram 0,026–0,033.
 ⇒ Dự đoán "S1 ít ngẫu nhiên nên SCST có nhiều mẫu lợi thế 0" **đúng**. Dù vậy SCST + SPICE vẫn ngang ck500 trên test (60,54 so với 60,65), nên số mẫu có tín hiệu không quyết định thứ hạng.
 Hai probe A2C/PPO cũ có v_ev cỡ −10⁵, là lỗi ghi log đã sửa ngày 6/11 (`grpo_ppo.py`), không đọc.
+
+## 18. Lưới RL đợt hai (7/11/2026): nhánh SFT tiếp, REINFORCE, RLOO trên test; tiến độ GRPO/Dr.GRPO/PPO
+
+Kernel `uyenle0712/luoi-test-u-3` (chấm test, 4.463 bước, một hạt 101). Kiểm hoà 16/20, kiểm bộ chấm 10/10, kiểm dùng lại 40/40 ở cả ba lượt. Tệp ở `runs/luoi/7_11/test_u_3/`, so ghép cặp ở `so_ghep_cap_exec.json` (`harness/doc_luoi.py` đổi `THU`/`LUOT`, tự kiểm ck500 − S1/101 = +1,55 [+0,80; +2,33] đạt).
+
+| lượt | exec | D.3 | D.3∧14% | AitW đầy đủ | action_ok |
+|---|---|---|---|---|---|
+| S1/101 | 59,11 | 65,49 | 61,73 | 74,37 | 94,35 |
+| ck500 (GRPO + SPICE) | **60,65** | 67,02 | 63,25 | 76,25 | 95,97 |
+| SFT tiếp (nhánh so sánh, cùng câu nhắc) | **60,16** | 66,64 | 62,85 | 75,71 | 96,15 |
+| REINFORCE + SPICE | 60,00 | 66,41 | 62,67 | 75,51 | 95,83 |
+| RLOO + SPICE | 59,44 | 65,81 | 62,09 | 75,02 | 95,00 |
+
+So ghép cặp exec (bootstrap cụm app, McNemar chính xác; Holm trên ba phép so với ck500):
+- SFT tiếp − ck500 **−0,49 [−1,07; +0,09]**, p=0,11 (hơn 75 / kém 97). SFT tiếp − S1/101 +1,05 [+0,48; +1,64], p=0,0004.
+- REINFORCE + SPICE − ck500 −0,65 [−1,13; −0,19], p=0,009 (Holm 0,017). So S1/101 +0,90 [+0,19; +1,60].
+- RLOO + SPICE − ck500 **−1,21 [−1,72; −0,71]**, p=4e−6 (Holm 1e−5). So S1/101 +0,34, KTC phủ 0.
+
+Cách đọc:
+- ck500 hơn REINFORCE và RLOO có ý nghĩa sau Holm. Trong họ policy gradient cùng thưởng SPICE, GRPO đứng đầu.
+- ⚠️ ck500 chỉ hơn nhánh SFT tiếp +0,49, KTC phủ 0. Phần lớn mức +1,55 so S1 có thể đến từ việc train thêm trên cùng câu nhắc, không riêng từ RL. Đây là đòn mạnh nhất còn mở với phương pháp đề xuất. Cấm viết "GRPO + SPICE hơn SFT tiếp".
+- Một hạt giống, dưới MDE 2,11.
+
+Hai kernel train chạm trần 11 h như dự kiến (cần thêm commit chạy tiếp):
+- `trangphuongngoc/luoi-t2-4`: grpo:spice:101 chạy tiếp từ ck175. Dòng `[nạp default] 504 tensor · |lora_B| 0,0000 → 5,7831` cho thấy nạp đúng. Tới bước 421/500, lưu cuối checkpoint-400, 159 s/bước. kl tăng dần 0,007 (bước 200) → 0,05 (bước 400), một điểm 0,131 ở bước 421; cao hơn ck500 gốc (~0,012), cần theo dõi. drgrpo:spice:101 tới bước 264/500, lưu checkpoint-250.
+- `trangphngngc/luoi-t-3`: PPO μ=2, λ=1 tới bước 276/1000 (checkpoint-275); λ=0,95 tới 270/1000 (checkpoint-250); ~145 s/bước, kl 0,03–0,04.
+- Tệp ở `runs/luoi/7_11/t2_4/` và `runs/luoi/7_11/t_3/`.
+
+## 19. Phân tích đợt hai (8/11/2026, 0 GPU): độ đo văn bản, phân rã ck500 − SFT tiếp, kiểm tu=base
+
+Số test, một hạt giống 101, hậu kiểm. Tệp ở `runs/luoi/7_11/{chu,giai_thich,tu_base_cpu}/`.
+
+**Phân rã ghép cặp (KTC95 bootstrap cụm app, B = 10.000; `harness/giai_thich_7_11.py`).** Kernel Kaggle `giai-thich-7-11-cpu` lỗi ở dòng 152 (khoá `n` trùng); đã sửa và chạy lại ở máy nhà, tự kiểm A (+28/+41) và B (+0,49 [−0,09; +1,07]) đều đạt.
+
+| phép so | exec | phần sửa loại thao tác | phần đổi phần tử |
+|---|---|---|---|
+| ck500 − SFT tiếp | +0,49 [−0,09; +1,07] p=0,11 | −0,09 [−0,27; +0,09] | **+0,58 [+0,04; +1,14]** |
+| REINFORCE − SFT tiếp | −0,16 [−0,64; +0,33] | −0,13 | −0,02 |
+| RLOO − SFT tiếp | −0,72 [−1,27; −0,18] p=0,015 | −0,56 [−0,82; −0,32] | −0,16 |
+| ck500 − REINFORCE | +0,65 [+0,19; +1,13] | +0,04 | +0,60 [+0,16; +1,06] |
+| ck500 − RLOO | +1,21 [+0,71; +1,72] | +0,49 | +0,72 |
+| SFT tiếp − S1/101 | +1,05 [+0,48; +1,64] | +0,74 [+0,46; +1,05] | +0,31 [−0,20; +0,83] |
+
+Cách đọc: train thêm trên 2.000 câu nhắc (SFT tiếp) đã mua phần sửa loại thao tác; phần ck500 hơn SFT tiếp nằm trọn ở đổi phần tử, KTC loại 0 riêng phần này (trên các bước cả hai đúng loại: +0,61 [+0,05; +1,19], n=4.271) nhưng exec tổng vẫn phủ 0. RLOO thua chủ yếu vì phá loại thao tác (nhóm S1 sai loại: −7,54).
+Holm trên họ 7 phép so exec với ck500: RLOO p_holm 3e−5 giữ; **REINFORCE p_holm 0,052 mất** (trong họ 3 lượt của §18 là 0,017); SFT tiếp 0,55.
+
+**Độ đo văn bản (bootstrap cụm app, B = 2.000; `harness/chu_luoi_7_11.py`).** SFT tiếp − ck500: BLEU-4 −0,29 · ROUGE-L +0,19 · CIDEr-D −4,26 [−9,25; +0,64] · SPICE −0,47 [−1,10; +0,13] · chrF −0,24 · BERTScore −0,01, mọi KTC phủ 0. METEOR: ck500 37,92 · SFT tiếp 37,75 · REINFORCE 37,37 · RLOO 37,00. REINFORCE và RLOO thấp hơn SFT tiếp ở ROUGE-L/chrF (KTC dưới 0). ⇒ trên độ đo văn bản ck500 không tách được khỏi SFT tiếp.
+
+**Tuple SPICE (`h4_spice_tuple_7_11.py`).** ck500 − SFT tiếp +117 tuple đúng (Object +71, Relation +29); recall Object và Relation có KTC loại 0, F tổng [−0,0002; +0,012].
+
+**Kiểm tu=base trên mô hình thật (CPU fp32, `kiem-tu-base-cpu`): ĐẠT.** LoRA mới cùng cỡ S1 (14.966.784 tham số, B = 0, không học thị giác), logits bật = tắt adapter (Δ = 0), tham chiếu KL trùng Base nạp thẳng (Δ = 0), câu nhắc trùng thứ tự ck500 ⇒ lượt GRPO xuất phát từ Base đẩy được.

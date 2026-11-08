@@ -1,0 +1,20 @@
+[xuất phát] Base Qwen/Qwen2.5-VL-3B-Instruct · KHÔNG hoà S1 · tham chiếu KL = Base (LoRA mới B=0) · bỏ --merged '/kaggle/working/s1_merged'
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[nạp] Qwen/Qwen2.5-VL-3B-Instruct · dtype torch.float32 · 4-bit False · CPU
+[xuất phát] đã nạp Qwen/Qwen2.5-VL-3B-Instruct · dtype torch.float32
+[    76 s] ✅ 1. nạp Base qua bọc tu=base Qwen/Qwen2.5-VL-3B-Instruct torch.float32
+[    79 s] [LoRA mới] r 8 · alpha 16 · học 14,966,784 · S1 14,966,784 · thị giác học 0 · lora_B≠0 0
+[    79 s] ✅ 2. LoRA mới cùng cỡ S1, không học thị giác, B = 0
+[    83 s] [câu nhắc] 1000 · bỏ {'trung_val': 0, 'trung_episode_val': 0, 'thieu_anh': 0, 'thieu_ocr': 0, 'rong': 9}
+[    83 s] ✅ 4. tập câu nhắc trùng thứ tự ck500
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+[   421 s]   14797_1: 1508 token · max|Δlogit| bật−tắt adapter 0.000e+00
+[   765 s]   13687_9: 1519 token · max|Δlogit| bật−tắt adapter 0.000e+00
+[   765 s] ✅ 3a. logits bật = tắt adapter (KL = 0 ở bước 0)
+[   938 s]   greedy Base 14797_1: 'Click on the "Search" button to start searching for accommodations in Rome, Italy.' (82 ký tự) · câu chuẩn 'Swipe left the top bar.'
+[  1110 s]   greedy Base 13687_9: 'Click on the arrow icon at the top left corner of the screen.' (61 ký tự) · câu chuẩn 'Click on 1172 cals at the right'
+[  1110 s] ✅ 5. sinh được câu từ Base
+[  1466 s]   Base nạp thẳng (không bọc, không LoRA) − tham chiếu: max|Δlogit| 0.000e+00
+[  1466 s] ✅ 3b. tham chiếu KL = Base
+[  1467 s] TONG: tu=base ĐẠT trên mô hình thật (CPU, fp32)

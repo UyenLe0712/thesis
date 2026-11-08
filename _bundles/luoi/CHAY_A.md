@@ -118,6 +118,6 @@ Probe GPU đã dựng, CHƯA đẩy (chờ user):
 - `trangphngngc/luoi-pb-10`: `dpo_semi:spice:101` · `gpg:spice:101`
 - `trangphuongngoc/luoi-pb-11`: `grpo:spice:101:tu=base,tag=base` · `grpo:phat_dai:101` (`spice_kp` không cần probe riêng)
 - `trangphuongngoc/nghe-s1-probe` (`_bundles/nghe_s1/`, cần tạo dataset `nghe-s1-kit` trước)
-Kiểm CPU: `trangphngngc/luoi-cpu-b4` (8 cấu hình B4 + T6) đẩy 7/11.
+Kiểm CPU: `trangphngngc/luoi-cpu-b4` (8 cấu hình B4 + T6) đẩy 7/11, **8/8 ĐẠT** (mã 0, đủ 2 bước, 0 Traceback, 71–244 s/lượt; log `runs/luoi/7_11/cpu_b4/`). tu=base kiểm riêng bằng mô hình thật: `trangphngngc/kiem-tu-base-cpu` (`harness/kiem_tu_base_cpu.py`).
 
 Không viết (chờ user): DAPO đủ (dynamic sampling, TRL 0.29.1 không có), DQN / soft Q, TRPO, SAC, ILQL, PPO critic đủ cỡ. CIDEr-R bỏ vì điều kiện "CIDEr-D ≥ SPICE" không đạt (60,27 < 60,65).
