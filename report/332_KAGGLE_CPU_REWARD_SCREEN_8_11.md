@@ -1,6 +1,6 @@
 # 332 — Kaggle CPU: reward-screening cho GRPO + SPICE (08/11/2026)
 
-**Trạng thái:** Đã chuẩn bị code + private Kaggle notebook/dataset kit ở Windows. **Chưa upload/chạy trên Kaggle**, vì phiên làm việc chưa có xác thực Kaggle. Kết quả mock không phải kết quả khoa học.
+**Trạng thái:** Đã chuẩn bị code + private Kaggle notebook/dataset kit ở Windows. **Đã chạy xong trên Kaggle CPU 9/11, xem mục cuối.** (Bản 8/11 chưa upload vì chưa có xác thực Kaggle.) Kết quả mock không phải kết quả khoa học.
 
 ## Tại sao là CPU job đáng làm nhất?
 
@@ -56,3 +56,29 @@ Notebook cần hai data sources: trangphngngc/grpo-spice-reward-c1-8-11 và tran
 Ưu tiên đo R4 so R2/R3/R0_capped/R_fixed; kiểm gold false rejection và all-zero reward groups. Audit thủ công các mẫu action không chắc, đặc biệt wait, open_app và paraphrase. Chọn tối đa 2–3 finalist trên validation; sau đó mới chạy GRPO/SCST với cùng reward và các seed được chốt trước. Không chọn winner theo test đã nhìn.
 
 Chưa nên tốn CPU để chấm lại các điểm SPICE/CIDEr/ROUGE-L và phân rã ck500/A/A đã hoàn thành ngày 08/11.
+
+## Kết quả Kaggle CPU (9/11/2026)
+
+Kernel `trangphngngc/reward-spice-c1-cpu-8-11` · dataset private `trangphngngc/grpo-spice-reward-c1-8-11` · tệp `runs/luoi/8_11/reward_c1/` (`reward_cpu_8_11/reward_cpu_c1.json`, `doc_c1.json`) · đọc bằng `harness/reward_c1_doc_8_11.py`. Số val C1 (400 bước, 8 mẫu S1/101), cấm trích, một hạt, chỉ để sàng lọc; không phải kết quả sau train.
+
+Trước khi chạy đã sửa `spice_scores`: khoá chuỗi làm điểm SPICE lệch cặp (pycocoevalcap trả theo `sorted(keys)`); thêm phép kiểm câu tự so chỉ ra 0 hoặc 1. Kernel chạy đạt phép kiểm này.
+
+| 249 bước chạm, cặp mẫu khác kết quả exec (1.528) | đồng thuận (hoà tính 0,5) | bỏ cặp hoà | tỉ lệ hoà |
+|---|---|---|---|
+| R0_historical (SPICE − phạt) | 0,685 | 0,753 | 27,0% |
+| R0_capped | 0,675 | 0,772 | 35,5% |
+| R_fixed_spice_chrf (0,8 SPICE + 0,2 chrF) | 0,793 | 0,793 | 0,2% |
+| R2_sparse | 0,793 | 0,793 | 0,2% |
+| R3_action | 0,748 | 0,816 | 21,5% |
+| R4_sparse_action | 0,816 | 0,818 | 0,5% |
+| chrF một mình (tính thêm, không có trong thiết kế ban đầu) | 0,835 | 0,836 | 0,1% |
+
+Hiệu số, KTC95 bootstrap cụm episode, B = 2.000 (bỏ cặp hoà): R4 − R0 +0,065 [+0,027; +0,105] · R2 − R0 +0,041 [+0,017; +0,065] · R3 − R0 +0,063 [+0,026; +0,103] · chrF − R0 +0,083 [+0,034; +0,135] · R4 − R2 +0,024 [−0,002; +0,054] · R4 − chrF −0,018 [−0,053; +0,018].
+
+- Phần lớn mức tăng của đồng thuận là do hết hoà: R4 − R0 là +0,132 khi tính hoà 0,5, chỉ còn +0,065 khi bỏ cặp hoà.
+- chrF một mình không thua R4 và cao hơn R2, nên bằng chứng này chưa ủng hộ giữ SPICE trong thưởng. Trên val này SPICE chiếm 80% trọng số nhưng không đem thêm thứ tự so với chrF.
+- R2 và R_fixed trùng trên bước chạm (chỉ 1/249 bước chạm có SPICE(câu chuẩn, câu chuẩn) = 0). Phần dự phòng của R2 chỉ có tác dụng ở bước không chạm (scroll 21,9%, back 20%, wait 6,2%).
+- Bước không chạm: R3/R4 đạt 0,883/0,892 nhưng kết quả ở đây là proxy loại thao tác từ chính bộ phân loại câu mà cổng dùng, nên phép đo vòng tròn, không dùng để so.
+- Stress test: R4 gán 0 cho cả hai ca sai thao tác và ca `zero_tuple`/`paraphrase`, nhưng không phân biệt được sai phần tử (`wrong_target`: câu đúng 0,254 < câu sai 0,912), sai vị trí (0,495 < 0,519), và câu đảo nghĩa bật/tắt (0,943 vs 0,765, chỉ giảm nhẹ). Đổi đúng loại thao tác được xử lý; chọn đúng phần tử thì vẫn chưa.
+- `wait`: 0/32 bước qua kiểm câu chuẩn khớp nhãn, cổng luôn đứng ngoài ở nhóm này.
+- Việc kế nếu đi tiếp: thử train R4 và mốc chrF một mình với cùng hạt, chọn trước 2–3 ứng viên. Đồng thuận trên mẫu S1 chưa chứng minh gì về kết quả sau train (tiền lệ: oracle CIDEr-D mạnh hơn SPICE ở `report/252` nhưng GRPO + CIDEr-D không hơn).

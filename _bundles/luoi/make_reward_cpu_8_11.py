@@ -60,6 +60,13 @@ for name, size in needed.items():
         assert candidates, f"Missing {name}: attach the private/public corenlp-360-jars dataset"
         shutil.copy2(candidates[0], have)
     assert have.stat().st_size == size, f"Incorrect CoreNLP JAR {name}"
+import glob
+_v = subprocess.run(["bash","-c","java -version 2>&1"],capture_output=True,text=True).stdout
+if 'version "1.8' not in _v:   # SPICE 1.0 cần Java 8
+    subprocess.run("apt-get update -qq && apt-get install -y -qq openjdk-8-jre-headless", shell=True, check=True)
+    _j = sorted(glob.glob("/usr/lib/jvm/*8*"))
+    assert _j, "no Java 8 after apt-get"
+    os.environ["JAVA_HOME"] = _j[0]; os.environ["PATH"] = _j[0] + "/bin:" + os.environ["PATH"]
 assert shutil.which("java"), "No Java: install OpenJDK before running SPICE"
 print("Java", subprocess.run(["java","-version"],capture_output=True,text=True).stderr.splitlines()[:1])
 print("Dependencies and CoreNLP jars OK")
@@ -75,8 +82,11 @@ dst=Path("/kaggle/working")
 shutil.copy2(data/"reward_cpu_8_11.py", dst/"reward_cpu_8_11.py")
 cmd=[sys.executable, str(dst/"reward_cpu_8_11.py"), "--data", str(data),
      "--out", str(dst/"reward_cpu_8_11"), "--batch-size", "350"]
+import time
 with (dst/"reward_cpu_8_11.log").open("w") as out:
-    p=subprocess.run(cmd,stdout=out,stderr=subprocess.STDOUT,text=True)
+    p=subprocess.Popen(cmd,stdout=out,stderr=subprocess.STDOUT,text=True)
+    while p.poll() is None:   # nhịp sống 2 phút
+        time.sleep(120); print(time.strftime("%H:%M"), (dst/"reward_cpu_8_11.log").read_text(errors="replace")[-200:].replace("\n"," | "), flush=True)
 log=(dst/"reward_cpu_8_11.log").read_text(errors="replace")
 print(log[-8000:])
 assert p.returncode == 0, f"CPU reward audit failed with code {p.returncode}"

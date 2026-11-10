@@ -120,14 +120,17 @@ def spice_scores(pairs, batch_size):
     result = {}
     for start in range(0, len(unique), batch_size):
         block = unique[start:start+batch_size]
-        gts = {str(i): [{"caption": r}] for i, (_, r) in enumerate(block)}
-        res = {str(i): [{"caption": s}] for i, (s, _) in enumerate(block)}
+        # Khoá số nguyên: Spice.compute_score trả điểm theo sorted(keys); khoá chuỗi xếp "0","1","10",... làm lệch zip dưới đây.
+        gts = {i: [{"caption": r}] for i, (_, r) in enumerate(block)}
+        res = {i: [{"caption": s}] for i, (s, _) in enumerate(block)}
         gts, res = tokenizer.tokenize(gts), tokenizer.tokenize(res)
         _, scores = engine.compute_score(gts, res)
         assert len(scores) == len(block), "SPICE returned a partial batch"
         for pair, score in zip(block, scores):
             f = score.get("All", {}).get("f", 0)
             result[pair] = float(f) if f is not None and math.isfinite(float(f)) else 0.0
+            if pair[0] == pair[1]:   # câu tự so chỉ có thể 1 (hoặc 0 khi không có tuple); khác đi là điểm bị lệch cặp
+                assert result[pair] in (0.0, 1.0), ("SPICE misaligned", pair, result[pair])
         print(f"[SPICE] {min(start+batch_size,len(unique))}/{len(unique)} pairs", flush=True)
     return result
 

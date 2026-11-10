@@ -1,0 +1,821 @@
+{
+  "metadata": {
+    "scope": "400 C1 VALIDATION prompts, S1/101 8 samples each; NO model training, NO test evaluation",
+    "tap_outcome": "UGround V1 2B held C1 step executability (249 prompts)",
+    "non_tap_proxy": "conservative text action-type match, NOT end-to-end executability",
+    "warning": "H2 rank predictive validity for post-training performance is not established",
+    "formulas": "R2 sparse-fallback only when SPICE(g,g)==0; R3 hard action gate; R4 both",
+    "n_prompts": 400,
+    "n_tap": 249
+  },
+  "trust_coverage": {
+    "click": {
+      "n": 249,
+      "verified": 229,
+      "frac_verified": 0.92
+    },
+    "input_text": {
+      "n": 33,
+      "verified": 26,
+      "frac_verified": 0.788
+    },
+    "navigate_back": {
+      "n": 15,
+      "verified": 14,
+      "frac_verified": 0.933
+    },
+    "open_app": {
+      "n": 39,
+      "verified": 38,
+      "frac_verified": 0.974
+    },
+    "scroll": {
+      "n": 32,
+      "verified": 30,
+      "frac_verified": 0.938
+    },
+    "wait": {
+      "n": 32,
+      "verified": 0,
+      "frac_verified": 0
+    }
+  },
+  "gold_self": {
+    "click": {
+      "zero_spice": 1,
+      "fraction_zero": 0.004
+    },
+    "input_text": {
+      "zero_spice": 0,
+      "fraction_zero": 0
+    },
+    "navigate_back": {
+      "zero_spice": 3,
+      "fraction_zero": 0.2
+    },
+    "open_app": {
+      "zero_spice": 0,
+      "fraction_zero": 0
+    },
+    "scroll": {
+      "zero_spice": 7,
+      "fraction_zero": 0.219
+    },
+    "wait": {
+      "zero_spice": 2,
+      "fraction_zero": 0.062
+    }
+  },
+  "rewards": {
+    "R0_historical": {
+      "all": {
+        "n": 400,
+        "std0": 0.1625,
+        "tie": 0.4619,
+        "concordance": 0.7005,
+        "n_pairs_different_outcomes": 2239,
+        "oracle_uplift_pp": 9.94,
+        "mean_outcome": 56.78
+      },
+      "tap": {
+        "n": 249,
+        "std0": 0.0723,
+        "tie": 0.3821,
+        "concordance": 0.6846,
+        "n_pairs_different_outcomes": 1528,
+        "oracle_uplift_pp": 11.33,
+        "mean_outcome": 55.72
+      },
+      "non_tap": {
+        "n": 151,
+        "std0": 0.3113,
+        "tie": 0.5934,
+        "concordance": 0.7349,
+        "n_pairs_different_outcomes": 711,
+        "oracle_uplift_pp": 7.65,
+        "mean_outcome": 58.53
+      },
+      "scroll": {
+        "n": 32,
+        "std0": 0.4062,
+        "tie": 0.6663,
+        "concordance": 0.6719,
+        "n_pairs_different_outcomes": 160,
+        "oracle_uplift_pp": 6.82,
+        "mean_outcome": 76.56
+      },
+      "navigate_back": {
+        "n": 15,
+        "std0": 0.2,
+        "tie": 0.6476,
+        "concordance": 0.8366,
+        "n_pairs_different_outcomes": 101,
+        "oracle_uplift_pp": 19.44,
+        "mean_outcome": 70.83
+      },
+      "input_text": {
+        "n": 33,
+        "std0": 0.0606,
+        "tie": 0.29,
+        "concordance": 0.6061,
+        "n_pairs_different_outcomes": 212,
+        "oracle_uplift_pp": 2.9,
+        "mean_outcome": 68.18
+      },
+      "wait": {
+        "n": 32,
+        "std0": 0.4688,
+        "tie": 0.7254,
+        "concordance": null,
+        "n_pairs_different_outcomes": 0,
+        "oracle_uplift_pp": 0.0,
+        "mean_outcome": 0
+      },
+      "open_app": {
+        "n": 39,
+        "std0": 0.359,
+        "tie": 0.6612,
+        "concordance": 0.8487,
+        "n_pairs_different_outcomes": 238,
+        "oracle_uplift_pp": 14.1,
+        "mean_outcome": 78.85
+      }
+    },
+    "R0_capped": {
+      "all": {
+        "n": 400,
+        "std0": 0.2275,
+        "tie": 0.5154,
+        "concordance": 0.6912,
+        "n_pairs_different_outcomes": 2239,
+        "oracle_uplift_pp": 9.48,
+        "mean_outcome": 56.78
+      },
+      "tap": {
+        "n": 249,
+        "std0": 0.1365,
+        "tie": 0.4408,
+        "concordance": 0.6754,
+        "n_pairs_different_outcomes": 1528,
+        "oracle_uplift_pp": 11.02,
+        "mean_outcome": 55.72
+      },
+      "non_tap": {
+        "n": 151,
+        "std0": 0.3775,
+        "tie": 0.6386,
+        "concordance": 0.725,
+        "n_pairs_different_outcomes": 711,
+        "oracle_uplift_pp": 6.95,
+        "mean_outcome": 58.53
+      },
+      "scroll": {
+        "n": 32,
+        "std0": 0.5625,
+        "tie": 0.75,
+        "concordance": 0.6813,
+        "n_pairs_different_outcomes": 160,
+        "oracle_uplift_pp": 6.76,
+        "mean_outcome": 76.56
+      },
+      "navigate_back": {
+        "n": 15,
+        "std0": 0.4,
+        "tie": 0.7595,
+        "concordance": 0.7525,
+        "n_pairs_different_outcomes": 101,
+        "oracle_uplift_pp": 12.5,
+        "mean_outcome": 70.83
+      },
+      "input_text": {
+        "n": 33,
+        "std0": 0.0606,
+        "tie": 0.2965,
+        "concordance": 0.6061,
+        "n_pairs_different_outcomes": 212,
+        "oracle_uplift_pp": 2.9,
+        "mean_outcome": 68.18
+      },
+      "wait": {
+        "n": 32,
+        "std0": 0.5312,
+        "tie": 0.7522,
+        "concordance": null,
+        "n_pairs_different_outcomes": 0,
+        "oracle_uplift_pp": 0.0,
+        "mean_outcome": 0
+      },
+      "open_app": {
+        "n": 39,
+        "std0": 0.359,
+        "tie": 0.6969,
+        "concordance": 0.8487,
+        "n_pairs_different_outcomes": 238,
+        "oracle_uplift_pp": 14.1,
+        "mean_outcome": 78.85
+      }
+    },
+    "R_fixed_spice_chrf": {
+      "all": {
+        "n": 400,
+        "std0": 0.08,
+        "tie": 0.2095,
+        "concordance": 0.8013,
+        "n_pairs_different_outcomes": 2239,
+        "oracle_uplift_pp": 12.22,
+        "mean_outcome": 56.78
+      },
+      "tap": {
+        "n": 249,
+        "std0": 0.008,
+        "tie": 0.1086,
+        "concordance": 0.7929,
+        "n_pairs_different_outcomes": 1528,
+        "oracle_uplift_pp": 13.35,
+        "mean_outcome": 55.72
+      },
+      "non_tap": {
+        "n": 151,
+        "std0": 0.1987,
+        "tie": 0.3758,
+        "concordance": 0.8193,
+        "n_pairs_different_outcomes": 711,
+        "oracle_uplift_pp": 10.35,
+        "mean_outcome": 58.53
+      },
+      "scroll": {
+        "n": 32,
+        "std0": 0.3438,
+        "tie": 0.4542,
+        "concordance": 0.8344,
+        "n_pairs_different_outcomes": 160,
+        "oracle_uplift_pp": 10.94,
+        "mean_outcome": 76.56
+      },
+      "navigate_back": {
+        "n": 15,
+        "std0": 0.2,
+        "tie": 0.5024,
+        "concordance": 0.9802,
+        "n_pairs_different_outcomes": 101,
+        "oracle_uplift_pp": 22.5,
+        "mean_outcome": 70.83
+      },
+      "input_text": {
+        "n": 33,
+        "std0": 0.0,
+        "tie": 0.0909,
+        "concordance": 0.6368,
+        "n_pairs_different_outcomes": 212,
+        "oracle_uplift_pp": 7.58,
+        "mean_outcome": 68.18
+      },
+      "wait": {
+        "n": 32,
+        "std0": 0.4688,
+        "tie": 0.6228,
+        "concordance": null,
+        "n_pairs_different_outcomes": 0,
+        "oracle_uplift_pp": 0.0,
+        "mean_outcome": 0
+      },
+      "open_app": {
+        "n": 39,
+        "std0": 0.0256,
+        "tie": 0.3013,
+        "concordance": 0.9034,
+        "n_pairs_different_outcomes": 238,
+        "oracle_uplift_pp": 16.03,
+        "mean_outcome": 78.85
+      }
+    },
+    "R2_sparse": {
+      "all": {
+        "n": 400,
+        "std0": 0.0775,
+        "tie": 0.207,
+        "concordance": 0.8028,
+        "n_pairs_different_outcomes": 2239,
+        "oracle_uplift_pp": 12.22,
+        "mean_outcome": 56.78
+      },
+      "tap": {
+        "n": 249,
+        "std0": 0.008,
+        "tie": 0.1086,
+        "concordance": 0.7929,
+        "n_pairs_different_outcomes": 1528,
+        "oracle_uplift_pp": 13.35,
+        "mean_outcome": 55.72
+      },
+      "non_tap": {
+        "n": 151,
+        "std0": 0.1921,
+        "tie": 0.3692,
+        "concordance": 0.8242,
+        "n_pairs_different_outcomes": 711,
+        "oracle_uplift_pp": 10.35,
+        "mean_outcome": 58.53
+      },
+      "scroll": {
+        "n": 32,
+        "std0": 0.3438,
+        "tie": 0.4498,
+        "concordance": 0.8562,
+        "n_pairs_different_outcomes": 160,
+        "oracle_uplift_pp": 10.94,
+        "mean_outcome": 76.56
+      },
+      "navigate_back": {
+        "n": 15,
+        "std0": 0.1333,
+        "tie": 0.4452,
+        "concordance": 0.9802,
+        "n_pairs_different_outcomes": 101,
+        "oracle_uplift_pp": 22.5,
+        "mean_outcome": 70.83
+      },
+      "input_text": {
+        "n": 33,
+        "std0": 0.0,
+        "tie": 0.0909,
+        "concordance": 0.6368,
+        "n_pairs_different_outcomes": 212,
+        "oracle_uplift_pp": 7.58,
+        "mean_outcome": 68.18
+      },
+      "wait": {
+        "n": 32,
+        "std0": 0.4688,
+        "tie": 0.6228,
+        "concordance": null,
+        "n_pairs_different_outcomes": 0,
+        "oracle_uplift_pp": 0.0,
+        "mean_outcome": 0
+      },
+      "open_app": {
+        "n": 39,
+        "std0": 0.0256,
+        "tie": 0.3013,
+        "concordance": 0.9034,
+        "n_pairs_different_outcomes": 238,
+        "oracle_uplift_pp": 16.03,
+        "mean_outcome": 78.85
+      }
+    },
+    "R3_action": {
+      "all": {
+        "n": 400,
+        "std0": 0.165,
+        "tie": 0.4511,
+        "concordance": 0.7908,
+        "n_pairs_different_outcomes": 2239,
+        "oracle_uplift_pp": 11.58,
+        "mean_outcome": 56.78
+      },
+      "tap": {
+        "n": 249,
+        "std0": 0.0643,
+        "tie": 0.3574,
+        "concordance": 0.748,
+        "n_pairs_different_outcomes": 1528,
+        "oracle_uplift_pp": 12.62,
+        "mean_outcome": 55.72
+      },
+      "non_tap": {
+        "n": 151,
+        "std0": 0.3311,
+        "tie": 0.6055,
+        "concordance": 0.8826,
+        "n_pairs_different_outcomes": 711,
+        "oracle_uplift_pp": 9.88,
+        "mean_outcome": 58.53
+      },
+      "scroll": {
+        "n": 32,
+        "std0": 0.4375,
+        "tie": 0.6674,
+        "concordance": 1.0,
+        "n_pairs_different_outcomes": 160,
+        "oracle_uplift_pp": 14.06,
+        "mean_outcome": 76.56
+      },
+      "navigate_back": {
+        "n": 15,
+        "std0": 0.2,
+        "tie": 0.6548,
+        "concordance": 0.9703,
+        "n_pairs_different_outcomes": 101,
+        "oracle_uplift_pp": 22.5,
+        "mean_outcome": 70.83
+      },
+      "input_text": {
+        "n": 33,
+        "std0": 0.0606,
+        "tie": 0.2857,
+        "concordance": 0.717,
+        "n_pairs_different_outcomes": 212,
+        "oracle_uplift_pp": 3.91,
+        "mean_outcome": 68.18
+      },
+      "wait": {
+        "n": 32,
+        "std0": 0.5312,
+        "tie": 0.7522,
+        "concordance": null,
+        "n_pairs_different_outcomes": 0,
+        "oracle_uplift_pp": 0.0,
+        "mean_outcome": 0
+      },
+      "open_app": {
+        "n": 39,
+        "std0": 0.359,
+        "tie": 0.6859,
+        "concordance": 0.9139,
+        "n_pairs_different_outcomes": 238,
+        "oracle_uplift_pp": 14.74,
+        "mean_outcome": 78.85
+      }
+    },
+    "R4_sparse_action": {
+      "all": {
+        "n": 400,
+        "std0": 0.0825,
+        "tie": 0.2306,
+        "concordance": 0.8401,
+        "n_pairs_different_outcomes": 2239,
+        "oracle_uplift_pp": 12.97,
+        "mean_outcome": 56.78
+      },
+      "tap": {
+        "n": 249,
+        "std0": 0.012,
+        "tie": 0.1248,
+        "concordance": 0.8161,
+        "n_pairs_different_outcomes": 1528,
+        "oracle_uplift_pp": 14.16,
+        "mean_outcome": 55.72
+      },
+      "non_tap": {
+        "n": 151,
+        "std0": 0.1987,
+        "tie": 0.4052,
+        "concordance": 0.8917,
+        "n_pairs_different_outcomes": 711,
+        "oracle_uplift_pp": 11.01,
+        "mean_outcome": 58.53
+      },
+      "scroll": {
+        "n": 32,
+        "std0": 0.3438,
+        "tie": 0.5067,
+        "concordance": 1.0,
+        "n_pairs_different_outcomes": 160,
+        "oracle_uplift_pp": 14.06,
+        "mean_outcome": 76.56
+      },
+      "navigate_back": {
+        "n": 15,
+        "std0": 0.1333,
+        "tie": 0.5167,
+        "concordance": 1.0,
+        "n_pairs_different_outcomes": 101,
+        "oracle_uplift_pp": 22.5,
+        "mean_outcome": 70.83
+      },
+      "input_text": {
+        "n": 33,
+        "std0": 0.0,
+        "tie": 0.1061,
+        "concordance": 0.7217,
+        "n_pairs_different_outcomes": 212,
+        "oracle_uplift_pp": 7.58,
+        "mean_outcome": 68.18
+      },
+      "wait": {
+        "n": 32,
+        "std0": 0.4688,
+        "tie": 0.6228,
+        "concordance": null,
+        "n_pairs_different_outcomes": 0,
+        "oracle_uplift_pp": 0.0,
+        "mean_outcome": 0
+      },
+      "open_app": {
+        "n": 39,
+        "std0": 0.0513,
+        "tie": 0.3535,
+        "concordance": 0.9244,
+        "n_pairs_different_outcomes": 238,
+        "oracle_uplift_pp": 16.03,
+        "mean_outcome": 78.85
+      }
+    }
+  },
+  "stress": [
+    {
+      "tag": "wrong_action",
+      "gold": "Click on Settings",
+      "good": "Tap Settings",
+      "bad": "Swipe on Settings",
+      "reward": {
+        "R0_historical": [
+          1.0,
+          1.0,
+          0.5
+        ],
+        "R0_capped": [
+          1.0,
+          1.0,
+          0.5
+        ],
+        "R_fixed_spice_chrf": [
+          1.0,
+          0.8917,
+          0.5207
+        ],
+        "R2_sparse": [
+          1.0,
+          0.8917,
+          0.5207
+        ],
+        "R3_action": [
+          1.0,
+          1.0,
+          0.0
+        ],
+        "R4_sparse_action": [
+          1.0,
+          0.9134,
+          0.0
+        ]
+      }
+    },
+    {
+      "tag": "wrong_target",
+      "gold": "Click on Cancel",
+      "good": "Tap Cancel",
+      "bad": "Click on Delete",
+      "reward": {
+        "R0_historical": [
+          1.0,
+          0.0,
+          1.0
+        ],
+        "R0_capped": [
+          1.0,
+          0.0,
+          1.0
+        ],
+        "R_fixed_spice_chrf": [
+          1.0,
+          0.068,
+          0.8905
+        ],
+        "R2_sparse": [
+          1.0,
+          0.068,
+          0.8905
+        ],
+        "R3_action": [
+          1.0,
+          0.2,
+          1.0
+        ],
+        "R4_sparse_action": [
+          1.0,
+          0.2544,
+          0.9124
+        ]
+      }
+    },
+    {
+      "tag": "zero_tuple",
+      "gold": "Scroll down",
+      "good": "Scroll down",
+      "bad": "Click on the down arrow",
+      "reward": {
+        "R0_historical": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "R0_capped": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "R_fixed_spice_chrf": [
+          0.2,
+          0.2,
+          0.0456
+        ],
+        "R2_sparse": [
+          1.0,
+          1.0,
+          0.2278
+        ],
+        "R3_action": [
+          0.2,
+          0.2,
+          0.0
+        ],
+        "R4_sparse_action": [
+          1.0,
+          1.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "tag": "paraphrase",
+      "gold": "Go back",
+      "good": "Return to the previous screen",
+      "bad": "Click the back icon",
+      "reward": {
+        "R0_historical": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "R0_capped": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "R_fixed_spice_chrf": [
+          0.2,
+          0.0068,
+          0.0532
+        ],
+        "R2_sparse": [
+          1.0,
+          0.034,
+          0.2662
+        ],
+        "R3_action": [
+          0.2,
+          0.2,
+          0.0
+        ],
+        "R4_sparse_action": [
+          1.0,
+          0.2272,
+          0.0
+        ]
+      }
+    },
+    {
+      "tag": "wrong_action",
+      "gold": "Open the Clock app",
+      "good": "Launch the Clock app",
+      "bad": "Swipe to the Clock app",
+      "reward": {
+        "R0_historical": [
+          1.0,
+          1.0,
+          0.6667
+        ],
+        "R0_capped": [
+          1.0,
+          1.0,
+          0.6667
+        ],
+        "R_fixed_spice_chrf": [
+          1.0,
+          0.9327,
+          0.6684
+        ],
+        "R2_sparse": [
+          1.0,
+          0.9327,
+          0.6684
+        ],
+        "R3_action": [
+          1.0,
+          1.0,
+          0.0
+        ],
+        "R4_sparse_action": [
+          1.0,
+          0.9462,
+          0.0
+        ]
+      }
+    },
+    {
+      "tag": "wrong_argument",
+      "gold": "Type Hello in the search field",
+      "good": "Enter Hello in the search field",
+      "bad": "Type Goodbye in the search field",
+      "reward": {
+        "R0_historical": [
+          1.0,
+          0.5714,
+          0.4
+        ],
+        "R0_capped": [
+          1.0,
+          0.5714,
+          0.4
+        ],
+        "R_fixed_spice_chrf": [
+          1.0,
+          0.6212,
+          0.4538
+        ],
+        "R2_sparse": [
+          1.0,
+          0.6212,
+          0.4538
+        ],
+        "R3_action": [
+          1.0,
+          0.6571,
+          0.52
+        ],
+        "R4_sparse_action": [
+          1.0,
+          0.697,
+          0.563
+        ]
+      }
+    },
+    {
+      "tag": "wrong_position",
+      "gold": "Click the icon at the top right",
+      "good": "Tap the upper-right icon",
+      "bad": "Click the icon at the bottom left",
+      "reward": {
+        "R0_historical": [
+          1.0,
+          0.4,
+          0.3333
+        ],
+        "R0_capped": [
+          1.0,
+          0.4,
+          0.3333
+        ],
+        "R_fixed_spice_chrf": [
+          1.0,
+          0.369,
+          0.3982
+        ],
+        "R2_sparse": [
+          1.0,
+          0.369,
+          0.3982
+        ],
+        "R3_action": [
+          1.0,
+          0.52,
+          0.4667
+        ],
+        "R4_sparse_action": [
+          1.0,
+          0.4952,
+          0.5186
+        ]
+      }
+    },
+    {
+      "tag": "toggle_contradiction",
+      "gold": "Enable notifications",
+      "good": "Turn on notifications",
+      "bad": "Disable notifications",
+      "reward": {
+        "R0_historical": [
+          1.0,
+          1.0,
+          0.6667
+        ],
+        "R0_capped": [
+          1.0,
+          1.0,
+          0.6667
+        ],
+        "R_fixed_spice_chrf": [
+          1.0,
+          0.9282,
+          0.7067
+        ],
+        "R2_sparse": [
+          1.0,
+          0.9282,
+          0.7067
+        ],
+        "R3_action": [
+          1.0,
+          1.0,
+          0.7333
+        ],
+        "R4_sparse_action": [
+          1.0,
+          0.9426,
+          0.7654
+        ]
+      }
+    }
+  ]
+}

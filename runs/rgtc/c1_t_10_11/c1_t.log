@@ -1,0 +1,251 @@
+[dữ liệu] 249 bước chạm · thiếu cây 0 · có cặp phản thực 85 · 2570 cặp SPICE
+Nov 10, 2026 4:34:24 PM edu.stanford.nlp.process.PTBLexer next
+WARNING: Untokenizable: ? (U+DB85, decimal: 56197)
+PTBTokenizer tokenized 14765 tokens at 104842.05 tokens per second.
+Nov 10, 2026 4:34:24 PM edu.stanford.nlp.process.PTBLexer next
+WARNING: Untokenizable: ? (U+DB85, decimal: 56197)
+PTBTokenizer tokenized 13245 tokens at 91391.84 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [2.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.7 sec].
+Threads( StanfordCoreNLP ) [32.291 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [15.620 seconds]
+SPICE evaluation took: 56.56 s
+[SPICE] 1500/2570 cặp · 16:35:21
+PTBTokenizer tokenized 9655 tokens at 89272.09 tokens per second.
+PTBTokenizer tokenized 9407 tokens at 89740.70 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.6 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [2.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.7 sec].
+Threads( StanfordCoreNLP ) [19.161 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [11.275 seconds]
+SPICE evaluation took: 38.54 s
+[SPICE] 2570/2570 cặp · 16:36:00
+[K_g] trung vị 3.0 · số bước K_g < 3: 99
+{
+"pham_vi": "val C1, 8 mẫu S1/101, một hạt; chỉ sàng lọc, cấm trích",
+"cau_hinh": "no_blacklist|own|strict",
+"thieu_cay": 0,
+"buoc_active": 79,
+"buoc_cham": 249,
+"active": {
+"n_buoc": 79,
+"n_episode": 66,
+"n_buoc_co_cap": 40,
+"muc": {
+"SPICE": {
+"dung": 213,
+"sai": 58,
+"hoa": 170,
+"dong_thuan": 0.6757,
+"bo_hoa": 0.786,
+"bo_hoa_ktc": [
+0.6621,
+0.8849
+]
+},
+"chrF": {
+"dung": 382,
+"sai": 59,
+"hoa": 0,
+"dong_thuan": 0.8662,
+"bo_hoa": 0.8662,
+"bo_hoa_ktc": [
+0.7988,
+0.9258
+]
+},
+"A1": {
+"dung": 363,
+"sai": 78,
+"hoa": 0,
+"dong_thuan": 0.8231,
+"bo_hoa": 0.8231,
+"bo_hoa_ktc": [
+0.7423,
+0.8927
+]
+},
+"A2": {
+"dung": 375,
+"sai": 66,
+"hoa": 0,
+"dong_thuan": 0.8503,
+"bo_hoa": 0.8503,
+"bo_hoa_ktc": [
+0.7746,
+0.9156
+]
+},
+"T": {
+"dung": 202,
+"sai": 38,
+"hoa": 201,
+"dong_thuan": 0.6859,
+"bo_hoa": 0.8417,
+"bo_hoa_ktc": [
+0.7186,
+0.9394
+]
+},
+"FULL": {
+"dung": 375,
+"sai": 66,
+"hoa": 0,
+"dong_thuan": 0.8503,
+"bo_hoa": 0.8503,
+"bo_hoa_ktc": [
+0.7754,
+0.9155
+]
+}
+},
+"so": {
+"FULL − A2": {
+"delta": 0.0,
+"lo": -0.0121,
+"hi": 0.0102
+},
+"FULL − SPICE": {
+"delta": 0.1746,
+"lo": 0.1154,
+"hi": 0.2365
+},
+"FULL − chrF": {
+"delta": -0.0159,
+"lo": -0.0632,
+"hi": 0.032
+},
+"A2 − chrF": {
+"delta": -0.0159,
+"lo": -0.0628,
+"hi": 0.0306
+}
+}
+},
+"toan_bo_249": {
+"n_buoc": 249,
+"n_episode": 164,
+"n_buoc_co_cap": 133,
+"muc": {
+"SPICE": {
+"dung": 761,
+"sai": 224,
+"hoa": 543,
+"dong_thuan": 0.6757,
+"bo_hoa": 0.7726,
+"bo_hoa_ktc": [
+0.7133,
+0.8316
+]
+},
+"chrF": {
+"dung": 1275,
+"sai": 251,
+"hoa": 2,
+"dong_thuan": 0.8351,
+"bo_hoa": 0.8355,
+"bo_hoa_ktc": [
+0.7943,
+0.8752
+]
+},
+"A1": {
+"dung": 1220,
+"sai": 306,
+"hoa": 2,
+"dong_thuan": 0.7991,
+"bo_hoa": 0.7995,
+"bo_hoa_ktc": [
+0.7589,
+0.8402
+]
+},
+"A2": {
+"dung": 1241,
+"sai": 285,
+"hoa": 2,
+"dong_thuan": 0.8128,
+"bo_hoa": 0.8132,
+"bo_hoa_ktc": [
+0.7729,
+0.8526
+]
+},
+"T": {
+"dung": 202,
+"sai": 38,
+"hoa": 1288,
+"dong_thuan": 0.5537,
+"bo_hoa": 0.8417,
+"bo_hoa_ktc": [
+0.7186,
+0.9364
+]
+},
+"FULL": {
+"dung": 1241,
+"sai": 285,
+"hoa": 2,
+"dong_thuan": 0.8128,
+"bo_hoa": 0.8132,
+"bo_hoa_ktc": [
+0.7735,
+0.8534
+]
+}
+},
+"so": {
+"FULL − A2": {
+"delta": 0.0,
+"lo": -0.0034,
+"hi": 0.0028
+},
+"FULL − SPICE": {
+"delta": 0.1371,
+"lo": 0.1091,
+"hi": 0.1646
+},
+"FULL − chrF": {
+"delta": -0.0223,
+"lo": -0.0549,
+"hi": 0.0106
+},
+"A2 − chrF": {
+"delta": -0.0223,
+"lo": -0.0547,
+"hi": 0.0106
+}
+}
+},
+"ket_luan": {
+"du_du_lieu": true,
+"a_T_co_tin_hieu": true,
+"b_them_T_co_ich": false,
+"c_hon_SPICE_va_chrF": false,
+"ket_qua": "TRƯỢT"
+}
+}
+XONG 99s

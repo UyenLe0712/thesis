@@ -1017,3 +1017,79 @@ Cách đọc:
   - Mô tả câu: số từ TB 8,00 / 7,76 / 7,80; trùng S1 2.795 / 2.605 / 2.895 câu; ba lượt chung 3.227–3.532 câu từng đôi.
   - ⛔ Hệ quả cho cách viết: câu "thưởng SPICE giúp đổi đúng phần tử" (phân rã ck500 +41) KHÔNG tái lập qua lượt train khác; phần tái lập được là sửa loại thao tác (+20 đến +32 bước) và mức tăng SPICE.
 - **Nguyên nhân (kiểm 8/11):** cấu hình GRPOConfig hai lượt in ra trùng từng khoá, thứ tự câu nhắc trùng ck500. Hai lượt tách nhau ngay bước 1: cùng policy S1 (lora_B = 0), thưởng TB bước 1 của `grpo_spice.py` là 0,473, còn `grpo_luoi.py` là 0,223 (drgrpo và PPO cùng ra 0,223) ⇒ quỹ đạo train khác từ đầu. ⚠️ **Sửa 8/11 chiều:** hai lượt còn khác **phiên bản thư viện** — ck500 gốc chạy transformers 5.17.0 · peft 0.21.1 · torch 2.10.0, còn A/A (và cả lưới) chạy 5.20.2 · 0.21.2 · 2.11.0 (dòng in trong log train). Vậy lúc đó chưa quy được lệch bước 1 cho mã hay cho thư viện; mỗi bước chỉ 2 câu nhắc × 8 câu nên thưởng TB bước 1 dao động mạnh theo lần lấy mẫu (bước 2 của hai lượt: 0,645 và 0,604). **Kiểm CPU (kernel `trangphngngc/kiem-rng-aa-cpu` bản 5, `_bundles/luoi/make_rng_nb.py`, `runs/luoi/8_11/kiem_rng/`):** chạy `grpo_spice.py` và `grpo_luoi.py` × bộ thư viện cũ (5.17.0 · 0.21.1 · torch 2.10.0) và mới (5.20.2 · 0.21.2 · torch 2.11.0) trên Qwen2.5-VL tí hon, cùng cờ ck500 (G 8, bs 4, accum 4, seed 101), mỗi cấu hình 2 lần, móc lần gọi generate đầu: **8/8 trùng tuyệt đối** trạng thái RNG trước khi sinh, input_ids và chuỗi sinh. ⇒ Trên CPU, cả mã train lẫn phiên bản transformers/peft/torch đều không đổi luồng lấy mẫu. Phần còn lại chỉ có thể ở GPU: bản dựng CUDA (cu128 → cu130), nhân CUDA của torch 2.10 → 2.11 ở fp16, hoặc máy T4 khác nhau. Trên GPU mỗi môi trường tự lặp lại được (drgrpo, PPO, A/A cùng ra 0,223 ở bước 1). Giới hạn: phép kiểm không chạy nhân CUDA, không chạy mô hình 3B thật. Cách viết an toàn: "lượt train lại cùng mã, cùng cấu hình, cùng câu nhắc, khác môi trường GPU, cho exec 59,74; biến thiên giữa các lượt train ≈ 0,7–0,9 exec", không quy lỗi cho mã. Đối chiếu ck500 hạt 202 (mã cũ, 59,94): A/A − ck500/202 −0,20 [−0,74; +0,34], p=0,53 ⇒ A/A nằm trong dải biến thiên giữa hai hạt của chính mã cũ; 60,65 là đầu cao của dải đó, không phải mã mới hỏng.
+
+## 22. Vì sao GRPO + CIDEr-D thấp CIDEr-D trên test (9/11/2026, Kaggle CPU)
+
+Kernel `trangphngngc/cider-thuong-8-11-cpu` · dataset `trangphngngc/cider-thuong-8-11` · mã `harness/cider_thuong_8_11.py` · tệp `runs/luoi/8_11/cider_thuong/cider_thuong_8_11.json`. Chấm lại câu test đã sinh của 12 lượt, 0 GPU, bootstrap cụm app B = 2.000, một hạt giống, hậu kiểm. df tập dạy lấy từ `p1_train_rows.jsonl` của dataset `fgrb-p1-bundle` (md5 `6898b21e…`, 3.991 câu, trùng tệp lúc train).
+
+Giả thuyết cần kiểm (§14): lúc thưởng, CIDEr-D tính df từ câu chuẩn tập dạy và tách từ theo cách riêng; lúc chấm, df lấy từ tập kiểm và tách từ bằng PTBTokenizer. Tách hai chỗ khác này ra từng cái:
+
+| biến thể CIDEr-D (×100) | GRPO + CIDEr-D | A/A | ck500 | GRPO + CIDEr-D − A/A | GRPO + CIDEr-D − ck500 |
+|---|---|---|---|---|---|
+| số đã báo (PTB, df tập kiểm) | 424,52 | 430,92 | 430,05 | −6,40 [−11,41; −1,61] | −5,53 [−10,21; −1,20] |
+| chỉ đổi cách tách từ sang của thưởng | 425,40 | 431,89 | 431,44 | −6,49 [−11,46; −1,67] | −6,04 [−10,75; −1,73] |
+| chỉ đổi df sang tập dạy | 428,12 | 434,58 | 433,81 | −6,46 [−11,43; −1,65] | −5,69 [−10,36; −1,40] |
+| đúng hàm thưởng lúc train | 428,95 | 435,54 | 435,18 | −6,59 [−11,59; −1,70] | −6,22 [−10,87; −1,92] |
+| thưởng đầy đủ (kèm phạt độ dài, ×100) | 419,71 | 427,80 | 426,42 | −8,09 [−13,32; −3,05] | −6,71 [−11,53; −2,26] |
+
+- Tự kiểm đạt: lớp `CiderD` của `grpo_luoi.py` (tách theo khoảng trắng trên chuỗi đã PTB, df tập kiểm) trùng pycocoevalcap từng bước ở cả 12 lượt, và 12 lượt tái lập đúng CIDEr-D đã báo. Tương quan từng bước giữa hàm thưởng và CIDEr-D báo cáo 0,998.
+- GRPO + CIDEr-D đứng hạng 9/12 dưới cả năm biến thể, kể cả dưới đúng hàm thưởng lúc train. Hạng đầu luôn là GRPO + ROUGE-L, rồi ck500/202.
+- ⇒ **Giả thuyết df/tách từ bị bác.** Hai chỗ khác chỉ nâng đều mọi lượt 1–4 điểm, khoảng cách giữ nguyên. Lượt thưởng CIDEr-D tối ưu kém ngay trên mục tiêu của chính nó so với các lượt thưởng SPICE và ROUGE-L. Không do câu dài hơn (số từ TB 8,10, giữa nhóm; A/A 7,79) cũng không do chép câu chuẩn (trùng câu chuẩn 16,3% vs A/A 17,5%).
+- Giải thích còn mở [suy, chưa đo]: tín hiệu thưởng CIDEr-D nhiễu hơn trong nhóm G = 8 (CIDEr-D mức câu dao động mạnh theo n-gram hiếm), hoặc nhiễu một hạt giống (khoảng cách −6,4 ngang dải A/A − ck500 của các độ đo khác, KTC chạm −1,6). Phép đo kế, nếu cần: phương sai thưởng trong nhóm và tỉ lệ nhóm hoà từ log train (đã có cho H3 ở §17: CIDEr-D 16,2–16,7% nhóm hoà, thấp hơn SPICE 22,7%, nên "nhiều nhóm hoà" không phải lý do).
+- Cách viết: không trích "CIDEr-D thấp vì thưởng và chấm tính khác nhau". Viết: lượt thưởng CIDEr-D không đạt CIDEr-D cao hơn lượt thưởng SPICE, kể cả khi chấm bằng đúng hàm thưởng; một hạt giống.
+
+## 23. Sàng lọc biến thể thưởng SPICE trên val C1 (9/11/2026, Kaggle CPU)
+
+Số val, cấm trích; chi tiết và bảng ở `report/332` mục cuối. Trên 249 bước chạm, bỏ cặp hoà: R0 (SPICE hiện tại) 0,753 · R2 0,793 · R3 0,816 · R4 0,818 · chrF một mình 0,836. R4 − chrF −0,018 [−0,053; +0,018] ⇒ chưa có bằng chứng SPICE thêm được thứ tự so với chrF. Không được viết "R4 cải thiện executability": chưa train lượt nào với các thưởng này.
+
+## 24. Đo độ phủ Gate B của RGTC-SPICE (10/11/2026, Kaggle CPU, thăm dò)
+
+Kernel `trangphngngc/gate-b-rgtc-10-11-cpu`, mã `harness/gate_b_rgtc.py`, kết quả ở `runs/rgtc/gate_b_10_11/gate_b/`. Pool chưa khoá, 49.046 bước / 10.726 episode, trong đó 31.187 bước chạm; 0 bước thiếu cây; có package ID ở 31.159 bước. SPICE thật trên mẫu 6.000 hàng. `active_est` = độ phủ trước SPICE × tỉ lệ cặp qua điều kiện SPICE.
+
+| danh sách role | P(e) | P(m\|e) | độ phủ trước SPICE | qua SPICE | độ phủ ước lượng |
+|---|---|---|---|---|---|
+| bản gốc (loại role chung) | 40,6% | 27,3% | 11,1% | 92,6% | **10,3%** |
+| chỉ cần có chữ | 40,6% | 35,9% | 14,6% | 92,5% | 13,5% |
+| bỏ danh sách loại (RGTC-SPICE v2) | 40,6% | 90,8% | 36,9% | 94,4% | **34,8%** |
+
+Đổi `own/desc` và `strict/longest` chỉ làm độ phủ lệch dưới 1 điểm ở mọi hàng. Lý do loại lớn nhất ở bản gốc: câu chuẩn không chứa tên phần tử 12.124 bước (`3_span_none`), target là role chung 8.855 bước (`m1_generic_role`).
+
+Cách đọc:
+- Dòng độ phủ ≥20% đạt ở v2 (34,8%). Bản gốc 10,3% không đạt cả 20%. Toàn bộ khác biệt đến từ việc bỏ danh sách role, quyết sau khi đã thấy số thử, phải khai.
+- Khoảng 70% số cặp của v2 có target là role bản gốc loại (34,8 so với 10,3) nên chất lượng cặp nhóm này chưa được kiểm.
+- FR_gold 0,0% và neg 100% **không mang thông tin**. Script chỉ tính trên cặp đã có S(g,g) = 1, S(n,n) = 1 và S(g,n) < 1, nên T(g+) > 0,5 và T(g−) < 0,5 đúng theo định nghĩa. Dòng giữ 100% action class cũng do bộ lọc `8_action_class_changed` bảo đảm. Không được viết các dòng này là "đã đạt" như bằng chứng về độ tin cậy.
+- Audit tay ≥190/200 chưa làm. `audit_ung_vien.jsonl` hiện lấy theo cấu hình bản gốc nên không có cặp role chung, phải dựng lại theo `no_blacklist|own|strict`.
+- Chưa có phép kiểm trên 8 mẫu sinh thật của mô hình, là phép duy nhất cho biết T có tách câu tốt khỏi câu xấu hay không.
+- Bảng class → role, từ vựng POS/STATE/ATTR, alias ≥2 ký tự chữ-số do script đặt vì file action chưa định nghĩa, phải khai.
+
+## 25. Điểm target T của RGTC trên 8 mẫu sinh thật: TRƯỢT, RGTC dừng (10–11/11/2026, Kaggle CPU)
+
+Kernel `trangphngngc/rgtc-c1-t-10-11-cpu`, mã `harness/rgtc_c1_t_10_11.py` (luật đạt/trượt ghi trong docstring trước khi chạy), kết quả `runs/rgtc/c1_t_10_11/c1_t/`. Val C1, 249 bước chạm, 8 mẫu S1/101, một hạt, số val cấm trích. Đại lượng: độ đồng thuận với exec trên các cặp mẫu cùng bước có exec khác nhau; KTC95 bootstrap cụm episode.
+
+79/249 bước active theo `no_blacklist|own|strict` (66 episode, 40 bước có cặp exec khác nhau; 441 cặp).
+
+| điểm (bước active) | đồng thuận, hoà 0,5 | bỏ hoà [KTC95] |
+|---|---|---|
+| SPICE | 0,676 | 0,786 [0,662; 0,885] |
+| chrF | **0,866** | 0,866 [0,799; 0,926] |
+| T một mình | 0,686 | 0,842 [0,719; 0,939] |
+| A2 = 0,70S + 0,15A + 0,15·0,5 − d | 0,850 | — |
+| FULL = 0,70S + 0,15A + 0,15T − d | 0,850 | — |
+
+- (a) T có tín hiệu: cận dưới 0,719 > 0,5, đạt. Nhưng T hoà ở 201/441 cặp.
+- (b) FULL − A2 = **0,000** [−0,012; +0,010]: thêm T không đổi thứ tự cặp nào ⇒ trượt. Những cặp T xếp đúng thì S đã xếp đúng sẵn.
+- (c) FULL − chrF = −0,016 [−0,063; +0,032] ⇒ trượt. Trên cả 249 bước: −0,022 [−0,055; +0,011].
+- ⇒ Theo luật: **RGTC-SPICE dừng trước GPU**, không dựng audit, không cần đọc tay.
+- Tái lập phát hiện §23: chrF một mình không thua công thức nào có SPICE. Ở đây mọi công thức có SPICE trọng số 0,8 (A1 0,823, A2 0,850) đều dưới chrF; SPICE một mình hoà 170/441 cặp.
+- Lượt chạy đầu trên máy nhà (cho "ĐẠT") có lỗi đọc số tuple SPICE nên K_g = 0, S rút về chrF; đã xoá, không dùng. K_g đúng = tp + fn, trung vị 3, 99/249 bước K_g < 3.
+- Giới hạn: mẫu của S1 chứ không phải SFT-cont; độ đồng thuận với exec của UGround chưa phải kết quả sau train.
+- Cách viết nếu đưa vào luận văn: đã thử thêm thành phần target phản thực cùng màn vào thưởng SPICE; trên mẫu sinh thật thành phần này không đổi thứ tự của thưởng, nên không train.
+
+## 26. PPO chạy tiếp (kernel luoi-t-11, 10–11/11/2026): dừng vì hết đĩa, chưa có số test
+
+Kernel `trangphngngc/luoi-t-11` báo ERROR sau khoảng 4,1 h: `OSError: [Errno 28] No space left on device`. Nguyên nhân: `harness/grpo_luoi.py` lưu điểm mỗi 25 bước với `save_total_limit=None`, nên `/kaggle/working` giữ mọi điểm lưu từ bước 25 (kể cả phần chép từ luoi-t-10) tới khi đầy.
+- λ = 1: từ ck575 tới **ck650** đủ tệp; ck675 ghi dở (thiếu `trainer_state.json`), không dùng. KL cuối 0,013–0,027.
+- λ = 0,95: từ ck525 tới **ck600**. KL cuối 0,036–0,064.
+- Cả hai lượt in `[nạp default] … → 14,06 / 13,54` và nạp `value_head.pt` của điểm lưu nguồn ⇒ chạy tiếp đúng.
+- Lượt kế phải đặt `save_total_limit` (hoặc xoá điểm lưu cũ trước khi train), chạy tiếp từ ck650 / ck600 của output `luoi-t-11`. Tệp ở `runs/luoi/10_11/t_11/` (điểm lưu không vào git).
+
