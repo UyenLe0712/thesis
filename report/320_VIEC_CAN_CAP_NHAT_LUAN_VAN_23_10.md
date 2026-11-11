@@ -950,6 +950,7 @@ Holm trên họ 7 phép so exec với ck500: RLOO p_holm 3e−5 giữ; **REINFOR
 Hai kernel chạy tiếp, cả hai nạp đúng điểm lưu (`[nạp default] 504 tensor · |lora_B| 0 → x>0 · khoá lạ 0` ở cả bốn lượt; PPO nạp thêm `value_head.pt`). Log ở `runs/luoi/7_11/{t2_11,t_10}/`, adapter nằm trên output Kaggle.
 - **grpo:spice:101 XONG 500/500** (checkpoint-500), 150 s/bước, đỉnh VRAM 12,8 GiB. kl ở 100 bước cuối dao động 0,003–0,094, bước cuối 0,012 (ck500 gốc ~0,012). Sẵn sàng chấm test.
 - **drgrpo:spice:101 tới 475/500** (checkpoint-475), chạm trần giờ; kl 0,002–0,033. Cần một lượt ngắn 25 bước, hoặc chấm checkpoint-475 nếu chấp nhận khai.
+  - **Treo, user quyết sau (11/11/2026).** Điểm lưu nằm trong output `trangphuongngoc/luoi-t2-11`, chưa chấm test. Dr.GRPO (Liu et al. 2025) là biến thể của GRPO (bỏ chia độ dài và chia std), không phải một họ RL kinh điển, nên chỉ đóng vai ablation của GRPO. Ba hướng: (a) không chấm, ghi trong luận văn là đã train nhưng không chấm vì là biến thể GRPO; (b) chấm checkpoint-475 (~3 h Kaggle T4), khai thiếu 25 bước; (c) chạy nốt 25 bước (~1 h) rồi chấm. Nếu chấm thì làm sau khi PPO xong, không giành giờ GPU của PPO.
 - **PPO μ=2, λ=1 tới 575/1000** (checkpoint-575); kl tăng 0,04 → 0,13. **λ=0,95 tới 525/1000** (checkpoint-525); kl 0,02–0,06. Cần thêm khoảng hai commit.
 
 ## 21. Lượt train lại ck500 (A/A, 8/11/2026): KHÔNG tái lập được 60,65
