@@ -1,0 +1,51 @@
+{
+ "status": "DRAFT — chép nguyên từ report/SA_SPICE_v3_extracted_verified.md; chỉ thành FROZEN khi user trả lời 5 câu §16 và có commit + timestamp trước mọi rollout DEV-v3",
+ "reward": {
+  "s": "SPICE(y,g) qua pycocoevalcap pin trong input_manifest",
+  "c": "sacrebleu.sentence_chrf(y,[g]).score/100",
+  "K_g": "số tuple gold đã chuẩn hoá NFC/lowercase/collapse, dedup theo O|obj · A|obj|attr · R|subj|rel|obj",
+  "alpha_g": "0.8*min(1,K_g/3)",
+  "S": "alpha_g*s + (1-alpha_g)*c",
+  "A": {"1": "đúng canonical action, verifier trusted", "0": "sai action/toggle chắc chắn, trusted", "0.5": "unknown hoặc untrusted"},
+  "d": "min(0.05, 0.02*max(0, n_w(y)-n_w(g)-3))",
+  "R_SA_v3": "clip_[0,1](0.8*S + 0.2*A - d)",
+  "empty": 0,
+  "fail_closed": "SPICE parser/JVM missing, None/NaN/Inf/exception ⇒ STOP, không đổi thành 0"
+ },
+ "arms_factorial": {
+  "SPICE-MATCH": "clip(0.8*s + 0.1 - d)",
+  "Action-SPICE": "clip(0.8*s + 0.2*A - d)",
+  "FIXED": "clip(0.8*(0.8*s+0.2*c) + 0.1 - d)",
+  "FIXED+A": "clip(0.8*(0.8*s+0.2*c) + 0.2*A - d)",
+  "Sparse-SPICE": "clip(0.8*S + 0.1 - d)",
+  "SA-SPICE-v3": "clip(0.8*S + 0.2*A - d)"
+ },
+ "arms_baseline": {
+  "chrF": "clip(c - d)",
+  "SPIDEr-like": "clip(0.5*s + 0.5*CiderD/10 - d), DF chỉ từ gold TRAIN-v3",
+  "ROUGE-L": "clip(pycocoevalcap.Rouge - d)",
+  "SFT-cont": "không RL, adapter _bundles/colab_rl_test/kit/sft_final (md5 113e2a3e…)"
+ },
+ "seeds": [401, 503, 907],
+ "seed_cam": [101],
+ "runs": {"factorial": 18, "baseline_rl": 9, "tong": 27},
+ "grpo": {"init": "sft_cont_merged (S1 hoà + SFT-cont hoà)", "reference": "sft_cont_merged frozen",
+          "prompts": "1.000 TRAIN-v3, cùng thứ tự mọi arm", "G": 8, "prompts_per_update": 2, "updates": 500,
+          "temperature": 1.0, "top_p": 1.0, "top_k": 0, "max_completion": 96, "lr": 1e-5,
+          "adv": "group std", "loss_agg": "DAPO token", "kl_beta": 0.04, "num_iterations": 1,
+          "grad_clip": 1.0, "vision": "frozen", "hardware_dtype": "giống nhau mọi arm"},
+ "eval_contract": {"grounder": "osunlp/UGround-V1-2B (tree hash trong input_manifest)", "decode": "greedy, do_sample=False, max_new_tokens=96, EOS <|im_end|>",
+                   "action_ok": "parser độc lập, KHÔNG dùng verifier của reward", "exec": "action_ok ∧ ±14% ∧ Voronoi (metric_exec.py b93e85c)",
+                   "artifact": "một tệp prediction + hash dùng chung cho mọi evaluator"},
+ "checkpoints": [100, 200, 300, 400, 500],
+ "feasible_dev_vs_sftcont_mean3seed": {"nontap_drop_max_pp": 3, "scroll_back_drop_max_pp": 5, "unknown_up_max_pp": 2,
+                                       "empty_up_max_pp": 0.5, "truncated_up_max_pp": 1, "kl_rolling20_max": 0.10},
+ "checkpoint_rule": "mean tap exec qua 3 seed; cluster = package; ≥30 cluster; bootstrap 10.000 trên checkpoint có mean cao nhất M; SE = SD bootstrap; chọn checkpoint sớm nhất có mean ≥ M − SE; không feasible ⇒ arm fail",
+ "open_confirm_if": ["SA > SPICE-MATCH (point, DEV)", "SA > Sparse-SPICE (point, DEV)", "bounded-harm DEV pass"],
+ "primary": {"endpoint": "tap exec", "family_holm_0.05": ["SA − Sparse-SPICE", "SA − FIXED+A", "SA − SPICE-MATCH", "SA − chrF", "SA − SPIDEr-like", "SA − ROUGE-L"],
+             "analysis": "mean qua 3 seed mỗi item → paired diff → cluster package (≥30) → bootstrap 10.000 KTC95 hai phía → one-sided wild cluster bootstrap-t 100.000 center dưới null",
+             "pass": "effect > 0 và Holm p < 0.05", "practical_target_pp": 1.0},
+ "noninferiority_vs_sftcont": {"all_nontap_pp": -1, "scroll_pp": -2, "back_pp": -2, "rule": "cận dưới một phía 95% (percentile 5%) > margin"},
+ "power": "trước CONFIRM: ước discordance/ICC/cỡ tap-scroll-back từ DEV hoặc pilot mù, không xem chênh mean; mô phỏng ≥80% cho +1 pp và ba NI; thiếu ⇒ estimation-only/unresolved",
+ "stop_in_train": ["NaN/Inf", "KL rolling-20 > 0.10", "empty +0.5 pp", "unknown +2 pp", "truncation +1 pp", "OOM"]
+}

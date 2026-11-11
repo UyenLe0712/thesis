@@ -1,0 +1,98 @@
+{
+ "scope": "LOCAL (WSL). Lượt GPU/CPU trên Kaggle phải in lại đúng các hash này trong log trước khi chạy; lệch ⇒ STOP.",
+ "base_model": {
+  "path": "/home/uyenle/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-3B-Instruct/snapshots/66285546d2b821cf421d4f5eb2576359d3770cd3",
+  "files": 11,
+  "bytes": 7520892432,
+  "tree_sha256": "277883ac8288edc049e3da08aff4e4265bf8d8ffa6185dd5e0bfd0ee46291b6f",
+  "repo": "Qwen/Qwen2.5-VL-3B-Instruct",
+  "revision": "66285546d2b821cf421d4f5eb2576359d3770cd3"
+ },
+ "grounder_primary": {
+  "path": "/home/uyenle/.cache/huggingface/hub/models--osunlp--UGround-V1-2B/snapshots/ea7109f9573e5d8ee5170e425bd1fd73f2020e06",
+  "files": 2,
+  "bytes": 30563,
+  "tree_sha256": "dd943cc5568c8e5ce77c0861bfb58b8c1bab429313de6e48b36772497e04154c",
+  "repo": "osunlp/UGround-V1-2B",
+  "revision": "ea7109f9573e5d8ee5170e425bd1fd73f2020e06"
+ },
+ "s1_adapter": {
+  "path": "/mnt/d/Master/Thesis/_bundles/colab_rl_test/kit/adapter_s1_seed101",
+  "files": 2,
+  "bytes": 59945362,
+  "tree_sha256": "c76169dbccda88cb123b1e216a47973c7aeb213d399b453a64c17dfe62cf5cd9"
+ },
+ "sft_cont_adapter": {
+  "path": "/mnt/d/Master/Thesis/_bundles/colab_rl_test/kit/sft_final",
+  "files": 2,
+  "bytes": 59945484,
+  "tree_sha256": "deedde8f0129d17e5518d173188f948739a43e61ea3e46c020788de9d9910022",
+  "md5_model": "113e2a3e6a0781fd5121acda99962d1b",
+  "nguon": "kernel uyenle0712/luoi-test-u-3 chấm test sft_tiep_101 với md5 113e2a3e… (report/320 §18: exec 60,16)"
+ },
+ "sft_cont_prompt_keys": {
+  "path": "/mnt/d/Master/Thesis/_bundles/luoi/ds/prompt_keys_ck500.json",
+  "bytes": 10493,
+  "sha256": "12e798b56ebf98d09451bef1c4725132bd61d6da6bef4bc7d4ad8a561f227d20"
+ },
+ "pool": {
+  "path": "/mnt/d/Master/Thesis/harness/dg1_cache/train_ac/train_tru_val.jsonl",
+  "bytes": 30829592,
+  "sha256": "553b5f0761867c682157a00d360e6028f7362f5868ceaf93b87b9f79a84b0b12"
+ },
+ "train_all": {
+  "path": "/mnt/d/Master/Thesis/harness/dg1_cache/train_ac/train.jsonl",
+  "bytes": 31554740,
+  "sha256": "df6fff49d002a39556d034181d5b6afab215b47de62a72b0db23ed37c9edf887"
+ },
+ "ocr": {
+  "path": "/mnt/d/Master/Thesis/harness/dg1_cache/train_ac/ocr.jsonl",
+  "bytes": 129540858,
+  "sha256": "f93b39e34fceca9c6436f7ee532b7365983b1db18e306a1a01e00cd67fe2f0f1"
+ },
+ "a11y_forest": {
+  "path": "/home/uyenle/.cache/huggingface/hub/datasets--HarrytheOrange--parsed_AndroidControl/blobs/9a8656d7d23f02b0192690f7fab5b735ccfa28456d2b5ee95f1c40931ff53195",
+  "bytes": 452572751,
+  "sha256": "9a8656d7d23f02b0192690f7fab5b735ccfa28456d2b5ee95f1c40931ff53195"
+ },
+ "image_root": {
+  "path": "/mnt/d/Master/Thesis/harness/dg1_cache/train_ac/images",
+  "files": 64567,
+  "tree_sha256": "CHƯA TÍNH — do `sa3_split.py hash` ghi sha256 từng ảnh; tree hash rút từ tệp đó"
+ },
+ "scorers": {
+  "pycocoevalcap_tree": {
+   "path": "/home/uyenle/.venvs/thesis/lib/python3.12/site-packages/pycocoevalcap",
+   "files": 40,
+   "bytes": 503683475,
+   "tree_sha256": "3fa4ad9991d6f7d5b9480224bec4eddb0ad4291e5e4cd2f82fc3672f3a187afa"
+  },
+  "spice_jar": {
+   "path": "/home/uyenle/.venvs/thesis/lib/python3.12/site-packages/pycocoevalcap/spice/spice-1.0.jar",
+   "bytes": 19751099,
+   "sha256": "6c6a73ae6dd108667047c1818707590413934dcb9f1a62cef6469059b41b3d59"
+  },
+  "spice_lib_tree": {
+   "path": "/home/uyenle/.venvs/thesis/lib/python3.12/site-packages/pycocoevalcap/spice/lib",
+   "files": 19,
+   "bytes": 396969440,
+   "tree_sha256": "d743807a252ac83f66be0bce34bfa42c2c42e8cb51ffc13cd1766b393370d1ad"
+  },
+  "corenlp_jars": "KHÔNG có ở máy nhà; trên Kaggle dùng dataset trangphngngc/corenlp-360-jars — phải ghim hash trong log",
+  "java": "openjdk version \"1.8.0_504\"",
+  "python": "3.12.3",
+  "sacrebleu": "2.6.0",
+  "peft": "0.21.0",
+  "transformers": "5.14.1"
+ },
+ "audit_sample_size_one_sided_95": {
+  "PPV>98%_k0": 149,
+  "rate<5%_k0": 59,
+  "PPV>98%_k1": 236,
+  "rate<5%_k1": 93,
+  "PPV>98%_k2": 313,
+  "rate<5%_k2": 124,
+  "PPV>98%_k3": 386,
+  "rate<5%_k3": 153
+ }
+}

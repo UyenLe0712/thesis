@@ -1,0 +1,34 @@
+{
+ "status": "DRAFT — chờ user duyệt 4 diễn giải ở 'can_duyet' rồi mới chạy build; sau build không sửa",
+ "nguon_spec": "report/SA_SPICE_v3_extracted_verified.md §4",
+ "code": {"lineage": "harness/sa3_lineage.py", "split": "harness/sa3_split.py", "manifest": "harness/sa3_manifest.py"},
+ "pool": "harness/dg1_cache/train_ac/train_tru_val.jsonl (63.000 bước / 12.549 episode; đã trừ val400/600/val_cham400/600 theo episode)",
+ "key": ["source_dataset", "episode_id", "step_id"],
+ "source_dataset": "androidcontrol (một nguồn: HarrytheOrange/parsed_AndroidControl ⋈ ckg/AndroidControlParsedWithImages-20k)",
+ "exclusion": {
+  "kiem_tach_episode_pool": ["val400", "val600", "val_cham400 (chứa C1)", "val_cham600", "test_ac/test.jsonl"],
+  "loai_episode": "runs/sa_spice_v3/preflight/excl_episodes.json = hợp mọi episode do 133 artifact 'tập con' chạm (prompt_keys mọi lượt RL, tập RA-SFT/CW-RA/RAFT/GA-DPO/TAGE/CTG, cache phần thưởng, p1_sample_keys, 2.000 câu nhắc GRPO-point tái dựng bằng mã)",
+  "artifact_phu_pool": "10 tệp chạm ≥50% pool (bản sao train, descriptors_ten, tage_neg, chỉ mục RA) — không loại được, khai trong claim là S1-seen",
+  "near_dup": {
+   "anh_exact": "SHA-256 trùng",
+   "anh_phash": "DCT 63 bit (xám 32×32 LANCZOS, khối 8×8 bỏ DC, so trung vị), Hamming ≤ 4",
+   "text": "goal NFC/lowercase/collapse whitespace, MinHash token-3gram 128 perm 16 band, kiểm Jaccard chính xác ≥ 0,90",
+   "xu_ly": "episode pool near-dup với episode đã loại/val/test ⇒ loại; nhóm near-dup nội pool >1 episode ⇒ loại cả nhóm; cặp text ghi ra minhash_can_xet_tay.json"
+  }
+ },
+ "strata": {"dominant_action": "action_type nhiều nhất trong episode, hoà ⇒ tên nhỏ nhất theo byte",
+            "length_bucket": ["1-4", "5-9", ">=10"]},
+ "order_in_stratum": "SHA256('sa-spice-v3|androidcontrol|<episode_id>') tăng dần",
+ "quota": {"DEV": 600, "CONFIRM": 1500, "TRAIN": 1000, "don_vi": "episode",
+           "phan_bo": "largest remainder theo cỡ stratum còn lại, hoà ⇒ tên stratum theo byte; rút lần lượt DEV → CONFIRM → TRAIN"},
+ "train_step": "một bước/episode: SHA256('sa-spice-v3-step|androidcontrol|<ep>|<step>') nhỏ nhất trong các bước có câu chuẩn không trống (mọi loại action, như 1.000 câu nhắc SFT-cont: 63% click)",
+ "dev_confirm": "toàn bộ bước của episode",
+ "package_cluster": "package đa số của episode từ cây trợ năng (bỏ window_type 3, launcher/systemui/inputmethod/permissioncontroller), hoà ⇒ nhỏ nhất theo byte; episode không có package ⇒ endpoint descriptive (§7bis)",
+ "freeze": "split_manifest.json in sha256 từng split + đếm step/episode/package theo action; CONFIRM-v3 không mở trước khi protocol_freeze.json được user chốt",
+ "can_duyet": [
+  "1. Luật 'màn chung': ảnh near-dup xuất hiện ở ≥20 episode (home/launcher/màn chờ) không tạo cạnh near-dup. Không có trong memo; nếu bỏ, pHash ≤4 nhiều khả năng gộp gần hết pool vào một cụm vì bước 0 của mọi episode open_app là màn home.",
+  "2. Nhóm near-dup nội pool bị loại cả nhóm (thay vì giữ cùng split) để quota đếm chính xác.",
+  "3. Cặp MinHash ≥0,90 mặc định xử lý như near-dup (loại) trong khi chờ xét tay; xét tay chỉ được KHÔI PHỤC episode, không thêm loại mới sau khi thấy split.",
+  "4. Package cụm lấy theo episode, không theo từng bước (bước 0 màn home không có package)."
+ ]
+}

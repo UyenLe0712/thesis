@@ -1,0 +1,769 @@
+{
+ "spec": "report/SA_SPICE_v3_extracted_verified.md §4.1",
+ "pool_goc": {
+  "file": "harness/dg1_cache/train_ac/train_tru_val.jsonl",
+  "sha256": "553b5f0761867c682157a00d360e6028f7362f5868ceaf93b87b9f79a84b0b12",
+  "steps": 63000,
+  "episodes": 12549
+ },
+ "tach_episode": {
+  "val400.jsonl": {
+   "episodes": 90,
+   "giao_pool": 0
+  },
+  "val600.jsonl": {
+   "episodes": 128,
+   "giao_pool": 0
+  },
+  "val_cham400.jsonl": {
+   "episodes": 137,
+   "giao_pool": 0
+  },
+  "val_cham600.jsonl": {
+   "episodes": 209,
+   "giao_pool": 0
+  },
+  "test_ac/test.jsonl": {
+   "episodes": 1432,
+   "giao_pool": 0
+  }
+ },
+ "nguong_phu_pool": 0.5,
+ "artifact_tap_con": [
+  {
+   "file": "harness/dg1_cache/train_ac/p1_sample_keys.json",
+   "pool_episodes": 3262,
+   "frac": 0.2599,
+   "ghi_chu": "pool 4.000 câu nhắc gốc của bundle grpo_spice/ck500"
+  },
+  {
+   "file": "runs/cw309/T/cw_data/train_cw.jsonl",
+   "pool_episodes": 3255,
+   "frac": 0.2594
+  },
+  {
+   "file": "runs/cw309/T/pred_ck500_train.jsonl",
+   "pool_episodes": 3255,
+   "frac": 0.2594
+  },
+  {
+   "file": "runs/ra304_T/ra_data/train_cont.jsonl",
+   "pool_episodes": 3255,
+   "frac": 0.2594
+  },
+  {
+   "file": "runs/ra304_T/ra_data/train_ra.jsonl",
+   "pool_episodes": 3255,
+   "frac": 0.2594
+  },
+  {
+   "file": "runs/tage_val/that/drafts_train.jsonl",
+   "pool_episodes": 2198,
+   "frac": 0.1752
+  },
+  {
+   "file": "runs/cw309/T/tu_0.jsonl",
+   "pool_episodes": 1802,
+   "frac": 0.1436
+  },
+  {
+   "file": "runs/ctg/p0/p0_a3/prompt_keys.json",
+   "pool_episodes": 1796,
+   "frac": 0.1431
+  },
+  {
+   "file": "runs/cw309/T/tu_1.jsonl",
+   "pool_episodes": 1783,
+   "frac": 0.1421
+  },
+  {
+   "file": "runs/rd314/R/train_raft.jsonl",
+   "pool_episodes": 1783,
+   "frac": 0.1421
+  },
+  {
+   "file": "TAI_DUNG:harness/grpo_point.py dung_hang(seed=101,n=2000)",
+   "pool_episodes": 1759,
+   "frac": 0.1402,
+   "n_keys": 2000
+  },
+  {
+   "file": "_bundles/luoi/ds/prompt_keys_ck500.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "_bundles/luoi/ds_trang/prompt_keys_ck500.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "_bundles/luoi/ds_trang2/prompt_keys_ck500.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "_bundles/luoi/ds_uyenle/prompt_keys_ck500.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "_bundles/moi_b3/ds/prompt_keys_ck500.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "_bundles/nghe_s1/ds_trangphuongngoc/prompt_keys_ck500.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "_scripts/288/nghe/prompt_keys_ck500.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/10_11/t_11/ppo_spice_101_l1/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/10_11/t_11/ppo_spice_101_l95/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/7_11/cpu_b4/out/dpo_semi_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/7_11/cpu_b4/out/dpo_semi_spice_101_k1/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/7_11/cpu_b4/out/gpg_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/7_11/cpu_b4/out/gpg_spice_101_std/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/7_11/cpu_b4/out/grpo_phat_dai_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/7_11/cpu_b4/out/grpo_spice_kp_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/7_11/cpu_b4/out/orpo_off_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/7_11/cpu_b4/out/orpo_on_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/7_11/t2_11/drgrpo_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/7_11/t2_11/grpo_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/7_11/t2_4/drgrpo_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/7_11/t2_4/grpo_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/7_11/t_10/ppo_spice_101_l1/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/7_11/t_10/ppo_spice_101_l95/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/7_11/t_3/ppo_spice_101_l1/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/7_11/t_3/ppo_spice_101_l95/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/8_11/kiem_rng/out/cu_grpo_luoi_1/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/8_11/kiem_rng/out/cu_grpo_luoi_2/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/8_11/kiem_rng/out/cu_grpo_spice_1/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/8_11/kiem_rng/out/cu_grpo_spice_2/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/8_11/kiem_rng/out/moi_grpo_luoi_1/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/8_11/kiem_rng/out/moi_grpo_luoi_2/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/8_11/kiem_rng/out/moi_grpo_spice_1/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/8_11/kiem_rng/out/moi_grpo_spice_2/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/lo1/t1/grpo_meteor_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/lo1/t1/grpo_rougel_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/lo1/t21/reinforce_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/lo1/t21/rloo_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/lo1/u1/grpo_cider_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/lo1/u1/scst_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/lo3/luoi-t2-3/grpo_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/lo3/luoi-t2-3/sft_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/a2c_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/awr_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/cem_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/grpo_bertscore_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/grpo_bleu4_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/grpo_chrf_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/grpo_spice_101_ch/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/grpo_spice_101_dapo0/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/grpo_spice_101_drg/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/grpo_spice_101_g16/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/grpo_spice_101_g4/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/grpo_spice_101_gspo/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/grpo_spice_101_mu2/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/grpo_spice_101_sb/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/grpo_spider_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/mad_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/raml_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/rank_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/rft_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/scst_cider_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_cau_hinh/out/vanilla_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_moi/out/dpo_off_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_moi/out/dpo_on_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_moi/out/es_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_moi/out/grpo_bcmr_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_moi/out/grpo_loai_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_moi/out/grpo_seq_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_moi/out/grpo_spice_cong_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_moi/out/grpo_ten_loai_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_moi/out/gspo_spice_101_s1000/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_moi/out/mixer_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_moi/out/mrt_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_moi/out/quark_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_moi/out/rft_off_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_moi/out/rlce_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_moi/out/seqgan_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/cpu_moi/out/spg_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/train_t2/grpo_spice_101/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/train_t2/ppo_spice_101_l1/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/xao101/c1/grpo_spice/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/xao101/c1b/grpo_spice/prompt_keys.json",
+   "pool_episodes": 949,
+   "frac": 0.0756
+  },
+  {
+   "file": "runs/rd314/R/raft_mau_0.jsonl",
+   "pool_episodes": 942,
+   "frac": 0.0751
+  },
+  {
+   "file": "runs/rd314/R/raft_mau_1.jsonl",
+   "pool_episodes": 933,
+   "frac": 0.0743
+  },
+  {
+   "file": "_scripts/314/ds_gadpo314_cap/cap_all.jsonl",
+   "pool_episodes": 793,
+   "frac": 0.0632
+  },
+  {
+   "file": "runs/rd314/cap_all.jsonl",
+   "pool_episodes": 793,
+   "frac": 0.0632
+  },
+  {
+   "file": "_bundles/nghe_s1/ds_trangphuongngoc/bang_nghe.json",
+   "pool_episodes": 606,
+   "frac": 0.0483
+  },
+  {
+   "file": "_scripts/288/g0/g0_cau.jsonl",
+   "pool_episodes": 606,
+   "frac": 0.0483
+  },
+  {
+   "file": "_scripts/288/g0/g0_som.jsonl",
+   "pool_episodes": 606,
+   "frac": 0.0483
+  },
+  {
+   "file": "_scripts/288/nghe/bang_nghe.json",
+   "pool_episodes": 606,
+   "frac": 0.0483
+  },
+  {
+   "file": "runs/g0_288/g0/g0_phi4.jsonl",
+   "pool_episodes": 606,
+   "frac": 0.0483
+  },
+  {
+   "file": "runs/g0_288/g0_phi4.jsonl",
+   "pool_episodes": 606,
+   "frac": 0.0483
+  },
+  {
+   "file": "runs/ctg/dich/ctg_s1.jsonl",
+   "pool_episodes": 413,
+   "frac": 0.0329
+  },
+  {
+   "file": "runs/rgtc/gate_b_10_11/gate_b/audit_ung_vien.jsonl",
+   "pool_episodes": 381,
+   "frac": 0.0304
+  },
+  {
+   "file": "runs/g0_288/g0/g0_phi4_s0.jsonl",
+   "pool_episodes": 313,
+   "frac": 0.0249
+  },
+  {
+   "file": "runs/g0_288/g0/g0_phi4_s1.jsonl",
+   "pool_episodes": 308,
+   "frac": 0.0245
+  },
+  {
+   "file": "runs/luoi/probe_ppo/probe_a2c_spice_101/prompt_keys.json",
+   "pool_episodes": 48,
+   "frac": 0.0038
+  },
+  {
+   "file": "runs/luoi/probe_ppo/probe_ppo_spice_101_l10/prompt_keys.json",
+   "pool_episodes": 48,
+   "frac": 0.0038
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/smoke_a_u/probe_grpo_bertscore_101/prompt_keys.json",
+   "pool_episodes": 48,
+   "frac": 0.0038
+  },
+  {
+   "file": "runs/luoi/smoke_6_11/smoke_a_u/probe_grpo_spice_101_gspo/prompt_keys.json",
+   "pool_episodes": 48,
+   "frac": 0.0038
+  },
+  {
+   "file": "runs/ctg/p0/p0_a3/ctg_log.jsonl",
+   "pool_episodes": 40,
+   "frac": 0.0032
+  },
+  {
+   "file": "runs/luoi/moi_b2_cpu/out_bcmr/prompt_keys.json",
+   "pool_episodes": 11,
+   "frac": 0.0009
+  },
+  {
+   "file": "runs/luoi/moi_b2_cpu/out_es/prompt_keys.json",
+   "pool_episodes": 11,
+   "frac": 0.0009
+  },
+  {
+   "file": "runs/luoi/moi_b2_cpu/out_grpo_doi_chung/prompt_keys.json",
+   "pool_episodes": 11,
+   "frac": 0.0009
+  },
+  {
+   "file": "runs/luoi/moi_b2_cpu/out_mixer/prompt_keys.json",
+   "pool_episodes": 11,
+   "frac": 0.0009
+  },
+  {
+   "file": "runs/luoi/moi_b2_cpu/out_quark/prompt_keys.json",
+   "pool_episodes": 11,
+   "frac": 0.0009
+  },
+  {
+   "file": "runs/luoi/moi_b2_cpu/out_quark_tiep/prompt_keys.json",
+   "pool_episodes": 11,
+   "frac": 0.0009
+  },
+  {
+   "file": "runs/luoi/moi_b2_cpu/out_rlce/prompt_keys.json",
+   "pool_episodes": 11,
+   "frac": 0.0009
+  },
+  {
+   "file": "runs/luoi/moi_b2_cpu/out_seqgan/prompt_keys.json",
+   "pool_episodes": 11,
+   "frac": 0.0009
+  },
+  {
+   "file": "runs/luoi/moi_b2_cpu/out_seqgan_tiep/prompt_keys.json",
+   "pool_episodes": 11,
+   "frac": 0.0009
+  },
+  {
+   "file": "runs/luoi/moi_b2_cpu_v2/out_bcmr/prompt_keys.json",
+   "pool_episodes": 11,
+   "frac": 0.0009
+  },
+  {
+   "file": "runs/luoi/moi_b2_cpu_v2/out_es/prompt_keys.json",
+   "pool_episodes": 11,
+   "frac": 0.0009
+  },
+  {
+   "file": "runs/luoi/moi_b2_cpu_v2/out_grpo_doi_chung/prompt_keys.json",
+   "pool_episodes": 11,
+   "frac": 0.0009
+  },
+  {
+   "file": "runs/luoi/moi_b2_cpu_v2/out_mixer/prompt_keys.json",
+   "pool_episodes": 11,
+   "frac": 0.0009
+  },
+  {
+   "file": "runs/luoi/moi_b2_cpu_v2/out_quark/prompt_keys.json",
+   "pool_episodes": 11,
+   "frac": 0.0009
+  },
+  {
+   "file": "runs/luoi/moi_b2_cpu_v2/out_quark_tiep/prompt_keys.json",
+   "pool_episodes": 11,
+   "frac": 0.0009
+  },
+  {
+   "file": "runs/luoi/moi_b2_cpu_v2/out_rlce/prompt_keys.json",
+   "pool_episodes": 11,
+   "frac": 0.0009
+  },
+  {
+   "file": "runs/luoi/moi_b2_cpu_v2/out_seqgan/prompt_keys.json",
+   "pool_episodes": 11,
+   "frac": 0.0009
+  },
+  {
+   "file": "runs/luoi/moi_b2_cpu_v2/out_seqgan_tiep/prompt_keys.json",
+   "pool_episodes": 11,
+   "frac": 0.0009
+  },
+  {
+   "file": "runs/triad_t/b3_uground_vongtron.json",
+   "pool_episodes": 2,
+   "frac": 0.0002
+  },
+  {
+   "file": "runs/triad_t/poa_showui.json",
+   "pool_episodes": 2,
+   "frac": 0.0002
+  },
+  {
+   "file": "runs/triad_t/pob_ket_qua.json",
+   "pool_episodes": 2,
+   "frac": 0.0002
+  }
+ ],
+ "artifact_phu_pool": [
+  {
+   "file": "_bundles/acu_build/kit/train_tru_val.jsonl",
+   "pool_episodes": 12549,
+   "frac": 1.0
+  },
+  {
+   "file": "_bundles/giai_thich_6_11/ds/harness/dg1_cache/train_ac/train.jsonl",
+   "pool_episodes": 12549,
+   "frac": 1.0
+  },
+  {
+   "file": "_bundles/luoi/kit_trangphngngc/descriptors_ten.jsonl",
+   "pool_episodes": 10524,
+   "frac": 0.8386
+  },
+  {
+   "file": "_bundles/luoi/kit_trangphuongngoc/descriptors_ten.jsonl",
+   "pool_episodes": 10524,
+   "frac": 0.8386
+  },
+  {
+   "file": "_bundles/luoi/kit_uyenle0712/descriptors_ten.jsonl",
+   "pool_episodes": 10524,
+   "frac": 0.8386
+  },
+  {
+   "file": "_bundles/moi_b3/ds/descriptors_ten.jsonl",
+   "pool_episodes": 10524,
+   "frac": 0.8386
+  },
+  {
+   "file": "_bundles/tage-test-script/tage_neg.jsonl",
+   "pool_episodes": 11733,
+   "frac": 0.935
+  },
+  {
+   "file": "_bundles/tage-val-script/tage_neg.jsonl",
+   "pool_episodes": 11733,
+   "frac": 0.935
+  },
+  {
+   "file": "_scripts/304/ra-sft-script/train_tru_val.jsonl",
+   "pool_episodes": 12549,
+   "frac": 1.0
+  },
+  {
+   "file": "_scripts/308/kaggle/ds_cwu/ra/train_tru_val.jsonl",
+   "pool_episodes": 12549,
+   "frac": 1.0
+  }
+ ],
+ "bo_qua": [],
+ "episodes_loai": 4633,
+ "con_lai": {
+  "steps": 31442,
+  "episodes": 7916,
+  "action_steps": {
+   "click": 19213,
+   "scroll": 3718,
+   "open_app": 2529,
+   "wait": 2448,
+   "input_text": 2204,
+   "navigate_back": 1228,
+   "long_press": 86,
+   "navigate_home": 16
+  }
+ }
+}

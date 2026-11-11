@@ -1,0 +1,45 @@
+[dữ liệu] shard 0/2 · 500 câu nhắc · đã có 0 · còn 500
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+[probe ghép] 8 câu nhắc · max|Δlogit| 0.0898 (atol 0.15) · greedy trùng 8/8
+[cấu hình] dtype torch.float16 · torch 2.11.0+cu130 · transformers 5.20.2 · lấy mẫu {'do_sample': True, 'temperature': 1.0, 'top_p': 1.0, 'top_k': 0, 'repetition_penalty': 1.0, 'num_return_sequences': 8, 'max_new_tokens': 96, 'use_cache': True}
+  10/500 · 2.0 phút · còn ~97.2 phút · greedy: 'Click on the Go to Cart button at the bottom of th'
+  20/500 · 4.0 phút · còn ~95.1 phút · greedy: 'Tap on the first result.'
+  30/500 · 6.0 phút · còn ~94.2 phút · greedy: 'Click on the Fix & manage tab at the bottom right '
+  40/500 · 8.0 phút · còn ~92.3 phút · greedy: 'Click on the search bar at the top of the screen'
+  50/500 · 10.0 phút · còn ~89.8 phút · greedy: 'Click on the Roasted Peeled Almonds'
+  60/500 · 12.0 phút · còn ~88.3 phút · greedy: 'Click on the plus icon at the top of the screen'
+  70/500 · 14.1 phút · còn ~86.3 phút · greedy: 'Click on the toggle button of syntax highlighting.'
+  80/500 · 16.0 phút · còn ~84.1 phút · greedy: 'Click on the Sagittarius constellation'
+  90/500 · 18.1 phút · còn ~82.4 phút · greedy: 'Click on the Molten Chocolate Cake'
+  100/500 · 20.0 phút · còn ~80.0 phút · greedy: 'Type Baseball bats in search bar'
+  110/500 · 21.8 phút · còn ~77.5 phút · greedy: 'Swipe up to view more shorts'
+  120/500 · 23.8 phút · còn ~75.5 phút · greedy: 'Click on the edit button.'
+  130/500 · 25.9 phút · còn ~73.6 phút · greedy: 'Open the Gallery app.'
+  140/500 · 27.9 phút · còn ~71.7 phút · greedy: 'Click on the tab "Remove from Wishlist".'
+  150/500 · 29.9 phút · còn ~69.7 phút · greedy: 'Click on the Add button'
+/pytorch/aten/src/ATen/native/cuda/TensorCompare.cu:109: _assert_async_cuda_kernel: block: [0,0,0], thread: [0,0,0] Assertion `probability tensor contains either `inf`, `nan` or element < 0` failed.
+Traceback (most recent call last):
+  File "/kaggle/working/sa3_mau.py", line 129, in <module>
+    main()
+    ~~~~^^
+  File "/kaggle/working/sa3_mau.py", line 115, in main
+    s = B.generate(**inp, **samp)
+  File "/usr/local/lib/python3.13/dist-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+  File "/usr/local/lib/python3.13/dist-packages/transformers/generation/utils.py", line 2989, in generate
+    result = decoding_method(
+        self,
+    ...<5 lines>...
+        **model_kwargs,
+    )
+  File "/usr/local/lib/python3.13/dist-packages/transformers/generation/utils.py", line 3270, in _sample
+    this_peer_finished = stop_check(unfinished_sequences, next_tokens, input_ids.shape[1])
+  File "/usr/local/lib/python3.13/dist-packages/transformers/generation/utils.py", line 396, in __call__
+    return bool(unfinished_sequences.max() == 0)
+torch.AcceleratorError: CUDA error: device-side assert triggered
+Search for `cudaErrorAssert' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+

@@ -1,0 +1,131 @@
+{
+ "spec": "runs/sa_spice_v3/preflight/split_spec.json",
+ "source_dataset": "androidcontrol",
+ "pool": {
+  "cand_episodes": 7916,
+  "loai_near_dup_cheo": 1341,
+  "loai_nhom_noi_pool": 679,
+  "loai_cau_chuan_trong": 44,
+  "loai_thieu_package": 46,
+  "con_chon_duoc": 5806
+ },
+ "near_dup": {
+  "canh_muc_anh_cau": 4744,
+  "cap_goal_minhash": 1337,
+  "luat": "v2: ảnh pHash≤4 ∧ cùng câu chuẩn, hoặc goal MinHash≥0,9; cạnh trực tiếp, không bắc cầu"
+ },
+ "quota": {
+  "DEV": {
+   "wait|1-4": 10,
+   "click|1-4": 350,
+   "scroll|5-9": 23,
+   "click|5-9": 133,
+   "scroll|1-4": 37,
+   "scroll|>=10": 3,
+   "click|>=10": 14,
+   "open_app|1-4": 12,
+   "long_press|1-4": 1,
+   "navigate_back|1-4": 12,
+   "input_text|1-4": 1,
+   "wait|5-9": 2,
+   "input_text|5-9": 0,
+   "navigate_back|5-9": 2,
+   "open_app|5-9": 0,
+   "input_text|>=10": 0,
+   "long_press|5-9": 0
+  },
+  "CONFIRM": {
+   "wait|1-4": 26,
+   "click|1-4": 874,
+   "scroll|5-9": 58,
+   "click|5-9": 332,
+   "scroll|1-4": 93,
+   "scroll|>=10": 7,
+   "click|>=10": 35,
+   "open_app|1-4": 31,
+   "long_press|1-4": 1,
+   "navigate_back|1-4": 29,
+   "input_text|1-4": 4,
+   "wait|5-9": 5,
+   "input_text|5-9": 1,
+   "navigate_back|5-9": 4,
+   "open_app|5-9": 0,
+   "input_text|>=10": 0,
+   "long_press|5-9": 0
+  },
+  "TRAIN": {
+   "wait|1-4": 18,
+   "click|1-4": 583,
+   "scroll|5-9": 39,
+   "click|5-9": 221,
+   "scroll|1-4": 62,
+   "scroll|>=10": 5,
+   "click|>=10": 23,
+   "open_app|1-4": 20,
+   "long_press|1-4": 1,
+   "navigate_back|1-4": 19,
+   "input_text|1-4": 3,
+   "wait|5-9": 3,
+   "input_text|5-9": 0,
+   "navigate_back|5-9": 3,
+   "open_app|5-9": 0,
+   "input_text|>=10": 0,
+   "long_press|5-9": 0
+  }
+ },
+ "splits": {
+  "DEV": {
+   "file": "runs/sa_spice_v3/split/dev_v3.jsonl",
+   "sha256": "58a3143d6036efa8f67f5bd6cb43d4778ad2a391c8b22df80dfffb00749a3eb6",
+   "episodes": 600,
+   "steps": 2223,
+   "thieu_package": 0,
+   "packages": 275,
+   "action_steps": {
+    "click": 1328,
+    "scroll": 290,
+    "wait": 172,
+    "open_app": 170,
+    "input_text": 143,
+    "navigate_back": 109,
+    "long_press": 10,
+    "navigate_home": 1
+   }
+  },
+  "CONFIRM": {
+   "file": "runs/sa_spice_v3/split/confirm_v3.jsonl",
+   "sha256": "5df921303228b0f3b81f53b9436bec3959ced26c5269bbfca900837fba76953b",
+   "episodes": 1500,
+   "steps": 5601,
+   "thieu_package": 0,
+   "packages": 451,
+   "action_steps": {
+    "click": 3341,
+    "scroll": 776,
+    "wait": 460,
+    "open_app": 415,
+    "input_text": 356,
+    "navigate_back": 234,
+    "long_press": 17,
+    "navigate_home": 2
+   }
+  },
+  "TRAIN": {
+   "file": "runs/sa_spice_v3/split/train_v3.jsonl",
+   "sha256": "aa56b209ac7e486b45f4556752384b2c040a558aae8a3b52a92b871bf31503aa",
+   "episodes": 1000,
+   "steps": 1000,
+   "thieu_package": 0,
+   "packages": 369,
+   "action_steps": {
+    "click": 616,
+    "scroll": 135,
+    "open_app": 85,
+    "wait": 70,
+    "input_text": 49,
+    "navigate_back": 39,
+    "long_press": 6
+   }
+  }
+ }
+}
