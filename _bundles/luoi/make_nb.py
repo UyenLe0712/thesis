@@ -60,6 +60,9 @@ MD5 = {f: md5(os.path.join(H, "ds", f) if os.path.exists(os.path.join(H, "ds", f
 CAT_H = float(os.environ.get("CAT_H", 11))
 PROBE_H = float(os.environ.get("PROBE_H", 1.5))   # trần giờ ở chế độ probe; mặc định giữ như cũ
 MOI = os.environ.get("MOI", "").split()
+CAN_CK = os.environ.get("CAN_CK") == "1"          # 11/11: chạy tiếp từ dataset điểm lưu, không thấy điểm lưu thì dừng
+GIU_CK = int(os.environ.get("GIU_CK", 0))          # 11/11: >0 thì chỉ giữ GIU_CK điểm lưu mới nhất mỗi lượt (luoi-t-11 hết đĩa)
+DS_THEM = os.environ.get("DS_THEM", "").split()    # dataset thêm, ví dụ dataset điểm lưu chép từ tài khoản khác
 BASE = ("grpo_luoi.py", "grpo_spice.py", "build_branch_data.py")
 C1 = f'''import subprocess, sys, os, time
 T_NB = time.time()
@@ -110,7 +113,7 @@ for r in RUNS:
     for p in ck:
         shutil.copytree(p, os.path.join(o, os.path.basename(p)), dirs_exist_ok=True)
     print(r, "→", o, "· diem luu da chep:", sorted((os.path.basename(p) for p in ck), key=lambda s: int(s.split("-")[1]))[-3:])
-    assert ck or not {bool(prev)!r} or r in {MOI!r}, f"DUNG: co kernel truoc ma khong thay diem luu cua {{o}}"
+    assert ck or not ({bool(prev)!r} or {CAN_CK!r}) or r in {MOI!r}, f"DUNG: co kernel truoc ma khong thay diem luu cua {{o}}"
 print("BUNDLE:", BUNDLE, "· md5 khop", flush=True)
 '''
 C3 = '''import importlib.util, subprocess
@@ -220,6 +223,11 @@ def tinh_trang(r, o):
     return msg
 while any(p.poll() is None for _, _, p in P):
     time.sleep(120)
+    if GIU_SO > 0:
+        for _, o, _ in P:
+            c = sorted(glob.glob(f"{o}/checkpoint-*"), key=lambda s: int(s.rsplit("-", 1)[1]))
+            for x in c[:-GIU_SO]:
+                shutil.rmtree(x, ignore_errors=True); print("  [xoa diem luu cu]", x, flush=True)
     m = subprocess.run("free -g | awk '/Mem/{print $3\\"/\\"$2\\" GB RAM\\"}'; nvidia-smi --query-gpu=memory.used --format=csv,noheader | tr '\\\\n' ' '",
                        shell=True, capture_output=True, text=True).stdout.strip()
     print(f"{(time.time()-T_NB)/3600:5.2f} h · {m}", flush=True)
@@ -236,7 +244,7 @@ for r, o, p in P:
 shutil.rmtree(MERGED, ignore_errors=True)
 '''
 cells = [{"cell_type": "code", "metadata": {}, "execution_count": None, "outputs": [], "source": c.splitlines(True)}
-         for c in (C1, C2, C3, C4.replace("CAT_GIO", str(CAT_H)).replace("PROBE_GIO", str(PROBE_H)))]
+         for c in (C1, C2, C3, C4.replace("CAT_GIO", str(CAT_H)).replace("GIU_SO", str(GIU_CK)).replace("PROBE_GIO", str(PROBE_H)))]
 nb = {"cells": cells, "metadata": {"kernelspec": {"name": "python3", "display_name": "Python 3", "language": "python"}},
       "nbformat": 4, "nbformat_minor": 5}
 d = os.path.join(H, f"k_{name}")
@@ -244,7 +252,7 @@ os.makedirs(d, exist_ok=True)
 json.dump(nb, open(os.path.join(d, f"{name}.ipynb"), "w"), ensure_ascii=False, indent=1)
 meta = {"id": f"{user}/{name}", "title": name, "code_file": f"{name}.ipynb", "language": "python",
         "kernel_type": "notebook", "is_private": "true", "enable_gpu": "true", "enable_internet": "true",
-        "dataset_sources": [f"{user}/fgrb-p1-bundle", f"{user}/grpo-luoi-script"] + ([f"{user}/luoi-kit"] if set(FILES) - set(BASE) else []),
+        "dataset_sources": [f"{user}/fgrb-p1-bundle", f"{user}/grpo-luoi-script"] + ([f"{user}/luoi-kit"] if set(FILES) - set(BASE) else []) + DS_THEM,
         "competition_sources": [], "kernel_sources": ([prev] if prev else [])}
 json.dump(meta, open(os.path.join(d, "kernel-metadata.json"), "w"), indent=1)
 print("đã dựng", d, "·", RUNS, "·", mode)
