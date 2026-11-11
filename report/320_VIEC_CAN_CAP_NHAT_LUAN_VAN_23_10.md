@@ -1094,3 +1094,12 @@ Kernel `trangphngngc/luoi-t-11` báo ERROR sau khoảng 4,1 h: `OSError: [Errno 
 - Cả hai lượt in `[nạp default] … → 14,06 / 13,54` và nạp `value_head.pt` của điểm lưu nguồn ⇒ chạy tiếp đúng.
 - Lượt kế phải đặt `save_total_limit` (hoặc xoá điểm lưu cũ trước khi train), chạy tiếp từ ck650 / ck600 của output `luoi-t-11`. Tệp ở `runs/luoi/10_11/t_11/` (điểm lưu không vào git).
 
+
+## 27. PPO chạy tiếp lần hai (kernel luoi-ppo-u-1, 11/11/2026): dừng ở trần giờ, chưa có số test
+
+Kernel `uyenle0712/luoi-ppo-u-1` (T4×2, trần 11 h) COMPLETE, cả hai lượt bị cắt ở trần giờ (mã thoát −15) trước bước 1000.
+- λ = 1: `[tiếp từ] checkpoint-650`, nạp `value_head.pt` của ck650, `[nạp default] … → 14,71`; lưu cuối **ck925** (giữ ck875 · ck900 · ck925).
+- λ = 0,95: `[tiếp từ] checkpoint-600`, nạp `value_head.pt` của ck600, `[nạp default] … → 14,40`; lưu cuối **ck875** (giữ ck825 · ck850 · ck875).
+- Dòng `[xoa diem luu cu]` chạy đúng, không hết đĩa. ~200 s/bước.
+- Thưởng SPICE trung bình theo cửa sổ 100 bước gần như phẳng: λ = 1 0,48 (bước 1–99) → 0,49–0,54 (bước 300–897), λ = 0,95 0,48 → 0,46–0,54; KL 0,05–0,08. Số train, không phải số đánh giá.
+- Chưa có câu sinh trên test ⇒ chưa có exec lẫn độ đo văn bản. Tệp log ở `runs/luoi/11_11/ppo_u_1/` (điểm lưu không vào git).

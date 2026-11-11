@@ -156,3 +156,19 @@ Loại: trùng mục với tập loại/test 1.341 · trùng mục nội pool 67
 1. Kernel 1 `trangphuongngoc/sa3-mau-k1` (T4×2): hoà S1 → probe ghép SFT-cont (logits + greedy) → greedy + 8 mẫu (T = 1,0) trên 1.000 câu nhắc. Mã `harness/sa3_mau.py`, `_bundles/sa3_mau/`.
 2. Kernel 2 (T4×2): UGround chấm exec 9 câu × 622 bước chạm. `_bundles/sa3_cham/make_k2.py` (khuôn runbook 251).
 3. Kaggle CPU: `harness/sa3_reward_screen.py`: 9 reward + concordance / zero-std / oracle uplift + KTC95 cụm package cho SA − từng reward; kèm phân bố K_g và A.
+
+**Kết quả sàng mức 1 (11/11, kernel `trangphngngc/sa3-screen-k3` v2, Kaggle CPU).** 622 bước chạm · 263 package · greedy exec 61,41 · trung bình 8 mẫu 55,55 · A = 1 ở 6.025/8.000 câu, A = 0,5 ở 1.975. v1 lỗi do gửi câu chuẩn sang SPICE dạng list (đã sửa `sa3_reward_screen.py:159`, kiểm SPICE thật trên WSL).
+
+| reward | concordance | zero-std | oracle uplift | SA − reward: concordance [KTC95 cụm package] | SA − reward: oracle pp |
+|---|---|---|---|---|---|
+| SPICE-MATCH | 0,6766 | 5,79% | +7,22 | **+0,094** [+0,069; +0,119] | +1,86 [+0,66; +3,06] |
+| Action-SPICE | 0,7162 | 4,18% | +8,18 | **+0,055** [+0,035; +0,074] | +0,90 [−0,14; +1,90] |
+| FIXED | 0,7470 | 0,96% | +8,60 | **+0,024** [+0,012; +0,037] | +0,48 [−0,32; +1,36] |
+| FIXED+A | 0,7567 | 0,96% | +8,92 | **+0,014** [+0,005; +0,025] | +0,16 [−0,52; +0,92] |
+| Sparse-SPICE | 0,7634 | 0,96% | +8,76 | **+0,007** [+0,003; +0,012] | +0,32 [0,00; +0,81] |
+| **SA-SPICE-v3** | 0,7708 | 0,96% | +9,08 | — | — |
+| chrF | **0,7941** | 1,13% | **+10,85** | **−0,023** [−0,046; −0,002] | **−1,77** [−3,09; −0,58] |
+| SPIDEr-like | 0,7788 | 1,93% | +9,73 | −0,008 [−0,030; +0,012] | −0,64 [−1,74; +0,36] |
+| ROUGE-L | 0,7802 | 2,25% | +9,93 | −0,009 [−0,035; +0,016] | −0,85 [−2,41; +0,61] |
+
+Đọc: mỗi thành phần của SA-SPICE-v3 (action, chrF trộn, sparse fallback, phạt độ dài) đều cộng thêm concordance có ý nghĩa so với các bản SPICE con, nhưng **chrF đứng một mình xếp câu exec tốt hơn SA-SPICE-v3**, có ý nghĩa ở cả hai đại lượng; SPIDEr-like và ROUGE-L ngang. Tái lập đúng chiều pilot C1 (chrF 0,8355 > R4 0,8161). Sàng này chỉ chẩn đoán offline (memo §13 không có luật dừng theo sàng); quyết chạy mức 2 (27 lượt) là của user. Tệp: `runs/sa_spice_v3/screen/out/`.

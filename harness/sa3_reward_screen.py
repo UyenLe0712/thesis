@@ -156,7 +156,7 @@ def main():
     B = 1500
     for st in range(0, len(nonempty), B):
         ch = nonempty[st:st + B]
-        res = spice_chi_tiet([it[2] for _, it in ch], [[it[0]["target_instruction"]] for _, it in ch], nhan=f"spice {st}")
+        res = spice_chi_tiet([it[2] for _, it in ch], [it[0]["target_instruction"] for _, it in ch], nhan=f"spice {st}")
         for (i, _), o in zip(ch, res):
             f = o["scores"]["All"]["f"]
             if f is None or f != f:
