@@ -190,3 +190,40 @@ Không sụp độ dài, không rỗng. Còn ~325 update mỗi arm (~13 h trên 
 
 **Phiên 2 (kernel `uyenle0712/sa3-grpo-u-2`, 14/11 07:25 → 17:15 VN, T4×2) dừng vì LỖI, không phải trần giờ.** `[tiếp từ] checkpoint-175` · `[nạp default] |lora_B| 0 → 5,94 / 6,22` đúng. Cả hai arm chạy tới khoảng bước 415 rồi chết ở bước lấy mẫu: `probability tensor contains either inf, nan or element < 0` (logit fp16 NaN, cùng lỗi `sa3-mau-k1`). Trước đó có hai bước `grad_norm` nan mỗi arm (SA 12/188, chrF 98/398) nhưng trọng số mọi điểm lưu đều lành: 0/504 tensor NaN, `|lora_B|` tăng đều (SA 0,31 → 0,68; chrF 0,33 → 0,70 ở ck100 → ck400). Điểm lưu ck100/200/300/400 ở dataset `uyenle0712/sa3-ck-u2` (máy nhà `_bundles/sa3_grpo/ck_u2/`, gitignore); log ở `runs/sa_spice_v3/grpo/u_2/`.
 Vá 14/11: `sa3_grpo.py` bọc `model.generate` thêm `remove_invalid_values=True` (mặc định bật, cờ tắt `--khong-chan-nan`; chỉ thay logit đã hỏng, in `[chặn NaN]`). **Phải khai:** từ ck400 tới ck500 lấy mẫu có bản vá này, trước đó không. Phiên 3 `uyenle0712/sa3-grpo-u-3` (trần 11 h) chạy tiếp từ ck400, còn 100 update (~4 h).
+
+**Phiên 3 (kernel `uyenle0712/sa3-grpo-u-3`, 14/11 ~18:00 → ~22:15 VN, T4×2) COMPLETE, cả hai arm tới bước 500.** Log có `[tiếp từ] checkpoint-400` · `[chặn NaN]` · `[nạp default] |lora_B| 0 → 9,02 / 9,39` · `[LoRA mới]` 14.966.784. Trọng số ck400 · ck500 · final: 0/504 tensor NaN. `log_history.json` đủ 500 bước, khớp số tính từ log phiên 1–2 ở ck100–400. Điểm lưu ở máy nhà `_bundles/sa3_grpo/ck_u3/` (gitignore, 3,1 GB); log ở `runs/sa_spice_v3/grpo/u_3/`.
+
+Số train (thưởng = TB 50 bước trước điểm lưu, sai số ~±0,025; KL = TB 20 bước cuối):
+
+| arm | ck100 | ck200 | ck300 | ck400 | ck500 |
+|---|---|---|---|---|---|
+| SA-SPICE-v3 thưởng | 0,608 | 0,618 | 0,575 | 0,615 | 0,609 |
+| SA-SPICE-v3 KL | 0,004 | 0,025 | 0,025 | 0,042 | 0,043 |
+| chrF thưởng | 0,596 | 0,644 | 0,593 | 0,654 | 0,628 |
+| chrF KL | 0,009 | 0,036 | 0,072 | 0,045 | **0,114** |
+
+Thưởng train phẳng trong nhiễu ⇒ không dùng để chọn điểm lưu. **chrF ck500 vượt ngưỡng KL 0,10 của memo §8 ⇒ không feasible**; SA-SPICE-v3 mọi điểm lưu ≤ 0,08.
+
+Kế hoạch DEV-v3 (user 14/11): chấm trước **một điểm lưu mỗi arm** — SA-SPICE-v3 ck500, chrF ck400 (điểm feasible muộn nhất) — cùng SFT-cont làm mốc; chỉ khi kết quả ổn mới chấm đủ ck100–500 và chọn chính thức theo luật 1 SE. **Lệch memo §8 (chấm thử một điểm trước), phải khai.** Một seed (101), memo đòi ba ⇒ kết quả chỉ chỉ hướng, chưa mở CONFIRM-v3.
+
+**Chấm DEV-v3 lượt đầu (14/11 22:36 VN):** kernel `uyenle0712/sa3-dev-a` (SFT-cont · SA-SPICE-v3 ck500) và `trangphngngc/sa3-dev-b` (SA-SPICE-v3 ck400 · chrF ck400), mỗi GPU một mô hình: greedy 2.223 bước DEV-v3 (`harness/sa3_dev.py`, cùng câu nhắc/giải mã với `sa3_mau.py`, mô hình = sft_cont_merged đã kiểm hoà + adapter GRPO) rồi UGround chấm exec 1.338 bước chạm. Thêm SA ck400 để có phép so cùng số bước với chrF ck400. Bước không chạm đọc ở máy nhà từ tệp câu.
+
+## 12. Kết quả DEV-v3 lượt đầu (15/11)
+
+Kernel `uyenle0712/sa3-dev-a` và `trangphngngc/sa3-dev-b` COMPLETE. Tệp ở `runs/sa_spice_v3/dev/{a,b}/` (câu `dev_*.jsonl`, chấm UGround `score/score_dev_*_raw.jsonl`, log). Đọc bằng `python3 -I harness/sa3_dev_doc.py` → `runs/sa_spice_v3/dev/doc_dev.json`. **Số DEV, một seed (101), cấm trích ra bài.** Bootstrap cụm như `score_run` (540 cụm).
+
+| | exec (1.338 bước chạm) | đúng loại thao tác, bước không chạm (667 bước gold tin được) | back |
+|---|---|---|---|
+| SFT-cont | 62,93 [60,04; 65,79] | 83,96% | 84/104 |
+| SA-SPICE-v3 ck500 | **64,35** [61,43; 67,27] | 78,41% | 56/104 |
+| SA-SPICE-v3 ck400 | 64,28 [61,36; 67,19] | 81,56% | 60/104 |
+| chrF ck400 | 63,98 [61,06; 66,87] | 77,06% | 57/104 |
+
+Ghép cặp exec: SA ck500 − SFT-cont **+1,42 [+0,29; +2,59]** cứu 40 phá 21 p=0,020 · SA ck400 − SFT-cont +1,35 [+0,37; +2,38] p=0,013 · chrF ck400 − SFT-cont +1,05 [−0,22; +2,33] p=0,11 · **SA ck400 − chrF ck400 +0,30 [−0,57; +1,20] p=0,61** · SA ck500 − ck400 +0,07.
+
+Bước không chạm (đúng loại theo `classify` của verifier v3, gold tin được): SA ck500 − SFT-cont **−5,55 [−8,17; −3,12]** (cứu 17 phá 54) · SA ck400 −2,40 [−4,67; −0,29] · chrF ck400 −6,90 [−9,29; −4,71]. Phần tụt gần như toàn ở **back** (84 → 56–60): ở ck500, 28 câu back của SFT-cont thành câu chạm, chỉ 6/28 còn nói "back/arrow" ⇒ 22 câu chỉ sang phần tử khác, lỗi thật, không phải do bộ phân loại. input_text cũng giảm ở ck500 (88 → 78) và chrF (→ 75); scroll giữ hoặc tăng nhẹ.
+
+Đọc: SA-SPICE-v3 tăng exec có ý nghĩa so SFT-cont (~+1,4, cùng cỡ ck500 − S1 trên test), nhưng **không hơn chrF** (thứ tự giữ như sàng mức 1 về tín hiệu yếu), và tái lập đúng tác hại back của ck500 trên test (`report/261` §6). ck400 ít hại back hơn ck500 với exec gần như bằng. Câu trùng nguyên văn gold: SFT-cont 706/2.223 · SA ck500 633 · ck400 650 · chrF 612. Độ đo văn bản: đang tính trên Kaggle CPU (§12b).
+
+### 12b. Độ đo văn bản DEV-v3 (đang chạy)
+15/11 đẩy `trangphngngc/chu-sa3-dev-15-11-cpu` (Kaggle CPU, dataset `trangphngngc/chu-sa3-dev-15-11` + `corenlp-360-jars`), mã `harness/chu_sa3_dev_15_11.py` (dùng lại `ktc_chu_27_10.tung_buoc`): BLEU-4 · ROUGE-L · CIDEr-D · SPICE · chrF · BERTScore có KTC ghép cặp bootstrap cụm episode (B = 2.000), METEOR mức kho; trên cả 2.223 bước và tập con 1.338 bước chạm. Gói `_bundles/chu_sa3_dev_15_11/`. Xong tải về `runs/sa_spice_v3/dev/chu/`.
