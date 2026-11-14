@@ -146,6 +146,21 @@ def train(a):
     a.bundle, a.algo, a.reward, a.probe, a.keys_ck500, a.n_prompt = a.data, "grpo", "spice", False, "", 1000
     a.adapter = os.path.join(a.data, "adapter_s1_seed101")      # chỉ lấy cấu hình LoRA (r, alpha, target) cùng cỡ S1
     GS.MODE.update(reward="spice", G=a.G, seed=a.seed)
+    if a.chan_nan:
+        # 14/11: phiên u-2 cả hai arm chết ở bước ~415 vì logit fp16 NaN/inf lúc multinomial (cùng lỗi sa3-mau-k1);
+        # remove_invalid_values chỉ thay logit đã hỏng, phân phối lành giữ nguyên. Bọc NGOÀI bản sinh theo khúc.
+        goc_skk = GS.sinh_theo_khuc
+
+        def skk(model, k, pad_id):
+            goc_skk(model, k, pad_id)
+            g0 = model.generate
+
+            def gen(*ar, **kw):
+                kw.setdefault("remove_invalid_values", True)
+                return g0(*ar, **kw)
+            model.generate = gen
+            print("[chặn NaN] remove_invalid_values=True khi sinh", flush=True)
+        GS.sinh_theo_khuc = skk
     GL.train(a)
 
 
@@ -184,6 +199,7 @@ def main():
     ap.add_argument("--beta", type=float, default=0.04); ap.add_argument("--lr", type=float, default=1e-5)
     ap.add_argument("--max-steps", type=int, default=500); ap.add_argument("--resume", default=None)
     ap.add_argument("--no-q4", dest="q4", action="store_false"); ap.add_argument("--gen-chunk", type=int, default=0)
+    ap.add_argument("--khong-chan-nan", dest="chan_nan", action="store_false")   # mặc định bật từ 14/11 (cần --gen-chunk > 0)
     a = ap.parse_args()
     if a.selftest:
         return selftest()
