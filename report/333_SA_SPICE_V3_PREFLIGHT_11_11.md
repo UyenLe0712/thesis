@@ -172,3 +172,18 @@ Loại: trùng mục với tập loại/test 1.341 · trùng mục nội pool 67
 | ROUGE-L | 0,7802 | 2,25% | +9,93 | −0,009 [−0,035; +0,016] | −0,85 [−2,41; +0,61] |
 
 Đọc: mỗi thành phần của SA-SPICE-v3 (action, chrF trộn, sparse fallback, phạt độ dài) đều cộng thêm concordance có ý nghĩa so với các bản SPICE con, nhưng **chrF đứng một mình xếp câu exec tốt hơn SA-SPICE-v3**, có ý nghĩa ở cả hai đại lượng; SPIDEr-like và ROUGE-L ngang. Tái lập đúng chiều pilot C1 (chrF 0,8355 > R4 0,8161). Sàng này chỉ chẩn đoán offline (memo §13 không có luật dừng theo sàng); quyết chạy mức 2 (27 lượt) là của user. Tệp: `runs/sa_spice_v3/screen/out/`.
+
+## 11. Mức 2: lượt đầu (11/11, user quyết)
+
+User quyết chạy mức 2 trước **một seed**, hai arm song song trên hai GPU của cùng một kernel: **SA-SPICE-v3** (GPU0) và **chrF** (GPU1, đối chứng mạnh nhất theo sàng mức 1). **Seed 101** theo quyết định của user ("cho dễ báo cáo"), **lệch memo §6** (memo khoá 401 · 503 · 907 và ghi "Seed 101/C1 không tham gia"). Phải khai khi báo: thiết kế reward đã nhìn pilot C1 trên mẫu S1/101; seed chỉ đổi thứ tự xáo câu nhắc và lấy mẫu, không đổi dữ liệu, và không ghép cặp được với ck500 (khác điểm xuất phát và tập câu nhắc).
+
+Mã `harness/sa3_grpo.py`: vòng train của `grpo_luoi.py` (GRPO, LoRA mới cỡ S1, KL β 0,04 về sft_cont_merged, DAPO, group std, G 8, 2 câu nhắc/update, lr 1e-5, 500 update), thay tập câu nhắc = 1.000 câu TRAIN-v3 và reward = đúng hàm `rewards()` của sàng. Kiểm WSL: selftest 9 arm đạt; reward SA-SPICE-v3 trên 8 mẫu thật của một bước khớp điểm sàng tuyệt đối (lệch 0).
+
+**Phiên 1 (kernel `uyenle0712/sa3-grpo-u-1`, 11/11 21:00 → 12/11 ~04:30 VN, T4×2) COMPLETE, cắt ở trần 7,5 h.** Kiểm hoà greedy trùng kernel 1 **3/3**; `[LoRA mới]` 14.966.784 tham số học, bằng S1; 1.000 câu nhắc. Số train, không phải số đánh giá:
+
+| arm | update đã chạy | điểm lưu | thưởng 1–25 → 76–100 → 151–cuối | KL cuối | s/update | số từ TB đầu → cuối |
+|---|---|---|---|---|---|---|
+| SA-SPICE-v3 | 182 | ck100 · ck150 · ck175 | 0,571 → 0,573 → 0,605 | 0,013 | 146 | 6,9 → 7,8 |
+| chrF | 189 | ck100 · ck150 · ck175 | 0,565 → 0,556 → 0,633 | 0,032 | 140 | 7,0 → 8,5 |
+
+Không sụp độ dài, không rỗng. Còn ~325 update mỗi arm (~13 h trên T4). Hạn mức Kaggle của cả ba tài khoản hết tới 14/11 ⇒ chạy tiếp trên Colab bằng `_bundles/sa3_grpo/k_sa3-grpo-c-2/sa3-grpo-c-2_colab.ipynb` (dựng bằng `_bundles/colab_tu_kaggle.py` từ notebook Kaggle cùng mã, tiếp từ ck175 trong output phiên 1). Log ở `runs/sa_spice_v3/grpo/u_1/`. Nếu kiểm hoà trên GPU Colab lệch 1/3 câu thì phải khai ở đây.

@@ -9,6 +9,7 @@ Khác bản cũ (k_luoi-test-t-1 viết cứng hai lượt):
 
 python make_test_nb2.py <user> <kernel> <full|smoke> <ten=thu_muc:md5> [...]
   biến môi trường: CAT_H (trần giờ, mặc định 11; smoke 0,42) · KIT (dataset kit) · PREV (kernel trước để nối tiếp)
+  · BUOC (global_step điểm lưu, mặc định 500) · DS_THEM (dataset thêm chứa thư mục adapter, tìm theo tên + md5)
 ví dụ:
   python make_test_nb2.py uyenle0712 luoi-test-u-3 full sft_tiep_101=sft_final:113e2a3e6a0781fd5121acda99962d1b \
       rloo_spice_101=rloo_spice_101:0efff3eb11f96370097eeafa9410e8cc reinforce_spice_101=reinforce_spice_101:e0e9c51585f416337a25c52f6e7c8505
@@ -28,6 +29,8 @@ for s in spec:
 CAT_H = float(os.environ.get("CAT_H", 0.42 if mode.endswith("smoke") else 11))
 KIT = os.environ.get("KIT", f"{user}/sft-colab-kit")
 PREV = os.environ.get("PREV")
+BUOC = int(os.environ.get("BUOC", 500))   # bước của điểm lưu được chấm (PPO lưới: 1000)
+DS_THEM = os.environ.get("DS_THEM", "").split()   # dataset thêm, vd adapter điểm lưu PPO
 N = 20 if mode.endswith("smoke") else 0
 H = os.path.dirname(os.path.abspath(__file__))
 
@@ -59,10 +62,13 @@ for f in ("grpo_spice.py", "gen_test_grpo.py", "build_branch_data.py", "tai_dung
 CK = {{}}
 for r, d, h in LUOT:
     p = f"{{KIT}}/{{d}}"
+    if not os.path.exists(f"{{p}}/adapter_model.safetensors"):   # 11/11: adapter ở dataset riêng (vd điểm lưu PPO), tìm theo tên thư mục + md5
+        c_ = [os.path.dirname(x) for x in glob.glob(f"/kaggle/input/**/{{d}}/adapter_model.safetensors", recursive=True) if md5(x) == h]
+        assert c_, f"DUNG: khong thay adapter {{r}} ({{d}})"; p = c_[0]
     assert md5(f"{{p}}/adapter_model.safetensors") == h, f"DUNG: adapter {{r}} lech md5"
     assert json.load(open(f"{{p}}/adapter_config.json"))["base_model_name_or_path"].endswith("s1_merged"), f"DUNG: {{r}} khong gan tren S1 hoa"
     if os.path.exists(f"{{p}}/trainer_state.json"):
-        assert json.load(open(f"{{p}}/trainer_state.json"))["global_step"] == 500, f"DUNG: {{r}} khong phai buoc 500"
+        assert json.load(open(f"{{p}}/trainer_state.json"))["global_step"] == {BUOC}, f"DUNG: {{r}} khong phai buoc {BUOC}"
     CK[r] = p
     print(r, "←", p, flush=True)
 NGUON = sorted(glob.glob(f"{{KIT}}/raw_*.jsonl")); assert len(NGUON) == 8, NGUON
@@ -208,6 +214,6 @@ os.makedirs(d, exist_ok=True)
 json.dump(nb, open(os.path.join(d, f"{name}.ipynb"), "w"), ensure_ascii=False, indent=1)
 meta = {"id": f"{user}/{name}", "title": name, "code_file": f"{name}.ipynb", "language": "python",
         "kernel_type": "notebook", "is_private": "true", "enable_gpu": "true", "enable_internet": "true",
-        "dataset_sources": [f"{user}/thesis-score", KIT] + ([f"{user}/thesis-nontap-images"] if NT else []), "competition_sources": [], "kernel_sources": [PREV] if PREV else []}
+        "dataset_sources": [f"{user}/thesis-score", KIT] + ([f"{user}/thesis-nontap-images"] if NT else []) + DS_THEM, "competition_sources": [], "kernel_sources": [PREV] if PREV else []}
 json.dump(meta, open(os.path.join(d, "kernel-metadata.json"), "w"), indent=1)
 print("đã dựng", d, "·", [x[0] for x in LUOT], "·", mode, "· trần", CAT_H, "h")

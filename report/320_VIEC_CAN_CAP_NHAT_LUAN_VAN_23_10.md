@@ -1103,3 +1103,40 @@ Kernel `uyenle0712/luoi-ppo-u-1` (T4×2, trần 11 h) COMPLETE, cả hai lượt
 - Dòng `[xoa diem luu cu]` chạy đúng, không hết đĩa. ~200 s/bước.
 - Thưởng SPICE trung bình theo cửa sổ 100 bước gần như phẳng: λ = 1 0,48 (bước 1–99) → 0,49–0,54 (bước 300–897), λ = 0,95 0,48 → 0,46–0,54; KL 0,05–0,08. Số train, không phải số đánh giá.
 - Chưa có câu sinh trên test ⇒ chưa có exec lẫn độ đo văn bản. Tệp log ở `runs/luoi/11_11/ppo_u_1/` (điểm lưu không vào git).
+
+## 28. PPO tới bước 1000 (kernel luoi-ppo-t2-1, 11/11/2026): đủ bước, đang chấm test
+
+Kernel `trangphuongngoc/luoi-ppo-t2-1` (T4×2, trần 7 h) COMPLETE, cả hai lượt chạy tới **bước 1000**.
+- λ = 1: `[tiếp từ] checkpoint-925`, nạp `value_head.pt` của ck925, `[nạp default] … → 17,13`; 75 bước, 142,8 s/bước, đỉnh VRAM 11,9 GiB.
+- λ = 0,95: `[tiếp từ] checkpoint-875`, nạp `value_head.pt` của ck875, `[nạp default] … → 16,73`; 125 bước, 149,2 s/bước, đỉnh VRAM 12,4 GiB.
+- Thưởng SPICE trung bình theo cửa sổ 100 bước (số train, không phải số đánh giá): λ = 1 0,483 (1–100) → 0,537 (401–500) → 0,566 (901–1000), KL 0,04; λ = 0,95 0,481 → 0,536 → 0,549, KL 0,07.
+- Adapter ck1000 (md5 λ = 1 `cd70887f…`, λ = 0,95 `eaec5fab…`) ở dataset `trangphngngc/ppo-ck1000`. Chấm test đẩy lên `trangphngngc/luoi-test-t-ppo` (12/11 06:31 VN, trần 2,2 h vì trang chỉ còn 2,43 h GPU), phần còn lại chạy tiếp trên Colab. Log ở `runs/luoi/11_11/ppo_t2_1/`.
+- **Chấm test phiên 1 (12/11, `trangphngngc/luoi-test-t-ppo`, T4×2, dừng ở trần 2,2 h):** `[kiểm hoà] 16/20` trùng S1 · `[kiem bo cham] 10/10` trùng toạ độ ⇒ đường sinh và bộ chấm lành. Sinh được λ = 1 **2.622/4.463** câu, λ = 0,95 **2.641/4.463** (2,9 s/bước, mỗi lượt 1 câu rỗng, trung bình 8,3 từ); chưa chấm exec. Tệp ở `runs/luoi/12_11/test_t_ppo/`.
+- **Phần còn lại chạy trên Colab:** `_bundles/luoi/k_luoi-test-c-ppo/luoi-test-c-ppo_colab.ipynb` (dựng bằng `PREV=trangphngngc/luoi-test-t-ppo`, nối tiếp từ câu đã sinh; secret `KAGGLE_TRANGPHNGNC`; cả hai lượt chung GPU 0). Còn ~1.830 câu mỗi lượt (~1,5 h T4) rồi chấm exec 4.463 bước chạm + bước không chạm.
+- **14/11: phần còn lại chuyển về Kaggle** (hạn mức mới): đẩy `trangphngngc/luoi-test-c-ppo` bản Kaggle (T4×2, trần 11 h, nối tiếp output `luoi-test-t-ppo`), không chạy Colab.
+- **Độ đo văn bản TẠM (kernel CPU `trangphngngc/chu-ppo-tam-13-11-cpu`, 13–14/11; mã `harness/chu_ppo_tam_13_11.py`; tệp `runs/luoi/13_11/chu_ppo_tam/chu_ppo_tam_13_11.json`; tự kiểm đạt).** Tính trên **2.622 bước đầu** thứ tự tệp thô S1/101 (đoạn đã sinh ở phiên 1, KHÔNG phải mẫu ngẫu nhiên); mọi nhánh cắt về đúng tập này, CIDEr-D lấy IDF của tập con ⇒ số tuyệt đối không so được với bảng 4.463 bước, chỉ đọc phép so ghép cặp. KTC95 bootstrap cụm app, B = 2.000, một hạt. Khi đủ 4.463 câu phải chạy lại bản đủ.
+
+| phép so (tập con 2.622) | BLEU-4 | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
+|---|---|---|---|---|---|---|
+| PPO λ=1 − ck500 | −1,61 [−2,31; −0,90] | +0,06 [−0,47; +0,62] | −7,83 [−15,00; −0,17] | −0,35 [−1,24; +0,54] | +0,26 [−0,32; +0,86] | −0,20 [−0,68; +0,31] |
+| PPO λ=1 − SFT tiếp | −1,15 [−1,96; −0,37] | −0,23 [−0,83; +0,41] | −4,97 [−13,04; +3,13] | +0,03 [−0,98; +0,97] | +0,49 [−0,12; +1,12] | −0,20 [−0,72; +0,31] |
+| PPO λ=1 − S1/101 | −0,96 [−1,83; +0,03] | +0,72 [0,00; +1,44] | +3,07 [−6,01; +12,11] | +0,57 [−0,51; +1,59] | +1,61 [+0,91; +2,34] | +0,32 [−0,26; +0,89] |
+| PPO λ=0,95 − ck500 | −1,86 [−2,58; −1,16] | −0,42 [−0,93; +0,12] | −11,02 [−18,51; −3,64] | −1,08 [−2,02; −0,15] | −0,10 [−0,63; +0,44] | −0,53 [−1,01; −0,03] |
+| PPO λ=1 − PPO λ=0,95 | +0,25 [−0,42; +0,94] | +0,48 [−0,04; +1,05] | +3,19 [−3,73; +10,25] | +0,74 [−0,13; +1,67] | +0,36 [−0,16; +0,92] | +0,33 [−0,16; +0,84] |
+| (đối chiếu) ck500 − S1/101 | +0,65 [−0,11; +1,55] | +0,66 [+0,04; +1,27] | +10,90 [+3,12; +19,08] | +0,91 [−0,09; +1,85] | +1,35 [+0,64; +2,03] | +0,52 [−0,04; +1,06] |
+
+METEOR (không KTC): ck500 38,18 · SFT tiếp 38,07 · PPO λ=1 38,20 · PPO λ=0,95 38,10 · S1/101 37,24. Đọc tạm: PPO không hơn ck500 ở độ đo văn bản nào; BLEU-4 và CIDEr-D thấp hơn có ý nghĩa ở cả hai λ, λ=0,95 thấp hơn ck500 cả SPICE. Chưa có exec.
+- **EXEC TEST PPO ck1000 (kernel `trangphngngc/luoi-test-c-ppo`, 14/11, T4×2, 2,3 h; tệp `runs/luoi/14_11/test_c_ppo/`).** `[kiểm hoà] 16/20` · `[kiem bo cham] 10/10`; nối tiếp câu phiên 1, sinh nốt 1,5 h, chấm 0,7 h; đủ 4.463 bước chạm. Số test, một hạt 101; KTC95 bootstrap cụm app B = 10.000, p McNemar chính xác. Tự kiểm: ck500 − S1/101 tính lại ra +1,55 [+0,80; +2,29] (khớp số đã công bố).
+
+| phép so (exec, 4.463) | Δ [KTC95] | cứu / phá | p |
+|---|---|---|---|
+| PPO λ=1 (60,07) − ck500 (60,65) | −0,58 [−1,15; −0,04] | 74 / 100 | 0,058 |
+| PPO λ=0,95 (59,98) − ck500 | −0,67 [−1,24; −0,11] | 70 / 100 | 0,026 |
+| PPO λ=1 − S1/101 (59,11) | +0,96 [+0,18; +1,74] | 158 / 115 | 0,011 |
+| PPO λ=0,95 − S1/101 | +0,87 [0,00; +1,74] | 176 / 137 | 0,032 |
+| PPO λ=1 − SFT tiếp (60,16) | −0,09 [−0,72; +0,54] | 102 / 106 | 0,84 |
+| PPO λ=1 − GRPO A/A (59,74) | +0,34 [−0,25; +0,91] | 95 / 80 | 0,29 |
+| PPO λ=1 − SCST + SPICE (60,54) | −0,47 [−0,97; +0,02] | 63 / 84 | 0,099 |
+| PPO λ=1 − PPO λ=0,95 | +0,09 [−0,53; +0,71] | 104 / 100 | 0,83 |
+
+Đọc: PPO (1.000 bước) hơn S1 khoảng +0,9 nhưng **ngang SFT tiếp** và **thấp hơn ck500** (KTC loại 0 ở cả hai λ, p McNemar 0,058/0,026) ⇒ không vào nhóm dẫn đầu; λ không đổi gì. Chưa chấm bước không chạm, D.3/AitW. Độ đo văn bản bản đủ 4.463 câu chưa chạy (bản tạm ở trên).

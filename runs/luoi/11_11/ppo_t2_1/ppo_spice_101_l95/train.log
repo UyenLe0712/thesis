@@ -1,0 +1,1423 @@
+[PPO] λ 0.95 · chuẩn hoá lợi thế True · lr V 0.0003
+[đè cấu hình] {'num_iterations': 2}
+[cấu hình] seed 101 · thuật toán ppo · thưởng spice
+trl 0.29.1 · transformers 5.20.2 · peft 0.21.2 · torch 2.11.0+cu130
+[nạp] /kaggle/working/s1_merged · dtype torch.float16 · 4-bit False · Tesla T4
+[LoRA mới] tham số học 14,966,784 · S1 có 14,966,784
+[câu nhắc] 1000 · bỏ {'trung_val': 0, 'trung_episode_val': 0, 'thieu_anh': 0, 'thieu_ocr': 0, 'rong': 9} · n_char max 1974
+[câu nhắc] trùng thứ tự với ck500 ✓
+GRPOConfig: {'num_generations': 8, 'per_device_train_batch_size': 4, 'gradient_accumulation_steps': 4, 'generation_batch_size': 16, 'steps_per_generation': 4, 'num_iterations': 2, 'max_completion_length': 96, 'temperature': 1.0, 'top_p': 1.0, 'top_k': 0, 'beta': 0.04, 'learning_rate': 1e-05, 'loss_type': 'dapo', 'scale_rewards': 'group', 'max_steps': 1000, 'bf16': False, 'fp16': True}
+[sinh theo khúc] bật, mỗi khúc ≤ 8 chuỗi
+[tiếp từ] /kaggle/working/ppo_spice_101_l95/checkpoint-875
+[nạp default] 504 tensor · |lora_B| 0.0000 → 16.7329 · khoá lạ 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+[sinh theo khúc] 16 chuỗi → 2 khúc ≤ 8
+PTBTokenizer tokenized 95 tokens at 1635.22 tokens per second.
+PTBTokenizer tokenized 120 tokens at 2092.04 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.2 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [2.835 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.246 seconds]
+SPICE evaluation took: 11.67 s
+[spice] lần 1 · 16 câu · 12.3s · thưởng TB 0.964 · số từ TB 6.2 · rỗng 0
+[đầu giá trị] nạp từ /kaggle/working/ppo_spice_101_l95/checkpoint-875/value_head.pt
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 135 tokens at 2316.66 tokens per second.
+PTBTokenizer tokenized 171 tokens at 2696.52 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.6 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.0 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [2.846 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.958 seconds]
+SPICE evaluation took: 12.47 s
+{'loss': '0.001093', 'grad_norm': '0.7881', 'learning_rate': '1e-05', 'num_tokens': '1.046e+07', 'completions/mean_length': '8.188', 'completions/min_length': '6', 'completions/max_length': '16', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '8.188', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '16', 'rewards/r_spice/mean': '0.9642', 'rewards/r_spice/std': '0.1006', 'reward': '0.9642', 'reward_std': '0.1006', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.1821', 'luoi/frac_adv_zero': '0', 'kl': '0.02555', 'entropy': '0.354', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.03996', 'luoi/v_ev': '-2.529', 'step_time': '199.5', 'epoch': '0.876'}
+{'loss': '-0.0009505', 'grad_norm': '0.7862', 'learning_rate': '1e-05', 'kl': '0.02505', 'entropy': '0.3534', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.02123', 'luoi/v_ev': '-1.635', 'step_time': '90.39', 'epoch': '0.877'}
+[spice] lần 2 · 16 câu · 13.0s · thưởng TB 0.608 · số từ TB 10.1 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 87 tokens at 1419.40 tokens per second.
+PTBTokenizer tokenized 127 tokens at 2263.05 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.2 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [2.871 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.354 seconds]
+SPICE evaluation took: 12.04 s
+{'loss': '0.005312', 'grad_norm': '1.704', 'learning_rate': '1e-05', 'num_tokens': '1.049e+07', 'completions/mean_length': '12.31', 'completions/min_length': '6', 'completions/max_length': '16', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '12.31', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '16', 'rewards/r_spice/mean': '0.6083', 'rewards/r_spice/std': '0.2368', 'reward': '0.6083', 'reward_std': '0.2368', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.1896', 'luoi/frac_adv_zero': '0', 'kl': '0.1359', 'entropy': '0.2378', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.05437', 'luoi/v_ev': '0.1252', 'step_time': '216.2', 'epoch': '0.878'}
+{'loss': '0.001229', 'grad_norm': '1.818', 'learning_rate': '1e-05', 'kl': '0.1216', 'entropy': '0.2405', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.04005', 'luoi/v_ev': '0.2072', 'step_time': '90.24', 'epoch': '0.879'}
+[spice] lần 3 · 16 câu · 12.6s · thưởng TB 0.480 · số từ TB 7.0 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 175 tokens at 2983.18 tokens per second.
+PTBTokenizer tokenized 202 tokens at 3592.63 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.9 sec].
+Threads( StanfordCoreNLP ) [3.461 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.961 seconds]
+SPICE evaluation took: 12.50 s
+{'loss': '0.001914', 'grad_norm': '1.7', 'learning_rate': '1e-05', 'num_tokens': '1.051e+07', 'completions/mean_length': '8.125', 'completions/min_length': '6', 'completions/max_length': '14', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '8.125', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '14', 'rewards/r_spice/mean': '0.48', 'rewards/r_spice/std': '0.5381', 'reward': '0.48', 'reward_std': '0.5381', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.3759', 'luoi/frac_adv_zero': '0', 'kl': '0.04877', 'entropy': '0.2908', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1722', 'luoi/v_ev': '0.2039', 'step_time': '213.2', 'epoch': '0.88'}
+{'loss': '-0.001302', 'grad_norm': '1.639', 'learning_rate': '1e-05', 'kl': '0.04954', 'entropy': '0.2913', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.09979', 'luoi/v_ev': '0.303', 'step_time': '89.56', 'epoch': '0.881'}
+[spice] lần 4 · 16 câu · 13.0s · thưởng TB 0.165 · số từ TB 11.7 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 87 tokens at 1587.94 tokens per second.
+PTBTokenizer tokenized 87 tokens at 1569.17 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [2.568 seconds]
+Parsing test captions
+SPICE evaluation took: 11.60 s
+{'loss': '0.002019', 'grad_norm': '1.293', 'learning_rate': '1e-05', 'num_tokens': '1.054e+07', 'completions/mean_length': '12.69', 'completions/min_length': '4', 'completions/max_length': '17', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '12.69', 'completions/min_terminated_length': '4', 'completions/max_terminated_length': '17', 'rewards/r_spice/mean': '0.1647', 'rewards/r_spice/std': '0.2618', 'reward': '0.1647', 'reward_std': '0.2618', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.2222', 'luoi/frac_adv_zero': '0', 'kl': '0.05326', 'entropy': '0.2445', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.06628', 'luoi/v_ev': '0.4002', 'step_time': '235', 'epoch': '0.882'}
+{'loss': '-0.0004519', 'grad_norm': '1.238', 'learning_rate': '1e-05', 'kl': '0.0567', 'entropy': '0.2426', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.03155', 'luoi/v_ev': '0.4651', 'step_time': '94.33', 'epoch': '0.883'}
+[spice] lần 5 · 16 câu · 12.1s · thưởng TB 0.500 · số từ TB 4.0 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 135 tokens at 2370.93 tokens per second.
+PTBTokenizer tokenized 147 tokens at 2580.65 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.9 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.0 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [2.952 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.662 seconds]
+SPICE evaluation took: 12.09 s
+{'loss': '3.558e-05', 'grad_norm': '0.2933', 'learning_rate': '1e-05', 'num_tokens': '1.056e+07', 'completions/mean_length': '5.5', 'completions/min_length': '3', 'completions/max_length': '8', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '5.5', 'completions/min_terminated_length': '3', 'completions/max_terminated_length': '8', 'rewards/r_spice/mean': '0.5', 'rewards/r_spice/std': '0.5164', 'reward': '0.5', 'reward_std': '0.5164', 'frac_reward_zero_std': '1', 'luoi/adv_abs_mean': '0.5176', 'luoi/frac_adv_zero': '0', 'kl': '0.0008875', 'entropy': '0.01545', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.2142', 'luoi/v_ev': '0.4237', 'step_time': '217.9', 'epoch': '0.884'}
+{'loss': '-8.392e-05', 'grad_norm': '0.3032', 'learning_rate': '1e-05', 'kl': '0.0008784', 'entropy': '0.01571', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1011', 'luoi/v_ev': '0.4045', 'step_time': '86.95', 'epoch': '0.885'}
+[spice] lần 6 · 16 câu · 12.6s · thưởng TB 0.231 · số từ TB 7.7 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 111 tokens at 1901.38 tokens per second.
+PTBTokenizer tokenized 146 tokens at 2527.65 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.6 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.0 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [2.554 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [1.83 seconds]
+SPICE evaluation took: 11.91 s
+{'loss': '0.001957', 'grad_norm': '3.528', 'learning_rate': '1e-05', 'num_tokens': '1.058e+07', 'completions/mean_length': '9.25', 'completions/min_length': '6', 'completions/max_length': '15', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '9.25', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '15', 'rewards/r_spice/mean': '0.2309', 'rewards/r_spice/std': '0.3937', 'reward': '0.2309', 'reward_std': '0.3937', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.28', 'luoi/frac_adv_zero': '0', 'kl': '0.04792', 'entropy': '0.2346', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1168', 'luoi/v_ev': '0.4036', 'step_time': '212.8', 'epoch': '0.886'}
+{'loss': '-0.006708', 'grad_norm': '3.751', 'learning_rate': '1e-05', 'kl': '0.0431', 'entropy': '0.2368', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.08442', 'luoi/v_ev': '0.409', 'step_time': '88.3', 'epoch': '0.887'}
+[spice] lần 7 · 16 câu · 12.4s · thưởng TB 0.240 · số từ TB 8.1 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 103 tokens at 1804.35 tokens per second.
+PTBTokenizer tokenized 97 tokens at 1676.41 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.6 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [2.681 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.578 seconds]
+SPICE evaluation took: 11.42 s
+{'loss': '0.004867', 'grad_norm': '1.545', 'learning_rate': '1e-05', 'num_tokens': '1.061e+07', 'completions/mean_length': '9.188', 'completions/min_length': '6', 'completions/max_length': '14', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '9.188', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '14', 'rewards/r_spice/mean': '0.2398', 'rewards/r_spice/std': '0.3294', 'reward': '0.2398', 'reward_std': '0.3294', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.3585', 'luoi/frac_adv_zero': '0', 'kl': '0.1208', 'entropy': '0.4376', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1475', 'luoi/v_ev': '0.401', 'step_time': '207.8', 'epoch': '0.888'}
+{'loss': '0.00149', 'grad_norm': '1.563', 'learning_rate': '1e-05', 'kl': '0.1239', 'entropy': '0.4366', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.09762', 'luoi/v_ev': '0.3796', 'step_time': '87.56', 'epoch': '0.889'}
+[spice] lần 8 · 16 câu · 12.0s · thưởng TB 0.208 · số từ TB 5.1 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 119 tokens at 2165.77 tokens per second.
+PTBTokenizer tokenized 107 tokens at 1920.07 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.2 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [2.860 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.320 seconds]
+SPICE evaluation took: 11.96 s
+{'loss': '0.002041', 'grad_norm': '3.13', 'learning_rate': '1e-05', 'num_tokens': '1.063e+07', 'completions/mean_length': '6.625', 'completions/min_length': '5', 'completions/max_length': '11', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '6.625', 'completions/min_terminated_length': '5', 'completions/max_terminated_length': '11', 'rewards/r_spice/mean': '0.2083', 'rewards/r_spice/std': '0.4014', 'reward': '0.2083', 'reward_std': '0.4014', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.2024', 'luoi/frac_adv_zero': '0', 'kl': '0.05227', 'entropy': '0.6551', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1093', 'luoi/v_ev': '0.3727', 'step_time': '207.9', 'epoch': '0.89'}
+{'loss': '-0.00438', 'grad_norm': '3.216', 'learning_rate': '1e-05', 'kl': '0.05423', 'entropy': '0.6558', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1021', 'luoi/v_ev': '0.3756', 'step_time': '88.45', 'epoch': '0.891'}
+[spice] lần 9 · 16 câu · 12.5s · thưởng TB 0.306 · số từ TB 5.8 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 71 tokens at 1396.30 tokens per second.
+PTBTokenizer tokenized 71 tokens at 1343.72 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.852 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) 
+SPICE evaluation took: 10.61 s
+{'loss': '0.002492', 'grad_norm': '1.592', 'learning_rate': '1e-05', 'num_tokens': '1.065e+07', 'completions/mean_length': '7.312', 'completions/min_length': '4', 'completions/max_length': '12', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '7.312', 'completions/min_terminated_length': '4', 'completions/max_terminated_length': '12', 'rewards/r_spice/mean': '0.3063', 'rewards/r_spice/std': '0.3241', 'reward': '0.3063', 'reward_std': '0.3241', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.2341', 'luoi/frac_adv_zero': '0', 'kl': '0.06187', 'entropy': '0.4467', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.09974', 'luoi/v_ev': '0.3287', 'step_time': '207.8', 'epoch': '0.892'}
+{'loss': '-0.001089', 'grad_norm': '1.605', 'learning_rate': '1e-05', 'kl': '0.0638', 'entropy': '0.4479', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.0917', 'luoi/v_ev': '0.2254', 'step_time': '87.41', 'epoch': '0.893'}
+[spice] lần 10 · 16 câu · 11.1s · thưởng TB 1.000 · số từ TB 3.5 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 95 tokens at 1050.45 tokens per second.
+PTBTokenizer tokenized 91 tokens at 1687.54 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.9 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [2.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.6 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.9 sec].
+Threads( StanfordCoreNLP ) [3.192 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.501 seconds]
+SPICE evaluation took: 13.73 s
+{'loss': '0.0002297', 'grad_norm': '0.3159', 'learning_rate': '1e-05', 'num_tokens': '1.068e+07', 'completions/mean_length': '7', 'completions/min_length': '4', 'completions/max_length': '10', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '7', 'completions/min_terminated_length': '4', 'completions/max_terminated_length': '10', 'rewards/r_spice/mean': '1', 'rewards/r_spice/std': '0', 'reward': '1', 'reward_std': '0', 'frac_reward_zero_std': '1', 'luoi/adv_abs_mean': '0.5452', 'luoi/frac_adv_zero': '0', 'kl': '0.008657', 'entropy': '0.08388', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.3155', 'luoi/v_ev': '0.1513', 'step_time': '214.3', 'epoch': '0.894'}
+{'loss': '-2.366e-05', 'grad_norm': '0.3086', 'learning_rate': '1e-05', 'kl': '0.008694', 'entropy': '0.08258', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1632', 'luoi/v_ev': '0.1531', 'step_time': '86.7', 'epoch': '0.895'}
+[spice] lần 11 · 16 câu · 14.4s · thưởng TB 0.750 · số từ TB 4.7 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 111 tokens at 2023.07 tokens per second.
+PTBTokenizer tokenized 104 tokens at 1921.20 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.6 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.9 sec].
+Threads( StanfordCoreNLP ) [2.793 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.685 seconds]
+SPICE evaluation took: 11.96 s
+{'loss': '0.004174', 'grad_norm': '2.858', 'learning_rate': '1e-05', 'num_tokens': '1.07e+07', 'completions/mean_length': '5.75', 'completions/min_length': '4', 'completions/max_length': '8', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '5.75', 'completions/min_terminated_length': '4', 'completions/max_terminated_length': '8', 'rewards/r_spice/mean': '0.75', 'rewards/r_spice/std': '0.383', 'reward': '0.75', 'reward_std': '0.383', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.4076', 'luoi/frac_adv_zero': '0', 'kl': '0.104', 'entropy': '0.2703', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1963', 'luoi/v_ev': '0.1554', 'step_time': '211.8', 'epoch': '0.896'}
+{'loss': '-0.0009193', 'grad_norm': '2.737', 'learning_rate': '1e-05', 'kl': '0.1076', 'entropy': '0.2702', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1681', 'luoi/v_ev': '0.1334', 'step_time': '88', 'epoch': '0.897'}
+[spice] lần 12 · 16 câu · 12.6s · thưởng TB 0.241 · số từ TB 5.6 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 79 tokens at 1308.95 tokens per second.
+PTBTokenizer tokenized 126 tokens at 2449.55 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.0 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [2.408 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.831 seconds]
+SPICE evaluation took: 11.29 s
+{'loss': '0.002275', 'grad_norm': '2.241', 'learning_rate': '1e-05', 'num_tokens': '1.073e+07', 'completions/mean_length': '6.625', 'completions/min_length': '6', 'completions/max_length': '8', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '6.625', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '8', 'rewards/r_spice/mean': '0.2411', 'rewards/r_spice/std': '0.4324', 'reward': '0.2411', 'reward_std': '0.4324', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.5277', 'luoi/frac_adv_zero': '0', 'kl': '0.05686', 'entropy': '0.3536', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.2496', 'luoi/v_ev': '0.09584', 'step_time': '207', 'epoch': '0.898'}
+{'loss': '-0.00225', 'grad_norm': '2.369', 'learning_rate': '1e-05', 'kl': '0.06009', 'entropy': '0.3539', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1281', 'luoi/v_ev': '0.08298', 'step_time': '88.63', 'epoch': '0.899'}
+[spice] lần 13 · 16 câu · 11.8s · thưởng TB 0.380 · số từ TB 5.9 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 143 tokens at 2443.05 tokens per second.
+PTBTokenizer tokenized 129 tokens at 2182.98 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [3.76 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.412 seconds]
+SPICE evaluation took: 11.81 s
+{'loss': '0.001634', 'grad_norm': '1.442', 'learning_rate': '1e-05', 'num_tokens': '1.075e+07', 'completions/mean_length': '7.938', 'completions/min_length': '4', 'completions/max_length': '13', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '7.938', 'completions/min_terminated_length': '4', 'completions/max_terminated_length': '13', 'rewards/r_spice/mean': '0.3798', 'rewards/r_spice/std': '0.3433', 'reward': '0.3798', 'reward_std': '0.3433', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.2145', 'luoi/frac_adv_zero': '0', 'kl': '0.04157', 'entropy': '0.4408', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.06101', 'luoi/v_ev': '0.08248', 'step_time': '209.1', 'epoch': '0.9'}
+{'loss': '-0.002181', 'grad_norm': '1.477', 'learning_rate': '1e-05', 'kl': '0.0418', 'entropy': '0.4419', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.04408', 'luoi/v_ev': '0.07635', 'step_time': '88.45', 'epoch': '0.901'}
+[spice] lần 14 · 16 câu · 12.4s · thưởng TB 0.401 · số từ TB 7.1 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 183 tokens at 3423.42 tokens per second.
+PTBTokenizer tokenized 137 tokens at 2314.73 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.9 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.6 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [3.487 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.497 seconds]
+SPICE evaluation took: 12.83 s
+{'loss': '0.004744', 'grad_norm': '1.69', 'learning_rate': '1e-05', 'num_tokens': '1.077e+07', 'completions/mean_length': '8.688', 'completions/min_length': '6', 'completions/max_length': '15', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '8.688', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '15', 'rewards/r_spice/mean': '0.4013', 'rewards/r_spice/std': '0.3872', 'reward': '0.4013', 'reward_std': '0.3872', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.2619', 'luoi/frac_adv_zero': '0', 'kl': '0.1199', 'entropy': '0.3274', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1083', 'luoi/v_ev': '0.06101', 'step_time': '209.4', 'epoch': '0.902'}
+{'loss': '0.0009974', 'grad_norm': '1.661', 'learning_rate': '1e-05', 'kl': '0.1249', 'entropy': '0.3247', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.09959', 'luoi/v_ev': '0.04957', 'step_time': '88.52', 'epoch': '0.903'}
+[spice] lần 15 · 16 câu · 13.4s · thưởng TB 0.098 · số từ TB 7.3 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 167 tokens at 2986.59 tokens per second.
+PTBTokenizer tokenized 163 tokens at 2704.94 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [3.94 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.261 seconds]
+SPICE evaluation took: 11.75 s
+{'loss': '0.008043', 'grad_norm': '2.35', 'learning_rate': '1e-05', 'num_tokens': '1.08e+07', 'completions/mean_length': '8.688', 'completions/min_length': '7', 'completions/max_length': '16', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '8.688', 'completions/min_terminated_length': '7', 'completions/max_terminated_length': '16', 'rewards/r_spice/mean': '0.09835', 'rewards/r_spice/std': '0.178', 'reward': '0.09835', 'reward_std': '0.178', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.2587', 'luoi/frac_adv_zero': '0', 'kl': '0.2232', 'entropy': '0.2998', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.09646', 'luoi/v_ev': '0.05443', 'step_time': '209.6', 'epoch': '0.904'}
+{'loss': '0.002776', 'grad_norm': '2.432', 'learning_rate': '1e-05', 'kl': '0.2086', 'entropy': '0.3', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.06535', 'luoi/v_ev': '0.06683', 'step_time': '88.08', 'epoch': '0.905'}
+[spice] lần 16 · 16 câu · 12.3s · thưởng TB 0.825 · số từ TB 8.6 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 167 tokens at 3020.30 tokens per second.
+PTBTokenizer tokenized 162 tokens at 2996.81 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [3.125 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.298 seconds]
+SPICE evaluation took: 13.18 s
+{'loss': '0.002366', 'grad_norm': '3.29', 'learning_rate': '1e-05', 'num_tokens': '1.082e+07', 'completions/mean_length': '10.56', 'completions/min_length': '6', 'completions/max_length': '15', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '10.56', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '15', 'rewards/r_spice/mean': '0.825', 'rewards/r_spice/std': '0.3256', 'reward': '0.825', 'reward_std': '0.3256', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.4136', 'luoi/frac_adv_zero': '0', 'kl': '0.06148', 'entropy': '0.1391', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.2246', 'luoi/v_ev': '0.04038', 'step_time': '216.9', 'epoch': '0.906'}
+{'loss': '-0.001798', 'grad_norm': '1.099', 'learning_rate': '1e-05', 'kl': '0.05542', 'entropy': '0.1343', 'clip_ratio/low_mean': '0.01571', 'clip_ratio/low_min': '0.01571', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0.01571', 'luoi/v_loss': '0.1339', 'luoi/v_ev': '0.01191', 'step_time': '91.38', 'epoch': '0.907'}
+[spice] lần 17 · 16 câu · 13.8s · thưởng TB 0.627 · số từ TB 8.7 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 135 tokens at 2532.98 tokens per second.
+PTBTokenizer tokenized 148 tokens at 2584.36 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.2 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [3.32 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.147 seconds]
+SPICE evaluation took: 11.69 s
+{'loss': '0.0003617', 'grad_norm': '0.8804', 'learning_rate': '1e-05', 'num_tokens': '1.084e+07', 'completions/mean_length': '10.25', 'completions/min_length': '7', 'completions/max_length': '12', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '10.25', 'completions/min_terminated_length': '7', 'completions/max_terminated_length': '12', 'rewards/r_spice/mean': '0.6271', 'rewards/r_spice/std': '0.4123', 'reward': '0.6271', 'reward_std': '0.4123', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.2661', 'luoi/frac_adv_zero': '0', 'kl': '0.009476', 'entropy': '0.2441', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.05405', 'luoi/v_ev': '0.04019', 'step_time': '222.3', 'epoch': '0.908'}
+{'loss': '-0.001576', 'grad_norm': '0.8719', 'learning_rate': '1e-05', 'kl': '0.01013', 'entropy': '0.2441', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.05984', 'luoi/v_ev': '0.06573', 'step_time': '88.62', 'epoch': '0.909'}
+[spice] lần 18 · 16 câu · 12.3s · thưởng TB 0.496 · số từ TB 7.8 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 87 tokens at 1099.87 tokens per second.
+PTBTokenizer tokenized 96 tokens at 1784.99 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.2 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [2.723 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.596 seconds]
+SPICE evaluation took: 11.61 s
+{'loss': '0.001316', 'grad_norm': '1.334', 'learning_rate': '1e-05', 'num_tokens': '1.087e+07', 'completions/mean_length': '9.812', 'completions/min_length': '7', 'completions/max_length': '12', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '9.812', 'completions/min_terminated_length': '7', 'completions/max_terminated_length': '12', 'rewards/r_spice/mean': '0.4963', 'rewards/r_spice/std': '0.5205', 'reward': '0.4963', 'reward_std': '0.5205', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.3114', 'luoi/frac_adv_zero': '0', 'kl': '0.03113', 'entropy': '0.1185', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1433', 'luoi/v_ev': '0.1146', 'step_time': '217', 'epoch': '0.91'}
+{'loss': '-0.001287', 'grad_norm': '1.56', 'learning_rate': '1e-05', 'kl': '0.03097', 'entropy': '0.1183', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.07589', 'luoi/v_ev': '0.1756', 'step_time': '88.99', 'epoch': '0.911'}
+[spice] lần 19 · 16 câu · 12.2s · thưởng TB 0.506 · số từ TB 5.1 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 143 tokens at 2492.15 tokens per second.
+PTBTokenizer tokenized 142 tokens at 2507.12 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.6 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.2 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [2.934 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.204 seconds]
+SPICE evaluation took: 12.08 s
+{'loss': '0.001287', 'grad_norm': '1.977', 'learning_rate': '1e-05', 'num_tokens': '1.089e+07', 'completions/mean_length': '6.562', 'completions/min_length': '6', 'completions/max_length': '15', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '6.562', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '15', 'rewards/r_spice/mean': '0.5064', 'rewards/r_spice/std': '0.5104', 'reward': '0.5064', 'reward_std': '0.5104', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.2251', 'luoi/frac_adv_zero': '0', 'kl': '0.03003', 'entropy': '0.4386', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.05989', 'luoi/v_ev': '0.2272', 'step_time': '208.1', 'epoch': '0.912'}
+{'loss': '-0.002735', 'grad_norm': '1.693', 'learning_rate': '1e-05', 'kl': '0.02843', 'entropy': '0.4406', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.02776', 'luoi/v_ev': '0.2793', 'step_time': '88.9', 'epoch': '0.913'}
+[spice] lần 20 · 16 câu · 12.6s · thưởng TB 0.897 · số từ TB 7.8 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 103 tokens at 1876.45 tokens per second.
+PTBTokenizer tokenized 121 tokens at 2090.24 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.9 sec].
+Threads( StanfordCoreNLP ) [2.585 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.773 seconds]
+SPICE evaluation took: 11.43 s
+{'loss': '0.008043', 'grad_norm': '3.722', 'learning_rate': '1e-05', 'num_tokens': '1.092e+07', 'completions/mean_length': '9', 'completions/min_length': '6', 'completions/max_length': '14', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '9', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '14', 'rewards/r_spice/mean': '0.8974', 'rewards/r_spice/std': '0.2102', 'reward': '0.8974', 'reward_std': '0.2102', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.3167', 'luoi/frac_adv_zero': '0', 'kl': '0.2079', 'entropy': '0.3007', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1017', 'luoi/v_ev': '0.3361', 'step_time': '217.2', 'epoch': '0.914'}
+{'loss': '-0.00103', 'grad_norm': '4.048', 'learning_rate': '1e-05', 'kl': '0.1835', 'entropy': '0.3011', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.03977', 'luoi/v_ev': '0.3539', 'step_time': '89.91', 'epoch': '0.915'}
+[spice] lần 21 · 16 câu · 12.0s · thưởng TB 0.048 · số từ TB 6.1 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 151 tokens at 2543.79 tokens per second.
+PTBTokenizer tokenized 148 tokens at 2551.90 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [3.154 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.684 seconds]
+SPICE evaluation took: 13.73 s
+{'loss': '0.002469', 'grad_norm': '1.846', 'learning_rate': '1e-05', 'num_tokens': '1.094e+07', 'completions/mean_length': '7.625', 'completions/min_length': '6', 'completions/max_length': '12', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '7.625', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '12', 'rewards/r_spice/mean': '0.0475', 'rewards/r_spice/std': '0.2554', 'reward': '0.0475', 'reward_std': '0.2554', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.6144', 'luoi/frac_adv_zero': '0', 'kl': '0.05536', 'entropy': '0.2851', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.3753', 'luoi/v_ev': '0.2934', 'step_time': '207.4', 'epoch': '0.916'}
+{'loss': '-0.001436', 'grad_norm': '1.817', 'learning_rate': '1e-05', 'kl': '0.05632', 'entropy': '0.2855', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1656', 'luoi/v_ev': '0.2279', 'step_time': '87.38', 'epoch': '0.917'}
+[spice] lần 22 · 16 câu · 14.3s · thưởng TB 0.190 · số từ TB 7.9 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 103 tokens at 1974.51 tokens per second.
+PTBTokenizer tokenized 109 tokens at 1868.87 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.1 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [2.610 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.490 seconds]
+SPICE evaluation took: 11.17 s
+{'loss': '0.01034', 'grad_norm': '1.756', 'learning_rate': '1e-05', 'num_tokens': '1.096e+07', 'completions/mean_length': '9.562', 'completions/min_length': '4', 'completions/max_length': '15', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '9.562', 'completions/min_terminated_length': '4', 'completions/max_terminated_length': '15', 'rewards/r_spice/mean': '0.19', 'rewards/r_spice/std': '0.3055', 'reward': '0.19', 'reward_std': '0.3055', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.2717', 'luoi/frac_adv_zero': '0', 'kl': '0.339', 'entropy': '0.5162', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.08371', 'luoi/v_ev': '0.2277', 'step_time': '212.2', 'epoch': '0.918'}
+{'loss': '0.006761', 'grad_norm': '1.744', 'learning_rate': '1e-05', 'kl': '0.3245', 'entropy': '0.5163', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.06172', 'luoi/v_ev': '0.2516', 'step_time': '88.56', 'epoch': '0.919'}
+[spice] lần 23 · 16 câu · 11.7s · thưởng TB 0.801 · số từ TB 6.9 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 103 tokens at 1989.35 tokens per second.
+PTBTokenizer tokenized 101 tokens at 1721.36 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [2.545 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.313 seconds]
+SPICE evaluation took: 11.34 s
+{'loss': '0.002558', 'grad_norm': '1.731', 'learning_rate': '1e-05', 'num_tokens': '1.099e+07', 'completions/mean_length': '9.875', 'completions/min_length': '7', 'completions/max_length': '14', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '9.875', 'completions/min_terminated_length': '7', 'completions/max_terminated_length': '14', 'rewards/r_spice/mean': '0.8006', 'rewards/r_spice/std': '0.2869', 'reward': '0.8006', 'reward_std': '0.2869', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.3877', 'luoi/frac_adv_zero': '0', 'kl': '0.06057', 'entropy': '0.1747', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1992', 'luoi/v_ev': '0.2287', 'step_time': '207.6', 'epoch': '0.92'}
+{'loss': '-0.001741', 'grad_norm': '1.632', 'learning_rate': '1e-05', 'kl': '0.05476', 'entropy': '0.1781', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1467', 'luoi/v_ev': '0.1685', 'step_time': '87.93', 'epoch': '0.921'}
+[spice] lần 24 · 16 câu · 11.8s · thưởng TB 1.000 · số từ TB 5.4 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 175 tokens at 3165.27 tokens per second.
+PTBTokenizer tokenized 189 tokens at 3396.33 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.9 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [3.425 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [0.726 seconds]
+SPICE evaluation took: 12.76 s
+{'loss': '0.0003196', 'grad_norm': '0.5639', 'learning_rate': '1e-05', 'num_tokens': '1.101e+07', 'completions/mean_length': '6.375', 'completions/min_length': '5', 'completions/max_length': '7', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '6.375', 'completions/min_terminated_length': '5', 'completions/max_terminated_length': '7', 'rewards/r_spice/mean': '1', 'rewards/r_spice/std': '0', 'reward': '1', 'reward_std': '0', 'frac_reward_zero_std': '1', 'luoi/adv_abs_mean': '0.4713', 'luoi/frac_adv_zero': '0', 'kl': '0.008245', 'entropy': '0.0913', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.2111', 'luoi/v_ev': '0.1713', 'step_time': '222.2', 'epoch': '0.922'}
+{'loss': '-0.0007133', 'grad_norm': '0.5702', 'learning_rate': '1e-05', 'kl': '0.007526', 'entropy': '0.09215', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.09655', 'luoi/v_ev': '0.2088', 'step_time': '88.93', 'epoch': '0.923'}
+[spice] lần 25 · 16 câu · 13.3s · thưởng TB 0.520 · số từ TB 10.5 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 191 tokens at 3318.33 tokens per second.
+PTBTokenizer tokenized 193 tokens at 3451.50 tokens per second.
+Parsing reference captions
+Parsing test captions
+SPICE evaluation took: 1.341 s
+{'loss': '0.00251', 'grad_norm': '1.528', 'learning_rate': '1e-05', 'num_tokens': '1.103e+07', 'completions/mean_length': '12', 'completions/min_length': '6', 'completions/max_length': '15', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '12', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '15', 'rewards/r_spice/mean': '0.5198', 'rewards/r_spice/std': '0.3817', 'reward': '0.5198', 'reward_std': '0.3817', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.2621', 'luoi/frac_adv_zero': '0', 'kl': '0.06558', 'entropy': '0.4513', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1122', 'luoi/v_ev': '0.1876', 'step_time': '211.1', 'epoch': '0.924'}
+{'loss': '-0.0002683', 'grad_norm': '1.533', 'learning_rate': '1e-05', 'kl': '0.06494', 'entropy': '0.4518', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1055', 'luoi/v_ev': '0.1496', 'step_time': '89.23', 'epoch': '0.925'}
+[spice] lần 26 · 16 câu · 1.8s · thưởng TB 0.969 · số từ TB 11.1 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 95 tokens at 1735.35 tokens per second.
+PTBTokenizer tokenized 92 tokens at 1749.31 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.630 seconds]
+SPICE evaluation took: 10.35 s
+{'loss': '6.871e-05', 'grad_norm': '0.907', 'learning_rate': '1e-05', 'num_tokens': '1.106e+07', 'completions/mean_length': '15.12', 'completions/min_length': '12', 'completions/max_length': '19', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '15.12', 'completions/min_terminated_length': '12', 'completions/max_terminated_length': '19', 'rewards/r_spice/mean': '0.9688', 'rewards/r_spice/std': '0.08539', 'reward': '0.9688', 'reward_std': '0.08539', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.1998', 'luoi/frac_adv_zero': '0', 'kl': '0.001681', 'entropy': '0.0451', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.05023', 'luoi/v_ev': '0.1873', 'step_time': '201.2', 'epoch': '0.926'}
+{'loss': '-0.001731', 'grad_norm': '0.8774', 'learning_rate': '1e-05', 'kl': '0.001779', 'entropy': '0.04482', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.02701', 'luoi/v_ev': '0.2361', 'step_time': '89.23', 'epoch': '0.927'}
+[spice] lần 27 · 16 câu · 10.9s · thưởng TB 0.625 · số từ TB 4.8 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 151 tokens at 2215.76 tokens per second.
+PTBTokenizer tokenized 87 tokens at 1567.11 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.2 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.450 seconds]
+SPICE evaluation took: 10.17 s
+{'loss': '0.0004793', 'grad_norm': '2.394', 'learning_rate': '1e-05', 'num_tokens': '1.108e+07', 'completions/mean_length': '5.812', 'completions/min_length': '5', 'completions/max_length': '7', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '5.812', 'completions/min_terminated_length': '5', 'completions/max_terminated_length': '7', 'rewards/r_spice/mean': '0.625', 'rewards/r_spice/std': '0.5', 'reward': '0.625', 'reward_std': '0.5', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.374', 'luoi/frac_adv_zero': '0', 'kl': '0.01213', 'entropy': '0.4003', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1859', 'luoi/v_ev': '0.2077', 'step_time': '204.7', 'epoch': '0.928'}
+{'loss': '-0.004528', 'grad_norm': '2.371', 'learning_rate': '1e-05', 'kl': '0.01234', 'entropy': '0.4004', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1651', 'luoi/v_ev': '0.158', 'step_time': '88.24', 'epoch': '0.929'}
+[spice] lần 28 · 16 câu · 10.7s · thưởng TB 0.521 · số từ TB 4.0 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 103 tokens at 2007.54 tokens per second.
+PTBTokenizer tokenized 162 tokens at 3037.95 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [2.735 seconds]
+SPICE evaluation took: 10.46 s
+{'loss': '0.001912', 'grad_norm': '1.865', 'learning_rate': '1e-05', 'num_tokens': '1.111e+07', 'completions/mean_length': '6.25', 'completions/min_length': '5', 'completions/max_length': '7', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '6.25', 'completions/min_terminated_length': '5', 'completions/max_terminated_length': '7', 'rewards/r_spice/mean': '0.5208', 'rewards/r_spice/std': '0.5014', 'reward': '0.5208', 'reward_std': '0.5014', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.2285', 'luoi/frac_adv_zero': '0', 'kl': '0.0477', 'entropy': '0.2589', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.05585', 'luoi/v_ev': '0.1755', 'step_time': '200.7', 'epoch': '0.93'}
+{'loss': '-0.002281', 'grad_norm': '1.799', 'learning_rate': '1e-05', 'kl': '0.04497', 'entropy': '0.2617', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.03453', 'luoi/v_ev': '0.2222', 'step_time': '83.94', 'epoch': '0.931'}
+[spice] lần 29 · 16 câu · 10.9s · thưởng TB 0.145 · số từ TB 9.2 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 271 tokens at 4817.28 tokens per second.
+PTBTokenizer tokenized 206 tokens at 3635.65 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [3.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.6 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.9 sec].
+Threads( StanfordCoreNLP ) [3.86 seconds]
+SPICE evaluation took: 12.11 s
+{'loss': '0.001734', 'grad_norm': '2.408', 'learning_rate': '1e-05', 'num_tokens': '1.113e+07', 'completions/mean_length': '10.19', 'completions/min_length': '5', 'completions/max_length': '15', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '10.19', 'completions/min_terminated_length': '5', 'completions/max_terminated_length': '15', 'rewards/r_spice/mean': '0.145', 'rewards/r_spice/std': '0.426', 'reward': '0.145', 'reward_std': '0.426', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.3161', 'luoi/frac_adv_zero': '0', 'kl': '0.04446', 'entropy': '0.3057', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.123', 'luoi/v_ev': '0.3144', 'step_time': '205.9', 'epoch': '0.932'}
+{'loss': '-0.004024', 'grad_norm': '2.493', 'learning_rate': '1e-05', 'kl': '0.04227', 'entropy': '0.3077', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.105', 'luoi/v_ev': '0.3851', 'step_time': '88.56', 'epoch': '0.933'}
+[spice] lần 30 · 16 câu · 12.6s · thưởng TB 0.706 · số từ TB 10.9 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 183 tokens at 3633.02 tokens per second.
+PTBTokenizer tokenized 157 tokens at 2916.99 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [1.1 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.734 seconds]
+SPICE evaluation took: 11.02 s
+{'loss': '0.001757', 'grad_norm': '1.581', 'learning_rate': '1e-05', 'num_tokens': '1.115e+07', 'completions/mean_length': '13.06', 'completions/min_length': '7', 'completions/max_length': '15', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '13.06', 'completions/min_terminated_length': '7', 'completions/max_terminated_length': '15', 'rewards/r_spice/mean': '0.7062', 'rewards/r_spice/std': '0.3348', 'reward': '0.7062', 'reward_std': '0.3348', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.3935', 'luoi/frac_adv_zero': '0', 'kl': '0.04696', 'entropy': '0.2614', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.19', 'luoi/v_ev': '0.3449', 'step_time': '214.6', 'epoch': '0.934'}
+{'loss': '-0.00108', 'grad_norm': '1.447', 'learning_rate': '1e-05', 'kl': '0.04877', 'entropy': '0.2612', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1486', 'luoi/v_ev': '0.2603', 'step_time': '91.03', 'epoch': '0.935'}
+[spice] lần 31 · 16 câu · 11.5s · thưởng TB 0.300 · số từ TB 8.7 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 159 tokens at 2564.98 tokens per second.
+PTBTokenizer tokenized 147 tokens at 2475.87 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.0 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.707 seconds]
+SPICE evaluation took: 10.45 s
+{'loss': '0.004235', 'grad_norm': '0.8805', 'learning_rate': '1e-05', 'num_tokens': '1.118e+07', 'completions/mean_length': '9.875', 'completions/min_length': '6', 'completions/max_length': '15', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '9.875', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '15', 'rewards/r_spice/mean': '0.2999', 'rewards/r_spice/std': '0.3478', 'reward': '0.2999', 'reward_std': '0.3478', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.2663', 'luoi/frac_adv_zero': '0', 'kl': '0.1141', 'entropy': '0.3344', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1057', 'luoi/v_ev': '0.2501', 'step_time': '206.4', 'epoch': '0.936'}
+{'loss': '0.002917', 'grad_norm': '0.7574', 'learning_rate': '1e-05', 'kl': '0.1225', 'entropy': '0.3327', 'clip_ratio/low_mean': '0.007812', 'clip_ratio/low_min': '0.007812', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0.007812', 'luoi/v_loss': '0.07216', 'luoi/v_ev': '0.2899', 'step_time': '87.87', 'epoch': '0.937'}
+[spice] lần 32 · 16 câu · 11.0s · thưởng TB 0.542 · số từ TB 8.2 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 151 tokens at 2725.22 tokens per second.
+PTBTokenizer tokenized 178 tokens at 3231.25 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [3.1 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.6 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [1.15 seconds]
+SPICE evaluation took: 10.84 s
+{'loss': '0.0003605', 'grad_norm': '1.256', 'learning_rate': '1e-05', 'num_tokens': '1.12e+07', 'completions/mean_length': '9.75', 'completions/min_length': '4', 'completions/max_length': '14', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '9.75', 'completions/min_terminated_length': '4', 'completions/max_terminated_length': '14', 'rewards/r_spice/mean': '0.5417', 'rewards/r_spice/std': '0.5', 'reward': '0.5417', 'reward_std': '0.5', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.2861', 'luoi/frac_adv_zero': '0', 'kl': '0.011', 'entropy': '0.196', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1076', 'luoi/v_ev': '0.3288', 'step_time': '205.7', 'epoch': '0.938'}
+{'loss': '-0.002299', 'grad_norm': '1.256', 'learning_rate': '1e-05', 'kl': '0.01042', 'entropy': '0.1973', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.07608', 'luoi/v_ev': '0.3503', 'step_time': '87.54', 'epoch': '0.939'}
+[spice] lần 33 · 16 câu · 11.3s · thưởng TB 0.283 · số từ TB 9.9 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 159 tokens at 2650.27 tokens per second.
+PTBTokenizer tokenized 149 tokens at 2394.34 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.979 seconds]
+SPICE evaluation took: 10.51 s
+{'loss': '0.0007014', 'grad_norm': '1.295', 'learning_rate': '1e-05', 'num_tokens': '1.123e+07', 'completions/mean_length': '11.88', 'completions/min_length': '7', 'completions/max_length': '16', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '11.88', 'completions/min_terminated_length': '7', 'completions/max_terminated_length': '16', 'rewards/r_spice/mean': '0.283', 'rewards/r_spice/std': '0.2695', 'reward': '0.283', 'reward_std': '0.2695', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.2477', 'luoi/frac_adv_zero': '0', 'kl': '0.01765', 'entropy': '0.246', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.0843', 'luoi/v_ev': '0.3681', 'step_time': '211.1', 'epoch': '0.94'}
+{'loss': '-0.002306', 'grad_norm': '1.354', 'learning_rate': '1e-05', 'kl': '0.01785', 'entropy': '0.2488', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.06363', 'luoi/v_ev': '0.3845', 'step_time': '90.27', 'epoch': '0.941'}
+[spice] lần 34 · 16 câu · 11.0s · thưởng TB 0.447 · số từ TB 8.8 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 63 tokens at 1035.42 tokens per second.
+PTBTokenizer tokenized 128 tokens at 2146.33 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.8 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.6 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [2.0 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [1.73 seconds]
+SPICE evaluation took: 10.75 s
+{'loss': '0.001206', 'grad_norm': '1.725', 'learning_rate': '1e-05', 'num_tokens': '1.125e+07', 'completions/mean_length': '13.94', 'completions/min_length': '9', 'completions/max_length': '17', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '13.94', 'completions/min_terminated_length': '9', 'completions/max_terminated_length': '17', 'rewards/r_spice/mean': '0.4469', 'rewards/r_spice/std': '0.3631', 'reward': '0.4469', 'reward_std': '0.3631', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.2517', 'luoi/frac_adv_zero': '0', 'kl': '0.0301', 'entropy': '0.2567', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.08501', 'luoi/v_ev': '0.348', 'step_time': '209.8', 'epoch': '0.942'}
+{'loss': '-0.00248', 'grad_norm': '1.668', 'learning_rate': '1e-05', 'kl': '0.02813', 'entropy': '0.2568', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.06484', 'luoi/v_ev': '0.2436', 'step_time': '88.67', 'epoch': '0.943'}
+[spice] lần 35 · 16 câu · 11.3s · thưởng TB 0.191 · số từ TB 7.1 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 87 tokens at 1547.48 tokens per second.
+PTBTokenizer tokenized 86 tokens at 1527.21 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.9 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.6 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.385 seconds]
+SPICE evaluation took: 10.24 s
+{'loss': '0.002852', 'grad_norm': '1.231', 'learning_rate': '1e-05', 'num_tokens': '1.127e+07', 'completions/mean_length': '10.12', 'completions/min_length': '8', 'completions/max_length': '13', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '10.12', 'completions/min_terminated_length': '8', 'completions/max_terminated_length': '13', 'rewards/r_spice/mean': '0.1912', 'rewards/r_spice/std': '0.2775', 'reward': '0.1912', 'reward_std': '0.2775', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.1586', 'luoi/frac_adv_zero': '0', 'kl': '0.07275', 'entropy': '0.4254', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.03035', 'luoi/v_ev': '0.2308', 'step_time': '207.2', 'epoch': '0.944'}
+{'loss': '-0.0002559', 'grad_norm': '1.183', 'learning_rate': '1e-05', 'kl': '0.07384', 'entropy': '0.4236', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.02187', 'luoi/v_ev': '0.262', 'step_time': '87.97', 'epoch': '0.945'}
+[spice] lần 36 · 16 câu · 10.8s · thưởng TB 1.000 · số từ TB 4.4 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 143 tokens at 2530.34 tokens per second.
+PTBTokenizer tokenized 144 tokens at 2842.97 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.6 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.550 seconds]
+SPICE evaluation took: 9.079 s
+{'loss': '0.001803', 'grad_norm': '1.354', 'learning_rate': '1e-05', 'num_tokens': '1.13e+07', 'completions/mean_length': '5.438', 'completions/min_length': '4', 'completions/max_length': '6', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '5.438', 'completions/min_terminated_length': '4', 'completions/max_terminated_length': '6', 'rewards/r_spice/mean': '1', 'rewards/r_spice/std': '0', 'reward': '1', 'reward_std': '0', 'frac_reward_zero_std': '1', 'luoi/adv_abs_mean': '0.5517', 'luoi/frac_adv_zero': '0', 'kl': '0.04607', 'entropy': '0.1329', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.3016', 'luoi/v_ev': '0.2216', 'step_time': '201.8', 'epoch': '0.946'}
+{'loss': '-0.001585', 'grad_norm': '1.373', 'learning_rate': '1e-05', 'kl': '0.04185', 'entropy': '0.1323', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1755', 'luoi/v_ev': '0.1712', 'step_time': '85.62', 'epoch': '0.947'}
+[spice] lần 37 · 16 câu · 9.6s · thưởng TB 0.675 · số từ TB 7.6 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 95 tokens at 1813.86 tokens per second.
+PTBTokenizer tokenized 97 tokens at 1794.98 tokens per second.
+Parsing reference captions
+Parsing test captions
+SPICE evaluation took: 1.092 s
+{'loss': '0.001332', 'grad_norm': '2.549', 'learning_rate': '1e-05', 'num_tokens': '1.132e+07', 'completions/mean_length': '9.062', 'completions/min_length': '5', 'completions/max_length': '14', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '9.062', 'completions/min_terminated_length': '5', 'completions/max_terminated_length': '14', 'rewards/r_spice/mean': '0.675', 'rewards/r_spice/std': '0.4123', 'reward': '0.675', 'reward_std': '0.4123', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.3495', 'luoi/frac_adv_zero': '0', 'kl': '0.03352', 'entropy': '0.2798', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1369', 'luoi/v_ev': '0.142', 'step_time': '203.1', 'epoch': '0.948'}
+{'loss': '-0.003425', 'grad_norm': '2.581', 'learning_rate': '1e-05', 'kl': '0.03592', 'entropy': '0.2809', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1118', 'luoi/v_ev': '0.1038', 'step_time': '87.86', 'epoch': '0.949'}
+[spice] lần 38 · 16 câu · 1.5s · thưởng TB 1.000 · số từ TB 5.1 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 135 tokens at 2457.59 tokens per second.
+PTBTokenizer tokenized 149 tokens at 2526.35 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.6 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.7 sec].
+Threads( StanfordCoreNLP ) [1.27 seconds]
+SPICE evaluation took: 9.250 s
+{'loss': '0.001311', 'grad_norm': '0.4032', 'learning_rate': '1e-05', 'num_tokens': '1.134e+07', 'completions/mean_length': '6.625', 'completions/min_length': '5', 'completions/max_length': '8', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '6.625', 'completions/min_terminated_length': '5', 'completions/max_terminated_length': '8', 'rewards/r_spice/mean': '1', 'rewards/r_spice/std': '0', 'reward': '1', 'reward_std': '0', 'frac_reward_zero_std': '1', 'luoi/adv_abs_mean': '0.1165', 'luoi/frac_adv_zero': '0', 'kl': '0.03166', 'entropy': '0.1149', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.02197', 'luoi/v_ev': '0.1666', 'step_time': '208.2', 'epoch': '0.95'}
+{'loss': '0.0009295', 'grad_norm': '0.3738', 'learning_rate': '1e-05', 'kl': '0.03362', 'entropy': '0.1148', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.01443', 'luoi/v_ev': '0.2899', 'step_time': '88.04', 'epoch': '0.951'}
+[spice] lần 39 · 16 câu · 9.8s · thưởng TB 0.000 · số từ TB 7.2 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 103 tokens at 2015.74 tokens per second.
+PTBTokenizer tokenized 97 tokens at 1788.22 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.6 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.405 seconds]
+SPICE evaluation took: 8.991 s
+{'loss': '0.002859', 'grad_norm': '1.381', 'learning_rate': '1e-05', 'num_tokens': '1.137e+07', 'completions/mean_length': '12.5', 'completions/min_length': '8', 'completions/max_length': '20', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '12.5', 'completions/min_terminated_length': '8', 'completions/max_terminated_length': '20', 'rewards/r_spice/mean': '0', 'rewards/r_spice/std': '0', 'reward': '0', 'reward_std': '0', 'frac_reward_zero_std': '1', 'luoi/adv_abs_mean': '0.5483', 'luoi/frac_adv_zero': '0', 'kl': '0.06136', 'entropy': '0.2142', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.3105', 'luoi/v_ev': '0.251', 'step_time': '204.7', 'epoch': '0.952'}
+{'loss': '-0.0005044', 'grad_norm': '0.7862', 'learning_rate': '1e-05', 'kl': '0.05836', 'entropy': '0.2136', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0.004167', 'clip_ratio/high_max': '0.004167', 'clip_ratio/region_mean': '0.004167', 'luoi/v_loss': '0.1441', 'luoi/v_ev': '0.1953', 'step_time': '87.27', 'epoch': '0.953'}
+[spice] lần 40 · 16 câu · 9.5s · thưởng TB 0.646 · số từ TB 5.1 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 143 tokens at 2566.04 tokens per second.
+PTBTokenizer tokenized 121 tokens at 1986.94 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [2.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.7 sec].
+Threads( StanfordCoreNLP ) [0.583 seconds]
+SPICE evaluation took: 9.595 s
+{'loss': '0.001215', 'grad_norm': '1.571', 'learning_rate': '1e-05', 'num_tokens': '1.139e+07', 'completions/mean_length': '6.625', 'completions/min_length': '4', 'completions/max_length': '8', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '6.625', 'completions/min_terminated_length': '4', 'completions/max_terminated_length': '8', 'rewards/r_spice/mean': '0.6458', 'rewards/r_spice/std': '0.463', 'reward': '0.6458', 'reward_std': '0.463', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.4937', 'luoi/frac_adv_zero': '0', 'kl': '0.0305', 'entropy': '0.3234', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.2414', 'luoi/v_ev': '0.1439', 'step_time': '212.1', 'epoch': '0.954'}
+{'loss': '-0.002164', 'grad_norm': '1.588', 'learning_rate': '1e-05', 'kl': '0.02806', 'entropy': '0.3241', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1576', 'luoi/v_ev': '0.09', 'step_time': '87.55', 'epoch': '0.955'}
+[spice] lần 41 · 16 câu · 10.1s · thưởng TB 0.822 · số từ TB 6.1 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 215 tokens at 3914.21 tokens per second.
+PTBTokenizer tokenized 199 tokens at 3848.67 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.6 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [2.343 seconds]
+SPICE evaluation took: 9.868 s
+{'loss': '0.001393', 'grad_norm': '1.879', 'learning_rate': '1e-05', 'num_tokens': '1.141e+07', 'completions/mean_length': '8.188', 'completions/min_length': '6', 'completions/max_length': '15', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '8.188', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '15', 'rewards/r_spice/mean': '0.8225', 'rewards/r_spice/std': '0.2825', 'reward': '0.8225', 'reward_std': '0.2825', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.4232', 'luoi/frac_adv_zero': '0', 'kl': '0.03361', 'entropy': '0.2264', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1688', 'luoi/v_ev': '0.05445', 'step_time': '203.1', 'epoch': '0.956'}
+{'loss': '-0.001981', 'grad_norm': '1.662', 'learning_rate': '1e-05', 'kl': '0.03428', 'entropy': '0.2248', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1294', 'luoi/v_ev': '0.03616', 'step_time': '86.88', 'epoch': '0.957'}
+[spice] lần 42 · 16 câu · 10.4s · thưởng TB 0.324 · số từ TB 11.0 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 143 tokens at 2966.57 tokens per second.
+PTBTokenizer tokenized 124 tokens at 2511.43 tokens per second.
+Parsing reference captions
+Parsing test captions
+SPICE evaluation took: 1.071 s
+{'loss': '0.005758', 'grad_norm': '0.842', 'learning_rate': '1e-05', 'num_tokens': '1.144e+07', 'completions/mean_length': '12.56', 'completions/min_length': '6', 'completions/max_length': '24', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '12.56', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '24', 'rewards/r_spice/mean': '0.324', 'rewards/r_spice/std': '0.3438', 'reward': '0.324', 'reward_std': '0.3438', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.2516', 'luoi/frac_adv_zero': '0', 'kl': '0.2472', 'entropy': '0.387', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1065', 'luoi/v_ev': '0.01648', 'step_time': '209.8', 'epoch': '0.958'}
+{'loss': '0.00404', 'grad_norm': '0.8309', 'learning_rate': '1e-05', 'kl': '0.2391', 'entropy': '0.3868', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.05984', 'luoi/v_ev': '0.009625', 'step_time': '88.68', 'epoch': '0.959'}
+[spice] lần 43 · 16 câu · 1.5s · thưởng TB 0.946 · số từ TB 6.8 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 143 tokens at 2637.08 tokens per second.
+PTBTokenizer tokenized 172 tokens at 3066.93 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [2.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.6 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.439 seconds]
+SPICE evaluation took: 9.542 s
+{'loss': '0.003454', 'grad_norm': '0.2895', 'learning_rate': '1e-05', 'num_tokens': '1.146e+07', 'completions/mean_length': '11.31', 'completions/min_length': '5', 'completions/max_length': '13', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '11.31', 'completions/min_terminated_length': '5', 'completions/max_terminated_length': '13', 'rewards/r_spice/mean': '0.9464', 'rewards/r_spice/std': '0.1464', 'reward': '0.9464', 'reward_std': '0.1464', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.3069', 'luoi/frac_adv_zero': '0', 'kl': '0.0961', 'entropy': '0.04985', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.09302', 'luoi/v_ev': '-0.03537', 'step_time': '198.4', 'epoch': '0.96'}
+{'loss': '0.003291', 'grad_norm': '0.273', 'learning_rate': '1e-05', 'kl': '0.09893', 'entropy': '0.0499', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.03962', 'luoi/v_ev': '-0.1214', 'step_time': '87.95', 'epoch': '0.961'}
+[spice] lần 44 · 16 câu · 10.1s · thưởng TB 0.494 · số từ TB 9.8 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 271 tokens at 5035.58 tokens per second.
+PTBTokenizer tokenized 245 tokens at 4684.75 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.6 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [2.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.7 sec].
+Threads( StanfordCoreNLP ) [1.335 seconds]
+SPICE evaluation took: 10.96 s
+{'loss': '0.0004685', 'grad_norm': '0.3094', 'learning_rate': '1e-05', 'num_tokens': '1.149e+07', 'completions/mean_length': '10.81', 'completions/min_length': '6', 'completions/max_length': '15', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '10.81', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '15', 'rewards/r_spice/mean': '0.4938', 'rewards/r_spice/std': '0.5229', 'reward': '0.4938', 'reward_std': '0.5229', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.2971', 'luoi/frac_adv_zero': '0', 'kl': '0.01172', 'entropy': '0.1172', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.12', 'luoi/v_ev': '-0.0918', 'step_time': '205.4', 'epoch': '0.962'}
+{'loss': '0.0001319', 'grad_norm': '0.3015', 'learning_rate': '1e-05', 'kl': '0.01177', 'entropy': '0.1164', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.07314', 'luoi/v_ev': '-0.0009457', 'step_time': '87.93', 'epoch': '0.963'}
+[spice] lần 45 · 16 câu · 11.5s · thưởng TB 0.585 · số từ TB 14.2 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 151 tokens at 2809.50 tokens per second.
+PTBTokenizer tokenized 140 tokens at 2681.72 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.6 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [2.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.6 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.515 seconds]
+SPICE evaluation took: 9.522 s
+{'loss': '0.0015', 'grad_norm': '0.6159', 'learning_rate': '1e-05', 'num_tokens': '1.151e+07', 'completions/mean_length': '17.38', 'completions/min_length': '9', 'completions/max_length': '22', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '17.38', 'completions/min_terminated_length': '9', 'completions/max_terminated_length': '22', 'rewards/r_spice/mean': '0.5853', 'rewards/r_spice/std': '0.4387', 'reward': '0.5853', 'reward_std': '0.4387', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.2135', 'luoi/frac_adv_zero': '0', 'kl': '0.03721', 'entropy': '0.3353', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.07453', 'luoi/v_ev': '0.05725', 'step_time': '214', 'epoch': '0.964'}
+{'loss': '0.0004241', 'grad_norm': '0.612', 'learning_rate': '1e-05', 'kl': '0.03693', 'entropy': '0.336', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.04259', 'luoi/v_ev': '0.128', 'step_time': '88.73', 'epoch': '0.965'}
+[spice] lần 46 · 16 câu · 10.0s · thưởng TB 0.761 · số từ TB 7.8 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 95 tokens at 1843.80 tokens per second.
+PTBTokenizer tokenized 98 tokens at 1880.87 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.628 seconds]
+SPICE evaluation took: 9.183 s
+{'loss': '0.0003597', 'grad_norm': '1.351', 'learning_rate': '1e-05', 'num_tokens': '1.153e+07', 'completions/mean_length': '9.812', 'completions/min_length': '6', 'completions/max_length': '12', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '9.812', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '12', 'rewards/r_spice/mean': '0.7607', 'rewards/r_spice/std': '0.2861', 'reward': '0.7607', 'reward_std': '0.2861', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.1962', 'luoi/frac_adv_zero': '0', 'kl': '0.009158', 'entropy': '0.08121', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.0521', 'luoi/v_ev': '0.1325', 'step_time': '202.9', 'epoch': '0.966'}
+{'loss': '-0.003168', 'grad_norm': '1.176', 'learning_rate': '1e-05', 'kl': '0.009173', 'entropy': '0.07933', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.03558', 'luoi/v_ev': '0.1031', 'step_time': '86.22', 'epoch': '0.967'}
+[spice] lần 47 · 16 câu · 9.7s · thưởng TB 0.417 · số từ TB 4.7 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 175 tokens at 2898.61 tokens per second.
+PTBTokenizer tokenized 180 tokens at 3411.87 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [2.769 seconds]
+SPICE evaluation took: 10.13 s
+{'loss': '0.00181', 'grad_norm': '1.557', 'learning_rate': '1e-05', 'num_tokens': '1.156e+07', 'completions/mean_length': '6.312', 'completions/min_length': '5', 'completions/max_length': '10', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '6.312', 'completions/min_terminated_length': '5', 'completions/max_terminated_length': '10', 'rewards/r_spice/mean': '0.4167', 'rewards/r_spice/std': '0.3043', 'reward': '0.4167', 'reward_std': '0.3043', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.2435', 'luoi/frac_adv_zero': '0', 'kl': '0.04229', 'entropy': '0.5651', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.06081', 'luoi/v_ev': '0.1554', 'step_time': '202.8', 'epoch': '0.968'}
+{'loss': '-0.0006939', 'grad_norm': '1.544', 'learning_rate': '1e-05', 'kl': '0.04308', 'entropy': '0.5638', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.02859', 'luoi/v_ev': '0.1995', 'step_time': '87.45', 'epoch': '0.969'}
+[spice] lần 48 · 16 câu · 10.7s · thưởng TB 0.678 · số từ TB 9.9 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 191 tokens at 3558.43 tokens per second.
+PTBTokenizer tokenized 148 tokens at 2777.98 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.892 seconds]
+SPICE evaluation took: 9.487 s
+{'loss': '0.001159', 'grad_norm': '0.7683', 'learning_rate': '1e-05', 'num_tokens': '1.158e+07', 'completions/mean_length': '11.38', 'completions/min_length': '6', 'completions/max_length': '21', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '11.38', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '21', 'rewards/r_spice/mean': '0.6785', 'rewards/r_spice/std': '0.3514', 'reward': '0.6785', 'reward_std': '0.3514', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.1989', 'luoi/frac_adv_zero': '0', 'kl': '0.02804', 'entropy': '0.3331', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.06762', 'luoi/v_ev': '0.2409', 'step_time': '209.1', 'epoch': '0.97'}
+{'loss': '-0.0003293', 'grad_norm': '0.7701', 'learning_rate': '1e-05', 'kl': '0.03008', 'entropy': '0.3327', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.0508', 'luoi/v_ev': '0.2744', 'step_time': '88.34', 'epoch': '0.971'}
+[spice] lần 49 · 16 câu · 10.0s · thưởng TB 0.501 · số từ TB 7.6 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 127 tokens at 2315.24 tokens per second.
+PTBTokenizer tokenized 122 tokens at 2253.57 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [2.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.815 seconds]
+SPICE evaluation took: 9.801 s
+{'loss': '0.002852', 'grad_norm': '2.166', 'learning_rate': '1e-05', 'num_tokens': '1.161e+07', 'completions/mean_length': '9.875', 'completions/min_length': '4', 'completions/max_length': '17', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '9.875', 'completions/min_terminated_length': '4', 'completions/max_terminated_length': '17', 'rewards/r_spice/mean': '0.5007', 'rewards/r_spice/std': '0.4332', 'reward': '0.5007', 'reward_std': '0.4332', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.3302', 'luoi/frac_adv_zero': '0', 'kl': '0.07266', 'entropy': '0.5007', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1295', 'luoi/v_ev': '0.288', 'step_time': '206.7', 'epoch': '0.972'}
+{'loss': '-0.001951', 'grad_norm': '2.122', 'learning_rate': '1e-05', 'kl': '0.0744', 'entropy': '0.4987', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1047', 'luoi/v_ev': '0.3205', 'step_time': '87.81', 'epoch': '0.973'}
+[spice] lần 50 · 16 câu · 10.3s · thưởng TB -0.006 · số từ TB 6.0 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 103 tokens at 1902.06 tokens per second.
+PTBTokenizer tokenized 104 tokens at 2014.32 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.412 seconds]
+SPICE evaluation took: 9.094 s
+{'loss': '0.003785', 'grad_norm': '0.7672', 'learning_rate': '1e-05', 'num_tokens': '1.163e+07', 'completions/mean_length': '9.625', 'completions/min_length': '5', 'completions/max_length': '14', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '9.625', 'completions/min_terminated_length': '5', 'completions/max_terminated_length': '14', 'rewards/r_spice/mean': '-0.00625', 'rewards/r_spice/std': '0.025', 'reward': '-0.00625', 'reward_std': '0.025', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.4948', 'luoi/frac_adv_zero': '0', 'kl': '0.09362', 'entropy': '0.3853', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.2354', 'luoi/v_ev': '0.3328', 'step_time': '214.8', 'epoch': '0.974'}
+{'loss': '0.002266', 'grad_norm': '0.7724', 'learning_rate': '1e-05', 'kl': '0.09743', 'entropy': '0.3836', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.124', 'luoi/v_ev': '0.3481', 'step_time': '91.49', 'epoch': '0.975'}
+[spice] lần 51 · 16 câu · 9.6s · thưởng TB 0.500 · số từ TB 4.6 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 135 tokens at 2333.95 tokens per second.
+PTBTokenizer tokenized 142 tokens at 2636.07 tokens per second.
+Parsing reference captions
+Parsing test captions
+SPICE evaluation took: 1.103 s
+{'loss': '0.006154', 'grad_norm': '0.8678', 'learning_rate': '1e-05', 'num_tokens': '1.166e+07', 'completions/mean_length': '6.562', 'completions/min_length': '5', 'completions/max_length': '9', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '6.562', 'completions/min_terminated_length': '5', 'completions/max_terminated_length': '9', 'rewards/r_spice/mean': '0.5', 'rewards/r_spice/std': '0.5164', 'reward': '0.5', 'reward_std': '0.5164', 'frac_reward_zero_std': '1', 'luoi/adv_abs_mean': '0.3997', 'luoi/frac_adv_zero': '0', 'kl': '0.1523', 'entropy': '0.1074', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1723', 'luoi/v_ev': '0.3616', 'step_time': '206.3', 'epoch': '0.976'}
+{'loss': '0.004595', 'grad_norm': '0.9092', 'learning_rate': '1e-05', 'kl': '0.1495', 'entropy': '0.1091', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1492', 'luoi/v_ev': '0.3462', 'step_time': '88.37', 'epoch': '0.977'}
+[spice] lần 52 · 16 câu · 1.5s · thưởng TB 0.979 · số từ TB 7.4 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 119 tokens at 2050.79 tokens per second.
+PTBTokenizer tokenized 159 tokens at 2623.54 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.426 seconds]
+SPICE evaluation took: 9.144 s
+{'loss': '0.0007582', 'grad_norm': '0.2624', 'learning_rate': '1e-05', 'num_tokens': '1.168e+07', 'completions/mean_length': '10', 'completions/min_length': '6', 'completions/max_length': '14', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '10', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '14', 'rewards/r_spice/mean': '0.9792', 'rewards/r_spice/std': '0.08333', 'reward': '0.9792', 'reward_std': '0.08333', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.4782', 'luoi/frac_adv_zero': '0', 'kl': '0.01717', 'entropy': '0.05616', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.2087', 'luoi/v_ev': '0.2749', 'step_time': '208.2', 'epoch': '0.978'}
+{'loss': '0.0004596', 'grad_norm': '0.2631', 'learning_rate': '1e-05', 'kl': '0.01715', 'entropy': '0.05612', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.07376', 'luoi/v_ev': '0.216', 'step_time': '87.91', 'epoch': '0.979'}
+[spice] lần 53 · 16 câu · 9.7s · thưởng TB 0.549 · số từ TB 9.4 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 87 tokens at 1634.31 tokens per second.
+PTBTokenizer tokenized 96 tokens at 1775.24 tokens per second.
+Parsing reference captions
+Parsing test captions
+SPICE evaluation took: 1.096 s
+{'loss': '0.002106', 'grad_norm': '0.9193', 'learning_rate': '1e-05', 'num_tokens': '1.17e+07', 'completions/mean_length': '11.5', 'completions/min_length': '6', 'completions/max_length': '12', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '11.5', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '12', 'rewards/r_spice/mean': '0.5489', 'rewards/r_spice/std': '0.4978', 'reward': '0.5489', 'reward_std': '0.4978', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.3168', 'luoi/frac_adv_zero': '0', 'kl': '0.05259', 'entropy': '0.1063', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1236', 'luoi/v_ev': '0.1956', 'step_time': '213.3', 'epoch': '0.98'}
+{'loss': '0.0006627', 'grad_norm': '0.8815', 'learning_rate': '1e-05', 'kl': '0.0541', 'entropy': '0.1072', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.08856', 'luoi/v_ev': '0.1544', 'step_time': '87.13', 'epoch': '0.981'}
+[spice] lần 54 · 16 câu · 1.5s · thưởng TB 0.500 · số từ TB 4.6 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 119 tokens at 2234.18 tokens per second.
+PTBTokenizer tokenized 132 tokens at 2443.82 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [2.341 seconds]
+SPICE evaluation took: 9.888 s
+{'loss': '0.0006692', 'grad_norm': '0.3016', 'learning_rate': '1e-05', 'num_tokens': '1.173e+07', 'completions/mean_length': '6.062', 'completions/min_length': '5', 'completions/max_length': '7', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '6.062', 'completions/min_terminated_length': '5', 'completions/max_terminated_length': '7', 'rewards/r_spice/mean': '0.5', 'rewards/r_spice/std': '0.5164', 'reward': '0.5', 'reward_std': '0.5164', 'frac_reward_zero_std': '1', 'luoi/adv_abs_mean': '0.3728', 'luoi/frac_adv_zero': '0', 'kl': '0.01652', 'entropy': '0.08652', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1778', 'luoi/v_ev': '0.1298', 'step_time': '202.8', 'epoch': '0.982'}
+{'loss': '0.000513', 'grad_norm': '0.3049', 'learning_rate': '1e-05', 'kl': '0.01579', 'entropy': '0.08756', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1134', 'luoi/v_ev': '0.1256', 'step_time': '86.19', 'epoch': '0.983'}
+[spice] lần 55 · 16 câu · 10.4s · thưởng TB 0.608 · số từ TB 7.3 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 159 tokens at 3116.63 tokens per second.
+PTBTokenizer tokenized 155 tokens at 2847.62 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.7 sec].
+Threads( StanfordCoreNLP ) [0.793 seconds]
+SPICE evaluation took: 9.453 s
+{'loss': '0.00102', 'grad_norm': '1.378', 'learning_rate': '1e-05', 'num_tokens': '1.175e+07', 'completions/mean_length': '8.375', 'completions/min_length': '5', 'completions/max_length': '14', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '8.375', 'completions/min_terminated_length': '5', 'completions/max_terminated_length': '14', 'rewards/r_spice/mean': '0.6081', 'rewards/r_spice/std': '0.491', 'reward': '0.6081', 'reward_std': '0.491', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.4018', 'luoi/frac_adv_zero': '0', 'kl': '0.0234', 'entropy': '0.3995', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1769', 'luoi/v_ev': '0.1057', 'step_time': '203.4', 'epoch': '0.984'}
+{'loss': '-0.001935', 'grad_norm': '1.363', 'learning_rate': '1e-05', 'kl': '0.02364', 'entropy': '0.3998', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1207', 'luoi/v_ev': '0.09661', 'step_time': '87.32', 'epoch': '0.985'}
+[spice] lần 56 · 16 câu · 9.9s · thưởng TB 0.677 · số từ TB 8.2 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 95 tokens at 1769.16 tokens per second.
+PTBTokenizer tokenized 77 tokens at 1496.23 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.441 seconds]
+SPICE evaluation took: 9.044 s
+{'loss': '0.000592', 'grad_norm': '0.607', 'learning_rate': '1e-05', 'num_tokens': '1.177e+07', 'completions/mean_length': '10.81', 'completions/min_length': '7', 'completions/max_length': '19', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '10.81', 'completions/min_terminated_length': '7', 'completions/max_terminated_length': '19', 'rewards/r_spice/mean': '0.6765', 'rewards/r_spice/std': '0.3669', 'reward': '0.6765', 'reward_std': '0.3669', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.292', 'luoi/frac_adv_zero': '0', 'kl': '0.01409', 'entropy': '0.2404', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1117', 'luoi/v_ev': '0.07433', 'step_time': '204.1', 'epoch': '0.986'}
+{'loss': '-0.000379', 'grad_norm': '0.5983', 'learning_rate': '1e-05', 'kl': '0.01389', 'entropy': '0.2408', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.0689', 'luoi/v_ev': '0.06754', 'step_time': '87.32', 'epoch': '0.987'}
+[spice] lần 57 · 16 câu · 9.5s · thưởng TB 0.094 · số từ TB 3.9 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 135 tokens at 2442.38 tokens per second.
+PTBTokenizer tokenized 141 tokens at 2603.93 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [3.0 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.7 sec].
+Threads( StanfordCoreNLP ) [2.328 seconds]
+SPICE evaluation took: 10.07 s
+{'loss': '0.002666', 'grad_norm': '1.744', 'learning_rate': '1e-05', 'num_tokens': '1.18e+07', 'completions/mean_length': '4.875', 'completions/min_length': '3', 'completions/max_length': '7', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '4.875', 'completions/min_terminated_length': '3', 'completions/max_terminated_length': '7', 'rewards/r_spice/mean': '0.09375', 'rewards/r_spice/std': '0.272', 'reward': '0.09375', 'reward_std': '0.272', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.5424', 'luoi/frac_adv_zero': '0', 'kl': '0.0685', 'entropy': '0.1655', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.2566', 'luoi/v_ev': '0.07357', 'step_time': '203.4', 'epoch': '0.988'}
+{'loss': '-0.002183', 'grad_norm': '1.866', 'learning_rate': '1e-05', 'kl': '0.05503', 'entropy': '0.1713', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0.01471', 'clip_ratio/high_max': '0.01471', 'clip_ratio/region_mean': '0.01471', 'luoi/v_loss': '0.1323', 'luoi/v_ev': '0.08177', 'step_time': '87.8', 'epoch': '0.989'}
+[spice] lần 58 · 16 câu · 10.6s · thưởng TB 0.517 · số từ TB 7.7 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 167 tokens at 2866.20 tokens per second.
+PTBTokenizer tokenized 162 tokens at 3008.01 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.3 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.484 seconds]
+SPICE evaluation took: 9.149 s
+{'loss': '0.003532', 'grad_norm': '1.39', 'learning_rate': '1e-05', 'num_tokens': '1.182e+07', 'completions/mean_length': '9', 'completions/min_length': '6', 'completions/max_length': '19', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '9', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '19', 'rewards/r_spice/mean': '0.5165', 'rewards/r_spice/std': '0.4887', 'reward': '0.5165', 'reward_std': '0.4887', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.2865', 'luoi/frac_adv_zero': '0', 'kl': '0.08549', 'entropy': '0.512', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1313', 'luoi/v_ev': '0.1207', 'step_time': '210.2', 'epoch': '0.99'}
+{'loss': '0.0003641', 'grad_norm': '1.34', 'learning_rate': '1e-05', 'kl': '0.09036', 'entropy': '0.5112', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1241', 'luoi/v_ev': '0.1427', 'step_time': '89.31', 'epoch': '0.991'}
+[spice] lần 59 · 16 câu · 9.7s · thưởng TB 0.906 · số từ TB 8.7 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 191 tokens at 3430.37 tokens per second.
+PTBTokenizer tokenized 208 tokens at 3951.20 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.6 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [2.889 seconds]
+SPICE evaluation took: 10.23 s
+{'loss': '0.00168', 'grad_norm': '1.7', 'learning_rate': '1e-05', 'num_tokens': '1.185e+07', 'completions/mean_length': '10.19', 'completions/min_length': '6', 'completions/max_length': '12', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '10.19', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '12', 'rewards/r_spice/mean': '0.9062', 'rewards/r_spice/std': '0.272', 'reward': '0.9062', 'reward_std': '0.272', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.5024', 'luoi/frac_adv_zero': '0', 'kl': '0.04329', 'entropy': '0.1457', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.2559', 'luoi/v_ev': '0.09936', 'step_time': '203.1', 'epoch': '0.992'}
+{'loss': '-0.002249', 'grad_norm': '1.593', 'learning_rate': '1e-05', 'kl': '0.049', 'entropy': '0.1436', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.114', 'luoi/v_ev': '0.06488', 'step_time': '86.98', 'epoch': '0.993'}
+[spice] lần 60 · 16 câu · 10.7s · thưởng TB 0.636 · số từ TB 11.1 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 231 tokens at 4262.80 tokens per second.
+PTBTokenizer tokenized 180 tokens at 3301.46 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.6 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.7 sec].
+Threads( StanfordCoreNLP ) [2.464 seconds]
+SPICE evaluation took: 9.813 s
+{'loss': '0.001302', 'grad_norm': '1.023', 'learning_rate': '1e-05', 'num_tokens': '1.187e+07', 'completions/mean_length': '14.06', 'completions/min_length': '9', 'completions/max_length': '21', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '14.06', 'completions/min_terminated_length': '9', 'completions/max_terminated_length': '21', 'rewards/r_spice/mean': '0.6356', 'rewards/r_spice/std': '0.1759', 'reward': '0.6356', 'reward_std': '0.1759', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.1402', 'luoi/frac_adv_zero': '0', 'kl': '0.0299', 'entropy': '0.4384', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.04425', 'luoi/v_ev': '0.07709', 'step_time': '207.3', 'epoch': '0.994'}
+{'loss': '-0.001163', 'grad_norm': '1.003', 'learning_rate': '1e-05', 'kl': '0.03058', 'entropy': '0.4361', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.03437', 'luoi/v_ev': '0.05865', 'step_time': '87.86', 'epoch': '0.995'}
+[spice] lần 61 · 16 câu · 10.3s · thưởng TB 0.324 · số từ TB 9.8 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 159 tokens at 3053.88 tokens per second.
+PTBTokenizer tokenized 177 tokens at 3139.94 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.7 sec].
+Threads( StanfordCoreNLP ) [1.220 seconds]
+SPICE evaluation took: 9.627 s
+{'loss': '0.00695', 'grad_norm': '1.768', 'learning_rate': '1e-05', 'num_tokens': '1.189e+07', 'completions/mean_length': '11.44', 'completions/min_length': '7', 'completions/max_length': '15', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '11.44', 'completions/min_terminated_length': '7', 'completions/max_terminated_length': '15', 'rewards/r_spice/mean': '0.3236', 'rewards/r_spice/std': '0.317', 'reward': '0.3236', 'reward_std': '0.317', 'frac_reward_zero_std': '0', 'luoi/adv_abs_mean': '0.3424', 'luoi/frac_adv_zero': '0', 'kl': '0.1733', 'entropy': '0.3053', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.143', 'luoi/v_ev': '0.006237', 'step_time': '205.1', 'epoch': '0.996'}
+{'loss': '0.002537', 'grad_norm': '1.758', 'learning_rate': '1e-05', 'kl': '0.1779', 'entropy': '0.3028', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.07448', 'luoi/v_ev': '-0.02253', 'step_time': '87.63', 'epoch': '0.997'}
+[spice] lần 62 · 16 câu · 10.1s · thưởng TB 0.667 · số từ TB 9.2 · rỗng 0
+/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2_vl/image_processing_qwen2_vl.py:129: FutureWarning: Passing `min_pixels` and `max_pixels` to a processor call is deprecated and will be removed in v5.23. Pass in `size={'longest_edge': xxx, 'shortest_edge': xxx} to override the target size.`
+  warnings.warn(
+PTBTokenizer tokenized 95 tokens at 1971.84 tokens per second.
+PTBTokenizer tokenized 96 tokens at 1897.89 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [1.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [1.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.8 sec].
+Threads( StanfordCoreNLP ) [0.534 seconds]
+SPICE evaluation took: 9.044 s
+{'loss': '0.007334', 'grad_norm': '1.321', 'learning_rate': '1e-05', 'num_tokens': '1.192e+07', 'completions/mean_length': '11.19', 'completions/min_length': '7', 'completions/max_length': '16', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '11.19', 'completions/min_terminated_length': '7', 'completions/max_terminated_length': '16', 'rewards/r_spice/mean': '0.667', 'rewards/r_spice/std': '0.3599', 'reward': '0.667', 'reward_std': '0.3599', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.2709', 'luoi/frac_adv_zero': '0', 'kl': '0.1824', 'entropy': '0.2385', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.1031', 'luoi/v_ev': '-0.05188', 'step_time': '204', 'epoch': '0.998'}
+{'loss': '0.004075', 'grad_norm': '0.982', 'learning_rate': '1e-05', 'kl': '0.2219', 'entropy': '0.2367', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.05459', 'luoi/v_ev': '-0.06357', 'step_time': '87.32', 'epoch': '0.999'}
+[spice] lần 63 · 16 câu · 9.5s · thưởng TB 0.525 · số từ TB 4.6 · rỗng 0
+{'loss': '0.0009644', 'grad_norm': '3.354', 'learning_rate': '1e-05', 'num_tokens': '1.194e+07', 'completions/mean_length': '6.625', 'completions/min_length': '6', 'completions/max_length': '8', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '6.625', 'completions/min_terminated_length': '6', 'completions/max_terminated_length': '8', 'rewards/r_spice/mean': '0.525', 'rewards/r_spice/std': '0.5', 'reward': '0.525', 'reward_std': '0.5', 'frac_reward_zero_std': '0.5', 'luoi/adv_abs_mean': '0.3453', 'luoi/frac_adv_zero': '0', 'kl': '0.0239', 'entropy': '0.2731', 'clip_ratio/low_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/high_max': '0', 'clip_ratio/region_mean': '0', 'luoi/v_loss': '0.149', 'luoi/v_ev': '-0.04264', 'step_time': '202.7', 'epoch': '1'}
+{'train_runtime': '1.865e+04', 'train_samples_per_second': '0.107', 'train_steps_per_second': '0.007', 'train_loss': '0.0009547', 'epoch': '1'}
+[xong] 125 bước · 310.8 phút · 149.2 s/bước · đỉnh VRAM 12.39 GiB · thưởng 10.6 s/lần
