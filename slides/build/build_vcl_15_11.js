@@ -126,7 +126,7 @@ note(SAY[1]); foot();
 slide();
 bar("Bài toán: từ ảnh màn hình tới một câu cho người đọc");
 // ảnh mỏ neo, tỉ lệ 2096x690
-{ const iw = 6.4, ih = iw * 690 / 2096; s.addImage({ path: FIG_MONEO, x: M, y: 2.35, w: iw, h: ih }); }
+{ const iw = 6.6, ih = iw * 690 / 2096; s.addImage({ path: FIG_MONEO, x: M, y: 2.35, w: iw, h: ih }); }
 block(7.45, 1.5, 5.3, 1.65);
 text("Đầu vào", { x: 7.75, y: 1.65, w: 4.8, h: 0.45, fontSize: 20, bold: true, color: TEAL });
 text("ảnh màn hình + mục tiêu của người dùng", { x: 7.75, y: 2.15, w: 4.8, h: 0.8, fontSize: 20 });
@@ -174,7 +174,7 @@ note(SAY[4]); foot();
 // ══════════ 5 · GHÉP HAI BẢN PHÁT HÀNH ══════════
 slide();
 bar("Ghép hai bản phát hành, và cách kiểm ghép đúng");
-table(M, 1.45, [4.6, 1.85, 1.6], [
+table(M, 1.45, [3.75, 2.55, 1.75], [
   { cells: ["bản phát hành", "có", "thiếu"], bold: true, color: WHITE, fill: NAVY, h: 0.5 },
   { cells: [{ t: "HarrytheOrange/\nparsed_AndroidControl", mono: true, fs: 14 }, "câu chỉ dẫn, cây trợ năng", "ảnh"], h: 1.0 },
   { cells: [{ t: "ckg/AndroidControl\nParsedWithImages-20k", mono: true, fs: 14 }, "ảnh", "câu chỉ dẫn theo bước"], h: 1.0 },
@@ -299,7 +299,7 @@ note(SAY[12]); foot();
 // ══════════ 13 · QUY MÔ ══════════
 slide();
 bar("Quy mô và cách chia tập");
-table(M, 1.35, [3.6, 2.4, 2.4], [
+table(M, 1.35, [5.33, 3.4, 3.4], [
   { cells: ["", { t: "huấn luyện", align: "right" }, { t: "kiểm tra", align: "right" }], bold: true, color: WHITE, fill: NAVY, h: 0.6 },
   { cells: ["số bước", "64.567", "6.958"], h: 0.7 },
   { cells: ["bước chạm", "41.191", "4.463"], h: 0.7 },
@@ -309,10 +309,10 @@ table(M, 1.35, [3.6, 2.4, 2.4], [
 [["chia theo tác vụ,", "0 tác vụ trùng", TEAL],
  ["không tách được", "cách diễn đạt", AMBER],
  ["không phải tập ứng dụng chưa thấy", "95,6% ứng dụng có ở tập huấn luyện", AMBER]].forEach((c, i) => {
-  const yy = 1.35 + i * 1.32;
-  block(9.25, yy, 3.48, 1.17);
-  rect(9.25, yy, 0.12, 1.17, c[2]);
-  text(c[0] + "\n" + c[1], { x: 9.5, y: yy, w: 3.1, h: 1.17, fontSize: 15, valign: "middle", lh: 1.1 });
+  const xx = M + i * 4.1;
+  block(xx, 5.05, 3.93, 1.25);
+  rect(xx, 5.05, 0.12, 1.25, c[2]);
+  text(c[0] + "\n" + c[1], { x: xx + 0.25, y: 5.05, w: 3.55, h: 1.25, fontSize: 16, valign: "middle", lh: 1.1 });
 });
 note(SAY[13]); foot();
 
@@ -389,7 +389,7 @@ note(QA("B2")); footB();
 // B2 · sáu chỉ số
 slide();
 bar("Dự phòng · Mẫu thử và toàn bộ ngữ liệu");
-table(M + 1.2, 1.35, [5.4, 2.5, 2.0], [
+table(M + 0.9, 1.35, [5.2, 2.6, 2.6], [
   { cells: ["chỉ số", { t: "toàn bộ (41.099)", align: "right" }, { t: "mẫu thử (1.074)", align: "right" }], bold: true, color: WHITE, fill: NAVY, h: 0.6 },
   { cells: ["tên rõ ràng", "73,6%", "73,8%"], h: 0.62 },
   { cells: ["chỉ có ký hiệu, không có chữ", "4,4%", "2,8%"], h: 0.62 },
@@ -425,7 +425,7 @@ table(M, 1.35, [3.4, 1.55, 1.9, 1.7, 2.0, 1.58], [
   { cells: [{ t: "toàn bộ", bold: true }, { t: "41.099", bold: true }, { t: "67,2%", bold: true }, { t: "8,1%", bold: true }, { t: "2,6%", bold: true }, { t: "22,1%", bold: true }], h: 0.7, rule: false },
 ], { fs: 19, align: ["left", "right", "right", "right", "right", "right"] });
 rect(M + 4.95, 1.35, 3.6, 3.45, "none", { line: TEAL, lw: 2 });
-text("Hai cột viền xanh giải quyết được mơ hồ: 80,1% · 37,5% · 66,7% · 75,3%.", { x: M, y: 5.2, w: W - 2 * M, h: 0.6, fontSize: 18, color: TEAL, align: "center" });
+text("Hai cột viền xanh giải quyết được mơ hồ. Cộng hai cột: tên rõ ràng 80,1% · chỉ có ký hiệu 37,5% · không có tên 66,7% · toàn bộ 75,3%.", { x: M, y: 5.1, w: W - 2 * M, h: 0.9, fontSize: 18, color: TEAL, align: "center", lh: 1.1 });
 note(QA("C3")); footB();
 
 // B5 · một bản ghi
