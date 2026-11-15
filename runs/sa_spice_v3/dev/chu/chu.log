@@ -1,0 +1,152 @@
+PTBTokenizer tokenized 19396 tokens at 148185.29 tokens per second.
+PTBTokenizer tokenized 19699 tokens at 132869.03 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [2.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.7 sec].
+Threads( StanfordCoreNLP ) [39.681 seconds]
+Parsing test captions
+Threads( StanfordCoreNLP ) [15.169 seconds]
+SPICE evaluation took: 1.071 min
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/389 [00:00<?, ?it/s]Loading weights:  65%|██████▌   | 254/389 [00:00<00:00, 2508.41it/s]Loading weights: 100%|██████████| 389/389 [00:00<00:00, 2629.78it/s]
+[transformers] [1mRobertaModel LOAD REPORT[0m from: roberta-large
+Key                       | Status     | 
+--------------------------+------------+-
+lm_head.dense.bias        | UNEXPECTED | 
+lm_head.layer_norm.weight | UNEXPECTED | 
+lm_head.layer_norm.bias   | UNEXPECTED | 
+lm_head.bias              | UNEXPECTED | 
+lm_head.dense.weight      | UNEXPECTED | 
+pooler.dense.weight       | MISSING    | 
+pooler.dense.bias         | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  SFT-cont: tính từng bước xong (278 s)
+PTBTokenizer tokenized 19396 tokens at 149070.45 tokens per second.
+PTBTokenizer tokenized 20110 tokens at 153153.61 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.5 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [2.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.5 sec].
+Threads( StanfordCoreNLP ) [15.356 seconds]
+SPICE evaluation took: 23.97 s
+  SA-SPICE-v3 ck500: tính từng bước xong (201 s)
+PTBTokenizer tokenized 19396 tokens at 154423.16 tokens per second.
+PTBTokenizer tokenized 20485 tokens at 158266.73 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.6 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [2.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.7 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.6 sec].
+Threads( StanfordCoreNLP ) [8.97 seconds]
+SPICE evaluation took: 17.26 s
+  SA-SPICE-v3 ck400: tính từng bước xong (202 s)
+PTBTokenizer tokenized 19396 tokens at 148231.33 tokens per second.
+PTBTokenizer tokenized 21083 tokens at 158981.60 tokens per second.
+Parsing reference captions
+Parsing test captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.6 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [3.4 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.8 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.6 sec].
+Threads( StanfordCoreNLP ) [13.378 seconds]
+SPICE evaluation took: 23.44 s
+  chrF ck400: tính từng bước xong (210 s)
+bước 2223 · chạm 1338
+✅ tự kiểm chrF trọn kho
+  toan_bo bootstrap 200/2000
+  toan_bo bootstrap 400/2000
+  toan_bo bootstrap 600/2000
+  toan_bo bootstrap 800/2000
+  toan_bo bootstrap 1000/2000
+  toan_bo bootstrap 1200/2000
+  toan_bo bootstrap 1400/2000
+  toan_bo bootstrap 1600/2000
+  toan_bo bootstrap 1800/2000
+  toan_bo bootstrap 2000/2000
+  [toan_bo] SA-SPICE-v3 ck500 − SFT-cont: bleu4 -2.64 [-3.70; -1.57] · rougeL -1.38 [-2.13; -0.60] · cider_d -20.41 [-29.87; -10.98] · spice -1.75 [-2.85; -0.64] · chrf -0.77 [-1.50; -0.02] · bert -1.45 [-2.15; -0.73]
+  [toan_bo] SA-SPICE-v3 ck400 − SFT-cont: bleu4 -3.15 [-4.12; -2.17] · rougeL -0.87 [-1.52; -0.16] · cider_d -13.82 [-22.34; -5.34] · spice -1.01 [-1.99; -0.04] · chrf -0.04 [-0.66; +0.61] · bert -1.08 [-1.67; -0.44]
+  [toan_bo] chrF ck400 − SFT-cont: bleu4 -5.71 [-6.81; -4.64] · rougeL -2.00 [-2.83; -1.19] · cider_d -32.19 [-42.61; -22.21] · spice -2.64 [-3.93; -1.39] · chrf -0.37 [-1.11; +0.37] · bert -2.01 [-2.75; -1.29]
+  [toan_bo] SA-SPICE-v3 ck400 − chrF ck400: bleu4 +2.57 [+1.80; +3.36] · rougeL +1.14 [+0.58; +1.75] · cider_d +18.37 [+11.45; +25.48] · spice +1.63 [+0.77; +2.57] · chrf +0.33 [-0.19; +0.89] · bert +0.92 [+0.43; +1.46]
+  [toan_bo] SA-SPICE-v3 ck500 − chrF ck400: bleu4 +3.07 [+2.27; +3.86] · rougeL +0.63 [+0.10; +1.20] · cider_d +11.77 [+4.93; +18.75] · spice +0.89 [+0.05; +1.79] · chrf -0.40 [-1.01; +0.19] · bert +0.56 [+0.06; +1.09]
+  [toan_bo] SA-SPICE-v3 ck500 − SA-SPICE-v3 ck400: bleu4 +0.51 [-0.17; +1.21] · rougeL -0.51 [-0.98; -0.04] · cider_d -6.59 [-12.65; -0.62] · spice -0.73 [-1.44; -0.07] · chrf -0.73 [-1.19; -0.27] · bert -0.36 [-0.79; +0.04]
+  [toan_bo] SFT-cont: bleu4 60.17 · rougeL 74.62 · cider_d 539.27 · spice 55.47 · chrf 69.79 · bert 73.69
+  [toan_bo] SA-SPICE-v3 ck500: bleu4 57.53 · rougeL 73.24 · cider_d 518.85 · spice 53.72 · chrf 69.03 · bert 72.25
+  [toan_bo] SA-SPICE-v3 ck400: bleu4 57.02 · rougeL 73.76 · cider_d 525.45 · spice 54.46 · chrf 69.76 · bert 72.61
+  [toan_bo] chrF ck400: bleu4 54.46 · rougeL 72.62 · cider_d 507.08 · spice 52.83 · chrf 69.43 · bert 71.69
+  cham bootstrap 200/2000
+  cham bootstrap 400/2000
+  cham bootstrap 600/2000
+  cham bootstrap 800/2000
+  cham bootstrap 1000/2000
+  cham bootstrap 1200/2000
+  cham bootstrap 1400/2000
+  cham bootstrap 1600/2000
+  cham bootstrap 1800/2000
+  cham bootstrap 2000/2000
+  [cham] SA-SPICE-v3 ck500 − SFT-cont: bleu4 -0.54 [-1.59; +0.69] · rougeL +0.32 [-0.54; +1.15] · cider_d -0.26 [-11.12; +10.96] · spice -0.28 [-1.77; +1.12] · chrf +0.62 [-0.18; +1.46] · bert +0.03 [-0.72; +0.78]
+  [cham] SA-SPICE-v3 ck400 − SFT-cont: bleu4 -1.94 [-3.03; -0.67] · rougeL -0.02 [-0.83; +0.72] · cider_d -2.12 [-13.00; +8.05] · spice -0.29 [-1.65; +0.99] · chrf +1.00 [+0.26; +1.73] · bert -0.29 [-1.00; +0.41]
+  [cham] chrF ck400 − SFT-cont: bleu4 -3.88 [-5.01; -2.49] · rougeL -0.29 [-1.26; +0.59] · cider_d -14.67 [-27.56; -1.90] · spice -1.28 [-2.92; +0.29] · chrf +1.33 [+0.46; +2.20] · bert -0.55 [-1.37; +0.27]
+  [cham] SA-SPICE-v3 ck400 − chrF ck400: bleu4 +1.94 [+0.97; +2.85] · rougeL +0.27 [-0.43; +0.92] · cider_d +12.55 [+3.43; +21.88] · spice +0.99 [-0.22; +2.10] · chrf -0.33 [-1.02; +0.33] · bert +0.26 [-0.31; +0.84]
+  [cham] SA-SPICE-v3 ck500 − chrF ck400: bleu4 +3.34 [+2.43; +4.25] · rougeL +0.61 [-0.12; +1.35] · cider_d +14.41 [+5.82; +23.47] · spice +1.00 [-0.09; +2.12] · chrf -0.71 [-1.45; +0.01] · bert +0.57 [-0.02; +1.17]
+  [cham] SA-SPICE-v3 ck500 − SA-SPICE-v3 ck400: bleu4 +1.40 [+0.62; +2.25] · rougeL +0.33 [-0.22; +0.87] · cider_d +1.86 [-5.64; +9.51] · spice +0.01 [-0.87; +0.94] · chrf -0.38 [-0.96; +0.20] · bert +0.32 [-0.18; +0.80]
+  [cham] SFT-cont: bleu4 56.79 · rougeL 71.98 · cider_d 463.70 · spice 48.39 · chrf 66.57 · bert 70.85
+  [cham] SA-SPICE-v3 ck500: bleu4 56.25 · rougeL 72.30 · cider_d 463.43 · spice 48.10 · chrf 67.19 · bert 70.88
+  [cham] SA-SPICE-v3 ck400: bleu4 54.85 · rougeL 71.97 · cider_d 461.58 · spice 48.09 · chrf 67.57 · bert 70.56
+  [cham] chrF ck400: bleu4 52.91 · rougeL 71.69 · cider_d 449.02 · spice 47.11 · chrf 67.90 · bert 70.31
+PTBTokenizer tokenized 19396 tokens at 145837.87 tokens per second.
+PTBTokenizer tokenized 19699 tokens at 152592.99 tokens per second.
+PTBTokenizer tokenized 12794 tokens at 113582.12 tokens per second.
+PTBTokenizer tokenized 12822 tokens at 106477.92 tokens per second.
+PTBTokenizer tokenized 19396 tokens at 144893.37 tokens per second.
+PTBTokenizer tokenized 20110 tokens at 152082.91 tokens per second.
+PTBTokenizer tokenized 12794 tokens at 112786.72 tokens per second.
+PTBTokenizer tokenized 13033 tokens at 111108.15 tokens per second.
+PTBTokenizer tokenized 19396 tokens at 144872.98 tokens per second.
+PTBTokenizer tokenized 20485 tokens at 157406.72 tokens per second.
+PTBTokenizer tokenized 12794 tokens at 109936.95 tokens per second.
+PTBTokenizer tokenized 13394 tokens at 117292.71 tokens per second.
+PTBTokenizer tokenized 19396 tokens at 142375.16 tokens per second.
+PTBTokenizer tokenized 21083 tokens at 158377.30 tokens per second.
+PTBTokenizer tokenized 12794 tokens at 108998.01 tokens per second.
+PTBTokenizer tokenized 13816 tokens at 119337.81 tokens per second.
+METEOR {'SFT-cont · toan_bo': 43.16, 'SFT-cont · cham': 40.66, 'SA-SPICE-v3 ck500 · toan_bo': 42.34, 'SA-SPICE-v3 ck500 · cham': 41.12, 'SA-SPICE-v3 ck400 · toan_bo': 42.88, 'SA-SPICE-v3 ck400 · cham': 41.29, 'chrF ck400 · toan_bo': 42.38, 'chrF ck400 · cham': 41.32}

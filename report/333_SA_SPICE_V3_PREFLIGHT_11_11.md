@@ -225,5 +225,41 @@ Bước không chạm (đúng loại theo `classify` của verifier v3, gold tin
 
 Đọc: SA-SPICE-v3 tăng exec có ý nghĩa so SFT-cont (~+1,4, cùng cỡ ck500 − S1 trên test), nhưng **không hơn chrF** (thứ tự giữ như sàng mức 1 về tín hiệu yếu), và tái lập đúng tác hại back của ck500 trên test (`report/261` §6). ck400 ít hại back hơn ck500 với exec gần như bằng. Câu trùng nguyên văn gold: SFT-cont 706/2.223 · SA ck500 633 · ck400 650 · chrF 612. Độ đo văn bản: đang tính trên Kaggle CPU (§12b).
 
-### 12b. Độ đo văn bản DEV-v3 (đang chạy)
+### 12b. Độ đo văn bản DEV-v3 (xong 15/11 ~07:00 VN, kernel chạy ~20 phút)
 15/11 đẩy `trangphngngc/chu-sa3-dev-15-11-cpu` (Kaggle CPU, dataset `trangphngngc/chu-sa3-dev-15-11` + `corenlp-360-jars`), mã `harness/chu_sa3_dev_15_11.py` (dùng lại `ktc_chu_27_10.tung_buoc`): BLEU-4 · ROUGE-L · CIDEr-D · SPICE · chrF · BERTScore có KTC ghép cặp bootstrap cụm episode (B = 2.000), METEOR mức kho; trên cả 2.223 bước và tập con 1.338 bước chạm. Gói `_bundles/chu_sa3_dev_15_11/`. Xong tải về `runs/sa_spice_v3/dev/chu/`.
+
+**Kết quả** (`runs/sa_spice_v3/dev/chu/chu_sa3_dev_15_11.json`; tự kiểm chrF trọn kho đạt; 600 cụm episode; số dev, không trích):
+
+| nhánh (2.223 bước) | BLEU-4 | METEOR | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
+|---|---|---|---|---|---|---|---|
+| SFT-cont | 60,17 | 43,16 | 74,62 | 539,27 | 55,47 | 69,79 | 73,69 |
+| SA ck500 | 57,53 | 42,34 | 73,24 | 518,85 | 53,72 | 69,03 | 72,25 |
+| SA ck400 | 57,02 | 42,88 | 73,76 | 525,45 | 54,46 | 69,76 | 72,61 |
+| chrF ck400 | 54,46 | 42,38 | 72,62 | 507,08 | 52,83 | 69,43 | 71,69 |
+
+| nhánh (1.338 bước chạm) | BLEU-4 | METEOR | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
+|---|---|---|---|---|---|---|---|
+| SFT-cont | 56,79 | 40,66 | 71,98 | 463,70 | 48,39 | 66,57 | 70,85 |
+| SA ck500 | 56,25 | 41,12 | 72,30 | 463,43 | 48,10 | 67,19 | 70,88 |
+| SA ck400 | 54,85 | 41,29 | 71,97 | 461,58 | 48,09 | 67,57 | 70,56 |
+| chrF ck400 | 52,91 | 41,32 | 71,69 | 449,02 | 47,11 | 67,90 | 70,31 |
+
+Ghép cặp (KTC95; * = loại 0):
+- Toàn bộ: SA ck400 − SFT-cont BLEU-4 −3,15* · ROUGE-L −0,87* · CIDEr-D −13,82* · SPICE −1,01* · chrF −0,04 · BERT −1,08*. SA ck500 − SFT-cont: cả sáu âm*. chrF ck400 − SFT-cont: năm âm* (chrF −0,37 phủ 0).
+- Toàn bộ: SA ck400 − chrF ck400 BLEU-4 +2,57* · ROUGE-L +1,14* · CIDEr-D +18,37* · SPICE +1,63* · chrF +0,33 · BERT +0,92*. SA ck400 − ck500: ROUGE-L, CIDEr-D, SPICE, chrF đều nghiêng về ck400*.
+- Bước chạm: SA ck400 − SFT-cont BLEU-4 −1,94* · chrF +1,00* · bốn độ đo còn lại phủ 0. SA ck400 − chrF ck400 BLEU-4 +1,94* · CIDEr-D +12,55* · SPICE +0,99 [−0,22; +2,10].
+
+Đọc: phần tụt so SFT-cont trên toàn bộ chủ yếu ở bước không chạm (cùng chỗ tụt đúng loại thao tác ở §12); trên bước chạm SA ≈ SFT-cont, chỉ BLEU-4 thấp hơn. SA hơn chrF rõ ở BLEU-4/CIDEr-D (cả hai phạm vi) và SPICE (toàn bộ), dù exec hai nhánh ngang nhau. Trên toàn bộ ck400 hơn ck500 ở 4/6 độ đo có KTC ⇒ thêm căn cứ cho việc chọn ck400 ở §13.
+
+## 13. Chọn điểm lưu và chấm tập kiểm (15/11)
+
+**Chọn SA-SPICE-v3 ck400, chấm một nhánh trên tập kiểm.** Căn cứ, theo các tiêu chí đã viết sẵn trong `protocol_freeze.json` (bản DRAFT, một seed thay vì ba ⇒ phải khai):
+- Tiêu chí khả thi so SFT-cont: bước không chạm tụt tối đa 3 điểm, scroll + back gộp tụt tối đa 5 điểm, KL ≤ 0,10.
+  - SA ck400: −2,40 không chạm · scroll+back 80,36 → 76,74 (−3,6) · KL 0,042 ⇒ **khả thi**.
+  - SA ck500: −5,55 · −5,2 ⇒ không khả thi. chrF ck400: −6,90 · −7,2 ⇒ không khả thi (chrF ck500 KL 0,114 cũng không).
+  - Đọc "scroll_back_drop_max_pp" là ngưỡng gộp scroll + back; nếu đọc từng loại thì back của mọi nhánh đều trượt (84 → 56–60/104). Phải khai cách đọc này.
+- Luật một SE: ck400 sớm hơn và exec ngang ck500 (+0,07 [−0,60; +0,77]) ⇒ chọn ck400. ck100–300 chưa chấm DEV (lệch memo §8, đã khai ở §11).
+- Không chấm chrF ck400 trên tập kiểm vì nhánh này không qua tiêu chí khả thi trên DEV. Không chấm cả ck400 lẫn ck500 rồi chọn theo tập kiểm.
+- Không mở CONFIRM-v3: điều kiện mở (SA > SPICE-MATCH, SA > Sparse-SPICE) cần hai arm chưa train. Tập kiểm 4.463 bước là nơi mọi nhánh lưới RL đã báo số, nên dùng để so với ck500 / SFT tiếp / PPO.
+
+**Kernel `trangphngngc/sa3-test-ck400`** (T4×2, đẩy 15/11 06:55 VN, trần 11 h, builder `_bundles/sa3_test/make_k.py`, không dataset mới): hoà S1 → hoà SFT-cont (kiểm 3/3) → sft_cont_merged trên 20 bước chạm test phải trùng ≥16/20 câu SFT tiếp đã chấm (60,16) → kiểm bộ chấm 10 bước S1. GPU0: SA ck400 sinh 4.463 bước chạm, dùng lại tệp thô cho câu trùng, UGround chấm, kiểm 40 bước. GPU1: SA ck400 rồi SFT-cont sinh 2.495 bước không chạm, chấm noharm. Kết quả về `runs/sa_spice_v3/test/`. Mốc so exec: SFT tiếp (`runs/luoi/7_11/test_u_3/`), ck500, S1/101.
