@@ -50,5 +50,8 @@
 - ✅ [MacKinnon, Nielsen & Webb (Journal of Econometrics 2023)](mackinnon_nielsen_webb_2023.md) — hướng dẫn suy luận cluster-robust ít-cụm (nền §7.4).
 - *(construct-validity NeurIPS 2025 → xem mục A; Sai/BUMP/Clark → mục A.)*
 
+## G. RL sau SFT (đọc 15/11/2026, gộp một file)
+- ✅ [17 bài RL/GRPO: SFT trước hay RL thẳng, đóng góp gì, generic hay specific](rl_sau_sft_17_bai_15_11.md) — InstructGPT · SCST · SPIDEr · DeepSeekMath · DeepSeek-R1 · Kimi k1.5 · Tülu 3 · Qwen3 · SFT Memorizes · Vision-R1 · InfiGUI-R1 · DAPO · Dr. GRPO · SimpleRL-Zoo · Visual-RFT · UI-R1 · GUI-R1; venue đánh dấu ✔/⚠ ngay trong file.
+
 ---
 *Nguồn link/venue đã xác minh: `report/45` (deep-research 2026-07-05). Bài ⚠ cần kiểm venue trước khi in.*
