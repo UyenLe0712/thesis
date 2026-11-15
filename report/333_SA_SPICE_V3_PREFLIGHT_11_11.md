@@ -263,3 +263,32 @@ Ghép cặp (KTC95; * = loại 0):
 - Không mở CONFIRM-v3: điều kiện mở (SA > SPICE-MATCH, SA > Sparse-SPICE) cần hai arm chưa train. Tập kiểm 4.463 bước là nơi mọi nhánh lưới RL đã báo số, nên dùng để so với ck500 / SFT tiếp / PPO.
 
 **Kernel `trangphngngc/sa3-test-ck400`** (T4×2, đẩy 15/11 06:55 VN, trần 11 h, builder `_bundles/sa3_test/make_k.py`, không dataset mới): hoà S1 → hoà SFT-cont (kiểm 3/3) → sft_cont_merged trên 20 bước chạm test phải trùng ≥16/20 câu SFT tiếp đã chấm (60,16) → kiểm bộ chấm 10 bước S1. GPU0: SA ck400 sinh 4.463 bước chạm, dùng lại tệp thô cho câu trùng, UGround chấm, kiểm 40 bước. GPU1: SA ck400 rồi SFT-cont sinh 2.495 bước không chạm, chấm noharm. Kết quả về `runs/sa_spice_v3/test/`. Mốc so exec: SFT tiếp (`runs/luoi/7_11/test_u_3/`), ck500, S1/101.
+
+## 14. Kết quả tập kiểm SA-SPICE-v3 ck400 (kernel `sa3-test-ck400`, xong 15/11 ~16:50 VN)
+
+Số **test**, một seed (101), một điểm lưu chọn trên DEV trước khi chấm test. Tệp ở `runs/sa_spice_v3/test/` (mã đã chạy ở `ma_kernel/`). Bảng đầy đủ, có đánh dấu, ở `report/334` §1–§5.
+
+**Kiểm:** hoà S1 rồi hoà SFT-cont, greedy trùng kernel 1 **3/3** · sft_cont_merged trùng câu SFT tiếp đã chấm **19/20** (ngưỡng 16) · bộ chấm tái lập 10 bước S1 (10/10 hit_voronoi và hit_disk trùng tệp thô cũ) · 4.112 câu trùng tệp thô cũ dùng lại kết quả chấm, 40 bước chừa ra chấm lại trùng tuyệt đối **40/40** · adapter gắn thật: câu SA khác SFT-cont ở 606/2.495 bước không chạm. Log in "13/4463 trùng" là 13/20 câu mẫu SFT tiếp (mẫu số in sai, chỉ 20 khoá được so).
+
+**Bước chạm (4.463):** exec **61,21** [59,45; 62,92] · D.3 67,56 · AitW đầy đủ 77,12 · đúng loại thao tác 95,79. Cao nhất mọi nhánh đã train ở exec, D.3, D.3∧14%.
+
+| phép so exec (ghép cặp, cụm app, B = 1.000 bản thử; bản B = 10.000 ở report/334) | Δ [KTC95] | hơn/kém | p |
+|---|---|---|---|
+| SA ck400 − SFT tiếp (cùng điểm xuất phát) | **+1,05** [+0,48; +1,66] | 116/69 | 0,0007 |
+| SA ck400 − ck500 | +0,56 [−0,04; +1,22] | 100/75 | 0,069 |
+| SA ck400 − A/A | +1,48 [+0,86; +2,21] | 130/64 | 2,5e−6 |
+| SA ck400 − S1/101 | +2,11 [+1,34; +2,89] | 181/87 | 9,5e−9 |
+
+DEV − test: SA ck400 − SFT-cont +1,35 trên DEV-v3, +1,05 trên test (cùng chiều, nhỏ hơn).
+
+**Bước không chạm (2.495, tỉ lệ đúng loại thao tác %):**
+
+| | toàn bộ | scroll | wait | input_text | open_app | navigate_back |
+|---|---|---|---|---|---|---|
+| SFT-cont | 84,61 | 76,82 | 95,64 | 80,36 | 97,44 | 71,11 |
+| SA-SPICE-v3 ck400 | 84,05 | 80,00 | 94,26 | 80,16 | 98,29 | **58,52** |
+| S1/101 | 85,97 | 83,97 | 90,69 | 81,58 | 96,16 | 72,96 |
+
+So S1 (score_run noharm): SA −1,92 [−2,98; −0,89], SFT-cont −1,36 [−2,31; −0,44]; cả hai ĐẠT ngưỡng −3. Tiêu chí khả thi so SFT-cont: toàn bộ −0,56 (≤3) · scroll+back gộp 75,32 → 74,34 (−0,98, ≤5) ⇒ **đạt trên test**; nhưng back tách riêng −12,6 điểm (192 → 158/270), cùng dạng đã thấy trên DEV (84 → 60/104). Phải khai.
+
+**Cách đọc:** so với điểm xuất phát của chính nó (SFT tiếp), SA-SPICE-v3 hơn +1,05 có ý nghĩa; so ck500 thì chưa tách được (+0,56, KTC phủ 0). +2,11 so S1/101 cộng dồn hai bước (SFT tiếp +1,05 rồi GRPO +1,05), chạm đúng MDE 2,11 nhưng là một seed. Chưa có: độ đo văn bản test (cần kernel CPU SPICE), seed thứ hai, hai arm đối chứng SPICE-MATCH / Sparse-SPICE ⇒ chưa được viết "thiết kế thưởng SA tạo ra mức tăng", chỉ được viết "GRPO với thưởng SA-SPICE-v3 từ SFT-cont".

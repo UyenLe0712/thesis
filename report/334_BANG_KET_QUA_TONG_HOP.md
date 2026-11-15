@@ -1,17 +1,129 @@
 # 334 — Bảng kết quả tổng hợp (tự sinh)
 
-> **Tệp này do `harness/bang_tong_hop.py` sinh ra — đừng sửa tay.** Cập nhật: thêm nhánh vào danh sách trong script rồi `cd harness && python3 bang_tong_hop.py`. Lần sinh gần nhất: 15/11/2026 00:08 (giờ máy WSL, UTC). Bootstrap B = 10000.
+> **Tệp này do `harness/bang_tong_hop.py` sinh ra — đừng sửa tay.** Cập nhật: thêm nhánh vào danh sách trong script rồi `cd harness && python3 bang_tong_hop.py`. Lần sinh gần nhất: 15/11/2026 09:56 (giờ máy WSL, UTC). Bootstrap B = 10000.
 
 Quy ước: số **test** = tập kiểm AndroidControl của dự án (4.463 bước chạm + 2.495 bước không chạm), trích được. Số **DEV/val** chỉ để chọn nhánh, cấm trích ra bài. Mọi nhánh một hạt giống (101) trừ chỗ ghi khác. KTC95 bootstrap cụm app (test) hoặc cụm episode (DEV-v3); p là McNemar chính xác; * = KTC loại 0.
 
-## 1. Tập kiểm — tiêu chí xác định vị trí (4.463 bước chạm)
+Tự kiểm: ck500 − S1/101 exec = +1,55 [+0,80; +2,33] (đã công bố +1,55 [+0,80; +2,33]).
+
+Mục lục: **1** so thuật toán RL · **2** so phần thưởng · 3–5 bảng đầy đủ mọi nhánh trên tập kiểm (vị trí, văn bản, không chạm) · 6 DEV-v3 · 7–12 dụng cụ khác, lịch sử tự sinh, AitZ, ACU, dev so test, nhánh chưa có số.
+
+## 1. So thuật toán RL — cùng phần thưởng SPICE, cùng điểm xuất phát S1/101
+
+Mọi lượt: LoRA mới cỡ S1, KL β 0,04 về S1/101, 1.000 câu nhắc train, G = 8, lr 1e-5, seed 101. Các lượt lưới (trừ ck500) chạy cùng mã `grpo_luoi.py` / `grpo_ppo.py` ⇒ **phép so công bằng là so với A/A** (GRPO + SPICE train lại bằng cùng mã); ck500 là lượt gốc bằng `grpo_spice.py`, lệch A/A −0,92 exec do khác mã/thư viện/GPU.
+
+**Bảng 1.1.** Tiêu chí xác định vị trí trên tập kiểm (4.463 bước chạm, %). Xếp theo exec. **Đậm** = cao nhất, <u>gạch chân</u> = cao nhì trong các lượt RL. Δexec so A/A: * KTC95 loại 0, † còn ý nghĩa sau Holm.
+
+| thuật toán | update | exec ↑ | D.3 ↑ | AitW đầy đủ ↑ | đúng loại thao tác ↑ | Δexec − A/A |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| GRPO (lượt gốc) | 500 | **60,65** | **67,02** | **76,25** | 95,85 | +0,92† |
+| SCST (mốc = câu greedy) | 500 | <u>60,54</u> | <u>66,88</u> | <u>76,14</u> | <u>95,99</u> | +0,81† |
+| PPO, GAE λ = 1 <sup>a</sup> | 1000 | 60,07 | 66,77 | 76,09 | **96,35** | +0,34 |
+| REINFORCE (mốc EMA) | 500 | 60,00 | 66,41 | 75,51 | 95,74 | +0,27 |
+| PPO, GAE λ = 0,95 <sup>a</sup> | 1000 | 59,98 | 66,26 | 75,69 | 95,38 | +0,25 |
+| GRPO (A/A) | 500 | 59,74 | 66,41 | 75,71 | 95,56 | 0 (mốc) |
+| RLOO | 500 | 59,44 | 65,81 | 75,02 | 94,91 | −0,29 |
+| *mốc không RL* | | | | | | |
+| *SFT tiếp (không RL, cùng 1.000 câu nhắc)* | 125 | *60,16* | *66,64* | *75,71* | *96,06* | *+0,43* |
+| *điểm xuất phát* | 0 | *59,11* | *65,49* | *74,37* | *94,26* | *−0,63* |
+
+**Bảng 1.2.** Độ đo văn bản trên tập kiểm (4.463 bước chạm, mức kho). Cùng cách đánh dấu.
+
+| thuật toán | BLEU-4 ↑ | METEOR ↑ | ROUGE-L ↑ | CIDEr-D ↑ | SPICE ↑ | chrF ↑ | BERTScore ↑ |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| GRPO (lượt gốc) | 52,36 | <u>37,92</u> | 68,36 | 430,05 | 45,79 | 62,87 | 67,07 |
+| SCST (mốc = câu greedy) | 51,97 | **38,15** | **68,70** | <u>430,89</u> | <u>45,93</u> | **63,31** | **67,25** |
+| PPO, GAE λ = 1 <sup>a</sup> | 50,70 | 37,86 | 68,25 | 420,72 | 44,98 | <u>63,00</u> | 66,78 |
+| REINFORCE (mốc EMA) | <u>52,52</u> | 37,37 | 67,97 | 426,11 | 45,27 | 62,06 | 66,76 |
+| PPO, GAE λ = 0,95 <sup>a</sup> | 50,67 | 37,89 | 67,96 | 419,53 | 44,81 | 62,85 | 66,54 |
+| GRPO (A/A) | **52,97** | 37,55 | <u>68,44</u> | **430,92** | **46,00** | 62,39 | <u>67,09</u> |
+| RLOO | 52,00 | 37,00 | 67,33 | 422,10 | 45,26 | 61,65 | 66,31 |
+| *mốc không RL* | | | | | | | |
+| *SFT tiếp (không RL, cùng 1.000 câu nhắc)* | *52,07* | *37,75* | *68,55* | *425,79* | *45,33* | *62,64* | *67,05* |
+| *điểm xuất phát* | *51,56* | *36,79* | *67,35* | *416,12* | *44,37* | *61,26* | *66,33* |
+
+**Bảng 1.3 (chi tiết).** So ghép cặp exec: Δ [KTC95] (số bước hơn/kém), p McNemar chính xác; cột cuối Holm trên họ 8 phép so với A/A. * = KTC loại 0.
+
+| thuật toán | − A/A | − ck500 | − SFT tiếp | − S1/101 | p Holm (− A/A) |
+|---|:---:|:---:|:---:|:---:|:---:|
+| GRPO (lượt gốc) | +0,92* [+0,49; +1,37] (71/30) p=5,5e-05 | - | +0,49 [−0,09; +1,07] (97/75) p=0,109 | +1,55* [+0,80; +2,33] (159/90) p=1,5e-05 | 0,00044 |
+| SCST (mốc = câu greedy) | +0,81* [+0,34; +1,28] (78/42) p=0,001 | −0,11 [−0,55; +0,33] (49/54) p=0,694 | +0,38 [−0,11; +0,88] (73/56) p=0,159 | +1,43* [+0,79; +2,10] (134/70) p=8,8e-06 | 0,009 |
+| PPO, GAE λ = 1 <sup>a</sup> | +0,34 [−0,23; +0,93] (95/80) p=0,290 | −0,58* [−1,14; −0,02] (74/100) p=0,058 | −0,09 [−0,71; +0,54] (102/106) p=0,835 | +0,96* [+0,19; +1,73] (158/115) p=0,011 | 1,000 |
+| REINFORCE (mốc EMA) | +0,27 [−0,21; +0,74] (66/54) p=0,315 | −0,65* [−1,13; −0,18] (43/72) p=0,009 | −0,16 [−0,64; +0,34] (64/71) p=0,606 | +0,90* [+0,20; +1,60] (133/93) p=0,009 | 1,000 |
+| PPO, GAE λ = 0,95 <sup>a</sup> | +0,25 [−0,33; +0,84] (101/90) p=0,469 | −0,67* [−1,23; −0,09] (70/100) p=0,026 | −0,18 [−0,86; +0,51] (120/128) p=0,657 | +0,87* [+0,02; +1,73] (176/137) p=0,032 | 1,000 |
+| GRPO (A/A) | - | −0,92* [−1,36; −0,48] (30/71) p=5,5e-05 | −0,43 [−0,99; +0,14] (78/97) p=0,173 | +0,63 [−0,11; +1,38] (137/109) p=0,085 | - |
+| RLOO | −0,29 [−0,80; +0,19] (63/76) p=0,309 | −1,21* [−1,74; −0,71] (41/95) p=4,2e-06 | −0,72* [−1,27; −0,17] (66/98) p=0,015 | +0,34 [−0,33; +1,00] (110/95) p=0,328 | 1,000 |
+| SFT tiếp (không RL, cùng 1.000 câu nhắc) | +0,43 [−0,13; +0,99] (97/78) p=0,173 | −0,49 [−1,06; +0,09] (75/97) p=0,109 | - | +1,05* [+0,47; +1,64] (109/62) p=0,0004 | 0,867 |
+| điểm xuất phát | −0,63 [−1,37; +0,12] (109/137) p=0,085 | −1,55* [−2,33; −0,80] (90/159) p=1,5e-05 | −1,05* [−1,64; −0,48] (62/109) p=0,0004 | - | 0,510 |
+
+a: PPO một câu nhắc mỗi update nên chạy 1.000 update để đi hết đúng 1.000 câu nhắc như các lượt khác. Chưa có số test: Dr.GRPO (treo ở checkpoint-475), A2C (mới probe). Chưa chạy: DPO, MIXER, MRT, RAML.
+
+## 2. So phần thưởng — cùng thuật toán GRPO, cùng điểm xuất phát S1/101
+
+Cùng cấu hình GRPO như mục 1, chỉ đổi phần thưởng. Lượt lưới (ROUGE-L, METEOR, CIDEr-D) cùng mã với A/A ⇒ so với A/A; xao101 và A2 dùng mã khác (`grpo_spice.py`, `ctg_grpo.py`) nên đọc cột − ck500 cho xao101. SA-SPICE-v3 khác điểm xuất phát (SFT-cont) và tập câu nhắc (TRAIN-v3) ⇒ đọc cột − SFT tiếp.
+
+**Bảng 2.1.** Tiêu chí xác định vị trí trên tập kiểm (4.463 bước chạm, %). Xếp theo exec. **Đậm** = cao nhất, <u>gạch chân</u> = cao nhì trong các lượt RL. Δexec so A/A: * KTC95 loại 0, † còn ý nghĩa sau Holm.
+
+| phần thưởng | update | exec ↑ | D.3 ↑ | AitW đầy đủ ↑ | đúng loại thao tác ↑ | Δexec − A/A |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| SA-SPICE-v3 + thưởng khớp thao tác <sup>b</sup> | 400 | **61,21** | **67,56** | **77,12** | 95,79 | +1,48† |
+| SPICE (lượt gốc) | 500 | <u>60,65</u> | 67,02 | 76,25 | 95,85 | +0,92† |
+| ROUGE-L | 500 | 60,63 | <u>67,04</u> | <u>76,79</u> | **96,75** | +0,90† |
+| METEOR | 500 | 60,27 | 66,75 | 76,27 | <u>96,17</u> | +0,54 |
+| CIDEr-D | 500 | 60,27 | 66,44 | 76,00 | 95,99 | +0,54* |
+| CIDEr-D (mã CTG, 1000 update) | 1000 | 59,98 | 66,35 | 76,07 | 96,15 | +0,25 |
+| CIDEr-D (mã CTG, 500 update) | 500 | 59,96 | 66,44 | 76,52 | 96,10 | +0,22 |
+| SPICE (A/A) | 500 | 59,74 | 66,41 | 75,71 | 95,56 | 0 (mốc) |
+| SPICE ghép ngẫu nhiên giữa các mẫu (kiểm soát) | 500 | 59,11 | 65,58 | 74,59 | 94,06 | −0,63 |
+| *mốc không RL* | | | | | | |
+| *không thưởng (SFT tiếp)* | 125 | *60,16* | *66,64* | *75,71* | *96,06* | *+0,43* |
+| *điểm xuất phát* | 0 | *59,11* | *65,49* | *74,37* | *94,26* | *−0,63* |
+
+**Bảng 2.2.** Độ đo văn bản trên tập kiểm (4.463 bước chạm, mức kho). Cùng cách đánh dấu.
+
+| phần thưởng | BLEU-4 ↑ | METEOR ↑ | ROUGE-L ↑ | CIDEr-D ↑ | SPICE ↑ | chrF ↑ | BERTScore ↑ |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| SA-SPICE-v3 + thưởng khớp thao tác <sup>b</sup> | - | - | - | - | - | - | - |
+| SPICE (lượt gốc) | 52,36 | 37,92 | 68,36 | 430,05 | <u>45,79</u> | 62,87 | 67,07 |
+| ROUGE-L | 52,59 | <u>38,20</u> | **69,27** | **432,81** | 45,57 | <u>63,42</u> | **67,57** |
+| METEOR | 50,76 | **38,63** | <u>69,14</u> | 426,61 | 45,13 | **64,19** | <u>67,35</u> |
+| CIDEr-D | 51,59 | 37,78 | 68,47 | 424,52 | 44,43 | 62,90 | 67,03 |
+| CIDEr-D (mã CTG, 1000 update) | <u>52,82</u> | 37,37 | 68,46 | 427,98 | 44,45 | 61,92 | - |
+| CIDEr-D (mã CTG, 500 update) | 52,38 | 37,24 | 68,59 | 428,27 | 45,27 | 61,76 | - |
+| SPICE (A/A) | **52,97** | 37,55 | 68,44 | <u>430,92</u> | **46,00** | 62,39 | 67,09 |
+| SPICE ghép ngẫu nhiên giữa các mẫu (kiểm soát) | 51,32 | 36,95 | 67,36 | 418,13 | 44,40 | 61,52 | 66,40 |
+| *mốc không RL* | | | | | | | |
+| *không thưởng (SFT tiếp)* | *52,07* | *37,75* | *68,55* | *425,79* | *45,33* | *62,64* | *67,05* |
+| *điểm xuất phát* | *51,56* | *36,79* | *67,35* | *416,12* | *44,37* | *61,26* | *66,33* |
+
+**Bảng 2.3 (chi tiết).** So ghép cặp exec: Δ [KTC95] (số bước hơn/kém), p McNemar chính xác; cột cuối Holm trên họ 10 phép so với A/A. * = KTC loại 0.
+
+| phần thưởng | − A/A | − ck500 | − SFT tiếp | − S1/101 | p Holm (− A/A) |
+|---|:---:|:---:|:---:|:---:|:---:|
+| SA-SPICE-v3 + thưởng khớp thao tác <sup>b</sup> | +1,48* [+0,85; +2,14] (130/64) p=2,5e-06 | +0,56 [−0,05; +1,17] (100/75) p=0,069 | +1,05* [+0,46; +1,65] (116/69) p=0,00068 | +2,11* [+1,33; +2,89] (181/87) p=9,5e-09 | 2,5e-05 |
+| SPICE (lượt gốc) | +0,92* [+0,49; +1,37] (71/30) p=5,5e-05 | - | +0,49 [−0,09; +1,07] (97/75) p=0,109 | +1,55* [+0,80; +2,33] (159/90) p=1,5e-05 | 0,0005 |
+| ROUGE-L | +0,90* [+0,37; +1,44] (95/55) p=0,001 | −0,02 [−0,55; +0,51] (73/74) p=1,000 | +0,47 [−0,14; +1,08] (101/80) p=0,137 | +1,52* [+0,75; +2,29] (171/103) p=4,8e-05 | 0,011 |
+| METEOR | +0,54 [−0,02; +1,11] (97/73) p=0,077 | −0,38 [−0,94; +0,17] (72/89) p=0,207 | +0,11 [−0,52; +0,74] (107/102) p=0,782 | +1,17* [+0,39; +1,96] (170/118) p=0,003 | 0,465 |
+| CIDEr-D | +0,54* [+0,02; +1,07] (89/65) p=0,063 | −0,38 [−0,88; +0,11] (56/73) p=0,159 | +0,11 [−0,48; +0,70] (94/89) p=0,768 | +1,17* [+0,41; +1,92] (162/110) p=0,002 | 0,444 |
+| CIDEr-D (mã CTG, 1000 update) | +0,25 [−0,42; +0,92] (128/117) p=0,523 | −0,67 [−1,33; 0,00] (101/131) p=0,057 | −0,18 [−0,88; +0,52] (136/144) p=0,676 | +0,87* [+0,02; +1,74] (198/159) p=0,044 | 1,000 |
+| CIDEr-D (mã CTG, 500 update) | +0,22 [−0,42; +0,88] (114/104) p=0,542 | −0,69* [−1,34; −0,02] (91/122) p=0,040 | −0,20 [−0,90; +0,49] (131/140) p=0,627 | +0,85* [+0,02; +1,67] (172/134) p=0,034 | 1,000 |
+| SPICE (A/A) | - | −0,92* [−1,36; −0,48] (30/71) p=5,5e-05 | −0,43 [−0,99; +0,14] (78/97) p=0,173 | +0,63 [−0,11; +1,38] (137/109) p=0,085 | - |
+| SPICE ghép ngẫu nhiên giữa các mẫu (kiểm soát) | −0,63 [−1,37; +0,11] (112/140) p=0,089 | −1,55* [−2,30; −0,81] (94/163) p=2e-05 | −1,05* [−1,59; −0,52] (57/104) p=0,00026 | 0,00 [−0,41; +0,42] (45/45) p=1,000 | 0,465 |
+| không thưởng (SFT tiếp) | +0,43 [−0,13; +0,99] (97/78) p=0,173 | −0,49 [−1,06; +0,09] (75/97) p=0,109 | - | +1,05* [+0,47; +1,64] (109/62) p=0,0004 | 0,520 |
+| điểm xuất phát | −0,63 [−1,37; +0,12] (109/137) p=0,085 | −1,55* [−2,33; −0,80] (90/159) p=1,5e-05 | −1,05* [−1,64; −0,48] (62/109) p=0,0004 | - | 0,465 |
+
+b: xuất phát từ SFT-cont (= SFT tiếp), 1.000 câu nhắc TRAIN-v3, chọn ck400 theo tiêu chí khả thi trên DEV-v3 (report/333 §13). Chưa có số test: chrF (trượt tiêu chí khả thi DEV), BLEU-4, SPIDEr, BERTScore.
+
+## 3. Tập kiểm, mọi nhánh — tiêu chí xác định vị trí (4.463 bước chạm)
 
 Tính lại từ tệp thô `*_raw.jsonl` bằng `luat_d3.py` + `luat_aitw_day_du.py`. Cột *đúng loại thao tác* gồm cả điều kiện bật/tắt.
 
-| nhóm | nhánh | n | exec | D.3 | D.3∧14% | ±14% từng trục | AitW khoảng cách | AitW đầy đủ | đúng loại thao tác |
-|---|---|---|---|---|---|---|---|---|---|
-| mốc | Câu chuẩn (trần dụng cụ) | 4463 | 75,73 | 83,82 | 79,23 | 84,23 | 84,09 | 92,14 | 99,93 |
-| chính | ACE (R3) | 4463 | 60,68 | 67,11 | 63,28 | 68,94 | 68,63 | 76,32 | 95,85 |
+**Đậm** = cao nhất, <u>gạch chân</u> = cao nhì trong các nhánh đã train (không tính nhóm *mốc*: câu chuẩn, S1, 7B, Base).
+
+| nhóm | nhánh | n | exec ↑ | D.3 ↑ | D.3∧14% ↑ | ±14% từng trục ↑ | AitW khoảng cách ↑ | AitW đầy đủ ↑ | đúng loại thao tác ↑ |
+|---|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| mốc | Câu chuẩn (trần dụng cụ) | 4463 | *75,73* | *83,82* | *79,23* | *84,23* | *84,09* | *92,14* | *99,93* |
+| chính | ACE (R3) | 4463 | <u>60,68</u> | <u>67,11</u> | <u>63,28</u> | 68,94 | 68,63 | 76,32 | 95,85 |
 | chính | ck500 (GRPO + SPICE) | 4463 | 60,65 | 67,02 | 63,25 | 68,90 | 68,59 | 76,25 | 95,85 |
 | chính | ck500 hạt 202 | 4463 | 59,94 | 66,55 | 62,65 | 68,59 | 68,25 | 76,23 | 95,94 |
 | lưới RL | GRPO + ROUGE-L | 4463 | 60,63 | 67,04 | 63,19 | 69,17 | 68,83 | 76,79 | 96,75 |
@@ -27,26 +139,24 @@ Tính lại từ tệp thô `*_raw.jsonl` bằng `luat_d3.py` + `luat_aitw_day_d
 | lưới RL | GRPO + SPICE chạy lại (A/A) | 4463 | 59,74 | 66,41 | 62,47 | 68,09 | 67,76 | 75,71 | 95,56 |
 | lưới RL | RLOO + SPICE | 4463 | 59,44 | 65,81 | 62,09 | 67,69 | 67,35 | 75,02 | 94,91 |
 | lưới RL | xao101 (SPICE ghép ngẫu nhiên) | 4463 | 59,11 | 65,58 | 61,84 | 67,47 | 67,11 | 74,59 | 94,06 |
-| lưới RL | SA-SPICE-v3 ck400 | - | **đang chấm / chưa có** | | | | | | |
+| lưới RL | SA-SPICE-v3 ck400 | 4463 | **61,21** | **67,56** | **63,86** | **69,80** | **69,46** | <u>77,12</u> | 95,79 |
 | hướng đã thử | TAGE | 4463 | 60,23 | 66,44 | 62,69 | 68,74 | 68,43 | 76,07 | 96,53 |
 | hướng đã thử | RAFT | 4463 | 60,23 | 66,52 | 62,81 | 68,54 | 68,23 | 75,87 | 95,56 |
-| hướng đã thử | GRPO-point (chặng ba) | 4463 | 60,07 | 67,04 | 62,96 | 69,37 | 68,90 | 77,30 | 98,75 |
-| hướng đã thử | MIN-DESC | 4463 | 60,05 | 66,55 | 62,69 | 68,72 | 68,32 | 76,41 | 98,77 |
+| hướng đã thử | GRPO-point (chặng ba) | 4463 | 60,07 | 67,04 | 62,96 | <u>69,37</u> | <u>68,90</u> | **77,30** | <u>98,75</u> |
+| hướng đã thử | MIN-DESC | 4463 | 60,05 | 66,55 | 62,69 | 68,72 | 68,32 | 76,41 | **98,77** |
 | hướng đã thử | CE2-S2 | 4463 | 59,42 | 66,03 | 62,07 | 68,45 | 67,94 | 76,09 | 98,72 |
 | hướng đã thử | CW-RA | 4463 | 58,53 | 64,84 | 60,95 | 66,77 | 66,46 | 74,34 | 94,06 |
 | hướng đã thử | ra_k4 | 4463 | 59,40 | 65,81 | 62,00 | 67,56 | 67,24 | 75,02 | 93,57 |
 | hướng đã thử | S2 | 4463 | 57,18 | 63,63 | 59,69 | 65,72 | 65,40 | 73,40 | 94,73 |
 | hướng đã thử | gui_sel | 4463 | 56,13 | 62,38 | 58,62 | 63,86 | 63,52 | 71,16 | 90,81 |
-| mốc | S1/202 | 4463 | 59,62 | 66,10 | 62,36 | 67,91 | 67,62 | 75,31 | 94,47 |
-| mốc | S1/101 | 4463 | 59,11 | 65,49 | 61,73 | 67,24 | 66,91 | 74,37 | 94,26 |
-| mốc | Qwen2.5-VL-7B prompting | 4463 | 51,51 | 57,67 | 53,71 | 59,33 | 58,84 | 66,79 | 96,15 |
-| mốc | Base 3B | 4463 | 47,59 | 53,60 | 49,76 | 55,86 | 55,28 | 63,39 | 96,17 |
+| mốc | S1/202 | 4463 | *59,62* | *66,10* | *62,36* | *67,91* | *67,62* | *75,31* | *94,47* |
+| mốc | S1/101 | 4463 | *59,11* | *65,49* | *61,73* | *67,24* | *66,91* | *74,37* | *94,26* |
+| mốc | Qwen2.5-VL-7B prompting | 4463 | *51,51* | *57,67* | *53,71* | *59,33* | *58,84* | *66,79* | *96,15* |
+| mốc | Base 3B | 4463 | *47,59* | *53,60* | *49,76* | *55,86* | *55,28* | *63,39* | *96,17* |
 
-### 1b. So ghép cặp exec với ba mốc (test)
+### 3b. So ghép cặp exec với ba mốc (test)
 
-Δ [KTC95] (hơn / kém), p McNemar chính xác chưa hiệu chỉnh. Holm cho từng họ phép so xem report/320.
-
-Tự kiểm: ck500 − S1/101 = +1,55 [+0,80; +2,33] (đã công bố +1,55 [+0,80; +2,33]).
+Δ [KTC95] (hơn / kém), p McNemar chính xác chưa hiệu chỉnh. Holm theo họ: mục 1c, 2c và report/320.
 
 | nhánh | − ck500 | − S1/101 | − SFT tiếp |
 |---|---|---|---|
@@ -66,6 +176,7 @@ Tự kiểm: ck500 − S1/101 = +1,55 [+0,80; +2,33] (đã công bố +1,55 [+0,
 | GRPO + SPICE chạy lại (A/A) | −0,92* [−1,36; −0,48] (30/71) p=5,5e-05 | +0,63 [−0,11; +1,38] (137/109) p=0,085 | −0,43 [−0,99; +0,14] (78/97) p=0,173 |
 | RLOO + SPICE | −1,21* [−1,74; −0,71] (41/95) p=4,2e-06 | +0,34 [−0,33; +1,00] (110/95) p=0,328 | −0,72* [−1,27; −0,17] (66/98) p=0,015 |
 | xao101 (SPICE ghép ngẫu nhiên) | −1,55* [−2,30; −0,81] (94/163) p=2e-05 | 0,00 [−0,41; +0,42] (45/45) p=1,000 | −1,05* [−1,59; −0,52] (57/104) p=0,00026 |
+| SA-SPICE-v3 ck400 | +0,56 [−0,05; +1,17] (100/75) p=0,069 | +2,11* [+1,33; +2,89] (181/87) p=9,5e-09 | +1,05* [+0,46; +1,65] (116/69) p=0,00068 |
 | TAGE | −0,43 [−0,87; +0,02] (48/67) p=0,093 | +1,12* [+0,31; +1,94] (190/140) p=0,007 | +0,07 [−0,61; +0,75] (130/127) p=0,901 |
 | RAFT | −0,43* [−0,82; −0,04] (31/50) p=0,045 | +1,12* [+0,36; +1,88] (158/108) p=0,003 | +0,07 [−0,58; +0,69] (108/105) p=0,891 |
 | GRPO-point (chặng ba) | −0,58 [−1,69; +0,51] (286/312) p=0,307 | +0,96 [−0,16; +2,11] (329/286) p=0,090 | −0,09 [−1,16; +0,95] (292/296) p=0,902 |
@@ -80,19 +191,21 @@ Tự kiểm: ck500 − S1/101 = +1,55 [+0,80; +2,33] (đã công bố +1,55 [+0,
 | Qwen2.5-VL-7B prompting | −9,14* [−10,75; −7,54] (316/724) p=1,9e-37 | −7,60* [−9,28; −5,95] (368/707) p=2,6e-25 | −8,65* [−10,28; −7,03] (337/723) p=5,7e-33 |
 | Base 3B | −13,06* [−14,58; −11,54] (264/847) p=1,1e-71 | −11,52* [−13,07; −10,02] (284/798) p=5,1e-57 | −12,57* [−14,09; −11,06] (271/832) p=9,2e-67 |
 
-## 2. Tập kiểm — độ đo văn bản (4.463 bước chạm, mức kho)
+## 4. Tập kiểm, mọi nhánh — độ đo văn bản (4.463 bước chạm, mức kho)
 
 COCO (BLEU-4, METEOR 1.5, ROUGE-L, CIDEr-D, SPICE) + chrF + BERTScore (roberta-large L17, rescaled). Giá trị chép từ JSON của các kernel chấm (cột nguồn). `-` = chưa tính.
 
-| nhánh | BLEU-4 | METEOR | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore | nguồn |
-|---|---|---|---|---|---|---|---|---|
-| Câu chuẩn (trần dụng cụ) | 100,00 | 100,00 | 100,00 | 988,74 | 98,61 | 100,00 | 100,00 | text_metrics_coco/them.json |
-| ACE (R3) | 53,47 | 38,37 | 69,11 | 442,02 | 47,13 | 63,45 | 67,73 | ktc_chu_27_10.json |
+Cùng cách đánh dấu như mục 3.
+
+| nhánh | BLEU-4 ↑ | METEOR ↑ | ROUGE-L ↑ | CIDEr-D ↑ | SPICE ↑ | chrF ↑ | BERTScore ↑ | nguồn |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|---|
+| Câu chuẩn (trần dụng cụ) | *100,00* | *100,00* | *100,00* | *988,74* | *98,61* | *100,00* | *100,00* | text_metrics_coco/them.json |
+| ACE (R3) | **53,47** | <u>38,37</u> | 69,11 | **442,02** | **47,13** | <u>63,45</u> | **67,73** | ktc_chu_27_10.json |
 | ck500 (GRPO + SPICE) | 52,36 | 37,92 | 68,36 | 430,05 | 45,79 | 62,87 | 67,07 | ktc_chu_27_10.json |
 | ck500 hạt 202 | 52,94 | 37,53 | 68,48 | 431,22 | 45,69 | 62,37 | 67,12 | ktc_chu_27_10.json |
-| GRPO + ROUGE-L | 52,59 | 38,20 | 69,27 | 432,81 | 45,57 | 63,42 | 67,57 | chu_luoi_8_11b.json |
+| GRPO + ROUGE-L | 52,59 | 38,20 | **69,27** | <u>432,81</u> | 45,57 | 63,42 | <u>67,57</u> | chu_luoi_8_11b.json |
 | SCST + SPICE | 51,97 | 38,15 | 68,70 | 430,89 | 45,93 | 63,31 | 67,25 | chu_luoi_8_11b.json |
-| GRPO + METEOR | 50,76 | 38,63 | 69,14 | 426,61 | 45,13 | 64,19 | 67,35 | chu_luoi_8_11b.json |
+| GRPO + METEOR | 50,76 | **38,63** | <u>69,14</u> | 426,61 | 45,13 | **64,19** | 67,35 | chu_luoi_8_11b.json |
 | GRPO + CIDEr-D | 51,59 | 37,78 | 68,47 | 424,52 | 44,43 | 62,90 | 67,03 | chu_luoi_8_11b.json |
 | GRPO + CIDEr-D (A2, 500 bước) | 52,38 | 37,24 | 68,59 | 428,27 | 45,27 | 61,76 | - | report/299 §3 |
 | GRPO + CIDEr-D (A2, 1000 bước) | 52,82 | 37,37 | 68,46 | 427,98 | 44,45 | 61,92 | - | report/299 §3 |
@@ -100,7 +213,7 @@ COCO (BLEU-4, METEOR 1.5, ROUGE-L, CIDEr-D, SPICE) + chrF + BERTScore (roberta-l
 | PPO λ=1 (1000 bước) | 50,70 | 37,86 | 68,25 | 420,72 | 44,98 | 63,00 | 66,78 | chu_ppo_du (14/11) |
 | PPO λ=0,95 (1000 bước) | 50,67 | 37,89 | 67,96 | 419,53 | 44,81 | 62,85 | 66,54 | chu_ppo_du (14/11) |
 | REINFORCE + SPICE | 52,52 | 37,37 | 67,97 | 426,11 | 45,27 | 62,06 | 66,76 | chu_luoi_8_11b.json |
-| GRPO + SPICE chạy lại (A/A) | 52,97 | 37,55 | 68,44 | 430,92 | 46,00 | 62,39 | 67,09 | chu_luoi_8_11b.json |
+| GRPO + SPICE chạy lại (A/A) | <u>52,97</u> | 37,55 | 68,44 | 430,92 | <u>46,00</u> | 62,39 | 67,09 | chu_luoi_8_11b.json |
 | RLOO + SPICE | 52,00 | 37,00 | 67,33 | 422,10 | 45,26 | 61,65 | 66,31 | chu_luoi_8_11b.json |
 | xao101 (SPICE ghép ngẫu nhiên) | 51,32 | 36,95 | 67,36 | 418,13 | 44,40 | 61,52 | 66,40 | ktc_chu_27_10.json |
 | SA-SPICE-v3 ck400 | chưa có | | | | | | | |
@@ -113,14 +226,14 @@ COCO (BLEU-4, METEOR 1.5, ROUGE-L, CIDEr-D, SPICE) + chrF + BERTScore (roberta-l
 | ra_k4 | chưa có | | | | | | | |
 | S2 | 48,68 | 35,75 | 65,97 | 387,68 | 41,28 | 59,94 | 65,07 | text_metrics_coco/them.json |
 | gui_sel | 46,89 | 34,23 | 63,32 | 370,62 | 39,28 | 57,66 | 62,75 | text_metrics_coco/them.json |
-| S1/202 | 51,66 | 37,17 | 67,71 | 419,19 | 44,23 | 61,92 | 66,75 | ktc_chu_27_10.json |
-| S1/101 | 51,56 | 36,79 | 67,35 | 416,12 | 44,37 | 61,26 | 66,33 | ktc_chu_27_10.json |
-| Qwen2.5-VL-7B prompting | 14,48 | 21,90 | 39,79 | 100,71 | 18,74 | 36,22 | 39,70 | ktc_chu_27_10.json |
-| Base 3B | 15,34 | 24,58 | 42,31 | 88,01 | 18,48 | 40,18 | 40,10 | text_metrics_coco/them.json |
+| S1/202 | *51,66* | *37,17* | *67,71* | *419,19* | *44,23* | *61,92* | *66,75* | ktc_chu_27_10.json |
+| S1/101 | *51,56* | *36,79* | *67,35* | *416,12* | *44,37* | *61,26* | *66,33* | ktc_chu_27_10.json |
+| Qwen2.5-VL-7B prompting | *14,48* | *21,90* | *39,79* | *100,71* | *18,74* | *36,22* | *39,70* | ktc_chu_27_10.json |
+| Base 3B | *15,34* | *24,58* | *42,31* | *88,01* | *18,48* | *40,18* | *40,10* | text_metrics_coco/them.json |
 
 Phép so ghép cặp có KTC cho độ đo văn bản: report/320 §3.2 (ck500, ACE, S1, xao101, ck500/202), §14.3 (lưới đợt đầu), §19 (SFT tiếp, REINFORCE, RLOO), §21 (A/A), §28 (PPO).
 
-## 3. Tập kiểm — bước không chạm (2.495 bước, tỉ lệ câu đúng loại thao tác, %)
+## 5. Tập kiểm — bước không chạm (2.495 bước, tỉ lệ câu đúng loại thao tác, %)
 
 | nhánh | toàn bộ (n=2.495) | scroll (n=755) | wait (n=505) | input_text (n=494) | open_app (n=469) | navigate_back (n=270) |
 |---|---|---|---|---|---|---|
@@ -128,16 +241,16 @@ Phép so ghép cặp có KTC cho độ đo văn bản: report/320 §3.2 (ck500, 
 | ck500 (GRPO + SPICE) | 84,29 | 77,75 | 95,25 | 79,55 | 97,87 | 67,04 |
 | CTG A2 (CIDEr-D, 1000 bước) | 84,45 | 77,62 | 94,46 | 81,38 | 98,72 | 65,56 |
 | CTG A3 (CIDEr-D + CTG, 1000 bước) | 84,25 | 78,68 | 94,46 | 80,36 | 98,72 | 62,59 |
-| SA-SPICE-v3 ck400 | **đang chấm** (kernel `sa3-test-ck400`) | | | | | |
-| SFT-cont | **đang chấm** (kernel `sa3-test-ck400`) | | | | | |
+| SFT-cont (= SFT tiếp) | 84,61 | 76,82 | 95,64 | 80,36 | 97,44 | 71,11 |
+| SA-SPICE-v3 ck400 | 84,05 | 80,00 | 94,26 | 80,16 | 98,29 | 58,52 |
 
 Phép so có KTC: ck500 − S1 toàn bộ −1,68 (cận dưới −2,76), scroll **−6,23 [−8,30; −4,31]**, back −5,93 (report/261 §6); A3 − S1 toàn bộ −1,72 [−2,82; −0,63], scroll −5,30 [−7,19; −3,53] (report/279 §4g).
 
-## 4. DEV-v3 (SA-SPICE-v3) — số dev, cấm trích
+## 6. DEV-v3 (SA-SPICE-v3) — số dev, cấm trích
 
 2.223 bước (1.338 chạm · 885 không chạm, 667 bước có gold tin được), tách khỏi tập dạy GRPO theo episode; pool lấy từ tập dạy SFT nên S1/SFT-cont đã thấy. Một hạt giống (101).
 
-### 4a. Tiêu chí xác định vị trí (1.338 bước chạm; hộp phần tử từ `train_ac/descriptors.jsonl`)
+### 6a. Tiêu chí xác định vị trí (1.338 bước chạm; hộp phần tử từ `train_ac/descriptors.jsonl`)
 
 | nhánh | exec | D.3 | D.3∧14% | ±14% từng trục | AitW khoảng cách | AitW đầy đủ | đúng loại thao tác |
 |---|---|---|---|---|---|---|---|
@@ -146,7 +259,7 @@ Phép so có KTC: ck500 − S1 toàn bộ −1,68 (cận dưới −2,76), scrol
 | SA-SPICE-v3 ck400 | 64,28 | 71,52 | 67,86 | 73,77 | 73,62 | 81,69 | 96,79 |
 | chrF ck400 | 63,98 | 71,30 | 67,71 | 73,54 | 73,39 | 81,39 | 97,46 |
 
-### 4b. So ghép cặp DEV-v3 (exec, cụm episode, B như trên)
+### 6b. So ghép cặp DEV-v3 (exec, cụm episode, B như trên)
 
 | phép so | exec | D.3 | AitW đầy đủ |
 |---|---|---|---|
@@ -156,7 +269,7 @@ Phép so có KTC: ck500 − S1 toàn bộ −1,68 (cận dưới −2,76), scrol
 | SA-SPICE-v3 ck400 − chrF ck400 | +0,30 [−0,59; +1,20] p=0,608 | +0,22 [−0,68; +1,14] p=0,749 | +0,30 [−0,63; +1,26] p=0,636 |
 | SA-SPICE-v3 ck500 − SA-SPICE-v3 ck400 | +0,07 [−0,60; +0,74] p=1,000 | +0,22 [−0,40; +0,87] p=0,664 | −0,07 [−0,76; +0,60] p=1,000 |
 
-### 4c. Bước không chạm DEV-v3 (667 bước có gold tin được, verifier v3)
+### 6c. Bước không chạm DEV-v3 (667 bước có gold tin được, verifier v3)
 
 | nhánh | đúng loại | % | câu trùng nguyên văn gold (/2.223) |
 |---|---|---|---|
@@ -173,7 +286,7 @@ Phép so có KTC: ck500 − S1 toàn bộ −1,68 (cận dưới −2,76), scrol
 
 Theo loại (đúng/tổng): input_text SFT-cont 88/111 · ck500 78 · ck400 88 · chrF 75 — navigate_back 84/104 · 56 · 60 · 57 — open_app 161/169 · 154 · 159 · 156 — scroll 227/283 · 235 · 237 · 226 (`sa3_dev_doc.py`).
 
-### 4d. Độ đo văn bản DEV-v3 — toàn bộ 2.223 bước
+### 6d. Độ đo văn bản DEV-v3 — toàn bộ 2.223 bước
 
 | nhánh | BLEU-4 | METEOR | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
 |---|---|---|---|---|---|---|---|
@@ -191,7 +304,7 @@ Theo loại (đúng/tổng): input_text SFT-cont 88/111 · ck500 78 · ck400 88 
 | SA-SPICE-v3 ck500 − chrF ck400 | +3,07* [+2,27; +3,86] | +0,63* [+0,10; +1,20] | +11,77* [+4,93; +18,75] | +0,89* [+0,05; +1,79] | −0,40 [−1,01; +0,19] | +0,56* [+0,06; +1,09] |
 | SA-SPICE-v3 ck500 − SA-SPICE-v3 ck400 | +0,51 [−0,17; +1,21] | −0,51* [−0,98; −0,04] | −6,59* [−12,65; −0,62] | −0,73* [−1,44; −0,07] | −0,73* [−1,19; −0,27] | −0,36 [−0,79; +0,04] |
 
-### 4d. Độ đo văn bản DEV-v3 — 1.338 bước chạm
+### 6d. Độ đo văn bản DEV-v3 — 1.338 bước chạm
 
 | nhánh | BLEU-4 | METEOR | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
 |---|---|---|---|---|---|---|---|
@@ -209,7 +322,7 @@ Theo loại (đúng/tổng): input_text SFT-cont 88/111 · ck500 78 · ck400 88 
 | SA-SPICE-v3 ck500 − chrF ck400 | +3,34* [+2,43; +4,25] | +0,61 [−0,12; +1,35] | +14,41* [+5,82; +23,47] | +1,00 [−0,09; +2,12] | −0,71 [−1,45; +0,01] | +0,57 [−0,02; +1,17] |
 | SA-SPICE-v3 ck500 − SA-SPICE-v3 ck400 | +1,40* [+0,62; +2,25] | +0,33 [−0,22; +0,87] | +1,86 [−5,64; +9,51] | +0,01 [−0,87; +0,94] | −0,38 [−0,96; +0,20] | +0,32 [−0,18; +0,80] |
 
-## 5. Đổi dụng cụ chấm (test, report/320 §4)
+## 7. Đổi dụng cụ chấm (test, report/320 §4)
 
 | nhánh | UGround exec | UI-Venus-7B exec | Phi-Ground-4B exec | Phi-4 người nghe (chọn đúng) |
 |---|---|---|---|---|
@@ -223,7 +336,7 @@ Theo loại (đúng/tổng): input_text SFT-cont 88/111 · ck500 78 · ck400 88 
 | ACE − S1/101 | +1,68 [+0,97; +2,42] | +0,76 [+0,02; +1,49] | +0,69 p=0,043 |
 | ACE − ck500 | +0,13 [−0,11; +0,39] | −0,02 [−0,33; +0,29] | 0,00 [−0,24; +0,23] |
 
-## 6. Lịch sử tự sinh (câu bước trước do mô hình viết, report/320 §7)
+## 8. Lịch sử tự sinh (câu bước trước do mô hình viết, report/320 §7)
 
 | | lịch sử chuẩn | lịch sử tự sinh | tự sinh − chuẩn |
 |---|---|---|---|
@@ -241,7 +354,7 @@ Theo loại (đúng/tổng): input_text SFT-cont 88/111 · ck500 78 · ck400 88 
 | S1 | 43,44 | 31,73 | 59,78 | 331,42 | 34,97 | 53,71 | 59,11 |
 | ck500 | 43,50 | 32,37 | 60,39 | 333,58 | 35,10 | 54,54 | 59,23 |
 
-## 7. Ngoài miền: AitZ zero-shot (report/320 §6)
+## 9. Ngoài miền: AitZ zero-shot (report/320 §6)
 
 | nhánh | exec | hit_disk | đúng loại thao tác | BLEU-4 | METEOR | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -255,7 +368,7 @@ Theo loại (đúng/tổng): input_text SFT-cont 88/111 · ck500 78 · ck400 88 
 
 ck500 − S1 exec trên AitZ: −0,51 (KTC phủ 0); SPICE +1,10 [+0,53; +1,66].
 
-## 8. ACU: phần AndroidControl S1 chưa thấy (report/320 §8)
+## 10. ACU: phần AndroidControl S1 chưa thấy (report/320 §8)
 
 | nhánh | exec [KTC95] | AitW khoảng cách | BLEU-4 | METEOR | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
 |---|---|---|---|---|---|---|---|---|---|
@@ -269,7 +382,7 @@ ck500 − S1 exec trên AitZ: −0,51 (KTC phủ 0); SPICE +1,10 [+0,53; +1,66].
 
 ck500 − S1/101 exec trên ACU: **+4,58 [+3,17; +6,05]** p=2,1e−10 · ACE − S1/101 +4,85 · ACE − ck500 +0,27 (phủ 0).
 
-## 9. Số dev/val trước đây so với test (cấm trích số dev)
+## 11. Số dev/val trước đây so với test (cấm trích số dev)
 
 | tập dev | cỡ | nhánh | dev exec | test exec | dev − test |
 |---|---|---|---|---|---|
@@ -279,21 +392,21 @@ ck500 − S1/101 exec trên ACU: **+4,58 [+3,17; +6,05]** p=2,1e−10 · ACE −
 | val400 | 262 chạm | MIN-DESC | 67,56 | 60,05 | +7,5 |
 | val400 | 262 chạm | GRPO-point | 68,32 | 60,07 | +8,3 |
 | DEV-v3 | 1.338 chạm | SFT-cont | 62,93 | 60,16 | +2,8 |
-| DEV-v3 | 1.338 chạm | SA-SPICE-v3 ck400 | 64,28 | đang chấm | |
+| DEV-v3 | 1.338 chạm | SA-SPICE-v3 ck400 | 64,28 | 61,21 | +3,1 |
 
 | phép so | dev | test |
 |---|---|---|
 | ck500 − S1/101 | +2,81 (val C1) | +1,55 |
 | GRPO-point − MIN-DESC | +0,76 (val400) | +0,02 |
-| SA-SPICE-v3 ck400 − SFT-cont | +1,35 (DEV-v3) | đang chấm |
+| SA-SPICE-v3 ck400 − SFT-cont | +1,35 (DEV-v3) | +1,05 |
 
-## 10. Nhánh chưa có số test
+## 12. Nhánh chưa có số test
 
 | nhánh | trạng thái | ghi chú |
 |---|---|---|
-| SA-SPICE-v3 ck400 | đang chấm (`trangphngngc/sa3-test-ck400`, đẩy 15/11 06:55) | chọn theo tiêu chí khả thi DEV-v3, report/333 §13 |
+| SA-SPICE-v3 ck400 — độ đo văn bản | chưa tính (cần kernel CPU, SPICE) | vị trí + không chạm đã có (kernel `sa3-test-ck400`, xong 15/11) |
 | chrF ck400 (SA-SPICE-v3 baseline) | không chấm test | trượt tiêu chí khả thi DEV (không chạm −6,90) |
 | Dr.GRPO | treo ở checkpoint-475 | report/320 §20 |
 | VIS-SFT | dừng ở điểm kiểm K1 | không có số test |
-| CTG A3 bước chạm | xem report/279 | chỉ ghi bước không chạm ở §3 |
+| CTG A3 bước chạm | xem report/279 | chỉ ghi bước không chạm ở §5 |
 

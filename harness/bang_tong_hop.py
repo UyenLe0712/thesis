@@ -63,6 +63,50 @@ TEST = [
 ]
 MOC_SO = [("ck500 (GRPO + SPICE)", "ck500"), ("S1/101", "S1/101"), ("SFT tiếp (= SFT-cont)", "SFT tiếp")]
 
+# ---------------- 1'. hai trục so sánh (mục 1 và 2 của report) ----------------
+# (tên trong TEST, nhãn ngắn, số update, ghi chú). Mốc (không RL) để cuối, không xếp theo exec.
+AA = "GRPO + SPICE chạy lại (A/A)"
+TRUC_RL = dict(
+    tieu_de="## 1. So thuật toán RL — cùng phần thưởng SPICE, cùng điểm xuất phát S1/101\n",
+    mo_ta="Mọi lượt: LoRA mới cỡ S1, KL β 0,04 về S1/101, 1.000 câu nhắc train, G = 8, lr 1e-5, seed 101. "
+          "Các lượt lưới (trừ ck500) chạy cùng mã `grpo_luoi.py` / `grpo_ppo.py` ⇒ **phép so công bằng là so với A/A** "
+          "(GRPO + SPICE train lại bằng cùng mã); ck500 là lượt gốc bằng `grpo_spice.py`, lệch A/A −0,92 exec do khác mã/thư viện/GPU.\n",
+    cot="thuật toán",
+    hang=[("ck500 (GRPO + SPICE)", "GRPO (lượt gốc)", 500, ""),
+          (AA, "GRPO (A/A)", 500, ""),
+          ("SCST + SPICE", "SCST (mốc = câu greedy)", 500, ""),
+          ("REINFORCE + SPICE", "REINFORCE (mốc EMA)", 500, ""),
+          ("RLOO + SPICE", "RLOO", 500, ""),
+          ("PPO λ=1 (1000 bước)", "PPO, GAE λ = 1", 1000, "a"),
+          ("PPO λ=0,95 (1000 bước)", "PPO, GAE λ = 0,95", 1000, "a")],
+    moc=[("SFT tiếp (= SFT-cont)", "SFT tiếp (không RL, cùng 1.000 câu nhắc)", 125, ""),
+         ("S1/101", "điểm xuất phát", 0, "")],
+    chu_thich="a: PPO một câu nhắc mỗi update nên chạy 1.000 update để đi hết đúng 1.000 câu nhắc như các lượt khác. "
+              "Chưa có số test: Dr.GRPO (treo ở checkpoint-475), A2C (mới probe). Chưa chạy: DPO, MIXER, MRT, RAML.",
+    so=[(AA, "A/A"), ("ck500 (GRPO + SPICE)", "ck500"), ("SFT tiếp (= SFT-cont)", "SFT tiếp"), ("S1/101", "S1/101")],
+)
+TRUC_TH = dict(
+    tieu_de="## 2. So phần thưởng — cùng thuật toán GRPO, cùng điểm xuất phát S1/101\n",
+    mo_ta="Cùng cấu hình GRPO như mục 1, chỉ đổi phần thưởng. Lượt lưới (ROUGE-L, METEOR, CIDEr-D) cùng mã với A/A ⇒ so với A/A; "
+          "xao101 và A2 dùng mã khác (`grpo_spice.py`, `ctg_grpo.py`) nên đọc cột − ck500 cho xao101. "
+          "SA-SPICE-v3 khác điểm xuất phát (SFT-cont) và tập câu nhắc (TRAIN-v3) ⇒ đọc cột − SFT tiếp.\n",
+    cot="phần thưởng",
+    hang=[("ck500 (GRPO + SPICE)", "SPICE (lượt gốc)", 500, ""),
+          (AA, "SPICE (A/A)", 500, ""),
+          ("GRPO + ROUGE-L", "ROUGE-L", 500, ""),
+          ("GRPO + METEOR", "METEOR", 500, ""),
+          ("GRPO + CIDEr-D", "CIDEr-D", 500, ""),
+          ("GRPO + CIDEr-D (A2, 500 bước)", "CIDEr-D (mã CTG, 500 update)", 500, ""),
+          ("GRPO + CIDEr-D (A2, 1000 bước)", "CIDEr-D (mã CTG, 1000 update)", 1000, ""),
+          ("SA-SPICE-v3 ck400", "SA-SPICE-v3 + thưởng khớp thao tác", 400, "b"),
+          ("xao101 (SPICE ghép ngẫu nhiên)", "SPICE ghép ngẫu nhiên giữa các mẫu (kiểm soát)", 500, "")],
+    moc=[("SFT tiếp (= SFT-cont)", "không thưởng (SFT tiếp)", 125, ""),
+         ("S1/101", "điểm xuất phát", 0, "")],
+    chu_thich="b: xuất phát từ SFT-cont (= SFT tiếp), 1.000 câu nhắc TRAIN-v3, chọn ck400 theo tiêu chí khả thi trên DEV-v3 (report/333 §13). "
+              "Chưa có số test: chrF (trượt tiêu chí khả thi DEV), BLEU-4, SPIDEr, BERTScore.",
+    so=[(AA, "A/A"), ("ck500 (GRPO + SPICE)", "ck500"), ("SFT tiếp (= SFT-cont)", "SFT tiếp"), ("S1/101", "S1/101")],
+)
+
 # ---------------- 2. độ đo văn bản test (4.463 bước chạm, mức kho) ----------------
 # BLEU-4 · METEOR · ROUGE-L · CIDEr-D · SPICE · chrF · BERTScore — nguồn ghi ở cột cuối
 CHU = {
@@ -105,7 +149,8 @@ NONTAP = {   # report/279 §4g (ctg_nontap_doc.json)
     "ck500 (GRPO + SPICE)": (84.29, 77.75, 95.25, 79.55, 97.87, 67.04),
     "CTG A2 (CIDEr-D, 1000 bước)": (84.45, 77.62, 94.46, 81.38, 98.72, 65.56),
     "CTG A3 (CIDEr-D + CTG, 1000 bước)": (84.25, 78.68, 94.46, 80.36, 98.72, 62.59),
-    # "SA-SPICE-v3 ck400": (...),  "SFT-cont": (...),   ← chờ kernel sa3-test-ck400
+    "SFT-cont (= SFT tiếp)": (84.61, 76.82, 95.64, 80.36, 97.44, 71.11),     # kernel sa3-test-ck400, noharm_sftcont.json
+    "SA-SPICE-v3 ck400": (84.05, 80.00, 94.26, 80.16, 98.29, 58.52),         # kernel sa3-test-ck400, noharm_sa_ck400.json
 }
 
 # ---------------- 4. DEV-v3 ----------------
@@ -147,6 +192,131 @@ def fp(p):
     return (f"{p:.2g}" if p < 0.001 else f"{p:.3f}").replace(".", ",")
 
 
+_SO = {}
+
+
+def so_nho(D, a, b, c="vor"):
+    if (a, b, c) not in _SO:
+        _SO[(a, b, c)] = so(D[a], D[b], c)
+    return _SO[(a, b, c)]
+
+
+def holm(ps):
+    """ps: {khoá: p} → {khoá: p_holm}"""
+    k = sorted(ps, key=ps.get); m = len(k); out = {}; run = 0.0
+    for i, x in enumerate(k):
+        run = max(run, min(1.0, (m - i) * ps[x])); out[x] = run
+    return out
+
+
+def hang_hai(vals, chon):
+    """vals: list số (None được); chon: list bool — chỉ xếp hạng các ô chon=True. Trả về chuỗi: nhất in đậm, nhì gạch chân."""
+    ds = sorted({round(x, 2) for x, c in zip(vals, chon) if c and x is not None}, reverse=True)
+    out = []
+    for x, c in zip(vals, chon):
+        t = v(x)
+        if c and x is not None and ds:
+            if round(x, 2) == ds[0]:
+                t = f"**{t}**"
+            elif len(ds) > 1 and round(x, 2) == ds[1]:
+                t = f"<u>{t}</u>"
+        out.append(t)
+    return out
+
+
+def bang_cot(w, ten_hang, cot, gia_tri, chon, nghieng):
+    """In bảng: mỗi cột đánh dấu nhất/nhì trong các hàng chon. nghieng = hàng mốc (in nghiêng). Hàng None = vạch nhóm."""
+    w("| " + " | ".join(cot) + " |")
+    w("|" + "|".join(["---"] + [":---:"] * (len(cot) - 1)) + "|")
+    so_cot = max((len(g) for g in gia_tri if g is not None), default=0)
+    cols = [hang_hai([g[k] if g is not None else None for g in gia_tri], [c and g is not None for g, c in zip(gia_tri, chon)])
+            for k in range(so_cot)]
+    for r, (tn, g) in enumerate(zip(ten_hang, gia_tri)):
+        if g is None:
+            w(f"| {tn} |" + " |" * (len(cot) - 1)); continue
+        o = [cols[k][r] for k in range(so_cot)]
+        if nghieng[r]:
+            o = [f"*{x}*" if x not in ("-", "") else x for x in o]; tn = f"*{tn}*"
+        w(f"| {tn} | " + " | ".join(o) + " |")
+    w("")
+
+
+def bang_truc(w, D, T):
+    so_muc = T["tieu_de"].split(".")[0].split()[-1]
+    w(T["tieu_de"]); w(T["mo_ta"])
+    co = [h for h in T["hang"] if h[0] in D]
+    chua = [h for h in T["hang"] if h[0] not in D]
+    co.sort(key=lambda h: -tb(D[h[0]], "vor"))
+    moc = [h for h in T["moc"] if h[0] in D]
+    rows = co + moc
+    nhan = lambda h: f"{h[1]}" + (f" <sup>{h[3]}</sup>" if h[3] else "")
+    so_cot = [(m, t) for m, t in T["so"] if m in D]
+    aa, aa_t = so_cot[0]
+    ph = holm({h[0]: so_nho(D, h[0], aa)["p"] for h in rows if h[0] != aa})
+
+    def delta(h):
+        if h[0] == aa:
+            return "0 (mốc)"
+        r = so_nho(D, h[0], aa)
+        st = ("†" if ph[h[0]] < 0.05 else "*") if (r["lo"] > 0 or r["hi"] < 0) else ""
+        return f"{sg(r['d'])}{st}"
+
+    vach = ("*mốc không RL*", None)
+    co_chua = co + chua                                   # nhánh RL (chưa có số để cuối nhóm RL), rồi vạch, rồi mốc
+    ten = [nhan(h) for h in co_chua] + [vach[0]] + [nhan(h) for h in moc]
+    chon = [True] * len(co) + [False] * (len(chua) + 1 + len(moc))
+    ngh = [False] * (len(co_chua) + 1) + [True] * len(moc)
+    upd = [str(h[2]) for h in co_chua] + [""] + [str(h[2]) for h in moc]
+    KHONG = "đang chấm / chưa có"
+
+    # bảng a: vị trí
+    w(f"**Bảng {so_muc}.1.** Tiêu chí xác định vị trí trên tập kiểm (4.463 bước chạm, %). Xếp theo exec. "
+      f"**Đậm** = cao nhất, <u>gạch chân</u> = cao nhì trong các lượt RL. Δexec so {aa_t}: * KTC95 loại 0, † còn ý nghĩa sau Holm.\n")
+    vt = lambda h: (tb(D[h[0]], "vor"), tb(D[h[0]], "d3"), tb(D[h[0]], "aitwf"), tb(D[h[0]], "aok"))
+    gv = [vt(h) for h in co] + [KHONG] * len(chua) + [None] + [vt(h) for h in moc]
+    # chèn cột update + Δ vào tên để giữ hàm in chung
+    dl = [delta(h) for h in co] + [""] * (len(chua) + 1) + [delta(h) for h in moc]
+    w(f"| {T['cot']} | update | exec ↑ | D.3 ↑ | AitW đầy đủ ↑ | đúng loại thao tác ↑ | Δexec − {aa_t} |")
+    w("|---|:---:|:---:|:---:|:---:|:---:|:---:|")
+    cols = [hang_hai([g[k] if isinstance(g, tuple) else None for g in gv], chon) for k in range(4)]
+    for r in range(len(ten)):
+        if gv[r] is None:
+            w(f"| {ten[r]} | | | | | | |"); continue
+        if gv[r] == KHONG:
+            w(f"| {ten[r]} | {upd[r]} | {KHONG} | | | | |"); continue
+        o = [cols[k][r] for k in range(4)] + [dl[r]]
+        tn = ten[r]
+        if ngh[r]:
+            o = [f"*{x}*" for x in o]; tn = f"*{tn}*"
+        w(f"| {tn} | {upd[r]} | " + " | ".join(o) + " |")
+    w("")
+
+    # bảng b: văn bản
+    w(f"**Bảng {so_muc}.2.** Độ đo văn bản trên tập kiểm (4.463 bước chạm, mức kho). Cùng cách đánh dấu.\n")
+    cc = lambda h: CHU[h[0]][:7] if CHU.get(h[0]) else (None,) * 7
+    gc = [cc(h) for h in co_chua] + [None] + [cc(h) for h in moc]
+    bang_cot(w, ten, [T["cot"], "BLEU-4 ↑", "METEOR ↑", "ROUGE-L ↑", "CIDEr-D ↑", "SPICE ↑", "chrF ↑", "BERTScore ↑"],
+             gc, [True] * len(co_chua) + [False] * (1 + len(moc)), ngh)
+
+    # bảng c: chi tiết ghép cặp
+    w(f"**Bảng {so_muc}.3 (chi tiết).** So ghép cặp exec: Δ [KTC95] (số bước hơn/kém), p McNemar chính xác; "
+      f"cột cuối Holm trên họ {len(ph)} phép so với {aa_t}. * = KTC loại 0.\n")
+    w(f"| {T['cot']} | " + " | ".join(f"− {t}" for _, t in so_cot) + f" | p Holm (− {aa_t}) |")
+    w("|---|" + ":---:|" * (len(so_cot) + 1))
+    for h in rows:
+        o = []
+        for m, _ in so_cot:
+            if m == h[0]:
+                o.append("-"); continue
+            r = so_nho(D, h[0], m)
+            st = "*" if (r["lo"] > 0 or r["hi"] < 0) else ""
+            o.append(f"{sg(r['d'])}{st} [{sg(r['lo'])}; {sg(r['hi'])}] ({r['cu']}/{r['ph']}) p={fp(r['p'])}")
+        o.append(fp(ph[h[0]]) if h[0] in ph else "-")
+        w(f"| {nhan(h)} | " + " | ".join(o) + " |")
+    w("")
+    w(T["chu_thich"] + "\n")
+
+
 def main():
     t0 = time.time()
     md = []
@@ -159,30 +329,46 @@ def main():
       "Số **DEV/val** chỉ để chọn nhánh, cấm trích ra bài. Mọi nhánh một hạt giống (101) trừ chỗ ghi khác. "
       "KTC95 bootstrap cụm app (test) hoặc cụm episode (DEV-v3); p là McNemar chính xác; * = KTC loại 0.\n")
 
-    # ===== 1. tiêu chí vị trí =====
+    # ===== nạp + tự kiểm =====
     D = {}
     for ten, f, nhom in TEST:
         X = nap_test(f)
         if X is not None:
             D[ten] = X
-    w("## 1. Tập kiểm — tiêu chí xác định vị trí (4.463 bước chạm)\n")
+    tk = so_nho(D, "ck500 (GRPO + SPICE)", "S1/101")
+    assert abs(tk["d"] - 1.55) < 0.01 and abs(tk["lo"] - 0.80) < 0.06 and abs(tk["hi"] - 2.33) < 0.06 or B < 10000, f"⛔ tự kiểm lệch {tk}"
+    w(f"Tự kiểm: ck500 − S1/101 exec = {sg(tk['d'])} [{sg(tk['lo'])}; {sg(tk['hi'])}] (đã công bố +1,55 [+0,80; +2,33]).\n")
+    w("Mục lục: **1** so thuật toán RL · **2** so phần thưởng · 3–5 bảng đầy đủ mọi nhánh trên tập kiểm (vị trí, văn bản, không chạm) · "
+      "6 DEV-v3 · 7–12 dụng cụ khác, lịch sử tự sinh, AitZ, ACU, dev so test, nhánh chưa có số.\n")
+
+    # ===== 1–2. hai trục so sánh =====
+    bang_truc(w, D, TRUC_RL)
+    bang_truc(w, D, TRUC_TH)
+    print(f"  hai trục xong {time.time()-t0:.0f} s", flush=True)
+
+    # ===== 3. tiêu chí vị trí, mọi nhánh =====
+    w("## 3. Tập kiểm, mọi nhánh — tiêu chí xác định vị trí (4.463 bước chạm)\n")
     w("Tính lại từ tệp thô `*_raw.jsonl` bằng `luat_d3.py` + `luat_aitw_day_du.py`. Cột *đúng loại thao tác* gồm cả điều kiện bật/tắt.\n")
-    w("| nhóm | nhánh | n | exec | D.3 | D.3∧14% | ±14% từng trục | AitW khoảng cách | AitW đầy đủ | đúng loại thao tác |")
-    w("|---|---|---|---|---|---|---|---|---|---|")
-    for ten, f, nhom in TEST:
-        if ten not in D:
+    w("**Đậm** = cao nhất, <u>gạch chân</u> = cao nhì trong các nhánh đã train (không tính nhóm *mốc*: câu chuẩn, S1, 7B, Base).\n")
+    CV = ("vor", "d3", "d3_gate", "d14_truc", "aitw", "aitwf", "aok")
+    hv = [(ten, nhom, D.get(ten)) for ten, f, nhom in TEST]
+    gv = [tuple(tb(X, c) for c in CV) if X else None for _, _, X in hv]
+    ch = [nhom != "mốc" and X is not None for _, nhom, X in hv]
+    cols = [hang_hai([g[k] if g else None for g in gv], ch) for k in range(len(CV))]
+    w("| nhóm | nhánh | n | exec ↑ | D.3 ↑ | D.3∧14% ↑ | ±14% từng trục ↑ | AitW khoảng cách ↑ | AitW đầy đủ ↑ | đúng loại thao tác ↑ |")
+    w("|---|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
+    for r, (ten, nhom, X) in enumerate(hv):
+        if X is None:
             w(f"| {nhom} | {ten} | - | **đang chấm / chưa có** | | | | | | |"); continue
-        X = D[ten]
-        w(f"| {nhom} | {ten} | {len(X)} | {v(tb(X,'vor'))} | {v(tb(X,'d3'))} | {v(tb(X,'d3_gate'))} | {v(tb(X,'d14_truc'))} | "
-          f"{v(tb(X,'aitw'))} | {v(tb(X,'aitwf'))} | {v(tb(X,'aok'))} |")
+        o = [cols[k][r] for k in range(len(CV))]
+        if nhom == "mốc":
+            o = [f"*{x}*" for x in o]
+        w(f"| {nhom} | {ten} | {len(X)} | " + " | ".join(o) + " |")
     w("")
 
     # ===== 1b. so ghép cặp exec =====
-    w("### 1b. So ghép cặp exec với ba mốc (test)\n")
-    w("Δ [KTC95] (hơn / kém), p McNemar chính xác chưa hiệu chỉnh. Holm cho từng họ phép so xem report/320.\n")
-    tk = so(D["ck500 (GRPO + SPICE)"], D["S1/101"])
-    assert abs(tk["d"] - 1.55) < 0.01 and abs(tk["lo"] - 0.80) < 0.06 and abs(tk["hi"] - 2.33) < 0.06 or B < 10000, f"⛔ tự kiểm lệch {tk}"
-    w(f"Tự kiểm: ck500 − S1/101 = {sg(tk['d'])} [{sg(tk['lo'])}; {sg(tk['hi'])}] (đã công bố +1,55 [+0,80; +2,33]).\n")
+    w("### 3b. So ghép cặp exec với ba mốc (test)\n")
+    w("Δ [KTC95] (hơn / kém), p McNemar chính xác chưa hiệu chỉnh. Holm theo họ: mục 1c, 2c và report/320.\n")
     w("| nhánh | " + " | ".join(f"− {m}" for _, m in MOC_SO) + " |")
     w("|---|" + "---|" * len(MOC_SO))
     for ten, f, nhom in TEST:
@@ -192,7 +378,7 @@ def main():
         for mt, _ in MOC_SO:
             if mt == ten:
                 o.append("-"); continue
-            r = so(D[ten], D[mt])
+            r = so_nho(D, ten, mt)
             st = "*" if (r["lo"] > 0 or r["hi"] < 0) else ""
             o.append(f"{sg(r['d'])}{st} [{sg(r['lo'])}; {sg(r['hi'])}] ({r['cu']}/{r['ph']}) p={fp(r['p'])}")
         w(f"| {ten} | " + " | ".join(o) + " |")
@@ -200,32 +386,37 @@ def main():
     print(f"  so ghép cặp xong {time.time()-t0:.0f} s", flush=True)
 
     # ===== 2. độ đo văn bản =====
-    w("## 2. Tập kiểm — độ đo văn bản (4.463 bước chạm, mức kho)\n")
+    w("## 4. Tập kiểm, mọi nhánh — độ đo văn bản (4.463 bước chạm, mức kho)\n")
     w("COCO (BLEU-4, METEOR 1.5, ROUGE-L, CIDEr-D, SPICE) + chrF + BERTScore (roberta-large L17, rescaled). Giá trị chép từ JSON của các kernel chấm (cột nguồn). `-` = chưa tính.\n")
-    w("| nhánh | BLEU-4 | METEOR | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore | nguồn |")
-    w("|---|---|---|---|---|---|---|---|---|")
-    for ten, f, nhom in TEST:
-        c = CHU.get(ten)
+    w("Cùng cách đánh dấu như mục 3.\n")
+    w("| nhánh | BLEU-4 ↑ | METEOR ↑ | ROUGE-L ↑ | CIDEr-D ↑ | SPICE ↑ | chrF ↑ | BERTScore ↑ | nguồn |")
+    w("|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|---|")
+    hc = [(ten, nhom, CHU.get(ten)) for ten, f, nhom in TEST]
+    ch = [nhom != "mốc" and c is not None for _, nhom, c in hc]
+    cols = [hang_hai([c[k] if c else None for _, _, c in hc], ch) for k in range(7)]
+    for r, (ten, nhom, c) in enumerate(hc):
         if not c:
             w(f"| {ten} | chưa có | | | | | | | |"); continue
-        w(f"| {ten} | " + " | ".join(v(x) for x in c[:7]) + f" | {c[7]} |")
+        o = [cols[k][r] for k in range(7)]
+        if nhom == "mốc":
+            o = [f"*{x}*" if x != "-" else x for x in o]
+        w(f"| {ten} | " + " | ".join(o) + f" | {c[7]} |")
     w("")
     w("Phép so ghép cặp có KTC cho độ đo văn bản: report/320 §3.2 (ck500, ACE, S1, xao101, ck500/202), §14.3 (lưới đợt đầu), "
       "§19 (SFT tiếp, REINFORCE, RLOO), §21 (A/A), §28 (PPO).\n")
 
     # ===== 3. không chạm =====
-    w("## 3. Tập kiểm — bước không chạm (2.495 bước, tỉ lệ câu đúng loại thao tác, %)\n")
+    w("## 5. Tập kiểm — bước không chạm (2.495 bước, tỉ lệ câu đúng loại thao tác, %)\n")
     w("| nhánh | " + " | ".join(f"{c} (n={n:,})".replace(",", ".") for c, n in zip(NONTAP_COT, NONTAP_N)) + " |")
     w("|---|" + "---|" * len(NONTAP_COT))
     for ten, row in NONTAP.items():
         w(f"| {ten} | " + " | ".join(v(x) for x in row) + " |")
-    w("| SA-SPICE-v3 ck400 | **đang chấm** (kernel `sa3-test-ck400`) | | | | | |")
-    w("| SFT-cont | **đang chấm** (kernel `sa3-test-ck400`) | | | | | |\n")
+    w("")
     w("Phép so có KTC: ck500 − S1 toàn bộ −1,68 (cận dưới −2,76), scroll **−6,23 [−8,30; −4,31]**, back −5,93 (report/261 §6); "
       "A3 − S1 toàn bộ −1,72 [−2,82; −0,63], scroll −5,30 [−7,19; −3,53] (report/279 §4g).\n")
 
     # ===== 4. DEV-v3 =====
-    w("## 4. DEV-v3 (SA-SPICE-v3) — số dev, cấm trích\n")
+    w("## 6. DEV-v3 (SA-SPICE-v3) — số dev, cấm trích\n")
     w("2.223 bước (1.338 chạm · 885 không chạm, 667 bước có gold tin được), tách khỏi tập dạy GRPO theo episode; pool lấy từ tập dạy SFT nên S1/SFT-cont đã thấy. "
       "Một hạt giống (101).\n")
     DT = {(str(d["episode_id"]), str(d["step_id"])): d for d in map(json.loads, open(DESC_TR, encoding="utf-8"))}
@@ -237,13 +428,13 @@ def main():
             for k in X:
                 X[k]["cum"] = f"ep{k[0]}"
             DV[ten] = X
-    w("### 4a. Tiêu chí xác định vị trí (1.338 bước chạm; hộp phần tử từ `train_ac/descriptors.jsonl`)\n")
+    w("### 6a. Tiêu chí xác định vị trí (1.338 bước chạm; hộp phần tử từ `train_ac/descriptors.jsonl`)\n")
     w("| nhánh | exec | D.3 | D.3∧14% | ±14% từng trục | AitW khoảng cách | AitW đầy đủ | đúng loại thao tác |")
     w("|---|---|---|---|---|---|---|---|")
     for ten, X in DV.items():
         w(f"| {ten} | {v(tb(X,'vor'))} | {v(tb(X,'d3'))} | {v(tb(X,'d3_gate'))} | {v(tb(X,'d14_truc'))} | {v(tb(X,'aitw'))} | {v(tb(X,'aitwf'))} | {v(tb(X,'aok'))} |")
     w("")
-    w("### 4b. So ghép cặp DEV-v3 (exec, cụm episode, B như trên)\n")
+    w("### 6b. So ghép cặp DEV-v3 (exec, cụm episode, B như trên)\n")
     w("| phép so | exec | D.3 | AitW đầy đủ |")
     w("|---|---|---|---|")
     for a, b in (("SA-SPICE-v3 ck500", "SFT-cont"), ("SA-SPICE-v3 ck400", "SFT-cont"), ("chrF ck400", "SFT-cont"),
@@ -258,7 +449,7 @@ def main():
     w("")
     if os.path.exists(DEV_DOC):
         dd = json.load(open(DEV_DOC))
-        w("### 4c. Bước không chạm DEV-v3 (667 bước có gold tin được, verifier v3)\n")
+        w("### 6c. Bước không chạm DEV-v3 (667 bước có gold tin được, verifier v3)\n")
         w("| nhánh | đúng loại | % | câu trùng nguyên văn gold (/2.223) |")
         w("|---|---|---|---|")
         for k, x in dd["nontap"].items():
@@ -276,7 +467,7 @@ def main():
         dc = json.load(open(DEV_CHU))
         ME = dc["meteor"]
         for pv, nh in (("toan_bo", "toàn bộ 2.223 bước"), ("cham", "1.338 bước chạm")):
-            w(f"### 4d. Độ đo văn bản DEV-v3 — {nh}\n")
+            w(f"### 6d. Độ đo văn bản DEV-v3 — {nh}\n")
             w("| nhánh | BLEU-4 | METEOR | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |")
             w("|---|---|---|---|---|---|---|---|")
             for ten, x in dc[pv]["diem"].items():
@@ -299,7 +490,7 @@ def main():
 
 
 # ---------------- các bảng không tính được từ tệp thô (chép từ report gốc, sửa tay khi có số mới) ----------------
-TINH = """## 5. Đổi dụng cụ chấm (test, report/320 §4)
+TINH = """## 7. Đổi dụng cụ chấm (test, report/320 §4)
 
 | nhánh | UGround exec | UI-Venus-7B exec | Phi-Ground-4B exec | Phi-4 người nghe (chọn đúng) |
 |---|---|---|---|---|
@@ -313,7 +504,7 @@ TINH = """## 5. Đổi dụng cụ chấm (test, report/320 §4)
 | ACE − S1/101 | +1,68 [+0,97; +2,42] | +0,76 [+0,02; +1,49] | +0,69 p=0,043 |
 | ACE − ck500 | +0,13 [−0,11; +0,39] | −0,02 [−0,33; +0,29] | 0,00 [−0,24; +0,23] |
 
-## 6. Lịch sử tự sinh (câu bước trước do mô hình viết, report/320 §7)
+## 8. Lịch sử tự sinh (câu bước trước do mô hình viết, report/320 §7)
 
 | | lịch sử chuẩn | lịch sử tự sinh | tự sinh − chuẩn |
 |---|---|---|---|
@@ -331,7 +522,7 @@ TINH = """## 5. Đổi dụng cụ chấm (test, report/320 §4)
 | S1 | 43,44 | 31,73 | 59,78 | 331,42 | 34,97 | 53,71 | 59,11 |
 | ck500 | 43,50 | 32,37 | 60,39 | 333,58 | 35,10 | 54,54 | 59,23 |
 
-## 7. Ngoài miền: AitZ zero-shot (report/320 §6)
+## 9. Ngoài miền: AitZ zero-shot (report/320 §6)
 
 | nhánh | exec | hit_disk | đúng loại thao tác | BLEU-4 | METEOR | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -345,7 +536,7 @@ TINH = """## 5. Đổi dụng cụ chấm (test, report/320 §4)
 
 ck500 − S1 exec trên AitZ: −0,51 (KTC phủ 0); SPICE +1,10 [+0,53; +1,66].
 
-## 8. ACU: phần AndroidControl S1 chưa thấy (report/320 §8)
+## 10. ACU: phần AndroidControl S1 chưa thấy (report/320 §8)
 
 | nhánh | exec [KTC95] | AitW khoảng cách | BLEU-4 | METEOR | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
 |---|---|---|---|---|---|---|---|---|---|
@@ -359,7 +550,7 @@ ck500 − S1 exec trên AitZ: −0,51 (KTC phủ 0); SPICE +1,10 [+0,53; +1,66].
 
 ck500 − S1/101 exec trên ACU: **+4,58 [+3,17; +6,05]** p=2,1e−10 · ACE − S1/101 +4,85 · ACE − ck500 +0,27 (phủ 0).
 
-## 9. Số dev/val trước đây so với test (cấm trích số dev)
+## 11. Số dev/val trước đây so với test (cấm trích số dev)
 
 | tập dev | cỡ | nhánh | dev exec | test exec | dev − test |
 |---|---|---|---|---|---|
@@ -369,23 +560,23 @@ ck500 − S1/101 exec trên ACU: **+4,58 [+3,17; +6,05]** p=2,1e−10 · ACE −
 | val400 | 262 chạm | MIN-DESC | 67,56 | 60,05 | +7,5 |
 | val400 | 262 chạm | GRPO-point | 68,32 | 60,07 | +8,3 |
 | DEV-v3 | 1.338 chạm | SFT-cont | 62,93 | 60,16 | +2,8 |
-| DEV-v3 | 1.338 chạm | SA-SPICE-v3 ck400 | 64,28 | đang chấm | |
+| DEV-v3 | 1.338 chạm | SA-SPICE-v3 ck400 | 64,28 | 61,21 | +3,1 |
 
 | phép so | dev | test |
 |---|---|---|
 | ck500 − S1/101 | +2,81 (val C1) | +1,55 |
 | GRPO-point − MIN-DESC | +0,76 (val400) | +0,02 |
-| SA-SPICE-v3 ck400 − SFT-cont | +1,35 (DEV-v3) | đang chấm |
+| SA-SPICE-v3 ck400 − SFT-cont | +1,35 (DEV-v3) | +1,05 |
 
-## 10. Nhánh chưa có số test
+## 12. Nhánh chưa có số test
 
 | nhánh | trạng thái | ghi chú |
 |---|---|---|
-| SA-SPICE-v3 ck400 | đang chấm (`trangphngngc/sa3-test-ck400`, đẩy 15/11 06:55) | chọn theo tiêu chí khả thi DEV-v3, report/333 §13 |
+| SA-SPICE-v3 ck400 — độ đo văn bản | chưa tính (cần kernel CPU, SPICE) | vị trí + không chạm đã có (kernel `sa3-test-ck400`, xong 15/11) |
 | chrF ck400 (SA-SPICE-v3 baseline) | không chấm test | trượt tiêu chí khả thi DEV (không chạm −6,90) |
 | Dr.GRPO | treo ở checkpoint-475 | report/320 §20 |
 | VIS-SFT | dừng ở điểm kiểm K1 | không có số test |
-| CTG A3 bước chạm | xem report/279 | chỉ ghi bước không chạm ở §3 |
+| CTG A3 bước chạm | xem report/279 | chỉ ghi bước không chạm ở §5 |
 """
 
 if __name__ == "__main__":
