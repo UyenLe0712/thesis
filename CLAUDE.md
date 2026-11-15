@@ -1635,11 +1635,13 @@ phút dựng lại dữ liệu và ảnh. Quyết chọn card ở **ô thăm dò
   adapter S1 ở Release `s1-seed101-adapter-v1`). Kiểm `sha256sum -c SHA256SUMS` đã đạt khi tải ngược về.
   ⭐ **Đợt hai 15/11 (user: "cái nào không cần nữa thì commit rồi xoá"):** xoá checkpoint giữa chừng `runs/luoi/lo1`,
   `runs/xao101/c1b`, `runs/luoi/smoke_6_11/train_t2` (giữ log + `trainer_state_last.json`) · `_bundles/sa3_grpo/ck_u1` ·
-  adapter RA-SFT cont / CW-RA / RAFT (lên Release `stopped-misc-v1`) · 44 thư mục/zip `_bundles/` của hướng đã dừng
-  (thesis_val*, thesis_lossval, thesis_som*, tage-*, triad-*, ctg-grpo-script, nghe288, venus_ck*, som_v3/v4,
-  phiground_ck*, ck500_s202_*, aitz_test_ds, chu_26_10, ktc_chu_27_10, so_27_10, acu_ocr144/gen, qwen7b_*, …) và
-  `_scripts/{288,289,296,299,308,312,314}` — phần trong git lấy lại từ lịch sử, phần ngoài git ở `stopped-misc-v1`.
-  Runbook cũ trỏ tới các thư mục này giờ là tham chiếu chết. Ổ D 154 → 114 GB.
+  ⛔ **Luật user 15/11: chỉ xoá đồ của hướng KHÔNG ra số / chỉ ở phụ lục; file của nội dung chính luận văn và file
+  hay dùng phải giữ.** Theo luật đó, đã xoá hẳn: adapter RA-SFT cont (lên Release `stopped-misc-v1`) · `_bundles/`
+  `thesis_lossval`, `nghe288`, `triad-*`, `c1_script/c1_exec8`, `fgrb_p*_script`, `tfvf_g0_script`, `cham288-script`,
+  `thesis-g0-288` · `_scripts/{288,289,312}` (trong git: `git checkout 24959e6^ -- <đường dẫn>`). Đã KHÔI PHỤC
+  (có số test/luận văn): TAGE (zip adapter về lại `_bundles/`), CTG, Venus/Phi-4/SoM, ck500 hạt 202, AitZ, 7B,
+  ACU, xao101_test, độ đo văn bản, thesis_val(_cham), `_scripts/{296,299,308,314}`, adapter CW-RA/RAFT `final`.
+  Jar models CoreNLP trong `ck500_s202_chu`/`colab-ck500-s202` không còn (bản sao) — chép từ `_bundles/luoi/ds/`.
   Còn giữ: `train_ac/images` 30 GB (bản ảnh dạy duy nhất) · `ck_u3` · adapter ck500/ck202/S1/SFT-cont · `_bundles` tháng 11.
 
 - ⛔ **Hai kho đang lệch.** Máy WSL **không có** `FINAL_SOLUTION.md` lẫn

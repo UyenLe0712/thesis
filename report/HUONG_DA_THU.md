@@ -6,7 +6,7 @@ File này được `CLAUDE.md` nạp tự động (`@report/HUONG_DA_THU.md`) n�
 1. Trước khi đề xuất một hướng mới, hoặc trước khi viết mã/runbook/notebook cho một hướng, tra bảng dưới. Trùng (kể cả đổi tên, đổi chút cấu hình) thì **phải nói rõ "đã thử ngày …, kết quả …, lý do dừng …"** và chỉ đề xuất lại khi nêu được **điểm khác cụ thể** làm kết quả có thể đổi.
 2. Số ghi ở đây là số đã báo trong report gốc; trích vào bài thì mở report gốc kiểm lại. Số **[val]** cấm trích.
 3. Có kết quả mới (một hướng xong hoặc dừng) thì **thêm một dòng vào đây** cùng lúc với report/320 và report/334.
-4. Thư mục `_bundles/`, `_scripts/`, adapter của hướng đã dừng đã xoá khỏi máy nhà 15/11; lấy lại phần trong git bằng `git log --all -- <đường dẫn>` rồi `git checkout <commit>^ -- <đường dẫn>`; phần ngoài git ở GitHub Release `stopped-fgrb-tage-v1` và `stopped-misc-v1` (`gh release download <tag>`).
+4. Dọn 15/11 theo luật user: **chỉ xoá đồ của hướng KHÔNG ra số test / chỉ ở mức phụ lục** (288 người nghe [val], C1 gate, FGRB, TFVF, TRIAD, RA-GRPO G0, VIS-SFT loss val, RA-SFT cont, `_scripts/{288,289,312}`); mọi thứ có số trong luận văn hoặc report/334, và thứ hay dùng, **giữ nguyên** (TAGE, CTG, CW-RA, RAFT, Venus/Phi-4/SoM, ck500 hạt 202, AitZ, 7B, ACU, xao101, độ đo văn bản). Lấy lại đồ đã xoá: phần trong git bằng `git checkout 24959e6^ -- <đường dẫn>`; phần ngoài git ở GitHub Release `stopped-fgrb-tage-v1` và `stopped-misc-v1` (`gh release download <tag>`).
 
 Mốc số test (4.463 bước chạm, exec UGround): câu chuẩn 75,73 · S1/101 59,11 · S1/202 59,6 · Base 47,59. MDE ghép cặp ~2,1. Hai hạt GRPO cùng công thức lệch 0,72–0,92 ⇒ chênh < 1 điểm ở một hạt là không phân biệt được.
 
