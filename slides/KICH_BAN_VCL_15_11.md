@@ -1,18 +1,44 @@
-# Kịch bản trình bày VCL 2026 (bản 15/11) và bộ câu hỏi dự kiến
+# Kịch bản trình bày VCL 2026 (bản 15/11, sắp lại cho mạch lạc) và bộ câu hỏi dự kiến
 
 **Bài:** *Sinh hướng dẫn sử dụng phần mềm từ ảnh chụp màn hình và mục tiêu người dùng: xây dựng
 ngữ liệu quy chiếu tự động khi phần tử giao diện không có tên cụ thể*
 Lê Đoàn Phương Uyên & Nguyễn Hồng Bửu Long · Hội thảo VCL 2026, HUFLIT, 27/11/2026.
 
-**Khung giờ:** 15 phút trình bày + hỏi đáp. Lời nói dưới đây khoảng **12–13 phút** ở nhịp nói
-chậm, chừa 2 phút cho lúc chỉ bảng, chuyển slide.
+**Khung giờ:** 15 phút trình bày + hỏi đáp. Lời nói dưới đây khoảng **12 phút**.
+**Nguồn số:** `paper/vcl2026/main.tex` (bản đã nộp).
 
-**Nguồn số:** mọi con số lấy từ `paper/vcl2026/main.tex` (bản đã nộp). Không thêm số nào ngoài bài
-vào phần trình bày chính. Phần hỏi đáp có vài số từ bài đồng hành và luận văn, đã ghi rõ chỗ đó.
+## Mạch của bài (đọc trước khi tập nói)
 
-**Cách đọc tệp này:**
-- *Trên slide* là thứ được in lên slide (để agent dựng slide làm theo). Chữ trên slide càng ít càng tốt.
-- *Lời nói* là phần bạn nói. Không cần học thuộc, nắm ý và các con số in đậm là đủ.
+Cả bài là một chuỗi nhân quả, mỗi slide trả lời câu hỏi mà slide trước để lại:
+
+```
+PHẦN 1. BÀI TOÁN
+  2  Muốn máy viết câu chỉ người khác bấm vào đâu
+  3  → nhưng nhiều nút không có tên
+  4  → nên phải chỉ qua vật bên cạnh (người viết cũng làm vậy)
+  5  → muốn dạy máy làm vậy thì cần dữ liệu, mà chưa có ⇒ bài này tạo dữ liệu đó
+                                        (dàn ý 3 phần)
+PHẦN 2. TẠO NHÃN
+  6  Mỗi bước cần một nhãn bốn ô (đích cần đạt)
+  7  → điền bằng quy trình bốn bước (bản đồ của phần 2)
+  8  → bước 1: ghép dữ liệu, kiểm ghép đúng
+  9  → bước 2–3: tìm nút được bấm và lấy tên
+ 10  → bước 4: tìm mốc chữ bên cạnh (ví dụ Gmail)
+ 11  → bản đầu của bước 4 làm sai, làm lại 7,3% → 75,3%
+PHẦN 3. KIỂM TRA NHÃN
+ 12  So với câu người viết: 53,5% vs 7,6%
+ 13  Chỗ còn yếu: nút chỉ có ký hiệu
+PHẦN 4. KẾT LUẬN
+ 14  Hạn chế
+ 15  Kết luận (nhắc lại đúng ba phần)
+```
+
+**Quy ước trên slide:** mọi slide nội dung có một **thanh tiến độ** nhỏ ở góc trên phải gồm bốn chữ
+*Bài toán · Tạo nhãn · Kiểm tra · Kết luận*, phần đang trình bày tô đậm. Slide 7 có sơ đồ bốn bước, và ở các
+slide 8–11 sơ đồ này xuất hiện thu nhỏ với bước đang nói được tô màu.
+
+**Quy ước lời nói:** câu đầu mỗi slide nối với slide trước, câu cuối dẫn sang slide sau (in nghiêng trong
+kịch bản để dễ nhớ). Hai câu này là thứ làm bài nghe mạch lạc, nên giữ lại dù nói tắt phần giữa.
 
 ---
 
@@ -22,351 +48,298 @@ vào phần trình bày chính. Phần hỏi đáp có vài số từ bài đồ
 VCL 2026, HUFLIT, 27/11/2026.
 
 **Lời nói:**
-Kính chào quý thầy cô và các bạn. Tôi là Lê Đoàn Phương Uyên, Khoa Công nghệ Thông tin, Trường Đại học
-Khoa học Tự nhiên. Đây là bài làm chung với thầy Nguyễn Hồng Bửu Long. Bài nói về cách chúng tôi
-dựng một bộ ngữ liệu để dạy mô hình viết câu hướng dẫn thao tác trên điện thoại.
+Kính chào quý thầy cô và các bạn. Tôi là Lê Đoàn Phương Uyên, Trường Đại học Khoa học Tự nhiên. Đây là bài
+làm chung với thầy Nguyễn Hồng Bửu Long. *Tôi xin bắt đầu bằng một tình huống rất quen.*
 
 ---
 
-## Slide 2 · Bài toán qua một ví dụ (~50 giây)
+## Slide 2 · Mục tiêu: máy viết câu chỉ cho người khác bấm vào đâu (~45 giây)
 
-**Trên slide:** bên trái là ảnh màn hình điện thoại (dùng ảnh `paper/vcl2026/hinh/fig_moneo.png`
-hoặc cắt phần màn hình), bên phải hai hộp:
-- *Đầu vào:* ảnh màn hình + mục tiêu của người dùng
-- *Đầu ra:* một câu, ví dụ "Chạm vào biểu tượng bút chì ở góc trên bên phải của ghi chú"
-Dòng nhỏ dưới cùng: *Tác tử giao diện: câu → toạ độ. Bài này: ảnh + mục tiêu → câu cho người đọc.*
+**Phần:** Bài toán
+**Trên slide:** bên trái hai bong bóng hội thoại:
+*"Con ơi, muốn gửi thư thì bấm vào đâu?"*
+*"Mẹ bấm vào cái biểu tượng ngay trên chữ Gmail."*
+Bên phải sơ đồ: `ảnh màn hình + việc người dùng muốn làm` → `mô hình` → `một câu hướng dẫn`
 
 **Lời nói:**
-Các tác tử điều khiển giao diện hiện nay thường nhận một câu lệnh rồi tự tìm toạ độ để bấm. Chúng tôi
-làm chiều ngược lại. Hệ thống nhận ảnh màn hình và mục tiêu của người dùng, rồi viết ra một câu để
-**người** đọc biết phải chạm vào đâu. Ví dụ: "chạm vào biểu tượng bút chì ở góc trên bên phải của ghi chú".
+Chắc ai cũng từng chỉ ba mẹ dùng điện thoại. Mẹ hỏi: muốn gửi thư thì bấm vào đâu? Mình trả lời: mẹ bấm vào
+cái biểu tượng ngay trên chữ Gmail.
 
-Loại câu này có ích cho người lớn tuổi, cho người lần đầu dùng một ứng dụng, và cho người dùng trình
-đọc màn hình.
+Chúng tôi muốn máy làm đúng việc đó: nhận ảnh màn hình và việc người dùng đang muốn làm, rồi viết ra **một
+câu** để người đọc biết bấm vào đâu. Câu như vậy giúp người lớn tuổi, người mới dùng ứng dụng, người dùng
+trình đọc màn hình.
 
-Về mặt ngôn ngữ học, đây chính là bài toán **sinh biểu thức quy chiếu** theo cách Dale và Reiter phát
-biểu: câu sinh ra phải đủ để người nghe nhận ra đúng một đối tượng, không lẫn với đối tượng khác cùng
-có mặt.
+*Nghe thì đơn giản, nhưng có một cái khó nằm ngay trong ví dụ này.*
 
 ---
 
-## Slide 3 · Cái khó: phần tử giao diện thường không có tên (~60 giây)
+## Slide 3 · Cái khó: nhiều nút không có tên để gọi (~50 giây)
 
-**Trên slide:** ba con số lớn, mỗi số một ô:
-- **12,6%** phần tử có nhãn văn bản (đo trên 120 màn ngẫu nhiên; 22/120 màn không có phần tử nào có tên)
-- **22,0%** phần tử cần chạm không có tên
-- **7,6%** phần tử cần chạm trùng tên với phần tử khác
-Dòng dưới: *Gộp lại: 29,6% số bước, gần một phần ba.*
+**Phần:** Bài toán
+**Trên slide:** ảnh `fig_moneo.png` (bốn biểu tượng). Bên cạnh con số lớn: **22%** · *nút cần bấm không có tên*
+Dòng nhỏ: *thêm 7,6% nút trùng tên ⇒ gần 1/3 số bước không gọi đúng tên được*
 
 **Lời nói:**
-Điểm làm giao diện khác ảnh tự nhiên nằm ở mấy con số này.
+*Cái khó là thế này.* Màn hình này có bốn biểu tượng: Gmail, Drive, Messages, Chrome. Mắt người thấy rõ.
+Nhưng trong thông tin ứng dụng khai báo với hệ điều hành, cả bốn đều **không có tên**. Với máy, đây chỉ là
+bốn cái hình.
 
-Mỗi màn hình Android có một cây trợ năng, tức bản liệt kê các phần tử đang hiển thị cùng nhãn chữ của
-chúng. Chúng tôi lấy ngẫu nhiên 120 màn trong gần một trăm nghìn màn và đếm: chỉ **12,6%** phần tử có
-nhãn chữ. Có 22 màn không có phần tử nào có tên.
+Chuyện này không hiếm: **22%** nút người dùng cần bấm không có tên, thêm 7,6% nút trùng tên với nút khác.
+Gần một phần ba số trường hợp, không thể nói đơn giản "bấm vào nút X".
 
-Trên 41.099 bước chạm mà chúng tôi dựng nhãn, **22%** phần tử cần chạm không có tên, và **7,6%** trùng tên
-với một phần tử khác trên cùng màn. Hai nhóm này không giao nhau, nên cộng lại là gần **30%** số bước.
-
-Ở ảnh tự nhiên, con mèo thì gọi là con mèo, cái ghế thì gọi là cái ghế. Ở đây, cứ ba lần thì gần một
-lần không có tên nào để gọi. Người viết câu buộc phải chỉ bằng vị trí hoặc bằng quan hệ với chữ bên
-cạnh, kiểu "biểu tượng nằm ngay trên chữ Gmail".
+*Vậy khi không có tên thì người ta chỉ bằng cách nào?*
 
 ---
 
-## Slide 4 · Vì sao phải có dữ liệu riêng (~40 giây)
+## Slide 4 · Không có tên thì phải chỉ qua vật bên cạnh (~55 giây)
 
-**Trên slide:** hai cột so sánh ngắn:
-- *Dòng sinh biểu thức quy chiếu (Mao 2016, Luo 2017, Yu 2017):* ảnh tự nhiên, đối tượng có danh từ, quan hệ chỉ là phương án bổ sung.
-- *Miền giao diện:* 22% không có tên, quan hệ với chữ lân cận thành phương tiện chính.
-Dòng dưới: *Widget Captioning: nhãn do người viết, mô tả một widget tách rời. AndroidControl: câu chỉ dẫn là đầu vào. Bài này: câu chỉ dẫn là đầu ra.*
+**Phần:** Bài toán
+**Trên slide:** hai cột:
+- **Ảnh đời thường:** "con mèo đen bên trái" · *vật nào cũng có tên*
+- **Màn hình điện thoại:** "biểu tượng ngay trên chữ Gmail" · *phải chỉ qua vật bên cạnh*
+Một con số: **1/3** câu do người viết dùng từ chỉ vị trí ("trên", "dưới", "góc phải"…)
+Dòng dưới: *Ngôn ngữ học gọi đây là sinh biểu thức quy chiếu: viết câu để người nghe nhận ra đúng một vật giữa nhiều vật giống nhau (Dale & Reiter, 1995).*
 
 **Lời nói:**
-Khung khái niệm thì chúng tôi dùng lại của dòng sinh biểu thức quy chiếu, kể cả ý mô tả bằng quan hệ
-của Dale và Haddock. Chỗ khác là miền này đảo ngược thứ tự ưu tiên: ở ảnh tự nhiên quan hệ là phương án
-phụ, còn ở đây nhiều khi nó là cách duy nhất.
+*Câu trả lời là chỉ qua vật bên cạnh.* Trong ngôn ngữ học, việc viết câu để người nghe nhận ra đúng một vật
+giữa nhiều vật giống nhau có tên là **sinh biểu thức quy chiếu**.
 
-Công trình gần nhất là Widget Captioning, nhưng nhãn của họ do người viết và mô tả một widget đứng
-riêng. Còn bộ AndroidControl của Google có sẵn câu chỉ dẫn theo từng bước, nhưng họ dùng câu đó làm
-đầu vào cho tác tử. Chúng tôi dùng nó làm đầu ra. Hiện chưa có bộ dữ liệu công khai nào dựng sẵn cho
-đúng tác vụ này, nên phải tự dựng.
+Trên ảnh đời thường, con mèo thì gọi là con mèo, chỉ cần thêm "màu đen", "bên trái". Trên màn hình điện thoại
+thì ngược lại: nhiều thứ không có tên, nên chỉ qua vật bên cạnh, kiểu "ngay trên chữ Gmail", lại thành cách chính.
+
+Người viết thật cũng làm vậy. Trong hơn 41 nghìn câu hướng dẫn do người viết, khoảng **một phần ba** phải dùng
+từ chỉ vị trí như "trên", "dưới", "góc phải".
+
+*Muốn máy học được cách chỉ như vậy, thì cần dữ liệu.*
 
 ---
 
-## Slide 5 · Ghép hai bản phát hành, và cách kiểm ghép đúng (~60 giây)
+## Slide 5 · Cần dữ liệu để dạy máy, nên bài này tạo dữ liệu đó (~55 giây)
 
-**Trên slide:** bảng nhỏ hai dòng:
-| bản phát hành | có | thiếu |
+**Phần:** Bài toán
+**Trên slide:** trên: **AndroidControl** (Google, 2024): 15.283 lần người thật thao tác; mỗi bước có *ảnh · chỗ bấm · câu do người viết*. **Thiếu:** *nút được bấm tên gì, khác các nút giống nó ở đâu.*
+Dưới: khung **Dàn ý** ba dòng đánh số:
+1. Tạo nhãn: nhãn trông thế nào, điền tự động ra sao
+2. Kiểm tra: làm sao biết nhãn đúng
+3. Kết luận: còn thiếu gì
+
+**Lời nói:**
+*Muốn dạy máy thì cần nhiều ví dụ.* Google có công bố bộ AndroidControl: hơn mười lăm nghìn lần người thật làm
+việc trên điện thoại, mỗi bước có ảnh, chỗ người đó bấm, và một câu hướng dẫn do người viết.
+
+Nhưng bộ này thiếu đúng thứ chúng tôi cần: nút được bấm tên là gì, và nó khác những nút giống nó ở chỗ nào.
+
+Bài này **tự động** bổ sung thông tin đó, không viết tay nhãn nào. Phần còn lại của bài đi theo ba câu hỏi:
+nhãn trông thế nào và được điền ra sao; làm sao biết nhãn đúng; và còn thiếu gì.
+
+*Bắt đầu với câu hỏi thứ nhất: nhãn trông thế nào.*
+
+---
+
+## Slide 6 · Mỗi bước cần một nhãn bốn ô (~50 giây)
+
+**Phần:** Tạo nhãn
+**Trên slide:** ảnh Gmail thu nhỏ bên trái, bên phải bảng:
+| ô | ví dụ trên màn Gmail | nghĩa |
 |---|---|---|
-| HarrytheOrange/parsed_AndroidControl | câu chỉ dẫn, cây trợ năng | ảnh |
-| ckg/AndroidControlParsedWithImages-20k | ảnh | câu chỉ dẫn theo bước |
-Bên dưới: *ghép theo (episode_id, step_id)* và một biểu đồ cột hai cột: **ghép đúng 48,3%** vs **cố ý ghép lệch 19,6%**.
+| loại | icon | nút, ô nhập hay biểu tượng |
+| tên | (không có tên) | chữ hiển thị trên nút |
+| vị trí | 111, 903 | chỗ bấm, thang 0 đến 1.000 |
+| **dấu hiệu phân biệt** | **ngay trên chữ "Gmail"** | **khác các nút giống nó ở đâu** |
 
 **Lời nói:**
-Không bản phát hành công khai nào của AndroidControl có đủ ba thứ chúng tôi cần: câu chỉ dẫn, ảnh và
-cây trợ năng. Nên chúng tôi ghép hai bản theo mã chuỗi thao tác và mã bước.
+*Đây là thứ chúng tôi muốn có cho mỗi bước:* một nhãn gồm bốn ô.
 
-Lỗi nguy hiểm nhất ở đây là ghép lệch một bước. Số dòng vẫn đủ, huấn luyện vẫn chạy, mọi thứ trông
-bình thường, nhưng mô hình học ảnh của bước này với câu của bước kia.
+Lấy lại màn Gmail. Ô loại: đây là một biểu tượng. Ô tên: không có tên. Ô vị trí: chỗ bấm. Và ô thứ tư, quan
+trọng nhất, là **dấu hiệu phân biệt**: nút này khác ba nút kia ở đâu, ở đây là "ngay trên chữ Gmail".
 
-Cách kiểm của chúng tôi: đọc chữ bằng OCR ngay tại điểm chạm, rồi xem chữ đó có nằm trong câu chỉ dẫn
-không. Ghép đúng thì khớp **48,3%**. Để có mốc so, chúng tôi cố ý ghép lệch một bước, thì chỉ còn
-**19,6%**.
+Khi nút có tên, ba ô đầu gần như đủ. Khi nút không có tên, mọi việc dồn vào ô thứ tư.
 
-Con số 48% đứng một mình không nói lên gì, vì OCR có lỗi và người viết câu không nhất thiết lặp lại chữ
-trên nút. Cái đáng tin là khoảng cách giữa hai con số.
+*Vậy máy tự điền bốn ô này thế nào?*
 
 ---
 
-## Slide 6 · Cây trợ năng không đủ, nên phải đọc chữ bằng OCR (~45 giây)
+## Slide 7 · Nhãn được điền tự động qua bốn bước (~40 giây)
 
-**Trên slide:**
-- Một màn: trung vị **86** phần tử, nhưng chỉ 12,6% có tên
-- OCR (RapidOCR, chạy CPU) trên **100%** ảnh: 64.567 bản ghi huấn luyện, 6.958 bản ghi kiểm tra
-- Tên lấy được: **8.581** từ cây trợ năng · **23.480** từ OCR (khoảng 1 : 2,7)
-- Nguyên tắc: *để trống còn hơn ghi sai*
+**Phần:** Tạo nhãn
+**Trên slide:** sơ đồ bốn khối nằm ngang, đánh số, có mũi tên:
+① **Ghép dữ liệu** (ảnh + câu + danh sách nút) → ② **Tìm nút được bấm** → ③ **Lấy tên nút** → ④ **Tìm dấu hiệu phân biệt**
+Dưới mỗi khối một dòng nhỏ: *ghép hai bản công bố* · *khung nhỏ nhất chứa chỗ bấm* · *danh sách hệ thống, rồi đọc chữ trong ảnh* · *chữ gần nhất làm mốc*
+Dòng cuối: *Toàn bộ bằng quy tắc, không viết tay nhãn nào.*
 
 **Lời nói:**
-Cây trợ năng lẽ ra là nguồn tên tự nhiên nhất, nhưng như vừa thấy, nó thiếu rất nhiều. Nên toàn bộ ảnh
-được đưa qua OCR. Kết quả là trong hơn 32 nghìn tên lấy được, cứ một tên từ cây trợ năng thì có
-khoảng 2,7 tên từ OCR.
+*Bốn ô được điền qua bốn bước, hoàn toàn bằng quy tắc.*
 
-OCR có hai kiểu sai. Kiểu thứ nhất là đọc biểu tượng thành chữ cái, sinh ra một chuỗi trông như tên thật.
-Kiểu thứ hai là dính chữ, ví dụ "Turnon". Kiểu thứ nhất nguy hiểm hơn.
+Bước một, ghép dữ liệu cho đủ nguyên liệu. Bước hai, tìm xem nút được bấm là nút nào. Bước ba, lấy tên của
+nút đó. Bước bốn, tìm dấu hiệu phân biệt.
 
-Nguyên tắc chúng tôi theo suốt bài: với dữ liệu huấn luyện, để trống ô tên còn đỡ hơn ghi sai. Ô trống
-chỉ làm mô hình mất một mẫu học. Ô ghi sai thì dạy mô hình gọi phần tử bằng một cái tên không có trên màn.
+Bước nào cũng có một chỗ dễ sai. *Tôi sẽ đi lần lượt, bắt đầu từ bước một.*
 
 ---
 
-## Slide 7 · Nhãn bốn ô (~60 giây)
+## Slide 8 · Bước 1: ghép hai bản dữ liệu, và kiểm là ghép đúng (~55 giây)
 
-**Trên slide:** sơ đồ bốn ô nằm ngang:
-`vai trò | tên | toạ độ | dấu hiệu phân biệt`
-Ví dụ in mono:
-`<desc>tappable text | Search here | <point>440,91</point> | just above the text "Coffee"</desc>`
-Ghi chú nhỏ: *Chỉ dựng cho bước chạm. Phần tử cần chạm = hộp bao nhỏ nhất chứa điểm chạm.*
+**Phần:** Tạo nhãn · sơ đồ bốn bước thu nhỏ, tô bước ①
+**Trên slide:** dòng trên: *Bản 1: câu + danh sách nút, thiếu ảnh. Bản 2: ảnh, thiếu câu. ⇒ ghép theo mã bước.*
+Biểu đồ hai cột: **ghép đúng 48%** · **cố ý ghép lệch 20%** (cột xám). Nhãn trục: *chữ ngay chỗ bấm có xuất hiện trong câu*
 
 **Lời nói:**
-Đây là nhãn mà mô hình phải học để sinh ra, trước khi viết câu. Nhãn gồm bốn ô.
+*Bước một là gom đủ nguyên liệu.* Mỗi bước cần ảnh màn hình, câu do người viết, và **danh sách nút** mà ứng
+dụng khai báo cho hệ điều hành, gọi là cây trợ năng. Không bản công bố nào có đủ cả ba, nên phải ghép hai bản
+theo mã của từng bước.
 
-Ô vai trò cho biết đó là nút, ô nhập hay mục danh sách. Ô tên là chữ hiển thị, lấy từ cây trợ năng trước,
-OCR sau. Ô toạ độ là điểm chạm, quy về thang 0 đến 1.000. Và ô thứ tư là dấu hiệu phân biệt, một mệnh
-đề cho biết phần tử này khác các phần tử giống nó ở chỗ nào.
+Sợ nhất là ghép lệch một bước: ảnh bước này đi với câu bước kia mà máy không báo lỗi gì. Để kiểm, chúng tôi đọc
+chữ ngay chỗ người dùng bấm rồi xem chữ đó có nằm trong câu không. Ghép đúng: **48%** có. Cố ý ghép lệch để so:
+chỉ **20%**. Hai số cách xa nhau, nên ghép đúng.
 
-Để biết phần tử cần chạm là cái nào, chúng tôi lấy hộp bao **nhỏ nhất** chứa điểm chạm. Phải lấy hộp
-nhỏ nhất vì cây trợ năng lồng nhiều tầng: một điểm chạm nằm trong hàng chục hộp cùng lúc, từ khung cả
-màn hình cho tới cái nút thật.
-
-Cả bốn ô đều dựng bằng quy tắc, không có ai viết tay nhãn nào.
+*Có đủ nguyên liệu rồi, bước tiếp là tìm nút và lấy tên.*
 
 ---
 
-## Slide 8 · Ví dụ thật: mỏ neo chữ (~55 giây)
+## Slide 9 · Bước 2 và 3: tìm nút được bấm, rồi lấy tên của nó (~55 giây)
 
-**Trên slide:** hình `paper/vcl2026/hinh/fig_moneo.png` chiếm gần hết slide. Dưới hình:
-`<desc>icon | (no name) | <point>111,903</point> | just above the text "Gmail"</desc>`
-Câu của người chú thích: *"Click on the gmail option"*
+**Phần:** Tạo nhãn · sơ đồ thu nhỏ, tô bước ② và ③
+**Trên slide:** hai hộp trái/phải:
+- **Bước 2:** chọn **khung nhỏ nhất** chứa chỗ bấm *(vì các khung lồng nhau, từ cả màn hình tới cái nút)*
+- **Bước 3:** chỉ **12,6%** phần tử có tên trong danh sách hệ thống ⇒ cho máy **đọc chữ trong ảnh (OCR)**
+Dải màu dưới: **Không chắc thì để trống, không đoán.**
 
 **Lời nói:**
-Đây là một bước thật trong tập kiểm tra, thuộc trường hợp khó. Khung xanh lá là phần tử cần chạm. Ba
-khung cam là ba biểu tượng cùng loại. Cả bốn biểu tượng đều không có tên trong cây trợ năng.
+*Bước hai là tìm xem người dùng bấm vào nút nào.* Mỗi nút có một khung chữ nhật trên màn, và các khung lồng nhau:
+một chỗ bấm nằm trong hàng chục khung, từ khung cả màn hình tới đúng cái nút. Nên chúng tôi chọn **khung nhỏ nhất**.
 
-Ba ô đầu của nhãn lúc này chỉ nói được "đây là một biểu tượng, không có tên". Toàn bộ việc chỉ đường
-dồn vào ô thứ tư. Chương trình tìm chuỗi chữ gần nhất nằm ngoài hộp bao, ở đây là chữ "Gmail", cách tâm
-114,5 pixel, và lấy nó làm **mỏ neo**: "nằm ngay trên chữ Gmail".
+*Bước ba là lấy tên nút.* Lẽ ra lấy từ danh sách hệ thống là xong, nhưng đếm thử thì chỉ **12,6%** phần tử có tên.
+Nên chúng tôi cho máy đọc thêm chữ trong ảnh, kỹ thuật gọi là OCR.
 
-Điều đáng chú ý là người chú thích, khi viết câu cho đúng bước này, cũng quy chiếu qua đúng chữ đó:
-"Click on the gmail option".
+OCR có lúc đọc nhầm, ví dụ đọc biểu tượng thành chữ cái. Nên nguyên tắc là: **không chắc thì để trống**. Để trống
+thì máy chỉ mất một ví dụ. Ghi sai thì máy học gọi nút bằng một cái tên không có trên màn hình.
+
+*Với nút như Gmail ở đây, ô tên để trống, và mọi việc chuyển sang bước bốn.*
 
 ---
 
-## Slide 9 · Hai bộ lọc, thêm vào sau khi thấy nhãn nhiễu (~45 giây)
+## Slide 10 · Bước 4: lấy chữ gần nhất làm mốc, như khi chỉ đường (~50 giây)
 
-**Trên slide:** hai hộp:
-- **Bộ lọc nhãn trợ năng:** loại tên kiểu mã nguồn, chuỗi số dài, "No label specified", "unlabeled"… → loại **14,7%** nhãn trên mẫu thử 1.074 nhãn
-- **Bộ lọc hình học:** chỉ lấy tên OCR khi hộp < **25%** màn → tác động **2,2%** số bước. Ví dụ: hộp phủ 95% màn cho chuỗi "THEFELLOWSHIPOF THE RING"
+**Phần:** Tạo nhãn · sơ đồ thu nhỏ, tô bước ④
+**Trên slide:** ảnh `fig_moneo.png` lớn, đánh dấu nút cần bấm, ba nút giống nó, chữ "Gmail", khoảng cách 114,5 px.
+Dưới: *Máy viết:* `ngay trên chữ "Gmail"` · *Người viết:* "Click on the gmail option"
 
 **Lời nói:**
-Hai bộ lọc này không có trong thiết kế ban đầu. Chúng tôi thêm vào sau khi đọc tay một mẫu thử 1.074
-nhãn và thấy nhãn bị nhiễu.
+*Bước bốn làm giống cách ta chỉ đường:* "nhà ngay sau tiệm thuốc". Máy tìm dòng chữ gần nút nhất mà nằm ngoài
+nút, ở đây là chữ Gmail, rồi lấy làm **mốc**, kèm hướng: trên, dưới, trái hay phải. Chúng tôi gọi đó là mỏ neo chữ.
 
-Bộ lọc thứ nhất loại những chuỗi đúng cú pháp nhưng người dùng không dựa vào được để tìm nút, ví dụ tên
-biến trong mã nguồn hay chữ "unlabeled". Trên mẫu thử nó loại 14,7% nhãn.
+Người chú thích, khi viết câu cho đúng bước này mà không hề biết quy tắc của chúng tôi, cũng chỉ qua đúng chữ
+Gmail: "Click on the gmail option".
 
-Bộ lọc thứ hai chặn trường hợp hộp quá lớn. Có hộp phủ 95% màn hình và OCR đọc ra cả tên phim bên trong.
-Chữ đó không còn chỉ về cái nút nữa. Nên chỉ khi hộp nhỏ hơn một phần tư màn thì mới lấy tên từ OCR.
-
-Cả hai bộ lọc cùng một tinh thần: không chắc thì để trống.
+*Nhưng bước bốn không đúng ngay từ đầu.*
 
 ---
 
-## Slide 10 · Ô thứ tư phải làm lại: từ 7,3% lên 75,9% (~55 giây)
+## Slide 11 · Bản đầu của bước 4 làm sai, phải làm lại (~50 giây)
 
+**Phần:** Tạo nhãn · sơ đồ thu nhỏ, tô bước ④
 **Trên slide:** hai cột trước/sau:
-- **Bản đầu:** 7,3% giải quyết được mơ hồ · 85,8% chỉ đếm ("một trong bảy phần tử cùng loại")
-- **Bản làm lại:** 75,9% trên mẫu thử · **75,3%** trên toàn bộ 41.099 nhãn
-Dòng nhỏ: *737/737 mỏ neo đúng hướng (kiểm tay). Đúng hướng chưa có nghĩa là hữu ích.*
+- **Bản đầu:** "một trong bảy biểu tượng cùng loại" · **7,3%** chỉ ra được đúng nút
+- **Bản làm lại:** "ngay trên chữ Gmail" · **75,3%** chỉ ra được đúng nút
 
 **Lời nói:**
-Đây là phần chúng tôi phải làm lại từ đầu. Bản đầu của ô thứ tư chỉ giải quyết được **7,3%** số trường
-hợp. Còn tới 85,8% là câu đếm, kiểu "một trong bảy phần tử cùng loại". Câu đó đúng, nhưng chỉ báo là có
-mơ hồ, chứ không giúp ai chọn được phần tử nào.
+*Bản đầu của bước bốn chủ yếu viết kiểu* "đây là một trong bảy biểu tượng cùng loại". Câu đó không sai, nhưng vô
+ích: nó chỉ báo có bảy cái giống nhau, không nói là cái nào. Chỉ **7,3%** trường hợp chỉ ra được đúng nút.
 
-Chúng tôi sắp lại thứ tự quy tắc: ưu tiên mệnh đề nào giải quyết được mơ hồ, và thêm mỏ neo chữ như ví
-dụ Gmail vừa rồi. Trên cùng mẫu thử, tỉ lệ đi từ 7,3% lên **75,9%**. Trên toàn bộ ngữ liệu là **75,3%**.
+Chúng tôi phát hiện khi đọc tay khoảng một nghìn nhãn. Sắp xếp lại quy tắc, ưu tiên mốc chữ như ví dụ Gmail, tỉ
+lệ lên **75,3%** trên toàn bộ dữ liệu.
 
-Chúng tôi kiểm tay cả 737 mỏ neo của mẫu thử, đúng hướng cả 737. Nhưng cần nói rõ: đúng hướng là do
-cách tính, còn mỏ neo có thật sự giúp người dùng tìm ra nút hay không thì phải đo bằng cách khác. Phần
-sau sẽ nói tới.
+Đến đây là xong phần tạo nhãn, được hơn 41 nghìn nhãn. *Câu hỏi tiếp theo: làm sao biết các nhãn đó đúng?*
 
 ---
 
-## Slide 11 · Độ phủ chưa đều: nhóm cần nhất lại được phủ kém nhất (~60 giây)
+## Slide 12 · Kiểm nhãn bằng câu do người viết (~65 giây)
 
-**Trên slide:** bảng rút gọn:
-| tầng tên của phần tử | số nhãn | giải quyết được mơ hồ |
-|---|---|---|
-| tên rõ ràng | 30.252 | **80,1%** |
-| không có tên | 9.038 | 66,7% |
-| chỉ có ký hiệu (vd. "Q", "?") | 1.809 | **37,5%** |
-| toàn bộ | 41.099 | 75,3% |
+**Phần:** Kiểm tra
+**Trên slide:** biểu đồ hai cột lớn:
+- tên máy đặt **trùng** chữ trong câu người viết cho đúng bước đó: **53,5%**
+- so với câu của bước kế tiếp (đối chứng): **7,6%** (cột xám)
+Dòng dưới: *Máy không đọc câu của người khi tạo nhãn ⇒ trùng nhau là hai nguồn độc lập cùng gọi một tên.*
 
 **Lời nói:**
-Con số 75,3% là trung bình, và trung bình này che mất một chuyện không vui.
+*Chấm tay hơn 41 nghìn nhãn thì không làm nổi, nên chúng tôi dùng câu do người viết làm phép thử.*
 
-Nhóm phần tử có tên rõ ràng, tức nhóm mà chỉ cần gọi tên là đủ, lại được phủ tốt nhất: **80,1%**. Nhóm
-không có tên được 66,7%. Còn nhóm chỉ mang một ký hiệu, ví dụ một chữ "Q" đứng lẻ, chỉ được **37,5%**.
+Khi tạo nhãn, máy **không hề đọc** câu đó. Nên nếu tên máy đặt lại trùng với chữ người viết dùng, thì đó là hai
+nguồn độc lập cùng gọi một tên. Kết quả: **53,5%** trùng nguyên văn.
 
-Nguyên nhân là cơ học. Mỏ neo cần một chuỗi chữ đủ gần. Mà vùng màn hình dày biểu tượng không tên thì
-thường cũng là vùng ít chữ. Nghĩa là chỗ cần dấu hiệu phân biệt nhất lại là chỗ quy tắc khó tìm được
-mỏ neo nhất. Đây là hạn chế chính của bộ ngữ liệu, và chúng tôi nêu thẳng trong bài.
+Để biết số đó cao hay thấp, chúng tôi làm một **đối chứng**, tức phép so cố ý làm sai để lấy mức nền: đem chính
+những cái tên đó so với câu của bước kế tiếp, trên màn rất giống. Chỉ còn **7,6%**, thấp hơn khoảng bảy lần.
+
+53,5% không có nghĩa là gần nửa số tên sai: người viết hay gọi chung kiểu "the search bar" cho ô có chữ "Search
+here", mà so nguyên văn không tính. Đây là mức thấp nhất.
+
+*Kiểm tra cũng cho thấy nhãn chưa tốt đều ở mọi chỗ.*
 
 ---
 
-## Slide 12 · Người chú thích và quy trình tự động chọn cùng chiến lược (~50 giây)
+## Slide 13 · Chỗ còn yếu: nút chỉ có một ký hiệu (~45 giây)
 
-**Trên slide:** ba con số, chia hai phía:
-- *Phía màn hình:* **55,6%** số bước có phần tử cạnh tranh trong khoảng 80–350 px · **91,6%** có phần tử cùng vai trò (trung vị 8)
-- *Phía ngôn ngữ:* **32,5%** câu của người dùng từ chỉ vị trí/thứ tự · **67,2%** dấu hiệu của quy trình là quan hệ với chữ lân cận
+**Phần:** Kiểm tra
+**Trên slide:** ba thanh ngang, tỉ lệ chỉ ra được đúng nút:
+- nút có tên rõ ràng: **80%**
+- nút không có tên: 67%
+- nút chỉ có một ký hiệu (ví dụ "Q", "?"): **38%**
 
 **Lời nói:**
-Câu hỏi tự nhiên là: phân biệt có thật là vấn đề, hay chỉ là chúng tôi tự đặt ra?
+*Con số 75% ở bước bốn là trung bình, và trung bình che mất một chuyện.* Nút có tên rõ ràng, vốn dễ gọi, lại được
+làm tốt nhất: 80%. Nút chỉ có một ký hiệu như chữ Q đứng lẻ, chỉ 38%.
 
-Phía màn hình: hơn một nửa số bước, 55,6%, có ít nhất một phần tử cạnh tranh nằm khá gần phần tử cần
-chạm. Và 91,6% số bước có phần tử cùng loại, trung vị tám cái một màn.
+Lý do: muốn có mốc chữ thì cần chữ ở gần, mà chỗ toàn biểu tượng thì thường ít chữ. Chỗ cần dấu hiệu phân biệt
+nhất lại khó tìm mốc nhất.
 
-Phía ngôn ngữ: trong hơn 41 nghìn câu do người chú thích viết, khoảng một phần ba, **32,5%**, phải dùng
-từ chỉ vị trí như "trên", "dưới", "góc phải", "đầu tiên". Còn quy trình của chúng tôi thì cho 67,2% dấu
-hiệu là quan hệ với chữ bên cạnh.
-
-Cả người lẫn máy đều chuyển từ gọi tên sang chỉ vị trí. Khác biệt còn lại là người nhìn thấy hình dạng
-biểu tượng, như cái kính lúp, rồi gọi là "search icon". Quy trình của chúng tôi chỉ đọc được chữ.
+*Đây cũng là hạn chế đầu tiên tôi muốn nói ở phần cuối.*
 
 ---
 
-## Slide 13 · Quy mô và cách chia tập (~45 giây)
+## Slide 14 · Những gì bài này chưa làm được (~40 giây)
 
-**Trên slide:**
-| | huấn luyện | kiểm tra |
-|---|---|---|
-| số bước | 64.567 | 6.958 |
-| bước chạm | 41.191 | 4.463 |
-| số tác vụ | 12.895 | 1.432 |
-| nhãn GUIRefCorpus | 41.099 | 4.448 |
-Ba dòng cảnh báo nhỏ: *chia theo tác vụ, 0 tác vụ trùng* · *không tách được cách diễn đạt* · *không phải tập ứng dụng chưa thấy (95,6% ứng dụng có ở tập huấn luyện)*
-
-**Lời nói:**
-Về quy mô: tập huấn luyện hơn 64 nghìn bước, trong đó hơn 41 nghìn bước chạm. Tập kiểm tra gần 7 nghìn
-bước. Bộ nhãn chúng tôi đặt tên là **GUIRefCorpus**, 41.099 dòng cho huấn luyện và 4.448 dòng cho kiểm tra.
-
-Tập được chia theo tác vụ, không chia ngẫu nhiên theo dòng, vì các màn trong cùng một tác vụ gần như
-giống nhau. Kiểm rò rỉ trên toàn bộ dữ liệu: không có tác vụ nào trùng.
-
-Nhưng chia theo tác vụ chỉ bảo đảm đúng một điều đó. Nó không tách được cách nói, vì người chú thích
-hay lặp lại những câu như "click on the search bar". Và tập kiểm tra cũng không phải tập ứng dụng chưa
-từng thấy. Chúng tôi nêu cả hai để không ai đọc kết quả rộng hơn mức dữ liệu cho phép.
-
----
-
-## Slide 14 · Kiểm chất lượng bằng một nguồn nằm ngoài quy trình (~65 giây)
-
-**Trên slide:** biểu đồ ba cột:
-- ô tên xuất hiện nguyên văn trong câu của người: **53,5%** (1.875/3.505)
-- ghép với câu của bước liền sau (bất kỳ): **5,4%**
-- ghép với bước liền sau trong cùng chuỗi thao tác (đối chứng khó): **7,6%**
-Dòng dưới: *Quy trình dựng nhãn không đọc câu chỉ dẫn ở bất kỳ bước nào. 53,5% là chặn dưới.*
-
-**Lời nói:**
-Đây là phần quan trọng nhất của bài.
-
-Bộ ngữ liệu dựng bằng quy tắc có một điểm yếu: mọi số đo tính từ chính quy tắc chỉ cho biết quy tắc
-chạy đúng như đã viết, chứ không cho biết nhãn có đúng không. Cần một nguồn nằm ngoài.
-
-Nguồn đó là câu do người chú thích viết. Quy trình dựng nhãn của chúng tôi không đọc câu này ở bất kỳ
-bước nào. Nên nếu tên mà quy trình đặt cho phần tử lại xuất hiện đúng nguyên văn trong câu của người, đó
-là một sự trùng khớp từ bên ngoài, không phải tự kiểm.
-
-Kết quả: **53,5%**. Để biết con số này cao hay thấp, chúng tôi đem đúng những cái tên đó ghép với câu
-của bước kế tiếp. Chỉ khớp 5,4%. Có người sẽ nói đối chứng đó dễ quá, nên chúng tôi làm khó hơn: chỉ
-ghép với bước kế tiếp trong cùng một chuỗi thao tác, tức hai màn rất giống nhau. Tỉ lệ khớp nhầm lên
-**7,6%**. Vẫn thấp hơn khoảng **bảy lần**.
-
-Và 53,5% không có nghĩa là gần một nửa số tên bị sai. Người chú thích hay gọi bằng tên loại, kiểu "the
-search bar" cho ô mang chữ "Search here", mà phép so nguyên văn thì không tính trường hợp đó. Nên 53,5%
-là chặn dưới.
-
----
-
-## Slide 15 · Hạn chế (~40 giây)
-
+**Phần:** Kết luận
 **Trên slide:** ba gạch:
-- **24,7%** dấu hiệu chưa giải quyết được mơ hồ (đã rõ nguyên nhân, sửa được)
-- So với nguồn ngoài mới chạm **1/4 ô** (ô tên); ô dấu hiệu chưa được người dùng kiểm
-- Bản gốc: không có nhãn chuẩn cho OCR; chuỗi mục tiêu bị cắt (99,4% không kết thúc bằng dấu câu)
+- Khoảng **1/4** dấu hiệu chưa chỉ ra được đúng nút (đã rõ lý do)
+- Chưa hỏi người dùng thật xem đọc nhãn có tìm ra nút không
+- Dữ liệu gốc không có đáp án chuẩn để kiểm OCR
 
 **Lời nói:**
-Ba hạn chế chúng tôi nêu rõ.
+*Bài còn ba chỗ chưa làm được.* Một, khoảng một phần tư dấu hiệu chưa chỉ ra được đúng nút; hướng sửa là lấy mốc
+từ cả các nút cùng loại, không chỉ từ chữ. Hai, cách kiểm tốt nhất cho ô thứ tư là đưa nhãn cho người thật xem
+và hỏi họ có tìm ra nút không; chúng tôi chưa làm. Ba, dữ liệu gốc không có đáp án chuẩn cho chữ trên màn, nên
+chúng tôi không nói được OCR đúng bao nhiêu phần trăm.
 
-Một, còn 24,7% dấu hiệu chưa giải quyết được mơ hồ. Nguyên nhân đã rõ nên sửa được, hướng đầu tiên là
-mở rộng nguồn neo sang các phần tử cùng vai trò, vì 91,6% số bước có sẵn những phần tử như vậy.
-
-Hai, phép so với nguồn ngoài mới chạm được ô tên. Ô dấu hiệu phân biệt muốn kiểm đúng thì phải hỏi thẳng
-người dùng xem đọc nhãn có tìm ra nút không. Chúng tôi chưa làm được.
-
-Ba, hai giới hạn từ chính bản phát hành gốc: không có nhãn chuẩn cho OCR, và chuỗi mục tiêu của tác vụ bị
-cắt cụt ngay từ nguồn.
+*Tôi xin tóm lại.*
 
 ---
 
-## Slide 16 · Kết luận (~45 giây)
+## Slide 15 · Kết luận (~40 giây)
 
-**Trên slide:** ba dòng:
-- GUIRefCorpus: **41.099 + 4.448** nhãn bốn ô, dựng hoàn toàn tự động từ AndroidControl
-- Ô dấu hiệu phân biệt: **7,3% → 75,3%**
-- Đối chiếu ngoài quy trình: **53,5%** vs **7,6%** (đối chứng khó)
-Dòng cuối nhỏ: *Phần huấn luyện mô hình: bài đồng hành.*
+**Phần:** Kết luận
+**Trên slide:** ba dòng, khớp ba phần của bài:
+- **Bài toán:** gần **1/3** số nút cần bấm không gọi đúng tên được ⇒ phải chỉ qua vật bên cạnh
+- **Tạo nhãn:** tự động **41.099 + 4.448** nhãn bốn ô (GUIRefCorpus); dấu hiệu phân biệt **7,3% → 75,3%**
+- **Kiểm tra:** **53,5%** trùng câu người viết, so với **7,6%** ở đối chứng
+Dòng nhỏ: *Phần dạy mô hình bằng bộ dữ liệu này: bài đồng hành.*
 
 **Lời nói:**
-Tóm lại, chúng tôi dựng một quy trình hoàn toàn tự động, biến AndroidControl thành bộ ngữ liệu
-GUIRefCorpus cho bài toán sinh biểu thức quy chiếu trên giao diện. "Hoàn toàn tự động" là nói về khâu
-dán nhãn. Con người vẫn tham gia, nhưng chỉ để kiểm. Mỗi lần thấy nhãn sai, chúng tôi sửa bộ quy tắc rồi
-dựng lại toàn bộ, không sửa tay từng nhãn.
+Tóm lại theo đúng ba phần vừa đi qua. Về bài toán: trên điện thoại, gần một phần ba số nút cần bấm không gọi đúng
+tên được, nên câu hướng dẫn phải chỉ qua vật bên cạnh. Về tạo nhãn: chúng tôi tự động tạo hơn 45 nghìn nhãn bốn
+ô, gọi là GUIRefCorpus, trong đó dấu hiệu phân biệt đi từ 7,3% lên 75,3% sau khi làm lại. Về kiểm tra: tên máy đặt
+trùng câu người viết 53,5%, cao gấp bảy lần mức đối chứng.
 
-Ô dấu hiệu phân biệt đi từ 7,3% lên 75,3%. Và chỗ dựa chính là phép đối chiếu với câu của người chú thích:
-53,5% so với 7,6% ở đối chứng khó.
-
-Phần huấn luyện mô hình trên bộ ngữ liệu này nằm ở bài đồng hành của nhóm.
+Phần dạy mô hình bằng bộ dữ liệu này nằm ở bài đồng hành của nhóm.
 
 ---
 
-## Slide 17 · Cảm ơn (~10 giây)
+## Slide 16 · Cảm ơn (~10 giây)
 
-**Trên slide:** "Cảm ơn quý thầy cô và các bạn đã lắng nghe" · email liên hệ.
+**Trên slide:** "Cảm ơn quý thầy cô và các bạn đã lắng nghe" · email.
 
 **Lời nói:**
-Phần trình bày của tôi đến đây là hết. Cảm ơn quý thầy cô và các bạn đã lắng nghe, tôi rất mong nhận
-được câu hỏi và góp ý.
+Phần trình bày của tôi đến đây là hết. Cảm ơn quý thầy cô và các bạn đã lắng nghe, tôi rất mong nhận được câu hỏi
+và góp ý.
 
 ---
 ---
@@ -545,9 +518,14 @@ chỉ tham gia ở khâu kiểm. Khi thấy sai thì sửa quy tắc và dựng 
 
 ## Slide dự phòng nên có (agent dựng sau slide Cảm ơn)
 
-1. Truy nguyên tỉ số 3,2 lần (cho câu B2): 72 nhãn → bỏ 32 trùng mục tiêu → 40 nhãn: 12 OCR / 3 cây / 25 không bên nào; 11/12 do nhãn trợ năng rác.
-2. Bảng sáu chỉ số mẫu thử vs toàn bộ (cho câu C4).
-3. Bốn nhãn thật đặt cạnh câu người chú thích (Bảng 2 của bài): Search here/Coffee · Leaf · Q trùng tên · Right arrow.
-4. Bảng phân bố dấu hiệu đầy đủ theo tầng (Bảng 3 của bài, đủ bốn cột).
-5. Một bản ghi GUIRefCorpus mẫu (cho câu D3).
-6. Chuỗi mục tiêu bị cắt: ví dụ "...look for Calvin Kle", 99,4% không có dấu câu cuối, ít nhất 71,3% cắt giữa từ.
+1. Hai bản phát hành và phần thiếu của mỗi bản (bảng HarrytheOrange/ckg), ghép theo (episode_id, step_id); 48,3% [43,4; 53,1] trên 400 bước vs 19,6% [15,6; 24,4] trên 311 bước. Cho câu hỏi về cách ghép.
+2. Hai bộ lọc: bộ lọc nhãn trợ năng (loại 14,7% trên mẫu thử 1.074 nhãn; 3,9% ứng viên trên toàn bộ) · bộ lọc hình học (hộp < 25% màn; 2,2% số bước; ví dụ hộp 95% màn "THEFELLOWSHIPOF THE RING").
+3. Truy nguyên tỉ số 3,2 lần: 72 nhãn → bỏ 32 trùng mục tiêu → 40 nhãn: 12 OCR / 3 cây / 25 không bên nào; 11/12 do nhãn trợ năng rác. Cho câu B2.
+4. Bảng sáu chỉ số mẫu thử vs toàn bộ. Cho câu C4.
+5. Bốn nhãn thật đặt cạnh câu của người chú thích (Search here/Coffee · Leaf · Q trùng tên · Right arrow).
+6. Bảng dấu hiệu phân biệt đầy đủ theo tầng tên (bốn cột: mỏ neo chữ, duy nhất, nêu trùng tên, chỉ đếm).
+7. Vị trí so với các công trình liên quan: Dale & Reiter 1995, Dale & Haddock 1991, Mao 2016, Luo 2017, Yu 2017 (ảnh tự nhiên) · Widget Captioning (nhãn do người viết, một widget tách rời) · AndroidControl (câu chỉ dẫn là đầu vào; ở đây là đầu ra).
+8. Quy mô chi tiết: 64.567 / 6.958 bước, 41.191 / 4.463 bước chạm, 12.895 / 1.432 tác vụ; ba điều cách chia không bảo đảm (cách diễn đạt lặp lại; 95,6% ứng dụng có ở tập huấn luyện; 55% số bước không gán được ứng dụng).
+9. Một bản ghi GUIRefCorpus có gì. Cho câu D3.
+10. Người và máy chọn cùng chiến lược: 32,5% câu người viết có từ chỉ vị trí · 67,2% dấu hiệu máy tạo là mốc chữ bên cạnh · 55,6% số bước có nút cạnh tranh trong khoảng 80 đến 350 px · 91,6% có nút cùng vai trò (trung vị 8).
+11. Chuỗi mục tiêu bị cắt từ nguồn ("...look for Calvin Kle", 99,4% không có dấu câu cuối, ít nhất 71,3% cắt giữa từ).

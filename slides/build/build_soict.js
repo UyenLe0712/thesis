@@ -278,7 +278,7 @@ slide();
 bar("Ablation: where the gain comes from");
 {
   const rows = [["D − S", -1.9, -3.0, -0.7, "−1.9 [−3.0, −0.7]  p = 0.003", RED],
-    ["P − S", 1.05, -0.11, 2.20, "+1.05 [−0.11, +2.20]  p = 0.073 (n.s.)", GREY],
+    ["P − S", 1.05, -0.11, 2.20, "+1.05 [−0.11, +2.20]  p = 0.073, not significant", GREY],
     ["P − control", 0.52, 0.02, 1.00, "+0.52 [+0.02, +1.00]  p = 0.043", TEAL]];
   const ax = 2.9, aw = 5.4, vmin = -3.5, vmax = 2.5, y0 = 1.45, rh = 1.05;
   const X = v => ax + aw * (v - vmin) / (vmax - vmin);
@@ -377,7 +377,7 @@ bar("Backup · Validation of the listener (Table 3)");
   const R = (a, b, c, d, e, fail) => ({ cells: [{ t: a, bold: fail }, b, c, d, { t: e, bold: fail, color: fail ? RED : TEAL }], h: 0.43 });
   table(M, 1.1, [5.4, 2.0, 1.45, 1.45, 1.83], [
     { cells: ["check", "threshold", "D.3", "Voronoi", "D.3 verdict"], bold: true, color: WHITE, fill: NAVY, h: 0.48, fs: 15 },
-    { cells: ["median localisation error of the listener", "≤ 3% of width", { t: "0.7% (n = 300)", align: "center" }, "", { t: "pass", color: TEAL }], h: 0.43 },
+    { cells: ["median localisation error of the listener", "≤ 3% of width", "0.7%", "0.7%", { t: "pass", color: TEAL }], h: 0.43 },
     R("false rejection of paraphrases", "≤ 10%", "6.5%", "0.0%", "pass"),
     R("false rejection under the action check", "≤ 15%", "0.0%", "0.0%", "pass"),
     R("false rejection by the polarity check", "≤ 5%", "0.0%", "0.0%", "pass"),
@@ -389,7 +389,7 @@ bar("Backup · Validation of the listener (Table 3)");
     R("catching a distant element (≥ 25% of width)", "≥ 95%", "94.5%", "100.0%", "fail", true),
     Object.assign(R("catching negation absent from the table", "≥ 50%", "20.0%", "20.0%", "fail", true), { rule: false }),
   ], { fs: 15, align: ["left", "left", "right", "right", "center"] });
-  text("Thresholds fixed before either run; same 398 steps and seed.", { x: M, y: 6.45, w: W - 2 * M, h: 0.4, fontSize: 15, italic: true, color: GREY, align: "center" });
+  text("Thresholds fixed before either run; same 398 steps and seed. Listener error measured once (n = 300).", { x: M, y: 6.45, w: W - 2 * M, h: 0.4, fontSize: 15, italic: true, color: GREY, align: "center" });
 }
 note(QA("A3")); footB();
 

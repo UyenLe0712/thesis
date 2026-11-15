@@ -1,8 +1,9 @@
-// Deck VCL 2026 (bản 15/11) theo slides/KICH_BAN_VCL_15_11.md.
-// 17 slide chính + 6 slide dự phòng. Khổ 16:9, style kế thừa build_vcl.js:
+// Deck VCL 2026 (bản 15/11, viết lại cho dễ hiểu) theo slides/KICH_BAN_VCL_15_11.md.
+// 16 slide chính (bốn phần) + 11 slide dự phòng. Khổ 16:9, style kế thừa build_vcl.js:
 // thanh tiêu đề chàm, khối xám bo góc, chữ serif Cambria.
-// Chữ trên slide lấy từ mục "Trên slide" của kịch bản; lời nói lấy NGUYÊN từ mục "Lời nói"
-// (đọc thẳng tệp kịch bản lúc dựng, không chép tay). Slide dự phòng lấy số từ paper/vcl2026/main.tex.
+// Tiêu đề slide chính và lời nói đọc thẳng từ tệp kịch bản lúc dựng (không chép tay).
+// Chữ trên slide theo mục "Trên slide". Slide dự phòng theo danh sách cuối kịch bản,
+// số lấy từ kịch bản và paper/vcl2026/main.tex.
 // Xuất: ../VCL2026_SLIDE_15_11.pptx
 const pptxgen = require("pptxgenjs");
 const fs = require("fs");
@@ -11,6 +12,7 @@ const path = require("path");
 const ROOT = path.join(__dirname, "..", "..");
 const KB = fs.readFileSync(path.join(__dirname, "..", "KICH_BAN_VCL_15_11.md"), "utf8");
 const FIG_MONEO = path.join(ROOT, "paper", "vcl2026", "hinh", "fig_moneo.png");
+const MONEO_R = 690 / 2096;
 
 const pres = new pptxgen();
 pres.layout = "LAYOUT_WIDE"; // 13.333 x 7.5
@@ -19,22 +21,23 @@ pres.title = "VCL 2026 - Ngữ liệu quy chiếu cho phần tử giao diện";
 
 const TF = "Cambria", MONO = "Consolas";
 const NAVY = "322164", INK = "1A1A1A", BLOCK = "ECEBF0", TEAL = "006666", RED = "B22222";
-const GREY = "5A5A66", WHITE = "FFFFFF", LIGHT = "B9B3CC", AMBER = "C77700";
-const FOOTA = "191132", FOOTB = "25194B", FOOTC = "4F417A";
+const GREY = "5A5A66", WHITE = "FFFFFF", LIGHT = "B9B3CC", AMBER = "C77700", SOFT = "A3A3AD";
+const MINT = "E6F0EF", FOOTA = "191132", FOOTB = "25194B", FOOTC = "4F417A";
 const W = 13.333, H = 7.5, M = 0.6;
 
-// ---------- lời nói từ kịch bản ----------
+// ---------- tiêu đề + lời nói từ kịch bản ----------
 function clean(t) {
-  return t.replace(/\*\*/g, "").replace(/`/g, "")
+  return t.replace(/\*/g, "").replace(/`/g, "")
     .split(/\n\s*\n/).map(p => p.replace(/\s*\n\s*/g, " ").trim()).filter(Boolean).join("\n\n");
 }
-const SAY = {};
+const SAY = {}, TITLE = {};
 KB.split(/\n## Slide /).slice(1).forEach(sec => {
   const n = parseInt(sec, 10);
+  const t = sec.match(/^\d+ · (.*?) \(~/);
+  if (t) TITLE[n] = t[1].trim();
   const m = sec.match(/\*\*Lời nói:\*\*\n([\s\S]*?)(?:\n---|$)/);
   if (m) SAY[n] = clean(m[1]);
 });
-// câu trả lời hỏi đáp, dùng làm ghi chú cho slide dự phòng
 function QA(code) {
   const re = new RegExp("\\*\\*" + code + "[ ⭐]*\\.\\s*([^\\n]*?)\\*\\*\\n([\\s\\S]*?)(?=\\n\\n)");
   const m = KB.match(re);
@@ -44,7 +47,7 @@ function QA(code) {
 
 // ---------- hạ tầng ----------
 let s, PAGE = 0, BPAGE = 0;
-const TOTAL = 17;
+const TOTAL = 16;
 function slide() { s = pres.addSlide(); s.background = { color: WHITE }; }
 function text(content, o) {
   const opt = Object.assign({ x: 0, y: 0, w: 4, h: 1, fontSize: 18, color: INK, fontFace: TF, align: "left", valign: "top", margin: 0 }, o);
@@ -53,16 +56,22 @@ function text(content, o) {
 }
 function rect(x, y, w, h, fill, o) {
   o = o || {};
-  const p = { x, y, w, h, fill: fill === "none" ? { type: "none" } : { color: fill }, line: o.line ? { color: o.line, width: o.lw || 1, dashType: o.dash || "solid" } : { type: "none" } };
+  const p = { x, y, w, h, fill: fill === "none" ? { type: "none" } : { color: fill }, line: o.line ? { color: o.line, width: o.lw || 1 } : { type: "none" } };
   if (o.radius) p.rectRadius = o.radius;
-  s.addShape(o.radius ? pres.shapes.ROUNDED_RECTANGLE : pres.shapes.RECTANGLE, p);
+  s.addShape(o.shape || (o.radius ? pres.shapes.ROUNDED_RECTANGLE : pres.shapes.RECTANGLE), p);
 }
-function block(x, y, w, h, fill) { rect(x, y, w, h, fill || BLOCK, { radius: 0.08 }); }
+function block(x, y, w, h, fill, line) { rect(x, y, w, h, fill || BLOCK, { radius: 0.08, line }); }
 function hline(x, y, w, c, lw) { s.addShape(pres.shapes.LINE, { x, y, w, h: 0, line: { color: c || LIGHT, width: lw || 1 } }); }
-function arrowR(x, y, w, c) { s.addShape(pres.shapes.LINE, { x, y, w, h: 0, line: { color: c || NAVY, width: 2.5, endArrowType: "triangle" } }); }
+function arrow(x1, y1, x2, y2, c) {
+  const o = { x: Math.min(x1, x2), y: Math.min(y1, y2), w: Math.abs(x2 - x1), h: Math.abs(y2 - y1), line: { color: c || NAVY, width: 2.5, endArrowType: "triangle" } };
+  if (x2 < x1) o.flipH = true;
+  if (y2 < y1) o.flipV = true;
+  s.addShape(pres.shapes.LINE, o);
+}
 function bar(t) {
-  rect(0, 0, W, 0.9, NAVY);
-  text(t, { x: M, y: 0, w: W - 2 * M, h: 0.9, fontSize: 26, bold: true, color: WHITE, valign: "middle" });
+  rect(0, 0, W, 0.95, NAVY);
+  const fs = t.length > 62 ? 21 : t.length > 52 ? 23 : 26;
+  text(t, { x: M, y: 0, w: W - 2 * M, h: 0.95, fontSize: fs, bold: true, color: WHITE, valign: "middle" });
 }
 function footRow(label) {
   const yy = H - 0.32, hh = 0.32;
@@ -74,22 +83,22 @@ function footRow(label) {
 }
 function foot() { PAGE++; footRow(`${PAGE}/${TOTAL}`); }
 function footB() { BPAGE++; footRow(`B${BPAGE}`); }
-function note(t) { s.addNotes(t); }
-// bảng tự vẽ
+function note(t) { if (t) s.addNotes(t); }
+function moneo(x, y, w) { s.addImage({ path: FIG_MONEO, x, y, w, h: w * MONEO_R }); }
 function table(x, y, colW, rows, o) {
   o = o || {};
   const totalW = colW.reduce((a, b) => a + b, 0);
   let yy = y;
-  rows.forEach((r, ri) => {
+  rows.forEach(r => {
     const h = r.h || o.rowH || 0.5;
     if (r.fill) rect(x, yy, totalW, h, r.fill);
     let xx = x;
     r.cells.forEach((c, ci) => {
       const cell = (typeof c === "string" || Array.isArray(c)) ? { t: c } : c;
-      text(cell.t, { x: xx + 0.08, y: yy, w: colW[ci] - 0.16, h, fontSize: cell.fs || r.fs || o.fs || 17,
+      text(cell.t, { x: xx + 0.1, y: yy, w: colW[ci] - 0.2, h, fontSize: cell.fs || r.fs || o.fs || 17,
         bold: cell.bold != null ? cell.bold : r.bold, color: cell.color || r.color || INK,
         fontFace: cell.mono ? MONO : TF, italic: cell.italic,
-        align: cell.align || (o.align && o.align[ci]) || "left", valign: "middle" });
+        align: cell.align || (o.align && o.align[ci]) || "left", valign: "middle", lh: cell.lh || 1.0 });
       xx += colW[ci];
     });
     if (r.rule !== false) hline(x, yy + h, totalW, r.ruleC || LIGHT, r.ruleW || 1);
@@ -97,7 +106,7 @@ function table(x, y, colW, rows, o) {
   });
   return yy;
 }
-// cột dọc tự vẽ: items [{label, v, txt, color}], trục 0..vmax
+// cột dọc: items [{label, v, txt, color}]
 function vbars(x, y, w, h, items, vmax, o) {
   o = o || {};
   const n = items.length, slot = w / n, bw = slot * (o.bw || 0.5);
@@ -105,9 +114,40 @@ function vbars(x, y, w, h, items, vmax, o) {
   items.forEach((it, i) => {
     const bh = h * it.v / vmax, bx = x + i * slot + (slot - bw) / 2;
     rect(bx, y + h - bh, bw, bh, it.color || NAVY);
-    text(it.txt, { x: bx - 0.4, y: y + h - bh - 0.6, w: bw + 0.8, h: 0.55, fontSize: o.vfs || 26, bold: true, color: it.color || NAVY, align: "center", valign: "bottom" });
-    text(it.label, { x: x + i * slot + 0.05, y: y + h + 0.1, w: slot - 0.1, h: o.lh || 0.9, fontSize: o.lfs || 15, color: INK, align: "center", lh: 1.05 });
+    text(it.txt, { x: bx - 0.5, y: y + h - bh - 0.75, w: bw + 1.0, h: 0.7, fontSize: o.vfs || 30, bold: true, color: it.color || NAVY, align: "center", valign: "bottom" });
+    text(it.label, { x: x + i * slot + 0.05, y: y + h + 0.12, w: slot - 0.1, h: o.lh || 1.0, fontSize: o.lfs || 16, color: INK, align: "center", lh: 1.05 });
   });
+}
+
+// ---------- thanh tiến độ + sơ đồ bốn bước thu nhỏ ----------
+const PARTS = ["Bài toán", "Tạo nhãn", "Kiểm tra", "Kết luận"];
+function main(n, title, part) {
+  slide();
+  rect(0, 0, W, 0.95, NAVY);
+  text(title, { x: M, y: 0, w: 8.6, h: 0.95, fontSize: 24, bold: true, color: WHITE, valign: "middle" });
+  const runs = [];
+  PARTS.forEach((p, i) => {
+    if (i) runs.push({ text: "  ·  ", options: { color: "7A7099" } });
+    runs.push({ text: p, options: i === part ? { bold: true, color: WHITE } : { color: "8F87AD" } });
+  });
+  text(runs, { x: 9.2, y: 0, w: W - 9.2 - 0.25, h: 0.95, fontSize: 13, align: "right", valign: "middle" });
+  NOTE_N = n;
+}
+let NOTE_N = 0;
+const STEPS = ["① Ghép dữ liệu", "② Tìm nút được bấm", "③ Lấy tên nút", "④ Tìm dấu hiệu phân biệt"];
+function miniSteps(active) {
+  const y = 1.1, h = 0.5, gap = 0.3, w = (W - 2 * M - 3 * gap) / 4;
+  STEPS.forEach((t, i) => {
+    const x = M + i * (w + gap), on = active.includes(i + 1);
+    rect(x, y, w, h, on ? TEAL : "F2F1F5", { radius: 0.06, line: on ? TEAL : "D5D2DE" });
+    text(t, { x, y, w, h, fontSize: 14, bold: on, color: on ? WHITE : "8C8899", align: "center", valign: "middle" });
+    if (i < 3) arrow(x + w + 0.03, y + h / 2, x + w + gap - 0.03, y + h / 2, on || active.includes(i + 2) ? TEAL : "C9C5D4");
+  });
+}
+// số lớn + chú thích
+function bigNum(v, cap, x, y, w, color, fs) {
+  text(v, { x, y, w, h: 1.25, fontSize: fs || 66, bold: true, color: color || TEAL, align: "center", valign: "middle" });
+  text(cap, { x, y: y + 1.25, w, h: 0.9, fontSize: 18, color: INK, align: "center", valign: "top", lh: 1.05 });
 }
 
 // ══════════ 1 · BÌA ══════════
@@ -115,280 +155,269 @@ slide();
 rect(0, 0, W, 0.75, NAVY);
 text("Hội thảo quốc gia về Ngôn ngữ học tính toán · VCL 2026", { x: 0, y: 0, w: W, h: 0.75, fontSize: 18, bold: true, color: WHITE, align: "center", valign: "middle" });
 rect(0.9, 1.25, W - 1.8, 2.75, NAVY, { radius: 0.1 });
-text("Sinh hướng dẫn sử dụng phần mềm từ ảnh chụp màn hình và mục tiêu người dùng", { x: 1.2, y: 1.45, w: W - 2.4, h: 1.15, fontSize: 30, bold: true, color: WHITE, align: "center", valign: "middle", lh: 1.05 });
-text("Xây dựng ngữ liệu quy chiếu tự động\nkhi phần tử giao diện không có tên cụ thể", { x: 1.2, y: 2.65, w: W - 2.4, h: 1.15, fontSize: 24, color: WHITE, align: "center", valign: "middle", lh: 1.1 });
+text("Sinh hướng dẫn sử dụng phần mềm từ ảnh chụp màn hình và mục tiêu người dùng:\nxây dựng ngữ liệu quy chiếu tự động\nkhi phần tử giao diện không có tên cụ thể",
+  { x: 1.2, y: 1.4, w: W - 2.4, h: 2.45, fontSize: 26, bold: true, color: WHITE, align: "center", valign: "middle", lh: 1.15 });
 text("Lê Đoàn Phương Uyên & Nguyễn Hồng Bửu Long", { x: 0.9, y: 4.45, w: W - 1.8, h: 0.5, fontSize: 24, bold: true, align: "center" });
 text("Khoa Công nghệ Thông tin, Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM", { x: 0.9, y: 5.05, w: W - 1.8, h: 0.45, fontSize: 19, color: GREY, align: "center" });
 text("VCL 2026 · HUFLIT · 27/11/2026", { x: 0.9, y: 5.75, w: W - 1.8, h: 0.5, fontSize: 20, bold: true, color: TEAL, align: "center" });
 note(SAY[1]); foot();
 
-// ══════════ 2 · BÀI TOÁN QUA MỘT VÍ DỤ ══════════
-slide();
-bar("Bài toán: từ ảnh màn hình tới một câu cho người đọc");
-// ảnh mỏ neo, tỉ lệ 2096x690
-{ const iw = 6.6, ih = iw * 690 / 2096; s.addImage({ path: FIG_MONEO, x: M, y: 2.35, w: iw, h: ih }); }
-block(7.45, 1.5, 5.3, 1.65);
-text("Đầu vào", { x: 7.75, y: 1.65, w: 4.8, h: 0.45, fontSize: 20, bold: true, color: TEAL });
-text("ảnh màn hình + mục tiêu của người dùng", { x: 7.75, y: 2.15, w: 4.8, h: 0.8, fontSize: 20 });
-block(7.45, 3.45, 5.3, 2.05);
-text("Đầu ra: một câu", { x: 7.75, y: 3.6, w: 4.8, h: 0.45, fontSize: 20, bold: true, color: RED });
-text("“Chạm vào biểu tượng bút chì ở góc trên bên phải của ghi chú”", { x: 7.75, y: 4.1, w: 4.8, h: 1.25, fontSize: 20, italic: true, lh: 1.05 });
-hline(M, 6.1, W - 2 * M, LIGHT, 1);
-text([{ text: "Tác tử giao diện: ", options: { bold: true, color: GREY } }, { text: "câu → toạ độ.      ", options: { color: GREY } },
-      { text: "Bài này: ", options: { bold: true, color: NAVY } }, { text: "ảnh + mục tiêu → câu cho người đọc.", options: { color: NAVY } }],
-  { x: M, y: 6.25, w: W - 2 * M, h: 0.6, fontSize: 18, align: "center", valign: "middle" });
+// ══════════ 2 · MỤC TIÊU ══════════
+main(2, "Mục tiêu: máy viết câu chỉ chỗ cần bấm", 0);
+s.addShape(pres.shapes.ROUNDED_RECTANGULAR_CALLOUT, { x: M, y: 1.5, w: 5.9, h: 1.45, fill: { color: BLOCK }, line: { color: SOFT, width: 1 } });
+text("“Con ơi, muốn gửi thư thì bấm vào đâu?”", { x: M + 0.3, y: 1.5, w: 5.3, h: 1.45, fontSize: 22, italic: true, valign: "middle" });
+s.addShape(pres.shapes.ROUNDED_RECTANGULAR_CALLOUT, { x: M + 0.6, y: 3.85, w: 5.9, h: 1.45, fill: { color: MINT }, line: { color: TEAL, width: 1 }, flipH: true });
+text("“Mẹ bấm vào cái biểu tượng ngay trên chữ Gmail.”", { x: M + 0.9, y: 3.85, w: 5.3, h: 1.45, fontSize: 22, italic: true, color: TEAL, valign: "middle" });
+{
+  const bx = 8.0, bw = 4.73;
+  block(bx, 1.3, bw, 1.25);
+  text("ảnh màn hình\n+ việc người dùng muốn làm", { x: bx + 0.2, y: 1.3, w: bw - 0.4, h: 1.25, fontSize: 20, align: "center", valign: "middle", lh: 1.05 });
+  arrow(bx + bw / 2, 2.6, bx + bw / 2, 3.15);
+  rect(bx, 3.2, bw, 1.1, NAVY, { radius: 0.08 });
+  text("mô hình", { x: bx, y: 3.2, w: bw, h: 1.1, fontSize: 24, bold: true, color: WHITE, align: "center", valign: "middle" });
+  arrow(bx + bw / 2, 4.35, bx + bw / 2, 4.9);
+  block(bx, 4.95, bw, 1.1, MINT, TEAL);
+  text("một câu hướng dẫn", { x: bx, y: 4.95, w: bw, h: 1.1, fontSize: 22, bold: true, color: TEAL, align: "center", valign: "middle" });
+}
 note(SAY[2]); foot();
 
-// ══════════ 3 · PHẦN TỬ KHÔNG CÓ TÊN ══════════
-slide();
-bar("Phần tử giao diện thường không có tên");
-[["12,6%", "phần tử có nhãn văn bản", "đo trên 120 màn ngẫu nhiên;\n22/120 màn không có phần tử nào có tên", TEAL],
- ["22,0%", "phần tử cần chạm\nkhông có tên", "", RED],
- ["7,6%", "phần tử cần chạm trùng tên\nvới phần tử khác", "", RED]].forEach((c, i) => {
-  const x = M + i * 4.1;
-  block(x, 1.4, 3.85, 3.6);
-  text(c[0], { x, y: 1.6, w: 3.85, h: 1.2, fontSize: 54, bold: true, color: c[3], align: "center", valign: "middle" });
-  text(c[1], { x: x + 0.2, y: 2.9, w: 3.45, h: 0.9, fontSize: 20, bold: true, color: NAVY, align: "center", lh: 1.05 });
-  if (c[2]) text(c[2], { x: x + 0.2, y: 3.95, w: 3.45, h: 0.9, fontSize: 14, italic: true, color: GREY, align: "center", lh: 1.05 });
-});
-rect(M, 5.45, W - 2 * M, 0.95, NAVY, { radius: 0.08 });
-text("Gộp lại: 29,6% số bước, gần một phần ba.", { x: M, y: 5.45, w: W - 2 * M, h: 0.95, fontSize: 26, bold: true, color: WHITE, align: "center", valign: "middle" });
+// ══════════ 3 · NÚT KHÔNG CÓ TÊN ══════════
+main(3, "Cái khó: nhiều nút không có tên", 0);
+moneo(M, 1.65, 7.7);
+text("Với máy, cả bốn biểu tượng này đều không có tên.", { x: M, y: 4.35, w: 7.7, h: 0.5, fontSize: 18, color: GREY, align: "center" });
+bigNum("22%", "nút cần bấm không có tên", 8.7, 1.75, 4.03, RED, 84);
+hline(M, 5.6, W - 2 * M, LIGHT, 1);
+text("Thêm 7,6% nút trùng tên với nút khác ⇒ gần 1/3 số bước không gọi đúng tên được.", { x: M, y: 5.7, w: W - 2 * M, h: 0.55, fontSize: 16, italic: true, color: GREY, align: "center", valign: "middle" });
 note(SAY[3]); foot();
 
-// ══════════ 4 · VÌ SAO PHẢI CÓ DỮ LIỆU RIÊNG ══════════
-slide();
-bar("Miền giao diện cần dữ liệu riêng");
-block(M, 1.35, 5.85, 2.75); block(6.88, 1.35, 5.85, 2.75, "E6F0EF");
-text("Sinh biểu thức quy chiếu", { x: M + 0.3, y: 1.5, w: 5.3, h: 0.5, fontSize: 21, bold: true, color: NAVY });
-text("Mao 2016 · Luo 2017 · Yu 2017", { x: M + 0.3, y: 2.0, w: 5.3, h: 0.4, fontSize: 15, italic: true, color: GREY });
-text("Ảnh tự nhiên, đối tượng có danh từ.\nQuan hệ chỉ là phương án bổ sung.", { x: M + 0.3, y: 2.55, w: 5.3, h: 1.3, fontSize: 19, lh: 1.15 });
-text("Miền giao diện", { x: 7.18, y: 1.5, w: 5.3, h: 0.5, fontSize: 21, bold: true, color: TEAL });
-text("22% không có tên.\nQuan hệ với chữ lân cận thành phương tiện chính.", { x: 7.18, y: 2.55, w: 5.3, h: 1.3, fontSize: 19, lh: 1.15 });
-table(M, 4.45, [3.6, 8.53], [
-  { cells: [{ t: "Widget Captioning", bold: true }, "nhãn do người viết, mô tả một widget tách rời"], h: 0.55 },
-  { cells: [{ t: "AndroidControl", bold: true }, "câu chỉ dẫn là đầu vào"], h: 0.55 },
-  { cells: [{ t: "Bài này", bold: true, color: RED }, { t: "câu chỉ dẫn là đầu ra", bold: true, color: RED }], h: 0.55, rule: false },
-], { fs: 18 });
+// ══════════ 4 · CHỈ QUA VẬT BÊN CẠNH ══════════
+main(4, "Không có tên thì chỉ qua vật bên cạnh", 0);
+[["Ảnh đời thường", "“con mèo đen bên trái”", "vật nào cũng có tên", NAVY, BLOCK],
+ ["Màn hình điện thoại", "“biểu tượng ngay trên chữ Gmail”", "phải chỉ qua vật bên cạnh", TEAL, MINT]].forEach((c, i) => {
+  const x = M + i * 6.2;
+  block(x, 1.3, 5.9, 2.2, c[4]);
+  text(c[0], { x: x + 0.3, y: 1.4, w: 5.3, h: 0.5, fontSize: 20, bold: true, color: c[3], align: "center" });
+  text(c[1], { x: x + 0.3, y: 1.95, w: 5.3, h: 0.75, fontSize: 23, italic: true, align: "center", valign: "middle" });
+  text(c[2], { x: x + 0.3, y: 2.8, w: 5.3, h: 0.5, fontSize: 17, color: GREY, align: "center" });
+});
+text("1/3", { x: M, y: 3.75, w: 2.4, h: 1.2, fontSize: 64, bold: true, color: TEAL, align: "center", valign: "middle" });
+text("câu do người viết dùng từ chỉ vị trí\n(“trên”, “dưới”, “góc phải”…)", { x: M + 2.6, y: 3.75, w: 9.5, h: 1.2, fontSize: 21, valign: "middle", lh: 1.1 });
+rect(M, 5.3, W - 2 * M, 0.85, NAVY, { radius: 0.08 });
+text([{ text: "Biểu thức quy chiếu: ", options: { bold: true } }, { text: "câu giúp người nghe nhận ra đúng một vật giữa nhiều vật giống nhau.", options: {} }],
+  { x: M + 0.3, y: 5.3, w: W - 2 * M - 0.6, h: 0.85, fontSize: 19, color: WHITE, align: "center", valign: "middle" });
+text("Dale & Reiter, 1995", { x: W - M - 3, y: 6.2, w: 3, h: 0.35, fontSize: 12, italic: true, color: GREY, align: "right" });
 note(SAY[4]); foot();
 
-// ══════════ 5 · GHÉP HAI BẢN PHÁT HÀNH ══════════
-slide();
-bar("Ghép hai bản phát hành, và cách kiểm ghép đúng");
-table(M, 1.45, [3.75, 2.55, 1.75], [
-  { cells: ["bản phát hành", "có", "thiếu"], bold: true, color: WHITE, fill: NAVY, h: 0.5 },
-  { cells: [{ t: "HarrytheOrange/\nparsed_AndroidControl", mono: true, fs: 14 }, "câu chỉ dẫn, cây trợ năng", "ảnh"], h: 1.0 },
-  { cells: [{ t: "ckg/AndroidControl\nParsedWithImages-20k", mono: true, fs: 14 }, "ảnh", "câu chỉ dẫn theo bước"], h: 1.0 },
-], { fs: 16 });
-block(M, 4.35, 8.05, 0.8);
-text([{ text: "ghép theo ", options: {} }, { text: "(episode_id, step_id)", options: { fontFace: MONO, bold: true, color: NAVY } }], { x: M, y: 4.35, w: 8.05, h: 0.8, fontSize: 19, align: "center", valign: "middle" });
-vbars(9.2, 1.9, 3.5, 3.3, [
-  { label: "ghép đúng", v: 48.3, txt: "48,3%", color: TEAL },
-  { label: "cố ý ghép lệch", v: 19.6, txt: "19,6%", color: "9A94AE" },
-], 55, { bw: 0.6, lfs: 16, vfs: 28 });
+// ══════════ 5 · CẦN DỮ LIỆU ══════════
+main(5, "Cần dữ liệu để dạy máy, nên bài này tạo nó", 0);
+block(M, 1.3, W - 2 * M, 1.85);
+text([{ text: "AndroidControl ", options: { bold: true, color: NAVY } }, { text: "(Google, 2024): 15.283 lượt người thật thao tác; có ảnh, chỗ bấm, câu người viết.", options: {} }],
+  { x: M + 0.35, y: 1.42, w: W - 2 * M - 0.7, h: 0.75, fontSize: 18.5, valign: "middle" });
+text([{ text: "Thiếu: ", options: { bold: true, color: RED } }, { text: "nút được bấm tên gì, khác các nút giống nó ở đâu.", options: {} }],
+  { x: M + 0.35, y: 2.2, w: W - 2 * M - 0.7, h: 0.75, fontSize: 20, valign: "middle" });
+text("Dàn ý", { x: M, y: 3.5, w: 4, h: 0.5, fontSize: 21, bold: true, color: TEAL });
+rect(M, 4.0, W - 2 * M, 2.35, "none", { line: TEAL, lw: 1.5 });
+[["1", "Tạo nhãn", "nhãn trông thế nào, điền tự động ra sao"], ["2", "Kiểm tra", "làm sao biết nhãn đúng"], ["3", "Kết luận", "còn thiếu gì"]].forEach((c, i) => {
+  const yy = 4.15 + i * 0.7;
+  text([{ text: c[0] + ".  ", options: { bold: true, color: TEAL } }, { text: c[1], options: { bold: true, color: NAVY } }, { text: ": " + c[2], options: {} }],
+    { x: M + 0.4, y: yy, w: W - 2 * M - 0.8, h: 0.65, fontSize: 20, valign: "middle" });
+});
 note(SAY[5]); foot();
 
-// ══════════ 6 · OCR ══════════
-slide();
-bar("Cây trợ năng không đủ, nên phải đọc chữ bằng OCR");
-const t6 = [
-  ["86", "phần tử trên một màn (trung vị),\nchỉ 12,6% có tên"],
-  ["100%", "ảnh qua OCR (RapidOCR, CPU):\n64.567 bản ghi huấn luyện, 6.958 kiểm tra"],
-  ["1 : 2,7", "tên lấy được: 8.581 từ cây trợ năng,\n23.480 từ OCR"],
-];
-t6.forEach((c, i) => {
-  const x = M + i * 4.1;
-  block(x, 1.4, 3.85, 3.4);
-  text(c[0], { x, y: 1.6, w: 3.85, h: 1.2, fontSize: 50, bold: true, color: i === 2 ? TEAL : NAVY, align: "center", valign: "middle" });
-  text(c[1], { x: x + 0.2, y: 3.0, w: 3.45, h: 1.5, fontSize: 17, align: "center", lh: 1.1 });
-});
-rect(M, 5.3, W - 2 * M, 1.0, TEAL, { radius: 0.08 });
-text("Nguyên tắc: để trống còn hơn ghi sai", { x: M, y: 5.3, w: W - 2 * M, h: 1.0, fontSize: 26, bold: true, color: WHITE, align: "center", valign: "middle" });
+// ══════════ 6 · NHÃN BỐN Ô ══════════
+main(6, "Mỗi bước cần một nhãn bốn ô", 1);
+moneo(M, 2.85, 4.0);
+text("nút cần bấm: biểu tượng Gmail", { x: M, y: 4.25, w: 4.0, h: 0.45, fontSize: 14, italic: true, color: GREY, align: "center" });
+table(4.95, 1.35, [2.05, 2.7, 3.03], [
+  { cells: ["ô", "ví dụ trên màn Gmail", "nghĩa"], bold: true, color: WHITE, fill: NAVY, h: 0.65 },
+  { cells: [{ t: "loại", bold: true }, { t: "icon", mono: true }, "nút, ô nhập hay biểu tượng"], h: 0.95 },
+  { cells: [{ t: "tên", bold: true }, "(không có tên)", "chữ hiển thị trên nút"], h: 0.95 },
+  { cells: [{ t: "vị trí", bold: true }, { t: "111, 903", mono: true }, "chỗ bấm, thang 0 đến 1.000"], h: 0.95 },
+  { cells: [{ t: "dấu hiệu phân biệt", bold: true, color: WHITE }, { t: "ngay trên chữ “Gmail”", bold: true, color: WHITE }, { t: "khác các nút giống nó ở đâu", bold: true, color: WHITE }], h: 1.15, fill: TEAL, rule: false },
+], { fs: 18 });
 note(SAY[6]); foot();
 
-// ══════════ 7 · NHÃN BỐN Ô ══════════
-slide();
-bar("Nhãn bốn ô");
-["vai trò", "tên", "toạ độ", "dấu hiệu phân biệt"].forEach((t, i) => {
-  const ws = [2.4, 2.4, 2.4, 4.3], xs = [M, M + 2.55, M + 5.1, M + 7.65];
-  rect(xs[i], 1.55, ws[i], 1.3, i === 3 ? TEAL : NAVY, { radius: 0.08 });
-  text(t, { x: xs[i], y: 1.55, w: ws[i], h: 1.3, fontSize: 26, bold: true, color: WHITE, align: "center", valign: "middle" });
-});
-block(M, 3.4, W - 2 * M, 1.4);
-text("<desc>tappable text | Search here | <point>440,91</point> | just above the text \"Coffee\"</desc>",
-  { x: M + 0.3, y: 3.4, w: W - 2 * M - 0.6, h: 1.4, fontSize: 19, fontFace: MONO, color: NAVY, align: "center", valign: "middle" });
-text("Chỉ dựng cho bước chạm.\nPhần tử cần chạm = hộp bao nhỏ nhất chứa điểm chạm.", { x: M, y: 5.2, w: W - 2 * M, h: 1.1, fontSize: 19, color: GREY, align: "center", lh: 1.15 });
+// ══════════ 7 · BỐN BƯỚC ══════════
+main(7, "Nhãn được điền tự động qua bốn bước", 1);
+{
+  const subs = ["ghép hai bản công bố", "khung nhỏ nhất chứa chỗ bấm", "danh sách hệ thống, rồi đọc chữ trong ảnh", "chữ gần nhất làm mốc"];
+  const names = ["Ghép dữ liệu", "Tìm nút được bấm", "Lấy tên nút", "Tìm dấu hiệu phân biệt"];
+  const gap = 0.45, w = (W - 2 * M - 3 * gap) / 4, y = 1.8;
+  names.forEach((t, i) => {
+    const x = M + i * (w + gap);
+    rect(x, y, w, 1.9, i === 3 ? TEAL : NAVY, { radius: 0.1 });
+    text("①②③④"[i], { x, y: y + 0.15, w, h: 0.6, fontSize: 30, bold: true, color: WHITE, align: "center", valign: "middle" });
+    text(t, { x: x + 0.15, y: y + 0.8, w: w - 0.3, h: 0.95, fontSize: 21, bold: true, color: WHITE, align: "center", valign: "middle", lh: 1.0 });
+    text(subs[i], { x: x + 0.05, y: y + 2.05, w: w - 0.1, h: 1.0, fontSize: 17, color: INK, align: "center", lh: 1.05 });
+    if (i < 3) arrow(x + w + 0.05, y + 0.95, x + w + gap - 0.05, y + 0.95);
+  });
+  rect(M, 5.35, W - 2 * M, 0.85, BLOCK, { radius: 0.08 });
+  text("Toàn bộ bằng quy tắc, không viết tay nhãn nào.", { x: M, y: 5.35, w: W - 2 * M, h: 0.85, fontSize: 21, bold: true, color: NAVY, align: "center", valign: "middle" });
+}
 note(SAY[7]); foot();
 
-// ══════════ 8 · MỎ NEO CHỮ ══════════
-slide();
-bar("Ví dụ thật: mỏ neo chữ");
-{ const iw = 11.0, ih = iw * 690 / 2096; s.addImage({ path: FIG_MONEO, x: (W - iw) / 2, y: 1.15, w: iw, h: ih }); }
-block(M, 4.95, W - 2 * M, 0.8);
-text("<desc>icon | (no name) | <point>111,903</point> | just above the text \"Gmail\"</desc>",
-  { x: M, y: 4.95, w: W - 2 * M, h: 0.8, fontSize: 19, fontFace: MONO, color: NAVY, align: "center", valign: "middle" });
-text([{ text: "Câu của người chú thích: ", options: { bold: true } }, { text: "“Click on the gmail option”", options: { italic: true, color: RED } }],
-  { x: M, y: 5.95, w: W - 2 * M, h: 0.6, fontSize: 21, align: "center", valign: "middle" });
+// ══════════ 8 · BƯỚC 1 ══════════
+main(8, "Bước 1: ghép hai bản dữ liệu", 1);
+miniSteps([1]);
+[["Bản 1", "có câu + danh sách nút, thiếu ảnh"], ["Bản 2", "có ảnh, thiếu câu"]].forEach((c, i) => {
+  const yy = 2.1 + i * 1.05;
+  block(M, yy, 6.6, 0.85);
+  text([{ text: c[0] + ": ", options: { bold: true, color: NAVY } }, { text: c[1], options: {} }], { x: M + 0.3, y: yy, w: 6.1, h: 0.85, fontSize: 20, valign: "middle" });
+});
+text("⇒ ghép lại thành một bộ đủ cả ba thứ", { x: M + 0.3, y: 4.3, w: 6.3, h: 0.7, fontSize: 21, bold: true, color: TEAL, valign: "middle" });
+vbars(8.3, 2.55, 4.4, 2.55, [
+  { label: "ghép đúng", v: 48, txt: "48%", color: TEAL },
+  { label: "ghép sai (để so)", v: 20, txt: "20%", color: SOFT },
+], 55, { bw: 0.55, lfs: 17, vfs: 32, lh: 0.5 });
+text("tỉ lệ chữ ngay chỗ bấm có xuất hiện trong câu", { x: 8.0, y: 5.8, w: 5.0, h: 0.45, fontSize: 15, italic: true, color: GREY, align: "center" });
 note(SAY[8]); foot();
 
-// ══════════ 9 · HAI BỘ LỌC ══════════
-slide();
-bar("Hai bộ lọc, thêm vào sau khi thấy nhãn nhiễu");
-[["Bộ lọc nhãn trợ năng", "Loại tên kiểu mã nguồn, chuỗi số dài,\n“No label specified”, “unlabeled”…", "14,7%", "nhãn bị loại\n(mẫu thử 1.074 nhãn)"],
- ["Bộ lọc hình học", "Chỉ lấy tên OCR khi hộp < 25% màn.\nVí dụ: hộp phủ 95% màn cho chuỗi\n“THEFELLOWSHIPOF THE RING”", "2,2%", "số bước\nbị tác động"]].forEach((c, i) => {
-  const x = M + i * 6.2;
-  block(x, 1.4, 5.9, 4.9);
-  text(c[0], { x: x + 0.3, y: 1.6, w: 5.3, h: 0.55, fontSize: 23, bold: true, color: NAVY });
-  text(c[1], { x: x + 0.3, y: 2.3, w: 5.3, h: 1.6, fontSize: 17, lh: 1.15 });
-  text(c[2], { x: x + 0.3, y: 4.1, w: 2.6, h: 1.3, fontSize: 48, bold: true, color: TEAL, valign: "middle" });
-  text(c[3], { x: x + 2.9, y: 4.1, w: 2.8, h: 1.3, fontSize: 17, color: GREY, valign: "middle", lh: 1.1 });
-});
+// ══════════ 9 · BƯỚC 2 VÀ 3 ══════════
+main(9, "Bước 2 và 3: tìm nút được bấm, lấy tên", 1);
+miniSteps([2, 3]);
+block(M, 2.0, 5.4, 3.0);
+text("Bước 2", { x: M + 0.3, y: 2.15, w: 4.8, h: 0.5, fontSize: 20, bold: true, color: TEAL });
+text("Chọn khung nhỏ nhất chứa chỗ bấm", { x: M + 0.3, y: 2.75, w: 4.8, h: 1.8, fontSize: 24, bold: true, color: NAVY, valign: "middle", lh: 1.1 });
+arrow(6.1, 3.5, 6.75, 3.5);
+block(6.85, 2.0, 5.88, 3.0);
+text("Bước 3", { x: 7.15, y: 2.15, w: 5.3, h: 0.5, fontSize: 20, bold: true, color: TEAL });
+text("12,6%", { x: 7.0, y: 2.65, w: 2.5, h: 1.0, fontSize: 44, bold: true, color: RED, valign: "middle" });
+text("phần tử có tên trong danh sách của hệ thống", { x: 9.45, y: 2.65, w: 3.15, h: 1.0, fontSize: 16, valign: "middle", lh: 1.05 });
+text("⇒ cho máy đọc chữ trong ảnh (OCR)", { x: 7.15, y: 3.85, w: 5.4, h: 0.8, fontSize: 21, bold: true, color: NAVY, valign: "middle" });
+rect(M, 5.35, W - 2 * M, 0.9, TEAL, { radius: 0.08 });
+text("Không chắc thì để trống, không đoán.", { x: M, y: 5.35, w: W - 2 * M, h: 0.9, fontSize: 24, bold: true, color: WHITE, align: "center", valign: "middle" });
 note(SAY[9]); foot();
 
-// ══════════ 10 · Ô THỨ TƯ LÀM LẠI ══════════
-slide();
-bar("Ô thứ tư phải làm lại: từ 7,3% lên 75,9%");
-block(M, 1.4, 5.0, 3.9);
-text("Bản đầu", { x: M, y: 1.55, w: 5.0, h: 0.5, fontSize: 22, bold: true, color: GREY, align: "center" });
-text("7,3%", { x: M, y: 2.1, w: 5.0, h: 1.1, fontSize: 54, bold: true, color: GREY, align: "center", valign: "middle" });
-text("giải quyết được mơ hồ\n85,8% chỉ đếm\n(“một trong bảy phần tử cùng loại”)", { x: M + 0.2, y: 3.3, w: 4.6, h: 1.8, fontSize: 17, align: "center", lh: 1.1 });
-arrowR(5.85, 3.3, 1.4, NAVY);
-block(7.5, 1.4, 5.23, 3.9, "E6F0EF");
-text("Bản làm lại", { x: 7.5, y: 1.55, w: 5.23, h: 0.5, fontSize: 22, bold: true, color: TEAL, align: "center" });
-text("75,9%", { x: 7.5, y: 2.1, w: 5.23, h: 1.1, fontSize: 54, bold: true, color: TEAL, align: "center", valign: "middle" });
-text("trên mẫu thử\n75,3% trên toàn bộ 41.099 nhãn", { x: 7.7, y: 3.3, w: 4.83, h: 1.8, fontSize: 18, align: "center", lh: 1.15 });
-text("737/737 mỏ neo đúng hướng (kiểm tay). Đúng hướng chưa có nghĩa là hữu ích.", { x: M, y: 5.65, w: W - 2 * M, h: 0.7, fontSize: 18, italic: true, color: GREY, align: "center", valign: "middle" });
+// ══════════ 10 · BƯỚC 4 ══════════
+main(10, "Bước 4: lấy chữ gần nhất làm mốc", 1);
+miniSteps([4]);
+moneo((W - 10.6) / 2, 1.8, 10.6);
+block(M, 5.45, W - 2 * M, 0.95);
+text([{ text: "Máy viết: ", options: { color: GREY } }, { text: "ngay trên chữ \"Gmail\"", options: { fontFace: MONO, color: TEAL, bold: true } },
+      { text: "        Người viết: ", options: { color: GREY } }, { text: "“Click on the gmail option”", options: { color: NAVY, bold: true, italic: true } }],
+  { x: M, y: 5.45, w: W - 2 * M, h: 0.95, fontSize: 22, align: "center", valign: "middle" });
 note(SAY[10]); foot();
 
-// ══════════ 11 · ĐỘ PHỦ CHƯA ĐỀU ══════════
-slide();
-bar("Độ phủ chưa đều: nhóm cần nhất lại được phủ kém nhất");
-{
-  const rows = [["tên rõ ràng", "30.252", 80.1, "80,1%", TEAL, true], ["không có tên", "9.038", 66.7, "66,7%", NAVY, false],
-    ["chỉ có ký hiệu (vd. “Q”, “?”)", "1.809", 37.5, "37,5%", RED, true], ["toàn bộ", "41.099", 75.3, "75,3%", GREY, false]];
-  const x0 = M, y0 = 1.35;
-  table(x0, y0, [4.6, 1.7, 5.83], [{ cells: ["tầng tên của phần tử", { t: "số nhãn", align: "right" }, "giải quyết được mơ hồ"], bold: true, color: WHITE, fill: NAVY, h: 0.6 }], { fs: 18 });
-  rows.forEach((r, i) => {
-    const yy = y0 + 0.6 + i * 1.0;
-    text(r[0], { x: x0 + 0.08, y: yy, w: 4.5, h: 1.0, fontSize: 19, bold: i === 3, valign: "middle" });
-    text(r[1], { x: x0 + 4.6, y: yy, w: 1.6, h: 1.0, fontSize: 19, align: "right", valign: "middle" });
-    const bx = x0 + 6.6, bwMax = 4.0;
-    rect(bx, yy + 0.3, bwMax, 0.4, "EEEDF2");
-    rect(bx, yy + 0.3, bwMax * r[2] / 100, 0.4, r[4]);
-    text(r[3], { x: bx + bwMax + 0.1, y: yy, w: 1.3, h: 1.0, fontSize: 20, bold: r[5], color: r[4], valign: "middle" });
-    hline(x0, yy + 1.0, 12.13, LIGHT, 1);
-  });
-}
+// ══════════ 11 · LÀM LẠI ══════════
+main(11, "Bản đầu của bước 4 sai, phải làm lại", 1);
+miniSteps([4]);
+[["Bản đầu", "“một trong bảy biểu tượng cùng loại”", "7,3%", GREY, BLOCK],
+ ["Bản làm lại", "“ngay trên chữ Gmail”", "75,3%", TEAL, MINT]].forEach((c, i) => {
+  const x = i === 0 ? M : 7.5, w = i === 0 ? 5.25 : 5.23;
+  block(x, 2.0, w, 4.25, c[4]);
+  text(c[0], { x, y: 2.15, w, h: 0.55, fontSize: 24, bold: true, color: c[3], align: "center" });
+  text(c[1], { x: x + 0.3, y: 2.75, w: w - 0.6, h: 0.9, fontSize: 21, italic: true, align: "center", valign: "middle", lh: 1.05 });
+  text(c[2], { x, y: 3.7, w, h: 1.3, fontSize: i === 0 ? 54 : 70, bold: true, color: c[3], align: "center", valign: "middle" });
+  text("số dấu hiệu chỉ ra được đúng nút", { x, y: 5.1, w, h: 0.6, fontSize: 18, align: "center" });
+});
+arrow(6.05, 4.3, 7.3, 4.3);
 note(SAY[11]); foot();
 
-// ══════════ 12 · NGƯỜI VÀ QUY TRÌNH ══════════
-slide();
-bar("Người chú thích và quy trình tự động chọn cùng chiến lược");
-[["Phía màn hình", NAVY, [["55,6%", "số bước có phần tử cạnh tranh trong khoảng 80 đến 350 px"], ["91,6%", "có phần tử cùng vai trò (trung vị 8)"]]],
- ["Phía ngôn ngữ", TEAL, [["32,5%", "câu của người dùng từ chỉ vị trí hoặc thứ tự"], ["67,2%", "dấu hiệu của quy trình là quan hệ với chữ lân cận"]]]].forEach((side, i) => {
-  const x = M + i * 6.2;
-  text(side[0], { x, y: 1.25, w: 5.9, h: 0.6, fontSize: 24, bold: true, color: side[1], align: "center" });
-  side[2].forEach((c, j) => {
-    const yy = 2.0 + j * 2.25;
-    block(x, yy, 5.9, 2.0);
-    text(c[0], { x: x + 0.2, y: yy, w: 2.5, h: 2.0, fontSize: 42, bold: true, color: side[1], valign: "middle" });
-    text(c[1], { x: x + 2.75, y: yy, w: 2.95, h: 2.0, fontSize: 18, valign: "middle", lh: 1.1 });
-  });
-});
+// ══════════ 12 · KIỂM BẰNG CÂU NGƯỜI VIẾT ══════════
+main(12, "Kiểm nhãn bằng câu do người viết", 2);
+vbars(M + 1.0, 1.95, 7.0, 2.85, [
+  { label: "tên máy đặt có trong câu\nngười viết cho đúng bước đó", v: 53.5, txt: "53,5%", color: TEAL },
+  { label: "đem tên đó so với câu\ncủa bước kế tiếp (để so)", v: 7.6, txt: "7,6%", color: SOFT },
+], 60, { bw: 0.45, lfs: 17, vfs: 38 });
+block(8.95, 1.9, 3.78, 2.9, MINT);
+text("Máy không đọc câu của người khi tạo nhãn.\n\n⇒ trùng nhau là hai nguồn độc lập cùng gọi một tên.", { x: 9.15, y: 1.9, w: 3.38, h: 2.9, fontSize: 19, color: NAVY, valign: "middle", lh: 1.1 });
 note(SAY[12]); foot();
 
-// ══════════ 13 · QUY MÔ ══════════
-slide();
-bar("Quy mô và cách chia tập");
-table(M, 1.35, [5.33, 3.4, 3.4], [
-  { cells: ["", { t: "huấn luyện", align: "right" }, { t: "kiểm tra", align: "right" }], bold: true, color: WHITE, fill: NAVY, h: 0.6 },
-  { cells: ["số bước", "64.567", "6.958"], h: 0.7 },
-  { cells: ["bước chạm", "41.191", "4.463"], h: 0.7 },
-  { cells: ["số tác vụ", "12.895", "1.432"], h: 0.7 },
-  { cells: [{ t: "nhãn GUIRefCorpus", bold: true, color: TEAL }, { t: "41.099", bold: true, color: TEAL }, { t: "4.448", bold: true, color: TEAL }], h: 0.7 },
-], { fs: 20, align: ["left", "right", "right"] });
-[["chia theo tác vụ,", "0 tác vụ trùng", TEAL],
- ["không tách được", "cách diễn đạt", AMBER],
- ["không phải tập ứng dụng chưa thấy", "95,6% ứng dụng có ở tập huấn luyện", AMBER]].forEach((c, i) => {
-  const xx = M + i * 4.1;
-  block(xx, 5.05, 3.93, 1.25);
-  rect(xx, 5.05, 0.12, 1.25, c[2]);
-  text(c[0] + "\n" + c[1], { x: xx + 0.25, y: 5.05, w: 3.55, h: 1.25, fontSize: 16, valign: "middle", lh: 1.1 });
+// ══════════ 13 · CHỖ CÒN YẾU ══════════
+main(13, "Chỗ còn yếu: nút chỉ có một ký hiệu", 2);
+text("Tỉ lệ dấu hiệu chỉ ra được đúng nút, theo loại nút", { x: M, y: 1.3, w: W - 2 * M, h: 0.55, fontSize: 20, color: GREY });
+[["nút có tên rõ ràng", 80, "80%", TEAL, true], ["nút không có tên", 67, "67%", NAVY, false], ["nút chỉ có một ký hiệu\n(ví dụ “Q”, “?”)", 38, "38%", RED, true]].forEach((r, i) => {
+  const yy = 2.15 + i * 1.35, bx = 4.6, bwMax = 6.8;
+  text(r[0], { x: M, y: yy, w: 3.8, h: 1.0, fontSize: 21, bold: r[4], align: "right", valign: "middle", lh: 1.05 });
+  rect(bx, yy + 0.15, bwMax, 0.7, "EEEDF2");
+  rect(bx, yy + 0.15, bwMax * r[1] / 100, 0.7, r[3]);
+  text(r[2], { x: bx + bwMax * r[1] / 100 + 0.15, y: yy, w: 1.3, h: 1.0, fontSize: r[4] ? 30 : 24, bold: r[4], color: r[3], valign: "middle" });
 });
 note(SAY[13]); foot();
 
-// ══════════ 14 · KIỂM BẰNG NGUỒN NGOÀI ══════════
-slide();
-bar("Kiểm chất lượng bằng một nguồn nằm ngoài quy trình");
-vbars(M + 0.3, 1.75, 8.0, 3.35, [
-  { label: "ô tên xuất hiện nguyên văn\ntrong câu của người\n(1.875/3.505)", v: 53.5, txt: "53,5%", color: TEAL },
-  { label: "ghép với câu của\nbước liền sau (bất kỳ)", v: 5.4, txt: "5,4%", color: "9A94AE" },
-  { label: "bước liền sau trong cùng\nchuỗi thao tác\n(đối chứng khó)", v: 7.6, txt: "7,6%", color: "9A94AE" },
-], 60, { bw: 0.48, lfs: 14, lh: 1.1 });
-block(9.25, 1.7, 3.48, 3.4);
-text("Quy trình dựng nhãn không đọc câu chỉ dẫn ở bất kỳ bước nào.", { x: 9.45, y: 1.85, w: 3.1, h: 1.6, fontSize: 18, lh: 1.1 });
-text("53,5% là chặn dưới.", { x: 9.45, y: 3.6, w: 3.1, h: 1.2, fontSize: 20, bold: true, color: TEAL, lh: 1.1 });
+// ══════════ 14 · HẠN CHẾ ══════════
+main(14, "Những gì bài này chưa làm được", 3);
+[[{ text: "Khoảng ", options: {} }, { text: "1/4", options: { bold: true, color: RED } }, { text: " dấu hiệu chưa chỉ ra được đúng nút (đã rõ lý do)", options: {} }],
+ [{ text: "Chưa hỏi người dùng thật xem đọc nhãn có tìm ra nút không", options: {} }]].forEach((c, i) => {
+  const yy = 1.7 + i * 1.9;
+  block(M, yy, W - 2 * M, 1.5);
+  rect(M, yy, 0.14, 1.5, AMBER);
+  text(c, { x: M + 0.5, y: yy, w: W - 2 * M - 0.8, h: 1.5, fontSize: 25, valign: "middle" });
+});
 note(SAY[14]); foot();
 
-// ══════════ 15 · HẠN CHẾ ══════════
-slide();
-bar("Hạn chế");
-[["24,7%", "dấu hiệu chưa giải quyết được mơ hồ", "đã rõ nguyên nhân, sửa được"],
- ["1/4 ô", "so với nguồn ngoài mới chạm ô tên", "ô dấu hiệu chưa được người dùng kiểm"],
- ["Bản gốc", "không có nhãn chuẩn cho OCR", "chuỗi mục tiêu bị cắt (99,4% không kết thúc bằng dấu câu)"]].forEach((c, i) => {
-  const yy = 1.35 + i * 1.7;
-  block(M, yy, W - 2 * M, 1.5);
-  text(c[0], { x: M + 0.2, y: yy, w: 2.8, h: 1.5, fontSize: 36, bold: true, color: RED, align: "center", valign: "middle" });
-  text(c[1], { x: M + 3.3, y: yy + 0.2, w: 8.6, h: 0.6, fontSize: 21, bold: true, color: NAVY });
-  text(c[2], { x: M + 3.3, y: yy + 0.8, w: 8.6, h: 0.55, fontSize: 18, color: GREY });
+// ══════════ 15 · KẾT LUẬN ══════════
+main(15, "Kết luận", 3);
+[["Bài toán", [{ text: "gần ", options: {} }, { text: "1/3", options: { bold: true, color: TEAL } }, { text: " nút cần bấm không gọi đúng tên được ⇒ phải chỉ qua vật bên cạnh", options: {} }]],
+ ["Tạo nhãn", [{ text: "tự động ", options: {} }, { text: "41.099 + 4.448", options: { bold: true, color: TEAL } }, { text: " nhãn bốn ô; dấu hiệu phân biệt ", options: {} }, { text: "7,3% → 75,3%", options: { bold: true, color: TEAL } }]],
+ ["Kiểm tra", [{ text: "53,5%", options: { bold: true, color: TEAL } }, { text: " trùng câu người viết, so với ", options: {} }, { text: "7,6%", options: { bold: true, color: GREY } }, { text: " ở đối chứng", options: {} }]]].forEach((c, i) => {
+  const yy = 1.35 + i * 1.5;
+  block(M, yy, W - 2 * M, 1.25);
+  rect(M, yy, 2.2, 1.25, NAVY, { radius: 0.08 });
+  text(c[0], { x: M, y: yy, w: 2.2, h: 1.25, fontSize: 21, bold: true, color: WHITE, align: "center", valign: "middle" });
+  text(c[1], { x: M + 2.45, y: yy, w: W - 2 * M - 2.7, h: 1.25, fontSize: 19.5, valign: "middle", lh: 1.05 });
 });
+text("Phần dạy mô hình bằng bộ dữ liệu này: bài đồng hành.", { x: M, y: 5.95, w: W - 2 * M, h: 0.5, fontSize: 17, italic: true, color: GREY, align: "center" });
 note(SAY[15]); foot();
 
-// ══════════ 16 · KẾT LUẬN ══════════
-slide();
-bar("Kết luận");
-[["41.099 + 4.448", "nhãn bốn ô GUIRefCorpus, dựng hoàn toàn tự động từ AndroidControl"],
- ["7,3% → 75,3%", "ô dấu hiệu phân biệt"],
- ["53,5% vs 7,6%", "đối chiếu ngoài quy trình (đối chứng khó)"]].forEach((c, i) => {
-  const yy = 1.35 + i * 1.55;
-  block(M, yy, W - 2 * M, 1.35);
-  text(c[0], { x: M + 0.25, y: yy, w: 4.6, h: 1.35, fontSize: 34, bold: true, color: TEAL, valign: "middle" });
-  text(c[1], { x: M + 5.0, y: yy, w: 6.9, h: 1.35, fontSize: 21, valign: "middle", lh: 1.1 });
-});
-text("Phần huấn luyện mô hình: bài đồng hành.", { x: M, y: 6.15, w: W - 2 * M, h: 0.5, fontSize: 17, italic: true, color: GREY, align: "center" });
-note(SAY[16]); foot();
-
-// ══════════ 17 · CẢM ƠN ══════════
+// ══════════ 16 · CẢM ƠN ══════════
 slide();
 rect(0, 0, W, H - 0.32, NAVY);
 text("Cảm ơn quý thầy cô và các bạn đã lắng nghe", { x: M, y: 2.2, w: W - 2 * M, h: 1.3, fontSize: 38, bold: true, color: WHITE, align: "center", valign: "middle" });
 text("24C15039@student.hcmus.edu.vn", { x: M, y: 3.9, w: W - 2 * M, h: 0.6, fontSize: 22, fontFace: MONO, color: LIGHT, align: "center", valign: "middle" });
-note(SAY[17]); foot();
+note(SAY[16]); foot();
 
 // ══════════════════ DỰ PHÒNG ══════════════════
-// B1 · tỉ số 3,2 lần
-slide();
-bar("Dự phòng · Truy nguyên tỉ số 3,2 lần");
-{
-  const st = [["72", "nhãn hai nguồn\ncho hai chuỗi khác nhau"], ["−32", "chuỗi đã nằm sẵn\ntrong mục tiêu"], ["40", "nhãn còn lại"]];
-  st.forEach((c, i) => {
-    const x = M + i * 3.0;
-    block(x, 1.5, 2.6, 2.2);
-    text(c[0], { x, y: 1.6, w: 2.6, h: 1.0, fontSize: 40, bold: true, color: NAVY, align: "center", valign: "middle" });
-    text(c[1], { x: x + 0.1, y: 2.6, w: 2.4, h: 1.0, fontSize: 15, align: "center", lh: 1.05 });
-    if (i < 2) arrowR(x + 2.62, 2.6, 0.36);
-  });
-  table(9.6, 1.5, [2.2, 0.93], [
-    { cells: ["khớp OCR", "12"], h: 0.7 }, { cells: ["khớp cây trợ năng", "3"], h: 0.7 }, { cells: ["không bên nào", "25"], h: 0.7, rule: false },
-  ], { fs: 18, align: ["left", "right"] });
-  block(M, 4.3, W - 2 * M, 1.9, "E6F0EF");
-  text("11/12 ca nghiêng về OCR do nhãn trợ năng là chuỗi không dùng được.\nKhi cả hai nguồn đều dùng được: 1 ca nghiêng về OCR, 3 ca nghiêng về cây trợ năng.",
-    { x: M + 0.3, y: 4.3, w: W - 2 * M - 0.6, h: 1.9, fontSize: 20, valign: "middle", lh: 1.25 });
-}
+function backup(t) { slide(); bar("Dự phòng · " + t); }
+
+// B1 · hai bản phát hành
+backup("Hai bản phát hành và cách kiểm ghép đúng");
+table(M, 1.35, [4.0, 2.6, 1.9], [
+  { cells: ["bản phát hành", "có", "thiếu"], bold: true, color: WHITE, fill: NAVY, h: 0.55 },
+  { cells: [{ t: "HarrytheOrange/\nparsed_AndroidControl", mono: true, fs: 14 }, "câu chỉ dẫn, cây trợ năng", "ảnh"], h: 1.0 },
+  { cells: [{ t: "ckg/AndroidControl\nParsedWithImages-20k", mono: true, fs: 14 }, "ảnh", "câu chỉ dẫn theo bước"], h: 1.0, rule: false },
+], { fs: 17 });
+block(M, 4.2, 8.5, 0.8);
+text([{ text: "ghép theo ", options: {} }, { text: "(episode_id, step_id)", options: { fontFace: MONO, bold: true, color: NAVY } }], { x: M, y: 4.2, w: 8.5, h: 0.8, fontSize: 19, align: "center", valign: "middle" });
+vbars(9.45, 1.85, 3.3, 3.0, [
+  { label: "ghép đúng\n400 bước", v: 48.3, txt: "48,3%", color: TEAL },
+  { label: "ghép lệch\n311 bước", v: 19.6, txt: "19,6%", color: SOFT },
+], 55, { bw: 0.6, lfs: 15, vfs: 26 });
+text("KTC95: [43,4; 53,1] · [15,6; 24,4]", { x: 9.2, y: 5.95, w: 3.8, h: 0.45, fontSize: 14, italic: true, color: GREY, align: "center" });
+note(QA("C5")); footB();
+
+// B2 · hai bộ lọc
+backup("Hai bộ lọc");
+[["Bộ lọc nhãn trợ năng", "loại tên kiểu mã nguồn, chuỗi số dài, “unlabeled”…", "14,7%", "nhãn bị loại trên mẫu thử 1.074 nhãn\n3,9% ứng viên trên toàn bộ"],
+ ["Bộ lọc hình học", "chỉ lấy tên OCR khi hộp < 25% màn\nvd. hộp 95% màn: “THEFELLOWSHIPOF THE RING”", "2,2%", "số bước bị tác động"]].forEach((c, i) => {
+  const x = M + i * 6.2;
+  block(x, 1.4, 5.9, 4.9);
+  text(c[0], { x: x + 0.3, y: 1.6, w: 5.3, h: 0.55, fontSize: 23, bold: true, color: NAVY });
+  text(c[1], { x: x + 0.3, y: 2.3, w: 5.3, h: 1.6, fontSize: 17, lh: 1.15 });
+  text(c[2], { x: x + 0.3, y: 4.1, w: 2.4, h: 1.4, fontSize: 46, bold: true, color: TEAL, valign: "middle" });
+  text(c[3], { x: x + 2.75, y: 4.1, w: 2.95, h: 1.4, fontSize: 16, color: GREY, valign: "middle", lh: 1.1 });
+});
+note(QA("B3")); footB();
+
+// B3 · tỉ số 3,2 lần
+backup("Truy nguyên tỉ số 3,2 lần");
+[["72", "nhãn hai nguồn\ncho hai chuỗi khác nhau"], ["−32", "chuỗi đã nằm sẵn\ntrong mục tiêu"], ["40", "nhãn còn lại"]].forEach((c, i) => {
+  const x = M + i * 3.0;
+  block(x, 1.5, 2.6, 2.2);
+  text(c[0], { x, y: 1.6, w: 2.6, h: 1.0, fontSize: 40, bold: true, color: NAVY, align: "center", valign: "middle" });
+  text(c[1], { x: x + 0.1, y: 2.6, w: 2.4, h: 1.0, fontSize: 15, align: "center", lh: 1.05 });
+  if (i < 2) arrow(x + 2.62, 2.6, x + 2.98, 2.6);
+});
+table(9.6, 1.5, [2.2, 0.93], [
+  { cells: ["khớp OCR", "12"], h: 0.7 }, { cells: ["khớp cây trợ năng", "3"], h: 0.7 }, { cells: ["không bên nào", "25"], h: 0.7, rule: false },
+], { fs: 18, align: ["left", "right"] });
+block(M, 4.3, W - 2 * M, 1.9, MINT);
+text("11/12 ca nghiêng về OCR: do nhãn trợ năng là rác.\nKhi cả hai nguồn dùng được: OCR 1 ca, cây trợ năng 3 ca.",
+  { x: M + 0.3, y: 4.3, w: W - 2 * M - 0.6, h: 1.9, fontSize: 20, valign: "middle", lh: 1.25 });
 note(QA("B2")); footB();
 
-// B2 · sáu chỉ số
-slide();
-bar("Dự phòng · Mẫu thử và toàn bộ ngữ liệu");
+// B4 · sáu chỉ số
+backup("Mẫu thử và toàn bộ ngữ liệu");
 table(M + 0.9, 1.35, [5.2, 2.6, 2.6], [
   { cells: ["chỉ số", { t: "toàn bộ (41.099)", align: "right" }, { t: "mẫu thử (1.074)", align: "right" }], bold: true, color: WHITE, fill: NAVY, h: 0.6 },
   { cells: ["tên rõ ràng", "73,6%", "73,8%"], h: 0.62 },
@@ -401,9 +430,8 @@ table(M + 0.9, 1.35, [5.2, 2.6, 2.6], [
 text("Sáu chỉ số lệch không quá 1,6 điểm phần trăm; mẫu thử nhỏ hơn 38 lần.", { x: M, y: 6.0, w: W - 2 * M, h: 0.55, fontSize: 18, italic: true, color: GREY, align: "center" });
 note(QA("C4")); footB();
 
-// B3 · bốn nhãn thật
-slide();
-bar("Dự phòng · Bốn nhãn thật và câu của người chú thích");
+// B5 · bốn nhãn thật
+backup("Bốn nhãn thật và câu của người chú thích");
 table(M, 1.35, [8.2, 3.93], [
   { cells: ["nhãn tự động", "câu của người chú thích"], bold: true, color: WHITE, fill: NAVY, h: 0.6 },
   { cells: [{ t: "tappable text | Search here | <point>440,91</point> | just above the text \"Coffee\"", mono: true, fs: 14 }, { t: "Click on the search bar", italic: true }], h: 1.0 },
@@ -411,12 +439,11 @@ table(M, 1.35, [8.2, 3.93], [
   { cells: [{ t: "icon | Q | <point>920,899</point> | shares a name with 1 other elements on screen", mono: true, fs: 14 }, { t: "click on the search icon", italic: true }], h: 1.0 },
   { cells: [{ t: "icon | (no name) | <point>920,904</point> | many elements of the same kind on screen", mono: true, fs: 14 }, { t: "Click on the Right arrow key", italic: true }], h: 1.0, rule: false },
 ], { fs: 18 });
-text("Hai dòng đầu: mệnh đề đủ chỉ ra phần tử. Hai dòng sau: chỉ cho biết có phần tử giống nó.", { x: M, y: 5.95, w: W - 2 * M, h: 0.6, fontSize: 17, italic: true, color: GREY, align: "center" });
+text("Hai dòng đầu chỉ ra được nút; hai dòng sau chỉ báo có nút giống nó.", { x: M, y: 5.95, w: W - 2 * M, h: 0.6, fontSize: 17, italic: true, color: GREY, align: "center" });
 footB();
 
-// B4 · bảng dấu hiệu đầy đủ
-slide();
-bar("Dự phòng · Loại dấu hiệu phân biệt theo tầng tên");
+// B6 · bảng dấu hiệu đầy đủ
+backup("Loại dấu hiệu phân biệt theo tầng tên");
 table(M, 1.35, [3.4, 1.55, 1.9, 1.7, 2.0, 1.58], [
   { cells: ["tầng tên", "n", "mỏ neo chữ", "duy nhất", "nêu trùng tên", "chỉ đếm"], bold: true, color: WHITE, fill: NAVY, h: 0.65 },
   { cells: ["tên rõ ràng", "30.252", "72,2%", "7,9%", "1,7%", "18,2%"], h: 0.7 },
@@ -425,12 +452,40 @@ table(M, 1.35, [3.4, 1.55, 1.9, 1.7, 2.0, 1.58], [
   { cells: [{ t: "toàn bộ", bold: true }, { t: "41.099", bold: true }, { t: "67,2%", bold: true }, { t: "8,1%", bold: true }, { t: "2,6%", bold: true }, { t: "22,1%", bold: true }], h: 0.7, rule: false },
 ], { fs: 19, align: ["left", "right", "right", "right", "right", "right"] });
 rect(M + 4.95, 1.35, 3.6, 3.45, "none", { line: TEAL, lw: 2 });
-text("Hai cột viền xanh giải quyết được mơ hồ. Cộng hai cột: tên rõ ràng 80,1% · chỉ có ký hiệu 37,5% · không có tên 66,7% · toàn bộ 75,3%.", { x: M, y: 5.1, w: W - 2 * M, h: 0.9, fontSize: 18, color: TEAL, align: "center", lh: 1.1 });
+text("Hai cột viền xanh chỉ ra được nút. Cộng lại: 80,1% · 37,5% · 66,7% · 75,3% (theo thứ tự hàng).",
+  { x: M, y: 5.1, w: W - 2 * M, h: 0.9, fontSize: 18, color: TEAL, align: "center", lh: 1.1 });
 note(QA("C3")); footB();
 
-// B5 · một bản ghi
-slide();
-bar("Dự phòng · Một bản ghi GUIRefCorpus có gì");
+// B7 · công trình liên quan
+backup("Vị trí so với các công trình liên quan");
+table(M, 1.35, [4.3, 7.83], [
+  { cells: ["công trình", "khác bài này ở đâu"], bold: true, color: WHITE, fill: NAVY, h: 0.6 },
+  { cells: [{ t: "Dale & Reiter 1995 · Dale & Haddock 1991\nMao 2016 · Luo 2017 · Yu 2017", lh: 1.1 }, "ảnh tự nhiên"], h: 1.2 },
+  { cells: [{ t: "Widget Captioning", bold: true }, "nhãn do người viết, một widget tách rời"], h: 1.0 },
+  { cells: [{ t: "AndroidControl", bold: true }, "câu chỉ dẫn là đầu vào; ở đây là đầu ra"], h: 1.0, rule: false },
+], { fs: 19 });
+note(QA("A2")); footB();
+
+// B8 · quy mô chi tiết
+backup("Quy mô và cách chia tập");
+table(M, 1.35, [5.33, 3.4, 3.4], [
+  { cells: ["", { t: "huấn luyện", align: "right" }, { t: "kiểm tra", align: "right" }], bold: true, color: WHITE, fill: NAVY, h: 0.6 },
+  { cells: ["số bước", "64.567", "6.958"], h: 0.65 },
+  { cells: ["bước chạm", "41.191", "4.463"], h: 0.65 },
+  { cells: ["số tác vụ", "12.895", "1.432"], h: 0.65, rule: false },
+], { fs: 20, align: ["left", "right", "right"] });
+text("Ba điều cách chia không bảo đảm", { x: M, y: 4.1, w: W - 2 * M, h: 0.5, fontSize: 19, bold: true, color: AMBER });
+["cách diễn đạt lặp lại", "95,6% ứng dụng có ở tập huấn luyện", "55% số bước không gán được ứng dụng"].forEach((t, i) => {
+  const xx = M + i * 4.1;
+  block(xx, 4.7, 3.93, 1.3);
+  rect(xx, 4.7, 0.12, 1.3, AMBER);
+  text(t, { x: xx + 0.3, y: 4.7, w: 3.5, h: 1.3, fontSize: 18, valign: "middle", lh: 1.1 });
+});
+note(QA("D4")); footB();
+
+
+// B9 · một bản ghi
+backup("Một bản ghi GUIRefCorpus có gì");
 text("Mỗi dòng JSON ứng với một bước chạm", { x: M, y: 1.2, w: W - 2 * M, h: 0.55, fontSize: 21, bold: true, color: NAVY });
 [["nhãn", "dòng bốn ô đã ghép, và riêng từng ô"],
  ["tên", "tên, nguồn của tên, tầng tên"],
@@ -448,18 +503,30 @@ text("<desc>icon | (no name) | <point>111,903</point> | just above the text \"Gm
 text("Ảnh không đi kèm: AndroidControl đã phát hành ảnh theo CC0.", { x: M, y: 6.15, w: W - 2 * M, h: 0.5, fontSize: 16, italic: true, color: GREY, align: "center" });
 note(QA("D3")); footB();
 
-// B6 · chuỗi mục tiêu bị cắt
-slide();
-bar("Dự phòng · Chuỗi mục tiêu bị cắt từ nguồn");
+
+// B10 · người và máy chọn cùng chiến lược
+backup("Người và máy chọn cùng chiến lược");
+[["32,5%", "câu người viết có từ chỉ vị trí", NAVY], ["67,2%", "dấu hiệu máy tạo là mốc chữ bên cạnh", TEAL],
+ ["55,6%", "số bước có nút cạnh tranh trong khoảng 80 đến 350 px", GREY], ["91,6%", "số bước có nút cùng vai trò (trung vị 8)", GREY]].forEach((c, i) => {
+  const x = M + (i % 2) * 6.2, yy = 1.4 + Math.floor(i / 2) * 2.35;
+  block(x, yy, 5.9, 2.05, i < 2 ? MINT : BLOCK);
+  text(c[0], { x, y: yy + 0.15, w: 5.9, h: 1.0, fontSize: 44, bold: true, color: c[2], align: "center", valign: "middle" });
+  text(c[1], { x: x + 0.3, y: yy + 1.2, w: 5.3, h: 0.7, fontSize: 18, align: "center", valign: "middle" });
+});
+note(QA("D5")); footB();
+
+// B11 · chuỗi mục tiêu bị cắt
+backup("Chuỗi mục tiêu bị cắt từ nguồn");
 block(M, 1.4, W - 2 * M, 1.2);
 text("...look for Calvin Kle", { x: M, y: 1.4, w: W - 2 * M, h: 1.2, fontSize: 32, fontFace: MONO, color: RED, align: "center", valign: "middle" });
-[["99,4%", "không kết thúc bằng dấu câu"], ["≥ 71,3%", "bị cắt giữa một từ"]].forEach((c, i) => {
+[["99,4%", "không có dấu câu cuối"], ["≥ 71,3%", "cắt giữa từ"]].forEach((c, i) => {
   const x = M + 0.8 + i * 5.6;
   text(c[0], { x, y: 3.0, w: 4.9, h: 1.2, fontSize: 52, bold: true, color: NAVY, align: "center", valign: "middle" });
   text(c[1], { x, y: 4.2, w: 4.9, h: 0.6, fontSize: 20, align: "center" });
 });
 text("Đo trên 1.424 mục tiêu khác nhau của tập kiểm tra.", { x: M, y: 5.5, w: W - 2 * M, h: 0.5, fontSize: 17, italic: true, color: GREY, align: "center" });
 footB();
+
 
 pres.writeFile({ fileName: path.join(__dirname, "..", "VCL2026_SLIDE_15_11.pptx") }).then(() => {
   console.log("Xong: VCL2026_SLIDE_15_11.pptx | chinh " + PAGE + " | du phong " + BPAGE + " | loi noi " + Object.keys(SAY).length);
