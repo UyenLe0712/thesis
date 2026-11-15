@@ -1104,7 +1104,7 @@ Kernel `uyenle0712/luoi-ppo-u-1` (T4×2, trần 11 h) COMPLETE, cả hai lượt
 - Thưởng SPICE trung bình theo cửa sổ 100 bước gần như phẳng: λ = 1 0,48 (bước 1–99) → 0,49–0,54 (bước 300–897), λ = 0,95 0,48 → 0,46–0,54; KL 0,05–0,08. Số train, không phải số đánh giá.
 - Chưa có câu sinh trên test ⇒ chưa có exec lẫn độ đo văn bản. Tệp log ở `runs/luoi/11_11/ppo_u_1/` (điểm lưu không vào git).
 
-## 28. PPO tới bước 1000 (kernel luoi-ppo-t2-1, 11/11/2026): đủ bước, đang chấm test
+## 28. PPO tới bước 1000 (kernel luoi-ppo-t2-1, 11/11/2026): đủ bước, đã chấm test (thua ck500)
 
 Kernel `trangphuongngoc/luoi-ppo-t2-1` (T4×2, trần 7 h) COMPLETE, cả hai lượt chạy tới **bước 1000**.
 - λ = 1: `[tiếp từ] checkpoint-925`, nạp `value_head.pt` của ck925, `[nạp default] … → 17,13`; 75 bước, 142,8 s/bước, đỉnh VRAM 11,9 GiB.
@@ -1151,3 +1151,14 @@ METEOR (không KTC): ck500 38,18 · SFT tiếp 38,07 · PPO λ=1 38,20 · PPO λ
 | PPO λ=1 − PPO λ=0,95 | +0,03 | +0,28 | +1,19 | +0,17 | +0,15 | +0,24 | (mọi KTC phủ 0) |
 
 Điểm tuyệt đối: PPO λ=1 BLEU-4 50,70 · ROUGE-L 68,25 · CIDEr-D 420,72 · SPICE 44,98 · chrF 63,00 · BERTScore 66,78 · METEOR 37,86; λ=0,95 50,67 · 67,96 · 419,53 · 44,81 · 62,85 · 66,54 · 37,89. Đọc: PPO thấp hơn ck500 ở BLEU-4, CIDEr-D, SPICE (KTC loại 0 cả hai λ), chỉ chrF ngang; cùng hướng với exec (−0,58/−0,67). Dù thưởng là SPICE, PPO thấp hơn ck500 cả trên SPICE.
+
+
+## 29. GRPO + thưởng SA-SPICE-v3 từ SFT-cont (11–15/11/2026): exec test 61,21, cao nhất mọi nhánh đã train
+
+Chi tiết thiết kế, DEV-v3, kiểm tra: report/333 §11–§14b. Bảng có đánh dấu: report/334 §3–§6. Phán quyết debate sau test: `research_notes/Debate SA SPICE v3 sau test/03_phan_quyet.md`.
+
+- Thưởng: R = clip(0,8·[α·SPICE + (1−α)·chrF/100] + 0,2·A − d, 0, 1), α = 0,8·min(1, K/3), A ∈ {0,5; 1} (khớp loại thao tác), d = phạt dài. GRPO G = 8, KL 0,04 về SFT-cont, 500 update, seed 101. Điểm lưu ck400 chọn trên DEV-v3 trước khi chấm test (nhánh duy nhất qua tiêu chí khả thi; chrF ck400 trượt ở bước không chạm nên không chấm test).
+- **Bước chạm (4.463):** exec **61,21** [59,45; 62,92] · D.3 67,56 · AitW đầy đủ 77,12. So ghép cặp (B = 10.000): − SFT tiếp **+1,05 [+0,46; +1,65] p = 6,8e−4** · − ck500 +0,56 [−0,05; +1,17] p = 0,069 (không ý nghĩa) · − A/A +1,48* · − S1/101 **+2,11 [+1,33; +2,89]**.
+- **Bước không chạm (2.495):** toàn bộ 84,05 (SFT-cont 84,61) · scroll 80,00 (+3,18) · **back 58,52 vs 71,11 (−12,59)**. Phải khai.
+- **Độ đo văn bản:** BLEU-4 51,24 · METEOR 38,90 · ROUGE-L 69,31 · CIDEr-D 429,12 · SPICE 45,76 · chrF 64,40 · BERTScore 67,59; cao nhất ở METEOR/ROUGE-L/chrF; SPICE − SFT tiếp +0,43 (không ý nghĩa).
+- Câu được viết: "GRPO với thưởng SA-SPICE-v3 từ SFT-cont hơn điểm xuất phát +1,05 exec (một seed)". Cấm: "hơn ck500", "tốt nhất" không kèm một seed, "thưởng composite giúp hơn SPICE thuần" (chưa có nhánh SPICE-MATCH).

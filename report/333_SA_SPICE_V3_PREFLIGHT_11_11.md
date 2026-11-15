@@ -292,3 +292,20 @@ DEV − test: SA ck400 − SFT-cont +1,35 trên DEV-v3, +1,05 trên test (cùng 
 So S1 (score_run noharm): SA −1,92 [−2,98; −0,89], SFT-cont −1,36 [−2,31; −0,44]; cả hai ĐẠT ngưỡng −3. Tiêu chí khả thi so SFT-cont: toàn bộ −0,56 (≤3) · scroll+back gộp 75,32 → 74,34 (−0,98, ≤5) ⇒ **đạt trên test**; nhưng back tách riêng −12,6 điểm (192 → 158/270), cùng dạng đã thấy trên DEV (84 → 60/104). Phải khai.
 
 **Cách đọc:** so với điểm xuất phát của chính nó (SFT tiếp), SA-SPICE-v3 hơn +1,05 có ý nghĩa; so ck500 thì chưa tách được (+0,56, KTC phủ 0). +2,11 so S1/101 cộng dồn hai bước (SFT tiếp +1,05 rồi GRPO +1,05), chạm đúng MDE 2,11 nhưng là một seed. Chưa có: độ đo văn bản test (cần kernel CPU SPICE), seed thứ hai, hai arm đối chứng SPICE-MATCH / Sparse-SPICE ⇒ chưa được viết "thiết kế thưởng SA tạo ra mức tăng", chỉ được viết "GRPO với thưởng SA-SPICE-v3 từ SFT-cont".
+
+### 14b. Độ đo văn bản tập kiểm SA-SPICE-v3 ck400 (kernel CPU `trangphngngc/chu-sa3-test-15-11-cpu`, xong 15/11)
+
+Tệp `runs/sa_spice_v3/test/chu/chu_sa3_test_15_11.json` + `chu.log`. 4.463 bước chạm, bộ chấm COCO + chrF + BERTScore (rescaled); tự kiểm tái lập 10 nhánh đã lưu. KTC95 bootstrap cụm app, B = 2.000, * = KTC loại 0. Số test, một seed.
+
+| | BLEU-4 | METEOR | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
+|---|---|---|---|---|---|---|---|
+| SA ck400 | 51,24 | **38,90** | **69,31** | 429,12 | 45,76 | **64,40** | 67,59 |
+
+| phép so | BLEU-4 | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
+|---|---|---|---|---|---|---|
+| SA − SFT tiếp | −0,82* | +0,76* | +3,33 | +0,43 | +1,77* | +0,54* |
+| SA − ck500 | −1,12* | +0,95* | −0,93 | −0,03 | +1,53* | +0,52* |
+| SA − S1/101 | −0,31 | +1,96* | +13,01* | +1,39* | +3,14* | +1,26* |
+| SA − A/A | −1,73* | +0,87* | −1,79 | −0,24 | +2,01* | +0,50* |
+
+Đọc: SA ck400 cao nhất mọi nhánh ở METEOR, ROUGE-L, chrF. SPICE ngang ck500 và không tăng có ý nghĩa so SFT tiếp (+0,43) ⇒ phần tăng văn bản đi qua chrF/ROUGE-L. Cần nhánh SPICE thuần từ SFT-cont (SPICE-MATCH) mới được nói gì về vai trò của SPICE trong thưởng composite. Đã thêm vào report/334 §4.

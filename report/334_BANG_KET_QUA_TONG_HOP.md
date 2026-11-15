@@ -1,6 +1,6 @@
 # 334 — Bảng kết quả tổng hợp (tự sinh)
 
-> **Tệp này do `harness/bang_tong_hop.py` sinh ra — đừng sửa tay.** Cập nhật: thêm nhánh vào danh sách trong script rồi `cd harness && python3 bang_tong_hop.py`. Lần sinh gần nhất: 15/11/2026 09:56 (giờ máy WSL, UTC). Bootstrap B = 10000.
+> **Tệp này do `harness/bang_tong_hop.py` sinh ra — đừng sửa tay.** Cập nhật: thêm nhánh vào danh sách trong script rồi `cd harness && python3 bang_tong_hop.py`. Lần sinh gần nhất: 15/11/2026 10:31 (giờ máy WSL, UTC). Bootstrap B = 10000.
 
 Quy ước: số **test** = tập kiểm AndroidControl của dự án (4.463 bước chạm + 2.495 bước không chạm), trích được. Số **DEV/val** chỉ để chọn nhánh, cấm trích ra bài. Mọi nhánh một hạt giống (101) trừ chỗ ghi khác. KTC95 bootstrap cụm app (test) hoặc cụm episode (DEV-v3); p là McNemar chính xác; * = KTC loại 0.
 
@@ -83,10 +83,10 @@ Cùng cấu hình GRPO như mục 1, chỉ đổi phần thưởng. Lượt lư�
 
 | phần thưởng | BLEU-4 ↑ | METEOR ↑ | ROUGE-L ↑ | CIDEr-D ↑ | SPICE ↑ | chrF ↑ | BERTScore ↑ |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| SA-SPICE-v3 + thưởng khớp thao tác <sup>b</sup> | - | - | - | - | - | - | - |
+| SA-SPICE-v3 + thưởng khớp thao tác <sup>b</sup> | 51,24 | **38,90** | **69,31** | 429,12 | 45,76 | **64,40** | **67,59** |
 | SPICE (lượt gốc) | 52,36 | 37,92 | 68,36 | 430,05 | <u>45,79</u> | 62,87 | 67,07 |
-| ROUGE-L | 52,59 | <u>38,20</u> | **69,27** | **432,81** | 45,57 | <u>63,42</u> | **67,57** |
-| METEOR | 50,76 | **38,63** | <u>69,14</u> | 426,61 | 45,13 | **64,19** | <u>67,35</u> |
+| ROUGE-L | 52,59 | 38,20 | <u>69,27</u> | **432,81** | 45,57 | 63,42 | <u>67,57</u> |
+| METEOR | 50,76 | <u>38,63</u> | 69,14 | 426,61 | 45,13 | <u>64,19</u> | 67,35 |
 | CIDEr-D | 51,59 | 37,78 | 68,47 | 424,52 | 44,43 | 62,90 | 67,03 |
 | CIDEr-D (mã CTG, 1000 update) | <u>52,82</u> | 37,37 | 68,46 | 427,98 | 44,45 | 61,92 | - |
 | CIDEr-D (mã CTG, 500 update) | 52,38 | 37,24 | 68,59 | 428,27 | 45,27 | 61,76 | - |
@@ -112,7 +112,7 @@ Cùng cấu hình GRPO như mục 1, chỉ đổi phần thưởng. Lượt lư�
 | không thưởng (SFT tiếp) | +0,43 [−0,13; +0,99] (97/78) p=0,173 | −0,49 [−1,06; +0,09] (75/97) p=0,109 | - | +1,05* [+0,47; +1,64] (109/62) p=0,0004 | 0,520 |
 | điểm xuất phát | −0,63 [−1,37; +0,12] (109/137) p=0,085 | −1,55* [−2,33; −0,80] (90/159) p=1,5e-05 | −1,05* [−1,64; −0,48] (62/109) p=0,0004 | - | 0,465 |
 
-b: xuất phát từ SFT-cont (= SFT tiếp), 1.000 câu nhắc TRAIN-v3, chọn ck400 theo tiêu chí khả thi trên DEV-v3 (report/333 §13). Chưa có số test: chrF (trượt tiêu chí khả thi DEV), BLEU-4, SPIDEr, BERTScore.
+b: xuất phát từ SFT-cont (= SFT tiếp), 1.000 câu nhắc TRAIN-v3, chọn ck400 theo tiêu chí khả thi trên DEV-v3 (report/333 §13). Không chấm test các nhánh chrF (trượt tiêu chí khả thi DEV), BLEU-4, SPIDEr.
 
 ## 3. Tập kiểm, mọi nhánh — tiêu chí xác định vị trí (4.463 bước chạm)
 
@@ -200,12 +200,12 @@ Cùng cách đánh dấu như mục 3.
 | nhánh | BLEU-4 ↑ | METEOR ↑ | ROUGE-L ↑ | CIDEr-D ↑ | SPICE ↑ | chrF ↑ | BERTScore ↑ | nguồn |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|---|
 | Câu chuẩn (trần dụng cụ) | *100,00* | *100,00* | *100,00* | *988,74* | *98,61* | *100,00* | *100,00* | text_metrics_coco/them.json |
-| ACE (R3) | **53,47** | <u>38,37</u> | 69,11 | **442,02** | **47,13** | <u>63,45</u> | **67,73** | ktc_chu_27_10.json |
+| ACE (R3) | **53,47** | 38,37 | 69,11 | **442,02** | **47,13** | 63,45 | **67,73** | ktc_chu_27_10.json |
 | ck500 (GRPO + SPICE) | 52,36 | 37,92 | 68,36 | 430,05 | 45,79 | 62,87 | 67,07 | ktc_chu_27_10.json |
 | ck500 hạt 202 | 52,94 | 37,53 | 68,48 | 431,22 | 45,69 | 62,37 | 67,12 | ktc_chu_27_10.json |
-| GRPO + ROUGE-L | 52,59 | 38,20 | **69,27** | <u>432,81</u> | 45,57 | 63,42 | <u>67,57</u> | chu_luoi_8_11b.json |
+| GRPO + ROUGE-L | 52,59 | 38,20 | <u>69,27</u> | <u>432,81</u> | 45,57 | 63,42 | 67,57 | chu_luoi_8_11b.json |
 | SCST + SPICE | 51,97 | 38,15 | 68,70 | 430,89 | 45,93 | 63,31 | 67,25 | chu_luoi_8_11b.json |
-| GRPO + METEOR | 50,76 | **38,63** | <u>69,14</u> | 426,61 | 45,13 | **64,19** | 67,35 | chu_luoi_8_11b.json |
+| GRPO + METEOR | 50,76 | <u>38,63</u> | 69,14 | 426,61 | 45,13 | <u>64,19</u> | 67,35 | chu_luoi_8_11b.json |
 | GRPO + CIDEr-D | 51,59 | 37,78 | 68,47 | 424,52 | 44,43 | 62,90 | 67,03 | chu_luoi_8_11b.json |
 | GRPO + CIDEr-D (A2, 500 bước) | 52,38 | 37,24 | 68,59 | 428,27 | 45,27 | 61,76 | - | report/299 §3 |
 | GRPO + CIDEr-D (A2, 1000 bước) | 52,82 | 37,37 | 68,46 | 427,98 | 44,45 | 61,92 | - | report/299 §3 |
@@ -216,7 +216,7 @@ Cùng cách đánh dấu như mục 3.
 | GRPO + SPICE chạy lại (A/A) | <u>52,97</u> | 37,55 | 68,44 | 430,92 | <u>46,00</u> | 62,39 | 67,09 | chu_luoi_8_11b.json |
 | RLOO + SPICE | 52,00 | 37,00 | 67,33 | 422,10 | 45,26 | 61,65 | 66,31 | chu_luoi_8_11b.json |
 | xao101 (SPICE ghép ngẫu nhiên) | 51,32 | 36,95 | 67,36 | 418,13 | 44,40 | 61,52 | 66,40 | ktc_chu_27_10.json |
-| SA-SPICE-v3 ck400 | chưa có | | | | | | | |
+| SA-SPICE-v3 ck400 | 51,24 | **38,90** | **69,31** | 429,12 | 45,76 | **64,40** | <u>67,59</u> | chu_sa3_test_15_11.json |
 | TAGE | - | - | - | - | 45,74 | - | - | report/269 §2 |
 | RAFT | 51,65 | 37,52 | 67,79 | 423,21 | 44,89 | 62,37 | 66,62 | report/314 §2 |
 | GRPO-point (chặng ba) | 49,86 | 37,31 | 68,54 | 402,91 | 42,50 | 61,88 | 66,85 | text_metrics_coco/them.json |
@@ -404,7 +404,6 @@ ck500 − S1/101 exec trên ACU: **+4,58 [+3,17; +6,05]** p=2,1e−10 · ACE −
 
 | nhánh | trạng thái | ghi chú |
 |---|---|---|
-| SA-SPICE-v3 ck400 — độ đo văn bản | chưa tính (cần kernel CPU, SPICE) | vị trí + không chạm đã có (kernel `sa3-test-ck400`, xong 15/11) |
 | chrF ck400 (SA-SPICE-v3 baseline) | không chấm test | trượt tiêu chí khả thi DEV (không chạm −6,90) |
 | Dr.GRPO | treo ở checkpoint-475 | report/320 §20 |
 | VIS-SFT | dừng ở điểm kiểm K1 | không có số test |

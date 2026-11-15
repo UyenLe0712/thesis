@@ -16,6 +16,7 @@ CAT_H = float(os.environ.get("CAT_H", 7.5))
 ARMS = os.environ.get("ARMS", "SA-SPICE-v3,chrF").split(",")
 SEED = int(os.environ.get("SEED", 101))
 DS_THEM = os.environ.get("DS_THEM", "").split()
+FP16 = os.environ.get("FP16", "0") == "1"
 assert 1 <= len(ARMS) <= 2
 R = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 H = os.path.dirname(os.path.abspath(__file__))
@@ -65,6 +66,12 @@ for f, h in {M!r}.items():
     assert md5(f"{{D}}/{{f}}") == h, f"DUNG: {{f}} lech ban may nha"
 for f in {PY!r}:
     shutil.copy(f"{{D}}/{{f}}", f"{{W}}/{{f}}")
+if {FP16!r}:   # 15/11: card >= Ampere (L4/A100) tự chọn bf16; ép fp16 cho giống lượt SA trên T4
+    _p = f"{{W}}/grpo_spice.py"; _s = open(_p, encoding="utf-8").read()
+    _o = "return torch.bfloat16 if torch.cuda.get_device_capability()[0] >= 8 else torch.float16"
+    assert _s.count(_o) == 1, "DUNG: khong thay dong chon dtype"
+    open(_p, "w", encoding="utf-8").write(_s.replace(_o, "return torch.float16  # ép fp16 (FP16=1)"))
+    print("[ép fp16] grpo_spice.py ban chep trong W", flush=True)
 import importlib.util
 SPL = list(importlib.util.find_spec("pycocoevalcap").submodule_search_locations)[0] + "/spice/lib"
 for j, sz in {{"stanford-corenlp-3.6.0.jar": 7270741, "stanford-corenlp-3.6.0-models.jar": 378116526}}.items():

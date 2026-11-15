@@ -58,7 +58,12 @@ from google.colab import drive, userdata
 if not os.path.isdir("/content/drive/MyDrive"):   # chạy qua Colab CLI thì gắn trước bằng `colab drivemount`
     drive.mount("/content/drive")
 DRIVE = "/content/drive/MyDrive/thesis/colab_kaggle/{name}"
-os.makedirs(DRIVE, exist_ok=True); os.makedirs("/kaggle/input", exist_ok=True); os.makedirs("/kaggle/working", exist_ok=True)
+os.makedirs(DRIVE, exist_ok=True)
+# 15/11: ảnh Colab mới gắn sẵn ổ CHỈ ĐỌC ở /kaggle/input ⇒ gỡ ra (chạy root) rồi kiểm ghi được
+if os.path.ismount("/kaggle/input"):
+    subprocess.run(["umount", "/kaggle/input"], check=False)
+os.makedirs("/kaggle/input", exist_ok=True); os.makedirs("/kaggle/working", exist_ok=True)
+open("/kaggle/input/.ghi_thu", "w").close(); os.remove("/kaggle/input/.ghi_thu")
 SEC = "KAGGLE_{owner.upper()}"   # Colab secret: khoá KGAT_ của tài khoản {owner}
 TOKF = "/content/.kaggle_tok/access_token"   # Colab CLI: `colab upload` tệp khoá lên đây (KAGGLE_API_TOKEN nhận đường dẫn tệp)
 if os.path.isfile(TOKF): os.environ["KAGGLE_API_TOKEN"] = TOKF

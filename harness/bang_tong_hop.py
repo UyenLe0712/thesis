@@ -103,7 +103,7 @@ TRUC_TH = dict(
     moc=[("SFT tiếp (= SFT-cont)", "không thưởng (SFT tiếp)", 125, ""),
          ("S1/101", "điểm xuất phát", 0, "")],
     chu_thich="b: xuất phát từ SFT-cont (= SFT tiếp), 1.000 câu nhắc TRAIN-v3, chọn ck400 theo tiêu chí khả thi trên DEV-v3 (report/333 §13). "
-              "Chưa có số test: chrF (trượt tiêu chí khả thi DEV), BLEU-4, SPIDEr, BERTScore.",
+              "Không chấm test các nhánh chrF (trượt tiêu chí khả thi DEV), BLEU-4, SPIDEr.",
     so=[(AA, "A/A"), ("ck500 (GRPO + SPICE)", "ck500"), ("SFT tiếp (= SFT-cont)", "SFT tiếp"), ("S1/101", "S1/101")],
 )
 
@@ -126,6 +126,7 @@ CHU = {
     "REINFORCE + SPICE": (52.52, 37.37, 67.97, 426.11, 45.27, 62.06, 66.76, "chu_luoi_8_11b.json"),
     "GRPO + SPICE chạy lại (A/A)": (52.97, 37.55, 68.44, 430.92, 46.00, 62.39, 67.09, "chu_luoi_8_11b.json"),
     "RLOO + SPICE": (52.00, 37.00, 67.33, 422.10, 45.26, 61.65, 66.31, "chu_luoi_8_11b.json"),
+    "SA-SPICE-v3 ck400": (51.24, 38.90, 69.31, 429.12, 45.76, 64.40, 67.59, "chu_sa3_test_15_11.json"),
     "xao101 (SPICE ghép ngẫu nhiên)": (51.32, 36.95, 67.36, 418.13, 44.40, 61.52, 66.40, "ktc_chu_27_10.json"),
     "TAGE": (None, None, None, None, 45.74, None, None, "report/269 §2"),
     "RAFT": (51.65, 37.52, 67.79, 423.21, 44.89, 62.37, 66.62, "report/314 §2"),
@@ -572,7 +573,6 @@ ck500 − S1/101 exec trên ACU: **+4,58 [+3,17; +6,05]** p=2,1e−10 · ACE −
 
 | nhánh | trạng thái | ghi chú |
 |---|---|---|
-| SA-SPICE-v3 ck400 — độ đo văn bản | chưa tính (cần kernel CPU, SPICE) | vị trí + không chạm đã có (kernel `sa3-test-ck400`, xong 15/11) |
 | chrF ck400 (SA-SPICE-v3 baseline) | không chấm test | trượt tiêu chí khả thi DEV (không chạm −6,90) |
 | Dr.GRPO | treo ở checkpoint-475 | report/320 §20 |
 | VIS-SFT | dừng ở điểm kiểm K1 | không có số test |
