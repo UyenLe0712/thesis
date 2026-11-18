@@ -54,10 +54,12 @@ with open(f"{DS}/ocr.jsonl", "w", encoding="utf-8") as f:            # cho kiem_
         if json.loads(l)["image"] in need:
             f.write(l)
 # ---- adapter GRPO ----
-for mo in ("sa_ck400", "sa_ck500", "chrf_ck400", "chrf_ck500", "sa_ck100", "sa_ck200", "sa_ck300", "chrf_ck100", "chrf_ck200", "chrf_ck300"):
-    if mo in MODELS:
+for mo in MODELS:
+    if mo != "sftcont":
         arm, ck = mo.split("_ck")
-        s, d = f"{R}/_bundles/sa3_grpo/ck_u3/{CK[arm]}/checkpoint-{ck}", f"{DS}/ad/{mo}"
+        # match = SPICE-MATCH chạy Colab L4 15–16/11 (điểm lưu ở ck_match, không nằm trong ck_u3)
+        s = f"{R}/_bundles/sa3_grpo/ck_match/checkpoint-{ck}" if arm == "match" else f"{R}/_bundles/sa3_grpo/ck_u3/{CK[arm]}/checkpoint-{ck}"
+        d = f"{DS}/ad/{mo}"
         os.makedirs(d, exist_ok=True)
         for f in ("adapter_config.json", "adapter_model.safetensors"):
             shutil.copy2(f"{s}/{f}", f"{d}/{f}")

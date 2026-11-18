@@ -309,3 +309,75 @@ Tệp `runs/sa_spice_v3/test/chu/chu_sa3_test_15_11.json` + `chu.log`. 4.463 bư
 | SA − A/A | −1,73* | +0,87* | −1,79 | −0,24 | +2,01* | +0,50* |
 
 Đọc: SA ck400 cao nhất mọi nhánh ở METEOR, ROUGE-L, chrF. SPICE ngang ck500 và không tăng có ý nghĩa so SFT tiếp (+0,43) ⇒ phần tăng văn bản đi qua chrF/ROUGE-L. Cần nhánh SPICE thuần từ SFT-cont (SPICE-MATCH) mới được nói gì về vai trò của SPICE trong thưởng composite. Đã thêm vào report/334 §4.
+
+## 15. SPICE-MATCH: train Colab L4 và DEV-v3 (15–16/11)
+
+**Train.** Arm SPICE-MATCH (thưởng clip(0,8·SPICE + 0,1 − d), SPICE thuần, không action/chrF) từ SFT-cont, seed 101, 500 update, cùng 1.000 câu nhắc TRAIN-v3 và cùng `sa3_grpo.py` như SA. Khác SA duy nhất ở máy: **Colab L4, ép fp16** (SA chạy Kaggle T4 fp16) ⇒ phải khai. Máy ảo mất hai lần (gập máy 15/11 ~23:15; bị thu hồi 16/11 ~16:28), chạy tiếp từ ck125 và ck425, cả hai lần kiểm `[tiếp từ]`, `[nạp default] |lora_B| > 0`, bước đầu = điểm lưu + 1. fp16: 3 bước `grad_norm nan` (GradScaler bỏ qua), 1 bước `kl nan` (bước 416, nửa số câu bị cắt ở 96 token); ck500 0 tensor NaN. Thưởng TB theo khối 100 bước 0,456 · 0,483 · 0,458 · 0,509 · 0,461 (phẳng như SA); KL tại ck400 0,020, ck500 0,039. Điểm lưu ck400/ck500 ở `_bundles/sa3_grpo/ck_match/`, đủ ck75–500 trên Drive `thesis/colab_kaggle/sa3-match-c-1/`.
+
+**DEV-v3** (kernel `uyenle0712/sa3-dev-match`, cùng builder `_bundles/sa3_dev/make_k.py`, xong 16/11 ~22:25 VN, `runs/sa_spice_v3/dev/match/`, đọc bằng `harness/sa3_dev_doc.py`). Số dev, cấm trích.
+
+| nhánh | exec (1.338 chạm) | Δ − SFT-cont | không chạm đúng loại (/667) | Δ − SFT-cont | back /104 | scroll /283 | scroll+back | KL |
+|---|---|---|---|---|---|---|---|---|
+| SFT-cont | 62,93 | — | 560 (83,96) | — | 84 | 227 | 80,36 | — |
+| SA ck400 | 64,28 | +1,35* | 544 | −2,40* | 60 | 237 | 76,74 | 0,042 |
+| SA ck500 | 64,35 | +1,42* | 523 | −5,55* | 56 | 235 | 75,19 | 0,043 |
+| MATCH ck400 | 64,65 | +1,72* [+0,86; +2,61] (29/6) | 535 | −3,75* | 56 | 234 | 74,94 | 0,020 |
+| MATCH ck500 | 64,28 | +1,35* | 539 | −3,15* | 65 | 235 | 77,52 | 0,039 |
+
+So cùng điểm lưu: exec SA − MATCH ck400 **−0,37 [−1,15; +0,38]** p=0,46 · ck500 +0,07 p=1,0. Không chạm SA ck400 − MATCH ck400 +1,35 [+0,00; +2,66] (17/8) p=0,11.
+
+**Tiêu chí khả thi §13** (không chạm tụt ≤3, scroll+back tụt ≤5, KL ≤0,10): MATCH ck400 trượt cả hai (−3,75; −5,43); MATCH ck500 trượt không chạm sát ngưỡng (−3,15, tức 21 bước thay vì 20) và qua scroll+back (−2,84). ⇒ Theo đúng thủ tục đã áp cho SA, **không điểm lưu MATCH nào khả thi**.
+
+Đọc (một hạt, số dev):
+- Trên exec, thưởng composite **không hơn** SPICE thuần (MATCH ck400 nhỉnh hơn SA ck400, KTC phủ 0). Phần exec tăng so SFT-cont không đến từ action/chrF trong thưởng.
+- Thứ composite có thể mua là bớt tác hại ở bước không chạm: ở ck400 SA tụt ít hơn MATCH 1,35 điểm (KTC chạm 0, p=0,11) và là nhánh duy nhất qua tiêu chí khả thi. Bằng chứng yếu, lẫn khác máy (L4 vs T4).
+- Back tụt ở mọi nhánh GRPO (84 → 56–65) ⇒ tác hại back không do thành phần nào riêng của SA.
+
+Chưa chấm test MATCH: chờ user chọn (xem §16 nếu có).
+
+## 16. Tập kiểm SPICE-MATCH ck400 (kernel `trangphngngc/sa3-test-match`, xong 17/11 ~02:50 VN)
+
+User chọn chấm test dù MATCH trượt tiêu chí khả thi DEV (§15) — phải khai. Chọn ck400 vì cùng số bước với SA ck400. Builder `_bundles/sa3_test/make_k_match.py` (chép `make_k.py`, chỉ đổi adapter, md5 `e7ab0390…`). Kết quả `runs/sa_spice_v3/test/match/`.
+
+**Kiểm:** hoà greedy 3/3 · sft_cont_merged trùng SFT tiếp 19/20 · bộ chấm 10 bước S1 · câu MATCH khác SFT-cont ở 428/2.495 bước không chạm (adapter gắn thật; SA 606) · SFT-cont không chạm sinh lại trùng **2.495/2.495** câu lượt `sa3-test-ck400` (tất định). Chạy 3,9 h.
+
+**Exec (4.463 bước chạm, bootstrap cụm app, McNemar chính xác):** MATCH ck400 **60,88**.
+
+| phép so | Δ [KTC95] | cứu / phá | p |
+|---|---|---|---|
+| MATCH − SA ck400 (61,21) | −0,34 [−0,76; +0,07] | 39 / 54 | 0,15 |
+| MATCH − SFT tiếp (60,16) | +0,72* [+0,25; +1,20] | 77 / 45 | 0,005 |
+| MATCH − ck500 (60,65) | +0,22 [−0,34; +0,81] | 85 / 75 | 0,48 |
+| MATCH − S1/101 (59,11) | +1,77* [+1,13; +2,42] | 149 / 70 | <0,001 |
+
+Câu MATCH trùng SA ở 3.448/4.463 bước.
+
+**Không chạm (2.495, đúng loại thao tác, `canon_action` strict_back như noharm):** MATCH 83,57 · SA 84,05 · SFT-cont 84,61. Theo loại MATCH: scroll 78,94 · wait 95,25 · input_text 78,74 · open_app 99,15 · back 56,30.
+
+| phép so | toàn bộ | back (270) | scroll (755) |
+|---|---|---|---|
+| MATCH − SFT-cont | −1,04* [−1,86; −0,23] p=0,013 | −14,81* (2/42) | +2,12* |
+| SA − SFT-cont | −0,56 [−1,46; +0,32] p=0,24 | −12,59* (3/37) | +3,18* |
+| SA − MATCH | +0,48 [−0,08; +1,07] p=0,13 | +2,22* [+0,36; +4,40] (7/1) p=0,07 | +1,06 [0,00; +2,19] |
+
+Đọc (một hạt; MATCH chạy L4, SA chạy T4):
+- Thứ tự exec trên test đảo so với DEV (DEV MATCH nhỉnh hơn 0,37, test SA nhỉnh hơn 0,34), cả hai lần KTC phủ 0 ⇒ **thưởng composite và SPICE thuần cho exec ngang nhau**. Phần SA hơn SFT tiếp (+1,05*) phần lớn đã có ở SPICE thuần (+0,72*).
+- Composite bớt tác hại không chạm một chút và nhất quán trên DEV lẫn test (DEV +1,35, test +0,48, back +2,22 với KTC loại 0 nhưng chỉ 8 bước bất đồng, McNemar p=0,07). Bằng chứng yếu, chưa đủ để viết "thành phần action trong thưởng chữa bước back": back vẫn tụt −12,6 ở SA.
+- Back tụt ở cả hai nhánh (−12,6 / −14,8) ⇒ tác hại back đến từ GRPO + SPICE nói chung, không do thành phần riêng của SA. Khớp phán quyết debate 15/11: chữa back ngoài reward.
+
+**Độ đo văn bản test (kernel `trangphngngc/chu-match-17-11-cpu`, 17/11, `harness/chu_match_17_11.py`, `runs/sa_spice_v3/test/match/chu/`).** 4.463 bước chạm, bootstrap cụm app B=2000, tự kiểm 4 nhánh cũ tái lập số đã lưu.
+
+| nhánh | BLEU-4 | METEOR | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
+|---|---|---|---|---|---|---|---|
+| SFT tiếp | 52,07 | 37,75 | 68,55 | 425,79 | 45,33 | 62,64 | 67,05 |
+| ck500 | 52,36 | 37,92 | 68,36 | 430,05 | 45,79 | 62,87 | 67,07 |
+| SA ck400 | 51,24 | 38,90 | 69,31 | 429,12 | 45,76 | 64,40 | 67,59 |
+| **MATCH ck400** | 52,59 | 38,74 | 69,51 | 436,26 | 46,41 | 64,07 | 67,96 |
+
+| phép so | BLEU-4 | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
+|---|---|---|---|---|---|---|
+| MATCH − SA | +1,35* | +0,20 | +7,14* | +0,65* | −0,34 [−0,70; 0,00] | +0,37* |
+| MATCH − SFT tiếp | +0,52* | +0,95* | +10,47* | +1,08* | +1,43* | +0,91* |
+| MATCH − ck500 | +0,23 | +1,14* | +6,21* | +0,61 [0,00; +1,20] | +1,20* | +0,90* |
+
+Đọc: ở độ đo văn bản, SPICE thuần **hơn** composite ở BLEU-4, CIDEr-D, SPICE, BERTScore (KTC loại 0); composite chỉ nhỉnh ở chrF (thành phần có trong thưởng của SA, KTC chạm 0) và METEOR (không KTC). MATCH cao nhất lưới RL ở ROUGE-L, CIDEr-D, SPICE, BERTScore (ACE vẫn cao hơn ở CIDEr-D/SPICE/BLEU-4). Gộp với exec (≈) và không chạm (SA nhỉnh rất ít): **thành phần action + chrF trong SA-SPICE-v3 không mua được gì rõ ràng trên test**, trừ chrF và một chút ở bước không chạm. Một hạt, khác máy (L4 vs T4).

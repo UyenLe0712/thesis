@@ -55,7 +55,7 @@ Mọi số test chỉ một hạt, trừ S1 và ck500 (hai hạt).
 | **ACE / R3** (ck500 + luật ghép câu `ra_k4` khi trùng ví dụ ∧ cùng loại thao tác) | mở rộng trong luận văn | 7/7 độ đo văn bản hơn ck500; exec 60,68 ≈ ck500 | report/304 §4–5 |
 | **SFT-cont** (S1 + SFT tiếp trên TRAIN-v3) | điểm xuất phát nhánh SA | DEV-v3 62,93 [val] | report/333 |
 | **GRPO + SA-SPICE-v3 từ SFT-cont, ck400**. Thưởng clip(0,8·[α·SPICE+(1−α)·chrF/100] + 0,2·A − d) | kết quả mới nhất, một hạt | exec **61,21**; − SFT tiếp +1,05 p=7e−4; − ck500 +0,56 p=0,069 (không ý nghĩa); − S1 +2,11. **Back không chạm 71,1 → 58,5** (phải khai). Văn bản: cao nhất METEOR 38,90 / ROUGE-L 69,31 / chrF 64,40; SPICE không tăng. Debate sau test: **không đổi reward**, chữa back ngoài reward. | report/320 §29, 333, `research_notes/Debate SA SPICE v3 sau test/03_phan_quyet.md` |
-| **SPICE-MATCH** (SPICE thuần từ SFT-cont, ablation của SA) | đang chạy Colab L4 15/11, ép fp16 | — | memory colab-chay-15-11 |
+| **SPICE-MATCH** (SPICE thuần từ SFT-cont, ablation của SA) | train 16/11 (Colab L4 fp16), DEV trượt khả thi (không chạm −3,75), test ck400 vẫn chấm (user) | test exec **60,88**; − SA ck400 −0,34 ns; − SFT tiếp +0,72*. Văn bản: hơn SA ở BLEU-4/CIDEr-D/SPICE/BERTScore (*), SA chỉ hơn chrF. Không chạm 83,57 (SA 84,05), back −14,8 vs −12,6 ⇒ **composite không mua được gì rõ ràng so SPICE thuần** | report/333 §15–16 |
 | Thước: exec (tiêu đề) · D.3 67,0 · AitW đầy đủ 77,3 (cận trên 85,0) · độ đo văn bản COCO + chrF + BERTScore · Phi-4 SoM · UI-Venus | chốt, đừng mở lại | | CLAUDE.md 13/9, 14/9 |
 
 Việc **chưa thử, đang chờ user** ở `report/336`:

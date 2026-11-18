@@ -47,6 +47,7 @@ TEST = [
     ("RLOO + SPICE", "luoi/7_11/test_u_3/score_rloo_spice_101_test_raw.jsonl", "lưới RL"),
     ("xao101 (SPICE ghép ngẫu nhiên)", "xao101/test/score_ck500_xao101_test_raw.jsonl", "lưới RL"),
     ("SA-SPICE-v3 ck400", "sa_spice_v3/test/score_sa_ck400_test_raw.jsonl", "lưới RL"),   # chờ kernel sa3-test-ck400
+    ("SPICE-MATCH ck400", "sa_spice_v3/test/match/score_match_ck400_test_raw.jsonl", "lưới RL"),   # kernel sa3-test-match 17/11, Colab L4
     ("TAGE", "tage_test/score_tage_gop_raw.jsonl", "hướng đã thử"),
     ("RAFT", "rd314/E/exec_raft/score_raft_gop_raw.jsonl", "hướng đã thử"),
     ("GRPO-point (chặng ba)", "grpo_point/score_grpo_point_seed101_raw.jsonl", "hướng đã thử"),
@@ -83,7 +84,7 @@ TRUC_RL = dict(
          ("S1/101", "điểm xuất phát", 0, "")],
     chu_thich="a: PPO một câu nhắc mỗi update nên chạy 1.000 update để đi hết đúng 1.000 câu nhắc như các lượt khác. "
               "Chưa có số test: Dr.GRPO (treo ở checkpoint-475), A2C (mới probe). Chưa chạy: DPO, MIXER, MRT, RAML.",
-    so=[(AA, "A/A"), ("ck500 (GRPO + SPICE)", "ck500"), ("SFT tiếp (= SFT-cont)", "SFT tiếp"), ("S1/101", "S1/101")],
+    so=[(AA, "A/A"), ("ck500 (GRPO + SPICE)", "ck500"), ("SFT tiếp (= SFT-cont)", "SFT tiếp"), ("S1/101", "S1/101"), ("SA-SPICE-v3 ck400", "SA ck400")],
 )
 TRUC_TH = dict(
     tieu_de="## 2. So phần thưởng — cùng thuật toán GRPO, cùng điểm xuất phát S1/101\n",
@@ -99,12 +100,14 @@ TRUC_TH = dict(
           ("GRPO + CIDEr-D (A2, 500 bước)", "CIDEr-D (mã CTG, 500 update)", 500, ""),
           ("GRPO + CIDEr-D (A2, 1000 bước)", "CIDEr-D (mã CTG, 1000 update)", 1000, ""),
           ("SA-SPICE-v3 ck400", "SA-SPICE-v3 + thưởng khớp thao tác", 400, "b"),
+          ("SPICE-MATCH ck400", "SPICE thuần (ablation của SA-SPICE-v3)", 400, "b,c"),
           ("xao101 (SPICE ghép ngẫu nhiên)", "SPICE ghép ngẫu nhiên giữa các mẫu (kiểm soát)", 500, "")],
     moc=[("SFT tiếp (= SFT-cont)", "không thưởng (SFT tiếp)", 125, ""),
          ("S1/101", "điểm xuất phát", 0, "")],
     chu_thich="b: xuất phát từ SFT-cont (= SFT tiếp), 1.000 câu nhắc TRAIN-v3, chọn ck400 theo tiêu chí khả thi trên DEV-v3 (report/333 §13). "
-              "Không chấm test các nhánh chrF (trượt tiêu chí khả thi DEV), BLEU-4, SPIDEr.",
-    so=[(AA, "A/A"), ("ck500 (GRPO + SPICE)", "ck500"), ("SFT tiếp (= SFT-cont)", "SFT tiếp"), ("S1/101", "S1/101")],
+              "Không chấm test các nhánh chrF (trượt tiêu chí khả thi DEV), BLEU-4, SPIDEr. "
+              "c: train Colab L4 fp16 (SA trên Kaggle T4 fp16); trượt tiêu chí khả thi DEV (không chạm −3,75), user vẫn cho chấm test để so với SA (report/333 §15).",
+    so=[(AA, "A/A"), ("ck500 (GRPO + SPICE)", "ck500"), ("SFT tiếp (= SFT-cont)", "SFT tiếp"), ("S1/101", "S1/101"), ("SA-SPICE-v3 ck400", "SA ck400")],
 )
 
 # ---------------- 2. độ đo văn bản test (4.463 bước chạm, mức kho) ----------------
@@ -127,6 +130,7 @@ CHU = {
     "GRPO + SPICE chạy lại (A/A)": (52.97, 37.55, 68.44, 430.92, 46.00, 62.39, 67.09, "chu_luoi_8_11b.json"),
     "RLOO + SPICE": (52.00, 37.00, 67.33, 422.10, 45.26, 61.65, 66.31, "chu_luoi_8_11b.json"),
     "SA-SPICE-v3 ck400": (51.24, 38.90, 69.31, 429.12, 45.76, 64.40, 67.59, "chu_sa3_test_15_11.json"),
+    "SPICE-MATCH ck400": (52.59, 38.74, 69.51, 436.26, 46.41, 64.07, 67.96, "chu_match_17_11.json"),   # kernel chu-match-17-11-cpu
     "xao101 (SPICE ghép ngẫu nhiên)": (51.32, 36.95, 67.36, 418.13, 44.40, 61.52, 66.40, "ktc_chu_27_10.json"),
     "TAGE": (None, None, None, None, 45.74, None, None, "report/269 §2"),
     "RAFT": (51.65, 37.52, 67.79, 423.21, 44.89, 62.37, 66.62, "report/314 §2"),
@@ -152,13 +156,16 @@ NONTAP = {   # report/279 §4g (ctg_nontap_doc.json)
     "CTG A3 (CIDEr-D + CTG, 1000 bước)": (84.25, 78.68, 94.46, 80.36, 98.72, 62.59),
     "SFT-cont (= SFT tiếp)": (84.61, 76.82, 95.64, 80.36, 97.44, 71.11),     # kernel sa3-test-ck400, noharm_sftcont.json
     "SA-SPICE-v3 ck400": (84.05, 80.00, 94.26, 80.16, 98.29, 58.52),         # kernel sa3-test-ck400, noharm_sa_ck400.json
+    "SPICE-MATCH ck400": (83.57, 78.94, 95.25, 78.74, 99.15, 56.30),         # kernel sa3-test-match, noharm_match_ck400.json
 }
 
 # ---------------- 4. DEV-v3 ----------------
 DEV = [("SFT-cont", "sa_spice_v3/dev/a/score/score_dev_sftcont_raw.jsonl"),
        ("SA-SPICE-v3 ck500", "sa_spice_v3/dev/a/score/score_dev_sa_ck500_raw.jsonl"),
        ("SA-SPICE-v3 ck400", "sa_spice_v3/dev/b/score/score_dev_sa_ck400_raw.jsonl"),
-       ("chrF ck400", "sa_spice_v3/dev/b/score/score_dev_chrf_ck400_raw.jsonl")]
+       ("chrF ck400", "sa_spice_v3/dev/b/score/score_dev_chrf_ck400_raw.jsonl"),
+       ("SPICE-MATCH ck400", "sa_spice_v3/dev/match/score/score_dev_match_ck400_raw.jsonl"),   # Colab L4 fp16 16/11
+       ("SPICE-MATCH ck500", "sa_spice_v3/dev/match/score/score_dev_match_ck500_raw.jsonl")]
 DEV_CHU = os.path.join(R, "sa_spice_v3/dev/chu/chu_sa3_dev_15_11.json")
 DEV_DOC = os.path.join(R, "sa_spice_v3/dev/doc_dev.json")
 DESC_TR = os.path.join(L.HERE, "dg1_cache", "train_ac", "descriptors.jsonl")
@@ -439,7 +446,9 @@ def main():
     w("| phép so | exec | D.3 | AitW đầy đủ |")
     w("|---|---|---|---|")
     for a, b in (("SA-SPICE-v3 ck500", "SFT-cont"), ("SA-SPICE-v3 ck400", "SFT-cont"), ("chrF ck400", "SFT-cont"),
-                 ("SA-SPICE-v3 ck400", "chrF ck400"), ("SA-SPICE-v3 ck500", "SA-SPICE-v3 ck400")):
+                 ("SA-SPICE-v3 ck400", "chrF ck400"), ("SA-SPICE-v3 ck500", "SA-SPICE-v3 ck400"),
+                 ("SPICE-MATCH ck400", "SFT-cont"), ("SPICE-MATCH ck500", "SFT-cont"),
+                 ("SA-SPICE-v3 ck400", "SPICE-MATCH ck400"), ("SA-SPICE-v3 ck500", "SPICE-MATCH ck500")):
         if a in DV and b in DV:
             o = []
             for c in ("vor", "d3", "aitwf"):
@@ -463,7 +472,8 @@ def main():
                 w(f"| {k[7:]} | {sg(x['d'])} [{sg(x['ci'][0])}; {sg(x['ci'][1])}] | {x['cuu']}/{x['pha']} | {fp(x['p'])} |")
         w("")
         w("Theo loại (đúng/tổng): input_text SFT-cont 88/111 · ck500 78 · ck400 88 · chrF 75 — navigate_back 84/104 · 56 · 60 · 57 — "
-          "open_app 161/169 · 154 · 159 · 156 — scroll 227/283 · 235 · 237 · 226 (`sa3_dev_doc.py`).\n")
+          "open_app 161/169 · 154 · 159 · 156 — scroll 227/283 · 235 · 237 · 226 (`sa3_dev_doc.py`). "
+          "SPICE-MATCH ck400 / ck500: input_text 85 · 84 — navigate_back 56 · 65 — open_app 160 · 155 — scroll 234 · 235.\n")
     if os.path.exists(DEV_CHU):
         dc = json.load(open(DEV_CHU))
         ME = dc["meteor"]

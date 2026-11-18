@@ -134,7 +134,7 @@ function main(n, title, part) {
   NOTE_N = n;
 }
 let NOTE_N = 0;
-const STEPS = ["① Ghép dữ liệu", "② Tìm nút được bấm", "③ Lấy tên nút", "④ Tìm dấu hiệu phân biệt"];
+const STEPS = ["① Ghép dữ liệu", "② Xác định phần tử", "③ Lấy tên", "④ Tìm dấu hiệu phân biệt"];
 function miniSteps(active) {
   const y = 1.1, h = 0.5, gap = 0.3, w = (W - 2 * M - 3 * gap) / 4;
   STEPS.forEach((t, i) => {
@@ -163,7 +163,7 @@ text("VCL 2026 · HUFLIT · 27/11/2026", { x: 0.9, y: 5.75, w: W - 1.8, h: 0.5, 
 note(SAY[1]); foot();
 
 // ══════════ 2 · MỤC TIÊU ══════════
-main(2, "Mục tiêu: máy viết câu chỉ chỗ cần bấm", 0);
+main(2, "Bài toán: sinh câu hướng dẫn thao tác", 0);
 s.addShape(pres.shapes.ROUNDED_RECTANGULAR_CALLOUT, { x: M, y: 1.5, w: 5.9, h: 1.45, fill: { color: BLOCK }, line: { color: SOFT, width: 1 } });
 text("“Con ơi, muốn gửi thư thì bấm vào đâu?”", { x: M + 0.3, y: 1.5, w: 5.3, h: 1.45, fontSize: 22, italic: true, valign: "middle" });
 s.addShape(pres.shapes.ROUNDED_RECTANGULAR_CALLOUT, { x: M + 0.6, y: 3.85, w: 5.9, h: 1.45, fill: { color: MINT }, line: { color: TEAL, width: 1 }, flipH: true });
@@ -171,29 +171,29 @@ text("“Mẹ bấm vào cái biểu tượng ngay trên chữ Gmail.”", { x: 
 {
   const bx = 8.0, bw = 4.73;
   block(bx, 1.3, bw, 1.25);
-  text("ảnh màn hình\n+ việc người dùng muốn làm", { x: bx + 0.2, y: 1.3, w: bw - 0.4, h: 1.25, fontSize: 20, align: "center", valign: "middle", lh: 1.05 });
+  text("ảnh màn hình\n+ mục tiêu người dùng", { x: bx + 0.2, y: 1.3, w: bw - 0.4, h: 1.25, fontSize: 20, align: "center", valign: "middle", lh: 1.05 });
   arrow(bx + bw / 2, 2.6, bx + bw / 2, 3.15);
   rect(bx, 3.2, bw, 1.1, NAVY, { radius: 0.08 });
   text("mô hình", { x: bx, y: 3.2, w: bw, h: 1.1, fontSize: 24, bold: true, color: WHITE, align: "center", valign: "middle" });
   arrow(bx + bw / 2, 4.35, bx + bw / 2, 4.9);
   block(bx, 4.95, bw, 1.1, MINT, TEAL);
-  text("một câu hướng dẫn", { x: bx, y: 4.95, w: bw, h: 1.1, fontSize: 22, bold: true, color: TEAL, align: "center", valign: "middle" });
+  text("câu hướng dẫn", { x: bx, y: 4.95, w: bw, h: 1.1, fontSize: 22, bold: true, color: TEAL, align: "center", valign: "middle" });
 }
 note(SAY[2]); foot();
 
 // ══════════ 3 · NÚT KHÔNG CÓ TÊN ══════════
-main(3, "Cái khó: nhiều nút không có tên", 0);
+main(3, "Phần tử giao diện thường không có tên", 0);
 moneo(M, 1.65, 7.7);
-text("Với máy, cả bốn biểu tượng này đều không có tên.", { x: M, y: 4.35, w: 7.7, h: 0.5, fontSize: 18, color: GREY, align: "center" });
+text("Cả bốn biểu tượng đều không có tên trong cây trợ năng.", { x: M, y: 4.35, w: 7.7, h: 0.5, fontSize: 18, color: GREY, align: "center" });
 bigNum("22%", "nút cần bấm không có tên", 8.7, 1.75, 4.03, RED, 84);
 hline(M, 5.6, W - 2 * M, LIGHT, 1);
-text("Thêm 7,6% nút trùng tên với nút khác ⇒ gần 1/3 số bước không gọi đúng tên được.", { x: M, y: 5.7, w: W - 2 * M, h: 0.55, fontSize: 16, italic: true, color: GREY, align: "center", valign: "middle" });
+text("Thêm 7,6% trùng tên với phần tử khác: tổng cộng 29,6% số bước.", { x: M, y: 5.7, w: W - 2 * M, h: 0.55, fontSize: 16, italic: true, color: GREY, align: "center", valign: "middle" });
 note(SAY[3]); foot();
 
 // ══════════ 4 · CHỈ QUA VẬT BÊN CẠNH ══════════
-main(4, "Không có tên thì chỉ qua vật bên cạnh", 0);
-[["Ảnh đời thường", "“con mèo đen bên trái”", "vật nào cũng có tên", NAVY, BLOCK],
- ["Màn hình điện thoại", "“biểu tượng ngay trên chữ Gmail”", "phải chỉ qua vật bên cạnh", TEAL, MINT]].forEach((c, i) => {
+main(4, "Quy chiếu qua phần tử lân cận", 0);
+[["Ảnh tự nhiên", "“con mèo đen bên trái”", "đối tượng thường có danh từ để gọi", NAVY, BLOCK],
+ ["Màn hình điện thoại", "“biểu tượng ngay trên chữ Gmail”", "nhiều phần tử không có tên", TEAL, MINT]].forEach((c, i) => {
   const x = M + i * 6.2;
   block(x, 1.3, 5.9, 2.2, c[4]);
   text(c[0], { x: x + 0.3, y: 1.4, w: 5.3, h: 0.5, fontSize: 20, bold: true, color: c[3], align: "center" });
@@ -201,23 +201,23 @@ main(4, "Không có tên thì chỉ qua vật bên cạnh", 0);
   text(c[2], { x: x + 0.3, y: 2.8, w: 5.3, h: 0.5, fontSize: 17, color: GREY, align: "center" });
 });
 text("1/3", { x: M, y: 3.75, w: 2.4, h: 1.2, fontSize: 64, bold: true, color: TEAL, align: "center", valign: "middle" });
-text("câu do người viết dùng từ chỉ vị trí\n(“trên”, “dưới”, “góc phải”…)", { x: M + 2.6, y: 3.75, w: 9.5, h: 1.2, fontSize: 21, valign: "middle", lh: 1.1 });
+text("câu của người chú thích có từ chỉ vị trí\n(“trên”, “dưới”, “góc phải”…)", { x: M + 2.6, y: 3.75, w: 9.5, h: 1.2, fontSize: 21, valign: "middle", lh: 1.1 });
 rect(M, 5.3, W - 2 * M, 0.85, NAVY, { radius: 0.08 });
-text([{ text: "Biểu thức quy chiếu: ", options: { bold: true } }, { text: "câu giúp người nghe nhận ra đúng một vật giữa nhiều vật giống nhau.", options: {} }],
+text([{ text: "Biểu thức quy chiếu: ", options: { bold: true } }, { text: "mô tả giúp người nghe xác định đúng một đối tượng giữa các đối tượng tương tự.", options: {} }],
   { x: M + 0.3, y: 5.3, w: W - 2 * M - 0.6, h: 0.85, fontSize: 19, color: WHITE, align: "center", valign: "middle" });
 text("Dale & Reiter, 1995", { x: W - M - 3, y: 6.2, w: 3, h: 0.35, fontSize: 12, italic: true, color: GREY, align: "right" });
 note(SAY[4]); foot();
 
 // ══════════ 5 · CẦN DỮ LIỆU ══════════
-main(5, "Cần dữ liệu để dạy máy, nên bài này tạo nó", 0);
+main(5, "Dữ liệu sẵn có và phần còn thiếu", 0);
 block(M, 1.3, W - 2 * M, 1.85);
-text([{ text: "AndroidControl ", options: { bold: true, color: NAVY } }, { text: "(Google, 2024): 15.283 lượt người thật thao tác; có ảnh, chỗ bấm, câu người viết.", options: {} }],
+text([{ text: "AndroidControl ", options: { bold: true, color: NAVY } }, { text: "(Li và cộng sự, 2024): 15.283 chuỗi thao tác thật; mỗi bước có ảnh, toạ độ chạm, câu chỉ dẫn.", options: {} }],
   { x: M + 0.35, y: 1.42, w: W - 2 * M - 0.7, h: 0.75, fontSize: 18.5, valign: "middle" });
-text([{ text: "Thiếu: ", options: { bold: true, color: RED } }, { text: "nút được bấm tên gì, khác các nút giống nó ở đâu.", options: {} }],
+text([{ text: "Chưa có: ", options: { bold: true, color: RED } }, { text: "mô tả phần tử cần chạm và dấu hiệu phân biệt nó với phần tử tương tự.", options: {} }],
   { x: M + 0.35, y: 2.2, w: W - 2 * M - 0.7, h: 0.75, fontSize: 20, valign: "middle" });
 text("Dàn ý", { x: M, y: 3.5, w: 4, h: 0.5, fontSize: 21, bold: true, color: TEAL });
 rect(M, 4.0, W - 2 * M, 2.35, "none", { line: TEAL, lw: 1.5 });
-[["1", "Tạo nhãn", "nhãn trông thế nào, điền tự động ra sao"], ["2", "Kiểm tra", "làm sao biết nhãn đúng"], ["3", "Kết luận", "còn thiếu gì"]].forEach((c, i) => {
+[["1", "Tạo nhãn", "cấu trúc nhãn và quy trình dựng tự động"], ["2", "Kiểm tra", "đối chiếu với câu của người chú thích"], ["3", "Kết luận", "hạn chế và hướng phát triển"]].forEach((c, i) => {
   const yy = 4.15 + i * 0.7;
   text([{ text: c[0] + ".  ", options: { bold: true, color: TEAL } }, { text: c[1], options: { bold: true, color: NAVY } }, { text: ": " + c[2], options: {} }],
     { x: M + 0.4, y: yy, w: W - 2 * M - 0.8, h: 0.65, fontSize: 20, valign: "middle" });
@@ -225,23 +225,23 @@ rect(M, 4.0, W - 2 * M, 2.35, "none", { line: TEAL, lw: 1.5 });
 note(SAY[5]); foot();
 
 // ══════════ 6 · NHÃN BỐN Ô ══════════
-main(6, "Mỗi bước cần một nhãn bốn ô", 1);
+main(6, "Nhãn mô tả bốn ô", 1);
 moneo(M, 2.85, 4.0);
-text("nút cần bấm: biểu tượng Gmail", { x: M, y: 4.25, w: 4.0, h: 0.45, fontSize: 14, italic: true, color: GREY, align: "center" });
+text("phần tử cần chạm: biểu tượng Gmail", { x: M, y: 4.25, w: 4.0, h: 0.45, fontSize: 14, italic: true, color: GREY, align: "center" });
 table(4.95, 1.35, [2.05, 2.7, 3.03], [
   { cells: ["ô", "ví dụ trên màn Gmail", "nghĩa"], bold: true, color: WHITE, fill: NAVY, h: 0.65 },
-  { cells: [{ t: "loại", bold: true }, { t: "icon", mono: true }, "nút, ô nhập hay biểu tượng"], h: 0.95 },
-  { cells: [{ t: "tên", bold: true }, "(không có tên)", "chữ hiển thị trên nút"], h: 0.95 },
-  { cells: [{ t: "vị trí", bold: true }, { t: "111, 903", mono: true }, "chỗ bấm, thang 0 đến 1.000"], h: 0.95 },
-  { cells: [{ t: "dấu hiệu phân biệt", bold: true, color: WHITE }, { t: "ngay trên chữ “Gmail”", bold: true, color: WHITE }, { t: "khác các nút giống nó ở đâu", bold: true, color: WHITE }], h: 1.15, fill: TEAL, rule: false },
+  { cells: [{ t: "loại", bold: true }, { t: "icon", mono: true }, "nút, ô nhập, biểu tượng…"], h: 0.95 },
+  { cells: [{ t: "tên", bold: true }, "(không có tên)", "chữ hiển thị trên phần tử"], h: 0.95 },
+  { cells: [{ t: "vị trí", bold: true }, { t: "111, 903", mono: true }, "điểm chạm, thang 0 đến 1.000"], h: 0.95 },
+  { cells: [{ t: "dấu hiệu phân biệt", bold: true, color: WHITE }, { t: "ngay trên chữ “Gmail”", bold: true, color: WHITE }, { t: "phân biệt với phần tử tương tự", bold: true, color: WHITE }], h: 1.15, fill: TEAL, rule: false },
 ], { fs: 18 });
 note(SAY[6]); foot();
 
 // ══════════ 7 · BỐN BƯỚC ══════════
-main(7, "Nhãn được điền tự động qua bốn bước", 1);
+main(7, "Quy trình dựng nhãn", 1);
 {
-  const subs = ["ghép hai bản công bố", "khung nhỏ nhất chứa chỗ bấm", "danh sách hệ thống, rồi đọc chữ trong ảnh", "chữ gần nhất làm mốc"];
-  const names = ["Ghép dữ liệu", "Tìm nút được bấm", "Lấy tên nút", "Tìm dấu hiệu phân biệt"];
+  const subs = ["ghép hai bản phát hành", "hộp bao nhỏ nhất chứa điểm chạm", "cây trợ năng, sau đó OCR", "chuỗi chữ gần nhất làm mốc"];
+  const names = ["Ghép dữ liệu", "Xác định phần tử", "Lấy tên", "Tìm dấu hiệu phân biệt"];
   const gap = 0.45, w = (W - 2 * M - 3 * gap) / 4, y = 1.8;
   names.forEach((t, i) => {
     const x = M + i * (w + gap);
@@ -252,54 +252,54 @@ main(7, "Nhãn được điền tự động qua bốn bước", 1);
     if (i < 3) arrow(x + w + 0.05, y + 0.95, x + w + gap - 0.05, y + 0.95);
   });
   rect(M, 5.35, W - 2 * M, 0.85, BLOCK, { radius: 0.08 });
-  text("Toàn bộ bằng quy tắc, không viết tay nhãn nào.", { x: M, y: 5.35, w: W - 2 * M, h: 0.85, fontSize: 21, bold: true, color: NAVY, align: "center", valign: "middle" });
+  text("Dựng hoàn toàn bằng quy tắc", { x: M, y: 5.35, w: W - 2 * M, h: 0.85, fontSize: 21, bold: true, color: NAVY, align: "center", valign: "middle" });
 }
 note(SAY[7]); foot();
 
 // ══════════ 8 · BƯỚC 1 ══════════
-main(8, "Bước 1: ghép hai bản dữ liệu", 1);
+main(8, "Bước 1. Ghép hai bản phát hành", 1);
 miniSteps([1]);
-[["Bản 1", "có câu + danh sách nút, thiếu ảnh"], ["Bản 2", "có ảnh, thiếu câu"]].forEach((c, i) => {
+[["Bản 1", "có câu chỉ dẫn và cây trợ năng, thiếu ảnh"], ["Bản 2", "có ảnh, thiếu câu chỉ dẫn"]].forEach((c, i) => {
   const yy = 2.1 + i * 1.05;
   block(M, yy, 6.6, 0.85);
   text([{ text: c[0] + ": ", options: { bold: true, color: NAVY } }, { text: c[1], options: {} }], { x: M + 0.3, y: yy, w: 6.1, h: 0.85, fontSize: 20, valign: "middle" });
 });
-text("⇒ ghép lại thành một bộ đủ cả ba thứ", { x: M + 0.3, y: 4.3, w: 6.3, h: 0.7, fontSize: 21, bold: true, color: TEAL, valign: "middle" });
+text("Ghép hai bản để có đủ ba thành phần", { x: M + 0.3, y: 4.3, w: 6.3, h: 0.7, fontSize: 21, bold: true, color: TEAL, valign: "middle" });
 vbars(8.3, 2.55, 4.4, 2.55, [
   { label: "ghép đúng", v: 48, txt: "48%", color: TEAL },
-  { label: "ghép sai (để so)", v: 20, txt: "20%", color: SOFT },
+  { label: "ghép lệch (đối chứng)", v: 20, txt: "20%", color: SOFT },
 ], 55, { bw: 0.55, lfs: 17, vfs: 32, lh: 0.5 });
-text("tỉ lệ chữ ngay chỗ bấm có xuất hiện trong câu", { x: 8.0, y: 5.8, w: 5.0, h: 0.45, fontSize: 15, italic: true, color: GREY, align: "center" });
+text("tỉ lệ chữ tại điểm chạm xuất hiện trong câu chỉ dẫn", { x: 8.0, y: 5.8, w: 5.0, h: 0.45, fontSize: 15, italic: true, color: GREY, align: "center" });
 note(SAY[8]); foot();
 
 // ══════════ 9 · BƯỚC 2 VÀ 3 ══════════
-main(9, "Bước 2 và 3: tìm nút được bấm, lấy tên", 1);
+main(9, "Bước 2 và 3. Xác định phần tử và lấy tên", 1);
 miniSteps([2, 3]);
 block(M, 2.0, 5.4, 3.0);
 text("Bước 2", { x: M + 0.3, y: 2.15, w: 4.8, h: 0.5, fontSize: 20, bold: true, color: TEAL });
-text("Chọn khung nhỏ nhất chứa chỗ bấm", { x: M + 0.3, y: 2.75, w: 4.8, h: 1.8, fontSize: 24, bold: true, color: NAVY, valign: "middle", lh: 1.1 });
+text("Hộp bao nhỏ nhất chứa điểm chạm", { x: M + 0.3, y: 2.75, w: 4.8, h: 1.8, fontSize: 24, bold: true, color: NAVY, valign: "middle", lh: 1.1 });
 arrow(6.1, 3.5, 6.75, 3.5);
 block(6.85, 2.0, 5.88, 3.0);
 text("Bước 3", { x: 7.15, y: 2.15, w: 5.3, h: 0.5, fontSize: 20, bold: true, color: TEAL });
 text("12,6%", { x: 7.0, y: 2.65, w: 2.5, h: 1.0, fontSize: 44, bold: true, color: RED, valign: "middle" });
-text("phần tử có tên trong danh sách của hệ thống", { x: 9.45, y: 2.65, w: 3.15, h: 1.0, fontSize: 16, valign: "middle", lh: 1.05 });
-text("⇒ cho máy đọc chữ trong ảnh (OCR)", { x: 7.15, y: 3.85, w: 5.4, h: 0.8, fontSize: 21, bold: true, color: NAVY, valign: "middle" });
+text("phần tử có tên trong cây trợ năng", { x: 9.45, y: 2.65, w: 3.15, h: 1.0, fontSize: 16, valign: "middle", lh: 1.05 });
+text("Bổ sung bằng OCR (nhận dạng chữ trong ảnh)", { x: 7.15, y: 3.85, w: 5.4, h: 0.8, fontSize: 21, bold: true, color: NAVY, valign: "middle" });
 rect(M, 5.35, W - 2 * M, 0.9, TEAL, { radius: 0.08 });
-text("Không chắc thì để trống, không đoán.", { x: M, y: 5.35, w: W - 2 * M, h: 0.9, fontSize: 24, bold: true, color: WHITE, align: "center", valign: "middle" });
+text("Tên không xác định được thì để trống", { x: M, y: 5.35, w: W - 2 * M, h: 0.9, fontSize: 24, bold: true, color: WHITE, align: "center", valign: "middle" });
 note(SAY[9]); foot();
 
 // ══════════ 10 · BƯỚC 4 ══════════
-main(10, "Bước 4: lấy chữ gần nhất làm mốc", 1);
+main(10, "Bước 4. Mỏ neo chữ", 1);
 miniSteps([4]);
 moneo((W - 10.6) / 2, 1.8, 10.6);
 block(M, 5.45, W - 2 * M, 0.95);
-text([{ text: "Máy viết: ", options: { color: GREY } }, { text: "ngay trên chữ \"Gmail\"", options: { fontFace: MONO, color: TEAL, bold: true } },
-      { text: "        Người viết: ", options: { color: GREY } }, { text: "“Click on the gmail option”", options: { color: NAVY, bold: true, italic: true } }],
+text([{ text: "Nhãn: ", options: { color: GREY } }, { text: "ngay trên chữ \"Gmail\"", options: { fontFace: MONO, color: TEAL, bold: true } },
+      { text: "        Câu của người chú thích: ", options: { color: GREY } }, { text: "“Click on the gmail option”", options: { color: NAVY, bold: true, italic: true } }],
   { x: M, y: 5.45, w: W - 2 * M, h: 0.95, fontSize: 22, align: "center", valign: "middle" });
 note(SAY[10]); foot();
 
 // ══════════ 11 · LÀM LẠI ══════════
-main(11, "Bản đầu của bước 4 sai, phải làm lại", 1);
+main(11, "Bước 4. Hai phiên bản quy tắc", 1);
 miniSteps([4]);
 [["Bản đầu", "“một trong bảy biểu tượng cùng loại”", "7,3%", GREY, BLOCK],
  ["Bản làm lại", "“ngay trên chữ Gmail”", "75,3%", TEAL, MINT]].forEach((c, i) => {
@@ -308,25 +308,25 @@ miniSteps([4]);
   text(c[0], { x, y: 2.15, w, h: 0.55, fontSize: 24, bold: true, color: c[3], align: "center" });
   text(c[1], { x: x + 0.3, y: 2.75, w: w - 0.6, h: 0.9, fontSize: 21, italic: true, align: "center", valign: "middle", lh: 1.05 });
   text(c[2], { x, y: 3.7, w, h: 1.3, fontSize: i === 0 ? 54 : 70, bold: true, color: c[3], align: "center", valign: "middle" });
-  text("số dấu hiệu chỉ ra được đúng nút", { x, y: 5.1, w, h: 0.6, fontSize: 18, align: "center" });
+  text("dấu hiệu xác định được đúng phần tử", { x, y: 5.1, w, h: 0.6, fontSize: 18, align: "center" });
 });
 arrow(6.05, 4.3, 7.3, 4.3);
 note(SAY[11]); foot();
 
 // ══════════ 12 · KIỂM BẰNG CÂU NGƯỜI VIẾT ══════════
-main(12, "Kiểm nhãn bằng câu do người viết", 2);
+main(12, "Đối chiếu với câu của người chú thích", 2);
 vbars(M + 1.0, 1.95, 7.0, 2.85, [
-  { label: "tên máy đặt có trong câu\nngười viết cho đúng bước đó", v: 53.5, txt: "53,5%", color: TEAL },
-  { label: "đem tên đó so với câu\ncủa bước kế tiếp (để so)", v: 7.6, txt: "7,6%", color: SOFT },
+  { label: "tên trong nhãn xuất hiện\ntrong câu của đúng bước đó", v: 53.5, txt: "53,5%", color: TEAL },
+  { label: "cùng tên, so với câu\ncủa bước kế tiếp (đối chứng)", v: 7.6, txt: "7,6%", color: SOFT },
 ], 60, { bw: 0.45, lfs: 17, vfs: 38 });
 block(8.95, 1.9, 3.78, 2.9, MINT);
-text("Máy không đọc câu của người khi tạo nhãn.\n\n⇒ trùng nhau là hai nguồn độc lập cùng gọi một tên.", { x: 9.15, y: 1.9, w: 3.38, h: 2.9, fontSize: 19, color: NAVY, valign: "middle", lh: 1.1 });
+text("Quy trình dựng nhãn không sử dụng câu của người chú thích.", { x: 9.15, y: 1.9, w: 3.38, h: 2.9, fontSize: 19, color: NAVY, valign: "middle", lh: 1.1 });
 note(SAY[12]); foot();
 
 // ══════════ 13 · CHỖ CÒN YẾU ══════════
-main(13, "Chỗ còn yếu: nút chỉ có một ký hiệu", 2);
-text("Tỉ lệ dấu hiệu chỉ ra được đúng nút, theo loại nút", { x: M, y: 1.3, w: W - 2 * M, h: 0.55, fontSize: 20, color: GREY });
-[["nút có tên rõ ràng", 80, "80%", TEAL, true], ["nút không có tên", 67, "67%", NAVY, false], ["nút chỉ có một ký hiệu\n(ví dụ “Q”, “?”)", 38, "38%", RED, true]].forEach((r, i) => {
+main(13, "Độ phủ theo loại phần tử", 2);
+text("Tỉ lệ dấu hiệu xác định được đúng phần tử", { x: M, y: 1.3, w: W - 2 * M, h: 0.55, fontSize: 20, color: GREY });
+[["có tên rõ ràng", 80, "80%", TEAL, true], ["không có tên", 67, "67%", NAVY, false], ["chỉ có một ký hiệu\n(ví dụ “Q”, “?”)", 38, "38%", RED, true]].forEach((r, i) => {
   const yy = 2.15 + i * 1.35, bx = 4.6, bwMax = 6.8;
   text(r[0], { x: M, y: yy, w: 3.8, h: 1.0, fontSize: 21, bold: r[4], align: "right", valign: "middle", lh: 1.05 });
   rect(bx, yy + 0.15, bwMax, 0.7, "EEEDF2");
@@ -336,9 +336,9 @@ text("Tỉ lệ dấu hiệu chỉ ra được đúng nút, theo loại nút", {
 note(SAY[13]); foot();
 
 // ══════════ 14 · HẠN CHẾ ══════════
-main(14, "Những gì bài này chưa làm được", 3);
-[[{ text: "Khoảng ", options: {} }, { text: "1/4", options: { bold: true, color: RED } }, { text: " dấu hiệu chưa chỉ ra được đúng nút (đã rõ lý do)", options: {} }],
- [{ text: "Chưa hỏi người dùng thật xem đọc nhãn có tìm ra nút không", options: {} }]].forEach((c, i) => {
+main(14, "Hạn chế", 3);
+[[{ text: "Khoảng ", options: {} }, { text: "1/4", options: { bold: true, color: RED } }, { text: " dấu hiệu chưa xác định được đúng phần tử", options: {} }],
+ [{ text: "Chưa đánh giá với người dùng thật", options: {} }]].forEach((c, i) => {
   const yy = 1.7 + i * 1.9;
   block(M, yy, W - 2 * M, 1.5);
   rect(M, yy, 0.14, 1.5, AMBER);
@@ -348,16 +348,16 @@ note(SAY[14]); foot();
 
 // ══════════ 15 · KẾT LUẬN ══════════
 main(15, "Kết luận", 3);
-[["Bài toán", [{ text: "gần ", options: {} }, { text: "1/3", options: { bold: true, color: TEAL } }, { text: " nút cần bấm không gọi đúng tên được ⇒ phải chỉ qua vật bên cạnh", options: {} }]],
+[["Bài toán", [{ text: "gần ", options: {} }, { text: "1/3", options: { bold: true, color: TEAL } }, { text: " phần tử cần chạm không có tên hoặc trùng tên, phải quy chiếu qua phần tử lân cận", options: {} }]],
  ["Tạo nhãn", [{ text: "tự động ", options: {} }, { text: "41.099 + 4.448", options: { bold: true, color: TEAL } }, { text: " nhãn bốn ô; dấu hiệu phân biệt ", options: {} }, { text: "7,3% → 75,3%", options: { bold: true, color: TEAL } }]],
- ["Kiểm tra", [{ text: "53,5%", options: { bold: true, color: TEAL } }, { text: " trùng câu người viết, so với ", options: {} }, { text: "7,6%", options: { bold: true, color: GREY } }, { text: " ở đối chứng", options: {} }]]].forEach((c, i) => {
+ ["Kiểm tra", [{ text: "53,5%", options: { bold: true, color: TEAL } }, { text: " tên trùng câu của người chú thích, so với ", options: {} }, { text: "7,6%", options: { bold: true, color: GREY } }, { text: " ở đối chứng", options: {} }]]].forEach((c, i) => {
   const yy = 1.35 + i * 1.5;
   block(M, yy, W - 2 * M, 1.25);
   rect(M, yy, 2.2, 1.25, NAVY, { radius: 0.08 });
   text(c[0], { x: M, y: yy, w: 2.2, h: 1.25, fontSize: 21, bold: true, color: WHITE, align: "center", valign: "middle" });
   text(c[1], { x: M + 2.45, y: yy, w: W - 2 * M - 2.7, h: 1.25, fontSize: 19.5, valign: "middle", lh: 1.05 });
 });
-text("Phần dạy mô hình bằng bộ dữ liệu này: bài đồng hành.", { x: M, y: 5.95, w: W - 2 * M, h: 0.5, fontSize: 17, italic: true, color: GREY, align: "center" });
+text("Kết quả huấn luyện mô hình: bài đồng hành.", { x: M, y: 5.95, w: W - 2 * M, h: 0.5, fontSize: 17, italic: true, color: GREY, align: "center" });
 note(SAY[15]); foot();
 
 // ══════════ 16 · CẢM ƠN ══════════
@@ -412,7 +412,7 @@ table(9.6, 1.5, [2.2, 0.93], [
   { cells: ["khớp OCR", "12"], h: 0.7 }, { cells: ["khớp cây trợ năng", "3"], h: 0.7 }, { cells: ["không bên nào", "25"], h: 0.7, rule: false },
 ], { fs: 18, align: ["left", "right"] });
 block(M, 4.3, W - 2 * M, 1.9, MINT);
-text("11/12 ca nghiêng về OCR: do nhãn trợ năng là rác.\nKhi cả hai nguồn dùng được: OCR 1 ca, cây trợ năng 3 ca.",
+text("11/12 ca nghiêng về OCR: nhãn trợ năng ở đó không dùng được.\nKhi cả hai nguồn dùng được: OCR 1 ca, cây trợ năng 3 ca.",
   { x: M + 0.3, y: 4.3, w: W - 2 * M - 0.6, h: 1.9, fontSize: 20, valign: "middle", lh: 1.25 });
 note(QA("B2")); footB();
 
@@ -505,8 +505,8 @@ note(QA("D3")); footB();
 
 
 // B10 · người và máy chọn cùng chiến lược
-backup("Người và máy chọn cùng chiến lược");
-[["32,5%", "câu người viết có từ chỉ vị trí", NAVY], ["67,2%", "dấu hiệu máy tạo là mốc chữ bên cạnh", TEAL],
+backup("Chiến lược quy chiếu: người chú thích và quy trình");
+[["32,5%", "câu của người chú thích có từ chỉ vị trí", NAVY], ["67,2%", "dấu hiệu của quy trình là mỏ neo chữ", TEAL],
  ["55,6%", "số bước có nút cạnh tranh trong khoảng 80 đến 350 px", GREY], ["91,6%", "số bước có nút cùng vai trò (trung vị 8)", GREY]].forEach((c, i) => {
   const x = M + (i % 2) * 6.2, yy = 1.4 + Math.floor(i / 2) * 2.35;
   block(x, yy, 5.9, 2.05, i < 2 ? MINT : BLOCK);

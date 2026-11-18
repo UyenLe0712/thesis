@@ -3,7 +3,9 @@
 for lan in 1 2 3; do
 OUT=$(timeout 90 colab ssh -s match -- '
 L=/kaggle/working/sa3_spicematch_101/train.log
-n=$(grep -c "^\[SPICE-MATCH\] lần" $L)
+# log nối qua nhiều lượt chạy tiếp ⇒ không đếm dòng; lấy bước thật = epoch cuối × 500
+n=$(grep -oE "epoch.: .[0-9.]+" $L | tail -1 | grep -oE "[0-9.]+$" | awk "{printf \"%.0f\", \$1*500}")
+n=${n:-0}
 t=$(grep -o "step_time.: .[0-9.]*" $L | tail -20 | grep -o "[0-9.]*$" | awk "{s+=\$1} END {if (NR) printf \"%.0f\", s/NR}")
 echo "Đã train: $n / 500 update"
 echo "Tốc độ: ${t:-?} giây/update · còn khoảng $(( (500-n)*${t:-85}/3600 )) giờ $(( (500-n)*${t:-85}%3600/60 )) phút"

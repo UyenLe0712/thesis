@@ -1,0 +1,66 @@
+PTBTokenizer tokenized 41033 tokens at 244967.10 tokens per second.
+PTBTokenizer tokenized 42552 tokens at 250876.16 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [2.9 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.5 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.7 sec].
+Threads( StanfordCoreNLP ) [01:10.571 minutes]
+Parsing test captions
+Threads( StanfordCoreNLP ) [33.130 seconds]
+SPICE evaluation took: 1.900 min
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/389 [00:00<?, ?it/s]Loading weights:  71%|███████   | 275/389 [00:00<00:00, 2699.93it/s]Loading weights: 100%|██████████| 389/389 [00:00<00:00, 2751.01it/s]
+[transformers] [1mRobertaModel LOAD REPORT[0m from: roberta-large
+Key                       | Status     | 
+--------------------------+------------+-
+lm_head.bias              | UNEXPECTED | 
+lm_head.layer_norm.bias   | UNEXPECTED | 
+lm_head.dense.weight      | UNEXPECTED | 
+lm_head.layer_norm.weight | UNEXPECTED | 
+lm_head.dense.bias        | UNEXPECTED | 
+pooler.dense.weight       | MISSING    | 
+pooler.dense.bias         | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Warning: Empty candidate sentence detected; setting raw BERTscores to 0.
+Warning: Empty reference sentence detected; setting raw BERTScores to 0.
+  SPICE-MATCH ck400: tính từng bước xong (483 s)
+✅ AndroidControl: 5 nhánh tái lập số đã lưu
+  AndroidControl bootstrap 200/2000 · 1 s
+  AndroidControl bootstrap 400/2000 · 2 s
+  AndroidControl bootstrap 600/2000 · 3 s
+  AndroidControl bootstrap 800/2000 · 3 s
+  AndroidControl bootstrap 1000/2000 · 4 s
+  AndroidControl bootstrap 1200/2000 · 5 s
+  AndroidControl bootstrap 1400/2000 · 6 s
+  AndroidControl bootstrap 1600/2000 · 7 s
+  AndroidControl bootstrap 1800/2000 · 8 s
+  AndroidControl bootstrap 2000/2000 · 9 s
+PTBTokenizer tokenized 41033 tokens at 252731.68 tokens per second.
+PTBTokenizer tokenized 41102 tokens at 245645.07 tokens per second.
+PTBTokenizer tokenized 41033 tokens at 105935.17 tokens per second.
+PTBTokenizer tokenized 41674 tokens at 215551.86 tokens per second.
+PTBTokenizer tokenized 41033 tokens at 239394.85 tokens per second.
+PTBTokenizer tokenized 41718 tokens at 239533.39 tokens per second.
+PTBTokenizer tokenized 41033 tokens at 248203.10 tokens per second.
+PTBTokenizer tokenized 43494 tokens at 259667.64 tokens per second.
+PTBTokenizer tokenized 41033 tokens at 250009.81 tokens per second.
+PTBTokenizer tokenized 42552 tokens at 243933.01 tokens per second.
+  METEOR {'S1/101': 36.79, 'ck500': 37.92, 'SFT tiếp': 37.75, 'SA-SPICE-v3 ck400': 38.9, 'SPICE-MATCH ck400': 38.74}
+  SPICE-MATCH ck400 − SA-SPICE-v3 ck400: bleu4 +1.35 [+0.92; +1.77] · rougeL +0.20 [-0.11; +0.50] · cider_d +7.14 [+2.66; +11.54] · spice +0.65 [+0.10; +1.16] · chrf -0.34 [-0.70; +0.00] · bert +0.37 [+0.07; +0.68]
+  SPICE-MATCH ck400 − SFT tiếp: bleu4 +0.52 [+0.06; +0.99] · rougeL +0.95 [+0.60; +1.31] · cider_d +10.47 [+5.89; +15.02] · spice +1.08 [+0.52; +1.66] · chrf +1.43 [+1.04; +1.83] · bert +0.91 [+0.56; +1.25]
+  SPICE-MATCH ck400 − ck500: bleu4 +0.23 [-0.26; +0.70] · rougeL +1.14 [+0.71; +1.54] · cider_d +6.21 [+1.13; +11.06] · spice +0.61 [+0.00; +1.20] · chrf +1.20 [+0.74; +1.61] · bert +0.90 [+0.51; +1.26]
+  SPICE-MATCH ck400 − S1/101: bleu4 +1.03 [+0.53; +1.81] · rougeL +2.16 [+1.70; +2.61] · cider_d +20.14 [+14.47; +25.72] · spice +2.04 [+1.34; +2.70] · chrf +2.80 [+2.31; +3.32] · bert +1.63 [+1.22; +2.04]
+  SA-SPICE-v3 ck400 − SFT tiếp: bleu4 -0.82 [-1.41; -0.26] · rougeL +0.76 [+0.33; +1.19] · cider_d +3.33 [-2.56; +9.22] · spice +0.43 [-0.26; +1.19] · chrf +1.77 [+1.31; +2.25] · bert +0.54 [+0.11; +0.97]
+→ /kaggle/working/w/runs/chu_match_17_11.json

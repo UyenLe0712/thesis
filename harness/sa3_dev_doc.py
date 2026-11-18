@@ -6,7 +6,7 @@ from score_run import cluster_bootstrap
 from sa3_action_verify import score_action, classify, CANON
 
 R = "runs/sa_spice_v3/dev"
-NH = {"sftcont": "a", "sa_ck500": "a", "sa_ck400": "b", "chrf_ck400": "b"}
+NH = {"sftcont": "a", "sa_ck500": "a", "sa_ck400": "b", "chrf_ck400": "b", "match_ck400": "match", "match_ck500": "match"}  # match thêm 16/11
 def raw(n):
     return {(r["episode_id"], r["step_id"]): r for r in map(json.loads, open(f"{R}/{NH[n]}/score/score_dev_{n}_raw.jsonl"))}
 def preds(n):
@@ -24,7 +24,8 @@ def mcn(b, c):
     m = b + c; k = min(b, c)
     p = sum(math.comb(m, i) for i in range(k+1)) / 2**m * 2 if m else 1.0
     return min(1.0, p)
-for x, y in [("sa_ck500", "sftcont"), ("sa_ck400", "sftcont"), ("chrf_ck400", "sftcont"), ("sa_ck400", "chrf_ck400"), ("sa_ck500", "sa_ck400")]:
+for x, y in [("sa_ck500", "sftcont"), ("sa_ck400", "sftcont"), ("chrf_ck400", "sftcont"), ("sa_ck400", "chrf_ck400"), ("sa_ck500", "sa_ck400"),
+             ("match_ck400", "sftcont"), ("match_ck500", "sftcont"), ("sa_ck400", "match_ck400"), ("sa_ck500", "match_ck500"), ("match_ck500", "match_ck400")]:
     D = [{"app": S[x][k]["app"], "episode_id": k[0], "d": S[x][k]["executable"] - S[y][k]["executable"]} for k in ks]
     pt, ci, _, _ = cluster_bootstrap(D, key, lambda u: u["d"])
     b = sum(u["d"] == 1 for u in D); c = sum(u["d"] == -1 for u in D)
@@ -46,7 +47,7 @@ for n in NH:
     for at in sorted({r['action_type'] for r in tr}):
         t = [r for r in tr if r["action_type"] == at]
         print(f"   {at:10s} {sum(classify(r['pred']) == CANON[at] for r in t)}/{len(t)}")
-for x, y in [("sa_ck500", "sftcont"), ("sa_ck400", "sftcont"), ("chrf_ck400", "sftcont")]:
+for x, y in [("sa_ck500", "sftcont"), ("sa_ck400", "sftcont"), ("chrf_ck400", "sftcont"), ("match_ck400", "sftcont"), ("match_ck500", "sftcont"), ("sa_ck400", "match_ck400")]:
     D = []
     for k in nk:
         r = P[x][k]
