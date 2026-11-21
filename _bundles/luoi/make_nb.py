@@ -4,12 +4,13 @@ python make_nb.py <tài khoản kaggle> <tên kernel> <che_do: probe|train> <lư
   biến môi trường: PROBE_H = trần giờ chế độ probe (mặc định 1,5) · CAT_H = trần giờ của phiên (đặt dưới hạn mức còn lại) · MOI = các lượt mới, cách nhau dấu cách, khi có kernel trước
   tệp ngoài ba tệp gốc nằm ở dataset nhỏ <tài khoản>/luoi-kit (dựng bằng make_kit.py), không phải tải lại jar
   lượt = algo:reward:seed[:k=v,k=v], ví dụ scst:spice:101 · grpo:spice:101:beta=0,loss=dr_grpo,tag=b0 · ppo:spice:101:mu=2,lam=0.95,steps=1000,tag=l95
-  k: beta · loss · scale · mu · lam · is · eps · steps · G · B1: dpob mrta spgt epsl · B2: celam rho0 mfrac ganmix ganwarm ganlr qk qpool espop esm essig eslr · B4: orpol dsync gstd · tu=base (xuất phát từ Qwen gốc, chỉ thuật toán grpo_luoi) · tag (phần đuôi thư mục, bắt buộc khi có k đổi cấu hình)
+  k: beta · loss · scale · mu · lam · is · eps · steps · G · B1: dpob mrta spgt epsl · B2: celam rho0 mfrac ganmix ganwarm ganlr qk qpool espop esm essig eslr · B4: orpol dsync gstd · B5: b5p · tu=base (xuất phát từ Qwen gốc, chỉ thuật toán grpo_luoi) · tag (phần đuôi thư mục, bắt buộc khi có k đổi cấu hình)
+  B5 (20/11): grpo_lon · rpp → grpo_moi_b5.py (lô 128, 62 bước, module tự ép accum/max_steps) · DS: dapo_ds → grpo_dapo_ds.py (dynamic sampling thật)
   Lượt không có k và thuật toán của lô 1 thì notebook giữ nguyên như cũ, chỉ cần dataset cũ.
 Kết quả ở k_<tên kernel>/ (ipynb + kernel-metadata.json); đẩy bằng
   kg <tk> kernels push -p k_<tên kernel> --accelerator NvidiaTeslaT4
 """
-import json, sys, os, hashlib
+import json, sys, os, hashlib, re
 
 user, name, mode, r0, r1 = sys.argv[1:6]
 prev = sys.argv[6] if len(sys.argv) > 6 else None
@@ -23,20 +24,31 @@ B2 = ("seqgan", "mixer", "rlce", "quark", "es")                                 
 B3 = ("spice_cong", "ten_loai", "loai")                                                     # thuong_moi.py
 B4 = ("orpo_on", "orpo_off", "dpo_semi", "gpg")                                          # grpo_moi_b4.py
 T6 = ("spice_kp", "phat_dai")                                                             # thuong_t6.py
+B5 = ("grpo_lon", "rpp")                                                                  # grpo_moi_b5.py (20/11)
+DS = ("dapo_ds",)                                                                         # grpo_dapo_ds.py (20/11)
 CO = {"beta": "--beta", "loss": "--loss-type", "scale": "--scale-rewards", "mu": "--mu", "lam": "--lam", "is": "--is-level",
       "eps": "--eps-high", "steps": "--max-steps", "G": "--G",
       "dpob": "--dpo-beta", "mrta": "--mrt-alpha", "spgt": "--spg-tau", "epsl": "--eps-low",
       "celam": "--ce-lam", "rho0": "--mixer-rho0", "mfrac": "--mixer-frac", "ganmix": "--gan-mix", "ganwarm": "--gan-warm",
       "ganlr": "--gan-lr", "qk": "--quark-k", "qpool": "--quark-pool", "espop": "--es-pop", "esm": "--es-m",
       "essig": "--es-sigma", "eslr": "--es-lr",
-      "orpol": "--orpo-lam", "dsync": "--dpo-sync", "gstd": "--gpg-std"}
+      "orpol": "--orpo-lam", "dsync": "--dpo-sync", "gstd": "--gpg-std", "b5p": "--b5-prompts"}
+def phu_thuoc(f):
+    """20/11: module mới B5/DS có thể import grpo_moi_b1 / grpo_moi_b4: đọc mã nguồn lúc dựng để chép kèm (chưa có tệp thì giả định chỉ cần grpo_codien)."""
+    for p in (os.path.join(H, "..", "..", "harness", f), os.path.join(H, f"kit_{user}", f)):
+        if os.path.exists(p):
+            src = open(p, encoding="utf-8").read()
+            return [m + ".py" for m in ("grpo_moi_b1", "grpo_moi_b4") if re.search(rf"^\s*(import|from)\s+{m}\b", src, re.M)]
+    print(f"⚠️ chưa có {f}: giả định chỉ import grpo_codien", flush=True)
+    return []
 RUNS = [r0] if r1 == "-" else [r0, r1]   # "-": chỉ một lượt, GPU thứ hai để trống
 FILES = ["grpo_luoi.py", "grpo_spice.py", "build_branch_data.py"]
 for r in RUNS:
     al, rw, sd, *x = r.split(":")
     opt = dict(kv.split("=") for kv in x[0].split(",")) if x else {}
     assert set(opt) <= set(CO) | {"tag", "tu"} and (not set(opt) - {"tag"} or "tag" in opt), f"cờ sai hoặc thiếu tag: {r}"
-    assert al in CU + CD + B1 + B2 + B4 + ("ppo", "a2c", "sft") and int(sd) > 0
+    assert al in CU + CD + B1 + B2 + B4 + B5 + DS + ("ppo", "a2c", "sft") and int(sd) > 0
+    assert "b5p" not in opt or al in B5, f"b5p chỉ đi với grpo_lon/rpp: {r}"
     assert rw in ("spice", "cider", "bleu4", "rougel", "chrf", "meteor", "bertscore", "spider", "bcmr") + B3 + T6
     assert rw not in T6 or (al == "grpo" and not set(opt) - {"tag"}), f"thưởng T6 chỉ đi với grpo mặc định: {r}"
     assert opt.get("tu", "base") == "base" and ("tu" not in opt or (al in CU and set(opt) <= {"tag", "tu"})), \
@@ -46,6 +58,8 @@ for r in RUNS:
     assert al == "grpo" or rw == "spice" or (al, rw) == ("scst", "cider"), f"lưới chỉ đổi một yếu tố: {r}"
     assert "lam" not in opt or al in ("ppo", "a2c"), r
     for f in ({"ppo": ["grpo_codien.py", "grpo_ppo.py"], "a2c": ["grpo_codien.py", "grpo_ppo.py"], "sft": ["sft_tiep.py"]}.get(al, [])
+              or (["grpo_codien.py"] + phu_thuoc("grpo_moi_b5.py") + ["grpo_moi_b5.py"] if al in B5 else [])
+              or (["grpo_codien.py"] + phu_thuoc("grpo_dapo_ds.py") + ["grpo_dapo_ds.py"] if al in DS else [])
               or (["grpo_tu_base.py"] if opt.get("tu") == "base" else [])
               or (["grpo_codien.py", "grpo_moi_b1.py", "grpo_moi_b4.py"] if al in B4 else [])
               or (["thuong_t6.py"] if rw in T6 else [])
@@ -146,6 +160,10 @@ if os.path.exists(f"{W}/grpo_moi_b4.py"):
     assert py("grpo_moi_b4.py", "--selftest-algo") == 0, "DUNG: selftest B4"
 if os.path.exists(f"{W}/thuong_t6.py"):
     assert py("thuong_t6.py", "--selftest-t6", "--bundle", BUNDLE) == 0, "DUNG: selftest thuong T6"
+if os.path.exists(f"{W}/grpo_moi_b5.py"):
+    assert py("grpo_moi_b5.py", "--selftest-algo") == 0, "DUNG: selftest B5 (grpo_lon/rpp)"
+if os.path.exists(f"{W}/grpo_dapo_ds.py"):
+    assert py("grpo_dapo_ds.py", "--selftest-algo") == 0, "DUNG: selftest DAPO dynamic sampling"
 if os.path.exists(f"{W}/grpo_tu_base.py"):
     assert py("grpo_tu_base.py", "--selftest-base") == 0, "DUNG: selftest xuat phat Base"
 rws0 = [x for x in rws if x not in ("bcmr", "spice_cong", "ten_loai", "loai", "spice_kp", "phat_dai")] or ["spice"]
@@ -161,18 +179,22 @@ B2 = ("seqgan", "mixer", "rlce", "quark", "es")                                 
 B3 = ("spice_cong", "ten_loai", "loai")                                                     # thuong_moi.py
 B4 = ("orpo_on", "orpo_off", "dpo_semi", "gpg")                                          # grpo_moi_b4.py
 T6 = ("spice_kp", "phat_dai")                                                             # thuong_t6.py
+B5 = ("grpo_lon", "rpp")                                                                  # grpo_moi_b5.py (20/11)
+DS = ("dapo_ds",)                                                                         # grpo_dapo_ds.py (20/11)
 CO = {"beta": "--beta", "loss": "--loss-type", "scale": "--scale-rewards", "mu": "--mu", "lam": "--lam", "is": "--is-level",
       "eps": "--eps-high", "steps": "--max-steps", "G": "--G",
       "dpob": "--dpo-beta", "mrta": "--mrt-alpha", "spgt": "--spg-tau", "epsl": "--eps-low",
       "celam": "--ce-lam", "rho0": "--mixer-rho0", "mfrac": "--mixer-frac", "ganmix": "--gan-mix", "ganwarm": "--gan-warm",
       "ganlr": "--gan-lr", "qk": "--quark-k", "qpool": "--quark-pool", "espop": "--es-pop", "esm": "--es-m",
       "essig": "--es-sigma", "eslr": "--es-lr",
-      "orpol": "--orpo-lam", "dsync": "--dpo-sync", "gstd": "--gpg-std"}
+      "orpol": "--orpo-lam", "dsync": "--dpo-sync", "gstd": "--gpg-std", "b5p": "--b5-prompts"}
 def tep_cua(r):
     al, rw = r.split(":")[:2]
     ok = opt_of(r)
     if al in ("ppo", "a2c"): return "grpo_ppo.py"
     if al == "sft": return "sft_tiep.py"
+    if al in B5: return "grpo_moi_b5.py"
+    if al in DS: return "grpo_dapo_ds.py"
     if ok.get("tu") == "base": return "grpo_tu_base.py"
     if al in B4: return "grpo_moi_b4.py"
     if rw in T6: return "thuong_t6.py"
@@ -181,7 +203,8 @@ def tep_cua(r):
     if rw in B3: return "thuong_moi.py"
     return "grpo_codien.py" if al in CD or set(ok) - {"tag", "tu"} or (al != "grpo" and rw != "spice") else "grpo_luoi.py"
 def tong_cua(r):
-    return 20 if MODE == "probe" else int(opt_of(r).get("steps", TONG))
+    b5 = r.split(":")[0] in B5                     # B5: lô 128, module tự ép 62 bước (probe 2 bước)
+    return (2 if b5 else 20) if MODE == "probe" else int(opt_of(r).get("steps", 1000 // int(opt_of(r).get("b5p", 16)) if b5 else TONG))
 P = []
 for g, r in enumerate(RUNS):
     al, rw, sd = r.split(":")[:3]
@@ -216,7 +239,7 @@ def tinh_trang(r, o):
         x = D[-10:]
         msg += (f" · {st.mean(d.get('step_time', 0) for d in x):.0f} s/buoc · thuong {st.mean(d['reward'] for d in x if 'reward' in d) if any('reward' in d for d in x) else float('nan'):.3f}"
                 f" · kl {st.mean(d.get('kl', 0) for d in x):.4f} · |A| {st.mean(d['luoi/adv_abs_mean'] for d in x if 'luoi/adv_abs_mean' in d) if any('luoi/adv_abs_mean' in d for d in x) else float('nan'):.3f}")
-    for k in ("[xong]", "[nạp default]", "[câu nhắc] trùng", "[xuất phát]", "[moi_b4]"):
+    for k in ("[xong]", "[nạp default]", "[câu nhắc] trùng", "[xuất phát]", "[moi_b4]", "[b5]", "[dapo_ds]", "[đè cấu hình]"):
         y = [l for l in L if l.startswith(k)]
         if y: msg += "\\n      " + y[-1][:150]
     if any("Traceback" in l or "OutOfMemory" in l or "Killed" in l for l in L[-80:]): msg += "\\n      ⚠️ Traceback/OOM o cuoi log"

@@ -1,0 +1,23 @@
+[b5] --algo rpp · P 16 câu nhắc × G 8 = 128 câu sinh/lô, bs 4 ⇒ ép gradient_accumulation_steps 32 (cờ notebook 4; ⇒ steps_per_generation 32, generation_batch_size 128: một bước tối ưu mỗi lô sinh) · num_iterations 1 (on-policy) · max_steps 2 (cờ notebook 500; probe) · warmup_steps 1 (thay 10: chỉ 2 bước) · save_steps 1000000000 (~20 phút/bước trên T4, trần 11 h) · lợi thế (r − mean_nhóm)/std cả lô (n − 1) · β, lr, thưởng giữ cờ notebook
+[đè cấu hình] {'gradient_accumulation_steps': 32, 'num_iterations': 1, 'max_steps': 2, 'warmup_steps': 1, 'save_steps': 1000000000}
+[cấu hình] seed 101 · thuật toán rpp · thưởng spice
+trl 0.29.1 · transformers 5.20.2 · peft 0.21.2 · torch 2.11.0+cu130
+[nạp] /kaggle/working/s1_merged · dtype torch.float16 · 4-bit False · Tesla T4
+[LoRA mới] tham số học 14,966,784 · S1 có 14,966,784
+[câu nhắc] 50 · bỏ {'trung_val': 0, 'trung_episode_val': 0, 'thieu_anh': 0, 'thieu_ocr': 0, 'rong': 9} · n_char max 2030
+GRPOConfig: {'num_generations': 8, 'per_device_train_batch_size': 4, 'gradient_accumulation_steps': 32, 'generation_batch_size': 128, 'steps_per_generation': 32, 'num_iterations': 1, 'max_completion_length': 96, 'temperature': 1.0, 'top_p': 1.0, 'top_k': 0, 'beta': 0.04, 'learning_rate': 1e-05, 'loss_type': 'dapo', 'scale_rewards': 'group', 'max_steps': 2, 'bf16': False, 'fp16': True}
+[sinh theo khúc] bật, mỗi khúc ≤ 8 chuỗi
+[tiếp từ] None
+Exception ignored in atexit callback <function _exit_function at 0x7cbf5f5884a0>:
+Traceback (most recent call last):
+  File "/usr/lib/python3.13/multiprocessing/util.py", line 431, in _exit_function
+    _run_finalizers()
+  File "/usr/lib/python3.13/multiprocessing/util.py", line 371, in _run_finalizers
+    finalizer()
+  File "/usr/lib/python3.13/multiprocessing/util.py", line 295, in __call__
+    res = self._callback(*self._args, **self._kwargs)
+  File "/usr/lib/python3.13/multiprocessing/queues.py", line 217, in _finalize_join
+    thread.join()
+  File "/usr/lib/python3.13/threading.py", line 1095, in join
+    self._handle.join(timeout)
+KeyboardInterrupt: 
