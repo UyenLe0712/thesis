@@ -1,6 +1,6 @@
 # 298 — ACTION: chốt RAF (7/10/2026)
 
-> Chép từ 4 ảnh chụp màn hình Mac (`report/298_anh/`, gửi 7/10 dạng zip, zip đã xoá). Thứ tự ảnh theo chữ số
+> Chép từ 4 ảnh chụp màn hình Mac (`report/298_anh/`, gửi 7/10 dạng zip, zip đã xoá; thư mục ảnh xoá 21/11, lấy lại: `git checkout a87e731 -- report/298_anh`). Thứ tự ảnh theo chữ số
 > cuối tên: `…1.jpg` (§1–2) · `…2.jpg` (§2 cuối–§4) · `…3.jpg` + `…4.jpg` (§5). Chỗ ảnh bị khuất
 > hoặc nằm giữa hai ảnh ghi `[không đọc được]`. Script §5 đã chép ra
 > **`_scripts/298/cham_raf_wsl_298.py`** (kiểm cú pháp đạt).

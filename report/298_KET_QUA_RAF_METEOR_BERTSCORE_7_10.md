@@ -1,6 +1,6 @@
 # 298 — Kết quả RAF trên test: METEOR + BERTScore (7/10/2026, WSL)
 
-Action gốc: `report/298_ACTION_CHOT_RAF_7_10.md` (chép từ 6 ảnh, ảnh ở `report/298_anh/` và `report/298_anh_2/`).
+Action gốc: `report/298_ACTION_CHOT_RAF_7_10.md` (chép từ 6 ảnh, ảnh ở `report/298_anh/` và `report/298_anh_2/`, đã xoá 21/11, lấy lại bằng `git checkout a87e731 -- <thư mục>`).
 Mục tiêu của action: lấy hai cột còn thiếu (METEOR, BERTScore) để biết RAF hơn ck500 ở 7/13 hay 6/13 cột.
 Toàn bộ số dưới đây là **số test** (4.463 bước chạm), chạy CPU trên WSL, 0 GPU.
 

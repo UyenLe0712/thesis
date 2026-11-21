@@ -1,4 +1,4 @@
-# CÁC HƯỚNG ĐÃ THỬ — đọc trước khi đề xuất, viết runbook/mã, hay đẩy GPU (cập nhật 15/11/2026)
+# CÁC HƯỚNG ĐÃ THỬ — đọc trước khi đề xuất, viết runbook/mã, hay đẩy GPU (cập nhật 21/11/2026)
 
 File này được `CLAUDE.md` nạp tự động (`@report/HUONG_DA_THU.md`) nên mọi phiên đều thấy.
 
@@ -58,14 +58,18 @@ Mọi số test chỉ một hạt, trừ S1 và ck500 (hai hạt).
 | **SPICE-MATCH** (SPICE thuần từ SFT-cont, ablation của SA) | train 16/11 (Colab L4 fp16), DEV trượt khả thi (không chạm −3,75), test ck400 vẫn chấm (user) | test exec **60,88**; − SA ck400 −0,34 ns; − SFT tiếp +0,72*. Văn bản: hơn SA ở BLEU-4/CIDEr-D/SPICE/BERTScore (*), SA chỉ hơn chrF. Không chạm 83,57 (SA 84,05), back −14,8 vs −12,6 ⇒ **composite không mua được gì rõ ràng so SPICE thuần** | report/333 §15–16 |
 | Thước: exec (tiêu đề) · D.3 67,0 · AitW đầy đủ 77,3 (cận trên 85,0) · độ đo văn bản COCO + chrF + BERTScore · Phi-4 SoM · UI-Venus | chốt, đừng mở lại | | CLAUDE.md 13/9, 14/9 |
 
+**Đang chạy (đợt B5, 20–21/11, `report/337`)** — xem §2e; đừng đề xuất lại như ý mới, đợi số test:
+Dr.GRPO đầy đủ · DAPO · GSPO · GRPO μ=2 · REINFORCE++ lô 64 · DPO trực tuyến · GRPO + chrF / BLEU-4 / SPIDEr /
+BERTScore từ S1.
+
 Việc **chưa thử, đang chờ user** ở `report/336`:
-- DPO trực tuyến (user chọn 15/11);
 - SA hạt 401/503;
 - SA + câu nhắc phân tầng cho back;
-- GRPO + SPIDEr / chrF / BLEU-4 / BERTScore từ S1;
 - Sparse-SPICE;
-- Dr.GRPO chạy nốt;
-- A2C / DQN / TRPO / MIXER / MRT.
+- A2C (mới probe, chưa có số) / DQN / TRPO / MIXER / MRT;
+- các họ RL mới chỉ qua selftest CPU, chưa train: Quark, ES trên LoRA, MIXER, BCMR, MRT, SPG, RLCE, SeqGAN,
+  RAML, CEM (`_bundles/moi_b1`, `moi_b2`; `runs/luoi/smoke_6_11`);
+- thưởng đã viết nhưng chưa train (xem §2d): `spice_cong`, `ten_loai`, `loai`, T6 `spice_kp`.
 
 Những việc này **không** nằm trong danh sách đã thử.
 
@@ -135,7 +139,7 @@ Cách đọc: *ý tưởng → cách làm → số → vì sao dừng → muốn
 | RLOO + SPICE | 59,44 | −1,21 p=4e−6 | |
 | SCST + SPICE | 60,54 | ngang | |
 | PPO, GAE λ=1 / 0,95 (1000 bước, value head trên LoRA) | 60,07 / 59,98 | ngang; thấp hơn ở BLEU-4 và CIDEr-D | §26–28; từng hết đĩa, phải `save_total_limit` |
-| Dr.GRPO | treo ở bước 475, chưa chấm | | user để sau, chỉ là ablation |
+| Dr.GRPO (lượt cũ) | treo ở bước 475, chưa chấm | | đã chạy lại đầy đủ ở đợt B5 (§2e) |
 | GRPO + ROUGE-L | 60,63 | ngang | đứng đầu CIDEr-D |
 | GRPO + METEOR | 60,27 | ngang | |
 | GRPO + CIDEr-D | 60,27 | ngang; CIDEr-D thấp hơn ck500 −5,53 | §22: **không** do df hay tách từ (đã kiểm 5 biến thể), tối ưu kém ngay trên mục tiêu của chính nó |
@@ -144,6 +148,11 @@ Cách đọc: *ý tưởng → cách làm → số → vì sao dừng → muốn
 | Biến thể thưởng SPICE R0–R4 (sàng tĩnh, độ đồng thuận với exec) | R0 0,753 … R4 0,818 < chrF 0,836 [val] | chưa train | §23, report/332 |
 | Sàng SA-SPICE-v3 mức 1 (9 câu/bước, 622 bước) | SA 0,771 hơn mọi bản SPICE con nhưng **thua chrF** 0,794 (−0,023, KTC loại 0) | user vẫn chọn chạy SA mức 2 | report/333 §10 |
 | GRPO + chrF từ SFT-cont, ck400 | trượt tiêu chí không chạm trên DEV-v3 ⇒ không chấm test | KL > 0,10 ở ck500 | report/333 |
+| **A2: GRPO thưởng CIDEr-D từ S1** (đợt đầu, 1.000 câu nhắc, T4 fp16; khác lượt lưới) | A2_500 59,96 · A2_1000 59,98 | A2_500 − ck500 **−0,69 [−1,34; −0,02] p=0,04** (cứu 91 / phá 122) | đúng loại thao tác hơn (+10 bước) nhưng đổi phần tử kém (−41); report/299 |
+| ck500 hạt 202 (GRPO + SPICE, hạt thứ hai) | 59,94 [58,13; 61,71] | − ck500/101 −0,72 [−1,27; −0,16] p=0,011; − S1/202 +0,31 p=0,50 | hai hạt cùng dương so S1; report/320 §2 |
+| Thưởng `spice_cong` (SPICE × 0,1 khi sai loại) · `ten_loai` · `loai` | chưa train | H2 trên 8 mẫu C1 [val]: conc 0,704 · 0,736 · 0,620 (METEOR 0,871, CIDEr-D 0,868) | `spice_cong` nghĩ ra **sau khi** thấy số test ck500 (phải khai); câu chuẩn F1 tên chỉ 0,57 ⇒ `ten_loai` nhiễu; report/320 §16, `harness/thuong_moi.py` |
+| T6 `spice_kp` (tách SPICE khỏi phạt độ dài) | chưa chạy | — | mã sẵn `harness/thuong_t6.py`; report/328 §T6 |
+| **SPICE-chrF-A** (α=0,5 cố định, giữ A) + sàng trọng số w | không train | concordance giảm đơn điệu theo w: 0,794 (w=0) · 0,776 · 0,749 · 0,676 (w=1) [sàng] | phán quyết debate sau test: **không đổi reward**; `research_notes/Debate SA SPICE v3 sau test/03_phan_quyet.md` |
 
 **Kết luận đã chốt của trục này:**
 - Không lượt nào hơn ck500 có ý nghĩa. Cả nhóm hơn S1 +1,2…+1,5 ⇒ chỉ viết "nhóm dẫn đầu", **cấm "SPICE tốt nhất"**.
@@ -156,7 +165,33 @@ Giải thích H1–H5 đã đo (report/320 §15–17):
 - H2: độ khớp exec trên mẫu tĩnh **không** dự đoán được thứ hạng sau train.
 - H5: SPICE vẫn tách rõ đúng/sai loại ở bước không chạm ⇒ "ít tín hiệu ở bước cuộn" **không đứng**.
 
-### 2e. Thước đo / dụng cụ đã thử rồi bỏ
+### 2e. Lưới RL đợt B5 (20–21/11; từ S1, hạt 101, cùng 1.000 câu nhắc ck500) — ĐANG CHẠY, chưa có số test
+
+Nguồn: `report/337` (tình trạng kernel), `slides/ACTION_4_THUAT_TOAN_RL_2025_SO_VOI_GRPO_20_11_2026.md`.
+Số dưới đây là **log train**, không phải số test. Có số test thì chép vào đây và vào `report/320`, `report/334`.
+
+| lượt | tới đâu (21/11) | thưởng train · KL | ghi chú |
+|---|---|---|---|
+| Dr.GRPO đầy đủ | **xong ck500/500** | 0,467 → 0,520 · KL TB/max 0,014/0,095 | chờ chấm test |
+| DAPO (lấy mẫu động, eps 0,28) | ck400/500 | 0,465 → 0,486 · KL max 0,211 | nhóm hoà bị loại 20,8% |
+| GRPO μ=2 (2 lượt tối ưu mỗi lô sinh) | ck625/1.000 | phẳng 0,500 → 0,500 · **KL max 0,592** | |
+| GSPO (tỉ số mức chuỗi) | ck600/1.000 | **giảm** 0,496 → 0,455 · clip_ratio 0,19 → 0,36 | dấu hiệu xấu |
+| REINFORCE++ lô 64 | ck70/125 | 0,470 → 0,472 | OOM GPU lần đầu, sửa `--gen-chunk 4` |
+| DPO trực tuyến (best-vs-worst trong nhóm 8, β 0,1) | ck450/500 | 0,486 → 0,511 · margin 0,006 → 0,116 | thiết kế ở report/336 §3 |
+| GRPO + chrF / BLEU-4 / SPIDEr / BERTScore từ S1 | ck450 / 475 / 350 / 375 | chrF 0,591 → 0,656 (**KL max 0,923**) · BLEU-4 0,474 → 0,618 (KL max 0,311) · SPIDEr 0,464 → 0,500 · BERTScore 0,646 → 0,685 | |
+| GRPO / REINFORCE++ lô 128 (`grpo_lon`, `rpp`) | **chết RAM** (-9) ở cả 5 kernel sau 6–8 phút | — | TRL tiền xử lý 128 ảnh = 9,83 GB; đừng chạy lại nguyên trạng |
+
+### 2f. Câu ghép / chọn câu lúc suy luận và phép đo phụ (có số test, không thay phương pháp chính)
+
+| hướng | cách làm | kết quả (test) | trạng thái · nguồn |
+|---|---|---|---|
+| **RAF** (6–7/10) | chọn giữa câu S1 và ck500 bằng đồng thuận CIDEr-D với 4 câu truy hồi kiểu Mao; chỉ mở khi hai câu khác nhau mà cùng loại thao tác (724/4.463 bước lùi về S1) | − ck500: BLEU-4 +0,72 · ROUGE-L +0,68 · CIDEr-D +5,61 [+1,46; +9,61] · SPICE +0,53 · BERTScore +0,55 · METEOR +0,17 (phủ 0) ⇒ 7/13 cột; 5 cột hành vi −0,13…−0,38 (phủ 0). Xếp hạng n-best kiểu Mao **hỏng**: −25…−84 CIDEr-D [val] | ACE (R3) thay thế; report/298, report/327 |
+| AitZ zero-shot (26/10) | chấm 2.736 bước chạm AitZ, không train lại | câu chuẩn 66,26 · S1 37,79 · ck500 37,28 · ACE 37,28 · Base 34,50; ck500 − S1 −0,51 (phủ 0); ACE gần như không kích hoạt | SPICE học văn phong AC, không mang sang AitZ; report/320 §6, 334 §9 |
+| ACU: AndroidControl phần S1 chưa thấy (27/10) | 1.484 bước chạm dựng từ TFRecord gốc | câu chuẩn 71,70 · S1 52,16 · **ck500 56,74** · ACE 57,01 · Base 49,80; ck500 − S1 **+4,58 [+3,17; +6,05]** p=2e−10 (vượt MDE) | xong; report/320 §8, 334 §10 |
+| Lịch sử tự sinh (26/10) | câu bước trước do mô hình viết thay câu chuẩn | S1 59,11 → 54,96 (−4,15) · ck500 60,65 → 56,44 (−4,21); ck500 − S1 vẫn **+1,48 [+0,54; +2,43]** | xong; report/320 §7, 334 §8 |
+| Qwen2.5-VL-7B prompting (26/10) | câu nhắc như Base | 51,51 [49,82; 53,15]; ck500 − 7B +9,14; 7B − Base +3,92 | mốc ngoài; report/320 |
+
+### 2g. Thước đo / dụng cụ đã thử rồi bỏ
 
 | hướng | kết quả | nguồn |
 |---|---|---|

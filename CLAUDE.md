@@ -1644,6 +1644,21 @@ phút dựng lại dữ liệu và ảnh. Quyết chọn card ở **ô thăm dò
   Jar models CoreNLP trong `ck500_s202_chu`/`colab-ck500-s202` không còn (bản sao) — chép từ `_bundles/luoi/ds/`.
   Còn giữ: `train_ac/images` 30 GB (bản ảnh dạy duy nhất) · `ck_u3` · adapter ck500/ck202/S1/SFT-cont · `_bundles` tháng 11.
 
+- 🧹 **Dọn repo 21/11 (5 agent rà từng thư mục, agent chính kiểm md5/Release rồi mới xoá, ~8,4 GB):**
+  `runs/luoi/**` 284 `tokenizer.json` trong điểm lưu không có trọng số (tokenizer Qwen, tải lại từ HF; `20_11` giữ) ·
+  `runs/aitz/build_v3_25_10/out/aitz_test.zip` + `runs/aitz/build_25_10/` (sha256/kích thước khớp Release
+  `data-aitz-test-v1`, `data-aitz-build-v1`) · `runs/ra304_T/ra_sft/last` (trùng `final`) · `ra_data` (dựng lại bằng
+  `ra_build.py`) · `_bundles`: ảnh/adapter chép thừa trong `sa3_dev/ds`, bản chép adapter S1 trong các kit, ck500 bản
+  chép ở `aitz_gen`, `luoi/ck_ppo_11_11{,b}` (PPO đã xong ck1000), phần untracked của `giai_thich_*/ds`,
+  `cpu_luoi_3_11/ds`, `acu_ocr144/ds`, `rgtc_c1_t_10_11/ds` (trùng md5 `runs/`/`harness/`), jar CoreNLP chép thừa ·
+  `harness`: tệp nhánh chưa từng train trong `branches/` (ghi ở `branches/README.txt`), `branches_tru_val`,
+  `branches_val400`, PATA `p1_crops` + `train_proper.jsonl`, `train.jsonl.bak_9_9`, các `.bak` lát thử 1.697 bước và `test.jsonl.chua_gan_nhan.bak`, ảnh audit PATA, `_archive` (trừ `cv_study`,
+  `launch_ocr.sh`; có ở commit `b93e85c`) · git rm: `report/288_anh_chup…zip`, `report/298_anh{,_2}` (lấy lại
+  `git checkout a87e731 -- …`), ảnh kiểm slide 28/10, ba deck `_*_PREVIEW`, deck BAO_VE_SCIENTIFIC/CONCISE/BAO_CAO_NGAN (script dựng còn), `slides/build/_img`, `slides/img`.
+  ⚠️ Adapter **ck500, ck500/202, sft_final, ra_k4 KHÔNG có Release** (repo public, chưa đẩy): mỗi cái còn đúng hai
+  bản trên máy (bản gốc + một bản chép trong `tuantu/` · `nontap_kit_6_11/` · `colab_rl_test/` · `aitz_ace/`) —
+  đừng xoá bản chép còn lại khi chưa có Release. Hướng đã thử thiếu đã bổ sung vào `report/HUONG_DA_THU.md` §1, §2d–2f.
+
 - ⛔ **Hai kho đang lệch.** Máy WSL **không có** `FINAL_SOLUTION.md` lẫn
   `report/115_PHUONG_AN_TD_ROI_DA_RUT.md` — phiên debate 23/8 chạy trên một checkout khác (máy
   Mac). Mọi tham chiếu tới hai file đó trong `report/116` hiện là **tham chiếu chết**. Lấy về khi
