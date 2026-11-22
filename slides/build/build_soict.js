@@ -1,5 +1,5 @@
 // SOICT 2026 talk deck (GUIStep, paper 5590), following slides/KICH_BAN_SOICT_15_11.md.
-// 11 content slides (five parts) + Thank-you + 10 backup slides. 16:9, same visual family as the VCL deck
+// 12 content slides (five parts) + Thank-you + 10 backup slides. 16:9, same visual family as the VCL deck
 // (indigo title bar, rounded grey blocks, Cambria).
 // On-slide text comes from "On the slide"; speaker notes are read verbatim from "Say" at build
 // time (the "(ý chính …)" line is kept at the end of the notes as a Vietnamese reminder).
@@ -45,7 +45,7 @@ function QA(code) {
 
 // ---------- helpers ----------
 let s, PAGE = 0, BPAGE = 0;
-const TOTAL = 12;
+const TOTAL = 13;
 function slide() { s = pres.addSlide(); s.background = { color: WHITE }; }
 function text(content, o) {
   const opt = Object.assign({ x: 0, y: 0, w: 4, h: 1, fontSize: 18, color: INK, fontFace: TF, align: "left", valign: "top", margin: 0 }, o);
@@ -184,30 +184,38 @@ main("Three contributions", 0);
 });
 note(SAY[3]); foot();
 
-// ══════════ 4 · METHOD ══════════
-main("GUIStep: training signal from existing records", 1);
+// ══════════ 4 · TRAINING SIGNAL ══════════
+main("GUIStep: every training signal comes from existing records", 1);
 {
-  const y = 1.25, h = 1.3;
-  box(M, y, 4.6, h, "recorded step\nscreenshot · human instruction\ntouch point · UI tree", { fs: 16 });
+  const y = 1.45, h = 1.4;
+  box(M, y, 4.6, h, "recorded step\nscreenshot · human instruction\ntouch point · UI tree", { fs: 18 });
   arrow(M + 4.65, y + h / 2, M + 5.35, y + h / 2);
-  box(M + 5.4, y, 2.9, h, "training targets", { fs: 19, bold: true, fill: WHITE });
+  box(M + 5.4, y, 2.9, h, "training targets", { fs: 20, bold: true, fill: WHITE });
   arrow(M + 8.35, y + h / 2, M + 9.05, y + h / 2);
-  box(M + 9.1, y, 3.03, h, "Qwen2.5-VL-3B\n+ QLoRA", { fs: 19, bold: true, color: WHITE, fill: NAVY, line: NAVY });
+  box(M + 9.1, y, 3.03, h, "Qwen2.5-VL-3B\n+ QLoRA", { fs: 20, bold: true, color: WHITE, fill: NAVY, line: NAVY });
 }
-text("uses only what recorded demonstrations store, none of it specific to AndroidControl", { x: M, y: 2.62, w: W - 2 * M, h: 0.4, fontSize: 16, italic: true, color: GREY, align: "center", valign: "middle" });
-table(M, 3.1, [1.0, 8.0, 3.13], [
-  { cells: ["", "learns to write", "training"], bold: true, color: WHITE, fill: NAVY, h: 0.5, fs: 17 },
-  { cells: [{ t: "S", bold: true }, "the sentence", "cross-entropy"], h: 0.52 },
-  { cells: [{ t: "D", bold: true }, "a declaration of the target, then the sentence", "cross-entropy"], h: 0.52 },
-  { cells: [{ t: "P", bold: true, color: TEAL }, "D + preference: right vs wrong element declared", { t: "ORPO", bold: true, color: TEAL }], h: 0.52, rule: false },
-], { fs: 18 });
-block(M, 5.25, W - 2 * M, 1.0);
-text("declaration:  <desc>item | Close | <point>274,285</point> | just below \"3:09\"</desc>", { x: M, y: 5.27, w: W - 2 * M, h: 0.52, fontSize: 17, fontFace: MONO, color: NAVY, align: "center", valign: "middle" });
-text("role · name · position · nearby text", { x: M, y: 5.77, w: W - 2 * M, h: 0.42, fontSize: 16, italic: true, color: GREY, align: "center", valign: "middle" });
-text("+ a control: same extra training as P, correct examples only", { x: M, y: 6.38, w: W - 2 * M, h: 0.45, fontSize: 18, color: TEAL, bold: true, align: "center" });
+text("no new labels · none of it specific to AndroidControl", { x: M, y: 3.0, w: W - 2 * M, h: 0.45, fontSize: 18, italic: true, color: GREY, align: "center", valign: "middle" });
+block(M, 3.85, W - 2 * M, 2.6);
+text("From the UI tree: a declaration of the target element", { x: M, y: 3.95, w: W - 2 * M, h: 0.55, fontSize: 20, bold: true, color: NAVY, align: "center", valign: "middle" });
+text("<desc>item | Close | <point>274,285</point> | just below \"3:09\"</desc>", { x: M, y: 4.6, w: W - 2 * M, h: 0.7, fontSize: 20, fontFace: MONO, color: NAVY, align: "center", valign: "middle" });
+text("role · name · position · nearby text", { x: M, y: 5.4, w: W - 2 * M, h: 0.55, fontSize: 19, italic: true, color: GREY, align: "center", valign: "middle" });
 note(SAY[4]); foot();
 
-// ══════════ 5 · WORD OVERLAP ══════════
+// ══════════ 5 · THREE VERSIONS ══════════
+main("Three versions of GUIStep, plus a control", 1);
+table(M, 1.5, [1.3, 7.7, 3.13], [
+  { cells: ["", "learns to write", "training"], bold: true, color: WHITE, fill: NAVY, h: 0.65, fs: 20 },
+  { cells: [{ t: "S", bold: true }, "the sentence", "cross-entropy"], h: 0.85 },
+  { cells: [{ t: "D", bold: true }, "the declaration, then the sentence", "cross-entropy"], h: 0.85 },
+  { cells: [{ t: "P", bold: true, color: TEAL }, "D + preference: right vs wrong element declared", { t: "ORPO", bold: true, color: TEAL }], h: 0.85, rule: false },
+], { fs: 22 });
+block(M, 5.2, W - 2 * M, 1.2, MINT);
+text([{ text: "control: ", options: { bold: true, color: TEAL } }, { text: "same extra training as P, correct examples only", options: {} }],
+  { x: M + 0.3, y: 5.2, w: W - 2 * M - 0.6, h: 0.6, fontSize: 22, align: "center", valign: "middle" });
+text("isolates what the preference objective itself adds", { x: M + 0.3, y: 5.75, w: W - 2 * M - 0.6, h: 0.55, fontSize: 18, italic: true, color: GREY, align: "center", valign: "middle" });
+note(SAY[5]); foot();
+
+// ══════════ 6 · WORD OVERLAP ══════════
 main("Word overlap cannot judge these sentences", 2);
 box(M, 1.4, 5.6, 0.9, "“Click on the search bar”", { fs: 21, fill: WHITE });
 box(M, 2.7, 5.6, 0.9, "“Tap the magnifying glass at the top”", { fs: 21, fill: WHITE });
@@ -215,33 +223,50 @@ arrow(M + 5.65, 1.85, 7.45, 2.4); arrow(M + 5.65, 3.15, 7.45, 2.65);
 rect(7.55, 1.9, 1.2, 1.2, NAVY, { radius: 0.12 });
 s.addShape(pres.shapes.OVAL, { x: 7.79, y: 2.08, w: 0.58, h: 0.58, fill: { type: "none" }, line: { color: WHITE, width: 4 } });
 s.addShape(pres.shapes.LINE, { x: 8.29, y: 2.59, w: 0.27, h: 0.27, line: { color: WHITE, width: 5 } });
-[["97.5%", "valid rewordings rejected by word overlap (small pilot)"], ["0.34 AUC", "embedding similarity telling same vs different element (chance = 0.5)"]].forEach((c, i) => {
+text("same button", { x: 8.95, y: 2.2, w: 2.5, h: 0.6, fontSize: 19, bold: true, color: NAVY, valign: "middle" });
+[["97.5%", "valid rewordings rejected by word overlap (pilot)"], ["AUC 0.34", "embedding similarity, same vs different element: worse than chance (0.5)"]].forEach((c, i) => {
   const x = M + i * 6.2;
   block(x, 4.15, 5.9, 2.2);
   text(c[0], { x, y: 4.25, w: 5.9, h: 1.1, fontSize: 52, bold: true, color: RED, align: "center", valign: "middle" });
   text(c[1], { x: x + 0.3, y: 5.35, w: 5.3, h: 0.85, fontSize: 18, align: "center", valign: "middle", lh: 1.05 });
 });
-note(SAY[5]); foot();
-
-// ══════════ 6 · EXECUTABILITY ══════════
-main("Executability: a listener follows the sentence", 2);
-box(M, 1.4, 3.6, 1.3, "generated sentence\n+ screenshot", { fs: 20 });
-arrow(M + 3.65, 2.05, M + 4.35, 2.05);
-box(M + 4.4, 1.4, 3.6, 1.3, "frozen listener\n(UGround)", { fs: 20, bold: true, color: WHITE, fill: NAVY, line: NAVY });
-arrow(M + 8.05, 2.05, M + 8.75, 2.05);
-box(M + 8.8, 1.4, 3.33, 1.3, "point on screen", { fs: 20, bold: true, color: RED });
-[["(i)", "right action type"], ["(ii)", "no opposite meaning\n(enable vs disable)"], ["(iii)", "point inside the\ntarget element"]].forEach((c, i) => {
-  const x = M + i * 4.1;
-  block(x, 3.15, 3.85, 1.9, MINT);
-  text(c[0], { x, y: 3.25, w: 3.85, h: 0.5, fontSize: 22, bold: true, color: TEAL, align: "center" });
-  text(c[1], { x: x + 0.15, y: 3.8, w: 3.55, h: 1.1, fontSize: 20, align: "center", valign: "middle", lh: 1.05 });
-});
-rect(M, 5.45, W - 2 * M, 0.95, NAVY, { radius: 0.08 });
-text("Executability = % of steps passing all three", { x: M, y: 5.45, w: W - 2 * M, h: 0.95, fontSize: 25, bold: true, color: WHITE, align: "center", valign: "middle" });
 note(SAY[6]); foot();
 
-// ══════════ 7 · SCORE VALIDATED ══════════
-main("The score is validated", 2);
+// ══════════ 7 · EXECUTABILITY ══════════
+main("Executability: a model follows the sentence, we check where it taps", 2);
+{
+  // same screen as slide 2, so the audience already knows the example
+  const ih = 4.5, iw = ih * 720 / 736, ix = M, iy = 1.2;
+  s.addImage({ path: FIG1, x: ix, y: iy, w: iw, h: ih });
+  rect(ix, iy, iw, ih, "none", { line: SOFT, lw: 1 });
+  const cx = ix + 0.142 * iw, cy = iy + 0.332 * ih, r = 0.0879 * iw;
+  s.addShape(pres.shapes.OVAL, { x: cx - r, y: cy - r, w: 2 * r, h: 2 * r, fill: { type: "none" }, line: { color: RED, width: 3 } });
+  text("element the user tapped", { x: cx - r, y: cy + r + 0.05, w: 2.6, h: 0.36, fontSize: 14, bold: true, color: RED, fill: { color: WHITE }, valign: "middle" });
+  const bx = ix + iw + 0.45, bw = W - M - bx;
+  block(bx, 1.2, bw, 1.05);
+  text([{ text: "1  ", options: { bold: true, color: TEAL } }, { text: "The listener (UGround, frozen) reads\n", options: { bold: true, color: NAVY } },
+        { text: "screenshot + “Click on the sort by option”", options: { italic: true } }],
+    { x: bx + 0.25, y: 1.2, w: bw - 0.5, h: 1.05, fontSize: 18, valign: "middle", lh: 1.05 });
+  block(bx, 2.4, bw, 0.75);
+  text([{ text: "2  ", options: { bold: true, color: TEAL } }, { text: "It taps one point. ", options: { bold: true, color: NAVY } },
+        { text: "It never sees the answer.", options: {} }],
+    { x: bx + 0.25, y: 2.4, w: bw - 0.5, h: 0.75, fontSize: 18, valign: "middle" });
+  text([{ text: "3  ", options: { bold: true, color: TEAL } }, { text: "The step is correct if all three hold:", options: { bold: true, color: NAVY } }],
+    { x: bx + 0.25, y: 3.25, w: bw - 0.5, h: 0.5, fontSize: 18, valign: "middle" });
+  const cw = (bw - 0.3) / 3;
+  [["right action", "click, not scroll"], ["same meaning", "not enable ↔ disable"], ["point inside", "the element the user tapped"]].forEach((c, i) => {
+    const x = bx + i * (cw + 0.15);
+    block(x, 3.85, cw, 1.85, MINT);
+    text(c[0], { x: x + 0.1, y: 3.95, w: cw - 0.2, h: 0.6, fontSize: 19, bold: true, color: TEAL, align: "center", valign: "middle" });
+    text(c[1], { x: x + 0.1, y: 4.55, w: cw - 0.2, h: 1.0, fontSize: 16, align: "center", valign: "middle", lh: 1.0 });
+  });
+}
+rect(M, 5.95, W - 2 * M, 0.8, NAVY, { radius: 0.08 });
+text("Executability = % of test steps that pass all three checks", { x: M, y: 5.95, w: W - 2 * M, h: 0.8, fontSize: 24, bold: true, color: WHITE, align: "center", valign: "middle" });
+note(SAY[7]); foot();
+
+// ══════════ 8 · SCORE VALIDATED ══════════
+main("The score tells good sentences from bad ones, across listeners", 2);
 text("listener score", { x: M, y: 1.15, w: 6.0, h: 0.45, fontSize: 16, italic: true, color: GREY, align: "center" });
 vbars(M + 0.1, 1.8, 6.1, 2.9, [
   { label: "human reference\n(ceiling)", v: 83.8, txt: "83.8", color: AMBER },
@@ -249,19 +274,20 @@ vbars(M + 0.1, 1.8, 6.1, 2.9, [
   { label: "reference from\nanother screen", v: 8.6, txt: "8.6", color: SOFT },
 ], 90, { bw: 0.5, lfs: 16, vfs: 26, lh: 0.75 });
 text("Wide gap: the listener reads the content, not the style.", { x: M, y: 5.75, w: 6.3, h: 0.6, fontSize: 17, italic: true, color: GREY, align: "center", valign: "middle" });
+text("ceiling: all 4,463 steps · the two floors: an 800-step slice", { x: M, y: 6.35, w: 6.3, h: 0.4, fontSize: 13, italic: true, color: GREY, align: "center", valign: "middle" });
 [["Other listeners", "UI-Venus, never trained on AndroidControl: 99% of the gain kept\nPhi-4, another model family: gain holds"],
  ["Stricter localisation rule", "Voronoi rule: same ranking of all systems"],
- ["Matching rule", "point inside the target box (the original AndroidControl rule)"]].forEach((c, i) => {
+ ["Rewording keeps the score", "1,139 rewrites that change verb or word order:\n−0.09 points [−0.93, +0.79]"]].forEach((c, i) => {
   const yy = 1.3 + i * 1.7;
   block(7.3, yy, 5.43, 1.5);
   text(c[0], { x: 7.55, y: yy + 0.12, w: 5.0, h: 0.45, fontSize: 19, bold: true, color: NAVY });
   text(c[1], { x: 7.55, y: yy + 0.55, w: 5.0, h: 0.85, fontSize: 17, valign: "top", lh: 1.0 });
 });
-note(SAY[7]); foot();
+note(SAY[8]); foot();
 
-// ══════════ 8 · MAIN RESULTS ══════════
+// ══════════ 9 · MAIN RESULTS ══════════
 main("Main results: +13.0 over the backbone", 3);
-text("executability (%), D.3 rule, 4,463 test touch steps", { x: M, y: 1.1, w: 9, h: 0.45, fontSize: 17, italic: true, color: GREY });
+text("executability (%), point-inside-element rule, 4,463 test touch steps", { x: M, y: 1.1, w: 9, h: 0.45, fontSize: 17, italic: true, color: GREY });
 {
   const rows = [["untuned 3B", 53.6, SOFT], ["prompted 7B", 57.7, SOFT], ["select-then-verbalise", 62.4, SOFT], ["GUIStep-D", 63.6, NAVY], ["GUIStep-S", 65.5, NAVY],
     ["control*", 66.0, NAVY], ["GUIStep-P", 66.5, TEAL], ["human", 83.8, AMBER]];
@@ -278,9 +304,9 @@ text("executability (%), D.3 rule, 4,463 test touch steps", { x: M, y: 1.1, w: 9
   text("GUIStep-P over the untuned 3B model\n95% CI [+11.5, +14.4]", { x: 9.95, y: 3.65, w: 2.58, h: 1.25, fontSize: 16, align: "center", valign: "middle", lh: 1.05 });
 }
 text("* control: same extra training as P, correct examples only.  CIs: bootstrap clustered by app.  Second seed of S: within 0.6 points.", { x: M, y: 6.38, w: W - 2 * M, h: 0.4, fontSize: 14, italic: true, color: GREY });
-note(SAY[8]); foot();
+note(SAY[9]); foot();
 
-// ══════════ 9 · KEY FINDING ══════════
+// ══════════ 10 · KEY FINDING ══════════
 main("Most of the gain comes from learning the sentence", 3);
 {
   // step chart: backbone -> S -> P
@@ -305,9 +331,9 @@ main("Most of the gain comes from learning the sentence", 3);
 }
 rect(M, 5.85, W - 2 * M, 0.75, NAVY, { radius: 0.08 });
 text("The human instruction already in the data is the strongest training signal.", { x: M, y: 5.85, w: W - 2 * M, h: 0.75, fontSize: 20, bold: true, color: WHITE, align: "center", valign: "middle" });
-note(SAY[9]); foot();
+note(SAY[10]); foot();
 
-// ══════════ 10 · UNSEEN ══════════
+// ══════════ 11 · UNSEEN ══════════
 main("The gain holds on sentences never seen in training", 3);
 [["+15.0", "GUIStep-S vs untuned model, sentences that also occur in training (52.6% of test)", NAVY, BLOCK],
  ["+8.4", "GUIStep-S vs untuned model, sentences never seen in training", TEAL, MINT]].forEach((c, i) => {
@@ -316,9 +342,9 @@ main("The gain holds on sentences never seen in training", 3);
   text(c[0], { x, y: 1.9, w: 5.9, h: 1.7, fontSize: 72, bold: true, color: c[2], align: "center", valign: "middle" });
   text(c[1], { x: x + 0.4, y: 3.8, w: 5.1, h: 1.4, fontSize: 20, align: "center", valign: "middle", lh: 1.1 });
 });
-note(SAY[10]); foot();
+note(SAY[11]); foot();
 
-// ══════════ 11 · CONCLUSION ══════════
+// ══════════ 12 · CONCLUSION ══════════
 main("Conclusion", 4);
 [["Method", [{ text: "a 3B model trained only from existing records", options: {} }]],
  ["Evaluation", [{ text: "executability, a validated listener-based score", options: {} }]],
@@ -330,9 +356,9 @@ main("Conclusion", 4);
   text(c[1], { x: M + 2.7, y: yy, w: W - 2 * M - 2.95, h: 1.2, fontSize: 22, valign: "middle" });
 });
 text("Next: a second dataset, a human study, rewards on the sentence itself.", { x: M, y: 5.95, w: W - 2 * M, h: 0.5, fontSize: 18, italic: true, color: GREY, align: "center" });
-note(SAY[11]); foot();
+note(SAY[12]); foot();
 
-// ══════════ 12 · THANK YOU ══════════
+// ══════════ 13 · THANK YOU ══════════
 slide();
 rect(0, 0, W, H - 0.32, NAVY);
 text("Thank you · Questions?", { x: M, y: 2.2, w: W - 2 * M, h: 1.3, fontSize: 50, bold: true, color: WHITE, align: "center", valign: "middle" });
@@ -342,7 +368,7 @@ foot();
 // ══════════════════ BACKUP ══════════════════
 // B1 · validation table (Table 3)
 slide();
-bar("Backup · Validation of the listener (Table 3)");
+bar("Validation of the listener (Table 3)");
 {
   const R = (a, b, c, d, e, fail) => ({ cells: [{ t: a, bold: fail }, b, c, d, { t: e, bold: fail, color: fail ? RED : TEAL }], h: 0.43 });
   table(M, 1.1, [5.4, 2.0, 1.45, 1.45, 1.83], [
@@ -365,7 +391,7 @@ note(QA("A3")); footB();
 
 // B2 · rule choice (Table 2)
 slide();
-bar("Backup · Choosing the localisation rule (Table 2)");
+bar("Choosing the localisation rule (Table 2)");
 table(M, 1.35, [5.6, 2.15, 2.15, 2.23], [
   { cells: ["sentence given to the listener", "D.3", "Voronoi", "window ±14%"], bold: true, color: WHITE, fill: NAVY, h: 0.6 },
   { cells: ["reference instruction (ceiling)", "83.0", "74.9", "83.0"], h: 0.62 },
@@ -379,7 +405,7 @@ note(QA("A4")); footB();
 
 // B3 · other listeners in detail
 slide();
-bar("Backup · Listener checks in detail");
+bar("Listener checks in detail");
 block(M, 1.2, 5.95, 2.4);
 text("UI-Venus-Ground-7B", { x: M + 0.25, y: 1.3, w: 5.5, h: 0.5, fontSize: 20, bold: true, color: NAVY });
 text("not trained on AndroidControl · 2,532 steps\nS − backbone: +11.14 (UGround) → +11.02 (UI-Venus)\nretains 99% of the gap", { x: M + 0.25, y: 1.85, w: 5.5, h: 1.6, fontSize: 16, lh: 1.15 });
@@ -396,7 +422,7 @@ note(QA("A2")); footB();
 
 // B4 · ablation with full CIs
 slide();
-bar("Backup · Ablation with full intervals");
+bar("Ablation with full intervals");
 table(M + 0.5, 1.4, [3.2, 4.3, 2.2, 2.4], [
   { cells: ["comparison", "difference [95% CI]", "p", "note"], bold: true, color: WHITE, fill: NAVY, h: 0.6 },
   { cells: ["D − S", "−1.9 [−3.0, −0.7]", "0.003", "significant"], h: 0.7 },
@@ -409,7 +435,7 @@ note(QA("B5")); footB();
 
 // B5 · other baselines
 slide();
-bar("Backup · Other baselines");
+bar("Other baselines");
 [["62.4", "select-then-verbalise variant", "abstains on 27.3% of steps whose target is in the list; differs from S in 3 settings"],
  ["57.7", "Qwen2.5-VL-7B, prompted", "+4.1 over the 3B backbone, −7.8 vs GUIStep-S"]].forEach((c, i) => {
   const yy = 1.4 + i * 2.4;
@@ -421,7 +447,7 @@ bar("Backup · Other baselines");
 note(QA("B4")); footB();
 // B4 · text metrics (Table 5)
 slide();
-bar("Backup · Reference-overlap metrics (Table 5)");
+bar("Reference-overlap metrics (Table 5)");
 table(M, 1.35, [2.6, 1.35, 1.35, 1.4, 1.45, 1.3, 1.3, 1.38], [
   { cells: ["", "BLEU-4", "METEOR", "ROUGE-L", "CIDEr-D", "SPICE", "chrF", "BERTScore"], bold: true, color: WHITE, fill: NAVY, h: 0.6, fs: 15 },
   { cells: ["untuned backbone", "15.3", "24.6", "42.3", "88.0", "18.5", "40.2", "40.1"], h: 0.62 },
@@ -435,7 +461,7 @@ note(QA("A1")); footB();
 
 // B7 · error analysis
 slide();
-bar("Backup · Error analysis of GUIStep-P");
+bar("Error analysis of GUIStep-P");
 block(M, 1.35, 5.2, 3.3);
 text("96.3%", { x: M, y: 1.5, w: 5.2, h: 1.3, fontSize: 60, bold: true, color: RED, align: "center", valign: "middle" });
 text("of the 1,493 failed steps fail the localisation check\n50 wrong action · 5 polarity", { x: M + 0.3, y: 2.9, w: 4.6, h: 1.5, fontSize: 18, align: "center", lh: 1.1 });
@@ -448,7 +474,7 @@ text("Failures were not inspected by hand: sentence, listener or box error.", { 
 note(QA("B12")); footB();
 // B5 · training details
 slide();
-bar("Backup · Training details");
+bar("Training details");
 [["Backbone", "Qwen2.5-VL-3B-Instruct, 4-bit NF4 QLoRA, LLaMA-Factory"],
  ["LoRA", "rank 8, scale 16, dropout 0.05, seven decoder projections"],
  ["Frozen", "vision tower and projector; context length 2,560"],
@@ -464,7 +490,7 @@ note(QA("B3")); footB();
 
 // B6 · prompt (Appendix A)
 slide();
-bar("Backup · Generation prompt (Appendix A)");
+bar("Generation prompt (Appendix A)");
 block(M, 1.2, W - 2 * M, 1.15);
 text([{ text: "System. ", options: { bold: true, color: NAVY } }, { text: "“You look at a phone screenshot and write ONE short English instruction for the user that says where to touch in order to continue.”", options: { italic: true } }],
   { x: M + 0.25, y: 1.2, w: W - 2 * M - 0.5, h: 1.15, fontSize: 17, valign: "middle", lh: 1.1 });
@@ -476,7 +502,7 @@ footB();
 
 // B7 · repeated / unseen (Table 4)
 slide();
-bar("Backup · Repeated and unseen sentences (Table 4)");
+bar("Repeated and unseen sentences (Table 4)");
 table(M + 0.5, 1.25, [3.0, 4.3, 4.3], [
   { cells: ["", "repeated (n = 2,347)", "unseen (n = 2,116)"], bold: true, color: WHITE, fill: NAVY, h: 0.58 },
   { cells: ["backbone", "58.7 [56.5, 60.9]", "47.9 [45.4, 50.5]"], h: 0.52 },

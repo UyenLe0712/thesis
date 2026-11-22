@@ -110,7 +110,9 @@ addText('PHÁT SINH TỰ ĐỘNG HƯỚNG DẪN SỬ DỤNG PHẦN MỀM\nDỰA 
 addText('Học viên thực hiện: Lê Đoàn Phương Uyên',{x:0.8,y:4.55,w:W-1.6,h:0.4,fontSize:16,bold:true,align:'center'});
 addText('Giáo viên hướng dẫn: TS. Nguyễn Hồng Bửu Long',{x:0.8,y:5.0,w:W-1.6,h:0.4,fontSize:16,bold:true,align:'center'});
 addText('TP. Hồ Chí Minh - 11/2026',{x:0.8,y:5.88,w:W-1.6,h:0.35,fontSize:13,align:'center'});
-note(`Em chào thầy. Hôm nay em báo cáo hai phần. Phần đầu nhắc lại bài toán và giải thích kỹ cách em chấm điểm bằng executability, vì đây là thước chính của mọi phép so. Phần sau là việc thầy giao hôm 1/11: so phương pháp với các thuật toán học tăng cường khác và so SPICE với các độ đo thưởng khác, kèm giải thích.`);
+note(`- Báo cáo hai phần.
+- Phần một nhắc lại bài toán và cách chấm bằng executability, vì mọi phép so phía sau đều đọc bằng con số này.
+- Phần hai là việc thầy giao ngày 1/11: so GRPO với các thuật toán RL khác, so SPICE với các độ đo thưởng khác, và giải thích vì sao.`);
 foot();
 
 // 2 · Bài toán
@@ -126,7 +128,8 @@ addText('Mô hình sinh ra',{x:6.78,y:1.74,w:2.35,h:0.36,fontSize:16.4,bold:true
 line(6.78,2.16,2.35,0,FOOTD,1.2);
 addText('Một câu hướng dẫn\ncho bước tiếp theo',{x:6.78,y:2.63,w:2.35,h:1.12,fontSize:19,bold:true,color:INK,align:'left',valign:'mid',fit:'shrink'});
 addText('Đầu ra là câu hướng dẫn cho người dùng, không phải tọa độ để hệ thống tự thao tác.',{x:0.78,y:5.72,w:8.35,h:0.50,fontSize:14.2,color:GREY,fit:'shrink'});
-note(`Bài toán: mô hình nhìn màn hình hiện tại, biết mục tiêu người dùng và các bước đã làm, rồi viết một câu hướng dẫn cho bước tiếp theo, ví dụ "Tap Not now". Đầu ra là câu cho người đọc, không phải tọa độ cho máy tự bấm.`);
+note(`- Ví dụ đầu ra: "Tap Not now".
+- Câu viết cho người đọc làm theo; mô hình không tự bấm thay người dùng.`);
 foot();
 
 // 3 · Yêu cầu
@@ -135,16 +138,17 @@ addText('Một câu tự nhiên vẫn có thể chưa đủ rõ để người d
 table(0.92,1.68,[4.10,4.10],[
   {cells:['Câu mơ hồ','Câu đủ rõ'],fill:FOOTB,color:WHITE,bold:true,h:0.56,fs:14.0},
   {cells:[{t:'“Tap the button.”',italic:true,color:FOOTD},{t:'“Tap Not now.”',italic:true,color:FOOTC}],h:0.92,rule:true,fs:18.0},
-  {cells:['Không biết cần chạm nút nào khi màn hình có nhiều nút.','Xác định được phần tử cần thao tác.'],h:1.06,fs:14.6}
+  {cells:['Không biết cần chạm nút nào khi màn hình có nhiều nút.','Biết ngay phải chạm nút nào.'],h:1.06,fs:14.6}
 ],{align:['center','center'],fs:14.6});
 line(0.92,4.76,8.20,0,RULE,1);
-addText('Câu hướng dẫn không chỉ cần đúng nội dung, mà còn phải giúp người đọc chọn đúng phần tử cần thao tác.',{x:1.08,y:5.12,w:7.84,h:0.78,fontSize:15.4,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
-note(`Một câu có thể đúng ngữ pháp, nghe tự nhiên, mà vẫn vô dụng. "Tap the button" trên màn hình có mười nút thì người đọc không biết bấm nút nào. Vì vậy em cần một cách chấm kiểm được chuyện câu có giúp chọn đúng phần tử hay không. Đó là executability ở phần sau.`);
+addText('Nghe tự nhiên thôi chưa đủ: câu phải giúp người đọc chọn đúng phần tử cần thao tác.',{x:1.08,y:5.12,w:7.84,h:0.78,fontSize:15.4,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
+note(`- Màn hình có mười nút thì "Tap the button" đúng ngữ pháp mà không dùng được.
+- Vì vậy cần một cách chấm kiểm được câu có giúp chọn đúng phần tử hay không. Đó là executability ở phần sau.`);
 foot();
 
 // 4 · AndroidControl
 newSlide('Dữ liệu','AndroidControl');
-addText('AndroidControl (Google DeepMind, NeurIPS 2024): người thật thao tác trên ứng dụng Android, mỗi bước kèm câu hướng dẫn do người viết.',{x:M,y:0.92,w:8.9,h:0.62,fontSize:15.4,color:FOOTB,align:'center',fit:'shrink'});
+addText('AndroidControl (Google DeepMind, NeurIPS 2024): người thật thao tác trên ứng dụng Android, mỗi bước kèm câu hướng dẫn do chính người thao tác viết.',{x:M,y:0.92,w:8.9,h:0.62,fontSize:15.4,color:FOOTB,align:'center',fit:'shrink'});
 table(0.84,1.72,[2.00,2.00,2.00,2.16],[
   {cells:['Màn hình','Thao tác','Tọa độ chạm','Câu hướng dẫn'],fill:LIGHT,bold:true,h:0.58,fs:13.4},
   {cells:['Trạng thái giao diện','Loại thao tác thực hiện','Vị trí người dùng chạm','Do người thực hiện viết'],h:0.80,fs:12.8}
@@ -156,7 +160,9 @@ table(1.12,3.40,[3.50,2.20,2.20],[
   {cells:['Số tác vụ','12.895','1.432'],h:0.50,fs:14.0}
 ],{align:['left','center','center'],fs:14.0});
 addText('Tách theo tác vụ: không tác vụ nào có mặt ở cả hai tập. Mọi số exec trong báo cáo tính trên 4.463 bước chạm của tập kiểm tra.',{x:1.12,y:5.62,w:7.90,h:0.62,fontSize:13.8,color:GREY,align:'center',fit:'shrink'});
-note(`Dữ liệu là AndroidControl của Google DeepMind. Bộ dữ liệu này dùng câu hướng dẫn làm đầu vào để dự đoán thao tác; em dùng theo chiều ngược lại, câu là đích sinh. Ở mỗi bước có tọa độ người dùng đã chạm thật, và chính tọa độ này giúp chấm executability. Mọi con số exec hôm nay tính trên 4.463 bước chạm của tập kiểm tra.`);
+note(`- Bộ gốc dùng câu hướng dẫn làm đầu vào để dự đoán thao tác; đề tài đi chiều ngược lại, câu là thứ cần sinh.
+- Mỗi bước có toạ độ người dùng đã chạm thật, và executability chấm dựa trên toạ độ này.
+- Mọi số exec hôm nay tính trên 4.463 bước chạm của tập kiểm tra.`);
 foot();
 
 // 5 · Executability: ý tưởng
@@ -172,10 +178,11 @@ box(7.79,1.80,1.75,1.50,'So với chỗ người\ndùng thật đã chạm',{bol
 addText('Người làm theo chỉ nhận ảnh màn hình và câu. Không biết đáp án, không tham gia huấn luyện.',{x:2.80,y:3.36,w:4.6,h:0.5,fontSize:12,italic:true,color:GREY,align:'center',fit:'shrink'});
 rect(0.95,4.20,8.10,1.35,HL,{radius:0.08});
 addText([{text:'Executability',options:{bold:true,color:FOOTB}},{text:' = tỉ lệ số bước mà người làm theo chạm đúng phần tử, chỉ dựa vào câu do mô hình viết.',options:{color:INK}}],{x:1.20,y:4.20,w:7.60,h:1.35,fontSize:17,align:'center',valign:'mid',fit:'shrink'});
-addText('BLEU, SPICE chấm câu chữ. Executability chấm hiệu quả: câu có dẫn người đọc tới đúng chỗ hay không.',{x:M,y:5.85,w:8.9,h:0.50,fontSize:13.8,color:GREY,align:'center',fit:'shrink'});
-note(`Em giải thích executability bằng một hình dung đơn giản. Đưa câu mô hình viết cho một người lạ, không biết đáp án, chỉ nhìn màn hình và đọc câu, rồi xem người đó bấm vào đâu. Bấm đúng nút người dùng thật đã bấm thì câu đó dùng được.
-Người lạ ở đây là UGround, một mô hình định vị giao diện có sẵn: đưa vào ảnh và câu, nó trả về một điểm trên màn hình. UGround không được huấn luyện cùng mô hình của em và không biết đáp án.
-Executability là tỉ lệ số bước bấm đúng. Khác BLEU hay SPICE ở chỗ: các độ đo đó so câu chữ với câu chuẩn, còn executability đo xem câu có làm được việc của nó không.`);
+addText('BLEU, SPICE so chữ với câu chuẩn. Executability xem câu có đưa người đọc tới đúng chỗ hay không.',{x:M,y:5.85,w:8.9,h:0.50,fontSize:13.8,color:GREY,align:'center',fit:'shrink'});
+note(`- Hình dung: đưa câu cho một người lạ không biết đáp án, chỉ nhìn màn hình và đọc câu, rồi xem họ bấm vào đâu. Bấm trúng chỗ người dùng thật đã bấm thì câu dùng được.
+- Người lạ ở đây là UGround, một mô hình định vị giao diện có sẵn: nhận ảnh và câu, trả về một điểm trên màn hình.
+- UGround không được huấn luyện cùng mô hình của đề tài và không biết đáp án.
+- BLEU, SPICE so chữ với câu chuẩn; executability xem câu có đưa người đọc tới đúng chỗ không.`);
 foot();
 
 // 6 · Ví dụ thật
@@ -187,10 +194,11 @@ addText([{text:'S1 (sau tinh chỉnh)',options:{bold:true,color:OK,breakLine:tru
 rect(5.45,3.15,4.15,1.45,'F8E9E9',{radius:0.06});
 addText([{text:'Mô hình gốc (chưa tinh chỉnh)',options:{bold:true,color:BAD,breakLine:true}},{text:'“Click on the "Gender" section to change it to "Male".”',options:{italic:true,breakLine:true}},{text:'→ UGround chạm vào ô Gender: SAI',options:{bold:true,color:BAD}}],{x:5.62,y:3.15,w:3.85,h:1.45,fontSize:13.4,valign:'mid',fit:'shrink'});
 rect(0.55,4.90,8.90,1.25,LIGHT,{radius:0.06});
-addText('Câu của mô hình gốc dài, đúng ngữ pháp, nhưng gọi sai phần tử. Điểm chạm chỉ lệch một hàng (Gender ngay trên Birthday), vẫn bị tính sai. Đây đúng là loại lỗi executability cần bắt.',{x:0.80,y:4.90,w:8.40,h:1.25,fontSize:14.4,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
-note(`Đây là màn hình thật trong tập kiểm tra. Người dùng chạm vào ô Birthday, vòng vàng. Câu của S1 là "Click on the Birthday option"; UGround đọc câu này và chạm đúng ô Birthday, vòng xanh, bước này đạt.
-Câu của mô hình gốc là "Click on the Gender section to change it to Male": câu dài, đúng ngữ pháp, nhưng gọi sai phần tử. UGround chạm vào ô Gender, dấu X đỏ, bước này không đạt.
-Điểm đáng chú ý: hai ô chỉ cách nhau một hàng. Nếu chỉ đo khoảng cách thì câu sai vẫn có thể được tính đúng. Slide sau giải thích cách em loại trường hợp này.`);
+addText('Câu của mô hình gốc dài và đúng ngữ pháp nhưng gọi sai ô. Điểm chạm chỉ lệch một hàng (Gender nằm ngay trên Birthday) và bước này vẫn bị tính sai.',{x:0.80,y:4.90,w:8.40,h:1.25,fontSize:14.4,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
+note(`- Màn hình thật trong tập kiểm tra. Người dùng chạm ô Birthday (vòng vàng).
+- S1 viết "Click on the Birthday option"; UGround chạm đúng ô Birthday (vòng xanh), bước này đạt.
+- Mô hình gốc viết "Click on the Gender section to change it to Male": câu dài, đúng ngữ pháp, nhưng gọi sai ô. UGround chạm ô Gender (dấu X đỏ), bước này không đạt.
+- Hai ô chỉ cách nhau một hàng. Nếu chỉ đo khoảng cách, câu sai này vẫn có thể được tính đúng; slide sau nói cách loại.`);
 foot();
 
 // 7 · Ba điều kiện
@@ -198,7 +206,7 @@ newSlide('Executability','Một bước được tính đúng khi nào');
 const cond=[
   ['1','Đúng loại thao tác','Bước cần chạm mà câu viết “Swipe up” hay “Go back” thì sai ngay, không cần xem điểm chạm.'],
   ['2','Chạm gần chỗ người dùng đã chạm','Điểm UGround chạm lệch không quá 14% bề ngang và 14% bề dọc màn hình so với điểm thật.'],
-  ['3','Gần đúng phần tử hơn mọi phần tử khác','Điểm chạm phải gần điểm thật hơn mọi phần tử bấm được khác trên màn hình (vùng tô vàng trong ví dụ). Điều kiện này loại câu gọi nhầm nút bên cạnh.']
+  ['3','Gần phần tử đúng hơn mọi phần tử khác','Điểm chạm phải gần điểm thật hơn mọi phần tử bấm được khác trên màn hình (vùng tô vàng trong ví dụ). Điều kiện này loại câu gọi nhầm nút bên cạnh.']
 ];
 cond.forEach((c,i)=>{ const yy=1.00+i*1.32;
   slide.addShape(pptx.ShapeType.ellipse,{x:0.62,y:yy+0.22,w:0.62,h:0.62,fill:{color:FOOTB},line:{color:FOOTB}});
@@ -208,11 +216,10 @@ cond.forEach((c,i)=>{ const yy=1.00+i*1.32;
 });
 rect(0.95,5.12,8.10,1.10,HL,{radius:0.08});
 addText([{text:'Executability = ',options:{bold:true,color:FOOTB}},{text:'số bước đạt cả 3 điều kiện  /  4.463 bước chạm',options:{color:INK}}],{x:1.1,y:5.12,w:7.8,h:1.10,fontSize:17,align:'center',valign:'mid',fit:'shrink'});
-note(`Một bước được tính đúng khi đạt đồng thời ba điều kiện.
-Một: câu phải nói đúng loại thao tác. Bước cần chạm mà câu bảo vuốt lên hay quay lại thì sai ngay.
-Hai: điểm UGround chạm không lệch quá 14% chiều ngang và 14% chiều dọc so với điểm người dùng chạm thật. Đây là ngưỡng quen thuộc của bộ AndroidInTheWild.
-Ba: điểm chạm phải gần điểm thật hơn mọi phần tử bấm được khác trên màn hình, tức nằm trong ô Voronoi, là vùng tô vàng ở ví dụ trước. Điều kiện này để loại các câu gọi nhầm nút ngay bên cạnh.
-Executability là số bước đạt cả ba, chia cho 4.463 bước chạm.`);
+note(`- Ba điều kiện phải đạt cùng lúc.
+- Một: đúng loại thao tác. Bước cần chạm mà câu bảo vuốt lên hay quay lại thì sai ngay.
+- Hai: điểm chạm lệch không quá 14% chiều ngang và 14% chiều dọc màn hình so với điểm thật. Ngưỡng này lấy từ bộ AndroidInTheWild.
+- Ba: điểm chạm gần điểm thật hơn mọi phần tử bấm được khác, tức nằm trong ô Voronoi (vùng tô vàng ở ví dụ trước). Điều kiện này loại câu gọi nhầm nút bên cạnh.`);
 foot();
 
 // 8 · Vì sao cần điều kiện 3
@@ -225,24 +232,26 @@ table(0.85,1.78,[3.70,2.20,2.40],[
 ],{align:['left','center','center'],fs:13.8});
 rect(0.95,4.55,8.10,1.25,LIGHT,{radius:0.06});
 addText('Chỉ đo khoảng cách thì câu gọi nhầm nút bên cạnh vẫn được điểm. Thêm điều kiện 3 loại gần hết các ca này mà vẫn giữ các ca chạm lệch nhẹ.',{x:1.15,y:4.55,w:7.70,h:1.25,fontSize:15,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
-note(`Tại sao phải có điều kiện ba? Em thử bằng cách dịch điểm chạm có chủ ý. Nếu dịch sang phần tử bên cạnh, cách chấm chỉ dùng dung sai 14% vẫn chấp nhận 84,3% số ca, tức gần như không phân biệt được nút đúng với nút kế bên. Thêm điều kiện ô Voronoi thì chỉ còn 2,8%. Còn các ca chạm lệch nhẹ trong cùng phần tử vẫn được giữ 99,7%. Nghĩa là điều kiện ba siết đúng chỗ cần siết, không làm khó những ca đáng được tính đúng.`);
+note(`- Phép thử: cố ý dịch điểm chạm, hoặc sang phần tử bên cạnh, hoặc lệch nhẹ trong cùng phần tử.
+- Chỉ dùng dung sai 14% thì 84,3% ca dịch sang nút bên cạnh vẫn được chấp nhận, gần như không phân biệt nút đúng với nút kế bên.
+- Thêm điều kiện ô Voronoi thì chỉ còn 2,8%, trong khi ca lệch nhẹ trong cùng phần tử vẫn giữ 99,7%.`);
 foot();
 
 // 9 · Đọc số exec: thang đo
 newSlide('Executability','Đọc con số executability thế nào');
-addText('Executability không đọc trên thang 0-100. Câu chuẩn do người viết cũng chỉ đạt 75,7%, vì người làm theo đôi khi chạm lệch.',{x:M,y:0.90,w:8.9,h:0.62,fontSize:15.2,color:FOOTB,align:'center',fit:'shrink'});
+addText('Thang thực tế không phải 0 đến 100: đưa chính câu chuẩn cho UGround cũng chỉ đạt 75,7%, vì UGround đôi khi chạm lệch.',{x:M,y:0.90,w:8.9,h:0.62,fontSize:15.2,color:FOOTB,align:'center',fit:'shrink'});
 const RX=0.75, RW=8.5, RY=3.30, X100=v=>RX+RW*v/80;
 rect(RX,RY-0.07,RW,0.14,'E4E1EA',{radius:0.04});
 rect(X100(12),RY-0.07,X100(75.7)-X100(12),0.14,'C9C0DD');
 [0,20,40,60,80].forEach(t=>{ line(X100(t),RY+0.10,0,0.10,GREY,0.75); addText(String(t),{x:X100(t)-0.3,y:RY+0.22,w:0.6,h:0.25,fontSize:10.5,color:GREY,align:'center'}); });
 const marks=[
   {v:6.1,t:'6,1\ncâu thật nhưng\nsai màn hình',up:false,c:FOOTD},
-  {v:12.0,t:'12,0\n“Tap the button.”\nmọi bước',up:true,c:FOOTD},
+  {v:12.0,t:'12,0\n“Tap the button.”\ncho mọi bước',up:true,c:FOOTD},
   {v:47.6,t:'47,6\nmô hình gốc 3B',up:true,c:FOOTC},
   {v:59.1,t:'59,1\nS1',up:false,c:FOOTC},
   {v:60.7,t:'60,7\nGRPO-SPICE',up:true,c:FOOTB},
   {v:61.2,t:'61,2\nSA-SPICE-v3',up:false,c:FOOTB,dx:0.55},
-  {v:75.7,t:'75,7\ncâu chuẩn\ncủa người',up:true,c:OK}
+  {v:75.7,t:'75,7\ncâu chuẩn',up:true,c:OK}
 ];
 marks.forEach(m=>{ const x=X100(m.v);
   slide.addShape(pptx.ShapeType.ellipse,{x:x-0.08,y:RY-0.08,w:0.16,h:0.16,fill:{color:m.c},line:{color:WHITE,width:1}});
@@ -251,23 +260,26 @@ marks.forEach(m=>{ const x=X100(m.v);
   else { line(x,RY+0.48,0,0.30,m.c,1); addText(m.t,{x:x-0.85+dx,y:RY+0.80,w:1.7,h:0.86,fontSize:11.5,bold:true,color:m.c,align:'center',valign:'top'}); }
 });
 rect(0.95,5.10,8.10,1.12,HL,{radius:0.08});
-addText('Khoảng dùng được là từ ~12 (câu rỗng nghĩa) tới 75,7 (câu chuẩn). Mô hình đi từ 47,6 lên 59,1 nhờ tinh chỉnh, rồi lên 60,7 và 61,2 nhờ học tăng cường.',{x:1.15,y:5.10,w:7.70,h:1.12,fontSize:14.2,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
+addText('Khoảng dùng được là từ khoảng 12 (câu không chỉ ra phần tử nào) tới 75,7 (câu chuẩn). Tinh chỉnh đưa mô hình từ 47,6 lên 59,1; học tăng cường đưa tiếp lên 60,7 và 61,2.',{x:1.15,y:5.10,w:7.70,h:1.12,fontSize:14.2,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
 addText('Hai mốc thấp (6,1 và 12,0) đo trên 800 bước của tập kiểm tra, các mốc còn lại trên đủ 4.463 bước.',{x:M,y:6.42,w:8.9,h:0.32,fontSize:10.5,italic:true,color:GREY,align:'center'});
-note(`Slide này để đọc con số. Trần không phải 100: chính câu chuẩn do người viết, đưa cho UGround, cũng chỉ đạt 75,7%, vì UGround đôi khi chạm lệch. Sàn cũng không phải 0: câu vô nghĩa "Tap the button" cho mọi bước vẫn đạt 12%, còn câu thật nhưng lấy của màn hình khác chỉ đạt 6,1%. Điều này cho thấy UGround thật sự đọc nội dung câu, câu đúng văn phong mà sai nội dung thì điểm rất thấp.
-Trên thang này, mô hình gốc đạt 47,6; tinh chỉnh có giám sát S1 lên 59,1; học tăng cường thưởng SPICE lên 60,7; và phần thưởng mới SA-SPICE-v3 lên 61,2. Các mức chênh sau tinh chỉnh nhỏ, khoảng 1 đến 2 điểm, nên em luôn kèm khoảng tin cậy khi so.`);
+note(`- Trần không phải 100: đưa câu chuẩn cho UGround cũng chỉ đạt 75,7%, vì UGround đôi khi chạm lệch. Đây là giới hạn của dụng cụ đo.
+- Sàn không phải 0: "Tap the button" cho mọi bước vẫn đạt 12%. Câu thật nhưng lấy từ màn hình khác chỉ đạt 6,1%, thấp hơn cả sàn, nghĩa là UGround đọc nội dung câu chứ không chấm văn phong.
+- Mô hình gốc 47,6, S1 59,1, GRPO-SPICE 60,7, SA-SPICE-v3 61,2. Sau tinh chỉnh các mức chênh chỉ 1 đến 2 điểm nên phép so nào cũng kèm khoảng tin cậy.`);
 foot();
 
 // 10 · Độ tin cậy
 newSlide('Executability','Executability có đáng tin không');
 table(0.62,0.98,[3.30,5.46],[
   {cells:['Phép kiểm','Kết quả'],fill:FOOTB,color:WHITE,bold:true,h:0.50,fs:13.4},
-  {cells:[{t:'Câu càng thiếu thông tin, điểm càng thấp',bold:true},'Câu chuẩn 74,9 · câu rỗng nghĩa 12,0 · câu sai màn hình 6,1 (cùng 800 bước)'],h:0.86,rule:true,fs:13.2},
+  {cells:[{t:'Câu càng thiếu thông tin, điểm càng thấp',bold:true},'Trên cùng 800 bước: câu chuẩn 74,9, “Tap the button.” 12,0, câu lấy từ màn hình khác 6,1'],h:0.86,rule:true,fs:13.2},
   {cells:[{t:'Bỏ tên phần tử khỏi câu chuẩn',bold:true},'Mất 28,5 điểm trên các bước bị tác động; bỏ mô tả vị trí chỉ mất 3,5 điểm'],h:0.86,rule:true,fs:13.2},
   {cells:[{t:'Đổi người làm theo',bold:true},'GRPO-SPICE vẫn cao hơn S1 dưới cả bốn mô hình định vị: UGround, UI-Venus, Phi-Ground, Phi-4'],h:0.86,rule:true,fs:13.2},
   {cells:[{t:'Chấm lại cùng câu',bold:true},'Kết quả tất định: 0 bất đồng trên 1.625 lần chấm lại'],h:0.70,fs:13.2}
 ],{align:['left','left'],fs:13.2});
-addText('Điểm phụ thuộc vào nội dung câu, đặc biệt là tên phần tử, chứ không phụ thuộc văn phong hay một mô hình định vị cụ thể.',{x:0.85,y:5.18,w:8.30,h:0.80,fontSize:14.6,bold:true,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
-note(`Để tin thước này, em làm bốn phép kiểm. Câu càng thiếu thông tin thì điểm càng thấp. Bỏ tên phần tử khỏi câu chuẩn thì mất 28,5 điểm trên các bước bị tác động, còn bỏ mô tả vị trí chỉ mất 3,5, nghĩa là thước thưởng đúng việc gọi tên phần tử. Đổi người làm theo sang ba mô hình định vị khác, trong đó Phi-Ground và Phi-4 không thuộc họ Qwen, thì phương pháp vẫn cao hơn S1. Và chấm lại nhiều lần cho cùng kết quả.`);
+addText('Điểm đi theo nội dung câu, nhất là tên phần tử, và thứ tự các mô hình giữ nguyên khi đổi mô hình định vị.',{x:0.85,y:5.18,w:8.30,h:0.80,fontSize:14.6,bold:true,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
+note(`- Bỏ tên phần tử khỏi câu chuẩn thì mất 28,5 điểm trên các bước bị tác động, bỏ mô tả vị trí chỉ mất 3,5: thước thưởng việc gọi đúng tên phần tử.
+- Đổi người làm theo sang ba mô hình định vị khác, phương pháp vẫn cao hơn S1. Phi-Ground và Phi-4 không thuộc họ Qwen.
+- Chấm lại cùng câu cho đúng cùng kết quả.`);
 foot();
 
 // 11 · Quy trình
@@ -283,8 +295,11 @@ addText('GRPO-SPICE',{x:M,y:3.42,w:2.15,h:0.40,fontSize:SECTION_FS,bold:true,col
 bullets(['Sinh 8 câu cho cùng đầu vào.','Thưởng = SPICE so với câu chuẩn, trừ phạt độ dài.'],M,3.92,4.15,{gap:0.76,fs:15.2,h:0.62});
 addText('ACE',{x:5.05,y:3.42,w:1.2,h:0.40,fontSize:SECTION_FS,bold:true,color:FOOTB});
 bullets(['Tìm 4 câu ví dụ giống nhất trong tập huấn luyện.','Chỉ thay câu ban đầu khi qua 2 điều kiện chọn lọc.'],5.05,3.92,4.35,{gap:0.76,fs:15.2,h:0.62});
-addText('Mô hình định vị chỉ dùng để chấm. Không tham gia sinh câu, không có trong phần thưởng.',{x:M,y:5.82,w:8.9,h:0.48,fontSize:14.2,color:FOOTB,align:'center',fit:'shrink'});
-note(`Phương pháp có hai thành phần. Xuất phát từ S1 là Qwen2.5-VL-3B đã tinh chỉnh có giám sát. Thành phần một học tăng cường bằng GRPO với thưởng SPICE. Thành phần hai là ACE, tra bốn câu ví dụ giống nhất trong tập huấn luyện và chỉ thay câu khi qua hai điều kiện. Mô hình định vị UGround chỉ dùng để chấm, không nằm trong phần thưởng, nên thước chấm độc lập với mục tiêu huấn luyện.`);
+addText('Mô hình định vị chỉ dùng để chấm: không tham gia sinh câu và không nằm trong phần thưởng.',{x:M,y:5.82,w:8.9,h:0.48,fontSize:14.2,color:FOOTB,align:'center',fit:'shrink'});
+note(`- Xuất phát từ S1: Qwen2.5-VL-3B đã tinh chỉnh có giám sát.
+- Thành phần một: học tăng cường bằng GRPO, thưởng SPICE.
+- Thành phần hai: ACE tra bốn câu ví dụ giống nhất trong tập huấn luyện và chỉ thay câu khi đạt hai điều kiện.
+- UGround không nằm trong phần thưởng, nên thước chấm độc lập với mục tiêu huấn luyện.`);
 foot();
 
 // 12 · GRPO-SPICE
@@ -300,7 +315,10 @@ rect(M,3.65,8.9,1.72,LIGHT,{line:FOOTD});
 addText('Vì sao SPICE',{x:M+0.22,y:3.90,w:2.15,h:0.35,fontSize:15.5,bold:true,color:FOOTB});
 addText('SPICE so câu theo đối tượng, thuộc tính, quan hệ thay vì từng chữ. Hai câu cùng nói về một nút vẫn được điểm cao dù khác cách viết.',{x:M+2.12,y:3.72,w:6.50,h:1.48,fontSize:15.2,valign:'mid',fit:'shrink'});
 addText('Tiền lệ: SCST (CVPR 2017) và SPIDEr (ICCV 2017) trong sinh chú thích ảnh.',{x:M,y:5.80,w:8.9,h:0.45,fontSize:14,color:GREY,align:'center'});
-note(`GRPO: với mỗi mẫu, mô hình viết tám câu, mỗi câu chấm SPICE so với câu chuẩn trừ phạt độ dài. Câu nào điểm cao hơn trung bình của nhóm tám câu thì được khuyến khích, thấp hơn thì bị giảm. Có thêm phạt KL để mô hình không đi quá xa S1. SPICE chấm theo đối tượng và quan hệ nên phù hợp với việc gọi đúng phần tử. Cách dùng độ đo làm phần thưởng đã có từ SCST và SPIDEr trong chú thích ảnh.`);
+note(`- Mỗi mẫu, mô hình viết tám câu; mỗi câu được chấm SPICE so với câu chuẩn, trừ phạt độ dài.
+- Câu có điểm cao hơn trung bình nhóm thì được tăng xác suất, thấp hơn thì bị giảm. Mốc so là trung bình của chính nhóm, nên không cần mô hình giá trị riêng.
+- Phạt KL giữ mô hình không đi quá xa S1.
+- SPICE chấm theo đối tượng và quan hệ, hợp với việc gọi đúng phần tử. Dùng độ đo làm phần thưởng đã có từ SCST và SPIDEr.`);
 foot();
 
 // 13 · ACE
@@ -318,7 +336,9 @@ rect(5.25,3.42,4.20,1.18,LIGHT,{line:FOOTC});
 addText('2 · Cùng loại thao tác với câu ban đầu.',{x:5.43,y:3.42,w:3.84,h:1.18,fontSize:14.0,align:'center',valign:'mid',fit:'shrink'});
 box(1.80,5.10,2.80,0.82,'Đủ điều kiện → dùng câu mới',{bold:true,fill:LIGHT,line:FOOTC,fs:14});
 box(5.40,5.10,2.80,0.82,'Không đủ → giữ câu ban đầu',{bold:true,fill:WHITE,line:FOOTD,fs:14});
-note(`ACE dựa trên quan sát: nhiều tác vụ lặp lại với thay đổi nhỏ, nên câu chuẩn của một bước cũ đôi khi dùng được nguyên văn. ACE tìm bốn bước giống nhất, cho bộ sinh xem bốn câu đó, và chỉ thay câu ban đầu khi câu mới chép nguyên văn một câu ví dụ và cùng loại thao tác. Ở phần lớn các bước, câu ban đầu được giữ.`);
+note(`- Nhiều tác vụ lặp lại với khác biệt nhỏ, nên câu chuẩn của một bước cũ đôi khi dùng lại được nguyên văn.
+- ACE cho bộ sinh xem câu của bốn bước giống nhất, và chỉ thay câu ban đầu khi câu mới trùng nguyên văn một câu ví dụ và cùng loại thao tác.
+- Phần lớn các bước giữ câu ban đầu.`);
 foot();
 
 // 14 · Kết quả chính
@@ -334,7 +354,10 @@ table(0.64,1.52,[2.02,1.55,1.38,1.38,1.05,1.34],[
 metricBadge(1.08,4.72,2.30,'+1,55','exec so với S1\nKTC 95% [+0,80; +2,33]',FOOTC);
 metricBadge(3.85,4.72,2.30,'+1,52','hộp phần tử so với S1',FOOTC);
 metricBadge(6.62,4.72,2.30,'+1,88','AitW đầy đủ so với S1',FOOTC);
-note(`Kết quả chính trên tập kiểm tra. GRPO-SPICE đạt 60,65 executability, hơn S1 1,55 điểm, khoảng tin cậy từ 0,80 đến 2,33, không chứa 0. Hai tiêu chí vị trí khác, hộp phần tử của AndroidControl và tiêu chí của AitW, cũng tăng cỡ đó. Thêm ACE thì exec giữ nguyên nhưng các độ đo văn bản tăng thêm.`);
+addText('Hộp phần tử: điểm chạm nằm trong khung của phần tử đúng (tiêu chí gốc của AndroidControl). AitW đầy đủ: tiêu chí của bộ AndroidInTheWild.',{x:M,y:6.18,w:8.9,h:0.42,fontSize:11,italic:true,color:GREY,align:'center',fit:'shrink'});
+note(`- GRPO-SPICE đạt 60,65, hơn S1 1,55 điểm; khoảng tin cậy 95% từ 0,80 đến 2,33, không chứa 0.
+- Hai tiêu chí vị trí khác (hộp phần tử của AndroidControl, AitW đầy đủ) cũng tăng cỡ đó.
+- Thêm ACE thì exec giữ nguyên, các độ đo văn bản tăng thêm.`);
 foot();
 
 // 15 · Bốn người làm theo
@@ -346,8 +369,10 @@ table(0.58,1.48,[2.18,1.55,1.55,1.55,1.55],[
   {cells:['GRPO-SPICE','60,65','56,06','47,75','45,33'],h:0.60,rule:true,fs:12.8},
   {cells:['Δ GRPO-SPICE − S1',{t:'+1,55',bold:true,color:FOOTC,fill:HL},{t:'+1,55',bold:true,color:FOOTC,fill:HL},{t:'+0,78',bold:true,color:FOOTC,fill:HL},{t:'+0,69',bold:true,color:FOOTC,fill:HL}],h:0.64,fs:12.6}
 ],{align:['left','center','center','center','center'],fs:12.7});
-addText('Cả bốn khoảng tin cậy đều nằm trên 0. Phi-Ground và Phi-4 không thuộc họ Qwen nên loại được khả năng người làm theo “quen” mô hình được chấm.',{x:0.85,y:4.20,w:8.30,h:0.90,fontSize:14.4,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
-note(`Một câu hỏi tự nhiên là: nếu đổi người làm theo thì sao. Em chấm lại cùng các câu bằng ba mô hình định vị khác. Mức số tuyệt đối khác nhau vì mỗi mô hình định vị mạnh yếu khác nhau, nhưng GRPO-SPICE luôn cao hơn S1 và cả bốn khoảng tin cậy đều trên 0.`);
+addText('Cả bốn khoảng tin cậy đều nằm trên 0. Phi-Ground và Phi-4 không thuộc họ Qwen, và mức tăng vẫn giữ chiều khi người làm theo khác họ với mô hình được chấm.',{x:0.85,y:4.20,w:8.30,h:0.90,fontSize:14.4,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
+note(`- Chấm lại cùng các câu bằng ba mô hình định vị khác.
+- Mức tuyệt đối khác nhau vì mỗi mô hình định vị mạnh yếu khác nhau.
+- GRPO-SPICE luôn cao hơn S1 và cả bốn khoảng tin cậy đều trên 0.`);
 foot();
 
 // 16 · Thiết kế lưới
@@ -355,59 +380,94 @@ newSlide('So sánh RL','Thiết kế phép so');
 addText('Yêu cầu ngày 1/11: so với các thuật toán RL khác và so SPICE với các độ đo thưởng khác, kèm giải thích.',{x:M,y:0.92,w:8.9,h:0.56,fontSize:15.2,color:FOOTB,align:'center',fit:'shrink'});
 rect(M,1.70,4.30,2.55,LIGHT,{radius:0.08});
 addText('Lưới 1 · đổi thuật toán',{x:M+0.2,y:1.80,w:3.9,h:0.40,fontSize:15.6,bold:true,color:FOOTB});
-addText('Giữ thưởng SPICE. Đổi: GRPO, SCST, REINFORCE, RLOO, PPO (hai mức λ).',{x:M+0.2,y:2.25,w:3.9,h:1.85,fontSize:14,valign:'top',fit:'shrink'});
+addText('Giữ thưởng SPICE, chỉ đổi thuật toán: GRPO, Dr.GRPO, SCST, REINFORCE, RLOO và PPO (hai mức λ của GAE).',{x:M+0.2,y:2.25,w:3.9,h:1.85,fontSize:14,valign:'top',fit:'shrink'});
 rect(5.15,1.70,4.30,2.55,LIGHT,{radius:0.08});
 addText('Lưới 2 · đổi phần thưởng',{x:5.35,y:1.80,w:3.9,h:0.40,fontSize:15.6,bold:true,color:FOOTB});
-addText('Giữ GRPO. Đổi thưởng: SPICE, ROUGE-L, METEOR, CIDEr-D, và SPICE + chrF + thưởng đúng loại thao tác (SA-SPICE-v3).',{x:5.35,y:2.25,w:3.9,h:1.85,fontSize:14,valign:'top',fit:'shrink'});
+addText('Giữ GRPO, chỉ đổi phần thưởng: SPICE, ROUGE-L, METEOR, CIDEr-D. Từ SFT tiếp thêm SPICE thuần và SA-SPICE-v3 (SPICE trộn chrF, cộng điểm khi đúng loại thao tác).',{x:5.35,y:2.25,w:3.9,h:1.85,fontSize:14,valign:'top',fit:'shrink'});
 addText('Giữ cố định',{x:M,y:4.45,w:3,h:0.36,fontSize:15,bold:true,color:FOOTB});
-addText('cùng điểm xuất phát S1 · cùng 1.000 câu nhắc · 8 câu mỗi câu nhắc · cùng tốc độ học, phạt KL, seed',{x:M,y:4.82,w:8.9,h:0.40,fontSize:13.6,fit:'shrink'});
+addText('Cùng điểm xuất phát S1, cùng 1.000 câu nhắc, 8 câu cho mỗi câu nhắc, cùng tốc độ học, phạt KL và seed.',{x:M,y:4.82,w:8.9,h:0.40,fontSize:13.6,fit:'shrink'});
 addText('Ba mốc để đọc',{x:M,y:5.32,w:3,h:0.36,fontSize:15,bold:true,color:FOOTB});
-addText('SFT tiếp: học thêm có giám sát trên cùng câu nhắc, không RL · SPICE ghép ngẫu nhiên: thưởng không mang thông tin · GRPO chạy lại (A/A): cùng cấu hình, đo độ dao động giữa hai lần chạy',{x:M,y:5.69,w:8.9,h:0.80,fontSize:13.2,fit:'shrink'});
-note(`Thầy yêu cầu so với các thuật toán RL khác và so SPICE với các độ đo thưởng khác. Em dựng hai lưới, mỗi lưới chỉ đổi một yếu tố. Lưới một giữ thưởng SPICE và đổi thuật toán: GRPO, SCST là mốc kinh điển của chú thích ảnh, REINFORCE, RLOO và PPO. Lưới hai giữ GRPO và đổi phần thưởng.
-Mọi thứ khác giữ nguyên. Thêm ba mốc để đọc cho đúng: SFT tiếp là học thêm có giám sát trên đúng các câu nhắc đó, không có RL, để tách công của RL với công của việc học thêm. SPICE ghép ngẫu nhiên là thưởng không mang thông tin. Và GRPO chạy lại cùng cấu hình để biết hai lần chạy lệch nhau bao nhiêu.`);
+addText('SFT tiếp: học thêm có giám sát trên cùng câu nhắc, không dùng RL.\nSPICE ghép ngẫu nhiên: phần thưởng không mang thông tin.\nGRPO chạy lại (A/A): cùng cấu hình, cho biết hai lần chạy lệch nhau bao nhiêu.',{x:M,y:5.69,w:8.9,h:0.80,fontSize:13.2,fit:'shrink'});
+note(`- Hai lưới, mỗi lưới chỉ đổi một yếu tố.
+- Lưới 1 giữ thưởng SPICE, đổi thuật toán. SCST là mốc kinh điển của bài toán chú thích ảnh.
+- Lưới 2 giữ GRPO, đổi phần thưởng.
+- Ba mốc đọc kèm: SFT tiếp tách công của RL khỏi công của việc học thêm; SPICE ghép ngẫu nhiên là thưởng không mang thông tin; GRPO chạy lại cho biết hai lần chạy cùng cấu hình lệch nhau bao nhiêu.`);
 foot();
 
 // 17 · Lưới thuật toán
 newSlide('So sánh RL','Lưới 1: các thuật toán RL (cùng thưởng SPICE)');
+addText('Chấm là mức chênh exec so với S1, vạch ngang là khoảng tin cậy 95%. Vạch nằm hẳn bên phải 0 là hơn S1 có ý nghĩa.',{x:0.55,y:0.68,w:6.6,h:0.30,fontSize:11,italic:true,color:GREY,fit:'shrink'});
 forest(0.50,1.32,9.0,[
   {label:'GRPO (lượt chính)',d:1.55,lo:0.80,hi:2.33,color:FOOTB,bold:true},
   {label:'SCST',d:1.43,lo:0.79,hi:2.10},
   {label:'PPO, λ = 1',d:0.96,lo:0.19,hi:1.73},
   {label:'REINFORCE',d:0.90,lo:0.20,hi:1.60},
+  {label:'Dr.GRPO',d:0.90,lo:0.26,hi:1.54},
   {label:'PPO, λ = 0,95',d:0.87,lo:0.02,hi:1.73},
   {label:'GRPO chạy lại (A/A)',d:0.63,lo:-0.11,hi:1.38},
   {label:'RLOO',d:0.34,lo:-0.33,hi:1.00},
   {label:'SFT tiếp (không RL)',d:1.05,lo:0.47,hi:1.64,color:FOOTD,italic:true,fill:'F6F5F8'}
-],{min:-0.5,max:2.5,rowH:0.46,labelW:2.45,valW:2.10});
+],{min:-0.5,max:2.5,rowH:0.42,labelW:2.45,valW:2.10});
 rect(0.70,5.85,8.60,0.88,HL,{radius:0.08});
-addText('Mọi thuật toán đều hơn S1 từ 0,3 đến 1,6 điểm, khoảng tin cậy chồng lên nhau. Hai lần chạy GRPO cùng cấu hình lệch 0,92 điểm, cỡ khoảng cách giữa các thuật toán.',{x:0.90,y:5.85,w:8.20,h:0.88,fontSize:13.4,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
-note(`Đây là lưới thuật toán. Mỗi chấm là mức chênh executability so với S1, vạch ngang là khoảng tin cậy 95%. Chấm nằm bên phải vạch 0 là hơn S1.
-Đọc ra ba điều. Thứ nhất, mọi thuật toán đều hơn S1, từ 0,3 đến 1,6 điểm; năm trong bảy lượt có khoảng tin cậy nằm hẳn trên 0. Thứ hai, các khoảng tin cậy chồng lên nhau nhiều, nên em không kết luận được thuật toán nào hơn hẳn. GRPO và SCST nhỉnh nhất, RLOO thấp nhất. Thứ ba, chạy lại GRPO đúng cấu hình cũ chỉ được 0,63, lệch lượt chính 0,92 điểm. Tức độ dao động giữa hai lần chạy đã cỡ khoảng cách giữa các thuật toán.
-Hàng cuối là SFT tiếp, không có RL, cũng hơn S1 1,05. Nghĩa là một phần mức tăng đến từ việc học thêm trên các câu nhắc này, không riêng RL.`);
+addText('Mọi thuật toán đều hơn S1 từ 0,3 đến 1,6 điểm và các khoảng tin cậy chồng lên nhau. Hai lần chạy GRPO cùng cấu hình đã lệch nhau 0,92 điểm, bằng cỡ khoảng cách giữa các thuật toán.',{x:0.90,y:5.85,w:8.20,h:0.88,fontSize:13.4,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
+note(`- Mỗi chấm là mức chênh exec so với S1, vạch ngang là khoảng tin cậy 95%. Chấm bên phải vạch 0 là hơn S1.
+- Mọi thuật toán hơn S1 từ 0,3 đến 1,6 điểm; sáu trong tám lượt có khoảng tin cậy nằm hẳn trên 0.
+- Các khoảng chồng lên nhau nhiều nên chưa kết luận được thuật toán nào hơn hẳn. GRPO và SCST nhỉnh nhất, RLOO thấp nhất.
+- Chạy lại GRPO đúng cấu hình cũ chỉ được 0,63, lệch lượt chính 0,92: dao động giữa hai lần chạy đã cỡ khoảng cách giữa các thuật toán.
+- Dr.GRPO (bỏ chia độ lệch chuẩn và bỏ chuẩn hoá theo độ dài) đạt 60,00: thấp hơn GRPO lượt chính 0,65 [0,19; 1,12], p = 0,009, ngang GRPO chạy lại cùng mã (+0,27, chưa có ý nghĩa). Bỏ hai phép chuẩn hoá không giúp gì ở bài này.
+- SFT tiếp, không có RL, cũng hơn S1 1,05. Một phần mức tăng đến từ việc học thêm trên các câu nhắc này.`);
 foot();
 
 // 18 · Lưới thưởng
 newSlide('So sánh RL','Lưới 2: các phần thưởng (cùng thuật toán GRPO)');
+addText('Chấm là mức chênh exec so với S1, vạch ngang là khoảng tin cậy 95%. Vạch nằm hẳn bên phải 0 là hơn S1 có ý nghĩa.',{x:0.55,y:0.68,w:6.6,h:0.30,fontSize:11,italic:true,color:GREY,fit:'shrink'});
 forest(0.50,1.32,9.0,[
   {label:'SA-SPICE-v3 *',d:2.11,lo:1.33,hi:2.89,color:FOOTB,bold:true},
+  {label:'SPICE thuần *',d:1.77,lo:1.13,hi:2.44},
   {label:'SPICE (lượt chính)',d:1.55,lo:0.80,hi:2.33,color:FOOTB},
   {label:'ROUGE-L',d:1.52,lo:0.75,hi:2.29},
   {label:'METEOR',d:1.17,lo:0.39,hi:1.96},
   {label:'CIDEr-D',d:1.17,lo:0.41,hi:1.92},
   {label:'SPICE chạy lại (A/A)',d:0.63,lo:-0.11,hi:1.38},
   {label:'SPICE ghép ngẫu nhiên',d:0.00,lo:-0.41,hi:0.42,color:BAD,italic:true,fill:'F6F5F8'}
-],{min:-0.5,max:3.0,rowH:0.48,labelW:2.45,valW:2.10});
-addText('* xuất phát từ SFT tiếp thay vì S1; so với chính điểm xuất phát đó: +1,05 [+0,46; +1,65].',{x:0.60,y:5.50,w:8.8,h:0.30,fontSize:11,italic:true,color:GREY});
+],{min:-0.5,max:3.0,rowH:0.44,labelW:2.45,valW:2.10});
+addText('* xuất phát từ SFT tiếp thay vì S1. So với SFT tiếp: SA-SPICE-v3 +1,05 [+0,46; +1,65], SPICE thuần +0,72 [+0,24; +1,20].',{x:0.60,y:5.50,w:8.8,h:0.30,fontSize:11,italic:true,color:GREY});
 rect(0.70,5.88,8.60,0.86,HL,{radius:0.08});
-addText('Thưởng ngẫu nhiên cho đúng 0, thưởng thật cho +0,6 đến +2,1 ⇒ mức tăng đến từ nội dung phần thưởng. Giữa SPICE, ROUGE-L, METEOR, CIDEr-D chưa tách được bên nào hơn.',{x:0.90,y:5.88,w:8.20,h:0.86,fontSize:13.2,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
-note(`Lưới phần thưởng, cùng cách đọc. Hàng quan trọng nhất là hàng cuối: nếu điểm SPICE bị ghép ngẫu nhiên giữa các câu, tức thưởng không mang thông tin gì, thì kết quả đúng bằng S1, chênh 0,00. Các thưởng thật cho từ 0,6 đến 2,1. Vậy mức tăng đến từ nội dung của phần thưởng, không phải từ việc chạy vòng lặp RL.
-Giữa bốn độ đo SPICE, ROUGE-L, METEOR, CIDEr-D thì khoảng tin cậy chồng nhau, em chưa tách được bên nào hơn. Em không viết SPICE là tốt nhất.
-Hàng đầu là phần thưởng mới SA-SPICE-v3, cao nhất 2,11 so với S1. Nhưng lượt này xuất phát từ SFT tiếp, nên so công bằng phải so với SFT tiếp: hơn 1,05, có ý nghĩa. Slide sau em nói kỹ.`);
+addText('Thưởng ngẫu nhiên cho đúng 0, thưởng thật cho từ +0,6 đến +2,1, nên mức tăng đến từ nội dung phần thưởng. Giữa SPICE, ROUGE-L, METEOR và CIDEr-D chưa tách được bên nào hơn.',{x:0.90,y:5.88,w:8.20,h:0.86,fontSize:13.2,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
+note(`- Hàng quan trọng nhất là hàng cuối: ghép điểm SPICE ngẫu nhiên giữa các câu thì kết quả đúng bằng S1, chênh 0,00. Mức tăng đến từ nội dung phần thưởng, không phải từ việc chạy vòng lặp RL.
+- SPICE, ROUGE-L, METEOR, CIDEr-D có khoảng tin cậy chồng nhau, chưa tách được bên nào hơn. Không viết "SPICE tốt nhất".
+- SA-SPICE-v3 cao nhất, +2,11 so với S1, nhưng xuất phát từ SFT tiếp. So công bằng với SFT tiếp thì hơn 1,05, có ý nghĩa; slide 21 nói kỹ.
+- SPICE thuần từ cùng điểm xuất phát: +1,77 so với S1, +0,72 so với SFT tiếp, cũng có ý nghĩa.`);
 foot();
+
+// Chờ số (ẩn) · điền khi có số test đợt B5, rồi chép vào slide 17/18 và bỏ ẩn hoặc xoá
+function choSo(title, intro, head, rows, ghichu){
+  newSlide(title); slide.hidden = true;
+  addText(intro,{x:M,y:0.80,w:8.9,h:0.56,fontSize:14,color:FOOTB,align:'center',fit:'shrink'});
+  const R=[{cells:head,fill:FOOTB,color:WHITE,bold:true,h:0.52,fs:12.8}];
+  rows.forEach((r,i)=>R.push({cells:[{t:r[0],bold:true},r[1],{t:'[chờ số]',color:GREY,italic:true},{t:'[chờ số]',color:GREY,italic:true}],h:0.56,rule:i<rows.length-1,fs:13.2}));
+  table(0.60,1.55,[3.60,1.60,1.40,2.20],R,{align:['left','center','center','center'],fs:13.2});
+  addText(ghichu,{x:M,y:5.70,w:8.9,h:0.70,fontSize:12.5,italic:true,color:GREY,align:'center',valign:'mid',fit:'shrink'});
+}
+choSo('Chờ số · Lưới 1: các thuật toán RL thêm ở đợt B5',
+  'Cùng cấu hình lưới: từ S1, thưởng SPICE, 1.000 câu nhắc, 8 câu mỗi câu nhắc, seed 101.',
+  ['Thuật toán','Đã train','exec','Δ so với S1 [KTC 95%]'],
+  [['DPO trực tuyến (câu tốt nhất và kém nhất trong nhóm 8)','500/500'],['DAPO','400/500'],['GSPO','750/1.000'],['GRPO μ=2','750/1.000'],['REINFORCE++ (lô 64)','70/125']],
+  'Test chạy sau 28/11. Có số thì thêm hàng vào biểu đồ slide 17.');
+note(`- Slide chờ số, đang ẩn. Điền exec và Δ so với S1 khi có số test, rồi chép vào biểu đồ slide 17.`);
+footB();
+choSo('Chờ số · Lưới 2: các phần thưởng thêm ở đợt B5',
+  'Cùng cấu hình lưới: GRPO từ S1, 1.000 câu nhắc, 8 câu mỗi câu nhắc, seed 101; chỉ đổi phần thưởng.',
+  ['Phần thưởng','Đã train','exec','Δ so với S1 [KTC 95%]'],
+  [['chrF','500/500'],['BLEU-4','500/500'],['SPIDEr','500/500'],['BERTScore','500/500']],
+  'Test chạy sau 28/11. Có số thì thêm hàng vào biểu đồ slide 18 và bảng độ đo văn bản ở slide 20; đọc kèm bước không chạm.');
+note(`- Slide chờ số, đang ẩn. Điền exec và Δ so với S1 khi có số test, rồi chép vào biểu đồ slide 18 và bảng slide 20.
+- Lượt chrF có KL lúc train cao hơn hẳn các lượt khác, nên đọc kèm bước không chạm.`);
+footB();
 
 // 19 · Phân rã
 newSlide('So sánh RL','Vì sao các phần thưởng cho exec gần nhau');
-addText('Tách số bước được sửa so với S1 (bước cứu trừ bước làm hỏng) thành hai phần.',{x:M,y:0.90,w:8.9,h:0.46,fontSize:15,color:FOOTB,align:'center',fit:'shrink'});
+addText('Số bước sửa được so với S1 (bước cứu được trừ bước làm hỏng), tách theo loại lỗi được sửa.',{x:M,y:0.90,w:8.9,h:0.46,fontSize:15,color:FOOTB,align:'center',fit:'shrink'});
 const pr=[['SPICE (lượt chính)',28,41],['SCST + SPICE',33,31],['ROUGE-L',48,20],['METEOR',31,21],['CIDEr-D',34,18],['SPICE ghép ngẫu nhiên',-3,3]];
 const BX=2.95, BS=0.050, B2=3.45;
 addText('sửa loại thao tác',{x:BX,y:1.46,w:3.0,h:0.30,fontSize:12.5,bold:true,color:FOOTC});
@@ -421,47 +481,56 @@ pr.forEach((r,i)=>{ const yy=1.86+i*0.56;
   addText('+'+b,{x:BX+B2+b*BS+0.06,y:yy,w:0.6,h:0.44,fontSize:12.5,bold:true,color:FOOTB,valign:'mid'});
 });
 rect(0.70,5.38,8.60,1.30,HL,{radius:0.08});
-addText('Các phần thưởng đi tới exec gần nhau theo hai đường khác nhau: ROUGE-L chủ yếu sửa loại thao tác, SPICE sửa phần tử nhiều hơn. Đây mới là dấu hiệu: so trực tiếp từng cặp chưa còn ý nghĩa sau hiệu chỉnh, và mới có một seed.',{x:0.90,y:5.38,w:8.20,h:1.30,fontSize:13.4,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
-note(`Tại sao các phần thưởng cho exec gần nhau? Em tách số bước sửa được so với S1 làm hai phần: bước S1 sai loại thao tác mà lượt mới sửa đúng, và bước đúng loại thao tác nhưng lượt mới chọn đúng phần tử hơn.
-Mọi phần thưởng thật đều sửa loại thao tác rõ; thưởng ngẫu nhiên thì gần như không sửa gì. Khác nhau ở cách phân bổ: ROUGE-L sửa loại thao tác nhiều nhất, 48 bước, nhưng phần tử chỉ 20. SPICE thì ngược lại, phần tử 41, nhiều nhất trong các thưởng. Hai phần bù nhau nên tổng exec gần bằng.
-Em ghi rõ đây là dấu hiệu, chưa phải kết luận: so trực tiếp từng cặp thì không còn ý nghĩa sau hiệu chỉnh Holm, và mới có một seed. Em không viết "SPICE giúp định vị tốt hơn".`);
+addText('Các phần thưởng tới mức exec gần nhau theo hai đường: ROUGE-L chủ yếu sửa loại thao tác, SPICE sửa phần tử nhiều hơn. Đây mới là dấu hiệu, vì so từng cặp không còn ý nghĩa sau hiệu chỉnh Holm và mới có một seed.',{x:0.90,y:5.38,w:8.20,h:1.30,fontSize:13.4,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
+note(`- Tách số bước sửa được so với S1 làm hai phần: bước S1 sai loại thao tác mà lượt mới sửa đúng, và bước đúng loại thao tác mà lượt mới chọn đúng phần tử hơn.
+- Thưởng thật đều sửa được loại thao tác; thưởng ngẫu nhiên gần như không sửa gì.
+- ROUGE-L sửa loại thao tác nhiều nhất (48 bước) nhưng phần tử chỉ 20. SPICE sửa phần tử 41 bước, nhiều nhất. Hai phần bù nhau nên tổng exec gần bằng.
+- Mới là dấu hiệu: so từng cặp không còn ý nghĩa sau hiệu chỉnh Holm, và mới một seed. Không viết "SPICE giúp định vị tốt hơn".`);
 foot();
 
 // 20 · Độ đo văn bản
 newSlide('So sánh RL','Độ đo văn bản: không phần thưởng nào thắng mọi cột');
 const T=(t,b)=>b?{t,bold:true,color:FOOTB,fill:HL}:t;
 table(0.45,1.00,[2.40,1.12,1.12,1.12,1.12,1.10,1.12],[
-  {cells:['Phần thưởng','BLEU-4','METEOR','ROUGE-L','CIDEr-D','SPICE','chrF'],fill:FOOTB,color:WHITE,bold:true,h:0.52,fs:12.4},
-  {cells:['SPICE (lượt chính)','52,36','37,92','68,36','430,05','45,79','62,87'],h:0.50,rule:true},
-  {cells:['SPICE chạy lại (A/A)',T('52,97',1),'37,55','68,44','430,92',T('46,00',1),'62,39'],h:0.50,rule:true},
-  {cells:['ROUGE-L','52,59','38,20','69,27',T('432,81',1),'45,57','63,42'],h:0.50,rule:true},
-  {cells:['METEOR','50,76','38,63','69,14','426,61','45,13','64,19'],h:0.50,rule:true},
-  {cells:['CIDEr-D','51,59','37,78','68,47','424,52','44,43','62,90'],h:0.50,rule:true},
-  {cells:['SA-SPICE-v3','51,24',T('38,90',1),T('69,31',1),'429,12','45,76',T('64,40',1)],h:0.50,rule:true},
-  {cells:[{t:'SFT tiếp (không RL)',italic:true,color:GREY},'52,07','37,75','68,55','425,79','45,33','62,64'],h:0.48,rule:true,color:GREY},
-  {cells:[{t:'S1',italic:true,color:GREY},'51,56','36,79','67,35','416,12','44,37','61,26'],h:0.48,color:GREY}
+  {cells:['Phần thưởng','BLEU-4','METEOR','ROUGE-L','CIDEr-D','SPICE','chrF'],fill:FOOTB,color:WHITE,bold:true,h:0.46,fs:12.4},
+  {cells:['SPICE (lượt chính)','52,36','37,92','68,36','430,05','45,79','62,87'],h:0.41,rule:true},
+  {cells:['SPICE chạy lại (A/A)',T('52,97',1),'37,55','68,44','430,92','46,00','62,39'],h:0.41,rule:true},
+  {cells:['Dr.GRPO + SPICE','52,10','37,66','68,24','428,84','45,60','62,56'],h:0.41,rule:true},
+  {cells:['ROUGE-L','52,59','38,20','69,27','432,81','45,57','63,42'],h:0.41,rule:true},
+  {cells:['METEOR','50,76','38,63','69,14','426,61','45,13','64,19'],h:0.41,rule:true},
+  {cells:['CIDEr-D','51,59','37,78','68,47','424,52','44,43','62,90'],h:0.41,rule:true},
+  {cells:['SA-SPICE-v3 *','51,24',T('38,90',1),'69,31','429,12','45,76',T('64,40',1)],h:0.41,rule:true},
+  {cells:['SPICE thuần *','52,59','38,74',T('69,51',1),T('436,26',1),T('46,41',1),'64,07'],h:0.41,rule:true},
+  {cells:[{t:'SFT tiếp (không RL)',italic:true,color:GREY},'52,07','37,75','68,55','425,79','45,33','62,64'],h:0.40,rule:true,color:GREY},
+  {cells:[{t:'S1',italic:true,color:GREY},'51,56','36,79','67,35','416,12','44,37','61,26'],h:0.40,color:GREY}
 ],{align:['left','center','center','center','center','center','center'],fs:12.6});
-addText('Mọi lượt RL đều cao hơn S1 ở hầu hết các cột. Mỗi phần thưởng nhỉnh ở một vài cột, chênh nhau nhỏ. Riêng GRPO + CIDEr-D lại thấp ở chính CIDEr-D, chưa giải thích được.',{x:0.70,y:5.48,w:8.60,h:0.92,fontSize:13.4,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
-note(`Bảng các độ đo văn bản. Ô tô màu là cao nhất mỗi cột. Không phần thưởng nào thắng mọi cột: SPICE nhỉnh ở BLEU-4 và SPICE, ROUGE-L nhỉnh ở CIDEr-D, SA-SPICE-v3 nhỉnh ở METEOR, ROUGE-L và chrF. Các chênh lệch đều nhỏ. Có một điểm lạ em khai thẳng: thưởng bằng CIDEr-D nhưng lại thấp ở chính CIDEr-D; em đã kiểm cách tính IDF và cách tách từ, chưa giải thích được.`);
+addText('Mọi lượt RL đều cao hơn S1 ở hầu hết các cột, và mỗi phần thưởng chỉ nhỉnh ở vài cột. Riêng lượt thưởng bằng CIDEr-D lại thấp ở chính CIDEr-D, hiện chưa giải thích được. (* xuất phát từ SFT tiếp)',{x:0.70,y:5.66,w:8.60,h:0.80,fontSize:13.4,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
+note(`- Ô tô màu là cao nhất mỗi cột. Không phần thưởng nào thắng mọi cột, các chênh lệch đều nhỏ.
+- SPICE thuần từ SFT tiếp cao nhất ở ROUGE-L, CIDEr-D và SPICE; SA-SPICE-v3 ở METEOR và chrF; GRPO chạy lại ở BLEU-4.
+- Dr.GRPO ngang GRPO lượt chính ở mọi cột.
+- Điểm lạ cần khai: thưởng bằng CIDEr-D mà lại thấp ở chính CIDEr-D. Đã kiểm cách tính IDF và cách tách từ, chưa giải thích được.`);
 foot();
 
 // 21 · SA-SPICE-v3
 newSlide('So sánh RL','Phần thưởng mới: SA-SPICE-v3');
-addText('Thưởng = SPICE trộn chrF (chrF đỡ các câu ngắn như “Scroll down” mà SPICE cho 0 điểm) + thưởng khi đúng loại thao tác − phạt độ dài.',{x:M,y:0.90,w:8.9,h:0.66,fontSize:14.6,color:FOOTB,align:'center',fit:'shrink'});
+addText('Phần thưởng trộn SPICE với chrF (chrF đỡ các câu ngắn như “Scroll down” mà SPICE cho 0 điểm), cộng điểm khi đúng loại thao tác và trừ phạt độ dài.',{x:M,y:0.90,w:8.9,h:0.66,fontSize:14.6,color:FOOTB,align:'center',fit:'shrink'});
 metricBadge(0.70,1.78,2.70,'61,21','exec, cao nhất\nmọi lượt đã huấn luyện',FOOTB);
 metricBadge(3.65,1.78,2.70,'+1,05','so với điểm xuất phát\nSFT tiếp, p = 0,0007',FOOTC);
 metricBadge(6.60,1.78,2.70,'+0,56','so với GRPO-SPICE\np = 0,069 (chưa ý nghĩa)',FOOTD);
-table(0.95,3.30,[4.40,1.85,1.85],[
-  {cells:['Bước không chạm (đúng loại thao tác, %)','SFT tiếp','SA-SPICE-v3'],fill:LIGHT,bold:true,h:0.50,fs:12.8},
-  {cells:['Cuộn (755 bước)','76,82',{t:'80,00',bold:true,color:OK}],h:0.46,rule:true,fs:13.2},
-  {cells:['Quay lại (270 bước)','71,11',{t:'58,52',bold:true,color:BAD}],h:0.46,rule:true,fs:13.2},
-  {cells:['Toàn bộ (2.495 bước)','84,61','84,05'],h:0.46,fs:13.2}
-],{align:['left','center','center'],fs:13.2});
+table(0.80,3.30,[3.80,1.45,1.45,1.70],[
+  {cells:['Bước không chạm (đúng loại thao tác, %)','SFT tiếp','SA-SPICE-v3','SPICE thuần'],fill:LIGHT,bold:true,h:0.50,fs:12.8},
+  {cells:['Cuộn (755 bước)','76,82',{t:'80,00',bold:true,color:OK},'78,94'],h:0.46,rule:true,fs:13.2},
+  {cells:['Quay lại (270 bước)','71,11',{t:'58,52',bold:true,color:BAD},{t:'56,30',bold:true,color:BAD}],h:0.46,rule:true,fs:13.2},
+  {cells:['Toàn bộ (2.495 bước)','84,61','84,05','83,57'],h:0.46,fs:13.2}
+],{align:['left','center','center','center'],fs:13.2});
 rect(0.70,5.38,8.60,1.30,HL,{radius:0.08});
-addText('Kết quả một seed. Chưa được viết “hơn GRPO-SPICE”. Điểm yếu cần chữa: bước quay lại giảm 12,6 điểm. Đang chạy nhánh SPICE thuần từ cùng điểm xuất phát để biết phần trộn thưởng có thật sự giúp không.',{x:0.90,y:5.38,w:8.20,h:1.30,fontSize:13.4,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
-note(`Từ phân tích trước, em thử một phần thưởng mới, SA-SPICE-v3. Nó trộn SPICE với chrF, vì với câu ngắn như "Scroll down" hay "Go back", SPICE cho 0 điểm kể cả khi câu đúng nguyên văn; chrF đỡ chỗ đó. Cộng thêm thưởng khi câu đúng loại thao tác.
-Kết quả exec 61,21, cao nhất trong mọi lượt em đã huấn luyện, hơn điểm xuất phát 1,05 có ý nghĩa. So với GRPO-SPICE thì hơn 0,56 nhưng chưa có ý nghĩa, nên em chưa viết là hơn.
-Điểm yếu: bước cuộn tăng nhưng bước quay lại giảm từ 71 xuống 58,5. Em đang chạy nhánh SPICE thuần từ cùng điểm xuất phát để tách xem phần trộn thưởng có thật sự giúp hay không.`);
+addText('Mới có một seed nên chưa viết là hơn GRPO-SPICE. SPICE thuần từ cùng điểm xuất phát đạt 60,88, ngang SA-SPICE-v3 (chênh 0,37, p = 0,46): phần trộn chrF chưa cho thấy lợi ích rõ ở exec. Cả hai cùng giảm ở bước quay lại.',{x:0.90,y:5.38,w:8.20,h:1.30,fontSize:13.4,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
+note(`- Với câu ngắn như "Scroll down" hay "Go back", SPICE cho 0 điểm kể cả khi câu đúng nguyên văn; chrF đỡ chỗ này. Cộng thêm điểm khi câu đúng loại thao tác.
+- 61,21 là exec cao nhất trong mọi lượt đã huấn luyện, hơn điểm xuất phát 1,05 và có ý nghĩa.
+- Hơn GRPO-SPICE 0,56 nhưng p = 0,069, nên chưa viết là hơn.
+- Điểm yếu: bước cuộn tăng, bước quay lại giảm từ 71,1 xuống 58,5.
+- SPICE thuần (cùng điểm xuất phát, bỏ chrF và điểm loại thao tác) đạt 60,88, chênh SA-SPICE-v3 0,37, p = 0,46. Ở độ đo văn bản SPICE thuần còn nhỉnh hơn, trừ chrF. Bước quay lại của nó cũng giảm, xuống 56,3.
+- Vậy phần trộn thưởng chưa mua được gì rõ; vấn đề bước quay lại cần chữa ngoài phần thưởng.`);
 foot();
 
 // 22 · Kết luận lưới
@@ -469,25 +538,30 @@ newSlide('So sánh RL','Trả lời câu hỏi “vì sao chọn GRPO và SPICE�
 table(0.60,1.00,[3.10,5.70],[
   {cells:['Câu hỏi','Câu trả lời từ số đo'],fill:FOOTB,color:WHITE,bold:true,h:0.50,fs:13.4},
   {cells:[{t:'RL có giúp không?',bold:true},'Có. Thưởng thật +0,6 đến +2,1 so với S1; thưởng ngẫu nhiên 0,00.'],h:0.80,rule:true,fs:13.4},
-  {cells:[{t:'Thuật toán nào tốt nhất?',bold:true},'Không tách được. GRPO và SCST nhỉnh nhất; độ lệch giữa hai lần chạy GRPO (0,92) cỡ khoảng cách giữa các thuật toán.'],h:0.98,rule:true,fs:13.4},
-  {cells:[{t:'Phần thưởng nào tốt nhất?',bold:true},'SPICE và ROUGE-L ngang nhau ở exec, nhưng theo hai đường: SPICE sửa phần tử nhiều hơn, ROUGE-L sửa loại thao tác nhiều hơn.'],h:0.98,rule:true,fs:13.4},
+  {cells:[{t:'Thuật toán nào tốt nhất?',bold:true},'Không tách được. GRPO và SCST nhỉnh nhất, Dr.GRPO thấp hơn GRPO (−0,65). Độ lệch giữa hai lần chạy GRPO (0,92) cỡ khoảng cách giữa các thuật toán.'],h:0.98,rule:true,fs:13.4},
+  {cells:[{t:'Phần thưởng nào tốt nhất?',bold:true},'SPICE và ROUGE-L ngang nhau ở exec, nhưng theo hai đường: SPICE sửa phần tử nhiều hơn, ROUGE-L sửa loại thao tác nhiều hơn. Trộn thêm chrF chưa hơn SPICE thuần.'],h:0.98,rule:true,fs:13.4},
   {cells:[{t:'Vì sao giữ GRPO-SPICE?',bold:true},'Thuộc nhóm dẫn đầu ở cả hai lưới, có tiền lệ (SCST, SPIDEr), và thưởng không chứa mô hình định vị nên thước chấm độc lập.'],h:0.98,fs:13.4}
 ],{align:['left','left'],fs:13.4});
-note(`Tóm lại cho câu hỏi của thầy. RL có giúp, và giúp nhờ nội dung phần thưởng. Giữa các thuật toán, em không tách được bên nào tốt nhất, GRPO và SCST nhỉnh nhất, nhưng nhiễu giữa hai lần chạy cỡ khoảng cách đó. Giữa các phần thưởng, SPICE và ROUGE-L ngang nhau ở exec nhưng đi hai đường khác nhau. Em giữ GRPO-SPICE vì nó thuộc nhóm dẫn đầu ở cả hai lưới, có tiền lệ rõ, và phần thưởng không dùng mô hình định vị nên thước chấm vẫn độc lập.`);
+note(`- RL có giúp, và giúp nhờ nội dung phần thưởng.
+- Giữa các thuật toán chưa tách được bên nào tốt nhất. GRPO và SCST nhỉnh nhất, nhưng dao động giữa hai lần chạy cỡ khoảng cách đó.
+- Giữa các phần thưởng, SPICE và ROUGE-L ngang nhau ở exec nhưng đi hai đường khác nhau.
+- Giữ GRPO-SPICE vì nó thuộc nhóm dẫn đầu ở cả hai lưới, có tiền lệ rõ, và phần thưởng không dùng mô hình định vị.`);
 foot();
 
 // 23 · Đang làm
 newSlide('Kết luận','Đang chạy và việc tiếp theo');
 table(0.60,1.00,[5.50,3.30],[
   {cells:['Việc','Mục đích'],fill:FOOTB,color:WHITE,bold:true,h:0.50,fs:13.4},
-  {cells:[{t:'SPICE thuần từ SFT tiếp (đang chạy)',bold:true},'tách công của phần trộn thưởng trong SA-SPICE-v3'],h:0.70,rule:true,fs:13.2},
+  {cells:[{t:'Test 5 lượt đã train xong: DPO trực tuyến; GRPO + chrF, BLEU-4, SPIDEr, BERTScore',bold:true},'chạy sau 28/11; bản chạy thử đã đạt'],h:0.80,rule:true,fs:13.2},
+  {cells:['Train nốt GSPO và GRPO μ=2 (750/1.000 bước), DAPO, REINFORCE++','đủ các thuật toán RL năm 2025 trong lưới'],h:0.76,rule:true,fs:13.2},
   {cells:['SA-SPICE-v3 thêm hai seed','biết kết quả có ổn định không'],h:0.62,rule:true,fs:13.2},
-  {cells:['Chữa bước quay lại (câu nhắc phân tầng theo loại thao tác)','gỡ điểm yếu −12,6 ở bước quay lại'],h:0.70,rule:true,fs:13.2},
-  {cells:['Thêm DPO trực tuyến vào lưới thuật toán','phương pháp ưu tiên phổ biến nhất còn thiếu'],h:0.70,rule:true,fs:13.2},
-  {cells:['GRPO + SPIDEr, chrF, BLEU-4, BERTScore','đủ các độ đo thưởng thường gặp'],h:0.62,rule:true,fs:13.2},
+  {cells:['Chữa bước quay lại (câu nhắc phân tầng theo loại thao tác)','gỡ điểm yếu ở bước quay lại'],h:0.70,rule:true,fs:13.2},
   {cells:['Đưa hai lưới và phần giải thích vào luận văn','theo yêu cầu 1/11'],h:0.62,fs:13.2}
 ],{align:['left','left'],fs:13.2});
-note(`Các việc tiếp theo. Đang chạy nhánh SPICE thuần từ cùng điểm xuất phát với SA-SPICE-v3. Sau đó em chạy thêm hai seed cho SA-SPICE-v3, thử chữa bước quay lại, thêm DPO trực tuyến vào lưới thuật toán vì đây là phương pháp ưu tiên phổ biến nhất còn thiếu, và chạy thêm vài độ đo thưởng. Cuối cùng là đưa hai lưới và phần giải thích vào luận văn. Em xin ý kiến thầy về thứ tự ưu tiên.`);
+note(`- Năm lượt đã train xong. Bản chạy thử test 20 bước đạt cả năm lượt: nạp đúng adapter, câu sinh khác nhau giữa các lượt. Test đầy đủ chạy khi hạn mức máy làm mới sau 28/11.
+- DPO trực tuyến là phương pháp học theo cặp ưu tiên phổ biến nhất còn thiếu trong lưới thuật toán.
+- Kết quả từng lượt sẽ điền vào hai slide chờ số đang ẩn sau slide 18.
+- Xin ý kiến thầy về thứ tự ưu tiên các việc này.`);
 foot();
 
 // 24 · Kết luận
@@ -499,12 +573,14 @@ table(0.82,1.00,[3.90,1.90,2.80],[
   {cells:['Thưởng ngẫu nhiên − S1','0,00','−0,41 đến +0,42'],h:0.62,fs:13.5}
 ],{align:['left','center','center'],fs:13.5});
 bullets(['Executability chấm câu bằng việc làm theo: đọc câu, chạm, xem có đúng phần tử không. Điểm phụ thuộc vào nội dung câu và giữ chiều khi đổi người làm theo.','Học tăng cường cải thiện câu nhờ nội dung phần thưởng. Các thuật toán và các độ đo thưởng phổ biến cho mức tăng gần nhau.','GRPO-SPICE thuộc nhóm dẫn đầu ở cả hai lưới; mọi kết quả hiện là một seed.'],0.82,3.70,8.36,{gap:0.92,fs:14.4,h:0.84});
-note(`Kết luận ba ý. Executability là cách chấm câu bằng việc làm theo, và em đã kiểm nó phản ứng đúng với nội dung câu. Học tăng cường giúp nhờ nội dung thưởng; các thuật toán và độ đo thưởng phổ biến cho mức tăng gần nhau. GRPO-SPICE thuộc nhóm dẫn đầu ở cả hai lưới. Mọi kết quả hiện là một seed, em đang chạy thêm để chắc hơn. Em cảm ơn thầy.`);
+note(`- Executability chấm câu bằng việc làm theo, và đã kiểm là nó phản ứng đúng với nội dung câu.
+- RL giúp nhờ nội dung phần thưởng; các thuật toán và độ đo thưởng phổ biến cho mức tăng gần nhau.
+- GRPO-SPICE thuộc nhóm dẫn đầu ở cả hai lưới. Mọi kết quả hiện là một seed, đang chạy thêm để chắc hơn.`);
 foot();
 
 // 25 · Cảm ơn
 newSlide();
-addText('Em xin cảm ơn thầy đã lắng nghe.',{x:0.85,y:2.75,w:8.30,h:1.15,fontSize:27,bold:true,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
+addText('Xin cảm ơn.',{x:0.85,y:2.75,w:8.30,h:1.15,fontSize:27,bold:true,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
 PAGE++;
 
 // ===== Dự phòng (ẩn) =====
@@ -523,7 +599,7 @@ table(0.60,0.90,[2.42,1.36,1.60,1.64,1.64],[
   {cells:['chrF','40,18','61,26','62,87','63,45'],h:0.40,rule:true,fs:11.5},
   {cells:['BERTScore','40,10','66,33','67,07','67,73'],h:0.40,fs:11.5}
 ],{align:['left','center','center','center','center'],fs:11.5});
-note(`Bảng đủ các chỉ số cho bốn cấu hình, mở khi thầy hỏi chi tiết.`); footB();
+note(`- Bảng đủ các chỉ số cho bốn cấu hình, mở khi được hỏi chi tiết.`); footB();
 
 newSlide('Dự phòng · Tác vụ mới, lịch sử tự sinh, AitZ, hai seed'); slide.hidden = true;
 table(0.60,0.95,[4.30,2.00,2.50],[
@@ -534,13 +610,16 @@ table(0.60,0.95,[4.30,2.00,2.50],[
   {cells:['GRPO-SPICE seed 202 so với seed 101','−0,72','−1,27 đến −0,16'],h:0.62,rule:true,fs:13},
   {cells:['Qwen2.5-VL-7B dùng prompt, không tinh chỉnh (so với GRPO-SPICE)','−9,14','−10,75 đến −7,54'],h:0.62,fs:13}
 ],{align:['left','center','center'],fs:13});
-note(`Các phép kiểm khái quát. Trên tác vụ mới mức tăng còn lớn hơn. Khi các bước trước do mô hình tự viết, mức tăng giữ nguyên. Trên AitZ thì không còn khác S1. Seed thứ hai thấp hơn seed chính 0,72 nhưng vẫn hơn S1.`); footB();
+note(`- Tác vụ chưa thấy khi huấn luyện: mức tăng lớn hơn, +4,58.
+- Các bước trước do mô hình tự viết: mức tăng giữ nguyên.
+- AitZ, không huấn luyện thêm: không còn khác S1.
+- Seed 202 thấp hơn seed 101 0,72 điểm nhưng vẫn hơn S1.`); footB();
 
 newSlide('Dự phòng · Định nghĩa executability bằng ký hiệu'); slide.hidden = true;
 bullets(['a(câu) = a(vàng): loại thao tác suy từ động từ đầu câu trùng loại thao tác thật.','|pₓ − gₓ| ≤ 0,14·W và |p_y − g_y| ≤ 0,14·H, với p là điểm UGround chạm, g là điểm người dùng chạm.','‖p − g‖ ≤ ‖p − cₖ‖ với mọi tâm phần tử bấm được khác cₖ (ô Voronoi của g).'],M,1.10,8.9,{gap:1.05,fs:15.2,h:0.90});
 addText('Executability = (1/N) Σ 1[cả ba điều kiện],   N = 4.463 bước chạm',{x:M,y:4.6,w:8.9,h:0.6,fontSize:17,bold:true,color:FOOTB,align:'center'});
 addText('Khoảng tin cậy: bootstrap theo cụm ứng dụng, 10.000 lần. Phép so ghép cặp: McNemar chính xác.',{x:M,y:5.4,w:8.9,h:0.5,fontSize:13,color:GREY,align:'center'});
-note(`Định nghĩa hình thức của executability nếu thầy cần.`); footB();
+note(`- Định nghĩa hình thức của executability, mở khi cần.`); footB();
 
 pptx.writeFile({ fileName:path.join(__dirname, '..', 'LUAN_VAN_SLIDE_TRINH_THAY_15_11.pptx') }).then(()=>{
   const md=['# Kịch bản trình thầy (11/2026)','','Đi kèm `slides/LUAN_VAN_SLIDE_TRINH_THAY_15_11.pptx`. Sinh tự động từ ghi chú trong `slides/build/build_trinh_thay_15_11.js`; sửa lời ở script, không sửa tay file này.',''];

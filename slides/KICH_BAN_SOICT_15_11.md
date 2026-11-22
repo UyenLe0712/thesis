@@ -8,7 +8,7 @@ Analytics, and Data-Driven Applications* (08:30–11:00, 10 talks, ours is the 7
 08:20–08:25, tell the session chair you are there, copy the slides and test them.
 
 **Slot:** 15 minutes **including Q&A**, talks back to back. The talk below runs about **9 minutes**,
-leaving 5 to 6 minutes for questions. If you run late, skip slide 10 (one sentence is enough).
+leaving 5 to 6 minutes for questions. If you run late, skip slide 11 (one sentence is enough).
 
 **Source of numbers:** `paper/soict2026/guistep/camera_ready_5590/Source/main.tex` (camera-ready).
 
@@ -18,15 +18,16 @@ leaving 5 to 6 minutes for questions. If you run late, skip slide 10 (one senten
  1  Title
  2  Task: write the next step for a person          (one example)
  3  Three contributions                            (what the audience should remember)
- 4  Method: training signal from existing records, S / D / P
- 5  Word overlap cannot judge these sentences      (why a new score)
- 6  Executability: a listener follows the sentence
- 7  The score is validated                         (ceiling, floor, other listeners, stricter rule)
- 8  Main results: +13.0, above a prompted 7B
- 9  Most of the gain comes from learning the sentence
-10  The gain holds on sentences never seen in training
-11  Conclusion + next steps
-12  Thank you
+ 4  Every training signal comes from existing records (flow + declaration)
+ 5  Three versions of GUIStep, plus a control      (S / D / P / control)
+ 6  Word overlap cannot judge these sentences      (why a new score)
+ 7  Executability: a model follows the sentence, we check where it taps
+ 8  The score tells good from bad, across listeners (ceiling, floor, other listeners, rewording)
+ 9  Main results: +13.0, above a prompted 7B
+10  Most of the gain comes from learning the sentence
+11  The gain holds on sentences never seen in training
+12  Conclusion + next steps
+13  Thank you
 ```
 
 **Tone:** speak about what the work achieves. Do not list weaknesses in the talk; the paper states them,
@@ -37,11 +38,11 @@ to be significantly better than S.
 - *Một ý cho mỗi slide, một câu kết cho cả bài:* "the human instruction already in the data is the strongest
   training signal, and a listener can check it". Mọi slide phục vụ ba đóng góp ở slide 3.
 - *Mở đầu bằng nhu cầu thật* (trang trợ giúp, hướng dẫn sử dụng) chứ không bằng thuật ngữ.
-- *Slide 8 có cột D thấp hơn S, người nghe sẽ thấy.* Nói ngay một câu ("declaring first does not help on its
-  own; preference brings it to the best score") rồi đi tiếp. Không né, không sa đà.
-- *Slide 9 không nói "P không hơn S"* (đúng nhưng tự hạ), cũng không nói "P hơn S" (sai với bài). Nói điều
+- *Slide 9 có cột D thấp hơn S.* Lời nói chỉ nêu điều tích cực: thêm preference lên khai báo thì P đạt điểm
+  cao nhất. Không tự nói "D thấp hơn"; bị hỏi thì trả lời thẳng theo câu B1/B2 (khai báo một mình −1,9, P bù lại).
+- *Slide 10 không nói "P không hơn S"* (đúng nhưng tự hạ), cũng không nói "P hơn S" (sai với bài). Nói điều
   bài chứng minh được: hơn 90% mức tăng đến từ học câu, nhánh kiểm soát tách được đúng phần của preference.
-- *Slide 7 có số*: khoảng cách S − backbone giữ 99% khi đổi người nghe (+11.14 → +11.02). Số thuyết phục hơn
+- *Slide 8 có số*: khoảng cách S − backbone giữ 99% khi đổi người nghe (+11.14 → +11.02). Số thuyết phục hơn
   chữ "holds".
 - *Điểm yếu không nằm trong bài nói* nhưng có sẵn slide dự phòng (B1, B4) và câu trả lời A3, B2, B5. Bị hỏi
   thì trả lời thẳng câu đầu, mở slide dự phòng.
@@ -52,16 +53,16 @@ trên sân khấu (người nghe không đọc phản biện); cứ trình bày 
 | góp ý (reviewer) | đã làm trong bài | khi trình bày |
 |---|---|---|
 | Viết khó theo dõi, trộn khung chung với cài đặt AndroidControl (R1, R3) | Tách §3 *Framework* khỏi §5.1 *Setup*, thêm Hình 2 tổng quan, Bảng 1 định nghĩa S/D/P/control | Slide 4: dòng "none of it specific to AndroidControl"; cả bài một ý mỗi slide |
-| Thước dựa vào mô hình học, cùng họ Qwen, đã thấy AndroidControl (R2, R3, R4) | Người nghe UI-Venus (giữ 99% khoảng cách) + Phi-4 khác họ; tiêu chí chặt Voronoi giữ thứ hạng | Slide 7 · câu A2 |
+| Thước dựa vào mô hình học, cùng họ Qwen, đã thấy AndroidControl (R2, R3, R4) | Người nghe UI-Venus (giữ 99% khoảng cách) + Phi-4 khác họ; tiêu chí chặt Voronoi giữ thứ hạng | Slide 8 · câu A2 |
 | Bộ bơm lỗi chấm bằng Voronoi, không phải D.3; "upper bound" thiếu căn cứ (R2) | Chạy lại dưới D.3 (đạt 6/10, Voronoi 8/10), bỏ chữ "upper bound" | Không nói; bị hỏi: câu A3 + slide B1 |
-| Thiếu mốc ngoài: VLM khác, pipeline chọn đích rồi diễn đạt (R2, R4) | Thêm Qwen2.5-VL-7B prompting (57,7) và select-then-verbalise (62,4) | **Slide 8** (cả hai cột) · câu B4 |
-| 17,3% câu trùng tập dạy, có học thuộc không (R2) | Tách câu lặp / chưa thấy: S − backbone +15,0 / **+8,4** | **Slide 10** · câu B6 |
+| Thiếu mốc ngoài: VLM khác, pipeline chọn đích rồi diễn đạt (R2, R4) | Thêm Qwen2.5-VL-7B prompting (57,7) và select-then-verbalise (62,4) | **Slide 9** (cả hai cột) · câu B4 |
+| 17,3% câu trùng tập dạy, có học thuộc không (R2) | Tách câu lặp / chưa thấy: S − backbone +15,0 / **+8,4** | **Slide 11** · câu B6 |
 | 11,14 vs 11,9 không khớp (R2) | Ghi rõ 11,14 là lát 2.532 bước, 11,9 là toàn 4.463 bước | Không nói; bị hỏi: hai tập chấm khác nhau |
 | "1.443 mô tả sai phần tử" chưa kiểm tay (R2) | Đổi thành "không đạt kiểm tra định vị", nêu ba nguyên nhân | Câu B12 · slide B7 |
-| McNemar không tính phụ thuộc trong app; cần lặp hạt giống (R2) | Bootstrap cụm theo app; S có hai hạt lệch 0,6 | **Slide 8** chú thích + lời nói · câu B5 |
+| McNemar không tính phụ thuộc trong app; cần lặp hạt giống (R2) | Bootstrap cụm theo app; S có hai hạt lệch 0,6 | **Slide 9** chú thích + lời nói · câu B5 |
 | Độ trễ, prompt, luật chấm, mã (R2) | Phụ lục A (prompt, luật chấm); độ trễ khai chưa đo | Slide B9 · câu B11 |
-| Tính mới hẹp, P không hơn S rõ (R2, R3) | Đóng góp thứ ba viết thành ablation có nhánh kiểm soát | **Slide 9** · câu B1 |
-| Một dữ liệu, một backbone, chỉ bước chạm, lịch sử là câu chuẩn (R1, R4) | Limitations viết lại đủ bốn ý | Slide 11 dòng "Next" · câu A6, B9 |
+| Tính mới hẹp, P không hơn S rõ (R2, R3) | Đóng góp thứ ba viết thành ablation có nhánh kiểm soát | **Slide 10** · câu B1 |
+| Một dữ liệu, một backbone, chỉ bước chạm, lịch sử là câu chuẩn (R1, R4) | Limitations viết lại đủ bốn ý | Slide 12 dòng "Next" · câu A6, B9 |
 
 **Speaking convention:** the first sentence of each slide links back, the last sentence leads to the next
 (in italics). Keep these two even if you shorten the middle.
@@ -71,8 +72,8 @@ trên sân khấu (người nghe không đọc phản biện); cứ trình bày 
 ## Slide 1 · Title (~15 s)
 
 **Say:**
-Good morning. My name is Uyen, from the University of Science, VNU Ho Chi Minh City. I will present
-GUIStep, a small vision-language model that writes step-by-step instructions for phone apps.
+Good morning. I'm Uyen, from the University of Science, VNU Ho Chi Minh City. I'll present GUIStep, a
+compact vision-language model that writes step-by-step instructions for phone apps.
 *Let me start with the task.*
 
 *(ý chính: chào, giới thiệu tên bài.)*
@@ -85,17 +86,17 @@ GUIStep, a small vision-language model that writes step-by-step instructions for
 Screenshot with "Sort by" circled; Goal / Generated / Reference.
 
 **Say:**
-*A user stuck in the middle of a phone task needs one sentence: what to touch next.* Sentences like this
-make up help pages and step-by-step user guides, and today people write them by hand.
+*When you get stuck in a phone app, you need one sentence: what to touch next.* Help pages and user
+guides are made of sentences like this, and today people write them by hand.
 
-Most GUI research goes the other way: agents such as SeeClick or OS-Atlas read an instruction and act for
-the machine. We do the reverse. From the screenshot, the user's goal and the previous steps, GUIStep writes
-**one instruction for a person**.
+Most GUI research goes the other way. Agents such as SeeClick or OS-Atlas read an instruction and carry it
+out on the screen. We do the reverse: from the screenshot, the user's goal and the previous steps, GUIStep
+writes one instruction for a person.
 
-Here the goal is to sort Aer Lingus flights by the cheapest direct one. Our model writes "Click on the sort
-by option", the same element as the human reference, among five filter chips on this screen.
+Here the goal is to sort Aer Lingus flights by the cheapest direct one. There are five filter chips on
+this screen. Our model writes "Click on the sort by option", the same chip as the human reference.
 
-*Our work makes three contributions.*
+*We make three contributions.*
 
 *(ý chính: bài toán ngược với agent; một ví dụ.)*
 
@@ -108,100 +109,121 @@ by option", the same element as the human reference, among five filter chips on 
 prompted 7B model.
 
 **Say:**
-*First, a method:* a compact 3B model trained only from what GUI datasets already record, with no new
-annotation. *Second, an evaluation:* executability, a score that checks whether the sentence can actually be
-followed, and we validate it. *Third, the results:* 13 points over the untuned model, and above a prompted
-model more than twice its size.
+*First, a method:* a compact 3B model trained only on what GUI datasets already record. We add no new
+labels. *Second, an evaluation:* executability, a score that checks whether someone can follow the
+sentence, and we validate it before using it. *Third, the results:* 13 points over the untuned model, and
+better than a prompted model more than twice its size.
 
-*First, the method.*
+*Let's start with the method.*
 
 *(ý chính: ba đóng góp, nói chắc.)*
 
 ---
 
-## Slide 4 · GUIStep: training signal from existing records (~60 s)
+## Slide 4 · GUIStep: every training signal comes from existing records (~35 s)
 
-**On the slide:** flow recorded step → training targets → Qwen2.5-VL-3B + QLoRA; table S / D / P;
-declaration example with labels role · name · position · nearby text; control line.
+**On the slide:** flow recorded step → training targets → Qwen2.5-VL-3B + QLoRA; "no new labels · none of it
+specific to AndroidControl"; declaration example with labels role · name · position · nearby text.
 
 **Say:**
-*Every training signal comes from what a recorded demonstration already contains:* the human
-instruction, the touched point, and the accessibility tree that lists the elements on screen. No new labels,
-and none of these inputs is specific to AndroidControl, so the framework carries over to other recorded
-GUI datasets.
+*All our training data comes from recorded demonstrations.* Each recorded step stores the human
+instruction, the point that was touched, and the accessibility tree, which lists the elements on the
+screen. We add no labels, and other GUI datasets record the same three things.
 
-We fine-tune Qwen2.5-VL **3B** with QLoRA in three versions. **S** writes the sentence directly. **D** first
-declares the target element, its role, name, position and a nearby text, then writes the sentence. **P**
-refines D with preference pairs built automatically: the correct element against a nearby competitor.
+From the tree we build a short declaration of the target element: its role, its name, its position, and
+a text next to it.
 
-To measure what each stage adds, we also train a **control** with the same extra training as P,
-using only the correct examples.
+*With these targets we train three versions.*
 
-*Now, how do we judge a generated sentence?*
-
-*(ý chính: không cần nhãn mới; S, D, P và nhánh kiểm soát.)*
+*(ý chính: không cần nhãn mới; khai báo phần tử lấy từ cây giao diện.)*
 
 ---
 
-## Slide 5 · Word overlap cannot judge these sentences (~40 s)
+## Slide 5 · Three versions of GUIStep, plus a control (~30 s)
+
+**On the slide:** table S / D / P (learns to write · training); control box.
 
 **Say:**
-*The same button can be described in many correct ways.* "Click on the search bar" and "Tap the magnifying
-glass at the top" name the same element but share almost no words.
+We fine-tune Qwen2.5-VL 3B with QLoRA. S writes the sentence directly. D writes the declaration first,
+then the sentence. P refines D with preference pairs that we build automatically: the correct element
+against a nearby one.
 
-In a pilot, word overlap rejected **97.5%** of valid rewordings, and sentence embeddings were worse than
+P gets extra training, so we also train a control with the same extra updates on correct examples only.
+The gap between P and this control is what the preference objective itself adds.
+
+*Now, how do we judge a generated sentence?*
+
+*(ý chính: S, D, P và nhánh kiểm soát.)*
+
+---
+
+## Slide 6 · Word overlap cannot judge these sentences (~40 s)
+
+**Say:**
+*One button can be described correctly in many ways.* "Click on the search bar" and "Tap the magnifying
+glass at the top" point to the same button, yet they share almost no words.
+
+In a pilot, word overlap rejected 97.5% of correct rewordings. Sentence embeddings did worse than
 chance at telling the same element from a different one.
 
-*So we score a sentence the way a person uses it: by trying to follow it.*
+*So we score a sentence the way a person would use it: by trying to follow it.*
 
 *(ý chính: BLEU/embedding không chấm được.)*
 
 ---
 
-## Slide 6 · Executability: a listener follows the sentence (~50 s)
+## Slide 7 · Executability: a model follows the sentence, we check where it taps (~55 s)
+
+**On the slide:** the flight screen from slide 2 with the tapped element circled · 1 the listener reads
+screenshot + sentence · 2 it taps one point, never sees the answer · 3 three checks (right action · same
+meaning · point inside the element the user tapped) · Executability = % of test steps that pass all three.
 
 **Say:**
-*The idea comes from referring expression generation: a description is good if a listener can find the
-object.* Our listener is a frozen grounding model, UGround. It sees only the screenshot and our sentence,
-never the answer, and points to the screen.
+*The idea comes from referring expression generation: a description is good if a listener can find
+the object.* Our listener is UGround, a frozen grounding model that plays the user. It gets the screenshot
+and our sentence, never the answer, and taps one point.
 
-A step counts as correct if the sentence names the right action, keeps the right meaning, and the point
-lands inside the element that was actually touched, which is the original matching rule of AndroidControl.
-Executability is the share of steps that pass all three.
+Take the flight example again. The listener reads "Click on the sort by option" and taps. The step counts
+as correct if three checks pass. The action must be right, a click and not a scroll. The sentence must not
+flip the meaning, for example enable instead of disable. And the point must land inside the element the
+user actually tapped. Executability is the share of test steps that pass all three.
 
-*Because the listener is a learned model, we validated it first.*
+*The listener is a learned model, so we validated it first.*
 
-*(ý chính: người nghe đóng băng đọc câu rồi trỏ.)*
+*(ý chính: một mô hình đóng vai người dùng đọc câu rồi bấm; bấm trúng phần tử người dùng đã bấm thì tính đúng.)*
 
 ---
 
-## Slide 7 · The score is validated (~50 s)
+## Slide 8 · The score tells good sentences from bad ones, across listeners (~50 s)
 
 **Say:**
-*First, the score separates good sentences from bad ones.* Human references score **83.8**. A sentence
-that names nothing, "Tap the button", scores 14, and a real sentence from another screen only 9. So the
-listener reads the content, not the style.
+*The score separates good sentences from bad ones.* Human references score 83.8. "Tap the button",
+which names nothing, scores 14, and a real sentence taken from another screen scores 9. Style alone earns
+almost nothing; the listener needs the right content.
 
-Second, the conclusions do not depend on this one listener. UI-Venus was never trained on AndroidControl,
-and with it the gain of fine-tuning keeps 99% of its size. Phi-4, from a different model family, also
-confirms the gain. Under a stricter localisation rule, the ranking of all systems stays the same.
+Our conclusions also hold beyond this one listener. With UI-Venus, which was never trained on
+AndroidControl, the gain from fine-tuning keeps 99% of its size. Phi-4, from another model family, shows
+the gain as well. A stricter localisation rule gives the same ranking of all systems, and rewriting a
+reference with another verb or word order leaves the score unchanged.
 
-*With a validated score, here are the results.*
+*Now the results.*
 
 *(ý chính: trần 83,8 vs sàn 14; đổi người nghe và đổi tiêu chí chặt vẫn giữ.)*
 
 ---
 
-## Slide 8 · Main results (~45 s)
+## Slide 9 · Main results (~45 s)
 
 **Say:**
-*On 4,463 test steps,* the untuned 3B model scores 53.6. A 7B model of the same family, prompted with the
-same input, reaches 57.7, and a pipeline that first selects the target and then verbalises it reaches 62.4.
-Every fine-tuned GUIStep model is above all three. Declaring the target first does
-not help on its own, but preference refinement brings it to the best score: GUIStep-P reaches **66.5,
-thirteen points above the starting model**, with a confidence interval from 11.5 to 14.4. The intervals
-account for steps from the same app, and a second training run of S lands within 0.6 points, so this gain
-is far above the noise.
+*Our best model, GUIStep-P, gains thirteen points over its starting model.* On 4,463 test steps the
+untuned 3B model scores 53.6. A 7B model from the same family, prompted with the same input, reaches 57.7,
+and a pipeline that first selects the target and then describes it reaches 62.4. Every fine-tuned GUIStep
+model beats all three.
+
+With preference training on top of the declaration, GUIStep-P reaches the best score, 66.5. The
+confidence interval for its gain runs from 11.5 to 14.4.
+The intervals account for steps from the same app. A second training run of S lands within 0.6 points,
+far less than thirteen.
 
 *Where does this gain come from?*
 
@@ -209,33 +231,33 @@ is far above the noise.
 
 ---
 
-## Slide 9 · Most of the gain comes from learning the sentence (~55 s)
+## Slide 10 · Most of the gain comes from learning the sentence (~55 s)
 
 **On the slide:** step chart backbone 53.6 → GUIStep-S 65.5 (+11.9) → GUIStep-P 66.5;
 two lines: sentence supervision brings most of the gain · preference adds +0.52 over a matched control
 (p = 0.043).
 
 **Say:**
-*The ablation shows where the gain comes from.* Training on the sentence alone, GUIStep-S, already brings **almost
-twelve of the thirteen points**, more than ninety percent. And because we trained a matched control, we can
-say exactly what the preference objective itself adds on top: half a point, and it is significant.
+*Most of it comes from learning the sentence.* GUIStep-S, trained on the sentence alone, already gets
+almost twelve of the thirteen points, more than ninety percent. Thanks to the matched control, we can also
+isolate what the preference objective adds on top: a significant +0.52 points.
 
-So **the human instruction already in the dataset is the strongest training signal**, and future rewards
+So the human instruction already in the dataset is the strongest training signal, and future rewards
 should act on that sentence.
 
-*A natural question is whether the model just copies sentences it has seen.*
+*A natural question: does the model just copy sentences it has seen?*
 
 *(ý chính: phần lớn mức tăng đến từ học câu; nhánh kiểm soát cho biết đúng phần đóng góp của preference.
 Nếu bị hỏi D: khai báo đứng một mình làm giảm 1,9, P bù lại — câu B1/B2.)*
 
 ---
 
-## Slide 10 · The gain holds on sentences never seen in training (~35 s) — *optional*
+## Slide 11 · The gain holds on sentences never seen in training (~35 s) — *optional*
 
 **Say:**
-*App instructions repeat a lot, so about half of the test sentences also appear in training.* There, the
-gain over the untuned model is 15 points. On sentences **never seen in training** the gain is still
-**8.4 points**, which copying cannot explain.
+*About half of the test sentences also appear in training, because app instructions repeat a lot.*
+On those, the gain over the untuned model is 15 points. On sentences never seen in training, the gain is
+still 8.4 points, and copying a training sentence word for word cannot explain that.
 
 *To conclude.*
 
@@ -243,21 +265,21 @@ gain over the untuned model is 15 points. On sentences **never seen in training*
 
 ---
 
-## Slide 11 · Conclusion (~40 s)
+## Slide 12 · Conclusion (~40 s)
 
 **Say:**
-To sum up. First, the records already in GUI datasets are enough to train a compact 3B model that writes
-next-step instructions for people. Second, executability scores these sentences by whether they can be
-followed, and it holds up under other listeners and a stricter rule. Third, GUIStep gains 13 points over its
-backbone and beats a prompted 7B model, and most of the gain comes from learning the sentence itself.
+To sum up. The records already in GUI datasets are enough to train a compact 3B model that writes
+next-step instructions for people. Executability scores these sentences by whether they can be followed,
+and it holds with other listeners and a stricter rule. GUIStep gains 13 points over its backbone and beats
+a prompted 7B model, and most of the gain comes from learning the sentence itself.
 
-Next, we will extend it to a second dataset, add a human study, and put rewards directly on the sentence.
+Next, we plan to add a second dataset, a human study, and rewards that act directly on the sentence.
 
 Thank you. I'm happy to take questions.
 
 ---
 
-## Slide 12 · Thank you
+## Slide 13 · Thank you
 
 **On the slide:** "Thank you · Questions?" · 24C15039@student.hcmus.edu.vn
 
@@ -268,151 +290,150 @@ Thank you. I'm happy to take questions.
 
 General tips:
 - Answer in the **first sentence** (yes / no / the number). Explain after.
+- Lead with what the work shows, then state any limit as a plain fact and say what we did about it. No
+  apologies, no "it's a weak point".
 - If you don't know: "We haven't measured that." Don't guess.
-- Speak slowly. Short sentences are fine. You can say "Good question, let me check the slide" and go to a backup slide.
+- Speak slowly. Short sentences are fine. You can say "Good question, let me show the slide" and go to a backup slide.
 - ⭐ = most likely to be asked.
 - Each answer has a Vietnamese line *(VN)* so you remember the idea even if you forget the English.
 
 ## Group A. Evaluation metric
 
 **A1 ⭐. Why not use BLEU, CIDEr or a VLM judge like GPT-4o?**
-BLEU and similar metrics compare words with a single reference, and one button has many correct names. In
+Because one button has many correct names, and BLEU-style metrics compare words with a single reference. In
 our pilot, word overlap rejected 97.5% of valid rewordings, and embeddings were below chance. Zhao et al.
-(EACL 2021) found the same for navigation instructions. We still report seven text metrics in Table 5, as a
-complement. A VLM judge is possible, but it is also a learned model that needs validation, and it would
-judge the sentence by reading, not by acting. Our listener actually tries to use the sentence.
-*(VN: BLEU so chữ với một câu chuẩn, sai bản chất; có báo kèm; VLM giám khảo cũng cần kiểm định.)*
+(EACL 2021) found the same for navigation instructions. We still report seven text metrics in Table 5 as a
+complement. A VLM judge reads the sentence; our listener tries to use it, which is what a real user does.
+And a VLM judge is also a learned model that would need the same validation we did.
+*(VN: BLEU so chữ với một câu chuẩn; có báo kèm 7 độ đo; người nghe thì thật sự làm theo câu.)*
 
 **A2 ⭐. Your listener, UGround, was trained on AndroidControl, and it's Qwen-based like your model. Isn't the score biased?**
-That's why we ran two more listeners. UI-Venus-Ground-7B was not trained on AndroidControl: the gap between
-S and the backbone was 11.14 under UGround and 11.02 under UI-Venus on the same 2,532 steps. Phi-4-multimodal
-is from a different family: S is still 6.4 points above the backbone, interval from 5.1 to 7.7. The
-limitation is that we only ran these listeners on S and the backbone, not on P and the control.
-*(VN: đã đổi sang UI-Venus (sạch AC) và Phi-4 (khác họ), chênh lệch vẫn giữ; nhưng chưa chạy cho P.)*
+We tested exactly that with two more listeners. UI-Venus-Ground-7B was never trained on AndroidControl: the
+gap between S and the backbone is 11.14 under UGround and 11.02 under UI-Venus, on the same 2,532 steps, so
+99% of it remains. Phi-4-multimodal comes from a different model family, and S is still 6.4 points above the
+backbone, interval 5.1 to 7.7. These two listeners were run on S and the backbone.
+*(VN: đã thử đúng điều đó: UI-Venus (không học AC) giữ 99%, Phi-4 (khác họ) vẫn +6,4; chạy cho S và backbone.)*
 
 **A3 ⭐. Your score fails 4 of 10 validation criteria. Why should we trust it?**
-We report it openly. It fails mainly on neighbouring elements, 30 to 80 pixels away, and on large boxes. It
-passes the criteria about wrong action, wrong content, scroll direction and paraphrase. So it is reliable for
-"did the sentence name the right kind of element in the right area", and weaker for "did it pick the exact
-button next to it". That's why we rely on comparisons between systems, which hold under the stricter Voronoi
-rule too, rather than on absolute levels.
-*(VN: khai thẳng; yếu ở phần tử sát bên; đọc so sánh giữa hệ, thứ hạng giữ dưới tiêu chí chặt hơn.)*
+Because it passes every criterion on what matters most: wrong action, wrong content, scroll direction and
+paraphrase. The four criteria it misses are about telling apart elements right next to each other, 30 to 80
+pixels apart, or inside one large box. We published all ten so readers can judge. That is also why we read
+the results as comparisons between systems, and those comparisons keep the same ranking under the stricter
+Voronoi rule.
+*(VN: đạt mọi tiêu chí chính; bốn tiêu chí còn lại là phần tử sát bên; công bố đủ 10; thứ hạng giữ dưới Voronoi.)*
 
 **A4. Why D.3 as the main rule and not Voronoi, which is stricter?**
-We chose by usable range: the ceiling minus the score of a generic sentence. D.3 has the widest range, 68.9,
-versus 62.9 for Voronoi and 62.5 for the tolerance window. D.3 is also the original rule of the AndroidControl
-paper. Voronoi is better at rejecting nearby elements, so we report every system under Voronoi too, and the
-ranking does not change.
-*(VN: chọn theo dải dùng được rộng nhất; D.3 là tiêu chí gốc của AndroidControl; Voronoi báo kèm.)*
+D.3 is the original rule of the AndroidControl paper, and it gives the widest usable range: ceiling minus
+the score of a generic sentence. That range is 68.9 for D.3, against 62.9 for Voronoi and 62.5 for the
+tolerance window. We also report every system under Voronoi, and the ranking does not change.
+*(VN: D.3 là tiêu chí gốc của AndroidControl, dải dùng được rộng nhất; Voronoi báo kèm, thứ hạng giữ.)*
 
 **A5. Why does the human reference only reach 83.8, not 100?**
-Two reasons: the listener makes mistakes, and some human sentences are ambiguous on their own. So we read
-every result against 83.8 as the measured ceiling, not against 100. The gap between our best model and the
-humans is 17.3 points.
+The listener makes some mistakes, and some human sentences are ambiguous on their own. So 83.8 is the
+measured ceiling, and we read every result against it. Our best model is 17.3 points below that ceiling.
 *(VN: trần 83,8 là giới hạn dụng cụ + câu người đôi khi mơ hồ.)*
 
 **A6. Is executability only for touch actions? What about scroll or typing?**
-Yes, the scored population is the 4,463 touch steps, because the score needs a touch point. Scroll and other
-steps are in training but not in this score. The action-class check does exist, so a sentence that says
-"scroll" on a touch step fails.
-*(VN: chỉ chấm bước chạm vì cần điểm chạm; bước khác có trong huấn luyện.)*
+Executability is scored on the 4,463 touch steps, because it needs a touch point. Scroll and other steps are
+in training. The action check still applies, so a sentence that says "scroll" on a touch step fails.
+*(VN: chấm bước chạm vì cần điểm chạm; bước khác có trong huấn luyện.)*
 
 **A7. Did you do any human evaluation?**
-No, and it's our first limitation. We validated the listener with ceiling and floor, ablations of the
-sentence, an injection suite and two other listeners, but not against people.
-*(VN: chưa; đây là giới hạn số một.)*
+Not with people yet; that is our next step. We validated the listener in four ways: ceiling and floor,
+removing parts of the sentence, an injection suite, and two other listeners.
+*(VN: chưa chấm bằng người, là bước tiếp theo; đã kiểm người nghe bằng bốn cách.)*
 
 ## Group B. Method and results
 
-**B1 ⭐. The declaration and preference stages don't help much. So what is the contribution?**
-Three things: a new task direction (instructions for people, not actions for agents), a training pipeline
-that needs no new labels, and a validated execution-based score. The ablation is a result in itself: with a
-matched control we can attribute the gain precisely. Most of it comes from learning the sentence, and the
-preference objective adds a small but significant half point. Without the control, one would wrongly credit
-the preference stage with all 2.9 points it gains over D. The novelty is not a new learning algorithm, and we
-say so in the paper.
-*(VN: đóng góp là bài toán + giám sát không cần nhãn mới + thước đã kiểm định; ablation trung thực cũng là đóng góp.)*
+**B1 ⭐. The declaration and preference stages add little. So what is the contribution?**
+Three things. First, the task itself: instructions for people, where most GUI work produces actions for
+agents. Second, a training pipeline that needs no new labels. Third, a validated score based on following
+the sentence. The ablation is a finding of its own: with a matched control we can say where the gain comes
+from. Most of it comes from learning the sentence, and the preference objective adds a significant +0.52.
+Without the control, the preference stage would get credit for all 2.9 points it gains over D. We do not
+claim a new learning algorithm.
+*(VN: đóng góp là bài toán + quy trình không cần nhãn mới + thước đã kiểm định; ablation có nhánh kiểm soát cũng là kết quả.)*
 
 **B2 ⭐. Why does adding the declaration hurt?**
-We have a likely reason but haven't proven it. The model must write a structured line before the sentence,
-and if the declaration names the wrong element, the sentence follows it. Also, if the declaration is not
-closed, the sentence is empty and the step fails. In the thesis we saw that changing the declaration often
-does not change the sentence at all, so the declaration and the sentence are only loosely connected. That is
-why I said future work should put the reward on the sentence.
+Our explanation: the model writes a structured line before the sentence, and if that line names the wrong
+element, the sentence follows it. If the line is not closed, the sentence is empty and the step fails. In the
+thesis we also saw that the declaration and the sentence are only loosely connected. That points to the next
+step: put the reward on the sentence itself, which is what our follow-up work does.
 *(VN: khai báo sai thì câu sai theo; khai báo và câu gắn lỏng; hướng tiếp là thưởng trực tiếp trên câu.)*
 
 **B3. Why only 3B? Why not 7B or larger?**
-Two reasons: cost and use case. One training run of 8,072 updates already takes about a day on one A100 with
-4-bit QLoRA. And a small model is more realistic for on-device help. The prompted 7B result shows that size
-alone doesn't solve it: our fine-tuned 3B is 7.8 points above the prompted 7B. We did not fine-tune a 7B.
-*(VN: chi phí + chạy trên thiết bị; 3B tinh chỉnh hơn 7B prompting 7,8 điểm; chưa tinh chỉnh 7B.)*
+Cost and use case. One training run of 8,072 updates takes about a day on one A100 with 4-bit QLoRA, and a
+compact model fits on-device help. Size alone does not solve the task: our fine-tuned 3B is 7.8 points above
+the prompted 7B. Fine-tuning a 7B is a natural next experiment.
+*(VN: chi phí + chạy trên thiết bị; 3B tinh chỉnh hơn 7B prompting 7,8 điểm; tinh chỉnh 7B là thí nghiệm tiếp.)*
 
 **B4. The 7B baseline is only prompted, with no prompt tuning. Is that fair?**
-It's a weak baseline and we say so. We gave it exactly the same input as our backbone and did not tune the
-prompt. There is no public system trained for this task, so we had no stronger external baseline. The main
-comparison in the paper is the controlled ablation inside GUIStep.
-*(VN: thừa nhận mốc yếu; chưa có hệ công khai nào cho đúng bài toán.)*
+It gets exactly the same input as our backbone, so the comparison is controlled. There is no public system
+trained for this task yet, so we also built a select-then-verbalise pipeline, which reaches 62.4. GUIStep is
+above both. The main evidence is the controlled ablation inside GUIStep.
+*(VN: cùng đầu vào nên so có kiểm soát; chưa có hệ công khai cho bài toán này; có thêm pipeline 62,4; GUIStep hơn cả hai.)*
 
 **B5 ⭐. Single seed. How do you know the differences are real?**
-For S we ran two seeds: they differ by 0.6 points, interval from −0.2 to +1.4. S over the backbone, about 12
-points, is far above that noise. But the differences between S, D, P and the control are around one to two
-points, the same order as seed noise, and D, P and control were trained once. So we don't claim those small
-differences are stable. That is exactly why our conclusion is "most of the gain comes from the sentence".
-*(VN: S có 2 hạt lệch 0,6; chênh lệch lớn với backbone chắc; chênh lệch nhỏ giữa cấu hình chưa chắc.)*
+For S we ran two seeds: they differ by 0.6 points, interval −0.2 to +1.4. The main gain, about 12 points over
+the backbone, is twenty times larger than that. The differences among S, D, P and the control are one to two
+points, and D, P and the control were trained once, so our conclusion rests on the large gain: most of it
+comes from the sentence.
+*(VN: S có 2 hạt lệch 0,6; mức tăng chính ~12 điểm lớn gấp 20 lần; kết luận dựa trên mức tăng lớn.)*
 
 **B6. Isn't the model just memorising sentences, since half the references repeat?**
-Partly, yes, and we measured it. On repeated sentences the gain over the backbone is 15 points; on unseen
-ones it's 8.4. The 8.4 points cannot come from copying a training sentence verbatim.
-*(VN: có một phần học thuộc; câu chưa thấy vẫn +8,4.)*
+We measured it. On unseen sentences the gain over the backbone is 8.4 points, and copying a training
+sentence word for word cannot produce that. On repeated sentences the gain is 15 points, so learning the
+dataset's usual wording also helps.
+*(VN: câu chưa thấy vẫn +8,4, học thuộc không giải thích được; câu lặp +15.)*
 
 **B7. What about unseen apps?**
-Only 78 test steps come from 20 apps not in training. P scores 68.0 and the backbone 56.4 there, but the
-interval is too wide to conclude anything.
-*(VN: chỉ 78 bước, KTC quá rộng, không kết luận.)*
+There are 78 test steps from 20 apps not in training. P scores 68.0 there and the backbone 56.4. With so few
+steps the interval is wide, so we report it without drawing a conclusion.
+*(VN: 78 bước, P 68,0 vs backbone 56,4; ít bước nên không kết luận.)*
 
 **B8. Your test split is not the official AndroidControl test split. Why?**
-We used the partition of the image release we joined with. We found later that 90% of our test tasks are in
-the official training split. Our training and test tasks are still disjoint, so it doesn't leak into our
-model. The risk is for the listener, which saw AndroidControl training data. That's one more reason for the
-UI-Venus and Phi-4 checks.
-*(VN: dùng cách chia của bản có ảnh; mô hình mình không rò rỉ; rủi ro ở người nghe nên đã đổi người nghe.)*
+We used the partition of the image release we built on. Our training and test tasks are disjoint, so our
+model sees no test task. 90% of our test tasks fall in the official training split, which matters for the
+listener, since it saw AndroidControl data. That is why we added UI-Venus, which never saw AndroidControl, and
+the gain holds.
+*(VN: theo cách chia của bản có ảnh; mô hình không rò rỉ; người nghe thì đã kiểm bằng UI-Venus.)*
 
 **B9. Why use the human previous instructions as history and not the model's own?**
-To isolate one step. It makes evaluation step-by-step, like teacher forcing. The cost is that errors cannot
-accumulate, so real multi-step use may be harder. We list this as a limitation.
-*(VN: để đánh giá từng bước độc lập; giá là lỗi không tích luỹ.)*
+To score each step on its own, like teacher forcing. In real multi-step use, errors could accumulate. In the
+thesis we also fed the model its own previous sentences: both models drop by about 4 points, and the gap
+between our RL follow-up and S stays the same, +1.5.
+*(VN: để chấm từng bước; luận văn chạy lịch sử tự sinh: cả hai giảm ~4 điểm, khoảng cách vẫn +1,5.)*
 
 **B10. How are the preference pairs built? Are they checked?**
-The competitor is the nearest visible element with the same role, 80 to 350 pixels away, with a different name
-and point. That gives 22,854 pairs. They are built automatically from the accessibility tree and were not
-checked by hand.
-*(VN: phần tử cùng vai trò gần nhất, cách 80–350 px; 22.854 cặp; không kiểm tay.)*
+Automatically from the accessibility tree: the competitor is the nearest visible element with the same role,
+80 to 350 pixels away, with a different name and point. That gives 22,854 pairs with no manual labelling.
+*(VN: phần tử cùng vai trò gần nhất, cách 80–350 px; 22.854 cặp, tự động, không cần gán tay.)*
 
 **B11. Inference latency? Can it run on a phone?**
-We didn't measure latency; it's in the limitations. The model is 3B and trained with 4-bit quantisation, so
-on-device use is plausible, but we have no measurement to show.
-*(VN: chưa đo độ trễ.)*
+We haven't measured latency yet. The model has 3B parameters and is trained with 4-bit quantisation, which
+makes on-device use realistic; measuring it is on our list.
+*(VN: chưa đo độ trễ; 3B + 4-bit nên khả thi.)*
 
 **B12. Most errors are localisation. Is it the model or the listener?**
-We can't say for sure, because we didn't label the 1,438 failures by hand. It could be a sentence naming the
-wrong element, a listener error, or an error in the box we rebuilt from the tree. Our guess is element naming,
-which Widget Captioning also reports as the hardest case, but we haven't tested it.
-*(VN: chưa gán nhãn tay nên không tách được; đoán là gọi tên phần tử.)*
+We haven't labelled the 1,438 failures by hand, so we can't split them yet. The candidates are a sentence that
+names the wrong element, a listener error, or the box rebuilt from the tree. Widget Captioning reports element
+naming as the hardest case, which is where we would look first.
+*(VN: chưa gán nhãn tay nên chưa tách được; Widget Captioning cho thấy gọi tên phần tử là khó nhất.)*
 
 ## Group C. What's next (if asked about future work)
 
 **C1. What have you done since the paper?**
 *(Unpublished thesis work. Say it only if asked, and say it is ongoing.)*
-In my thesis I tried putting a reward directly on the sentence, with reinforcement learning (GRPO) and SPICE
-as the reward, starting from GUIStep-S. On the same test set it improves over S by about 1.5 points under
-the D.3 rule (67.0 vs 65.5) and stays significant under the stricter rule. With a second seed the gain is
-smaller, so it is still work in progress.
-*(VN: luận văn thử GRPO thưởng SPICE từ S, D.3 67,0 vs 65,5; hạt 202 tăng ít hơn; chưa công bố, nói là đang làm.)*
+In my thesis I put a reward directly on the sentence, with reinforcement learning (GRPO) and SPICE as the
+reward, starting from GUIStep-S. On the same test set it improves over S by about 1.5 points under the D.3
+rule (67.0 vs 65.5), and the gain stays significant under the stricter rule. A second seed also improves over S, by less, so we
+are running more seeds.
+*(VN: luận văn thử GRPO thưởng SPICE từ S, D.3 67,0 vs 65,5; đang chạy thêm hạt; chưa công bố, nói là đang làm.)*
 
 **C2. Would this work in other languages, like Vietnamese?**
-The pipeline only needs a screenshot, a touch point, a UI tree and a human instruction, so it is not tied to
-English. The bottleneck is data: there is no Vietnamese dataset of recorded app use at this scale yet.
-*(VN: quy trình không gắn tiếng Anh; thiếu dữ liệu tiếng Việt.)*
+Yes, the pipeline only needs a screenshot, a touch point, a UI tree and a human instruction, so it is not tied
+to English. What is missing is data: there is no Vietnamese dataset of recorded app use at this scale yet.
+*(VN: quy trình không gắn tiếng Anh; chỉ thiếu dữ liệu tiếng Việt.)*
 
 ## If you don't understand the question
 

@@ -1,0 +1,27 @@
+22:17:38 bat dau canh
+22:26:38 colab exec thoat KHONG co dong XONG (loi hoac mat ket noi)
+│   332 │   │   │   │   msg["header"]["msg_type"] == "status"                  │
+│                                                                              │
+│ /home/uyenle/.venvs/colab/lib/python3.12/site-packages/colab_cli/runtime.py: │
+│ 305 in next_message                                                          │
+│                                                                              │
+│   302 │   │   │   deadline = (time.monotonic() + timeout) if timeout is not  │
+│       None else None                                                         │
+│   303 │   │   │   while True:                                                │
+│   304 │   │   │   │   if not client.connection_ready.is_set():               │
+│ ❱ 305 │   │   │   │   │   raise RuntimeError("Connection was lost.")         │
+│   306 │   │   │   │   wait = _WAIT_SLICE_SEC                                 │
+│   307 │   │   │   │   if deadline is not None:                               │
+│   308 │   │   │   │   │   left = deadline - time.monotonic()                 │
+╰─────────────────────────────────────────────────────────────────�
+RuntimeError: Connection was lost.
+[colab] Downloaded '/kaggle/working/pred_dpo_on_spice_101_test.jsonl' to 'runs/luoi/20_11/luoi-test-c-dpo/pred_dpo_on_spice_101_test.jsonl'
+22:26:45 tai pred_dpo_on_spice_101_test.jsonl OK
+[colab] Downloaded '/kaggle/working/gen_dpo_on_spice_101.log' to 'runs/luoi/20_11/luoi-test-c-dpo/gen_dpo_on_spice_101.log'
+22:26:47 tai gen_dpo_on_spice_101.log OK
+[colab] Stopping session 'dpo'...
+[colab] Session terminated.
+Current balance: 63.12 compute units
+Usage rate: 0.00/hr
+Active assignments: 0
+22:27:17 DA TAT MAY (loi)

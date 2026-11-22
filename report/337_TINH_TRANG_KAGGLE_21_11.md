@@ -156,3 +156,12 @@ exec **60,00** · − ck500 **−0,65 [−1,11; −0,18]** p = 0,009 · − A/A 
 - Upload dataset `uyenle0712/b5-ck-22-11` (`--dir-mode zip`, giữ đủ 5 thư mục con chrF · BLEU-4 · SPIDEr · BERTScore · DPO trực tuyến, md5 ở `_bundles/luoi/ck_b5_22_11/spec.txt`).
 - Đẩy `uyenle0712/luoi-test-u-b5smoke` (`make_test_nb2.py … smoke`, DS_THEM = b5-ck-22-11, trần 0,42 h): mỗi lượt sinh 20 câu + chấm 20 bước, chỉ để kiểm đường chạy (tìm adapter, kiểm hoà, kiểm bộ chấm), KHÔNG dùng số.
 - Hạn mức trước khi đẩy: uyenle 1,27 h · trang 1,80 h · trang2 0,61 h (làm mới 28/11 07:00 VN).
+
+**Kết quả smoke (22/11, 22:04 VN): ĐẠT.** Chạy 827 s (~0,23 h GPU), cả hai T4 dùng song song.
+- `✅ moi truong`; 5/5 lượt tìm đúng adapter trong `uyenle0712/b5-ck-22-11/<lượt>`.
+- `[kiểm hoà] 16/20` (đúng ngưỡng ≥16) · `[kiem bo cham] 10/10`.
+- Mỗi lượt sinh 20 câu, 0 câu rỗng, chấm đủ 20 bước; kiểm dùng lại trùng tuyệt đối ở cả 5 lượt; `xong 5/5`.
+- Câu sinh khác nhau giữa các lượt (10–16/20 trùng từng cặp) ⇒ adapter nạp thật, không rơi về S1.
+- Số exec smoke (15–16/20) **không dùng**. Output: `runs/luoi/20_11/luoi-test-u-b5smoke/`.
+- Ước lượng lượt đầy đủ: sinh ~0,02 h/20 câu/lượt/GPU ⇒ 4.463 câu ~4–5 h/lượt trên một T4 (đối chiếu Dr.GRPO đã chạy).
+- 22/11 22:26 VN lượt Colab DPO **dừng giữa chừng do lỗi của tôi**: Colab CLI mất kết nối (`RuntimeError: Connection was lost`) khi máy vẫn sinh câu bình thường (2,51 s/bước), script canh `_bundles/luoi/k_luoi-test-c-dpo/canh_tat_may.sh` coi đó là lỗi nên tắt máy. Đã sinh **1.163/4.463 câu**, tải về `runs/luoi/20_11/luoi-test-c-dpo/` và có bản đồng bộ trên Drive; chạy lại thì notebook nối tiếp. Tốn ~1,2 unit (còn 63,12). Script đã vá: mất kết nối CLI thì kiểm máy còn chạy rồi canh từ xa, không tắt. Chạy lại cần user bấm link drivemount.
