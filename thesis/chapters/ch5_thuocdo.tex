@@ -107,7 +107,7 @@ Cửa sổ 14\% và ô Voronoi (executability) & 99,7\% & \textbf{2,8\%} \\
 \end{tabular}
 \end{table}
 
-Phép gộp tâm dùng ngưỡng 24 dp. Phân tích độ nhạy theo khoảng cách giữa các phần tử nằm ở Phụ lục~\ref{sec:5.7}. Nhờ phép gộp này, executability phân biệt các phần tử tách biệt trên giao diện mà không phạt các sai lệch nhỏ trong cùng vùng thao tác.
+Phép gộp tâm dùng ngưỡng 24 dp. Phân tích độ nhạy theo khoảng cách giữa các phần tử nằm ở Phụ lục~\ref{sec:5.7}. Với thiết kế này, executability phân biệt các phần tử tách biệt trên giao diện mà không phạt các sai lệch nhỏ trong cùng vùng thao tác.
 
 \subsection{Các tiêu chí đánh giá bổ sung}\label{sec:5.12}
 
@@ -249,11 +249,11 @@ Phi-4-multimodal & Phi-4 & không & chọn số & 4.463 & 38,2 & 44,6 & 54,9 \\
 
 Dưới cả bốn mô hình đánh giá, S1 đều cao hơn Base. Chênh lệch đạt \textbf{+11,52 điểm} với UGround, \textbf{+9,68} [+7,60; +11,78] với UI-Venus, \textbf{+6,16} [+4,71; +7,64] với Phi-Ground và \textbf{+6,41 điểm} với Phi-4 ($p < 0{,}001$). Ở những công cụ đã đánh giá câu chuẩn, câu chuẩn vẫn cho điểm cao nhất. Thứ hạng này được giữ khi thay đổi mô hình đánh giá.
 
-Các mô hình đánh giá có thang điểm tuyệt đối khác nhau, nên chỉ dùng để đối chiếu chiều của kết quả, không thay số chính từ UGround. Việc đánh giá lặp lại trên các mẫu kiểm tra cũng cho kết quả nhất quán. So sánh trực tiếp GRPO-SPICE và ACE với S1 dưới bốn công cụ được trình bày ở Mục~\ref{sec:6.7.3}.
+Các mô hình đánh giá có thang điểm tuyệt đối khác nhau, nên ba mô hình bổ sung chỉ dùng để đối chiếu chiều của kết quả, không thay số chính từ UGround. Việc đánh giá lặp lại trên các mẫu kiểm tra cũng cho kết quả nhất quán (Mục~\ref{sec:5.4}). So sánh trực tiếp GRPO-SPICE và ACE với S1 dưới bốn công cụ được trình bày ở Mục~\ref{sec:6.7.3}.
 
 \subsection{Phạm vi của đánh giá tự động}\label{sec:5.3}
 
-UGround có sử dụng nhãn phần tử của AndroidControl trong huấn luyện~\cite{uground}, nên kết quả được kiểm tra thêm bằng các mô hình không dùng AndroidControl và các mô hình ngoài họ Qwen. Thứ hạng giữa các loại câu vẫn được giữ trong các phép đối chiếu này. Khi tách dữ liệu theo phần chia chính thức của AndroidControl, điểm của câu chuẩn, S1 và Base cũng thay đổi rất ít. Vì vậy các kết luận so sánh không dựa vào riêng một mô hình định vị hay một phần chia dữ liệu. Dù vậy, executability vẫn là phép đo tự động. Phần thực nghiệm vì thế diễn giải chênh lệch giữa các mô hình dưới cùng điều kiện đánh giá, không xem điểm tuyệt đối là đánh giá trực tiếp của người dùng.
+UGround có sử dụng nhãn phần tử của AndroidControl trong huấn luyện~\cite{uground}, nên kết quả được kiểm tra thêm bằng các mô hình không dùng AndroidControl và các mô hình ngoài họ Qwen. Thứ hạng giữa các loại câu vẫn được giữ trong các phép đối chiếu này. Khi tách dữ liệu theo phần chia chính thức của AndroidControl, điểm của câu chuẩn, S1 và Base cũng thay đổi rất ít. Vì vậy các kết luận so sánh không dựa vào riêng một mô hình định vị hay một phần chia dữ liệu. Dù vậy, executability vẫn là phép đo tự động, nên phần thực nghiệm diễn giải chênh lệch giữa các mô hình dưới cùng điều kiện đánh giá, không xem điểm tuyệt đối là đánh giá trực tiếp của người dùng.
 
 \section{Phương pháp phân tích thống kê}\label{sec:5.13}
 

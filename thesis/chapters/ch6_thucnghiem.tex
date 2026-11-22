@@ -38,7 +38,7 @@ Câu tham chiếu & 75,73 & 83,82 & 79,23 & 92,14 & +16,62 \\
 \begin{minipage}{\linewidth}\footnotesize Hộp là tiêu chí hộp phần tử. Hộp $\wedge$ 14\% là tiêu chí hộp phần tử kết hợp cửa sổ 14\%. AitW là AitW đầy đủ (Mục~\ref{sec:5.12}).\end{minipage}
 \end{table}
 
-Ba tiêu chí đánh giá bổ sung ở Chương~\ref{chap:5} cũng cho cùng xu hướng khi so sánh S1/101 với GRPO-SPICE, nên kết luận so sánh giữa hai mô hình không phụ thuộc vào riêng một cách xác định vị trí.
+Ba tiêu chí đánh giá bổ sung ở Chương~\ref{chap:5} cũng cho cùng xu hướng khi so sánh S1/101 với GRPO-SPICE, nên chiều so sánh giữa hai mô hình không phụ thuộc vào riêng một cách xác định vị trí.
 
 GRPO-SPICE thay đổi câu ở 1.668 bước, tương ứng 37,4\% tập đánh giá. So với S1/101, GRPO-SPICE có thêm 69 bước đạt. Trong phần chênh lệch này, khoảng 41 bước đến từ việc câu hướng dẫn của GRPO-SPICE dẫn tới đúng phần tử mục tiêu và khoảng 28 bước đến từ việc nêu đúng loại thao tác. Số bước không đạt do sai loại thao tác giảm từ 251 xuống 179. Hình~\ref{fig:6.1} minh họa một trường hợp S1/101 gọi nút \emph{Allow}, trong khi GRPO-SPICE gọi đúng nút \emph{Not Now}.
 
@@ -109,7 +109,7 @@ SPICE (GRPO-SPICE) & \textbf{60,65} & - & \textbf{430,05} & \textbf{45,79} & \te
 \begin{minipage}{\linewidth}\footnotesize Các cấu hình đều khởi tạo từ S1/101. GRPO-SPICE và SPICE ghép ngẫu nhiên chạy 500 bước cập nhật. Với CIDEr-D, kết quả được báo ở 500 và 1.000 bước cập nhật trên tập 2.000 prompt, trong đó có 1.000 prompt dùng cho GRPO-SPICE.\end{minipage}
 \end{table}
 
-Khi điểm SPICE được ghép ngẫu nhiên giữa các mẫu, executability trở về đúng mức 59,11\% của S1/101. GRPO-SPICE cao hơn cấu hình này \textbf{1,55 điểm} [+0,81; +2,30] ($p = 2{,}0 \times 10^{-5}$) và cao hơn ở cả sáu độ đo văn bản có khoảng tin cậy. Kết quả này cho thấy mức cải thiện không chỉ đến từ việc tiếp tục huấn luyện bằng GRPO; điểm SPICE cần được gắn với chính câu mà nó đánh giá.
+Khi điểm SPICE được ghép ngẫu nhiên giữa các mẫu, executability trở về đúng mức 59,11\% của S1/101. GRPO-SPICE cao hơn cấu hình này \textbf{1,55 điểm} [+0,81; +2,30] ($p = 2{,}0 \times 10^{-5}$) và cao hơn ở cả sáu độ đo văn bản có khoảng tin cậy. Như vậy, riêng việc tiếp tục huấn luyện bằng GRPO không tạo ra mức cải thiện; điểm SPICE cần được gắn với chính câu mà nó đánh giá.
 
 Với cùng 500 bước cập nhật, cấu hình dùng CIDEr-D đạt executability 59,96\%, thấp hơn GRPO-SPICE 0,69 điểm [$-$1,34; $-$0,02] ($p = 0{,}040$). Khi tăng lên 1.000 bước cập nhật, kết quả của CIDEr-D gần như không thay đổi. Trong các cấu hình được khảo sát, GRPO-SPICE đạt kết quả tốt nhất ở cả executability và ba độ đo văn bản trong Bảng~\ref{tab:6.3}.
 
@@ -300,7 +300,7 @@ Toàn bộ, lịch sử do mô hình tạo & 2.495 & 81,32 & 76,83 & $-$4,49 [$-
 \end{tabular}
 \end{table}
 
-Ở các bước có thao tác chạm, phần lớn lỗi còn lại không nằm ở loại thao tác mà ở việc xác định phần tử mục tiêu. Trong 1.756 bước GRPO-SPICE không đạt, có 1.576 bước (89,7\%) đã nêu đúng loại thao tác nhưng câu hướng dẫn vẫn chưa dẫn tới đúng phần tử. Con số tương ứng của S1/101 là 1.573 bước. Vì vậy, mô tả chính xác phần tử cần tương tác vẫn là nguồn lỗi lớn nhất.
+Ở các bước có thao tác chạm, phần lớn lỗi còn lại không nằm ở loại thao tác mà ở việc xác định phần tử mục tiêu. Trong 1.756 bước GRPO-SPICE không đạt, có 1.576 bước (89,7\%) đã nêu đúng loại thao tác nhưng câu hướng dẫn vẫn chưa dẫn tới đúng phần tử. Con số tương ứng của S1/101 là 1.573 bước. Vì vậy, sau khi loại thao tác đã đúng, nguồn lỗi lớn nhất vẫn là việc câu chưa mô tả đúng phần tử cần tương tác.
 
 \paragraph{Các phương án đã khảo sát.}\label{sec:6.10} Trước khi xác định phương pháp cuối cùng, luận văn đã thử các hướng dựa trên mô tả phần tử, học theo cặp ưu tiên, phần thưởng tọa độ, chọn ứng viên và hiệu chỉnh theo vùng ảnh. Các kết quả này được giữ ở Phụ lục~\ref{app:A} để không làm gián đoạn mạch kết quả chính của chương.
 

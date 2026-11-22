@@ -3,7 +3,7 @@
 
 \section{Đặt vấn đề}\label{sec:1.1}
 
-Khi sử dụng ứng dụng di động, người dùng có thể biết kết quả cần đạt nhưng chưa biết cần thực hiện thao tác nào tiếp theo trên giao diện hiện tại. Trong trường hợp này, một hướng dẫn hữu ích cần nêu đúng thao tác và giúp người dùng xác định được phần tử cần tương tác. Chẳng hạn, thay vì chỉ yêu cầu “chia sẻ”, hệ thống có thể hướng dẫn “Chạm vào biểu tượng chia sẻ ở góc trên bên phải màn hình”.
+Khi sử dụng ứng dụng di động, người dùng có thể biết kết quả cần đạt nhưng chưa biết cần thực hiện thao tác nào tiếp theo trên giao diện hiện tại. Trong trường hợp này, một hướng dẫn hữu ích cần nêu đúng thao tác và phải giúp người dùng xác định được phần tử cần tương tác. Chẳng hạn, thay vì chỉ yêu cầu “chia sẻ”, hệ thống có thể hướng dẫn “Chạm vào biểu tượng chia sẻ ở góc trên bên phải màn hình”.
 
 Các nghiên cứu gần đây về tác tử giao diện người dùng (GUI agent), như SeeClick~\cite{seeclick}, OS-Atlas~\cite{osatlas} và Aguvis~\cite{aguvis}, cũng giải quyết bài toán hiểu trạng thái giao diện và xác định hành động tiếp theo. Tuy nhiên, các hệ thống này chủ yếu hướng tới việc tự động thực hiện tác vụ: đầu ra thường gồm loại thao tác và vị trí trên màn hình, chẳng hạn \code{click(872,141)}. Biểu diễn này phù hợp với một tác tử phần mềm, nhưng không trực tiếp tạo ra hướng dẫn để người dùng đọc và làm theo.
 
@@ -31,7 +31,7 @@ Luận văn tập trung vào bài toán sinh hướng dẫn cho thao tác kế t
 \draw [mui] (mh) -- (cau);
 \draw [mui, dashed, draw=black!55] (cau) -- (dg);
 \end{tikzpicture}
-\caption[Bài toán sinh hướng dẫn cho thao tác kế tiếp và cách đánh giá bằng executability.]{Bài toán sinh hướng dẫn cho thao tác kế tiếp và cách đánh giá bằng executability, minh họa trên một bước của tập kiểm tra. Vòng vàng là điểm người dùng đã chạm. Vòng xanh lá là điểm mà mô hình định vị trả về khi đọc câu do phương pháp đề xuất sinh ra. Dấu X đỏ là điểm trả về cho câu của mô hình gốc chưa tinh chỉnh (\emph{Click on the three dots at the top right corner of the screen to access more options.}), nên câu đó không đạt. Phần mô tả mục tiêu tác vụ được giữ nguyên như trong dữ liệu nguồn.}
+\caption[Bài toán sinh hướng dẫn cho thao tác kế tiếp và cách đánh giá bằng executability.]{Bài toán sinh hướng dẫn cho thao tác kế tiếp và cách đánh giá bằng executability, minh họa trên một bước của tập kiểm tra. Vòng vàng là điểm người dùng đã chạm. Vòng xanh lá là điểm mà mô hình định vị trả về khi đọc câu do phương pháp đề xuất sinh ra. Dấu X đỏ là điểm trả về cho câu của mô hình gốc chưa tinh chỉnh (\emph{Click on the three dots at the top right corner of the screen to access more options.}), nên câu đó không đạt. Phần mô tả mục tiêu tác vụ được giữ nguyên như trong dữ liệu gốc.}
 \label{fig:1.1}
 \end{figure}
 
@@ -43,7 +43,7 @@ Hai vấn đề chính cần giải quyết là đánh giá hướng dẫn có c
 
 \subsection{Động lực khoa học}\label{sec:1.2.1}
 
-Về mặt khoa học, bài toán được nghiên cứu trong luận văn có liên hệ gần với hướng sinh biểu thức quy chiếu (\emph{referring expression generation}). Trong bài toán này, một mô tả hữu ích khi người tiếp nhận có thể dựa vào đó để nhận ra đúng đối tượng được nhắc tới. Mao và cộng sự~\cite{mao2016} đánh giá chất lượng mô tả thông qua một mô hình \emph{listener}. Mô hình này nhận câu mô tả và chọn đối tượng mà câu đề cập tới. Mô tả thành công nếu đối tượng được chọn trùng với đối tượng mục tiêu. Các nghiên cứu sau đó tiếp tục đưa tín hiệu từ listener vào quá trình huấn luyện nhằm khuyến khích mô hình tạo ra những mô tả có khả năng phân biệt đối tượng tốt hơn~\cite{luo2017,yu2017}. Cách tiếp cận này phù hợp với bài toán sinh hướng dẫn giao diện, vì một câu hướng dẫn chỉ hữu ích khi giúp người dùng nhận ra đúng phần tử cần thao tác.
+Về mặt khoa học, bài toán được nghiên cứu trong luận văn có liên hệ gần với hướng sinh biểu thức quy chiếu (\emph{referring expression generation}). Trong bài toán này, một mô tả được xem là hữu ích khi người tiếp nhận có thể dựa vào đó để nhận ra đúng đối tượng được nhắc tới. Mao và cộng sự~\cite{mao2016} đánh giá chất lượng mô tả thông qua một mô hình \emph{listener}. Mô hình này nhận câu mô tả và chọn đối tượng mà câu đó đề cập tới. Mô tả được xem là thành công nếu đối tượng được chọn trùng với đối tượng mục tiêu. Các nghiên cứu sau đó tiếp tục đưa tín hiệu từ listener vào quá trình huấn luyện nhằm khuyến khích mô hình tạo ra những mô tả có khả năng phân biệt đối tượng tốt hơn~\cite{luo2017,yu2017}. Cách tiếp cận này phù hợp với bài toán sinh hướng dẫn giao diện, vì một câu hướng dẫn chỉ hữu ích khi giúp người dùng nhận ra đúng phần tử cần thao tác.
 
 Trong miền giao diện người dùng, Widget Captioning~\cite{widgetcap} cũng xem xét việc mô tả các phần tử trên màn hình, bao gồm những trường hợp có nhiều phần tử giống hoặc gần giống nhau. Tuy nhiên, mục tiêu huấn luyện vẫn chủ yếu dựa trên mức độ phù hợp với câu chuẩn. Một hướng dẫn do mô hình tạo ra có thể gần với câu chuẩn về cách diễn đạt nhưng vẫn chưa đủ rõ để người dùng phân biệt đúng phần tử mục tiêu. Vì vậy, luận văn đánh giá thêm khả năng câu hướng dẫn giúp xác định đúng phần tử, thay vì chỉ dựa vào độ tương đồng về từ ngữ.
 
@@ -53,7 +53,7 @@ Khi dùng một mô hình định vị làm công cụ đánh giá, cần kiểm
 
 Về mặt ứng dụng, nhu cầu hướng dẫn người dùng thao tác trực tiếp trên giao diện đã xuất hiện trong các hệ thống thực tế. GuideMe~\cite{guideme} hỗ trợ người cao tuổi sử dụng điện thoại thông minh bằng cách nhận câu hỏi cùng nội dung màn hình và trả về hướng dẫn cho các thao tác cần thực hiện. Hệ thống này sử dụng một mô hình thương mại cỡ lớn qua mạng và được đánh giá thông qua nghiên cứu người dùng với 18 người tham gia. Tuy nhiên, công trình chưa cung cấp một độ đo tự động để có thể so sánh định lượng các phương pháp sinh hướng dẫn trong quá trình phát triển hệ thống.
 
-Một độ đo tự động có thể dùng nhất quán qua nhiều lần thử nghiệm sẽ giúp so sánh các phương pháp thuận tiện hơn, nhất là khi khó tổ chức một nghiên cứu người dùng riêng cho từng thay đổi nhỏ của mô hình. Ngoài ra, ảnh chụp màn hình điện thoại có thể chứa các thông tin nhạy cảm như tin nhắn, danh bạ hoặc dữ liệu tài chính. Mô hình cỡ vừa, triển khai được cục bộ, giúp hạn chế việc gửi dữ liệu màn hình tới dịch vụ bên ngoài. Luận văn tập trung vào mô hình ngôn ngữ thị giác cỡ nhỏ thay vì các mô hình lớn nhất hiện có.
+Một độ đo tự động có thể dùng nhất quán qua nhiều lần thử nghiệm sẽ giúp so sánh các phương pháp thuận tiện hơn, nhất là khi khó tổ chức một nghiên cứu người dùng riêng cho từng thay đổi nhỏ của mô hình. Ngoài ra, ảnh chụp màn hình điện thoại có thể chứa các thông tin nhạy cảm như tin nhắn, danh bạ hoặc dữ liệu tài chính. Một mô hình cỡ vừa có thể triển khai cục bộ sẽ giúp hạn chế việc gửi dữ liệu màn hình tới dịch vụ bên ngoài. Luận văn tập trung vào mô hình ngôn ngữ thị giác cỡ nhỏ thay vì các mô hình lớn nhất hiện có.
 
 \section{Mục đích nghiên cứu}\label{sec:1.3}
 
@@ -82,15 +82,15 @@ Về bài toán, mỗi lần suy luận, mô hình sinh một hướng dẫn cho
 
 Về đánh giá, executability được áp dụng cho các bước có thao tác chạm và tập trung vào câu hỏi liệu hướng dẫn có cung cấp đủ thông tin để xác định đúng phần tử và đúng loại thao tác hay không. Các khía cạnh như độ trôi chảy, độ dài, mức dễ hiểu đối với từng nhóm người dùng và trải nghiệm tổng thể không phải mục tiêu trực tiếp của độ đo này.
 
-Về dữ liệu, các thực nghiệm chính chạy trên AndroidControl với giao diện và câu hướng dẫn bằng tiếng Anh. Khả năng khái quát được kiểm tra thêm theo hai hướng: các tác vụ AndroidControl không xuất hiện trong tập huấn luyện của S1 và bộ dữ liệu AitZ thuộc một phân phối khác. Các câu tiếng Việt xuất hiện trong phần trình bày chỉ được dùng để minh họa cho bài toán.
+Về dữ liệu, các thực nghiệm chính được thực hiện trên AndroidControl với giao diện và câu hướng dẫn bằng tiếng Anh. Khả năng khái quát được kiểm tra thêm theo hai hướng: các tác vụ AndroidControl không xuất hiện trong tập huấn luyện của S1 và bộ dữ liệu AitZ thuộc một phân phối khác. Các câu tiếng Việt xuất hiện trong phần trình bày chỉ được dùng để minh họa cho bài toán.
 
-Về mô hình, hệ thống sinh được phát triển từ Qwen2.5-VL-3B-Instruct~\cite{qwen25vl} và được tinh chỉnh bằng QLoRA~\cite{qlora} hoặc LoRA trong điều kiện một GPU. Dùng chung Qwen2.5-VL-3B-Instruct làm điểm khởi tạo giúp phép so sánh tập trung vào ảnh hưởng của dữ liệu và cách tinh chỉnh, với điều kiện tính toán giữ tương đương.
+Về mô hình, hệ thống sinh được phát triển từ Qwen2.5-VL-3B-Instruct~\cite{qwen25vl} và được tinh chỉnh bằng QLoRA~\cite{qlora} hoặc LoRA trong điều kiện một GPU. Dùng chung Qwen2.5-VL-3B-Instruct làm điểm khởi tạo giúp phép so sánh tập trung vào ảnh hưởng của dữ liệu và cách tinh chỉnh, trong khi điều kiện tính toán được giữ tương đương.
 
 \section{Đóng góp chính}\label{sec:1.6}
 
 Luận văn tập trung vào ba đóng góp chính, gồm phương pháp sinh hướng dẫn, độ đo executability và phân tích thực nghiệm các phương án thiết kế. Ngoài ra, quy trình xây dựng dữ liệu tự động từ AndroidControl là kết quả nền tảng phục vụ toàn bộ quá trình huấn luyện và đánh giá.
 
-Thứ nhất, luận văn đề xuất một phương pháp sinh hướng dẫn gồm hai thành phần nối tiếp dựa trên Qwen2.5-VL-3B. Thành phần thứ nhất tiếp tục tối ưu S1 bằng GRPO với phần thưởng SPICE. S1 là Qwen2.5-VL-3B-Instruct sau khi được tinh chỉnh có giám sát. Bước tinh chỉnh này chạy với hai seed 101 và 202, cho S1/101 và S1/202. Thành phần thứ hai, ACE, sử dụng các câu ví dụ truy hồi để hiệu chỉnh câu hướng dẫn khi câu ứng viên đáp ứng các điều kiện lựa chọn. Thiết kế được trình bày ở Chương~\ref{chap:4}, còn kết quả thực nghiệm nằm ở Chương~\ref{chap:6}.
+Thứ nhất, luận văn đề xuất một phương pháp sinh hướng dẫn gồm hai thành phần nối tiếp dựa trên Qwen2.5-VL-3B. Thành phần thứ nhất tiếp tục tối ưu S1 bằng GRPO với phần thưởng SPICE. S1 là Qwen2.5-VL-3B-Instruct sau khi được tinh chỉnh có giám sát. Bước tinh chỉnh có giám sát này được chạy với hai seed 101 và 202, tạo thành S1/101 và S1/202. Thành phần thứ hai, ACE, sử dụng các câu ví dụ truy hồi để hiệu chỉnh câu hướng dẫn khi câu ứng viên đáp ứng các điều kiện lựa chọn. Thiết kế được trình bày ở Chương~\ref{chap:4}, còn kết quả thực nghiệm nằm ở Chương~\ref{chap:6}.
 
 Trên tập kiểm tra chính gồm 4.463 bước có thao tác chạm, GRPO-SPICE đạt 60,65\% executability, cao hơn S1/101 1,55 điểm [+0,80; +2,33] và cao hơn S1/202 1,03 điểm [+0,25; +1,83]. Lượt GRPO thứ hai đạt 59,94\%, cao hơn S1/101 0,83 điểm. Một nhánh kiểm soát cũng chạy 500 bước GRPO với cùng cấu hình, nhưng điểm SPICE được ghép ngẫu nhiên giữa các mẫu. Nhánh này đạt 59,11\%, bằng S1/101. GRPO-SPICE cao hơn nhánh kiểm soát 1,55 điểm [+0,81; +2,30]. Như vậy, với cùng số bước huấn luyện, mức tăng không xuất hiện khi điểm SPICE không còn gắn với đúng mẫu.
 

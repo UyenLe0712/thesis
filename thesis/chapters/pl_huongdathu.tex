@@ -26,7 +26,7 @@ CogCoM~\cite{cogcom} & thêm 70K mẫu chuỗi thao tác trung gian vào dữ li
 \end{tabularx}
 \end{table}
 
-Hai cấu hình của Shikra~\cite{shikra} dùng cùng mô hình và bài kiểm tra nhưng cho kết quả trái chiều khi thay đổi dạng biểu diễn trung gian: văn xuôi làm giảm kết quả, trong khi biểu diễn có tọa độ làm tăng kết quả. GCoT~\cite{gcot} cũng cho thấy lợi ích xuất hiện khi bước định vị được đưa vào quy trình huấn luyện thay vì chỉ bổ sung ở prompt. Từ các quan sát này, luận văn kiểm tra có kiểm soát một biểu diễn tập trung vào phần tử mục tiêu trong bài toán của đề tài.
+Hai cấu hình của Shikra~\cite{shikra} dùng cùng mô hình và bài kiểm tra nhưng cho kết quả trái chiều khi thay đổi dạng biểu diễn trung gian: văn xuôi làm giảm kết quả, trong khi biểu diễn có tọa độ làm tăng kết quả. GCoT~\cite{gcot} cũng cho thấy lợi ích xuất hiện khi bước định vị được đưa vào quy trình huấn luyện thay vì chỉ bổ sung ở prompt. Tác dụng của bước trung gian vì thế phụ thuộc vào cách biểu diễn và cách đưa thông tin đó vào mô hình. Từ các quan sát này, luận văn kiểm tra có kiểm soát một biểu diễn tập trung vào phần tử mục tiêu trong bài toán của đề tài.
 
 Chuỗi đích của phương án gồm hai phần như minh họa dưới đây.
 
@@ -207,7 +207,7 @@ Học theo cặp ưu tiên (MIN-DESC) & 99,6\% & 67,0\% & 71,8\% & 60,6\% \\
 \end{tabularx}
 \end{table}
 
-Học theo cặp ưu tiên đưa tỉ lệ đúng cả tên lẫn tọa độ lên 60,6\%, cao nhất trong ba cấu hình ở Bảng~\ref{tab:A.4}. So với S2, mức tăng là 6,77 điểm. Cấu hình chỉ học thêm có giám sát đạt 59,8\%, tương ứng tăng 5,93 điểm. Phần chênh riêng giữa MIN-DESC và CE2-S2 là 0,84 điểm, tức phần mục tiêu ưu tiên thêm vào sau khi đã tính hiệu quả của việc học tiếp.
+Học theo cặp ưu tiên đưa tỉ lệ đúng cả tên lẫn tọa độ lên 60,6\%, cao nhất trong ba cấu hình ở Bảng~\ref{tab:A.4}. So với S2, mức tăng là 6,77 điểm. Cấu hình chỉ học thêm có giám sát đạt 59,8\%, tương ứng tăng 5,93 điểm. Phần chênh riêng giữa MIN-DESC và CE2-S2 là 0,84 điểm, tức mức tăng mà mục tiêu ưu tiên tạo thêm ngoài phần do việc học tiếp mang lại.
 
 \subsubsection{Executability và đại lượng chính}\label{sec:A.2.2.2}
 
@@ -271,7 +271,7 @@ Nhóm đúng cả tên lẫn tọa độ chiếm 47,2\% số bước và MIN-DES
 
 Mỗi màn hình được chuyển thành danh sách tối đa 40 ứng viên, mỗi ứng viên gồm tên phần tử và tọa độ trên lưới [0, 1000]. Danh sách dùng cùng cách đặt tên với nhãn mô tả phần tử ở Mục~\ref{sec:A.1.1.data} và được sắp theo thứ tự đọc tự nhiên trên màn hình.
 
-Tên trong nhãn mô tả của một bước được xem là tên mục tiêu của bước đó. Một ứng viên được xem là đúng khi có cùng tên mục tiêu và cách điểm chạm không quá 140 đơn vị lưới trên mỗi trục, tương đương 14\% kích thước tương ứng của màn hình. Nếu có nhiều ứng viên thỏa điều kiện, ứng viên gần điểm chạm nhất được chọn. Trên tập kiểm tra, trong số các bước có tên mục tiêu, 96,7\% có tên đó xuất hiện trong danh sách. Trong chính nhóm bước có tên mục tiêu, 91,2\% có ít nhất một ứng viên vừa trùng tên vừa nằm trong dung sai vị trí. Trên mẫu 300 bước có ứng viên đúng, vị trí của ứng viên đúng sau khi chuẩn hóa về [0,1] có giá trị trung bình 0,481 và ứng viên đúng đứng đầu danh sách ở 5,0\% số mẫu. Vì vậy, vị trí trong danh sách không làm lộ đáp án. Mẫu dài nhất vẫn dưới giới hạn ngữ cảnh 3.072 token nên không mẫu nào bị cắt vì danh sách ứng viên.
+Tên trong nhãn mô tả của một bước được xem là tên mục tiêu của bước đó. Một ứng viên được xem là đúng khi có cùng tên mục tiêu và cách điểm chạm không quá 140 đơn vị lưới trên mỗi trục, tương đương 14\% kích thước tương ứng của màn hình. Nếu có nhiều ứng viên thỏa điều kiện, ứng viên gần điểm chạm nhất được chọn. Trên tập kiểm tra, trong số các bước có tên mục tiêu, 96,7\% có tên đó xuất hiện trong danh sách. Trong chính nhóm bước có tên mục tiêu, 91,2\% có ít nhất một ứng viên vừa trùng tên vừa nằm trong dung sai vị trí. Trên mẫu 300 bước có ứng viên đúng, vị trí của ứng viên đúng sau khi chuẩn hóa về [0,1] có giá trị trung bình 0,481 và ứng viên đúng đứng đầu danh sách ở 5,0\% số mẫu. Vì vậy, thứ tự trong danh sách không gợi ý vị trí của đáp án. Mẫu dài nhất vẫn dưới giới hạn ngữ cảnh 3.072 token nên không mẫu nào bị cắt vì danh sách ứng viên.
 
 Từ cùng một prompt, hai cấu hình dữ liệu được dựng với chuỗi đích khác nhau. Cấu hình chọn ứng viên sinh thêm thẻ lựa chọn phần tử trước câu hướng dẫn. Cấu hình chỉ sinh câu hướng dẫn vẫn nhận cùng danh sách ứng viên ở đầu vào nhưng chuỗi đích chỉ gồm câu hướng dẫn.
 
@@ -319,7 +319,7 @@ không & từ chối (đúng) & 1.001 & 22,4 & 53,8 & 86,6 \\
 \end{tabularx}
 \end{table}
 
-Khi danh sách chứa ứng viên đúng và mô hình đưa ra lựa chọn, executability đạt 71,4\% (Bảng~\ref{tab:A.8}), chỉ cách câu chuẩn 4,3 điểm. Nhóm này chiếm 52,1\% toàn bộ tập kiểm tra. Phần lớn cơ hội cải thiện nằm ở 872 bước có ứng viên đúng nhưng mô hình phát thẻ từ chối chọn, với executability 23,7\%. Tỉ lệ từ chối nhầm gần bằng mức 27,1\% trên mẫu phát triển. Vì vậy, khả năng chọn sau khi mô hình đã quyết định chọn tốt hơn rõ rệt so với bước quyết định có chọn hay không.
+Khi danh sách chứa ứng viên đúng và mô hình đưa ra lựa chọn, executability đạt 71,4\% (Bảng~\ref{tab:A.8}), chỉ cách câu chuẩn 4,3 điểm. Nhóm này chiếm 52,1\% toàn bộ tập kiểm tra. Phần lớn cơ hội cải thiện nằm ở 872 bước có ứng viên đúng nhưng mô hình phát thẻ từ chối chọn, với executability 23,7\%. Tỉ lệ từ chối nhầm gần bằng mức 27,1\% trên mẫu phát triển. Vì vậy, khi mô hình đã quyết định chọn, việc chọn phần tử đạt kết quả tốt hơn rõ rệt so với bước quyết định có chọn hay không.
 
 \textbf{Dấu hiệu đi kèm việc từ chối chọn.} Câu mang động từ không phải chạm chiếm 28,3\% số bước từ chối chọn, so với 0,97\% ở bước đưa ra lựa chọn, tương tự hiện tượng lẫn loại thao tác ở Mục~\ref{sec:A.1.3.1}. Sai số của mô hình định vị ở nhóm từ chối chọn có trung vị 19,9\% bề ngang màn, so với 0,78\% ở nhóm còn lại, tức mô hình xác định một vùng khác của màn như dạng lỗi lưỡng cực ở Mục~\ref{sec:A.2.2.3}. Tỉ lệ từ chối chọn tăng theo độ dài danh sách (Bảng~\ref{tab:A.9}), nhưng các màn hình có nhiều phần tử cũng thường khó hơn, nên quan sát này chỉ phản ánh tương quan.
 
@@ -608,7 +608,7 @@ Mô hình tinh chỉnh có giám sát (S1), hai seed & Hoàn tất, đã đánh 
 Mô tả phần tử (S2), seed 101 & Hoàn tất, đã đánh giá & 57,2, cao hơn Base 9,59 điểm. Trên nhóm mô tả đúng tên và tọa độ đạt 87,1, Mục~\ref{sec:A.1.3} \\
 Mô tả phần tử (S2), seed 202 & Không tiếp tục & giới hạn tài nguyên tính toán \\
 Mô tả giả (S2r) và mô tả không có tọa độ (S2-nopoint) & Không tiếp tục & phân tích theo nhóm của S2 cho mức +1,12 điểm gắn với tọa độ, nhưng S2-nopoint không được chạy \\
-Đưa danh sách phần tử vào S1 lúc suy luận & Không thực hiện & các cấu hình đã đánh giá không cần tới cấu hình này \\
+Đưa danh sách phần tử vào S1 lúc suy luận & Không thực hiện & không cấu hình nào đã đánh giá cần đến bước này \\
 Học thêm có giám sát (CE2-S2) và giai đoạn học theo cặp ưu tiên (MIN-DESC) & Hoàn tất, đã đánh giá & 59,4 và 60,0. MIN-DESC hơn CE2-S2 +0,63 [+0,16; +1,09], p=0,011, Mục~\ref{sec:A.2.2} \\
 Học ưu tiên với vế sai lấy từ lỗi của chính mô hình & Dừng ở bước tạo dữ liệu & chỉ 3,3\% cặp hợp lệ, Mục~\ref{sec:A.2.2.3} \\
 Giai đoạn thưởng tọa độ & Hoàn tất, đã đánh giá & 60,1. Độ chính xác dòng mô tả tăng +2,56 điểm, còn executability giữ gần mức MIN-DESC, Mục~\ref{sec:A.4.2} \\
