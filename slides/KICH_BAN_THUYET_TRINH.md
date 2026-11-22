@@ -76,6 +76,7 @@
 - Đọc: cột số đầu là executability, số sau là hơn S1 bao nhiêu điểm.
 - GRPO ở đây xuất phát từ mô hình học thêm, nên phần hơn S1 gồm cả công học thêm (+1,05); so với chính điểm xuất phát, GRPO hơn +0,72 [+0,24; +1,20].
 - SCST hơn S1 +1,43 [+0,79; +2,10]; RLOO +0,34, khoảng tin cậy chứa 0.
+- So trực tiếp với GRPO-SPICE từ S1 (60,65, không có trên hình): REINFORCE −0,65 (p=0,009), RLOO −1,21 (p=4e−6); SCST, PPO ngang.
 
 ## Slide 19
 - Executability, D.3 và AitW là ba cách xác định câu có dẫn tới đúng phần tử; đúng loại thao tác chỉ xét động từ.

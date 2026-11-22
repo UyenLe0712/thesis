@@ -362,11 +362,12 @@ hbarChart(M,1.25,8.9,[
   {label:'Học thêm không RL',value:1.05,text:'60,16   +1,05',color:'A9A4B8'}
 ],{labelW:2.3,valueW:1.75,rowH:0.56,max:2.0,fs:13.5});
 rect(M,5.3,8.9,0.95,SOFT,{radius:0.06});
-addText('Mọi thuật toán đều cao hơn S1. GRPO và SCST cao nhất, RLOO thấp nhất. Các mức chênh nhỏ và khoảng tin cậy chồng nhau, nên chưa khẳng định thuật toán nào hơn hẳn.',{x:M+0.2,y:5.3,w:8.5,h:0.95,fontSize:13.5,bold:true,color:FOOTB,valign:'mid'});
+addText('Mọi thuật toán đều cao hơn S1. GRPO từ S1 (60,65) hơn REINFORCE 0,65 điểm và RLOO 1,21 điểm, cả hai có ý nghĩa; với SCST và PPO thì chưa tách được.',{x:M+0.2,y:5.3,w:8.5,h:0.95,fontSize:13.5,bold:true,color:FOOTB,valign:'mid'});
 source(DAGGER+' S1 = 59,11.');
 note(`- Đọc: cột số đầu là executability, số sau là hơn S1 bao nhiêu điểm.
 - GRPO ở đây xuất phát từ mô hình học thêm, nên phần hơn S1 gồm cả công học thêm (+1,05); so với chính điểm xuất phát, GRPO hơn +0,72 [+0,24; +1,20].
-- SCST hơn S1 +1,43 [+0,79; +2,10]; RLOO +0,34, khoảng tin cậy chứa 0.`);
+- SCST hơn S1 +1,43 [+0,79; +2,10]; RLOO +0,34, khoảng tin cậy chứa 0.
+- So trực tiếp với GRPO-SPICE từ S1 (60,65, không có trên hình): REINFORCE −0,65 (p=0,009), RLOO −1,21 (p=4e−6); SCST, PPO ngang.`);
 foot();
 
 // Bảng số đầy đủ: in đậm giá trị cao nhất mỗi cột trong các hàng RL (không tính hàng mốc)
