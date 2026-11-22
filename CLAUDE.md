@@ -42,7 +42,7 @@ xuất lại khi có điểm khác cụ thể. Xong hoặc dừng một hướng
 |---|---|
 | **⭐ mọi bảng kết quả** (test, DEV-v3, dụng cụ khác, AitZ, ACU, dev vs test). Tự sinh, đừng sửa tay; số mới thì thêm vào script rồi chạy lại | **`report/334_BANG_KET_QUA_TONG_HOP.md`** · `harness/bang_tong_hop.py` (`~/.venvs/thesis/bin/python`) |
 | **⭐ số/việc cần vào luận văn** (nối mục mới, không sửa `thesis/` khi chưa được giao) | **`report/320_VIEC_CAN_CAP_NHAT_LUAN_VAN_23_10.md`** |
-| **⭐ lưới RL + thưởng đang chạy** (thầy đòi so GRPO với họ RL, SPICE với độ đo khác; bảo vệ dời 3/2027) | **`report/337_TINH_TRANG_KAGGLE_21_11.md`** (đọc trước) · `report/326_BAN_GIAO_LUOI_RL_1_11.md` · `report/323` §8–12 · `harness/grpo_luoi.py` · `harness/grpo_codien.py` |
+| **⭐ lưới RL + thưởng đang chạy** (thầy đòi so GRPO với họ RL, SPICE với độ đo khác; bảo vệ dời 3/2027) | **`report/337_TINH_TRANG_KAGGLE_21_11.md`** (đọc trước) · thiết kế đợt B5: `slides/ACTION_4_THUAT_TOAN_RL_2025_SO_VOI_GRPO_20_11_2026.md` §12 · `report/326_BAN_GIAO_LUOI_RL_1_11.md` · `report/323` §8–12 · `harness/grpo_luoi.py` · `harness/grpo_codien.py` |
 | việc chưa làm, chờ user chọn | `report/336_VIEC_CAN_LAM_SAU_15_11.md` |
 | việc thêm theo phản biện SOICT (xao101, AitZ, 7B, không chạm, lịch sử tự sinh, độ trễ) | `report/322_VIEC_THEM_THEO_PHAN_BIEN_SOICT_25_10.md` |
 | ck500 (GRPO + SPICE) — test, 13 cột, bước không chạm | `report/259` · `report/261` · `report/262` · `report/254` (bàn giao train) · `harness/grpo_spice.py` |
@@ -98,9 +98,14 @@ Caveat phải khai khi viết về ck500:
 - Lịch sử tự sinh (thay câu chuẩn bước trước): ck500 − S1 vẫn +1,48. ACU (phần S1 chưa thấy): +4,58. AitZ
   zero-shot: ck500 ≈ S1.
 
-**Đang chạy:** đợt B5 lưới RL (Dr.GRPO, DAPO, GSPO, μ=2, REINFORCE++, DPO trực tuyến, GRPO + chrF/BLEU-4/
-SPIDEr/BERTScore) — trạng thái ở `report/337`, bảng ở `HUONG_DA_THU.md` §2e. Có số test thì ghi vào
-`HUONG_DA_THU.md`, `report/320`, `report/334` cùng lúc.
+**Đợt B5 lưới RL (từ S1, hạt 101, cùng 1.000 câu nhắc ck500)** — trạng thái 22/11 sáng (`report/337` §9,
+bảng log train ở `HUONG_DA_THU.md` §2e):
+- **Xong train ck500, chờ test (6 lượt):** Dr.GRPO đầy đủ · DPO trực tuyến · GRPO + chrF · + BLEU-4 · + SPIDEr ·
+  + BERTScore. Test Dr.GRPO đang chạy (`uyenle0712/luoi-test-u-5` bản 2), chưa đủ 4.463 bước ⇒ nối tiếp sau 28/11.
+- **Đang train:** `trangphuongngoc/luoi-b5-t2-3` (GRPO μ=2 ck625 + GSPO ck600, /1.000). **Còn dở:** DAPO ck400 ·
+  REINFORCE++ lô 64 ck70/125. GRPO/REINFORCE++ lô 128 chết RAM, chưa sửa mã (user chưa đồng ý hướng sửa).
+- Hạn mức ba tài khoản gần cạn tới 28/11. Đừng đẩy lại kernel đang chạy; runbook `_bundles/luoi/CHAY_B5.md`.
+- Có số test thì ghi vào `HUONG_DA_THU.md`, `report/320`, `report/334` cùng lúc.
 
 ---
 
@@ -245,14 +250,17 @@ khỏi luận văn** (user 5/9, 14/9) nhưng hồ sơ giữ để tra. ⚠️ SH
 - **Tên đề tài:** VI *"Phát sinh tự động hướng dẫn sử dụng phần mềm dựa trên LLM từ các trường hợp sử dụng và
   giao diện người dùng"* · EN *"LLM-Based Automatic Generation of Software User Guides from Use Cases and
   Front-End Structures"*.
-- `\Khoa` vẫn là ô `\CANDIEN` — cần user điền. `bang_nhieu_thuoc.tex` tự sinh bởi
-  `harness/sinh_bang_nhieu_thuoc.py` (đừng sửa tay), chưa có hàng ACE.
+- `bang_nhieu_thuoc.tex` tự sinh bởi `harness/sinh_bang_nhieu_thuoc.py` (đừng sửa tay).
 - Sửa luận văn xong thì **dựng lại `thesis/main.pdf`** và cắt lại `chuong_pdf`. Chỉ sửa đúng tài liệu được giao
   (đang làm bài báo thì không tự sửa `thesis/`).
-- Hai bài đã nộp: **VCL2026** (30/8, hội thảo HUFLIT 27/11/2026) · **FAIR'2026** (EDAS #276). **SOICT 2026**:
-  EasyChair #5577, nhan đề GUIStep, oral, camera-ready đã nộp. Chi tiết ở README từng bài và memory.
-- Deck: trình thầy `LUAN_VAN_SLIDE.pptx` · bảo vệ `LUAN_VAN_SLIDE_BAOCAO.pptx` + `KICH_BAN_BAO_VE.md` · VCL ·
-  SOICT. Slide không xưng "em / thầy cô / hội đồng"; notes là gạch ý ngắn.
+- Bài báo (ch8 luận văn liệt kê VCL + SOICT): **VCL2026** được chấp nhận, hội thảo HUFLIT **27/11/2026** ·
+  **SOICT 2026** GUIStep (EasyChair #5577), oral, camera-ready đã nộp, poster A0 + chủ toạ phiên hạn 23/11 ·
+  **FAIR'2026** (EDAS #276) có deck `FAIR2026_SLIDE.pptx`. Chi tiết ở README từng bài và memory.
+- Deck trong `slides/` (mỗi deck có `KICH_BAN_*.md` đi kèm, sinh từ `slides/build/`): trình thầy
+  `LUAN_VAN_SLIDE_TRINH_THAY_15_11.pptx` · xin bảo vệ `LUAN_VAN_SLIDE_XIN_BAO_VE.pptx` · thuyết trình
+  `LUAN_VAN_SLIDE_THUYET_TRINH.pptx` · bảo vệ cũ `LUAN_VAN_SLIDE_BAOCAO.pptx` · VCL `VCL2026_SLIDE_15_11.pptx` ·
+  SOICT · FAIR. Kịch bản sinh tự động thì sửa lời trong script rồi dựng lại, đừng sửa tay. Slide không xưng
+  "em / thầy cô / hội đồng"; notes là gạch ý ngắn.
 
 ### ⛔ Lệnh dựng LaTeX
 
@@ -303,7 +311,9 @@ grep -c Overfull main.log                                        # phải là 0
    `train_loss`/`train_runtime`/`*_per_second` trong `all_results.json` sai — dùng `trainer_state.json`.
 9. Notebook 2 GPU: `assert torch.cuda.device_count()==2` trước khâu sinh (một lượt từng treo >16 h không log).
 
-**Kaggle** (30 h GPU/tuần, CLI `kg uyenle|trang|trang2|ca`, xem memory):
+**Kaggle** (30 h GPU/tuần/tài khoản, tối đa 2 phiên GPU cùng lúc, hạn mức làm mới 07:00 VN; CLI
+`kg uyenle|trang|trang2|ca`, xem memory). `kernels logs` rỗng khi đang chạy; không có lệnh huỷ ngoài
+`kernels delete` (mất log). trang2 không có dataset `thesis-score` ⇒ test chạy ở uyenle/trang.
 - Log ngập (tqdm) làm treo commit 7 giờ ⇒ tắt thanh tiến trình, tiến trình con ghi ra tệp, nhịp sống mỗi 2 phút;
   không có nhịp sống sau 4 phút thì dừng.
 - Mọi lệnh dài phải in tiến độ định kỳ, cấm `| tail`. Ô cuối zip riêng thư mục kết quả.
@@ -344,7 +354,7 @@ cho từng pha, tách pha CPU/IO ra khỏi phiên GPU đắt (VIS-SFT từng mã
 ## 💻 Môi trường
 
 Máy WSL2 **không GPU**. Python: `~/.venvs/thesis/bin/python`; chạy Python nhớ `PYTHONIOENCODING=utf-8`.
-Train trên Colab/Kaggle, chấm trên Kaggle T4. Ollama local: `nomic-embed-text`, `bge-m3`, `llama3.2`, `qwen2.5vl:3b/7b`.
+Train trên Colab/Kaggle, chấm trên Kaggle T4.
 `.claude/` nằm trong `.gitignore` ⇒ skill **không có lịch sử git**, sửa lớn phải tự sao lưu. `CLAUDE.md` thắng mọi
 skill khi mâu thuẫn (skill `soict-paper`, `vcl-fair-paper` mô tả giai đoạn cũ).
 
