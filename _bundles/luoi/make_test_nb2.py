@@ -64,6 +64,8 @@ for r, d, h in LUOT:
     p = f"{{KIT}}/{{d}}"
     if not os.path.exists(f"{{p}}/adapter_model.safetensors"):   # 11/11: adapter ở dataset riêng (vd điểm lưu PPO), tìm theo tên thư mục + md5
         c_ = [os.path.dirname(x) for x in glob.glob(f"/kaggle/input/**/{{d}}/adapter_model.safetensors", recursive=True) if md5(x) == h]
+        if not c_:   # 22/11: dataset upload phẳng (mất thư mục con) ⇒ tìm theo md5 trên mọi adapter
+            c_ = [os.path.dirname(x) for x in glob.glob("/kaggle/input/**/adapter_model.safetensors", recursive=True) if md5(x) == h]
         assert c_, f"DUNG: khong thay adapter {{r}} ({{d}})"; p = c_[0]
     assert md5(f"{{p}}/adapter_model.safetensors") == h, f"DUNG: adapter {{r}} lech md5"
     assert json.load(open(f"{{p}}/adapter_config.json"))["base_model_name_or_path"].endswith("s1_merged"), f"DUNG: {{r}} khong gan tren S1 hoa"

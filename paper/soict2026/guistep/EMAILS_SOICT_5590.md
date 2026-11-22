@@ -1,11 +1,15 @@
-# SOICT 2026 — Paper 5590: năm mail nhận 22/10/2026 (chép nguyên văn từ tin user dán)
+# SOICT 2026 — Paper 5590: mọi mail nhận được (chép nguyên văn từ tin user dán)
+
+Đợt A: năm mail nhận 22/10/2026 (chấp nhận, phản biện, camera-ready). Đợt B: năm mail nhận sau camera-ready (user dán 21/11/2026). Mail SOICT mới thì chép nối vào cuối file này.
 
 Việc cần làm rút ra từ các mail này: `CAMERA_READY_ACTION_22_10.md` (cùng thư mục).
-Mail thứ 4 có đính kèm file Word form License to Publish (nay là `thesis/SNCS_ProceedingsPaper_LTP_ST_SN_Singapore.docx`).
+Mail A4 có đính kèm file Word form License to Publish (nay là `thesis/SNCS_ProceedingsPaper_LTP_ST_SN_Singapore.docx`).
 
 ---
 
-## Mail 1 — Chấp nhận + nhận xét phản biện
+# ĐỢT A — năm mail nhận 22/10/2026
+
+## Mail A1 — Chấp nhận + nhận xét phản biện
 
 Dear Uyen Le Doan Phuong,
 
@@ -139,7 +143,7 @@ Test-time history uses ground-truth previous instructions rather than model-gene
 
 ---
 
-## Mail 2 — Nhắc camera-ready (bản có dấu `*******`, ban tổ chức chưa điền hạn)
+## Mail A2 — Nhắc camera-ready (bản có dấu `*******`, ban tổ chức chưa điền hạn)
 
 - Paper: 5590
   - Authors: Uyen Le Doan Phuong
@@ -177,7 +181,7 @@ https://easychair.org/contact
 
 ---
 
-## Mail 3 — Nhắc camera-ready (bản đã điền hạn và số trang)
+## Mail A3 — Nhắc camera-ready (bản đã điền hạn và số trang)
 
 - Paper: 5590
   - Authors: Uyen Le Doan Phuong
@@ -210,7 +214,7 @@ All questions about papers should be sent to the volume editors editors Huynh Th
 
 ---
 
-## Mail 4 — Form License to Publish mới (đính kèm file Word)
+## Mail A4 — Form License to Publish mới (đính kèm file Word)
 
 Dear Authors,
 
@@ -243,7 +247,7 @@ SOICT 2026 Organizing Committee
 
 ---
 
-## Mail 5 — Hướng dẫn nộp chi tiết
+## Mail A5 — Hướng dẫn nộp chi tiết
 
 Dear Authors,
 
@@ -307,3 +311,139 @@ Thank you for your cooperation.
 
 Best regards,
 SOICT 2026 Organizing Committee
+
+---
+
+# ĐỢT B — năm mail nhận sau camera-ready (user dán 21/11/2026, theo thứ tự nhận, không rõ ngày)
+
+## Việc rút ra từ các mail này
+
+| việc | hạn | trạng thái 21/11 |
+|---|---|---|
+| Phí đăng ký | — | **đã nhận** (mail 1), Registration ID **SOICT2026-00067**, có biên lai đính kèm |
+| Poster A0 dọc (841 × 1189 mm), gửi cả PPTX lẫn PDF qua https://forms.gle/HTPSK3scJ1b9zVq1A | **23/11/2026** | không bắt buộc (mail gọi là *invite*); ban tổ chức in miễn phí và tự dán |
+| Xem lịch trình bày, thứ tự tác giả trong tài khoản EasyChair | — | xem tại https://easychair.org/smart-program/SOICT2026/ |
+| Đăng ký làm chủ toạ phiên (session chair) qua https://forms.gle/fvsnq3p3FmK9BFXd9 | **23/11/2026** | tuỳ chọn |
+| Trình bày oral 15 phút **gồm cả hỏi đáp**, tới phòng sớm 5–10 phút để báo chủ toạ và thử slide | hội nghị tháng 12/2026, TP.HCM | slide ở `slides/` (deck SOICT) |
+
+### Lịch trình bày (tra chương trình EasyChair 21/11/2026)
+
+- **Thứ Bảy 5/12/2026, 10:00**, **Session 6B: Applied AI, Big Data Analytics, and Data-Driven Applications** (SOICT Technical Session 17), phòng **Salon B**. Phiên 08:30–11:00, 10 bài cách nhau đúng 15 phút, GUIStep là bài thứ 7 (sau bài fake news 09:45, trước bài dự báo giá ngô 10:15). Chương trình chưa ghi chủ toạ phiên.
+- GUIStep **không** có trong phiên poster 6F cùng giờ (14 poster, toàn bài khác) ⇒ bài chỉ trình bày oral; poster là việc thêm nếu muốn.
+- Hội nghị 4–5/12/2026; chương trình chỉ ghi tên phòng (Salon A/B, Windsor, Buckingham, Balmoral), không ghi tên khách sạn; soict.org không truy cập được lúc tra.
+- Thứ Bảy sau phiên: tea break 11:00–11:30 · Keynote III (Brigitte Jaumard) 11:30–12:10 · ăn trưa 12:10–13:30.
+- Tiền lệ SOICT 2025 (Nha Trang, Sheraton, 12–13/12/2025): cũng chạy oral và "Poster Exhibition" song song, bài poster khác bài oral; mỗi phiên sáng mở bằng keynote.
+
+Liên hệ: Hoa Binh Group `event31@hoabinh-group.com` (đăng ký) · `contact@soict.hust.edu.vn`.
+
+---
+
+## Mail B1 — Xác nhận đã nhận phí đăng ký (Hoa Binh Group)
+
+Dear Ms. Lê Đoàn Phương Uyên,
+
+Greetings from Hoa Binh Group, the registration services agency for The 15th International Symposium on Information and Communication Technology (SOICT 2026).
+
+We are pleased to inform you that your registration fee has been successfully received. Please find the receipt attached for your reference.
+
+Your Registration ID is SOICT2026-00067. Please keep this ID for reference in all future communications regarding SOICT 2026.
+
+If you have any questions or need further assistance, please do not hesitate to contact us at event31@hoabinh-group.com or contact@soict.hust.edu.vn.
+
+We look forward to welcoming you to SOICT 2026 and hope you enjoy a rewarding and enriching experience at the conference.
+
+Warm regards,
+
+SOICT 2026 Secretariat
+
+---
+
+## Mail B2 — Chấp nhận oral (bản gửi lại, kèm hướng dẫn poster, hạn 23/11)
+
+Dear Uyen Le Doan Phuong,
+
+We are pleased to inform you that your submission has been accepted for an ORAL presentation and publication in the SOICT 2026 proceedings.
+Paper ID: 5590
+Paper Title: GUIStep: A Compact Vision-Language Model for GUI Step Instruction Generation
+Author(s): Uyen Le Doan Phuong
+
+Presentation Guidelines
+Each paper will have a 15-minute oral presentation, including Q&A. Please adhere to this time limit to ensure smooth transitions between sessions. A projector and screen will be available in the session rooms.
+Presenters should arrive 5-10 minutes before their session begins to inform the session chair and check that their slides work properly with the room's audio-visual system. If any issues arise, notify the session chair or technical staff immediately.
+
+We also invite you to participate in poster sessions. We aim to organize the sessions to encourage meaningful interaction and discussion among researchers, professors, scientists, and students attending the conference.
+Poster sessions will run separately from oral sessions. We will provide adhesive tape for holding the posters. Please send us the file, and we will print it for you. Printing is free.
+
+Poster Presentation Preparation:
+• Posters will be A0 size, 841 x 1189mm (portrait format). Feel free to use your own artwork and design.
+• Please send the presentation files (in both PPTX and PDF formats) to the SOICT organizers no later than November 23, 2026: https://forms.gle/HTPSK3scJ1b9zVq1A
+• To better assist authors, the organizers will handle the printing (for free) and setup of your poster, ensuring a hassle-free experience. This means you do not have to worry about printing the poster or setting it up for the conference. Therefore, please send us your presentation files following the due date.
+Poster Exhibition:
+Your poster will be on display in the exhibition rooms throughout the entire day of your presentation in SOICT, allowing all participants to engage with your research, not just during your designated presentation session.
+
+We believe the poster presentation format will foster a rich, collaborative environment for sharing knowledge, networking, and building lasting connections with fellow researchers. Your paper's selection for poster presentation reflects its significance and contribution to the conference.
+
+We eagerly anticipate your participation in SOICT 2026, which will be held in Ho Chi Minh City in December 2026. Your presence will undoubtedly enhance the quality of our conference, and we look forward to welcoming you to Ho Chi Minh City, Vietnam.
+
+If you have any questions or require further assistance, please do not hesitate to contact us. Thank you once again for your valuable contribution to SOICT 2026.
+
+Sincerely,
+SOICT 2026 Program Chairs
+Wray Buntine, Morten Fjeld, Klaus Schöffmann, Tran The Truyen, Tran Minh Triet, Huynh Thi Thanh Binh
+
+---
+
+## Mail B3 — Chương trình hội nghị đã đăng
+
+Dear Uyen Le Doan Phuong,
+
+Thank you for your contributions to SOICT 2026.
+
+We are pleased to inform you that the conference program is now available at the following link: https://easychair.org/smart-program/SOICT2026/
+
+We kindly ask you to review the schedule and make arrangements to attend your presentation session. Should you have any questions, please do not hesitate to contact us.
+
+We look forward to seeing you at SOICT 2026.
+
+SOICT 2026 Program Chairs
+Wray Buntine, Morten Fjeld, Klaus Schöffmann, Tran The Truyen, Tran Minh Triet, Huynh Thi Thanh Binh
+
+---
+
+## Mail B4 — Chương trình cập nhật, kiểm thứ tự tác giả trên EasyChair
+
+Dear Uyen Le Doan Phuong,
+
+Paper ID: 5590
+Paper Title: GUIStep: A Compact Vision-Language Model for GUI Step Instruction Generation
+Author(s): Uyen Le Doan Phuong
+
+Thank you for your contributions to SOICT 2026.
+
+We have updated the program at the following link: https://easychair.org/smart-program/SOICT2026/
+
+We kindly ask you to review information in your easychair account, the order of authors (it will be appeared in the program automatically as your input), the schedule and make arrangements to attend your presentation session. Should you have any questions, please do not hesitate to contact us.
+
+We look forward to seeing you at SOICT 2026.
+
+SOICT 2026 Program Chairs
+Wray Buntine, Morten Fjeld, Klaus Schöffmann, Tran The Truyen, Tran Minh Triet, Huynh Thi Thanh Binh
+
+---
+
+## Mail B5 — Mời đăng ký làm chủ toạ phiên (hạn 23/11)
+
+Dear Uyen Le Doan Phuong,
+
+Thank you for contributing to SOICT 2026.
+
+We have shared the available session time slots with you: https://easychair.org/smart-program/SOICT2026/
+
+If you are interested in serving as Session(s) chair, please select the slot that best fits your availability and register by 23 Nov 2026 at: https://forms.gle/fvsnq3p3FmK9BFXd9
+
+As Session chair, you will opening the session, introduce each speaker, keep the presentations on schedule, and moderate the Q&A. We will send you further details closer to the conference.
+
+We greatly appreciate your support and look forward to welcoming you to SOICT 2026. Please do not hesitate to contact us if you have any questions.
+
+SOICT 2026 Program Chairs
+Wray Buntine, Morten Fjeld, Klaus Schöffmann, Tran The Truyen, Tran Minh Triet, Huynh Thi Thanh Binh

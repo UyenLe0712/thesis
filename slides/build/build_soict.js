@@ -1,5 +1,5 @@
 // SOICT 2026 talk deck (GUIStep, paper 5590), following slides/KICH_BAN_SOICT_15_11.md.
-// 12 content slides (five parts) + Thank-you + 10 backup slides. 16:9, same visual family as the VCL deck
+// 11 content slides (five parts) + Thank-you + 10 backup slides. 16:9, same visual family as the VCL deck
 // (indigo title bar, rounded grey blocks, Cambria).
 // On-slide text comes from "On the slide"; speaker notes are read verbatim from "Say" at build
 // time (the "(ý chính …)" line is kept at the end of the notes as a Vietnamese reminder).
@@ -45,7 +45,7 @@ function QA(code) {
 
 // ---------- helpers ----------
 let s, PAGE = 0, BPAGE = 0;
-const TOTAL = 13;
+const TOTAL = 12;
 function slide() { s = pres.addSlide(); s.background = { color: WHITE }; }
 function text(content, o) {
   const opt = Object.assign({ x: 0, y: 0, w: 4, h: 1, fontSize: 18, color: INK, fontFace: TF, align: "left", valign: "top", margin: 0 }, o);
@@ -170,14 +170,17 @@ text([{ text: "GUI agents: ", options: { bold: true, color: GREY } }, { text: "i
 }
 note(SAY[2]); foot();
 
-// ══════════ 3 · OUTLINE ══════════
-main("Outline", 0);
-[["Method", "GUIStep, training without new labels"], ["Evaluation", "scoring a sentence by whether it can be followed"],
- ["Results", "main comparison and ablation"], ["Conclusion", "limitations and next steps"]].forEach((c, i) => {
-  const yy = 1.45 + i * 1.2;
-  rect(M + 0.4, yy, 0.85, 0.85, TEAL, { radius: 0.1 });
-  text(String(i + 1), { x: M + 0.4, y: yy, w: 0.85, h: 0.85, fontSize: 28, bold: true, color: WHITE, align: "center", valign: "middle" });
-  text([{ text: c[0] + ": ", options: { bold: true, color: NAVY } }, { text: c[1], options: {} }], { x: M + 1.6, y: yy, w: 10, h: 0.85, fontSize: 25, valign: "middle" });
+// ══════════ 3 · CONTRIBUTIONS ══════════
+main("Three contributions", 0);
+[["Method", "a compact 3B model trained only from existing GUI records, no new labels"],
+ ["Evaluation", "executability: a validated score that checks if the sentence can be followed"],
+ ["Results", "+13.0 over the untuned backbone, above a prompted 7B model"]].forEach((c, i) => {
+  const yy = 1.5 + i * 1.6;
+  block(M, yy, W - 2 * M, 1.3);
+  rect(M, yy, 0.95, 1.3, TEAL, { radius: 0.08 });
+  text(String(i + 1), { x: M, y: yy, w: 0.95, h: 1.3, fontSize: 32, bold: true, color: WHITE, align: "center", valign: "middle" });
+  text([{ text: c[0] + ": ", options: { bold: true, color: NAVY } }, { text: c[1], options: {} }],
+    { x: M + 1.3, y: yy, w: W - 2 * M - 1.6, h: 1.3, fontSize: 24, valign: "middle", lh: 1.05 });
 });
 note(SAY[3]); foot();
 
@@ -191,15 +194,17 @@ main("GUIStep: training signal from existing records", 1);
   arrow(M + 8.35, y + h / 2, M + 9.05, y + h / 2);
   box(M + 9.1, y, 3.03, h, "Qwen2.5-VL-3B\n+ QLoRA", { fs: 19, bold: true, color: WHITE, fill: NAVY, line: NAVY });
 }
-table(M, 2.85, [1.0, 8.0, 3.13], [
+text("uses only what recorded demonstrations store, none of it specific to AndroidControl", { x: M, y: 2.62, w: W - 2 * M, h: 0.4, fontSize: 16, italic: true, color: GREY, align: "center", valign: "middle" });
+table(M, 3.1, [1.0, 8.0, 3.13], [
   { cells: ["", "learns to write", "training"], bold: true, color: WHITE, fill: NAVY, h: 0.5, fs: 17 },
   { cells: [{ t: "S", bold: true }, "the sentence", "cross-entropy"], h: 0.52 },
   { cells: [{ t: "D", bold: true }, "a declaration of the target, then the sentence", "cross-entropy"], h: 0.52 },
   { cells: [{ t: "P", bold: true, color: TEAL }, "D + preference: right vs wrong element declared", { t: "ORPO", bold: true, color: TEAL }], h: 0.52, rule: false },
 ], { fs: 18 });
-block(M, 5.05, W - 2 * M, 0.65);
-text("<desc>item | Close | <point>274,285</point> | just below \"3:09\"</desc>", { x: M, y: 5.05, w: W - 2 * M, h: 0.65, fontSize: 17, fontFace: MONO, color: NAVY, align: "center", valign: "middle" });
-text("+ a control with the same extra updates as P, without the wrong side.", { x: M, y: 5.9, w: W - 2 * M, h: 0.5, fontSize: 16, italic: true, color: GREY, align: "center" });
+block(M, 5.25, W - 2 * M, 1.0);
+text("declaration:  <desc>item | Close | <point>274,285</point> | just below \"3:09\"</desc>", { x: M, y: 5.27, w: W - 2 * M, h: 0.52, fontSize: 17, fontFace: MONO, color: NAVY, align: "center", valign: "middle" });
+text("role · name · position · nearby text", { x: M, y: 5.77, w: W - 2 * M, h: 0.42, fontSize: 16, italic: true, color: GREY, align: "center", valign: "middle" });
+text("+ a control: same extra training as P, correct examples only", { x: M, y: 6.38, w: W - 2 * M, h: 0.45, fontSize: 18, color: TEAL, bold: true, align: "center" });
 note(SAY[4]); foot();
 
 // ══════════ 5 · WORD OVERLAP ══════════
@@ -210,7 +215,7 @@ arrow(M + 5.65, 1.85, 7.45, 2.4); arrow(M + 5.65, 3.15, 7.45, 2.65);
 rect(7.55, 1.9, 1.2, 1.2, NAVY, { radius: 0.12 });
 s.addShape(pres.shapes.OVAL, { x: 7.79, y: 2.08, w: 0.58, h: 0.58, fill: { type: "none" }, line: { color: WHITE, width: 4 } });
 s.addShape(pres.shapes.LINE, { x: 8.29, y: 2.59, w: 0.27, h: 0.27, line: { color: WHITE, width: 5 } });
-[["97.5%", "valid rewordings rejected by word overlap (small pilot)"], ["0.34 AUC", "embedding similarity, below chance (0.5)"]].forEach((c, i) => {
+[["97.5%", "valid rewordings rejected by word overlap (small pilot)"], ["0.34 AUC", "embedding similarity telling same vs different element (chance = 0.5)"]].forEach((c, i) => {
   const x = M + i * 6.2;
   block(x, 4.15, 5.9, 2.2);
   text(c[0], { x, y: 4.25, w: 5.9, h: 1.1, fontSize: 52, bold: true, color: RED, align: "center", valign: "middle" });
@@ -235,78 +240,77 @@ rect(M, 5.45, W - 2 * M, 0.95, NAVY, { radius: 0.08 });
 text("Executability = % of steps passing all three", { x: M, y: 5.45, w: W - 2 * M, h: 0.95, fontSize: 25, bold: true, color: WHITE, align: "center", valign: "middle" });
 note(SAY[6]); foot();
 
-// ══════════ 7 · SCORE CHECKED ══════════
-main("The score is checked before use", 2);
+// ══════════ 7 · SCORE VALIDATED ══════════
+main("The score is validated", 2);
 text("listener score", { x: M, y: 1.15, w: 6.0, h: 0.45, fontSize: 16, italic: true, color: GREY, align: "center" });
-vbars(M + 0.1, 1.8, 6.1, 2.5, [
+vbars(M + 0.1, 1.8, 6.1, 2.9, [
   { label: "human reference\n(ceiling)", v: 83.8, txt: "83.8", color: AMBER },
   { label: "“Tap the button.”", v: 14.1, txt: "14.1", color: SOFT },
   { label: "reference from\nanother screen", v: 8.6, txt: "8.6", color: SOFT },
 ], 90, { bw: 0.5, lfs: 16, vfs: 26, lh: 0.75 });
-[["Other listeners (UI-Venus, Phi-4)", "fine-tuning gain still holds"], ["Stricter localisation rule", "same ranking"]].forEach((c, i) => {
-  const yy = 1.35 + i * 1.6;
-  block(7.3, yy, 5.43, 1.35);
-  text(c[0], { x: 7.55, y: yy + 0.15, w: 5.0, h: 0.5, fontSize: 19, bold: true, color: NAVY });
-  text(c[1], { x: 7.55, y: yy + 0.65, w: 5.0, h: 0.5, fontSize: 19 });
+text("Wide gap: the listener reads the content, not the style.", { x: M, y: 5.75, w: 6.3, h: 0.6, fontSize: 17, italic: true, color: GREY, align: "center", valign: "middle" });
+[["Other listeners", "UI-Venus, never trained on AndroidControl: 99% of the gain kept\nPhi-4, another model family: gain holds"],
+ ["Stricter localisation rule", "Voronoi rule: same ranking of all systems"],
+ ["Matching rule", "point inside the target box: the original AndroidControl rule"]].forEach((c, i) => {
+  const yy = 1.3 + i * 1.7;
+  block(7.3, yy, 5.43, 1.5);
+  text(c[0], { x: 7.55, y: yy + 0.12, w: 5.0, h: 0.45, fontSize: 19, bold: true, color: NAVY });
+  text(c[1], { x: 7.55, y: yy + 0.55, w: 5.0, h: 0.85, fontSize: 17, valign: "top", lh: 1.0 });
 });
-rect(M, 5.5, W - 2 * M, 0.9, "FFF4E5", { radius: 0.08, line: AMBER, lw: 1.5 });
-text("Known weakness: confuses neighbouring elements (30 to 80 px)", { x: M, y: 5.5, w: W - 2 * M, h: 0.9, fontSize: 21, bold: true, color: AMBER, align: "center", valign: "middle" });
 note(SAY[7]); foot();
 
 // ══════════ 8 · MAIN RESULTS ══════════
-main("Main results", 3);
-text("executability on 4,463 test steps", { x: M, y: 1.1, w: 9, h: 0.45, fontSize: 17, italic: true, color: GREY });
+main("Main results: +13.0 over the backbone", 3);
+text("executability (%), D.3 rule, 4,463 test touch steps", { x: M, y: 1.1, w: 9, h: 0.45, fontSize: 17, italic: true, color: GREY });
 {
-  const rows = [["untuned 3B", 53.6, SOFT], ["prompted 7B", 57.7, SOFT], ["GUIStep-D", 63.6, NAVY], ["GUIStep-S", 65.5, NAVY],
-    ["control", 66.0, NAVY], ["GUIStep-P", 66.5, TEAL], ["human", 83.8, AMBER]];
-  const lw = 2.3, bx = M + 2.45, bwMax = 6.0, vmax = 90, y0 = 1.65, rh = 0.66;
+  const rows = [["untuned 3B", 53.6, SOFT], ["prompted 7B", 57.7, SOFT], ["select-then-verbalise", 62.4, SOFT], ["GUIStep-D", 63.6, NAVY], ["GUIStep-S", 65.5, NAVY],
+    ["control*", 66.0, NAVY], ["GUIStep-P", 66.5, TEAL], ["human", 83.8, AMBER]];
+  const lw = 2.6, bx = M + 2.75, bwMax = 5.8, vmax = 90, y0 = 1.6, rh = 0.585;
   rows.forEach((r, i) => {
     const yy = y0 + i * rh, hl = r[0] === "GUIStep-P" || r[0] === "human";
-    text(r[0], { x: M, y: yy, w: lw, h: rh, fontSize: 18, bold: hl, color: r[0] === "human" ? AMBER : INK, align: "right", valign: "middle" });
+    text(r[0], { x: M, y: yy, w: lw, h: rh, fontSize: 17, bold: hl, color: r[0] === "human" ? AMBER : INK, align: "right", valign: "middle" });
     rect(bx, yy + 0.1, bwMax * r[1] / vmax, rh - 0.2, r[2]);
     text(r[1].toFixed(1), { x: bx + bwMax * r[1] / vmax + 0.08, y: yy, w: 0.9, h: rh, fontSize: 18, bold: hl, color: r[2] === SOFT ? GREY : r[2], valign: "middle" });
   });
   vline(bx, y0, rows.length * rh, GREY, 1.25);
   block(9.75, 2.3, 2.98, 2.7, MINT);
   text("+13.0", { x: 9.85, y: 2.45, w: 2.78, h: 1.2, fontSize: 48, bold: true, color: TEAL, align: "center", valign: "middle" });
-  text("GUIStep-P over the untuned 3B model", { x: 9.95, y: 3.7, w: 2.58, h: 1.1, fontSize: 17, align: "center", valign: "middle", lh: 1.05 });
+  text("GUIStep-P over the untuned 3B model\n95% CI [+11.5, +14.4]", { x: 9.95, y: 3.65, w: 2.58, h: 1.25, fontSize: 16, align: "center", valign: "middle", lh: 1.05 });
 }
+text("* control: same extra training as P, correct examples only.  CIs: bootstrap clustered by app.  Second seed of S: within 0.6 points.", { x: M, y: 6.38, w: W - 2 * M, h: 0.4, fontSize: 14, italic: true, color: GREY });
 note(SAY[8]); foot();
 
-// ══════════ 9 · ABLATION ══════════
-main("Most of the gain comes from learning the sentence", 3);
+// ══════════ 9 · KEY FINDING ══════════
+main("Key finding: the sentence is the signal", 3);
 {
-  const rows = [["D vs S", -1.9, -3.0, -0.7, "−1.9 [−3.0, −0.7]", "significant", RED],
-    ["P vs S", 1.05, -0.11, 2.20, "+1.05 [−0.11, +2.20]", "not significant", GREY],
-    ["P vs control", 0.52, 0.02, 1.00, "+0.52 [+0.02, +1.00]", "significant, but small", TEAL]];
-  const ax = 2.9, aw = 5.2, vmin = -3.5, vmax = 2.5, y0 = 1.3, rh = 1.1;
-  const X = v => ax + aw * (v - vmin) / (vmax - vmin);
-  const ay = y0 + rows.length * rh + 0.05;
-  hline(ax, ay, aw, GREY, 1.25);
-  [-3, -2, -1, 0, 1, 2].forEach(v => {
-    vline(X(v), ay, 0.08, GREY, 1);
-    text((v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v), { x: X(v) - 0.3, y: ay + 0.1, w: 0.6, h: 0.4, fontSize: 15, color: GREY, align: "center" });
+  // step chart: backbone -> S -> P
+  const steps = [["untuned 3B", 53.6, SOFT], ["GUIStep-S\nsentence only", 65.5, NAVY], ["GUIStep-P", 66.5, TEAL]];
+  const x0 = M + 0.3, y0 = 1.35, hh = 3.9, vmin = 45, vmax = 70, slot = 2.15, bw = 1.25;
+  const Y = v => y0 + hh * (1 - (v - vmin) / (vmax - vmin));
+  hline(x0, y0 + hh, slot * 3, GREY, 1.25);
+  steps.forEach((st, i) => {
+    const bx = x0 + i * slot + (slot - bw) / 2;
+    rect(bx, Y(st[1]), bw, y0 + hh - Y(st[1]), st[2]);
+    text(st[1].toFixed(1), { x: bx - 0.3, y: Y(st[1]) - 0.55, w: bw + 0.6, h: 0.5, fontSize: 24, bold: true, color: st[2] === SOFT ? GREY : st[2], align: "center", valign: "bottom" });
+    text(st[0], { x: x0 + i * slot, y: y0 + hh + 0.08, w: slot, h: 0.75, fontSize: 15, align: "center", lh: 1.0 });
   });
-  text("difference in executability (points)", { x: ax, y: ay + 0.45, w: aw, h: 0.4, fontSize: 15, italic: true, color: GREY, align: "center" });
-  vline(X(0), y0 - 0.1, rows.length * rh + 0.15, GREY, 1.25, "dash");
-  rows.forEach((r, i) => {
-    const yy = y0 + i * rh + rh / 2;
-    text(r[0], { x: M, y: yy - 0.35, w: 2.15, h: 0.7, fontSize: 21, bold: true, color: NAVY, align: "right", valign: "middle" });
-    hline(X(r[2]), yy, X(r[3]) - X(r[2]), r[6], 4);
-    vline(X(r[2]), yy - 0.15, 0.3, r[6], 2.5); vline(X(r[3]), yy - 0.15, 0.3, r[6], 2.5);
-    s.addShape(pres.shapes.OVAL, { x: X(r[1]) - 0.11, y: yy - 0.11, w: 0.22, h: 0.22, fill: { color: r[6] }, line: { color: r[6] } });
-    text([{ text: r[4], options: { bold: true, color: r[6] === GREY ? INK : r[6] } }, { text: "\n" + r[5], options: { color: GREY } }],
-      { x: 8.4, y: yy - 0.45, w: 4.3, h: 0.9, fontSize: 18, valign: "middle", lh: 1.0 });
-  });
+  text("+11.9", { x: x0 + (slot + bw) / 2 + 0.02, y: Y(59.5) - 0.2, w: slot - bw - 0.04, h: 0.4, fontSize: 17, bold: true, color: NAVY, align: "center" });
+  text("axis starts at 45", { x: x0, y: y0 - 0.15, w: 2.5, h: 0.3, fontSize: 12, italic: true, color: GREY });
+  block(7.4, 1.45, 5.33, 1.95, MINT);
+  text("> 90%", { x: 7.4, y: 1.5, w: 5.33, h: 0.9, fontSize: 44, bold: true, color: TEAL, align: "center", valign: "middle" });
+  text("of the +13.0 gain comes from training on the sentence itself", { x: 7.6, y: 2.4, w: 4.93, h: 0.9, fontSize: 18, align: "center", valign: "middle", lh: 1.05 });
+  block(7.4, 3.65, 5.33, 1.6);
+  text("+0.52", { x: 7.4, y: 3.7, w: 5.33, h: 0.75, fontSize: 32, bold: true, color: NAVY, align: "center", valign: "middle" });
+  text("what preference adds over a matched control\n(p = 0.043)", { x: 7.6, y: 4.45, w: 4.93, h: 0.7, fontSize: 17, align: "center", valign: "middle", lh: 1.05 });
 }
-block(M, 5.6, W - 2 * M, 0.8);
-text("Control already recovers 2.4 of P's 2.9 points over D.", { x: M, y: 5.6, w: W - 2 * M, h: 0.8, fontSize: 21, align: "center", valign: "middle" });
+rect(M, 5.85, W - 2 * M, 0.75, NAVY, { radius: 0.08 });
+text("The human instruction already in the data is the strongest training signal.", { x: M, y: 5.85, w: W - 2 * M, h: 0.75, fontSize: 20, bold: true, color: WHITE, align: "center", valign: "middle" });
 note(SAY[9]); foot();
 
 // ══════════ 10 · UNSEEN ══════════
-main("Gain holds on unseen sentences", 3);
-[["+15.0", "gain over the untuned model, sentences seen in training (52.6% of test)", NAVY, BLOCK],
- ["+8.4", "gain on sentences never seen in training", TEAL, MINT]].forEach((c, i) => {
+main("Not memorisation: gain on unseen sentences", 3);
+[["+15.0", "GUIStep-S vs untuned model, sentences that also occur in training (52.6% of test)", NAVY, BLOCK],
+ ["+8.4", "GUIStep-S vs untuned model, sentences never seen in training", TEAL, MINT]].forEach((c, i) => {
   const x = M + i * 6.2;
   block(x, 1.6, 5.9, 4.0, c[3]);
   text(c[0], { x, y: 1.9, w: 5.9, h: 1.7, fontSize: 72, bold: true, color: c[2], align: "center", valign: "middle" });
@@ -314,34 +318,24 @@ main("Gain holds on unseen sentences", 3);
 });
 note(SAY[10]); foot();
 
-// ══════════ 11 · LIMITATIONS ══════════
-main("Limitations", 4);
-["No human evaluation; weak on neighbouring elements", "One dataset, one backbone, touch steps only", "One seed for D, P and the control"].forEach((t, i) => {
-  const yy = 1.5 + i * 1.5;
-  block(M, yy, W - 2 * M, 1.2);
-  rect(M, yy, 0.14, 1.2, AMBER);
-  text(t, { x: M + 0.5, y: yy, w: W - 2 * M - 0.8, h: 1.2, fontSize: 24, valign: "middle" });
-});
-note(SAY[11]); foot();
-
-// ══════════ 12 · CONCLUSION ══════════
+// ══════════ 11 · CONCLUSION ══════════
 main("Conclusion", 4);
 [["Method", [{ text: "a 3B model trained only from existing records", options: {} }]],
- ["Evaluation", [{ text: "a checked, listener-based score", options: {} }]],
- ["Results", [{ text: "+13.0", options: { bold: true, color: TEAL } }, { text: " over the untuned model; most of it from learning the sentence", options: {} }]]].forEach((c, i) => {
+ ["Evaluation", [{ text: "executability, a validated listener-based score", options: {} }]],
+ ["Results", [{ text: "+13.0", options: { bold: true, color: TEAL } }, { text: " over the backbone, above a prompted 7B; most of it from learning the sentence", options: {} }]]].forEach((c, i) => {
   const yy = 1.4 + i * 1.45;
   block(M, yy, W - 2 * M, 1.2);
   rect(M, yy, 2.4, 1.2, NAVY, { radius: 0.08 });
   text(c[0], { x: M, y: yy, w: 2.4, h: 1.2, fontSize: 21, bold: true, color: WHITE, align: "center", valign: "middle" });
   text(c[1], { x: M + 2.7, y: yy, w: W - 2 * M - 2.95, h: 1.2, fontSize: 22, valign: "middle" });
 });
-text("Next: a second dataset, human evaluation, rewards on the sentence itself.", { x: M, y: 5.95, w: W - 2 * M, h: 0.5, fontSize: 18, italic: true, color: GREY, align: "center" });
-note(SAY[12]); foot();
+text("Next: a second dataset, a human study, rewards on the sentence itself.", { x: M, y: 5.95, w: W - 2 * M, h: 0.5, fontSize: 18, italic: true, color: GREY, align: "center" });
+note(SAY[11]); foot();
 
-// ══════════ 13 · THANK YOU ══════════
+// ══════════ 12 · THANK YOU ══════════
 slide();
 rect(0, 0, W, H - 0.32, NAVY);
-text("Thank you", { x: M, y: 2.2, w: W - 2 * M, h: 1.3, fontSize: 54, bold: true, color: WHITE, align: "center", valign: "middle" });
+text("Thank you · Questions?", { x: M, y: 2.2, w: W - 2 * M, h: 1.3, fontSize: 50, bold: true, color: WHITE, align: "center", valign: "middle" });
 text("24C15039@student.hcmus.edu.vn", { x: M, y: 3.8, w: W - 2 * M, h: 0.6, fontSize: 22, fontFace: MONO, color: LIGHT, align: "center", valign: "middle" });
 foot();
 

@@ -45,6 +45,7 @@ TEST = [
     ("REINFORCE + SPICE", "luoi/7_11/test_u_3/score_reinforce_spice_101_test_raw.jsonl", "lưới RL"),
     ("GRPO + SPICE chạy lại (A/A)", "luoi/8_11/test_u_4/score_grpo_spice_aa_101_test_raw.jsonl", "lưới RL"),
     ("RLOO + SPICE", "luoi/7_11/test_u_3/score_rloo_spice_101_test_raw.jsonl", "lưới RL"),
+    ("Dr.GRPO đầy đủ + SPICE", "luoi/20_11/luoi-test-u-5/score_drgrpo_full_spice_101_test_raw.jsonl", "lưới RL"),   # đợt B5, kernel luoi-test-u-5 22/11
     ("xao101 (SPICE ghép ngẫu nhiên)", "xao101/test/score_ck500_xao101_test_raw.jsonl", "lưới RL"),
     ("SA-SPICE-v3 ck400", "sa_spice_v3/test/score_sa_ck400_test_raw.jsonl", "lưới RL"),   # chờ kernel sa3-test-ck400
     ("SPICE-MATCH ck400", "sa_spice_v3/test/match/score_match_ck400_test_raw.jsonl", "lưới RL"),   # kernel sa3-test-match 17/11, Colab L4
@@ -78,12 +79,13 @@ TRUC_RL = dict(
           ("SCST + SPICE", "SCST (mốc = câu greedy)", 500, ""),
           ("REINFORCE + SPICE", "REINFORCE (mốc EMA)", 500, ""),
           ("RLOO + SPICE", "RLOO", 500, ""),
+          ("Dr.GRPO đầy đủ + SPICE", "Dr.GRPO (bỏ chuẩn hoá độ lệch chuẩn + độ dài)", 500, ""),
           ("PPO λ=1 (1000 bước)", "PPO, GAE λ = 1", 1000, "a"),
           ("PPO λ=0,95 (1000 bước)", "PPO, GAE λ = 0,95", 1000, "a")],
     moc=[("SFT tiếp (= SFT-cont)", "SFT tiếp (không RL, cùng 1.000 câu nhắc)", 125, ""),
          ("S1/101", "điểm xuất phát", 0, "")],
     chu_thich="a: PPO một câu nhắc mỗi update nên chạy 1.000 update để đi hết đúng 1.000 câu nhắc như các lượt khác. "
-              "Chưa có số test: Dr.GRPO (treo ở checkpoint-475), A2C (mới probe). Chưa chạy: DPO, MIXER, MRT, RAML.",
+              "Đợt B5 (20–22/11) chưa có số test: DAPO, GSPO, GRPO μ=2, REINFORCE++, DPO trực tuyến (đang chạy/chờ test). A2C mới probe. Chưa chạy: MIXER, MRT, RAML.",
     so=[(AA, "A/A"), ("ck500 (GRPO + SPICE)", "ck500"), ("SFT tiếp (= SFT-cont)", "SFT tiếp"), ("S1/101", "S1/101"), ("SA-SPICE-v3 ck400", "SA ck400")],
 )
 TRUC_TH = dict(

@@ -119,3 +119,20 @@ Thưởng = TB 25 bước đầu → 25 bước cuối (theo thước thưởng 
 | GRPO + BERTScore | ck375 | 0,646 → 0,685 | 0,021 / 0,236 |
 
 ⚠️ KL max của chrF (0,923) và μ=2 (0,592) cao hơn hẳn các lượt cũ (0,002–0,05); trước đây GRPO + chrF từ SFT-cont cũng trượt tiêu chí không chạm vì KL > 0,10 (report/333). Khi có số test, đọc kèm bước không chạm. GSPO thưởng giảm sau 600 bước. Chưa có số test nào.
+
+## 9. Cập nhật 22/11 ~08:00 VN — phiên 3 xong
+
+- `luoi-rw-u-3`, `luoi-rw-t-3`, `luoi-dpoon-t2-3` COMPLETE. Cả 5 lượt tới **ck500/500** (có `[tiếp từ]` đúng điểm lưu trước + `|lora_B| 0 → x>0`). Đã tải về `runs/luoi/20_11/<kernel>/`, chỉ giữ checkpoint-500.
+- ⛔ `luoi-test-u-5` (bản 1) **ERROR sau 1 phút**: dataset `b5-ck-21-11` upload phẳng (mất thư mục con `drgrpo_full_spice_101/`), notebook tìm theo tên thư mục nên không thấy adapter. Tốn ~1 phút GPU. Đã vá `make_test_nb2.py`: không thấy theo tên thì tìm theo md5 trên mọi `adapter_model.safetensors`. Đẩy lại bản 2 lúc 07:55, CAT_H 4,4 (uyenle còn 4,99 h) ⇒ nhiều khả năng chưa đủ 4.463 bước, nối tiếp sau 28/11 bằng `PREV=uyenle0712/luoi-test-u-5`.
+- 07:57 đẩy `trangphuongngoc/luoi-b5-t2-3` (μ=2 + GSPO, trỏ b5-t2-2, GIU_CK 3, CAT_H 5,4; notebook chỉ khác b5-t2-2 ở CAT_H). Nhịp phiên 2 ~30 bước/h ⇒ dự kiến tới ~ck775/750.
+- trang còn 1,8 h: không đẩy DAPO (nhịp ~18 bước/h, lưu mỗi 25 bước ⇒ dễ không kịp lưu điểm nào).
+
+| lượt | điểm lưu | thưởng (TB 25 đầu → 25 cuối) | KL TB / max |
+|---|---|---|---|
+| GRPO + chrF | ck500 | 0,591 → 0,708 | 0,048 / **0,923** |
+| GRPO + BLEU-4 | ck500 | 0,474 → 0,578 | 0,033 / 0,311 |
+| GRPO + SPIDEr | ck500 | 0,464 → 0,547 | 0,029 / 0,353 |
+| GRPO + BERTScore | ck500 | 0,646 → 0,716 | 0,032 / **0,496** |
+| DPO trực tuyến | ck500 | 0,486 → 0,510 | — |
+
+Chờ test (6 lượt xong train: Dr.GRPO, DPO trực tuyến, chrF, BLEU-4, SPIDEr, BERTScore). Hạn mức không đủ tuần này; test các lượt này sau 28/11 (adapter phải upload thành dataset, nhớ `--dir-mode zip` hoặc dựa vào tìm theo md5).

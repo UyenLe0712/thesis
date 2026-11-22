@@ -1,6 +1,6 @@
 # 322 — Việc làm thêm cho phương pháp đóng góp chính, rút từ phản biện SOICT (ghi 25/10/2026)
 
-Nguồn: bốn phản biện bài GUIStep (#5590), chép nguyên văn ở `paper/soict2026/guistep/EMAILS_SOICT_5590_22_10.md`.
+Nguồn: bốn phản biện bài GUIStep (#5590), chép nguyên văn ở `paper/soict2026/guistep/EMAILS_SOICT_5590.md`.
 Phạm vi: chỉ những gì làm mạnh **phương pháp đóng góp của luận văn** (GRPO thưởng SPICE = ck500, và luật ghép ACE/R3).
 Góp ý về thước đo đã trả lời phần lớn (UI-Venus, Phi-4, Phi-Ground, bộ bơm lỗi dưới D.3, hạt giống 202 của ck500), xem `report/320` mục A, B, G.
 Kết quả có số thì ghi vào `report/320` (theo luật làm việc), file này chỉ giữ danh sách việc và trạng thái.
