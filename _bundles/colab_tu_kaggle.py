@@ -40,6 +40,12 @@ for c in cells:
                   '    k_ = re.findall(r"trùng kernel 1: (\\d+)/(\\d+)", r_)\n'
                   '    assert k_ and int(k_[-1][0]) >= int(k_[-1][1]) - 1, "DUNG: kiem hoa lech qua 1 cau"\n'
                   '    print("⚠️ COLAB: kiem hoa lech", k_[-1], "— GPU khac T4, chap nhan lech 1 cau, GHI VAO BAO CAO", flush=True)')
+    # 22/11: hàng đợi test hai luồng trên một GPU — chỉ A100 (≥30 GB) mới chạy hai lượt cùng lúc; L4/T4 chạy lần lượt
+    c = c.replace("TH = [threading.Thread(target=tho, args=(g,)) for g in (0, 1)]",
+                  "_VR = int(subprocess.run('nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits', shell=True, capture_output=True, text=True).stdout.split()[0])\n"
+                  "_NG = (0, 1) if _VR > 30000 else (0,)\n"
+                  "print(f'⚙️ COLAB: GPU {_VR} MiB ⇒ {len(_NG)} luong song song', flush=True)\n"
+                  "TH = [threading.Thread(target=tho, args=(g,)) for g in _NG]")
     for bad in ("str(gpu)", "str(g)"):
         assert f'"CUDA_VISIBLE_DEVICES": {bad}' not in c
     out.append(c)

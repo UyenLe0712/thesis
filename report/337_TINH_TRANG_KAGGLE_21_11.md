@@ -148,3 +148,4 @@ exec **60,00** · − ck500 **−0,65 [−1,11; −0,18]** p = 0,009 · − A/A 
 - `chu-drgrpo-22-11-cpu`: độ đo văn bản Dr.GRPO xong, tự kiểm đạt; Dr.GRPO ngang ck500 ở cả 6 cột (KTC phủ 0), BLEU-4 thấp hơn A/A −0,88. Ghi report/320 §30, `bang_tong_hop.py`.
 - `luoi-b5-t2-3`: μ=2 và GSPO đều tới **ck750/1.000** (`[tiếp từ]` ck625 / ck600, `|lora_B| 0 → 10,10 / 14,31`). Thưởng μ=2 0,500 → 0,496 (KL TB/max 0,034/0,592), GSPO 0,496 → 0,485 (0,014/0,130) — cả hai không tăng. Còn 250 bước mỗi lượt (~8,5 h, sau 28/11, PREV=`trangphuongngoc/luoi-b5-t2-3`).
 - Tuần này hết việc GPU: uyenle ~0,5 h · trang 1,8 h · trang2 ~0 h.
+- 22/11 tối: dựng sẵn (CHƯA chạy, user dặn) notebook Colab test 5 lượt B5 xong ck500: `_bundles/luoi/k_luoi-test-c-b5/luoi-test-c-b5_colab.ipynb`, runbook `harness/runbook/colab_test_b5_22_11.md`. Dataset adapter `uyenle0712/b5-ck-22-11` **chưa upload** (`_bundles/luoi/ck_b5_22_11/`, gitignore). `colab_tu_kaggle.py` thêm: GPU < 30 GB thì chạy một lượt một lúc.
