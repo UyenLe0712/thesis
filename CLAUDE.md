@@ -30,7 +30,7 @@ xuất lại khi có điểm khác cụ thể. Xong hoặc dừng một hướng
 | `_scripts/` | mã theo action đánh số (296, 299, 304, 308, 314…) |
 | `paper/` | `fair2026/` · `vcl2026/` · `soict2026/guistep/` (bài SOICT thật sự nộp) |
 | `thesis/` | luận văn LaTeX; sửa ở `thesis/chapters/`, `main.tex` chỉ `\input` |
-| `slides/` | deck trình thầy · bảo vệ · VCL · SOICT + kịch bản `.md`; mã dựng ở `slides/build/` |
+| `slides/` | deck thuyết trình luận văn · trình thầy · VCL · SOICT · FAIR + kịch bản `.md`; mã dựng ở `slides/build/` |
 | `_bundles/` | gói mang lên Colab/Kaggle (`make_bundle.py`, `_bundles/luoi/make_nb.py`…) |
 
 `harness/` và `report/` **giữ nguyên tên** (hàng trăm tham chiếu + layout gói zip runbook phụ thuộc).
@@ -98,13 +98,20 @@ Caveat phải khai khi viết về ck500:
 - Lịch sử tự sinh (thay câu chuẩn bước trước): ck500 − S1 vẫn +1,48. ACU (phần S1 chưa thấy): +4,58. AitZ
   zero-shot: ck500 ≈ S1.
 
-**Đợt B5 lưới RL (từ S1, hạt 101, cùng 1.000 câu nhắc ck500)** — trạng thái 22/11 sáng (`report/337` §9,
+**Đợt B5 lưới RL (từ S1, hạt 101, cùng 1.000 câu nhắc ck500)** — trạng thái 22/11 tối (`report/337` §11–12,
 bảng log train ở `HUONG_DA_THU.md` §2e):
-- **Dr.GRPO đầy đủ có số test:** exec 60,00, − ck500 −0,65 [−1,11; −0,18] p=0,009 (thua), − S1 +0,90 (`report/320` §30).
-- **Xong train ck500, chờ test (5 lượt):** DPO trực tuyến · GRPO + chrF · + BLEU-4 · + SPIDEr · + BERTScore.
-- **Đang train:** `trangphuongngoc/luoi-b5-t2-3` (GRPO μ=2 ck625 + GSPO ck600, /1.000). **Còn dở:** DAPO ck400 ·
-  REINFORCE++ lô 64 ck70/125. GRPO/REINFORCE++ lô 128 chết RAM, chưa sửa mã (user chưa đồng ý hướng sửa).
-- Hạn mức ba tài khoản gần cạn tới 28/11. Đừng đẩy lại kernel đang chạy; runbook `_bundles/luoi/CHAY_B5.md`.
+- **Dr.GRPO đầy đủ có số test:** exec 60,00, − ck500 −0,65 [−1,11; −0,18] p=0,009 (thua), − S1 +0,90; độ đo văn
+  bản ngang ck500 cả 6 cột (`report/320` §30).
+- **Xong train ck500, chờ test (5 lượt):** DPO trực tuyến · GRPO + chrF · + BLEU-4 · + SPIDEr · + BERTScore. Adapter
+  đã lên dataset `uyenle0712/b5-ck-22-11`; smoke test Kaggle `luoi-test-u-b5smoke` **đạt** (5/5 tìm đúng adapter,
+  kiểm bộ chấm 10/10), số smoke không dùng. Test thật: Kaggle sau 28/11 hoặc Colab (`harness/runbook/colab_test_b5_22_11.md`).
+- **DPO trực tuyến test trên Colab T4:** dừng giữa chừng 22/11 22:26 (script canh tắt máy khi CLI mất kết nối, đã vá),
+  mới sinh **1.163/4.463 câu** (`runs/luoi/20_11/luoi-test-c-dpo/` + Drive); chạy lại thì nối tiếp, cần user bấm link
+  drivemount. Kiểm bộ chấm trên Colab 9/10 (Kaggle 10/10) ⇒ phải khai.
+- **Dừng giữa chừng, chờ hạn mức 28/11:** GRPO μ=2 và GSPO ck750/1.000 (thưởng đều không tăng; còn 250 bước,
+  PREV=`trangphuongngoc/luoi-b5-t2-3`) · DAPO ck400 · REINFORCE++ lô 64 ck70/125. GRPO/REINFORCE++ lô 128 chết RAM,
+  chưa sửa mã (user chưa đồng ý hướng sửa).
+- Hạn mức ba tài khoản gần cạn tới 28/11 07:00 VN; theo `report/337` §12 không còn lượt GPU nào đang chạy. Runbook `_bundles/luoi/CHAY_B5.md`.
 - Có số test thì ghi vào `HUONG_DA_THU.md`, `report/320`, `report/334` cùng lúc.
 
 ---
