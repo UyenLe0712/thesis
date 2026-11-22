@@ -100,8 +100,8 @@ Caveat phải khai khi viết về ck500:
 
 **Đợt B5 lưới RL (từ S1, hạt 101, cùng 1.000 câu nhắc ck500)** — trạng thái 22/11 sáng (`report/337` §9,
 bảng log train ở `HUONG_DA_THU.md` §2e):
-- **Xong train ck500, chờ test (6 lượt):** Dr.GRPO đầy đủ · DPO trực tuyến · GRPO + chrF · + BLEU-4 · + SPIDEr ·
-  + BERTScore. Test Dr.GRPO đang chạy (`uyenle0712/luoi-test-u-5` bản 2), chưa đủ 4.463 bước ⇒ nối tiếp sau 28/11.
+- **Dr.GRPO đầy đủ có số test:** exec 60,00, − ck500 −0,65 [−1,11; −0,18] p=0,009 (thua), − S1 +0,90 (`report/320` §30).
+- **Xong train ck500, chờ test (5 lượt):** DPO trực tuyến · GRPO + chrF · + BLEU-4 · + SPIDEr · + BERTScore.
 - **Đang train:** `trangphuongngoc/luoi-b5-t2-3` (GRPO μ=2 ck625 + GSPO ck600, /1.000). **Còn dở:** DAPO ck400 ·
   REINFORCE++ lô 64 ck70/125. GRPO/REINFORCE++ lô 128 chết RAM, chưa sửa mã (user chưa đồng ý hướng sửa).
 - Hạn mức ba tài khoản gần cạn tới 28/11. Đừng đẩy lại kernel đang chạy; runbook `_bundles/luoi/CHAY_B5.md`.

@@ -46,6 +46,24 @@ Cách chia dữ liệu của đề tài được lấy từ bản phân phối \
 
 Ngoài tập huấn luyện và tập kiểm tra, luận văn sử dụng thêm một tập kiểm định nội bộ để lựa chọn cấu hình cho GRPO-SPICE và ACE. Tập này được tạo bằng cách tách 346 tác vụ từ tập huấn luyện, tương ứng 1.567 bước, trong đó có 1.002 bước chạm. Do S1 đã được huấn luyện trên các mẫu này trước khi tập kiểm định nội bộ được tách ra, điểm số trên tập này có thể cao hơn so với khi đánh giá trên dữ liệu chưa xuất hiện trong quá trình huấn luyện S1. Vì vậy, tập kiểm định nội bộ chỉ được dùng để lựa chọn cấu hình và không được sử dụng để báo cáo kết quả cuối cùng.
 
+Trong phần thực nghiệm bổ sung, luận văn xây dựng thêm ba tập TRAIN-v3, DEV-v3 và CONFIRM-v3 từ các tác vụ của tập huấn luyện chưa được dùng trong các tập con của các thực nghiệm trước, gồm tập câu nhắc của GRPO-SPICE và tập kiểm định nội bộ. TRAIN-v3 cung cấp câu nhắc huấn luyện cho học tăng cường, DEV-v3 là tập phát triển dùng để chọn điểm lưu, còn CONFIRM-v3 được để dành cho bước xác nhận và chưa được sử dụng. Ba tập được chia ở mức tác vụ và tách khỏi tập kiểm tra của đề tài, nên việc chọn điểm lưu không dựa vào tập kiểm tra. TRAIN-v3 chỉ lấy một bước cho mỗi tác vụ để các câu nhắc huấn luyện phủ được nhiều tác vụ và ứng dụng hơn.
+
+Vì AndroidControl lặp lại cùng một màn hình hoặc cùng một mục tiêu ở nhiều tác vụ khác mã, luận văn loại thêm các tác vụ trùng lặp gần với tập kiểm tra, với các tập con đã dùng và giữa các tác vụ còn lại. Hai tác vụ được coi là trùng lặp gần khi thỏa một trong hai tiêu chí. Tiêu chí thứ nhất dùng băm cảm nhận pHash, tức một mã 63 bit tóm tắt hình dạng tổng thể của ảnh sao cho hai ảnh nhìn giống nhau cho hai mã chỉ khác ít bit: hai tác vụ trùng khi có một cặp bước mà mã ảnh khác nhau không quá 4 bit và câu chuẩn giống nhau. Tiêu chí thứ hai dùng MinHash, một cách ước lượng nhanh tỉ lệ cụm ba từ liên tiếp chung giữa hai đoạn văn bản: hai tác vụ trùng khi tỉ lệ này giữa hai mô tả mục tiêu đạt từ 0,90 trở lên. Phép băm được thực hiện trên 71.525 bước của tập huấn luyện và tập kiểm tra. Các tác vụ có câu chuẩn trống hoặc không xác định được ứng dụng cũng được loại. Quy mô ba tập được trình bày trong Bảng~\ref{tab:3.v3}. Tương tự tập kiểm định nội bộ, các tác vụ này đã xuất hiện trong quá trình huấn luyện S1, vì vậy số liệu trên DEV-v3 chỉ được dùng để chọn điểm lưu và không được báo cáo như kết quả.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Quy mô các tập TRAIN-v3, DEV-v3 và CONFIRM-v3.}\label{tab:3.v3}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+ & \textbf{Số tác vụ} & \textbf{Số bước} & \textbf{Số ứng dụng} \\
+\midrule
+TRAIN-v3 & 1.000 & 1.000 & 369 \\
+DEV-v3 & 600 & 2.223 (1.338 bước chạm) & 275 \\
+CONFIRM-v3 & 1.500 & 5.601 & 451 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 Để đánh giá khả năng khái quát trên các tác vụ chưa xuất hiện trong quá trình huấn luyện S1, luận văn xây dựng thêm tập ACU. Tập này được lấy từ một nhóm tác vụ của AndroidControl có câu hướng dẫn nhưng không thuộc bản phân phối \code{ckg}, do đó không nằm trong hai tập ở Bảng~\ref{tab:3.3}. Ảnh của các tác vụ này được lấy từ bản phát hành gốc của AndroidControl, sau đó OCR được trích xuất theo cùng quy trình với dữ liệu chính. Tập ACU gồm 1.484 bước có thao tác chạm thuộc 818 tác vụ. Trong số đó, 1.383 bước vẫn thuộc phần huấn luyện chính thức của AndroidControl. Vì vậy, ACU được sử dụng như một tập đánh giá bổ sung và không thay thế tập kiểm tra chính của đề tài.
 
 \section{Dữ liệu cho từng thành phần của phương pháp}\label{sec:3.5}\label{sec:3.4}

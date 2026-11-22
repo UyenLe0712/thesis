@@ -23,8 +23,8 @@ leaving 5 to 6 minutes for questions. If you run late, skip slide 10 (one senten
  6  Executability: a listener follows the sentence
  7  The score is validated                         (ceiling, floor, other listeners, stricter rule)
  8  Main results: +13.0, above a prompted 7B
- 9  Key finding: the sentence is the signal
-10  Not memorisation: gain on unseen sentences
+ 9  Most of the gain comes from learning the sentence
+10  The gain holds on sentences never seen in training
 11  Conclusion + next steps
 12  Thank you
 ```
@@ -113,7 +113,7 @@ annotation. *Second, an evaluation:* executability, a score that checks whether 
 followed, and we validate it. *Third, the results:* 13 points over the untuned model, and above a prompted
 model more than twice its size.
 
-*Let me start with the method.*
+*First, the method.*
 
 *(ý chính: ba đóng góp, nói chắc.)*
 
@@ -134,7 +134,7 @@ We fine-tune Qwen2.5-VL **3B** with QLoRA in three versions. **S** writes the se
 declares the target element, its role, name, position and a nearby text, then writes the sentence. **P**
 refines D with preference pairs built automatically: the correct element against a nearby competitor.
 
-To measure what each stage really adds, we also train a **control** with the same extra training as P,
+To measure what each stage adds, we also train a **control** with the same extra training as P,
 using only the correct examples.
 
 *Now, how do we judge a generated sentence?*
@@ -184,8 +184,7 @@ listener reads the content, not the style.
 
 Second, the conclusions do not depend on this one listener. UI-Venus was never trained on AndroidControl,
 and with it the gain of fine-tuning keeps 99% of its size. Phi-4, from a different model family, also
-confirms the gain. And under a
-stricter localisation rule the ranking of all systems stays the same.
+confirms the gain. Under a stricter localisation rule, the ranking of all systems stays the same.
 
 *With a validated score, here are the results.*
 
@@ -204,27 +203,25 @@ thirteen points above the starting model**, with a confidence interval from 11.5
 account for steps from the same app, and a second training run of S lands within 0.6 points, so this gain
 is far above the noise.
 
-So a 3B model trained this way is well above a prompted model more than twice its size.
-
 *Where does this gain come from?*
 
 *(ý chính: +13 điểm, 3B tinh chỉnh vượt 7B prompting.)*
 
 ---
 
-## Slide 9 · Key finding: the sentence is the signal (~55 s)
+## Slide 9 · Most of the gain comes from learning the sentence (~55 s)
 
 **On the slide:** step chart backbone 53.6 → GUIStep-S 65.5 (+11.9) → GUIStep-P 66.5;
 two lines: sentence supervision brings most of the gain · preference adds +0.52 over a matched control
 (p = 0.043).
 
 **Say:**
-*Our ablation gives a clear answer.* Training on the sentence alone, GUIStep-S, already brings **almost
+*The ablation shows where the gain comes from.* Training on the sentence alone, GUIStep-S, already brings **almost
 twelve of the thirteen points**, more than ninety percent. And because we trained a matched control, we can
 say exactly what the preference objective itself adds on top: half a point, and it is significant.
 
-The practical message is simple: **the human instruction already in the dataset is the strongest training
-signal**, and that is where future rewards should act.
+So **the human instruction already in the dataset is the strongest training signal**, and future rewards
+should act on that sentence.
 
 *A natural question is whether the model just copies sentences it has seen.*
 
@@ -233,12 +230,12 @@ Nếu bị hỏi D: khai báo đứng một mình làm giảm 1,9, P bù lại �
 
 ---
 
-## Slide 10 · Not memorisation: gain on unseen sentences (~35 s) — *optional*
+## Slide 10 · The gain holds on sentences never seen in training (~35 s) — *optional*
 
 **Say:**
 *App instructions repeat a lot, so about half of the test sentences also appear in training.* There, the
 gain over the untuned model is 15 points. On sentences **never seen in training** the gain is still
-**8.4 points**, which copying cannot explain. The model has learned to describe new targets.
+**8.4 points**, which copying cannot explain.
 
 *To conclude.*
 

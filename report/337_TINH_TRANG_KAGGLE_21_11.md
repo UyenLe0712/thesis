@@ -136,3 +136,8 @@ Thưởng = TB 25 bước đầu → 25 bước cuối (theo thước thưởng 
 | DPO trực tuyến | ck500 | 0,486 → 0,510 | — |
 
 Chờ test (6 lượt xong train: Dr.GRPO, DPO trực tuyến, chrF, BLEU-4, SPIDEr, BERTScore). Hạn mức không đủ tuần này; test các lượt này sau 28/11 (adapter phải upload thành dataset, nhớ `--dir-mode zip` hoặc dựa vào tìm theo md5).
+
+## 10. 22/11 ~12:15 — `luoi-test-u-5` COMPLETE: Dr.GRPO có số test đủ 4.463
+
+exec **60,00** · − ck500 **−0,65 [−1,11; −0,18]** p = 0,009 · − A/A +0,27 (ns) · − S1 +0,90 p = 0,006. Chi tiết report/320 §30, đã thêm vào `harness/bang_tong_hop.py` (report/334). Kịp đủ 4.463 bước trong trần 4,4 h (2,78 s/bước). Chưa chấm độ đo văn bản/không chạm.
+`luoi-b5-t2-3` (μ=2 + GSPO) vẫn RUNNING, dự kiến ~13:30.

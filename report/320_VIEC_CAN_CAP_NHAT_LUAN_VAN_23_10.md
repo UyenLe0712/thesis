@@ -1162,3 +1162,22 @@ Chi tiết thiết kế, DEV-v3, kiểm tra: report/333 §11–§14b. Bảng có
 - **Bước không chạm (2.495):** toàn bộ 84,05 (SFT-cont 84,61) · scroll 80,00 (+3,18) · **back 58,52 vs 71,11 (−12,59)**. Phải khai.
 - **Độ đo văn bản:** BLEU-4 51,24 · METEOR 38,90 · ROUGE-L 69,31 · CIDEr-D 429,12 · SPICE 45,76 · chrF 64,40 · BERTScore 67,59; cao nhất ở METEOR/ROUGE-L/chrF; SPICE − SFT tiếp +0,43 (không ý nghĩa).
 - Câu được viết: "GRPO với thưởng SA-SPICE-v3 từ SFT-cont hơn điểm xuất phát +1,05 exec (một seed)". Cấm: "hơn ck500", "tốt nhất" không kèm một seed, "thưởng composite giúp hơn SPICE thuần" (chưa có nhánh SPICE-MATCH).
+
+
+## 30. Dr.GRPO đầy đủ + SPICE từ S1 (đợt B5, 20–22/11/2026): exec test 60,00, thua ck500
+
+Dr.GRPO (Liu và cộng sự 2025): bỏ chia độ lệch chuẩn trong lợi thế nhóm **và** bỏ chuẩn hoá theo độ dài (`loss_type="dr_grpo"`), mã `harness/grpo_moi_b1.py` (`drgrpo_full`). Cùng cấu hình lưới: từ S1/101, thưởng SPICE, G = 8, KL 0,04, 500 update, 1.000 câu nhắc, seed 101. Train 3 phiên Kaggle (`trangphngngc/luoi-b5-t-1`, `-t-2`), mỗi lần nối tiếp có `[tiếp từ]` + `|lora_B| 0 → x>0`. Thưởng train 0,467 → 0,520, KL TB/max 0,014/0,095. Test: kernel `uyenle0712/luoi-test-u-5` bản 2 (22/11), đủ 4.463 bước, kiểm hoà S1 16/20 (như mọi lượt). Tệp ở `runs/luoi/20_11/luoi-test-u-5/`. Lượt cũ "GRPO bỏ chia std" (treo ở 475, `loss_type="dapo"`) không phải Dr.GRPO đầy đủ, không chấm.
+
+- **Bước chạm (4.463):** exec **60,00** [58,26; 61,71] · đúng loại thao tác 95,72 · số từ 7,96.
+
+| phép so (ghép cặp, bootstrap cụm app, B = 10.000) | Δ exec [KTC95] | hơn / kém | p (McNemar) |
+|---|---|---|---|
+| Dr.GRPO − S1/101 (59,11) | +0,90 [+0,26; +1,55] | 121 / 81 | 0,006 |
+| Dr.GRPO − ck500 (60,65) | **−0,65 [−1,11; −0,18]** | 72 / 43 (ck500 hơn) | 0,009 |
+| Dr.GRPO − GRPO A/A (59,74, cùng mã lưới) | +0,27 [−0,16; +0,71] | 59 / 47 | 0,29 |
+| Dr.GRPO − SFT tiếp (60,16) | −0,16 [−0,64; +0,32] | 55 / 62 | 0,58 |
+| Dr.GRPO − SCST + SPICE (60,54) | −0,54 [−0,95; −0,13] | 33 / 57 | 0,015 |
+
+- Phân rã so S1: sửa loại thao tác +22 bước (cứu 32 / phá 10, p = 0,001), đổi phần tử +18 (89 / 71, p = 0,18). ck500 tương ứng +28 và +41. ck500 − Dr.GRPO dồn ở phần tử (+23 bước, p = 0,028), loại thao tác chỉ +6 (p = 0,21). Câu trùng: Dr.GRPO = ck500 ở 3.518/4.463 câu.
+- Đọc: Dr.GRPO hơn S1 có ý nghĩa nhưng **thấp hơn ck500 và SCST**, ngang A/A và SFT tiếp ⇒ bỏ chuẩn hoá std/độ dài không giúp gì ở bài này. So công bằng nhất (cùng mã) là với A/A: +0,27, không ý nghĩa. Chưa chấm bước không chạm, D.3/AitW, độ đo văn bản (chờ kernel CPU sau 28/11).
+- Câu được viết: "Dr.GRPO đạt 60,00, ngang GRPO cùng mã, thấp hơn ck500 (−0,65, một seed)". Cấm: "Dr.GRPO tốt hơn GRPO".

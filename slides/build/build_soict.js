@@ -251,7 +251,7 @@ vbars(M + 0.1, 1.8, 6.1, 2.9, [
 text("Wide gap: the listener reads the content, not the style.", { x: M, y: 5.75, w: 6.3, h: 0.6, fontSize: 17, italic: true, color: GREY, align: "center", valign: "middle" });
 [["Other listeners", "UI-Venus, never trained on AndroidControl: 99% of the gain kept\nPhi-4, another model family: gain holds"],
  ["Stricter localisation rule", "Voronoi rule: same ranking of all systems"],
- ["Matching rule", "point inside the target box: the original AndroidControl rule"]].forEach((c, i) => {
+ ["Matching rule", "point inside the target box (the original AndroidControl rule)"]].forEach((c, i) => {
   const yy = 1.3 + i * 1.7;
   block(7.3, yy, 5.43, 1.5);
   text(c[0], { x: 7.55, y: yy + 0.12, w: 5.0, h: 0.45, fontSize: 19, bold: true, color: NAVY });
@@ -281,7 +281,7 @@ text("* control: same extra training as P, correct examples only.  CIs: bootstra
 note(SAY[8]); foot();
 
 // ══════════ 9 · KEY FINDING ══════════
-main("Key finding: the sentence is the signal", 3);
+main("Most of the gain comes from learning the sentence", 3);
 {
   // step chart: backbone -> S -> P
   const steps = [["untuned 3B", 53.6, SOFT], ["GUIStep-S\nsentence only", 65.5, NAVY], ["GUIStep-P", 66.5, TEAL]];
@@ -308,7 +308,7 @@ text("The human instruction already in the data is the strongest training signal
 note(SAY[9]); foot();
 
 // ══════════ 10 · UNSEEN ══════════
-main("Not memorisation: gain on unseen sentences", 3);
+main("The gain holds on sentences never seen in training", 3);
 [["+15.0", "GUIStep-S vs untuned model, sentences that also occur in training (52.6% of test)", NAVY, BLOCK],
  ["+8.4", "GUIStep-S vs untuned model, sentences never seen in training", TEAL, MINT]].forEach((c, i) => {
   const x = M + i * 6.2;

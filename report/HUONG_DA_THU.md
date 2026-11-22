@@ -140,6 +140,7 @@ Cách đọc: *ý tưởng → cách làm → số → vì sao dừng → muốn
 | SCST + SPICE | 60,54 | ngang | |
 | PPO, GAE λ=1 / 0,95 (1000 bước, value head trên LoRA) | 60,07 / 59,98 | ngang; thấp hơn ở BLEU-4 và CIDEr-D | §26–28; từng hết đĩa, phải `save_total_limit` |
 | Dr.GRPO (lượt cũ) | treo ở bước 475, chưa chấm | | đã chạy lại đầy đủ ở đợt B5 (§2e) |
+| **Dr.GRPO đầy đủ** (B5, 22/11; bỏ chia std + bỏ chuẩn hoá độ dài) | 60,00 | **−0,65 p=0,009** (thua); − SCST −0,54 p=0,015; ngang A/A, SFT tiếp | đổi phần tử chỉ +18 (ck500 +41); report/320 §30 |
 | GRPO + ROUGE-L | 60,63 | ngang | đứng đầu CIDEr-D |
 | GRPO + METEOR | 60,27 | ngang | |
 | GRPO + CIDEr-D | 60,27 | ngang; CIDEr-D thấp hơn ck500 −5,53 | §22: **không** do df hay tách từ (đã kiểm 5 biến thể), tối ưu kém ngay trên mục tiêu của chính nó |
@@ -172,7 +173,7 @@ Số dưới đây là **log train**, không phải số test. Có số test th�
 
 | lượt | tới đâu (21/11) | thưởng train · KL | ghi chú |
 |---|---|---|---|
-| Dr.GRPO đầy đủ | **xong ck500/500** | 0,467 → 0,520 · KL TB/max 0,014/0,095 | đang chấm test (`luoi-test-u-5` bản 2, 22/11) |
+| Dr.GRPO đầy đủ | **xong, có số test** | 0,467 → 0,520 · KL TB/max 0,014/0,095 | **exec 60,00; − ck500 −0,65 [−1,11; −0,18] p=0,009; − A/A +0,27 (ns); − S1 +0,90** (report/320 §30) |
 | DAPO (lấy mẫu động, eps 0,28) | ck400/500 | 0,465 → 0,486 · KL max 0,211 | nhóm hoà bị loại 20,8% |
 | GRPO μ=2 (2 lượt tối ưu mỗi lô sinh) | ck625/1.000 (phiên 3 `luoi-b5-t2-3` đang chạy) | phẳng 0,500 → 0,500 · **KL max 0,592** | |
 | GSPO (tỉ số mức chuỗi) | ck600/1.000 | **giảm** 0,496 → 0,455 · clip_ratio 0,19 → 0,36 | dấu hiệu xấu |

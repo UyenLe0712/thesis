@@ -586,7 +586,9 @@ ck500 − S1/101 exec trên ACU: **+4,58 [+3,17; +6,05]** p=2,1e−10 · ACE −
 | nhánh | trạng thái | ghi chú |
 |---|---|---|
 | chrF ck400 (SA-SPICE-v3 baseline) | không chấm test | trượt tiêu chí khả thi DEV (không chạm −6,90) |
-| Dr.GRPO | treo ở checkpoint-475 | report/320 §20 |
+| GRPO bỏ chia std (lượt cũ, `loss_type="dapo"`) | treo ở checkpoint-475, không chấm | report/320 §20; Dr.GRPO đầy đủ đã chạy lại và có số (§30) |
+| B5: DPO trực tuyến · GRPO + chrF / BLEU-4 / SPIDEr / BERTScore | xong train ck500, chờ test (sau 28/11) | report/337 §9 |
+| B5: DAPO · GRPO μ=2 · GSPO · REINFORCE++ lô 64 | train dở | report/337 §9 |
 | VIS-SFT | dừng ở điểm kiểm K1 | không có số test |
 | CTG A3 bước chạm | xem report/279 | chỉ ghi bước không chạm ở §5 |
 """
