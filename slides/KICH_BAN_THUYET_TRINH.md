@@ -10,7 +10,6 @@
 
 ## Slide 3
 - Mô hình nhìn màn hình, biết mục tiêu và các bước đã làm, viết câu cho bước kế tiếp.
-- Người đọc là người dùng, không phải máy.
 - Ảnh: một bước thật trong tập kiểm tra, người dùng chạm nút Bin.
 
 ## Slide 4
@@ -27,7 +26,7 @@
 - GRPO-SPICE sinh câu ban đầu; ACE chỉ thay câu ở một phần nhỏ số bước.
 
 ## Slide 7
-- SPICE không đếm chữ trùng như BLEU, mà so phần nội dung: ai, cái gì, ở đâu.
+- BLEU đếm chữ trùng; SPICE so các đối tượng, thuộc tính và quan hệ mà câu nhắc tới.
 - Điểm yếu đã đo trên câu chuẩn của tập kiểm định: đổi "Click" thành "Swipe up" SPICE vẫn cho khoảng 0,92, các độ đo khác chỉ 0,45 đến 0,79.
 - Hai điểm yếu này là lý do thử thêm phần thưởng SA-SPICE-v3 ở phần so sánh.
 
@@ -44,12 +43,11 @@
 - Quy tắc chọn trên tập kiểm định, áp lên tập kiểm tra một lần.
 
 ## Slide 11
-- Khác BLEU/SPICE: không so chữ với câu chuẩn, mà xem câu có làm được việc của nó không.
+- BLEU/SPICE so chữ với câu chuẩn; executability xem người làm theo câu có bấm đúng chỗ không.
 - UGround là mô hình định vị giao diện có sẵn: nhận ảnh và câu, trả về một điểm.
 
 ## Slide 12
 - Hai ô Birthday và Gender chỉ cách nhau một hàng: chỉ đo khoảng cách thì câu sai vẫn có thể được tính đúng.
-- Điều kiện ba siết đúng chỗ cần siết, không làm khó các ca đáng được tính đúng.
 
 ## Slide 13
 - Trần 75,7 là giới hạn của dụng cụ, không phải của ngôn ngữ.
@@ -57,7 +55,7 @@
 
 ## Slide 14
 - Mức số tuyệt đối khác nhau theo bộ định vị, nhưng phương pháp luôn cao hơn S1.
-- Thước tất định: cùng câu, cùng ảnh cho cùng toạ độ.
+- Độ đo tất định: cùng câu, cùng ảnh cho cùng toạ độ.
 
 ## Slide 15
 - D.3: tiêu chí gốc của AndroidControl, điểm chạm nằm trong hộp phần tử đúng.
@@ -82,7 +80,7 @@
 ## Slide 19
 - Executability, D.3 và AitW là ba cách xác định câu có dẫn tới đúng phần tử; đúng loại thao tác chỉ xét động từ.
 - PPO chạy 1.000 bước cập nhật để đi hết cùng 1.000 câu nhắc.
-- Dr.GRPO chưa chạy xong, A2C mới thăm dò, nên chưa có trong bảng.
+- Dr.GRPO đầy đủ (22/11): executability 60,00, thấp hơn GRPO-SPICE từ S1 0,65 điểm; chưa chấm D.3, AitW và độ đo văn bản nên chưa đưa vào bảng. A2C mới thăm dò.
 
 ## Slide 20
 - Các độ đo này so câu sinh với câu chuẩn của người chú thích.
@@ -104,7 +102,7 @@
 
 ## Slide 25
 - Khai thẳng các hạn chế kèm số đo.
-- Hướng tiếp: thêm hạt giống, chữa bước không chạm, DPO trực tuyến.
+- Hướng tiếp: thêm hạt giống, chữa bước không chạm; DPO trực tuyến đã huấn luyện xong, đang chờ chấm.
 
 ## Slide 26
 - Ba ý chính. Mời hội đồng đặt câu hỏi.

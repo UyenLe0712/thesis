@@ -139,16 +139,15 @@ addText('Khác với tác tử giao diện: đầu ra là câu cho người dùn
 addText('Vòng vàng trong ảnh: phần tử người dùng đã chạm ở bước này.',{x:M,y:5.7,w:6.0,h:0.5,fontSize:12,italic:true,color:GREY});
 imgFit(path.join(FIG,'fig_bai_toan_anh.png'),1080,2160,6.85,0.82,2.7,6.2);
 note(`- Mô hình nhìn màn hình, biết mục tiêu và các bước đã làm, viết câu cho bước kế tiếp.
-- Người đọc là người dùng, không phải máy.
 - Ảnh: một bước thật trong tập kiểm tra, người dùng chạm nút Bin.`);
 foot();
 
 // 4 · Vấn đề
-newSlide('Giới thiệu','Vì sao cần một độ đo mới');
+newSlide('Giới thiệu','BLEU và SPICE không kiểm được câu có chỉ đúng phần tử');
 rect(1.0,1.2,8.0,1.6,FOOTB,{radius:0.08});
 addText('“Tap the button.”',{x:1.0,y:1.2,w:8.0,h:1.6,fontSize:34,bold:true,italic:true,color:WHITE,align:'center',valign:'mid'});
 addText('Câu đúng ngữ pháp, nghe tự nhiên, nhưng trên màn hình có mười nút thì người đọc không biết bấm nút nào.',{x:1.0,y:3.2,w:8.0,h:0.9,fontSize:16,align:'center',valign:'mid'});
-addText('BLEU hay SPICE chỉ so câu chữ với câu chuẩn. Cần một cách chấm kiểm được câu có dẫn tới đúng phần tử hay không.',{x:1.0,y:4.35,w:8.0,h:0.9,fontSize:16,bold:true,color:FOOTC,align:'center',valign:'mid'});
+addText('BLEU hay SPICE chỉ so câu chữ với câu chuẩn. Muốn biết câu có dẫn tới đúng phần tử thì phải chấm bằng cách làm theo câu.',{x:1.0,y:4.35,w:8.0,h:0.9,fontSize:16,bold:true,color:FOOTC,align:'center',valign:'mid'});
 note(`- Câu không chỉ ra phần tử nào vẫn có thể được BLEU/SPICE cho điểm khá.
 - Từ đây dẫn sang executability.`);
 foot();
@@ -181,14 +180,14 @@ note(`- S1 là nền chung của mọi nhánh, huấn luyện bằng QLoRA.
 foot();
 
 // 10b · SPICE là gì
-newSlide('Phương pháp đề xuất','SPICE là gì');
+newSlide('Phương pháp đề xuất','SPICE chấm câu theo nội dung, không theo chữ trùng');
 addText('SPICE (Anderson và cộng sự, ECCV 2016) chấm một câu bằng cách so nội dung của nó với câu chuẩn: câu nhắc tới những đối tượng nào, đối tượng có đặc điểm gì, và liên hệ với nhau ra sao.',{x:M,y:0.85,w:8.9,h:0.95,fontSize:14.5,color:FOOTB});
 const SP=[['1. Tách câu','thành các bộ: đối tượng, thuộc tính, quan hệ'],['2. Làm như vậy','với câu chuẩn của người chú thích'],['3. Đếm số bộ khớp','giữa hai câu, rồi tính điểm F1']];
 SP.forEach((f,i)=>{ const x=0.45+i*3.12; box(x,2.0,2.6,1.25,f[0]+'\n'+f[1],{fill:i===2?FOOTC:WHITE,color:i===2?WHITE:INK,line:FOOTB,fs:13,bold:true,radius:0.06}); if(i<2) arrow(x+2.64,2.62,0.44); });
 addText('Độ chính xác P = số bộ khớp / số bộ của câu sinh     Độ phủ R = số bộ khớp / số bộ của câu chuẩn     SPICE = 2PR / (P + R)',{x:M,y:3.5,w:8.9,h:0.5,fontSize:12.5,color:GREY,align:'center',fit:'shrink'});
-card(M,4.2,4.35,2.3,'Vì sao hợp với bài toán','Câu gọi sai tên phần tử thì mất ngay các bộ quan trọng, nên điểm giảm rõ. Đổi động từ đồng nghĩa (“tap” hay “click”) hầu như không ảnh hưởng.',{tfs:14.5,fs:12.5,fill:HL});
+card(M,4.2,4.35,2.3,'Hợp với bài toán','Câu gọi sai tên phần tử thì mất ngay các bộ quan trọng, nên điểm giảm rõ. Đổi động từ đồng nghĩa (“tap” hay “click”) hầu như không ảnh hưởng.',{tfs:14.5,fs:12.5,fill:HL});
 card(5.1,4.2,4.35,2.3,'Điểm yếu đã đo','Gần như không phân biệt loại thao tác: đổi “Click” thành “Swipe up” vẫn được điểm cao. Câu quá ngắn như “Scroll down” không có bộ nào nên được 0, kể cả khi đúng nguyên văn.',{tfs:14.5,fs:12.5});
-note(`- SPICE không đếm chữ trùng như BLEU, mà so phần nội dung: ai, cái gì, ở đâu.
+note(`- BLEU đếm chữ trùng; SPICE so các đối tượng, thuộc tính và quan hệ mà câu nhắc tới.
 - Điểm yếu đã đo trên câu chuẩn của tập kiểm định: đổi "Click" thành "Swipe up" SPICE vẫn cho khoảng 0,92, các độ đo khác chỉ 0,45 đến 0,79.
 - Hai điểm yếu này là lý do thử thêm phần thưởng SA-SPICE-v3 ở phần so sánh.`);
 foot();
@@ -217,7 +216,6 @@ rect(5.4,0.95,4.05,4.0,SOFT,{radius:0.06});
 addText('Thiết lập',{x:5.6,y:1.05,w:3.7,h:0.4,fontSize:15,bold:true,color:FOOTB});
 addText('r = SPICE(câu, câu chuẩn) − 0,02 × phạt độ dài',{x:5.6,y:1.55,w:3.7,h:0.7,fontSize:13,bold:true,color:FOOTC});
 addText('500 bước cập nhật · 1.000 câu nhắc\n8 câu mỗi nhóm · hệ số KL 0,04\ntốc độ học 1e-5',{x:5.6,y:2.3,w:3.7,h:1.1,fontSize:12.5});
-addText('SPICE chấm theo đối tượng và quan hệ trong câu, hợp với việc gọi đúng phần tử.',{x:5.6,y:3.5,w:3.7,h:1.0,fontSize:12.5,color:GREY});
 addText('Tiền lệ dùng độ đo làm phần thưởng: SCST (Rennie và cộng sự, CVPR 2017) và SPIDEr (Liu và cộng sự, ICCV 2017).',{x:M,y:5.35,w:8.9,h:0.7,fontSize:13,color:GREY});
 note(`- GRPO không cần mô hình giá trị: mốc so là trung bình của chính nhóm tám câu.
 - Không nhận điểm mới ở thuật toán hay ở việc chọn SPICE; điểm mới là áp vào bài toán này và đánh giá bằng executability.`);
@@ -232,7 +230,7 @@ box(3.25,1.95,2.3,1.5,'Bộ sinh xem\nbốn câu ví dụ,\nviết câu ứng vi
 arrow(5.6,2.7,0.4);
 box(6.05,1.95,3.5,1.5,'Chỉ thay câu khi ứng viên\ntrùng nguyên văn một câu ví dụ\nvà cùng loại thao tác\nvới câu GRPO-SPICE',{fill:FOOTC,color:WHITE,line:FOOTC,fs:13,bold:true,radius:0.06});
 rect(M,4.0,8.9,1.3,SOFT,{radius:0.06});
-addText('Ở phần lớn các bước, câu GRPO-SPICE được giữ. Dùng câu ứng viên cho mọi bước thì executability giảm 1,25 điểm, nên hai điều kiện là phần cốt lõi.',{x:M+0.2,y:4.0,w:8.5,h:1.3,fontSize:14.5,valign:'mid'});
+addText('Ở phần lớn các bước, câu GRPO-SPICE được giữ. Dùng câu ứng viên cho mọi bước thì executability giảm 1,25 điểm, nên không bỏ được hai điều kiện này.',{x:M+0.2,y:4.0,w:8.5,h:1.3,fontSize:14.5,valign:'mid'});
 note(`- ACE: Action-Consistent Exemplar copying.
 - Quy tắc chọn trên tập kiểm định, áp lên tập kiểm tra một lần.`);
 foot();
@@ -244,8 +242,8 @@ const FL=[['Câu mô hình viết\n+ ảnh màn hình',WHITE,INK],['UGround\nmô
 FL.forEach((f,i)=>{ const x=0.45+i*2.42; box(x,2.0,1.9,1.5,f[0],{fill:f[1],color:f[2],line:FOOTB,fs:13.5,bold:true,radius:0.06}); if(i<3) arrow(x+1.94,2.75,0.44); });
 rect(M,4.1,8.9,0.95,SOFT,{radius:0.06});
 addText('Executability = tỉ lệ bước mà câu dẫn người làm theo tới đúng phần tử, với đúng loại thao tác.',{x:M+0.2,y:4.1,w:8.5,h:0.95,fontSize:15.5,bold:true,color:FOOTB,valign:'mid'});
-addText('UGround không tham gia huấn luyện và không nằm trong phần thưởng, nên thước chấm tách khỏi mục tiêu huấn luyện.',{x:M,y:5.35,w:8.9,h:0.7,fontSize:14,color:GREY});
-note(`- Khác BLEU/SPICE: không so chữ với câu chuẩn, mà xem câu có làm được việc của nó không.
+addText('UGround không tham gia huấn luyện và không nằm trong phần thưởng, nên độ đo tách khỏi mục tiêu huấn luyện.',{x:M,y:5.35,w:8.9,h:0.7,fontSize:14,color:GREY});
+note(`- BLEU/SPICE so chữ với câu chuẩn; executability xem người làm theo câu có bấm đúng chỗ không.
 - UGround là mô hình định vị giao diện có sẵn: nhận ảnh và câu, trả về một điểm.`);
 foot();
 
@@ -259,9 +257,8 @@ newSlide('Executability','Một bước đạt khi thoả cả ba điều kiện
 imgFit(path.join(FIG,'fig_voronoi.png'),1080,740,4.75,0.9,4.75,3.3);
 addText('Ví dụ thật: câu của S1 “Click on the Birthday option” chạm đúng ô Birthday; câu của mô hình gốc gọi ô Gender ngay hàng trên nên không đạt.',{x:4.75,y:4.3,w:4.75,h:0.8,fontSize:12,color:GREY});
 rect(M,5.4,8.9,0.95,SOFT,{radius:0.06});
-addText('Dịch điểm chạm sang phần tử bên cạnh: chỉ dùng dung sai 14% vẫn chấp nhận 84,3% số ca, thêm điều kiện ô Voronoi còn 2,8%. Chạm lệch nhẹ trong cùng phần tử vẫn được giữ 99,7%.',{x:M+0.2,y:5.4,w:8.5,h:0.95,fontSize:13,valign:'mid'});
-note(`- Hai ô Birthday và Gender chỉ cách nhau một hàng: chỉ đo khoảng cách thì câu sai vẫn có thể được tính đúng.
-- Điều kiện ba siết đúng chỗ cần siết, không làm khó các ca đáng được tính đúng.`);
+addText('Khi điểm chạm bị dời sang phần tử bên cạnh, chỉ dùng dung sai 14% vẫn chấp nhận 84,3% số ca; thêm điều kiện ô Voronoi thì còn 2,8%. Chạm lệch nhẹ trong cùng phần tử vẫn được giữ 99,7%.',{x:M+0.2,y:5.4,w:8.5,h:0.95,fontSize:13,valign:'mid'});
+note(`- Hai ô Birthday và Gender chỉ cách nhau một hàng: chỉ đo khoảng cách thì câu sai vẫn có thể được tính đúng.`);
 foot();
 
 // 8 · Trần và sàn
@@ -282,7 +279,7 @@ note(`- Trần 75,7 là giới hạn của dụng cụ, không phải của ngô
 foot();
 
 // 9 · Kiểm tra thước
-newSlide('Executability','Thước phản ứng với nội dung câu');
+newSlide('Executability','Điểm giảm khi câu thiếu tên, chiều tăng giữ khi đổi bộ định vị');
 card(M,0.9,2.85,3.6,'Bỏ tên phần tử khỏi câu chuẩn',null,{tfs:14});
 addText('−28,5',{x:M,y:1.55,w:2.85,h:0.8,fontSize:30,bold:true,color:FOOTC,align:'center'});
 addText('điểm trên các bước bị tác động. Bỏ mô tả vị trí chỉ mất 3,5 điểm: gọi đúng tên quan trọng hơn chỉ chỗ.',{x:M+0.18,y:2.45,w:2.5,h:1.9,fontSize:12.5,valign:'top'});
@@ -296,9 +293,8 @@ addText('Phi-Ground và Phi-4 không thuộc họ Qwen.',{x:3.72,y:3.6,w:2.55,h:
 card(6.6,0.9,2.85,3.6,'Chấm lại nhiều lần',null,{tfs:14});
 addText('0',{x:6.6,y:1.55,w:2.85,h:0.8,fontSize:30,bold:true,color:FOOTC,align:'center'});
 addText('bất đồng trên 1.625 phép so, qua bốn lượt chấm khác thứ tự và cách gom lô.',{x:6.78,y:2.45,w:2.5,h:1.9,fontSize:12.5,valign:'top'});
-addText('Câu càng thiếu thông tin thì điểm càng thấp; chiều tăng của phương pháp giữ nguyên khi đổi bộ định vị.',{x:M,y:4.85,w:8.9,h:0.8,fontSize:14.5,bold:true,color:FOOTB,align:'center'});
 note(`- Mức số tuyệt đối khác nhau theo bộ định vị, nhưng phương pháp luôn cao hơn S1.
-- Thước tất định: cùng câu, cùng ảnh cho cùng toạ độ.`);
+- Độ đo tất định: cùng câu, cùng ảnh cho cùng toạ độ.`);
 foot();
 
 // 13 · Kết quả chính
@@ -412,7 +408,7 @@ addText('GRPO dẫn ba cột vị trí, SCST đứng thứ hai. PPO λ = 1 viế
 source('% trên 4.463 bước chạm. '+DAGGER+' Đậm: cao nhất trong các lượt RL.');
 note(`- Executability, D.3 và AitW là ba cách xác định câu có dẫn tới đúng phần tử; đúng loại thao tác chỉ xét động từ.
 - PPO chạy 1.000 bước cập nhật để đi hết cùng 1.000 câu nhắc.
-- Dr.GRPO chưa chạy xong, A2C mới thăm dò, nên chưa có trong bảng.`);
+- Dr.GRPO đầy đủ (22/11): executability 60,00, thấp hơn GRPO-SPICE từ S1 0,65 điểm; chưa chấm D.3, AitW và độ đo văn bản nên chưa đưa vào bảng. A2C mới thăm dò.`);
 foot();
 
 // 18 · Thuật toán: bảng văn bản
@@ -456,7 +452,7 @@ hbarChart(M,1.25,8.9,[
   {label:'Học thêm không RL',value:1.05,text:'60,16   +1,05',color:'A9A4B8'}
 ],{labelW:2.3,valueW:1.75,rowH:0.56,max:2.3,fs:13.5});
 rect(M,5.3,8.9,0.95,SOFT,{radius:0.06});
-addText('Khi điểm SPICE bị ghép ngẫu nhiên giữa các câu, mô hình không hơn S1 chút nào. Vậy mức tăng đến từ nội dung phần thưởng, không phải từ việc chạy thêm vòng lặp.',{x:M+0.2,y:5.3,w:8.5,h:0.95,fontSize:13.5,bold:true,color:FOOTB,valign:'mid'});
+addText('Khi điểm SPICE bị ghép ngẫu nhiên giữa các câu, mô hình bằng đúng S1 (59,11). Mức tăng đến từ nội dung phần thưởng chứ không do chạy thêm vòng lặp.',{x:M+0.2,y:5.3,w:8.5,h:0.95,fontSize:13.5,bold:true,color:FOOTB,valign:'mid'});
 source(DAGGER+' S1 = 59,11.');
 note(`- Hàng ghép ngẫu nhiên là phép kiểm quan trọng nhất: cùng vòng lặp GRPO, chỉ khác là phần thưởng không mang thông tin.
 - SPICE, ROUGE-L, METEOR, CIDEr-D có khoảng tin cậy chồng nhau; không viết SPICE là tốt nhất.`);
@@ -473,7 +469,7 @@ foot();
 // 21 · Phần thưởng: bảng văn bản
 newSlide('So sánh RL','Đổi phần thưởng: số theo độ đo văn bản');
 numTable(0.95,TXT_HEAD,[2.3,0.95,0.95,0.95,1.0,0.9,0.9,0.95],RW_TXT,{fs:12});
-addText('SPICE cao nhất ở ROUGE-L, CIDEr-D, SPICE, BERTScore và ngang ROUGE-L ở BLEU-4; SA-SPICE-v3 cao nhất ở METEOR và chrF.',{x:M,y:5.45,w:8.9,h:0.75,fontSize:13.5,bold:true,color:FOOTB});
+addText('Thưởng SPICE cao nhất ở ROUGE-L, CIDEr-D, SPICE, BERTScore, và bằng lượt thưởng ROUGE-L ở BLEU-4 (52,59). SA-SPICE-v3 cao nhất ở METEOR và chrF.',{x:M,y:5.45,w:8.9,h:0.75,fontSize:13.5,bold:true,color:FOOTB});
 source('Bộ chấm COCO, mức kho trên 4.463 bước chạm; BERTScore đã chuẩn hoá. '+DAGGER);
 note(`- Thưởng bằng CIDEr-D lại thấp ở chính CIDEr-D (424,52); đã kiểm cách tính IDF và tách từ, chưa giải thích được.`);
 foot();
@@ -503,14 +499,14 @@ newSlide('Kết luận','Hạn chế');
   card(M+(i%2)*4.55,0.95+Math.floor(i/2)*2.6,4.35,2.4,c[0],c[1],{tfs:15,fs:13.5,th:0.7});
 });
 note(`- Khai thẳng các hạn chế kèm số đo.
-- Hướng tiếp: thêm hạt giống, chữa bước không chạm, DPO trực tuyến.`);
+- Hướng tiếp: thêm hạt giống, chữa bước không chạm; DPO trực tuyến đã huấn luyện xong, đang chờ chấm.`);
 foot();
 
 // 19 · Kết luận
 newSlide('Kết luận','Kết luận');
 ['Executability chấm câu bằng việc làm theo, và phản ứng đúng với nội dung câu: trần 75,7, sàn 12,0.',
  'GRPO-SPICE đạt 60,65%, hơn S1 1,55 điểm [+0,80; +2,33]; ACE giữ mức đó và cải thiện cả bảy độ đo văn bản. Lượt GRPO + SPICE mới từ SFT tiếp đạt 60,88%.',
- 'Học tăng cường giúp nhờ nội dung phần thưởng. Các thuật toán và độ đo thưởng phổ biến cho mức tăng gần nhau; GRPO-SPICE thuộc nhóm dẫn đầu ở cả hai phép so.'].forEach((t,i)=>{
+ 'Học tăng cường có ích nhờ nội dung phần thưởng: ghép điểm ngẫu nhiên thì không tăng. Các thuật toán và độ đo thưởng phổ biến cho mức tăng gần nhau; GRPO-SPICE thuộc nhóm dẫn đầu ở cả hai phép so.'].forEach((t,i)=>{
   const y=1.0+i*1.6; rect(M,y,0.75,0.75,FOOTC,{radius:0.08});
   addText(String(i+1),{x:M,y,w:0.75,h:0.75,fontSize:22,bold:true,color:WHITE,align:'center',valign:'mid'});
   addText(t,{x:M+1.0,y:y-0.1,w:7.9,h:1.3,fontSize:16,valign:'mid'});

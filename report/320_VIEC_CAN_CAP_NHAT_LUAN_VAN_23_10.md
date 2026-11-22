@@ -1181,3 +1181,13 @@ Dr.GRPO (Liu và cộng sự 2025): bỏ chia độ lệch chuẩn trong lợi t
 - Phân rã so S1: sửa loại thao tác +22 bước (cứu 32 / phá 10, p = 0,001), đổi phần tử +18 (89 / 71, p = 0,18). ck500 tương ứng +28 và +41. ck500 − Dr.GRPO dồn ở phần tử (+23 bước, p = 0,028), loại thao tác chỉ +6 (p = 0,21). Câu trùng: Dr.GRPO = ck500 ở 3.518/4.463 câu.
 - Đọc: Dr.GRPO hơn S1 có ý nghĩa nhưng **thấp hơn ck500 và SCST**, ngang A/A và SFT tiếp ⇒ bỏ chuẩn hoá std/độ dài không giúp gì ở bài này. So công bằng nhất (cùng mã) là với A/A: +0,27, không ý nghĩa. Chưa chấm bước không chạm, D.3/AitW, độ đo văn bản (chờ kernel CPU sau 28/11).
 - Câu được viết: "Dr.GRPO đạt 60,00, ngang GRPO cùng mã, thấp hơn ck500 (−0,65, một seed)". Cấm: "Dr.GRPO tốt hơn GRPO".
+- **Độ đo văn bản (kernel CPU `trangphngngc/chu-drgrpo-22-11-cpu`, 22/11; `runs/luoi/20_11/chu_drgrpo/`; tự kiểm đạt: S1, ck500, SFT tiếp, A/A tái lập số đã lưu).** Dr.GRPO: BLEU-4 52,10 · METEOR 37,66 · ROUGE-L 68,24 · CIDEr-D 428,84 · SPICE 45,60 · chrF 62,56 · BERTScore 66,96.
+
+| phép so (4.463, B = 2.000) | BLEU-4 | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
+|---|---|---|---|---|---|---|
+| Dr.GRPO − ck500 | −0,27 [−0,70; +0,15] | −0,13 [−0,46; +0,20] | −1,21 [−5,24; +2,81] | −0,19 [−0,68; +0,31] | −0,31 [−0,66; +0,04] | −0,10 [−0,41; +0,19] |
+| Dr.GRPO − GRPO A/A | **−0,88 [−1,44; −0,02]** | −0,20 [−0,51; +0,10] | −2,07 [−6,15; +1,84] | −0,39 [−0,90; +0,09] | +0,17 [−0,19; +0,53] | −0,12 [−0,39; +0,14] |
+| Dr.GRPO − SFT tiếp | +0,03 | −0,31 | +3,05 | +0,28 | −0,08 | −0,09 | (mọi KTC phủ 0) |
+| Dr.GRPO − S1/101 | +0,54 [−0,01; +1,31] | +0,89 [+0,44; +1,34] | +12,73 [+7,30; +18,31] | +1,24 [+0,53; +1,90] | +1,30 [+0,80; +1,76] | +0,63 [+0,26; +1,02] |
+
+Đọc: trên độ đo văn bản Dr.GRPO ngang ck500 và SFT tiếp (mọi KTC phủ 0), thấp hơn A/A ở BLEU-4, hơn S1 ở 5/6 cột. Cùng hướng với exec: không hơn GRPO thường. Chưa chấm bước không chạm, D.3/AitW.

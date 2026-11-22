@@ -1,7 +1,7 @@
 \chapter{Phương pháp đề xuất}
 \label{chap:4}
 
-Chương này trình bày phương pháp đề xuất gồm hai thành phần nối tiếp. GRPO-SPICE học tiếp từ S1 để tối ưu trực tiếp câu hướng dẫn bằng phần thưởng SPICE. ACE sau đó hiệu chỉnh có chọn lọc câu sinh ra bằng các câu ví dụ truy hồi từ tập huấn luyện. Cuối chương trình bày mô hình xuất phát, các mốc so sánh và cấu hình tinh chỉnh của S1. Cách tính executability được trình bày ở Chương~\ref{chap:5}. Các hướng đã khảo sát trước phương pháp cuối cùng được trình bày ở Phụ lục~\ref{app:A}.
+Chương này trình bày phương pháp đề xuất gồm hai thành phần nối tiếp. GRPO-SPICE học tiếp từ S1 để tối ưu trực tiếp câu hướng dẫn bằng phần thưởng SPICE. ACE sau đó hiệu chỉnh có chọn lọc câu sinh ra bằng các câu ví dụ truy hồi từ tập huấn luyện. Cuối chương trình bày mô hình xuất phát, các mốc so sánh và cấu hình tinh chỉnh của S1. Cách tính executability nằm ở Chương~\ref{chap:5}, còn các hướng đã khảo sát trước phương pháp cuối cùng nằm ở Phụ lục~\ref{app:A}.
 
 \section{Quy trình tổng thể}\label{sec:4.1}\label{sec:4.4}
 
@@ -87,9 +87,9 @@ Trong thiết lập chính, phần “Đã làm” dùng câu chuẩn của các
 
 \textbf{Cơ sở lựa chọn.} GRPO-SPICE tối ưu trực tiếp câu hướng dẫn thay vì thông qua một biểu diễn trung gian. SPICE được dùng làm phần thưởng vì độ đo này tập trung vào nội dung ngữ nghĩa của câu, tương tự cách CIDEr hoặc SPIDEr từng được dùng làm phần thưởng trong sinh chú thích ảnh~\cite{scst,spider}.
 
-Trên tập kiểm định nội bộ, trong các câu S1 sinh cho cùng một bước, nhóm có điểm SPICE cao hơn cũng đạt executability cao hơn. Mối liên hệ này là cơ sở để dùng SPICE làm tín hiệu học cho GRPO trong thiết lập của đề tài. Phép so với phần thưởng CIDEr-D được trình bày ở Mục~\ref{sec:6.3}.
+Trên tập kiểm định nội bộ, trong các câu S1 sinh cho cùng một bước, nhóm có điểm SPICE cao hơn cũng đạt executability cao hơn. Mối liên hệ này là cơ sở để dùng SPICE làm tín hiệu học cho GRPO trong thiết lập của đề tài. Mục~\ref{sec:6.3} so sánh thêm với phần thưởng CIDEr-D.
 
-\textbf{Thiết kế.} GRPO-SPICE khởi tạo từ mô hình S1 với seed 101. Bộ chuyển đổi LoRA của S1 được hợp nhất vào mô hình, sau đó một LoRA mới cùng kích thước được thêm để học tiếp. Tháp thị giác được giữ cố định. S1 cũng được giữ cố định làm mô hình tham chiếu cho thành phần KL, giúp quá trình học không lệch quá xa mô hình xuất phát. Với câu sinh $s$ và câu chuẩn $g$, phần thưởng được tính như sau:
+\textbf{Thiết kế.} GRPO-SPICE khởi tạo từ mô hình S1 với seed 101. Bộ chuyển đổi LoRA của S1 được hợp nhất vào mô hình, sau đó thêm một LoRA mới cùng kích thước để học tiếp. Tháp thị giác giữ cố định. S1 cố định đóng vai mô hình tham chiếu cho thành phần KL, giúp quá trình học không lệch quá xa mô hình xuất phát. Với câu sinh $s$ và câu chuẩn $g$, phần thưởng được tính như sau:
 
 \begin{equation}
 r(s) = \operatorname{SPICE}(s,g) - 0{,}02 \cdot \max(0,\ |s|-|g|-3),
@@ -140,13 +140,13 @@ Huấn luyện kéo dài 500 bước cập nhật. Mỗi bước dùng hai promp
 
 \textbf{Chọn điểm lưu.} Trong hai mốc 250 và 500 bước, mô hình sau 500 bước đạt executability cao hơn trên tập kiểm định nội bộ và được chọn trước khi đánh giá trên tập kiểm tra.
 
-\textbf{Lượt huấn luyện thứ hai và nhánh kiểm soát.} Lượt GRPO-SPICE thứ hai vẫn khởi tạo từ S1 với seed 101 và giữ nguyên toàn bộ cấu hình, chỉ đổi seed của giai đoạn GRPO sang 202 để kiểm tra độ ổn định. Nhánh kiểm soát cũng giữ cùng điểm khởi tạo, số bước và siêu tham số, nhưng điểm SPICE được gán ngẫu nhiên cho các câu khác trong cùng nhóm. Cách thiết lập này giữ nguyên việc huấn luyện thêm nhưng làm mất liên hệ giữa từng câu sinh và điểm SPICE tương ứng, qua đó tách đóng góp của tín hiệu SPICE khỏi tác dụng của các bước cập nhật bổ sung (Mục~\ref{sec:6.3}, Mục~\ref{sec:6.7.2}).
+\textbf{Lượt huấn luyện thứ hai và nhánh kiểm soát.} Lượt GRPO-SPICE thứ hai vẫn khởi tạo từ S1 với seed 101 và giữ nguyên toàn bộ cấu hình, chỉ đổi seed của giai đoạn GRPO sang 202 để kiểm tra độ ổn định. Nhánh kiểm soát cũng giữ cùng điểm khởi tạo, số bước và siêu tham số, nhưng điểm SPICE được gán ngẫu nhiên cho các câu khác trong cùng nhóm. Như vậy, nhánh kiểm soát vẫn được huấn luyện thêm như GRPO-SPICE nhưng mất liên hệ giữa từng câu sinh và điểm SPICE của câu đó, nên tách được đóng góp của tín hiệu SPICE khỏi tác dụng của các bước cập nhật bổ sung (Mục~\ref{sec:6.3}, Mục~\ref{sec:6.7.2}).
 
 \section{Thành phần thứ hai: hiệu chỉnh bằng câu ví dụ nhất quán thao tác (ACE)}\label{sec:4.6}
 
 \textbf{Cơ sở lựa chọn.} Câu chuẩn của AndroidControl có nhiều khuôn diễn đạt lặp lại giữa các tác vụ (Mục~\ref{sec:3.6}). Với một số bước, câu của trường hợp tương tự trong tập huấn luyện đã là một hướng dẫn phù hợp cho màn hình hiện tại. ACE (\emph{Action-Consistent Exemplar Copying}) tận dụng đặc điểm này theo hướng có chọn lọc. GRPO-SPICE vẫn là câu mặc định, còn câu ứng viên chỉ được dùng khi trùng với một câu ví dụ đã truy hồi và giữ cùng loại thao tác. Cách thiết kế này hướng tới cải thiện cách diễn đạt mà vẫn bảo toàn quyết định thao tác của câu ban đầu.
 
-\textbf{Truy hồi câu ví dụ.} Kho truy hồi gồm các câu chuẩn trong tập huấn luyện (Mục~\ref{sec:3.5}) và chỉ sử dụng thông tin văn bản. Hai cách truy hồi được kết hợp. Cách thứ nhất tìm trực tiếp các bước có mục tiêu tác vụ và lịch sử gần với bước hiện tại, theo ý tưởng của SmallCap~\cite{smallcap}. Cách thứ hai trước hết tìm các tác vụ có mục tiêu tương tự, sau đó chọn bước có ngữ cảnh gần nhất trong từng tác vụ. Hai danh sách được gộp, loại câu trùng và giữ bốn câu ưu tiên nhất. Các câu xuất hiện ở cả hai cách hoặc có từ nội dung phù hợp với OCR của màn hình được ưu tiên.
+\textbf{Truy hồi câu ví dụ.} Kho truy hồi gồm các câu chuẩn trong tập huấn luyện (Mục~\ref{sec:3.5}) và chỉ sử dụng thông tin văn bản. Hai cách truy hồi được kết hợp. Cách thứ nhất tìm trực tiếp các bước có mục tiêu tác vụ và lịch sử gần với bước hiện tại, theo ý tưởng của SmallCap~\cite{smallcap}. Cách thứ hai trước hết tìm các tác vụ có mục tiêu tương tự, sau đó chọn bước có ngữ cảnh gần nhất trong từng tác vụ. Hai danh sách được gộp, loại câu trùng và giữ bốn câu ưu tiên nhất. Câu được ưu tiên là câu xuất hiện ở cả hai cách hoặc có từ nội dung phù hợp với OCR của màn hình.
 
 \textbf{Mô hình sinh câu ứng viên.} Mô hình sinh ứng viên khởi tạo từ GRPO-SPICE và được tinh chỉnh có giám sát thêm 250 bước với tốc độ học $2 \times 10^{-5}$ trên 3.991 bước ở Mục~\ref{sec:3.5}. Trong huấn luyện, số lượng và thứ tự câu ví dụ được thay đổi, đồng thời một phần prompt không có ví dụ hoặc dùng ví dụ ngẫu nhiên để mô hình vẫn dựa vào trạng thái giao diện thay vì chỉ sao chép. Tác vụ đang học cũng được loại khỏi kho truy hồi. Khi suy luận, mỗi prompt sử dụng bốn câu ví dụ. Một nhánh so sánh không dùng câu ví dụ được giữ lại để tách ảnh hưởng của truy hồi khỏi ảnh hưởng của việc học thêm.
 
@@ -154,7 +154,7 @@ Huấn luyện kéo dài 500 bước cập nhật. Mỗi bước dùng hai promp
 
 \begin{enumerate}
 \item \textbf{Trùng một câu ví dụ.} Sau khi tách từ, câu ứng viên phải giống hoàn toàn một trong bốn câu ví dụ được truy hồi.
-\item \textbf{Nhất quán loại thao tác.} Động từ đầu câu ứng viên và câu ban đầu phải thuộc cùng một lớp thao tác. Sáu lớp được sử dụng gồm chạm, nhấn giữ, nhập chữ, cuộn hoặc vuốt, mở ứng dụng và quay lại.
+\item \textbf{Nhất quán loại thao tác.} Động từ đầu câu ứng viên và câu ban đầu phải thuộc cùng một lớp thao tác. Có sáu lớp: chạm, nhấn giữ, nhập chữ, cuộn hoặc vuốt, mở ứng dụng và quay lại.
 \end{enumerate}
 
 Hình~\ref{fig:4.3} minh họa một trường hợp câu ứng viên được nhận và một trường hợp bị loại vì đổi loại thao tác.
@@ -192,13 +192,13 @@ Hình~\ref{fig:4.3} minh họa một trường hợp câu ứng viên được n
 \label{fig:4.3}
 \end{figure}
 
-\textbf{Chọn điều kiện.} Bốn biến thể được xây dựng từ trước bằng cách lần lượt bổ sung yêu cầu về loại thao tác và mức tương đồng nội dung với câu ban đầu. Trên tập kiểm định nội bộ, trước hết giữ các biến thể cao hơn GRPO-SPICE ở ít nhất bốn trong năm độ đo dựa trên câu chuẩn, sau đó chọn biến thể có executability cao nhất. Điều kiện được chọn được giữ cố định khi áp dụng lên tập kiểm tra.
+\textbf{Chọn điều kiện.} Bốn biến thể được xây dựng từ trước bằng cách lần lượt bổ sung yêu cầu về loại thao tác và mức tương đồng nội dung với câu ban đầu. Việc chọn trên tập kiểm định nội bộ gồm hai bước: giữ các biến thể cao hơn GRPO-SPICE ở ít nhất bốn trong năm độ đo dựa trên câu chuẩn, rồi lấy biến thể có executability cao nhất. Điều kiện đã chọn được giữ cố định khi áp dụng lên tập kiểm tra.
 
 \section{Mô hình so sánh và cấu hình của S1}\label{sec:4.7}\label{sec:4.3}\label{sec:4.8}
 
-Phương pháp được đặt cạnh bốn mốc chính. Base là Qwen2.5-VL-3B-Instruct~\cite{qwen25vl} chưa tinh chỉnh. Qwen2.5-VL-7B-Instruct cũng không tinh chỉnh và dùng cùng prompt với Base, cung cấp một mốc có kích thước mô hình lớn hơn. S1 là Base sau tinh chỉnh có giám sát để sinh trực tiếp câu hướng dẫn. S1 được huấn luyện với hai seed 101 và 202 để quan sát mức biến thiên khi lặp lại huấn luyện. S1 với seed 101 là điểm khởi tạo của GRPO-SPICE, do đó đây là mốc so sánh trực tiếp. Câu chuẩn được đưa qua cùng quy trình đánh giá để làm mốc diễn giải điểm số. Các nhánh bổ sung, gồm lượt GRPO-SPICE thứ hai, nhánh kiểm soát và nhánh so sánh của ACE, được dùng để phân tích sâu hơn ở Chương~\ref{chap:6}.
+Phương pháp được đặt cạnh bốn mốc chính. Base là Qwen2.5-VL-3B-Instruct~\cite{qwen25vl} chưa tinh chỉnh. Qwen2.5-VL-7B-Instruct cũng không tinh chỉnh và dùng cùng prompt với Base, làm mốc cho mô hình cỡ lớn hơn. S1 là Base sau tinh chỉnh có giám sát để sinh trực tiếp câu hướng dẫn. S1 được huấn luyện với hai seed 101 và 202 để quan sát mức biến thiên khi lặp lại huấn luyện. S1 với seed 101 là điểm khởi tạo của GRPO-SPICE nên là mốc so sánh trực tiếp. Câu chuẩn được đưa qua cùng quy trình đánh giá để làm mốc diễn giải điểm số. Các nhánh bổ sung, gồm lượt GRPO-SPICE thứ hai, nhánh kiểm soát và nhánh so sánh của ACE, được dùng để phân tích sâu hơn ở Chương~\ref{chap:6}.
 
-S1 được tinh chỉnh bằng QLoRA~\cite{lora,qlora} trên LLaMA-Factory~\cite{llamafactory}. Trọng số gốc được lượng tử hóa 4 bit và chỉ các tham số LoRA được cập nhật. Cấu hình chính được tóm tắt ở Bảng~\ref{tab:4.1}. GRPO-SPICE và mô hình sinh ứng viên của ACE dùng cấu hình học tiếp riêng đã trình bày ở Mục~\ref{sec:4.5} và Mục~\ref{sec:4.6}.
+S1 được tinh chỉnh bằng QLoRA~\cite{lora,qlora} trên LLaMA-Factory~\cite{llamafactory}. Trọng số gốc được lượng tử hóa 4 bit và chỉ các tham số LoRA được cập nhật. Bảng~\ref{tab:4.1} tóm tắt cấu hình chính. GRPO-SPICE và mô hình sinh ứng viên của ACE dùng cấu hình học tiếp riêng đã trình bày ở Mục~\ref{sec:4.5} và Mục~\ref{sec:4.6}.
 
 \begin{table}[htbp]
 \centering\small
@@ -223,4 +223,4 @@ Tham số huấn luyện được & 14.966.784 (0,48\% phần ngôn ngữ) \\
 \end{tabularx}
 \end{table}
 
-Cách so sánh thống kê giữa các mô hình, gồm chênh lệch ghép cặp, khoảng tin cậy 95\% và giá trị p, được trình bày ở Mục~\ref{sec:5.13}.
+Mục~\ref{sec:5.13} trình bày cách so sánh thống kê giữa các mô hình, gồm chênh lệch ghép cặp, khoảng tin cậy 95\% và giá trị p.

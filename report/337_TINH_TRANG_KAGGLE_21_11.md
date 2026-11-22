@@ -141,3 +141,10 @@ Chờ test (6 lượt xong train: Dr.GRPO, DPO trực tuyến, chrF, BLEU-4, SPI
 
 exec **60,00** · − ck500 **−0,65 [−1,11; −0,18]** p = 0,009 · − A/A +0,27 (ns) · − S1 +0,90 p = 0,006. Chi tiết report/320 §30, đã thêm vào `harness/bang_tong_hop.py` (report/334). Kịp đủ 4.463 bước trong trần 4,4 h (2,78 s/bước). Chưa chấm độ đo văn bản/không chạm.
 `luoi-b5-t2-3` (μ=2 + GSPO) vẫn RUNNING, dự kiến ~13:30.
+- 12:37 đẩy `trangphngngc/chu-drgrpo-22-11-cpu` (kernel CPU, không tốn giờ GPU): độ đo văn bản tập kiểm cho Dr.GRPO, kèm tính lại A/A để so cùng mã. Bundle `_bundles/chu_drgrpo_22_11/` (dataset `trangphngngc/chu-drgrpo-22-11`), script `chu_drgrpo_22_11.py` dựa trên `chu_match_17_11.py`; S1/ck500/SFT tiếp nạp cache điểm từng bước của chu-match-17-11 (đã chạy thử máy nhà: tái lập số đã lưu, ck500 − S1 SPICE +1,42). Ước ~1–1,5 h. Kết quả về `runs/luoi/20_11/chu_drgrpo/`.
+
+## 11. 22/11 ~17:20 — chu-drgrpo và b5-t2-3 COMPLETE
+
+- `chu-drgrpo-22-11-cpu`: độ đo văn bản Dr.GRPO xong, tự kiểm đạt; Dr.GRPO ngang ck500 ở cả 6 cột (KTC phủ 0), BLEU-4 thấp hơn A/A −0,88. Ghi report/320 §30, `bang_tong_hop.py`.
+- `luoi-b5-t2-3`: μ=2 và GSPO đều tới **ck750/1.000** (`[tiếp từ]` ck625 / ck600, `|lora_B| 0 → 10,10 / 14,31`). Thưởng μ=2 0,500 → 0,496 (KL TB/max 0,034/0,592), GSPO 0,496 → 0,485 (0,014/0,130) — cả hai không tăng. Còn 250 bước mỗi lượt (~8,5 h, sau 28/11, PREV=`trangphuongngoc/luoi-b5-t2-3`).
+- Tuần này hết việc GPU: uyenle ~0,5 h · trang 1,8 h · trang2 ~0 h.

@@ -388,6 +388,23 @@ skill khi mâu thuẫn (skill `soict-paper`, `vcl-fair-paper` mô tả giai đo�
   Claude: đọc tài liệu, không theo trí nhớ.
 - Sau thay đổi lớn: cập nhật report tương ứng, `HUONG_DA_THU.md`, và file này khi có quyết định mới.
 
+### ⭐ Soát giọng văn: tự chọn skill theo việc (user không gõ lệnh skill)
+
+User chỉ nhờ bằng lời thường ("sửa cho tự nhiên", "bớt giọng AI", "soát slide", "humanize"…). Trợ lý tự
+gọi skill bằng tool Skill theo bảng dưới, không chờ user gọi tên, và báo một dòng đã dùng skill nào.
+
+| việc | skill |
+|---|---|
+| slide, ghi chú thuyết trình, kịch bản nói **tiếng Việt** (`slides/build/*.js`, `KICH_BAN_*.md`) | `viet-nhu-nguoi` |
+| chương luận văn, report, văn xuôi **tiếng Việt** (`thesis/chapters/*.tex`, `report/*.md`) | `humanizer-vi`; câu dịch sát từ tiếng Anh thì thêm `translationese-cleaner-vi` |
+| văn **tiếng Anh**: deck và kịch bản SOICT/FAIR, bài báo `paper/` | `humanizer` |
+| email, tin nhắn tiếng Việt | `viet-nhu-nguoi` |
+
+- Luật văn phong trong file này (mục dưới) và memory `van-phong-luan-van` **thắng skill** khi mâu thuẫn.
+- Luôn giữ nguyên số liệu, KTC, tên nhánh, caveat; sau khi sửa so số trước/sau. Slide sinh từ script thì sửa
+  script rồi dựng lại, không sửa tay `KICH_BAN_*.md` tự sinh.
+- Script trong skill (`scan.py`, `check_facts.py`) bị chặn chạy ⇒ áp luật bằng tay, không xin lách.
+
 ### ⭐ Quy tắc văn phong luận văn (thắng cách gọi cũ trong ghi chú lịch sử)
 
 Áp cho toàn bộ `thesis/chapters/*.tex` (memory `van-phong-luan-van` có bảng thay từ đầy đủ):

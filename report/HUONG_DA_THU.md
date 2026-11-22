@@ -173,10 +173,10 @@ Số dưới đây là **log train**, không phải số test. Có số test th�
 
 | lượt | tới đâu (21/11) | thưởng train · KL | ghi chú |
 |---|---|---|---|
-| Dr.GRPO đầy đủ | **xong, có số test** | 0,467 → 0,520 · KL TB/max 0,014/0,095 | **exec 60,00; − ck500 −0,65 [−1,11; −0,18] p=0,009; − A/A +0,27 (ns); − S1 +0,90** (report/320 §30) |
+| Dr.GRPO đầy đủ | **xong, có số test** | 0,467 → 0,520 · KL TB/max 0,014/0,095 | **exec 60,00; − ck500 −0,65 [−1,11; −0,18] p=0,009; − A/A +0,27 (ns); − S1 +0,90**; độ đo văn bản ngang ck500 cả 6 cột (report/320 §30) |
 | DAPO (lấy mẫu động, eps 0,28) | ck400/500 | 0,465 → 0,486 · KL max 0,211 | nhóm hoà bị loại 20,8% |
-| GRPO μ=2 (2 lượt tối ưu mỗi lô sinh) | ck625/1.000 (phiên 3 `luoi-b5-t2-3` đang chạy) | phẳng 0,500 → 0,500 · **KL max 0,592** | |
-| GSPO (tỉ số mức chuỗi) | ck600/1.000 | **giảm** 0,496 → 0,455 · clip_ratio 0,19 → 0,36 | dấu hiệu xấu |
+| GRPO μ=2 (2 lượt tối ưu mỗi lô sinh) | ck750/1.000 (22/11) | phẳng 0,500 → 0,496 · **KL max 0,592** | |
+| GSPO (tỉ số mức chuỗi) | ck750/1.000 (22/11) | **giảm** 0,496 → 0,485 (đáy 0,455 ở ck600) · clip_ratio 0,19 → 0,36 | dấu hiệu xấu |
 | REINFORCE++ lô 64 | ck70/125 | 0,470 → 0,472 | OOM GPU lần đầu, sửa `--gen-chunk 4` |
 | DPO trực tuyến (best-vs-worst trong nhóm 8, β 0,1) | **xong ck500** (22/11) | 0,486 → 0,510 · margin 0,006 → 0,116 | thiết kế ở report/336 §3; chờ test |
 | GRPO + chrF / BLEU-4 / SPIDEr / BERTScore từ S1 | **xong ck500 cả bốn** (22/11) | chrF 0,591 → 0,708 (**KL max 0,923**) · BLEU-4 0,474 → 0,578 (KL max 0,311) · SPIDEr 0,464 → 0,547 (0,353) · BERTScore 0,646 → 0,716 (**0,496**) | chờ test |
