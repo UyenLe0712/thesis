@@ -27,11 +27,15 @@ Học viên: Lê Đoàn Phương Uyên · GVHD: TS. Nguyễn Hồng Bửu Long �
 
 | Đường dẫn | Là gì |
 |---|---|
-| `slides/LUAN_VAN_SLIDE.pptx` | **Deck đang dùng** — chỉ một file, sửa tại chỗ rồi build đè, đừng đẻ bản v11/v12 |
-| `slides/build/build_slide.js` | Script dựng deck (`cd slides/build && node build_slide.js`) |
-| `slides/build/_preview/preview.html` | Xem nhanh deck trên trình duyệt |
-| `slides/latex/` | Bản LaTeX/Beamer cùng nội dung |
+| `slides/LUAN_VAN_SLIDE_THUYET_TRINH.pptx` + `KICH_BAN_THUYET_TRINH.md` | Deck thuyết trình luận văn (`build/build_thuyet_trinh.js`) |
+| `slides/LUAN_VAN_SLIDE_TRINH_THAY_15_11.pptx` + `KICH_BAN_TRINH_THAY_15_11.md` | Deck trình thầy (`build/build_trinh_thay_15_11.js`) |
+| `slides/SOICT2026_SLIDE.pptx` + `KICH_BAN_SOICT_15_11.md` | Deck SOICT; script đọc lời nói từ kịch bản (`build/build_soict.js`) |
+| `slides/VCL2026_SLIDE_15_11.pptx` + `KICH_BAN_VCL_15_11.md` | Deck VCL (`build/build_vcl_15_11.js`) |
+| `slides/FAIR2026_SLIDE.pptx` + `KICH_BAN_FAIR.md` | Deck FAIR (`build/build_fair.js`, rồi `make_kichban_fair.py`) |
 | `slides/_reference/` | Mẫu style tham khảo |
+
+Deck cũ (bảo vệ 9/9, trình thầy 7/10, VCL 30/8, xin bảo vệ 22/10, Beamer v9) đã xoá 22/11; lấy lại bằng
+`git checkout <commit trước 22/11> -- slides/...`.
 
 ## Bên trong `report/`
 
@@ -58,7 +62,7 @@ cd paper/fair2026 && tectonic -X compile main.tex --outdir .   # -> main.pdf
 #   ⚠️ đúng lệnh này, và kiểm `ls -la main.pdf` xem mốc giờ trước khi tin số trang
 
 # Slide
-cd slides/build && node build_slide.js     # -> slides/LUAN_VAN_SLIDE.pptx
+cd slides/build && node build_thuyet_trinh.js     # -> slides/LUAN_VAN_SLIDE_THUYET_TRINH.pptx
 
 # Chấm lại một nhánh (không gọi lại bộ định vị nếu đã có tệp thô)
 python harness/score_run.py --mode score --grounder uground \

@@ -256,10 +256,11 @@ khỏi luận văn** (user 5/9, 14/9) nhưng hồ sơ giữ để tra. ⚠️ SH
 - Bài báo (ch8 luận văn liệt kê VCL + SOICT): **VCL2026** được chấp nhận, hội thảo HUFLIT **27/11/2026** ·
   **SOICT 2026** GUIStep (EasyChair #5577), oral, camera-ready đã nộp, poster A0 + chủ toạ phiên hạn 23/11 ·
   **FAIR'2026** (EDAS #276) có deck `FAIR2026_SLIDE.pptx`. Chi tiết ở README từng bài và memory.
-- Deck trong `slides/` (mỗi deck có `KICH_BAN_*.md` đi kèm, sinh từ `slides/build/`): trình thầy
-  `LUAN_VAN_SLIDE_TRINH_THAY_15_11.pptx` · xin bảo vệ `LUAN_VAN_SLIDE_XIN_BAO_VE.pptx` · thuyết trình
-  `LUAN_VAN_SLIDE_THUYET_TRINH.pptx` · bảo vệ cũ `LUAN_VAN_SLIDE_BAOCAO.pptx` · VCL `VCL2026_SLIDE_15_11.pptx` ·
-  SOICT · FAIR. Kịch bản sinh tự động thì sửa lời trong script rồi dựng lại, đừng sửa tay. Slide không xưng
+- Deck trong `slides/` (mỗi deck có `KICH_BAN_*.md` đi kèm, sinh từ `slides/build/`): thuyết trình
+  `LUAN_VAN_SLIDE_THUYET_TRINH.pptx` · trình thầy `LUAN_VAN_SLIDE_TRINH_THAY_15_11.pptx` · VCL
+  `VCL2026_SLIDE_15_11.pptx` · SOICT · FAIR. Deck cũ (bảo vệ 9/9, trình thầy 7/10, VCL 30/8, xin bảo vệ 22/10,
+  Beamer) xoá 22/11, còn trong lịch sử git. Deck SOICT: script đọc lời nói từ `KICH_BAN_SOICT_15_11.md` (sửa
+  kịch bản đó là đúng chỗ). Xem ảnh slide: PowerPoint qua COM từ `powershell.exe` (máy không có LibreOffice). Kịch bản sinh tự động thì sửa lời trong script rồi dựng lại, đừng sửa tay. Slide không xưng
   "em / thầy cô / hội đồng"; notes là gạch ý ngắn.
 
 ### ⛔ Lệnh dựng LaTeX

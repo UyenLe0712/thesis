@@ -18,11 +18,11 @@ leaving 5 to 6 minutes for questions. If you run late, skip slide 11 (one senten
  1  Title
  2  Task: write the next step for a person          (one example)
  3  Three contributions                            (what the audience should remember)
- 4  Every training signal comes from existing records (flow + declaration)
+ 4  Training data comes from existing records  (flow + declaration)
  5  Three versions of GUIStep, plus a control      (S / D / P / control)
  6  Word overlap cannot judge these sentences      (why a new score)
- 7  Executability: a model follows the sentence, we check where it taps
- 8  The score tells good from bad, across listeners (ceiling, floor, other listeners, rewording)
+ 7  Executability: a model follows the sentence
+ 8  The score separates good and bad sentences (ceiling, floor, other listeners, rewording)
  9  Main results: +13.0, above a prompted 7B
 10  Most of the gain comes from learning the sentence
 11  The gain holds on sentences never seen in training
@@ -104,9 +104,9 @@ this screen. Our model writes "Click on the sort by option", the same chip as th
 
 ## Slide 3 · Three contributions (~35 s)
 
-**On the slide:** 1 Method: a compact 3B model trained only from existing GUI records, no new labels ·
-2 Evaluation: executability, a validated listener-based score · 3 Results: +13.0 over the backbone, above a
-prompted 7B model.
+**On the slide:** 1 Method: a 3B model trained only on what GUI datasets already record; 2 Evaluation:
+executability, which checks whether someone can follow the sentence; 3 Results: +13.0 over the untuned
+backbone and above a prompted 7B model.
 
 **Say:**
 *First, a method:* a compact 3B model trained only on what GUI datasets already record. We add no new
@@ -120,10 +120,11 @@ better than a prompted model more than twice its size.
 
 ---
 
-## Slide 4 · GUIStep: every training signal comes from existing records (~35 s)
+## Slide 4 · Training data comes from existing records (~35 s)
 
-**On the slide:** flow recorded step → training targets → Qwen2.5-VL-3B + QLoRA; "no new labels · none of it
-specific to AndroidControl"; declaration example with labels role · name · position · nearby text.
+**On the slide:** flow recorded step → training targets → Qwen2.5-VL-3B + QLoRA; "We add no labels. Other GUI
+datasets record the same fields."; the declaration split into four boxes labelled role, name, position,
+nearby text.
 
 **Say:**
 *All our training data comes from recorded demonstrations.* Each recorded step stores the human
@@ -172,11 +173,12 @@ chance at telling the same element from a different one.
 
 ---
 
-## Slide 7 · Executability: a model follows the sentence, we check where it taps (~55 s)
+## Slide 7 · Executability: a model follows the sentence (~55 s)
 
-**On the slide:** the flight screen from slide 2 with the tapped element circled · 1 the listener reads
-screenshot + sentence · 2 it taps one point, never sees the answer · 3 three checks (right action · same
-meaning · point inside the element the user tapped) · Executability = % of test steps that pass all three.
+**On the slide:** the flight screen from slide 2, red circle on the element the user tapped; 1 the listener
+gets the screenshot and the sentence; 2 it taps one point without seeing the answer; 3 three checks (right
+action, same meaning, point inside the element the user tapped); Executability = share of test steps that
+pass all three checks.
 
 **Say:**
 *The idea comes from referring expression generation: a description is good if a listener can find
@@ -194,7 +196,7 @@ user actually tapped. Executability is the share of test steps that pass all thr
 
 ---
 
-## Slide 8 · The score tells good sentences from bad ones, across listeners (~50 s)
+## Slide 8 · The score separates good and bad sentences (~50 s)
 
 **Say:**
 *The score separates good sentences from bad ones.* Human references score 83.8. "Tap the button",
@@ -233,8 +235,8 @@ far less than thirteen.
 
 ## Slide 10 · Most of the gain comes from learning the sentence (~55 s)
 
-**On the slide:** step chart backbone 53.6 → GUIStep-S 65.5 (+11.9) → GUIStep-P 66.5;
-two lines: sentence supervision brings most of the gain · preference adds +0.52 over a matched control
+**On the slide:** step chart backbone 53.6 → GUIStep-S 65.5 (+11.9) → GUIStep-P 66.5; two cards: over 90%
+of the +13.0 gain is already in GUIStep-S; the preference objective adds +0.52 over the matched control
 (p = 0.043).
 
 **Say:**
@@ -266,6 +268,10 @@ still 8.4 points, and copying a training sentence word for word cannot explain t
 ---
 
 ## Slide 12 · Conclusion (~40 s)
+
+**On the slide:** three rows: 0 new labels; 83.8 vs 14.1 (executability separates human references from a
+generic sentence and holds under other listeners and a stricter rule); +13.0 (over 90% of it from learning
+the sentence). Next: a second dataset, a human study, rewards that act on the sentence.
 
 **Say:**
 To sum up. The records already in GUI datasets are enough to train a compact 3B model that writes

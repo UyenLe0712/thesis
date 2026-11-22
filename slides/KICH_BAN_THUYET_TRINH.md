@@ -6,7 +6,7 @@
 - Chào hội đồng, giới thiệu đề tài, học viên, giáo viên hướng dẫn.
 
 ## Slide 2
-- Sáu phần. Độ đo executability trình bày ngay trước kết quả, vì mọi con số kết quả đều đọc bằng nó.
+- Bảy phần. Độ đo executability trình bày ngay trước kết quả, vì mọi con số kết quả đều đọc bằng nó.
 
 ## Slide 3
 - Mô hình nhìn màn hình, biết mục tiêu và các bước đã làm, viết câu cho bước kế tiếp.

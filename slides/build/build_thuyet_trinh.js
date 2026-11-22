@@ -53,7 +53,7 @@ function newSlide(section,topic=''){
 }
 function bullets(items,x,y,w,o={}){ const gap=o.gap||0.88; items.forEach((it,i)=>{ const yy=y+i*gap; slide.addShape(pptx.ShapeType.ellipse,{x:x+0.02,y:yy+0.15,w:0.07,h:0.07,fill:{color:o.dot||ACCENT},line:{color:o.dot||ACCENT,transparency:100}}); addText(it,{x:x+0.23,y:yy,w:w-0.23,h:o.h||0.72,fontSize:o.fs||BODY_FS,color:o.color||INK,fit:'shrink',valign:'top',lineSpacingMultiple:1.25}); }); }
 function box(x,y,w,h,t,o={}){ rect(x,y,w,h,o.fill||WHITE,{radius:o.radius||0,line:o.line||ACCENT2,lw:o.lw||1}); addText(t,{x,y,w,h,fontSize:o.fs||BODY_FS,bold:o.bold,color:o.color||INK,align:'center',valign:'mid',fit:'shrink'}); }
-function source(t){ addText(t,{x:M,y:6.92,w:W-2*M,h:0.15,fontSize:8,italic:true,color:GREY,align:'right'}); }
+function source(t){ addText(t,{x:M,y:6.92,w:W-2*M,h:0.15,fontSize:8.5,color:GREY,align:'left'}); }
 function metricBadge(x,y,w,value,label,color=ACCENT){ addText(value,{x,y,w,h:0.55,fontSize:24,bold:true,color,align:'center',valign:'mid'}); addText(label,{x,y:y+0.58,w,h:0.52,fontSize:SMALL_FS,color:INK,align:'center',valign:'mid',fit:'shrink'}); }
 function hbarChart(x,y,w,items,o={}){
   const labelW=o.labelW||2.15, valueW=o.valueW||0.92, gap=o.gap||0.16;
@@ -67,7 +67,7 @@ function hbarChart(x,y,w,items,o={}){
     addText(d.text||String(d.value),{x:barX+barW+gap,y:yy-0.02,w:valueW,h:0.42,fontSize:o.fs||13.6,bold:d.bold||false,color:d.color||ACCENT,align:'right',valign:'mid',fit:'shrink'});
   });
 }
-function table(x,y,colW,rows,o={}){ let yy=y; rows.forEach(r=>{ const h=r.h||0.48; if(r.fill) rect(x,yy,colW.reduce((a,b)=>a+b,0),h,r.fill); let xx=x; r.cells.forEach((c,i)=>{ const cell=typeof c==='string'?{t:c}:c; if(cell.fill) rect(xx,yy,colW[i],h,cell.fill); addText(cell.t,{x:xx,y:yy,w:colW[i],h,fontSize:cell.fs||r.fs||o.fs||TABLE_FS,bold:cell.bold!=null?cell.bold:r.bold,color:cell.color||r.color||INK,align:cell.align||(o.align&&o.align[i])||'left',valign:'mid',fit:'shrink',italic:cell.italic}); xx += colW[i]; }); if(r.rule) line(x,yy+h,colW.reduce((a,b)=>a+b,0),0,r.rule===true?RULE:r.rule,1); yy += h; }); }
+function table(x,y,colW,rows,o={}){ let yy=y; rows.forEach(r=>{ const h=r.h||0.48; if(r.fill) rect(x,yy,colW.reduce((a,b)=>a+b,0),h,r.fill); let xx=x; r.cells.forEach((c,i)=>{ const cell=typeof c==='string'?{t:c}:c; if(cell.fill) rect(xx,yy,colW[i],h,cell.fill); addText(cell.t,{x:xx,y:yy,w:colW[i],h,fontSize:cell.fs||r.fs||o.fs||TABLE_FS,bold:cell.bold!=null?cell.bold:r.bold,color:cell.color||r.color||INK,align:cell.align||(o.align&&o.align[i])||'left',valign:'mid',fit:'shrink'}); xx += colW[i]; }); if(r.rule) line(x,yy+h,colW.reduce((a,b)=>a+b,0),0,r.rule===true?RULE:r.rule,1); yy += h; }); }
 
 // ===== Bổ sung cho deck trình thầy 15/11 =====
 const fs = require('fs');
@@ -93,7 +93,7 @@ function forest(x,y,w,rows,o={}){
   rows.forEach((r,i)=>{
     const yy=top+i*rowH, cy=yy+rowH/2, c=r.color||FOOTC;
     if(r.fill) rect(x,yy+0.03,w,rowH-0.06,r.fill);
-    addText(r.label,{x:x+0.08,y:yy,w:labelW-0.08,h:rowH,fontSize:o.fs||13,bold:!!r.bold,italic:!!r.italic,color:r.italic?GREY:INK,valign:'mid',fit:'shrink'});
+    addText(r.label,{x:x+0.08,y:yy,w:labelW-0.08,h:rowH,fontSize:o.fs||13,bold:!!r.bold,color:r.italic?GREY:INK,valign:'mid',fit:'shrink'});
     line(X(r.lo),cy,X(r.hi)-X(r.lo),0,c,2.25);
     slide.addShape(pptx.ShapeType.ellipse,{x:X(r.d)-0.085,y:cy-0.085,w:0.17,h:0.17,fill:{color:c},line:{color:WHITE,width:1}});
     addText(`${vn(r.d)} [${vn(r.lo)}; ${vn(r.hi)}]`,{x:x+w-valW,y:yy,w:valW,h:rowH,fontSize:(o.fs||13)-1,bold:!!r.bold,color:r.italic?GREY:c,align:'right',valign:'mid'});
@@ -124,19 +124,19 @@ foot();
 
 // 2 · Mục lục
 newSlide('Nội dung');
-const ML=['Bài toán và dữ liệu','Phương pháp đề xuất: GRPO-SPICE và ACE','Độ đo executability','Kết quả trên tập kiểm tra','So sánh các thuật toán học tăng cường và các phần thưởng','Hạn chế và kết luận'];
-ML.forEach((t,i)=>{ const y=1.15+i*0.88; rect(1.1,y,0.62,0.62,i%2?FOOTC:FOOTB,{radius:0.08}); addText(String(i+1),{x:1.1,y,w:0.62,h:0.62,fontSize:20,bold:true,color:WHITE,align:'center',valign:'mid'}); addText(t,{x:2.0,y,w:7.0,h:0.62,fontSize:18,color:INK,valign:'mid'}); });
-note(`- Sáu phần. Độ đo executability trình bày ngay trước kết quả, vì mọi con số kết quả đều đọc bằng nó.`);
+const ML=['Bài toán','Dữ liệu','Phương pháp đề xuất: GRPO-SPICE và ACE','Độ đo executability','Kết quả trên tập kiểm tra','So sánh các thuật toán học tăng cường và các phần thưởng','Hạn chế và kết luận'];
+ML.forEach((t,i)=>{ const y=0.95+i*0.84; rect(1.1,y,0.62,0.62,FOOTB,{radius:0.08}); addText(String(i+1),{x:1.1,y,w:0.62,h:0.62,fontSize:20,bold:true,color:WHITE,align:'center',valign:'mid'}); addText(t,{x:2.0,y,w:7.0,h:0.62,fontSize:18,color:INK,valign:'mid'}); });
+note(`- Bảy phần. Độ đo executability trình bày ngay trước kết quả, vì mọi con số kết quả đều đọc bằng nó.`);
 foot();
 
 // 3 · Bài toán
 newSlide('Giới thiệu','Bài toán');
 addText('Sinh một câu hướng dẫn cho bước tiếp theo trên màn hình di động.',{x:M,y:0.88,w:6.2,h:0.7,fontSize:17,bold:true,color:FOOTB,fit:'shrink'});
 addText([{text:'Đầu vào. ',options:{bold:true,color:FOOTB}},{text:'Mục tiêu của tác vụ, các bước đã làm, ảnh chụp màn hình hiện tại và văn bản hiển thị trên giao diện.'}],{x:M,y:1.75,w:6.0,h:1.1,fontSize:15,valign:'top'});
-addText([{text:'Kết quả. ',options:{bold:true,color:FOOTB}},{text:'Một câu nêu thao tác cần làm và phần tử cần tương tác, ví dụ “Tap Not now”.'}],{x:M,y:2.95,w:6.0,h:0.9,fontSize:15,valign:'top'});
+addText([{text:'Kết quả. ',options:{bold:true,color:FOOTB}},{text:'Một câu nêu thao tác cần làm và phần tử cần tương tác, ví dụ “Click on the Not now button”.'}],{x:M,y:2.95,w:6.0,h:0.9,fontSize:15,valign:'top'});
 rect(M,4.15,6.0,1.25,SOFT,{radius:0.06});
-addText('Khác với tác tử giao diện: đầu ra là câu cho người dùng đọc, không phải toạ độ để hệ thống tự bấm.',{x:M+0.2,y:4.2,w:5.6,h:1.15,fontSize:14.5,color:INK,valign:'mid'});
-addText('Vòng vàng trong ảnh: phần tử người dùng đã chạm ở bước này.',{x:M,y:5.7,w:6.0,h:0.5,fontSize:12,italic:true,color:GREY});
+addText('Tác tử giao diện đọc câu rồi tự bấm. Bài toán này đi theo chiều ngược lại: mô hình viết câu để người dùng đọc và tự làm.',{x:M+0.2,y:4.2,w:5.6,h:1.15,fontSize:14.5,color:INK,valign:'mid'});
+addText('Ảnh: một bước thật trong tập kiểm tra. Vòng vàng là phần tử người dùng đã chạm (nút Bin).',{x:M,y:5.7,w:6.0,h:0.5,fontSize:12,color:GREY});
 imgFit(path.join(FIG,'fig_bai_toan_anh.png'),1080,2160,6.85,0.82,2.7,6.2);
 note(`- Mô hình nhìn màn hình, biết mục tiêu và các bước đã làm, viết câu cho bước kế tiếp.
 - Ảnh: một bước thật trong tập kiểm tra, người dùng chạm nút Bin.`);
@@ -145,9 +145,9 @@ foot();
 // 4 · Vấn đề
 newSlide('Giới thiệu','BLEU và SPICE không kiểm được câu có chỉ đúng phần tử');
 rect(1.0,1.2,8.0,1.6,FOOTB,{radius:0.08});
-addText('“Tap the button.”',{x:1.0,y:1.2,w:8.0,h:1.6,fontSize:34,bold:true,italic:true,color:WHITE,align:'center',valign:'mid'});
-addText('Câu đúng ngữ pháp, nghe tự nhiên, nhưng trên màn hình có mười nút thì người đọc không biết bấm nút nào.',{x:1.0,y:3.2,w:8.0,h:0.9,fontSize:16,align:'center',valign:'mid'});
-addText('BLEU hay SPICE chỉ so câu chữ với câu chuẩn. Muốn biết câu có dẫn tới đúng phần tử thì phải chấm bằng cách làm theo câu.',{x:1.0,y:4.35,w:8.0,h:0.9,fontSize:16,bold:true,color:FOOTC,align:'center',valign:'mid'});
+addText('“Tap the button.”',{x:1.0,y:1.2,w:8.0,h:1.6,fontSize:34,bold:true,color:WHITE,align:'center',valign:'mid'});
+addText('Câu đúng ngữ pháp, nghe tự nhiên, nhưng màn hình có nhiều nút thì người đọc không biết bấm nút nào.',{x:1.0,y:3.2,w:8.0,h:0.9,fontSize:16,valign:'mid'});
+addText('BLEU hay SPICE chỉ so câu chữ với câu chuẩn. Muốn biết câu có dẫn tới đúng phần tử thì phải chấm bằng cách làm theo câu.',{x:1.0,y:4.35,w:8.0,h:0.9,fontSize:16,bold:true,color:FOOTC,valign:'mid'});
 note(`- Câu không chỉ ra phần tử nào vẫn có thể được BLEU/SPICE cho điểm khá.
 - Từ đây dẫn sang executability.`);
 foot();
@@ -172,15 +172,15 @@ foot();
 // 10 · Phương pháp
 newSlide('Phương pháp đề xuất');
 const PP=[['S1\nQwen2.5-VL-3B\ntinh chỉnh có giám sát',WHITE,INK],['GRPO-SPICE\nhọc tăng cường,\nthưởng SPICE',FOOTC,WHITE],['ACE\nthay câu có chọn lọc\nbằng câu ví dụ',FOOTC,WHITE],['Câu\nhướng dẫn',WHITE,INK]];
-PP.forEach((f,i)=>{ const x=0.45+i*2.42; box(x,1.6,1.9,1.7,f[0],{fill:f[1],color:f[2],line:FOOTB,fs:13.5,bold:true,radius:0.06}); if(i<3) arrow(x+1.94,2.45,0.44); });
-rect(M,4.0,8.9,1.2,SOFT,{radius:0.06});
-addText('Mô hình định vị dùng để chấm điểm (phần sau) không có trong phần thưởng. Nhờ vậy mô hình sinh không học cách chiều theo đúng dụng cụ dùng để đánh giá nó.',{x:M+0.2,y:4.0,w:8.5,h:1.2,fontSize:14.5,valign:'mid'});
+PP.forEach((f,i)=>{ const x=0.45+i*2.42; box(x,1.2,1.9,1.7,f[0],{fill:f[1],color:f[2],line:FOOTB,fs:13.5,bold:true,radius:0.06}); if(i<3) arrow(x+1.94,2.05,0.44); });
+rect(M,3.5,8.9,1.2,SOFT,{radius:0.06});
+addText('Phần thưởng không dùng UGround, mô hình định vị chấm điểm ở phần sau. Vì vậy mô hình sinh không được tối ưu thẳng theo dụng cụ dùng để đánh giá nó.',{x:M+0.2,y:3.5,w:8.5,h:1.2,fontSize:14.5,valign:'mid'});
 note(`- S1 là nền chung của mọi nhánh, huấn luyện bằng QLoRA.
 - GRPO-SPICE sinh câu ban đầu; ACE chỉ thay câu ở một phần nhỏ số bước.`);
 foot();
 
 // 10b · SPICE là gì
-newSlide('Phương pháp đề xuất','SPICE chấm câu theo nội dung, không theo chữ trùng');
+newSlide('Phương pháp đề xuất','SPICE so nội dung câu với câu chuẩn');
 addText('SPICE (Anderson và cộng sự, ECCV 2016) chấm một câu bằng cách so nội dung của nó với câu chuẩn: câu nhắc tới những đối tượng nào, đối tượng có đặc điểm gì, và liên hệ với nhau ra sao.',{x:M,y:0.85,w:8.9,h:0.95,fontSize:14.5,color:FOOTB});
 const SP=[['1. Tách câu','thành các bộ: đối tượng, thuộc tính, quan hệ'],['2. Làm như vậy','với câu chuẩn của người chú thích'],['3. Đếm số bộ khớp','giữa hai câu, rồi tính điểm F1']];
 SP.forEach((f,i)=>{ const x=0.45+i*3.12; box(x,2.0,2.6,1.25,f[0]+'\n'+f[1],{fill:i===2?FOOTC:WHITE,color:i===2?WHITE:INK,line:FOOTB,fs:13,bold:true,radius:0.06}); if(i<2) arrow(x+2.64,2.62,0.44); });
@@ -211,11 +211,11 @@ foot();
 
 // 11 · GRPO-SPICE
 newSlide('Phương pháp đề xuất','GRPO-SPICE');
-bullets(['Với mỗi câu nhắc, mô hình viết tám câu.','Mỗi câu được chấm SPICE so với câu chuẩn, trừ một khoản phạt độ dài.','Câu cao hơn trung bình nhóm được khuyến khích, thấp hơn thì bị giảm.','Phạt KL giữ mô hình không đi quá xa S1.'],M,1.0,4.6,{gap:0.95,fs:14.5,h:0.85});
-rect(5.4,0.95,4.05,4.0,SOFT,{radius:0.06});
+bullets(['Với mỗi câu nhắc, mô hình viết tám câu.','Mỗi câu được chấm SPICE so với câu chuẩn, trừ một khoản phạt độ dài.','Câu có điểm cao hơn trung bình nhóm được tăng xác suất, câu thấp hơn bị giảm.','Phạt KL giữ mô hình không đi quá xa S1.'],M,1.0,4.6,{gap:0.95,fs:14.5,h:0.85});
+rect(5.4,0.95,4.05,2.75,SOFT,{radius:0.06});
 addText('Thiết lập',{x:5.6,y:1.05,w:3.7,h:0.4,fontSize:15,bold:true,color:FOOTB});
 addText('r = SPICE(câu, câu chuẩn) − 0,02 × phạt độ dài',{x:5.6,y:1.55,w:3.7,h:0.7,fontSize:13,bold:true,color:FOOTC});
-addText('500 bước cập nhật · 1.000 câu nhắc\n8 câu mỗi nhóm · hệ số KL 0,04\ntốc độ học 1e-5',{x:5.6,y:2.3,w:3.7,h:1.1,fontSize:12.5});
+addText('500 bước cập nhật, 1.000 câu nhắc\n8 câu mỗi nhóm, hệ số KL 0,04\ntốc độ học 1e-5',{x:5.6,y:2.3,w:3.7,h:1.1,fontSize:12.5});
 addText('Tiền lệ dùng độ đo làm phần thưởng: SCST (Rennie và cộng sự, CVPR 2017) và SPIDEr (Liu và cộng sự, ICCV 2017).',{x:M,y:5.35,w:8.9,h:0.7,fontSize:13,color:GREY});
 note(`- GRPO không cần mô hình giá trị: mốc so là trung bình của chính nhóm tám câu.
 - Không nhận điểm mới ở thuật toán hay ở việc chọn SPICE; điểm mới là áp vào bài toán này và đánh giá bằng executability.`);
@@ -223,7 +223,7 @@ foot();
 
 // 12 · ACE
 newSlide('Phương pháp đề xuất','ACE');
-addText('Nhiều tác vụ lặp lại với thay đổi nhỏ, nên câu chuẩn của một bước cũ đôi khi dùng được nguyên văn.',{x:M,y:0.9,w:8.9,h:0.7,fontSize:15,color:FOOTB,align:'center'});
+addText('Nhiều tác vụ lặp lại với thay đổi nhỏ, nên câu chuẩn của một bước cũ đôi khi dùng được nguyên văn.',{x:M,y:0.9,w:8.9,h:0.7,fontSize:15,color:FOOTB});
 box(0.45,1.95,2.3,1.5,'Truy hồi bốn bước\ngiống nhất trong\ntập huấn luyện',{fill:WHITE,line:FOOTB,fs:13,bold:true,radius:0.06});
 arrow(2.8,2.7,0.4);
 box(3.25,1.95,2.3,1.5,'Bộ sinh xem\nbốn câu ví dụ,\nviết câu ứng viên',{fill:WHITE,line:FOOTB,fs:13,bold:true,radius:0.06});
@@ -237,7 +237,7 @@ foot();
 
 // 6 · Executability
 newSlide('Executability');
-addText('Đưa câu cho một “người lạ” chỉ nhìn màn hình và làm theo, rồi xem người đó bấm vào đâu.',{x:M,y:0.9,w:8.9,h:0.6,fontSize:16,bold:true,color:FOOTB,align:'center',fit:'shrink'});
+addText('Đưa câu cho một “người lạ” chỉ nhìn màn hình và làm theo, rồi xem người đó bấm vào đâu.',{x:M,y:0.9,w:8.9,h:0.6,fontSize:16,bold:true,color:FOOTB,fit:'shrink'});
 const FL=[['Câu mô hình viết\n+ ảnh màn hình',WHITE,INK],['UGround\nmô hình định vị,\nkhông biết đáp án',FOOTC,WHITE],['Một điểm chạm\ntrên màn hình',WHITE,INK],['So với điểm\nngười dùng\nchạm thật',WHITE,INK]];
 FL.forEach((f,i)=>{ const x=0.45+i*2.42; box(x,2.0,1.9,1.5,f[0],{fill:f[1],color:f[2],line:FOOTB,fs:13.5,bold:true,radius:0.06}); if(i<3) arrow(x+1.94,2.75,0.44); });
 rect(M,4.1,8.9,0.95,SOFT,{radius:0.06});
@@ -262,10 +262,10 @@ note(`- Hai ô Birthday và Gender chỉ cách nhau một hàng: chỉ đo kho�
 foot();
 
 // 8 · Trần và sàn
-newSlide('Executability','Thang đo có trần và sàn');
+newSlide('Executability','Câu chuẩn đạt 75,7, câu của màn hình khác chỉ 6,1');
 hbarChart(M,1.05,8.9,[
   {label:'Câu chuẩn (trần)',value:75.7,text:'75,7',color:FOOTB,bold:true},
-  {label:'GRPO-SPICE từ SFT tiếp (17/11)',value:60.88,text:'60,9',color:FOOTC,bold:true},
+  {label:'GRPO-SPICE từ SFT tiếp',value:60.88,text:'60,9',color:FOOTC,bold:true},
   {label:'GRPO-SPICE (đề xuất)',value:60.65,text:'60,7',color:FOOTC,bold:true},
   {label:'S1 (tinh chỉnh có giám sát)',value:59.11,text:'59,1',color:FOOTD},
   {label:'Mô hình gốc',value:47.59,text:'47,6',color:FOOTD},
@@ -307,11 +307,11 @@ table(0.6,0.95,[3.3,1.85,1.95,1.7],[
   {cells:['SFT tiếp (S1 học thêm, không RL)','60,16','66,64','75,71'],h:0.42,rule:true},
   {cells:['GRPO-SPICE (từ S1)','60,65','67,02','76,25'],h:0.42,rule:true,fill:HL,bold:true,color:FOOTB},
   {cells:['GRPO-SPICE + ACE','60,68','67,11','76,32'],h:0.42,rule:true,fill:HL,bold:true,color:FOOTB},
-  {cells:['GRPO-SPICE (từ SFT tiếp, 17/11)','60,88','67,38','76,92'],h:0.42,fill:HL,bold:true,color:FOOTC}
+  {cells:['GRPO-SPICE (từ SFT tiếp)','60,88','67,38','76,92'],h:0.42,fill:HL,bold:true,color:FOOTC}
 ],{align:['left','center','center','center'],fs:13});
 card(M,4.55,2.85,2.15,'GRPO-SPICE − S1: +1,55','KTC 95% [+0,80; +2,33], không chứa 0. Hai tiêu chí vị trí còn lại tăng cùng cỡ.',{tfs:14,fs:12,fill:HL});
-card(3.57,4.55,2.85,2.15,'Lượt mới − S1: +1,77','KTC [+1,13; +2,44]. So với chính điểm xuất phát SFT tiếp: +0,72 [+0,24; +1,20].',{tfs:14,fs:12,fill:HL});
-card(6.6,4.55,2.85,2.15,'ACE: executability giữ nguyên','Cả bảy độ đo văn bản tăng thêm, ví dụ CIDEr-D 430,0 lên 442,0.',{tfs:14,fs:12});
+card(3.57,4.55,2.85,2.15,'Từ SFT tiếp − S1: +1,77','KTC [+1,13; +2,44]. So với chính điểm xuất phát SFT tiếp: +0,72 [+0,24; +1,20].',{tfs:14,fs:12,fill:HL});
+card(6.6,4.55,2.85,2.15,'ACE giữ executability','Cả bảy độ đo văn bản tăng thêm, ví dụ CIDEr-D 430,0 lên 442,0.',{tfs:14,fs:12});
 source('% trên 4.463 bước chạm của tập kiểm tra, một hạt giống.');
 note(`- D.3: tiêu chí gốc của AndroidControl, điểm chạm nằm trong hộp phần tử đúng.
 - AitW đầy đủ: khoảng cách 14% hoặc cùng nằm trong hộp nới 1,4 lần.
@@ -339,10 +339,10 @@ foot();
 
 // 15 · Cách so sánh
 newSlide('So sánh RL','Cách so sánh');
-card(M,0.95,4.35,2.55,'Phép so 1: đổi thuật toán','Giữ nguyên phần thưởng SPICE, lần lượt thay GRPO bằng SCST, PPO, REINFORCE, RLOO.',{tfs:16,fs:14});
-card(5.1,0.95,4.35,2.55,'Phép so 2: đổi phần thưởng','Giữ nguyên GRPO, lần lượt thay SPICE bằng ROUGE-L, METEOR, CIDEr-D, SA-SPICE-v3.',{tfs:16,fs:14});
-card(M,3.75,8.9,1.75,'Hai mốc để đọc số','S1: mô hình trước khi học tăng cường (59,11).   Học thêm không RL: S1 học thêm có giám sát trên cùng câu nhắc, không có phần thưởng (60,16).',{tfs:16,fs:14,fill:WHITE});
-addText('Mọi thứ khác giữ nguyên: cùng dữ liệu, cùng số câu nhắc, cùng hạt giống. Số là executability trên 4.463 bước chạm của tập kiểm tra.',{x:M,y:5.75,w:8.9,h:0.7,fontSize:13.5,color:GREY});
+card(M,0.95,4.35,1.9,'Phép so 1: đổi thuật toán','Giữ nguyên phần thưởng SPICE, lần lượt thay GRPO bằng SCST, PPO, REINFORCE, RLOO.',{tfs:16,fs:14});
+card(5.1,0.95,4.35,1.9,'Phép so 2: đổi phần thưởng','Giữ nguyên GRPO, lần lượt thay SPICE bằng ROUGE-L, METEOR, CIDEr-D, SA-SPICE-v3.',{tfs:16,fs:14});
+card(M,3.1,8.9,1.75,'Hai mốc để đọc số','S1: mô hình trước khi học tăng cường (59,11).\nHọc thêm không RL: S1 học thêm có giám sát trên cùng câu nhắc, không có phần thưởng (60,16).',{tfs:16,fs:14,fill:WHITE});
+addText('Mọi thứ khác giữ nguyên: cùng dữ liệu, cùng số câu nhắc, cùng hạt giống. Số là executability trên 4.463 bước chạm của tập kiểm tra.',{x:M,y:5.1,w:8.9,h:0.7,fontSize:13.5,color:GREY});
 note(`- Hai phép so, mỗi phép chỉ đổi một yếu tố.
 - Mốc "học thêm không RL" để tách công của học tăng cường với công của việc học thêm.`);
 foot();
@@ -376,7 +376,7 @@ function numTable(y,head,colW,rows,o={}){
   for(let j=1;j<nC;j++){ const v=rows.filter(r=>!r.base).map(r=>parseFloat(String(r.c[j]).replace('−','-').replace(',','.'))).filter(v=>!isNaN(v)); best[j]=Math.max(...v); }
   const tr=[{cells:head,fill:FOOTB,color:WHITE,bold:true,h:o.hh||0.62,fs:o.hfs||11.5}];
   rows.forEach((r,i)=>{
-    tr.push({cells:r.c.map((c,j)=>{ const v=parseFloat(String(c).replace('−','-').replace(',','.')); const b=j>0&&!r.base&&v===best[j]; return {t:c,bold:b||(j===0&&r.hl),color:r.base?GREY:(b?FOOTC:INK),italic:r.base&&j===0}; }),
+    tr.push({cells:r.c.map((c,j)=>{ const v=parseFloat(String(c).replace('−','-').replace(',','.')); const b=j>0&&!r.base&&v===best[j]; return {t:c,bold:b||(j===0&&r.hl),color:r.base?GREY:(b?FOOTC:INK)}; }),
       h:o.rh||0.46,rule:i<rows.length-1,fill:r.hl?HL:(r.base?LIGHT:undefined),fs:o.fs||12.5});
   });
   table(o.x||M,y,colW,tr,{align:['left'].concat(Array(nC-1).fill('center'))});
@@ -453,7 +453,7 @@ hbarChart(M,1.25,8.9,[
   {label:'Học thêm không RL',value:1.05,text:'60,16   +1,05',color:'A9A4B8'}
 ],{labelW:2.3,valueW:1.75,rowH:0.56,max:2.3,fs:13.5});
 rect(M,5.3,8.9,0.95,SOFT,{radius:0.06});
-addText('Khi điểm SPICE bị ghép ngẫu nhiên giữa các câu, mô hình bằng đúng S1 (59,11). Mức tăng đến từ nội dung phần thưởng chứ không do chạy thêm vòng lặp.',{x:M+0.2,y:5.3,w:8.5,h:0.95,fontSize:13.5,bold:true,color:FOOTB,valign:'mid'});
+addText('Ghép ngẫu nhiên điểm SPICE giữa các câu thì mô hình bằng đúng S1 (59,11): mức tăng đến từ nội dung phần thưởng.',{x:M+0.2,y:5.3,w:8.5,h:0.95,fontSize:13.5,bold:true,color:FOOTB,valign:'mid'});
 source(DAGGER+' S1 = 59,11.');
 note(`- Hàng ghép ngẫu nhiên là phép kiểm quan trọng nhất: cùng vòng lặp GRPO, chỉ khác là phần thưởng không mang thông tin.
 - SPICE, ROUGE-L, METEOR, CIDEr-D có khoảng tin cậy chồng nhau; không viết SPICE là tốt nhất.`);
@@ -479,14 +479,14 @@ foot();
 newSlide('So sánh RL','Phần thưởng trộn SA-SPICE-v3');
 addText('SA-SPICE-v3 trộn SPICE với chrF và cộng thưởng khi câu đúng loại thao tác, vì với câu ngắn như “Scroll down” SPICE cho 0 dù câu đúng.',{x:M,y:0.9,w:8.9,h:0.9,fontSize:14});
 [['61,21','SA-SPICE-v3','Executability cao nhất mọi lượt đã huấn luyện.',FOOTC,HL],
- ['60,88','SPICE','Cùng điểm xuất phát. Kém SA-SPICE-v3 0,34 điểm, chưa có ý nghĩa, nhưng cao hơn ở 5/7 độ đo văn bản.',FOOTB,SOFT],
+ ['60,88','SPICE','Cùng điểm xuất phát, thấp hơn SA-SPICE-v3 0,34 điểm (chưa có ý nghĩa) và cao hơn ở 5/7 độ đo văn bản.',FOOTB,SOFT],
  ['71,1 → 58,5','Bước quay lại','SA-SPICE-v3 làm giảm điểm ở bước quay lại (không chạm).',FOOTD,SOFT]].forEach((d,i)=>{
   const x=M+i*3.0; rect(x,2.0,2.8,3.3,d[4],{radius:0.06});
   addText(d[0],{x,y:2.15,w:2.8,h:0.75,fontSize:i===2?22:28,bold:true,color:d[3],align:'center',valign:'mid'});
   addText(d[1],{x:x+0.15,y:2.95,w:2.5,h:0.55,fontSize:14.5,bold:true,color:FOOTB,align:'center',valign:'mid',fit:'shrink'});
   addText(d[2],{x:x+0.15,y:3.6,w:2.5,h:1.6,fontSize:13,align:'center',valign:'top'});
 });
-addText('Trộn phần thưởng chưa cho lợi ích rõ so với SPICE.',{x:M,y:5.65,w:8.9,h:0.5,fontSize:15.5,bold:true,color:FOOTB,align:'center'});
+addText('Trộn phần thưởng chưa cho lợi ích rõ so với SPICE.',{x:M,y:5.65,w:8.9,h:0.5,fontSize:15.5,bold:true,color:FOOTB});
 note(`- SA-SPICE-v3 hơn mô hình học thêm không RL 1,05 điểm [+0,46; +1,65]; SPICE hơn 0,72 [+0,24; +1,20].
 - Bước quay lại giảm nên phải khai; hướng chữa nằm ngoài phần thưởng.`);
 foot();
@@ -497,7 +497,7 @@ newSlide('Kết luận','Hạn chế');
  ['Bước không chạm bị ảnh hưởng','Bước cuộn giảm từ 83,97 xuống 77,75: mô hình dịch dần về câu chạm.'],
  ['Đánh giá qua mô hình','Chưa có người dùng thật làm theo. UGround và UI-Venus cùng họ Qwen; hai bộ ngoài họ cho cùng chiều nhưng mức nhỏ hơn.'],
  ['Lợi ích của SPICE phụ thuộc miền','Trên AitZ, GRPO-SPICE ngang S1.']].forEach((c,i)=>{
-  card(M+(i%2)*4.55,0.95+Math.floor(i/2)*2.6,4.35,2.4,c[0],c[1],{tfs:15,fs:13.5,th:0.7});
+  card(M+(i%2)*4.55,0.95+Math.floor(i/2)*2.3,4.35,2.05,c[0],c[1],{tfs:15,fs:13.5,th:0.5});
 });
 note(`- Khai thẳng các hạn chế kèm số đo.
 - Hướng tiếp: thêm hạt giống, chữa bước không chạm; DPO trực tuyến đã huấn luyện xong, đang chờ chấm.`);
