@@ -71,3 +71,36 @@ hơn thì kết luận đảo chiều.
 
 Ghi vào runbook của lượt: tên card · s/bước · đỉnh cấp phát · đơn vị ước tính. ⛔ **Không đổi
 card giữa lượt đang chạy** — mất tiến độ về điểm lưu gần nhất cộng thời gian bung lại dữ liệu.
+
+## Mốc đã đo: sinh câu test trên Colab T4 vs L4 (22/11/2026, lượt DPO trực tuyến ck500)
+
+Việc: sinh 4.463 câu test + chấm exec, Qwen2.5-VL-3B (S1 hoà + adapter), một luồng, notebook
+`_bundles/luoi/k_luoi-test-c-dpo/` (dựng bằng `make_test_nb2.py` + `colab_tu_kaggle.py`).
+
+**Giá** [đo, đọc khi tạo máy bằng Colab CLI 22/11; giá đổi theo thời điểm, quyết lần sau phải tra lại]:
+
+| card | VRAM | unit/giờ | ghi chú |
+|---|---|---|---|
+| T4 | 15 GB | **1,15** | lên máy ngay |
+| L4 | 22,5 GB | **1,94** (gấp 1,69× T4) | tạo phiên timeout 3 lần liền (POST /tun/m/assign treo, không phải lỗi đăng nhập) |
+
+**Tốc độ sinh câu** (s/bước, cùng mã sinh):
+
+| máy | s/bước | nguồn |
+|---|---|---|
+| Kaggle T4 | 2,78 | các lượt test Kaggle (`luoi-test-u-*`) [đo] |
+| Colab T4 | 2,31 lúc đầu → ~2,6 sau 250 bước | log `gen_dpo_on_spice_101.log` [đo] |
+| Colab L4 | **chưa đo** | |
+
+⇒ Một lượt test trên Colab T4 ≈ 3,2 h sinh + 20–30 phút chấm ≈ **4–4,5 unit** [ước từ số đo].
+
+**Vì sao chọn T4 cho sinh câu** [suy, chưa đo L4]:
+- L4 chỉ rẻ hơn mỗi lượt nếu nhanh hơn T4 ≥ 1,69× (xong dưới ~2,1–2,3 h).
+- Sinh từng token ở lô nhỏ bị giới hạn bởi băng thông bộ nhớ: L4 ~300 GB/s, T4 ~320 GB/s ⇒ phần giải mã
+  gần như không nhanh hơn; L4 chỉ nhanh hơn rõ ở phần xử lý ảnh đầu vào (tính toán). Ước cả lượt 1,2–1,5×.
+- VRAM 22,5 GB của L4 không đủ để notebook chạy hai luồng song song (cần > 30 GB, tức A100).
+- L4 đáng dùng khi: train cần > 15 GB VRAM, hoặc cần số gấp và chấp nhận trả thêm.
+- Muốn chắc: chạy 10 phút trên L4 (~0,3 unit), đọc s/bước trong `gen_*.log`, điền vào bảng trên.
+
+**Khác biệt Colab vs Kaggle cần khai:** kiểm bộ chấm trên Colab T4 ra 9/10 bước trùng toạ độ (Kaggle thường
+10/10); vẫn qua ngưỡng ≥ 9. Kiểm hoà 16/20 như Kaggle.
