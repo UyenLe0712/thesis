@@ -1,27 +1,26 @@
-22:17:38 bat dau canh
-22:26:38 colab exec thoat KHONG co dong XONG (loi hoac mat ket noi)
-│   332 │   │   │   │   msg["header"]["msg_type"] == "status"                  │
-│                                                                              │
-│ /home/uyenle/.venvs/colab/lib/python3.12/site-packages/colab_cli/runtime.py: │
-│ 305 in next_message                                                          │
-│                                                                              │
-│   302 │   │   │   deadline = (time.monotonic() + timeout) if timeout is not  │
-│       None else None                                                         │
-│   303 │   │   │   while True:                                                │
-│   304 │   │   │   │   if not client.connection_ready.is_set():               │
-│ ❱ 305 │   │   │   │   │   raise RuntimeError("Connection was lost.")         │
-│   306 │   │   │   │   wait = _WAIT_SLICE_SEC                                 │
-│   307 │   │   │   │   if deadline is not None:                               │
-│   308 │   │   │   │   │   left = deadline - time.monotonic()                 │
-╰─────────────────────────────────────────────────────────────────�
-RuntimeError: Connection was lost.
-[colab] Downloaded '/kaggle/working/pred_dpo_on_spice_101_test.jsonl' to 'runs/luoi/20_11/luoi-test-c-dpo/pred_dpo_on_spice_101_test.jsonl'
-22:26:45 tai pred_dpo_on_spice_101_test.jsonl OK
-[colab] Downloaded '/kaggle/working/gen_dpo_on_spice_101.log' to 'runs/luoi/20_11/luoi-test-c-dpo/gen_dpo_on_spice_101.log'
-22:26:47 tai gen_dpo_on_spice_101.log OK
+19:05:33 bat dau canh
+22:03:34 notebook XONG
+-rw------- 1 root root  256675 Nov 23 15:03 ket_qua_test.zip
+-rw------- 1 root root     233 Nov 22 14:42 kiem_cham.json
+-rw------- 1 root root     740 Nov 22 14:42 kiem_cham.log
+-rw------- 1 root root    3629 Nov 22 14:42 kiem_cham_raw.jsonl
+-rw------- 1 root root    1754 Nov 22 14:42 kiem_hoa_test.jsonl
+-rw------- 1 root root     832 Nov 22 14:42 kiem_hoa_test.log
+-rw------- 1 root root  390662 Nov 23 14:41 pred_dpo_on_spice_101_test.jsonl
+drwx------ 2 root root    4096 Nov 23 12:21 __pycache__
+drwx------ 2 root root    4096 Nov 23 12:15 s1_merged
+-rw------- 1 root root     338 Nov 23 15:01 score_dpo_on_spice_101_test.json
+-rw------- 1 root root 1662139 Nov 23 15:01 score_dpo_on_spice_101_test_raw.jsonl
+-rw------- 1 root root    2071 Nov 23 14:43 score_dpo_on_spice_101_test_raw.jsonl.chua_lai.json
+-rw------- 1 root root    2798 Nov 22 14:42 tai_dung_cham.py
+drwx------ 3 root root    4096 Nov 23 12:07 thesis
+===== XONG CA NOTEBOOK =====
+[colab] Downloaded '/kaggle/working/ket_qua_test.zip' to 'runs/luoi/20_11/luoi-test-c-dpo/ket_qua_test.zip'
+22:03:37 tai zip OK 252K
+da xoa /content/drive/MyDrive/thesis/colab_kaggle/luoi-test-c-dpo/s1_merged
 [colab] Stopping session 'dpo'...
 [colab] Session terminated.
-Current balance: 63.12 compute units
+Current balance: 59.60 compute units
 Usage rate: 0.00/hr
 Active assignments: 0
-22:27:17 DA TAT MAY (loi)
+22:04:04 DA TAT MAY (xong)

@@ -102,14 +102,14 @@ Caveat phải khai khi viết về ck500:
 bảng log train ở `HUONG_DA_THU.md` §2e):
 - **Dr.GRPO đầy đủ có số test:** exec 60,00, − ck500 −0,65 [−1,11; −0,18] p=0,009 (thua), − S1 +0,90; độ đo văn
   bản ngang ck500 cả 6 cột (`report/320` §30).
-- **Xong train ck500, chờ test (5 lượt):** DPO trực tuyến · GRPO + chrF · + BLEU-4 · + SPIDEr · + BERTScore. Adapter
+- **Xong train ck500, chờ test (4 lượt):** GRPO + chrF · + BLEU-4 · + SPIDEr · + BERTScore. Adapter
   đã lên dataset `uyenle0712/b5-ck-22-11`; smoke test Kaggle `luoi-test-u-b5smoke` **đạt** (5/5 tìm đúng adapter,
   kiểm bộ chấm 10/10), số smoke không dùng. Test thật: Kaggle sau 28/11 hoặc Colab (`harness/runbook/colab_test_b5_22_11.md`).
-- **DPO trực tuyến test trên Colab T4:** dừng giữa chừng 22/11 22:26 (script canh tắt máy khi CLI mất kết nối, đã vá),
-  mới sinh **1.163/4.463 câu** (`runs/luoi/20_11/luoi-test-c-dpo/` + Drive); chạy lại thì nối tiếp, cần user bấm link
-  drivemount. Kiểm bộ chấm trên Colab 9/10 (Kaggle 10/10) ⇒ phải khai.
+- **DPO trực tuyến có số test (Colab T4, 23/11):** exec 59,44, − ck500 **−1,21 [−1,73; −0,71]** (thua), − S1 +0,34 ns, ngang
+  A/A (`report/320` §31). Kiểm bộ chấm trên Colab 9/10 (Kaggle 10/10) ⇒ phải khai. Độ đo văn bản: kernel CPU `trangphngngc/chu-dpo-23-11-cpu`.
+- **DAPO có số test (Colab T4, 24/11):** exec 60,03, − ck500 **−0,63 [−1,14; −0,12]** (thua), − S1 +0,92 [+0,09; +1,75], ngang A/A và Dr.GRPO (`report/320` §32). Kiểm bộ chấm Colab 9/10.
 - **Dừng giữa chừng, chờ hạn mức 28/11:** GRPO μ=2 và GSPO ck750/1.000 (thưởng đều không tăng; còn 250 bước,
-  PREV=`trangphuongngoc/luoi-b5-t2-3`) · DAPO ck400 · REINFORCE++ lô 64 ck70/125. GRPO/REINFORCE++ lô 128 chết RAM,
+  PREV=`trangphuongngoc/luoi-b5-t2-3`) · REINFORCE++ lô 64 ck70/125. GRPO/REINFORCE++ lô 128 chết RAM,
   chưa sửa mã (user chưa đồng ý hướng sửa).
 - Hạn mức ba tài khoản gần cạn tới 28/11 07:00 VN; theo `report/337` §12 không còn lượt GPU nào đang chạy. Runbook `_bundles/luoi/CHAY_B5.md`.
 - Có số test thì ghi vào `HUONG_DA_THU.md`, `report/320`, `report/334` cùng lúc.
@@ -317,7 +317,28 @@ grep -c Overfull main.log                                        # phải là 0
 7. Thư mục thăm dò cũ phải `rmtree` trước (không thì LLaMA-Factory chạy tiếp từ checkpoint cũ, log vẫn "completed").
 8. `trainer_log.jsonl` khác trường theo stage (`dpo` không có `loss`/`lr`); số học lấy từ stdout. Sau resume,
    `train_loss`/`train_runtime`/`*_per_second` trong `all_results.json` sai — dùng `trainer_state.json`.
-9. Notebook 2 GPU: `assert torch.cuda.device_count()==2` trước khâu sinh (một lượt từng treo >16 h không log).
+9. Notebook 2 GPU: `assert torch.cuda.device_count()==2` trước bước sinh (một lượt từng treo >16 h không log).
+
+⭐ **Chạy Colab qua CLI (`colab new/exec`) — chống mất máy giữa chừng (user chốt 24/11, sau khi mất ~0,8 unit):**
+- Máy Colab tạo bằng CLI sống nhờ tiến trình trên máy nhà. 24/11 phiên Claude Code bị ngắt ⇒ `colab exec` + script
+  canh chết theo ⇒ Colab thu hồi máy sau < 30 phút, train chưa kịp lưu điểm nào (lưu mỗi 25 bước ≈ 75 phút).
+- ⛔ **Không** chạy `colab exec`/script canh bằng `nohup … &` trong phiên Claude Code. Chạy trong **tmux**:
+  `bash _bundles/luoi/k_luoi-b5-dapo-c/chay_tmux.sh <tệp _colab_cli.py>` (cửa sổ `exec` + `canh`, bật
+  `keepawake.ps1` nếu chưa chạy). Xem: `tmux ls`, `tmux capture-pane -pt dapo:canh`.
+- Notebook train lưới dựng cho Colab phải có `--save-steps 5`: `python3 _bundles/colab_tu_kaggle.py <thư mục kernel> --save-steps 5`
+  (vá bản chép `grpo_luoi.py` trên máy Colab, mã gốc + md5 giữ nguyên; log in dòng `⚙️ COLAB: luu diem moi 5 buoc`).
+  Đồng bộ Drive 5 phút/lần ⇒ mất máy chỉ mất ≤ ~15 phút train.
+  ⚠️ Nối tiếp từ điểm lưu thì transformers lấy `save_steps` trong `trainer_state.json` của điểm lưu cũ (25), bỏ qua cấu hình
+  mới ⇒ `--save-steps` sửa cả tệp đó (vá 24/11, sau khi lượt DAPO Colab đầu tiên vẫn lưu mỗi 25 bước). Kiểm: có `checkpoint-<gốc+5>`.
+- Script canh mỗi 5 phút gọi vào máy và kiểm `colab usage`; `Active assignments: 0` khi chưa xong ⇒ ghi `MAY COLAB DA MAT`.
+- ⚠️ Kiểm `colab exec` còn sống **không** dùng `pgrep -f "colab exec …"` trơn: tmux giữ nguyên dòng lệnh đó nên luôn khớp ⇒ script canh chờ tới hết hạn mà không tắt máy (24/11, bắt kịp tay). Dùng `pgrep -af … | grep -vE "^[0-9]+ tmux"` như `canh_tat_may.sh` của DAPO.
+- Train **dài** (> ~4 h) ưu tiên Kaggle (kernel chạy trên máy chủ, không phụ thuộc máy nhà); Colab cho việc ngắn hoặc khi user chọn.
+- `colab new` báo timeout vẫn có thể đã tạo máy ⇒ luôn kiểm `colab usage` (Active assignments). Mỗi lần chỉ một máy.
+- `colab drivemount` hay lỗi `Connection was lost` / `mount failed`: chạy lại; quyền đã cấp thì lần sau báo "already mounted".
+  Mount vào `/content/gdrive` rồi `ln -s /content/gdrive /content/drive`. Khoá Kaggle: `colab upload` vào `/content/.kaggle_tok/access_token`.
+- Output kernel nguồn phải nằm ở `/kaggle/input/notebooks/<chủ>/<tên>` như Kaggle (đã vá `colab_tu_kaggle.py` 24/11), không thì
+  notebook lưới thấy hai bản `grpo_luoi.py` và dừng ở ô 2.
+- Đừng `pkill -f "<chuỗi>"` khi chuỗi đó nằm trong chính lệnh đang chạy (giết luôn shell của mình).
 
 **Kaggle** (30 h GPU/tuần/tài khoản, tối đa 2 phiên GPU cùng lúc, hạn mức làm mới 07:00 VN; CLI
 `kg uyenle|trang|trang2|ca`, xem memory). `kernels logs` rỗng khi đang chạy; không có lệnh huỷ ngoài

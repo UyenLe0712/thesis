@@ -1191,3 +1191,61 @@ Dr.GRPO (Liu và cộng sự 2025): bỏ chia độ lệch chuẩn trong lợi t
 | Dr.GRPO − S1/101 | +0,54 [−0,01; +1,31] | +0,89 [+0,44; +1,34] | +12,73 [+7,30; +18,31] | +1,24 [+0,53; +1,90] | +1,30 [+0,80; +1,76] | +0,63 [+0,26; +1,02] |
 
 Đọc: trên độ đo văn bản Dr.GRPO ngang ck500 và SFT tiếp (mọi KTC phủ 0), thấp hơn A/A ở BLEU-4, hơn S1 ở 5/6 cột. Cùng hướng với exec: không hơn GRPO thường. Chưa chấm bước không chạm, D.3/AitW.
+
+## 31. DPO trực tuyến + SPICE từ S1 (đợt B5, test 22–23/11/2026): exec 59,44, thua ck500
+
+DPO trực tuyến (thiết kế `report/336` §3): mỗi câu nhắc sinh nhóm G = 8, lấy câu SPICE cao nhất làm *chosen* và thấp nhất làm *rejected*, cập nhật theo mất mát DPO với β = 0,1, tham chiếu là S1. Cùng cấu hình lưới: từ S1/101, 500 update, 1.000 câu nhắc, seed 101. Thưởng train 0,486 → 0,510, margin 0,006 → 0,116 (log train ở `HUONG_DA_THU.md` §2e). Adapter ở dataset `uyenle0712/b5-dpo-22-11` (md5 `b91a83ae…`).
+
+Test chạy trên **Colab T4** (không phải Kaggle, vì hạn mức Kaggle cạn tới 28/11), notebook `_bundles/luoi/k_luoi-test-c-dpo/`. Lượt đầu 22/11 dừng ở 1.163 câu (script tắt máy hiểu nhầm lỗi mất kết nối CLI), lượt hai 23/11 nối tiếp đủ 4.463 câu. Kiểm hoà S1 16/20 (như mọi lượt). **Kiểm bộ chấm 9/10** bước trùng toạ độ tệp thô S1 (Kaggle cho 10/10; ngưỡng ≥ 9/10) ⇒ phải khai. Kiểm dùng lại 40/40 trùng tuyệt đối. Tệp ở `runs/luoi/20_11/luoi-test-c-dpo/kq/`.
+
+- **Bước chạm (4.463):** exec **59,44** [57,65; 61,23] · đúng loại thao tác 95,16 · số từ 7,95 · 1 câu rỗng. D.3 65,70 · AitW đầy đủ 74,77.
+
+| phép so (ghép cặp, bootstrap cụm app, B = 10.000) | Δ exec [KTC95] | hơn / kém | p (dấu) |
+|---|---|---|---|
+| DPO − S1/101 (59,11) | +0,34 [−0,38; +1,06] | 119 / 104 | 0,35 |
+| DPO − ck500 (60,65) | **−1,21 [−1,73; −0,71]** | 40 / 94 | 3,5e−6 |
+| DPO − GRPO A/A (59,74, cùng mã lưới) | −0,29 [−0,79; +0,18] | 60 / 73 | 0,30 |
+| DPO − SFT tiếp (60,16) | −0,72 [−1,25; −0,18] | 63 / 95 | 0,013 |
+| DPO − SCST + SPICE (60,54) | −1,10 [−1,55; −0,65] | 32 / 81 | 4,6e−6 |
+| DPO − Dr.GRPO (60,00) | −0,56 [−1,00; −0,13] | 41 / 66 | 0,020 |
+
+- Câu trùng: DPO = S1 ở 2.857/4.463 câu, = ck500 ở 3.421, = Dr.GRPO ở 3.469 (ck500 = S1: 2.795).
+- Đọc: DPO trực tuyến **không hơn S1 có ý nghĩa**, thấp hơn ck500, SCST, SFT tiếp và Dr.GRPO có ý nghĩa, ngang A/A. Cùng mức thấp nhất của lưới thuật toán với RLOO (cả hai 59,44). Một seed.
+- Câu được viết: "DPO trực tuyến (cặp tốt nhất − kém nhất trong nhóm) đạt 59,44, không hơn S1 và thấp hơn ck500 (−1,21, một seed)". Cấm suy rộng thành "DPO kém hơn RL" (chỉ một cấu hình β, một cách chọn cặp).
+- Chưa chấm: bước không chạm.
+- **Độ đo văn bản (kernel CPU `trangphngngc/chu-dpo-23-11-cpu`, 23–24/11; `runs/luoi/20_11/chu_dpo/`; tự kiểm đạt: S1, ck500, SFT tiếp, A/A, Dr.GRPO tái lập số đã lưu).** DPO: BLEU-4 51,93 · METEOR 37,40 · ROUGE-L 67,78 · CIDEr-D 424,90 · SPICE 45,42 · chrF 62,24 · BERTScore 66,61.
+
+| phép so (4.463, B = 2.000) | BLEU-4 | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
+|---|---|---|---|---|---|---|
+| DPO − ck500 | −0,43 [−0,86; +0,01] | **−0,58 [−1,00; −0,16]** | **−5,15 [−9,62; −0,58]** | −0,37 [−0,95; +0,22] | **−0,63 [−1,06; −0,21]** | **−0,46 [−0,82; −0,10]** |
+| DPO − GRPO A/A | **−1,04 [−1,61; −0,18]** | **−0,66 [−1,05; −0,29]** | **−6,01 [−10,69; −1,79]** | **−0,58 [−1,11; −0,06]** | −0,15 [−0,58; +0,27] | **−0,48 [−0,81; −0,15]** |
+| DPO − SFT tiếp | −0,14 [−0,69; +0,43] | **−0,77 [−1,21; −0,36]** | −0,89 [−5,70; +3,87] | +0,09 [−0,55; +0,71] | −0,40 [−0,85; +0,05] | **−0,45 [−0,84; −0,07]** |
+| DPO − Dr.GRPO | −0,17 [−0,59; +0,25] | **−0,46 [−0,79; −0,12]** | **−3,94 [−7,77; −0,17]** | −0,18 [−0,67; +0,34] | −0,32 [−0,67; +0,04] | **−0,36 [−0,64; −0,06]** |
+| DPO − S1/101 | +0,37 [−0,19; +1,16] | +0,43 [−0,00; +0,88] | **+8,79 [+3,47; +14,36]** | **+1,05 [+0,37; +1,79]** | **+0,98 [+0,48; +1,47]** | +0,27 [−0,10; +0,66] |
+
+METEOR (không KTC): S1 36,79 · DPO 37,40 · A/A 37,55 · Dr.GRPO 37,66 · SFT tiếp 37,75 · ck500 37,92.
+
+Đọc: trên độ đo văn bản DPO thấp hơn ck500 ở 4/6 cột có ý nghĩa (BLEU-4 và SPICE phủ 0), thấp hơn A/A ở 5/6, hơn S1 ở 3/6 (CIDEr-D, SPICE, chrF). Cùng hướng với exec: DPO đứng dưới mọi nhánh GRPO của lưới, chỉ hơn S1. Đáng chú ý: thưởng train là SPICE nhưng SPICE của DPO chỉ hơn S1 +1,05, thấp hơn mức của ck500 (+1,42) và Dr.GRPO (+1,24).
+
+## 32. DAPO + SPICE từ S1 (đợt B5, train 21–24/11, test 24/11/2026): exec 60,03, thua ck500, ngang Dr.GRPO
+
+DAPO (Yu và cs., 2025) theo cấu hình lưới: lấy mẫu động (bỏ nhóm có 8 câu cùng điểm thưởng, sinh bù câu nhắc mới), kẹp lệch ε 0,2 / 0,28, mất mát chuẩn hoá theo token; **giữ β = 0,04** (bài gốc β = 0) để cùng KL với các lượt khác. Từ S1/101, 500 update, 1.000 câu nhắc hữu hiệu, seed 101. Train ck400 trên Kaggle (`luoi-b5-t-1` → `-2`), nối tiếp ck400 → ck500 trên Colab T4 (24/11, `_bundles/luoi/k_luoi-b5-dapo-c/`). Thưởng train 0,46 (bước 1–50) → 0,55 (451–500), KL TB/max 0,030/0,419; nhóm hoà bị loại 422/1.546 = 27,3%, lấy bù 273 lần. Adapter: dataset `uyenle0712/b5-dapo-24-11` (md5 `1bedf7f7…`).
+
+Test trên **Colab T4** (`_bundles/luoi/k_luoi-test-c-dapo/`), cùng mã với test DPO. Kiểm hoà S1 16/20; **kiểm bộ chấm 9/10** (như DPO trên Colab; Kaggle 10/10) ⇒ phải khai. Tệp ở `runs/luoi/20_11/luoi-test-c-dapo/kq/`.
+
+- **Bước chạm (4.463):** exec **60,03** (2.679/4.463) · đúng loại thao tác 96,17 · số từ 7,9 · 1 câu rỗng. D.3 66,32 · AitW đầy đủ 75,82.
+
+| phép so (ghép cặp, bootstrap cụm app, B = 10.000) | Δ exec [KTC95] | hơn / kém | p (dấu) |
+|---|---|---|---|
+| DAPO − S1/101 (59,11) | **+0,92 [+0,09; +1,75]** | 173 / 132 | 0,022 |
+| DAPO − ck500 (60,65) | **−0,63 [−1,14; −0,12]** | 54 / 82 | 0,020 |
+| DAPO − GRPO A/A (59,74, cùng mã lưới) | +0,29 [−0,21; +0,79] | 78 / 65 | 0,32 |
+| DAPO − SFT tiếp (60,16) | −0,13 [−0,73; +0,48] | 103 / 109 | 0,73 |
+| DAPO − SCST + SPICE (60,54) | −0,52 [−1,03; +0,00] | 61 / 84 | 0,067 |
+| DAPO − Dr.GRPO (60,00) | +0,02 [−0,50; +0,55] | 76 / 75 | 1,0 |
+| DAPO − DPO trực tuyến (59,44) | +0,58 [+0,05; +1,14] | 100 / 74 | 0,058 |
+
+- Câu trùng: DAPO = S1 ở 2.605/4.463, = ck500 ở 3.333, = Dr.GRPO ở 3.279, = DPO ở 3.125.
+- Đọc: DAPO hơn S1 có ý nghĩa (KTC loại 0, p 0,022), thấp hơn ck500 có ý nghĩa, ngang A/A, SFT tiếp và Dr.GRPO. Exec gần như trùng Dr.GRPO (60,03 vs 60,00) nhưng câu chỉ trùng 3.279/4.463 ⇒ trùng tổng, không trùng từng bước. Một seed.
+- Câu được viết: "DAPO đạt 60,03, hơn S1 +0,92 nhưng thấp hơn ck500 −0,63 (một seed); ngang GRPO A/A cùng mã". Cấm "DAPO kém GRPO" (so A/A thì ngang); cấm suy rộng sang DAPO bản gốc (β = 0).
+- Chưa làm: độ đo văn bản (kernel CPU kiểu `chu_dpo_23_11`), bước không chạm.

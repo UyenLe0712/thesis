@@ -4,10 +4,10 @@
 cd /mnt/d/Master/Thesis
 L=~/colab_logs/dpo_exec.log; OUT=runs/luoi/20_11/luoi-test-c-dpo; mkdir -p $OUT
 NK=$OUT/canh_tat_may.log; log(){ echo "$(TZ='Asia/Ho_Chi_Minh' date +%H:%M:%S) $*" | tee -a $NK; }
-HAN=$(TZ='Asia/Ho_Chi_Minh' date -d "2026-11-23 04:00" +%s)
+HAN=$(TZ='Asia/Ho_Chi_Minh' date -d "2026-11-24 00:30" +%s)
 log "bat dau canh"
 while pgrep -f "colab exec -s dpo" >/dev/null && [ $(date +%s) -lt $HAN ]; do sleep 60; done
-if pgrep -f "colab exec -s dpo" >/dev/null; then log "HET HAN 04:00 ma chua xong ⇒ tat may (ket qua toi lan dong bo Drive gan nhat van con)"; LYDO=han
+if pgrep -f "colab exec -s dpo" >/dev/null; then log "HET HAN 00:30 ma chua xong ⇒ tat may (ket qua toi lan dong bo Drive gan nhat van con)"; LYDO=han
 elif tr -d '\r' < $L | grep -q "XONG CA NOTEBOOK"; then log "notebook XONG"; LYDO=xong
 else log "colab exec thoat KHONG co dong XONG (loi hoac mat ket noi)"; LYDO=loi; fi
 # 22/11: lần đầu chỉ là CLI mất kết nối (RuntimeError: Connection was lost) trong khi máy vẫn sinh câu tốt

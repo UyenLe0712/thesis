@@ -59,7 +59,7 @@ Mọi số test chỉ một hạt, trừ S1 và ck500 (hai hạt).
 | Thước: exec (tiêu đề) · D.3 67,0 · AitW đầy đủ 77,3 (cận trên 85,0) · độ đo văn bản COCO + chrF + BERTScore · Phi-4 SoM · UI-Venus | chốt, đừng mở lại | | CLAUDE.md 13/9, 14/9 |
 
 **Đang chạy (đợt B5, 20–21/11, `report/337`)** — xem §2e; đừng đề xuất lại như ý mới, đợi số test:
-Dr.GRPO đầy đủ · DAPO · GSPO · GRPO μ=2 · REINFORCE++ lô 64 · DPO trực tuyến · GRPO + chrF / BLEU-4 / SPIDEr /
+DAPO · GSPO · GRPO μ=2 · REINFORCE++ lô 64 · GRPO + chrF / BLEU-4 / SPIDEr /
 BERTScore từ S1.
 
 Việc **chưa thử, đang chờ user** ở `report/336`:
@@ -141,6 +141,8 @@ Cách đọc: *ý tưởng → cách làm → số → vì sao dừng → muốn
 | PPO, GAE λ=1 / 0,95 (1000 bước, value head trên LoRA) | 60,07 / 59,98 | ngang; thấp hơn ở BLEU-4 và CIDEr-D | §26–28; từng hết đĩa, phải `save_total_limit` |
 | Dr.GRPO (lượt cũ) | treo ở bước 475, chưa chấm | | đã chạy lại đầy đủ ở đợt B5 (§2e) |
 | **Dr.GRPO đầy đủ** (B5, 22/11; bỏ chia std + bỏ chuẩn hoá độ dài) | 60,00 | **−0,65 p=0,009** (thua); − SCST −0,54 p=0,015; ngang A/A, SFT tiếp | đổi phần tử chỉ +18 (ck500 +41); report/320 §30 |
+| **DPO trực tuyến** (B5, 23/11; cặp SPICE tốt nhất − kém nhất trong nhóm 8, β 0,1) | 59,44 | **−1,21 p=4e−6** (thua); − SFT tiếp −0,72*; − SCST −1,10* | − S1 +0,34 ns, ngang A/A ⇒ không hơn SFT; chấm trên Colab T4 (kiểm bộ chấm 9/10); report/320 §31 |
+| **DAPO** (B5, 24/11; lấy mẫu động, ε 0,2/0,28, giữ β 0,04) | 60,03 | **−0,63 p=0,02** (thua); ngang A/A, Dr.GRPO, SFT tiếp | − S1 +0,92 [+0,09; +1,75]; nhóm hoà bị loại 27,3%; chấm Colab T4 (kiểm bộ chấm 9/10); report/320 §32 |
 | GRPO + ROUGE-L | 60,63 | ngang | đứng đầu CIDEr-D |
 | GRPO + METEOR | 60,27 | ngang | |
 | GRPO + CIDEr-D | 60,27 | ngang; CIDEr-D thấp hơn ck500 −5,53 | §22: **không** do df hay tách từ (đã kiểm 5 biến thể), tối ưu kém ngay trên mục tiêu của chính nó |
@@ -174,11 +176,11 @@ Số dưới đây là **log train**, không phải số test. Có số test th�
 | lượt | tới đâu (21/11) | thưởng train · KL | ghi chú |
 |---|---|---|---|
 | Dr.GRPO đầy đủ | **xong, có số test** | 0,467 → 0,520 · KL TB/max 0,014/0,095 | **exec 60,00; − ck500 −0,65 [−1,11; −0,18] p=0,009; − A/A +0,27 (ns); − S1 +0,90**; độ đo văn bản ngang ck500 cả 6 cột (report/320 §30) |
-| DAPO (lấy mẫu động, eps 0,28) | ck400/500 | 0,465 → 0,486 · KL max 0,211 | nhóm hoà bị loại 20,8% |
+| DAPO (lấy mẫu động, eps 0,28) | **xong, có số test** (ck400 Kaggle → ck500 Colab T4, test Colab T4 24/11) | 0,46 (bước 1–50) → 0,55 (451–500) · KL TB/max 0,030/0,419 | **exec 60,03; − ck500 −0,63 [−1,14; −0,12] p=0,02 (thua); − S1 +0,92 [+0,09; +1,75]; − A/A +0,29 (ns); − Dr.GRPO +0,02**; kiểm bộ chấm Colab 9/10; nhóm hoà bị loại 27,3%; report/320 §32; `runs/luoi/20_11/luoi-b5-dapo-c/` |
 | GRPO μ=2 (2 lượt tối ưu mỗi lô sinh) | ck750/1.000 (22/11) | phẳng 0,500 → 0,496 · **KL max 0,592** | |
 | GSPO (tỉ số mức chuỗi) | ck750/1.000 (22/11) | **giảm** 0,496 → 0,485 (đáy 0,455 ở ck600) · clip_ratio 0,19 → 0,36 | dấu hiệu xấu |
 | REINFORCE++ lô 64 | ck70/125 | 0,470 → 0,472 | OOM GPU lần đầu, sửa `--gen-chunk 4` |
-| DPO trực tuyến (best-vs-worst trong nhóm 8, β 0,1) | **xong ck500** (22/11) | 0,486 → 0,510 · margin 0,006 → 0,116 | thiết kế ở report/336 §3; chờ test |
+| DPO trực tuyến (best-vs-worst trong nhóm 8, β 0,1) | **xong, có số test** (Colab T4 23/11) | 0,486 → 0,510 · margin 0,006 → 0,116 | **exec 59,44; − ck500 −1,21 [−1,73; −0,71] p=4e−6 (thua); − S1 +0,34 (ns); − A/A −0,29 (ns); − Dr.GRPO −0,56 p=0,02**; kiểm bộ chấm Colab 9/10 (phải khai); độ đo văn bản thua ck500 4/6 cột, thua A/A 5/6, hơn S1 3/6; report/320 §31 |
 | GRPO + chrF / BLEU-4 / SPIDEr / BERTScore từ S1 | **xong ck500 cả bốn** (22/11) | chrF 0,591 → 0,708 (**KL max 0,923**) · BLEU-4 0,474 → 0,578 (KL max 0,311) · SPIDEr 0,464 → 0,547 (0,353) · BERTScore 0,646 → 0,716 (**0,496**) | chờ test |
 | GRPO / REINFORCE++ lô 128 (`grpo_lon`, `rpp`) | **chết RAM** (-9) ở cả 5 kernel sau 6–8 phút | — | TRL tiền xử lý 128 ảnh = 9,83 GB; đừng chạy lại nguyên trạng |
 

@@ -17,6 +17,7 @@ import json, os, re, sys, argparse
 ap = argparse.ArgumentParser()
 ap.add_argument("kdir")
 ap.add_argument("--them-kernel", nargs="*", default=[], help="kernel output thêm vào /kaggle/input")
+ap.add_argument("--save-steps", type=int, default=0, help="24/11: >0 thì vá bản chép grpo_luoi.py TRÊN MÁY COLAB thành lưu mỗi N bước (mất máy chỉ mất ≤ N bước); mã gốc + md5 không đổi")
 a = ap.parse_args()
 meta = json.load(open(os.path.join(a.kdir, "kernel-metadata.json")))
 nb = json.load(open(os.path.join(a.kdir, meta["code_file"]), encoding="utf-8"))
@@ -51,7 +52,8 @@ for c in cells:
     out.append(c)
 
 dl_ds = "\n".join(f'tai(["datasets", "download", "-d", "{d}", "-p", "/kaggle/input/{d.split("/")[1]}", "--unzip"])' for d in DS)
-dl_k = "\n".join(f'tai(["kernels", "output", "{k}", "-p", "/kaggle/input/{k.split("/")[1]}"])' for k in KS)
+# 24/11: Kaggle gắn output kernel nguồn ở /kaggle/input/notebooks/<chủ>/<tên>; notebook lưới lọc "/notebooks/" để bỏ bản chép mã cũ
+dl_k = "\n".join(f'tai(["kernels", "output", "{k}", "-p", "/kaggle/input/notebooks/{k}"])' for k in KS)
 C0 = f'''# ===== Ô COLAB (thêm bởi _bundles/colab_tu_kaggle.py) — notebook gốc: {meta["id"]} =====
 # Cần: Runtime GPU (A100 nếu chạy hai tiến trình), Colab secret KAGGLE_{owner.upper()} = khoá KGAT_ của tài khoản Kaggle "{owner}".
 import os, subprocess, sys, glob, time, threading, shutil, json
@@ -99,6 +101,16 @@ print("✅ dong bo Drive moi 5 phut →", DRIVE, flush=True)
 C_END = '''# ===== Ô COLAB: đồng bộ lần chót =====
 print(subprocess.run(f"rsync -a /kaggle/working/ '{DRIVE}/' && ls -la '{DRIVE}' | tail -20", shell=True, capture_output=True, text=True).stdout, flush=True)
 '''
+if a.save_steps:   # 24/11: mất máy Colab giữa chừng thì mất cả 25 bước chưa lưu ⇒ lưu dày hơn, chỉ trên Colab
+    assert "tep_cua(r)" in out[-1], "--save-steps chỉ dùng cho notebook train lưới"
+    out[-1] = (f"_g = open(f'{{W}}/grpo_luoi.py', encoding='utf-8').read()\n"
+               f"assert _g.count('save_steps=(10 ** 9 if a.probe else 25)') == 1, 'DUNG: khong tim thay save_steps de va'\n"
+               f"open(f'{{W}}/grpo_luoi.py', 'w', encoding='utf-8').write(_g.replace('save_steps=(10 ** 9 if a.probe else 25)', 'save_steps=(10 ** 9 if a.probe else {a.save_steps})'))\n"
+               f"print('⚙️ COLAB: luu diem moi {a.save_steps} buoc ·', [l.strip() for l in open(f'{{W}}/grpo_luoi.py', encoding='utf-8') if 'save_steps=' in l][0], flush=True)\n"
+               # 24/11: nối tiếp thì transformers lấy save_steps từ trainer_state.json của điểm lưu cũ (25), bỏ qua cấu hình mới ⇒ sửa cả tệp đó
+               f"for _ts in glob.glob(f'{{W}}/*/checkpoint-*/trainer_state.json'):\n"
+               f"    _j = json.load(open(_ts)); _j['save_steps'] = {a.save_steps}; json.dump(_j, open(_ts, 'w'), indent=2)\n"
+               f"    print('⚙️ COLAB: trainer_state save_steps → {a.save_steps} ·', _ts, flush=True)\n") + out[-1]
 allc = [C0] + out[:-1] + [C_RESTORE, out[-1], C_END]
 for i, c in enumerate(allc):
     compile(c, f"c{i}", "exec")

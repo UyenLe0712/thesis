@@ -46,6 +46,8 @@ TEST = [
     ("GRPO + SPICE chạy lại (A/A)", "luoi/8_11/test_u_4/score_grpo_spice_aa_101_test_raw.jsonl", "lưới RL"),
     ("RLOO + SPICE", "luoi/7_11/test_u_3/score_rloo_spice_101_test_raw.jsonl", "lưới RL"),
     ("Dr.GRPO đầy đủ + SPICE", "luoi/20_11/luoi-test-u-5/score_drgrpo_full_spice_101_test_raw.jsonl", "lưới RL"),   # đợt B5, kernel luoi-test-u-5 22/11
+    ("DPO trực tuyến + SPICE", "luoi/20_11/luoi-test-c-dpo/kq/score_dpo_on_spice_101_test_raw.jsonl", "lưới RL"),   # đợt B5, Colab T4 22–23/11 (kiểm bộ chấm 9/10)
+    ("DAPO + SPICE", "luoi/20_11/luoi-test-c-dapo/kq/score_dapo_ds_spice_101_test_raw.jsonl", "lưới RL"),   # đợt B5, train ck400 Kaggle → ck500 Colab, test Colab T4 24/11 (kiểm bộ chấm 9/10)
     ("xao101 (SPICE ghép ngẫu nhiên)", "xao101/test/score_ck500_xao101_test_raw.jsonl", "lưới RL"),
     ("SA-SPICE-v3 ck400", "sa_spice_v3/test/score_sa_ck400_test_raw.jsonl", "lưới RL"),   # chờ kernel sa3-test-ck400
     ("SPICE-MATCH ck400", "sa_spice_v3/test/match/score_match_ck400_test_raw.jsonl", "lưới RL"),   # kernel sa3-test-match 17/11, Colab L4
@@ -80,12 +82,16 @@ TRUC_RL = dict(
           ("REINFORCE + SPICE", "REINFORCE (mốc EMA)", 500, ""),
           ("RLOO + SPICE", "RLOO", 500, ""),
           ("Dr.GRPO đầy đủ + SPICE", "Dr.GRPO (bỏ chuẩn hoá độ lệch chuẩn + độ dài)", 500, ""),
+          ("DPO trực tuyến + SPICE", "DPO trực tuyến (cặp tốt nhất − kém nhất trong nhóm 8, β 0,1)", 500, "b"),
+          ("DAPO + SPICE", "DAPO (lấy mẫu động, bỏ nhóm hoà, kẹp lệch ε 0,2/0,28; giữ β 0,04)", 500, "c"),
           ("PPO λ=1 (1000 bước)", "PPO, GAE λ = 1", 1000, "a"),
           ("PPO λ=0,95 (1000 bước)", "PPO, GAE λ = 0,95", 1000, "a")],
     moc=[("SFT tiếp (= SFT-cont)", "SFT tiếp (không RL, cùng 1.000 câu nhắc)", 125, ""),
          ("S1/101", "điểm xuất phát", 0, "")],
     chu_thich="a: PPO một câu nhắc mỗi update nên chạy 1.000 update để đi hết đúng 1.000 câu nhắc như các lượt khác. "
-              "Đợt B5 (20–22/11) chưa có số test: DAPO, GSPO, GRPO μ=2, REINFORCE++, DPO trực tuyến (đang chạy/chờ test). A2C mới probe. Chưa chạy: MIXER, MRT, RAML.",
+              "b: DPO trực tuyến chấm trên Colab T4 (22–23/11), kiểm bộ chấm 9/10 bước trùng toạ độ tệp thô S1 (Kaggle 10/10), kiểm dùng lại 40/40. "
+              "c: DAPO train ck400 trên Kaggle rồi nối tiếp tới ck500 trên Colab T4 (24/11), test Colab T4 24/11, kiểm bộ chấm 9/10, kiểm hoà 16/20. "
+              "Đợt B5 chưa có số test: GSPO, GRPO μ=2, REINFORCE++ (train dở). A2C mới probe. Chưa chạy: MIXER, MRT, RAML.",
     so=[(AA, "A/A"), ("ck500 (GRPO + SPICE)", "ck500"), ("SFT tiếp (= SFT-cont)", "SFT tiếp"), ("S1/101", "S1/101"), ("SA-SPICE-v3 ck400", "SA ck400")],
 )
 TRUC_TH = dict(
@@ -132,6 +138,7 @@ CHU = {
     "GRPO + SPICE chạy lại (A/A)": (52.97, 37.55, 68.44, 430.92, 46.00, 62.39, 67.09, "chu_luoi_8_11b.json"),
     "RLOO + SPICE": (52.00, 37.00, 67.33, 422.10, 45.26, 61.65, 66.31, "chu_luoi_8_11b.json"),
     "Dr.GRPO đầy đủ + SPICE": (52.10, 37.66, 68.24, 428.84, 45.60, 62.56, 66.96, "chu_drgrpo_22_11.json (22/11)"),
+    "DPO trực tuyến + SPICE": (51.93, 37.40, 67.78, 424.90, 45.42, 62.24, 66.61, "chu_dpo_23_11.json (24/11)"),
     "SA-SPICE-v3 ck400": (51.24, 38.90, 69.31, 429.12, 45.76, 64.40, 67.59, "chu_sa3_test_15_11.json"),
     "SPICE-MATCH ck400": (52.59, 38.74, 69.51, 436.26, 46.41, 64.07, 67.96, "chu_match_17_11.json"),   # kernel chu-match-17-11-cpu
     "xao101 (SPICE ghép ngẫu nhiên)": (51.32, 36.95, 67.36, 418.13, 44.40, 61.52, 66.40, "ktc_chu_27_10.json"),
@@ -588,8 +595,8 @@ ck500 − S1/101 exec trên ACU: **+4,58 [+3,17; +6,05]** p=2,1e−10 · ACE −
 |---|---|---|
 | chrF ck400 (SA-SPICE-v3 baseline) | không chấm test | trượt tiêu chí khả thi DEV (không chạm −6,90) |
 | GRPO bỏ chia std (lượt cũ, `loss_type="dapo"`) | treo ở checkpoint-475, không chấm | report/320 §20; Dr.GRPO đầy đủ đã chạy lại và có số (§30) |
-| B5: DPO trực tuyến · GRPO + chrF / BLEU-4 / SPIDEr / BERTScore | xong train ck500, chờ test (sau 28/11) | report/337 §9 |
-| B5: DAPO · GRPO μ=2 · GSPO · REINFORCE++ lô 64 | train dở | report/337 §9 |
+| B5: GRPO + chrF / BLEU-4 / SPIDEr / BERTScore | xong train ck500, chờ test (sau 28/11) | report/337 §9; DPO trực tuyến đã có số (report/320 §31) |
+| B5: GRPO μ=2 · GSPO · REINFORCE++ lô 64 | train dở | report/337 §9; DAPO đã có số (report/320 §32) |
 | VIS-SFT | dừng ở điểm kiểm K1 | không có số test |
 | CTG A3 bước chạm | xem report/279 | chỉ ghi bước không chạm ở §5 |
 """
