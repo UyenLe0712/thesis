@@ -1,6 +1,6 @@
 # 334 — Bảng kết quả tổng hợp (tự sinh)
 
-> **Tệp này do `harness/bang_tong_hop.py` sinh ra — đừng sửa tay.** Cập nhật: thêm nhánh vào danh sách trong script rồi `cd harness && python3 bang_tong_hop.py`. Lần sinh gần nhất: 24/11/2026 13:08 (giờ máy WSL, UTC). Bootstrap B = 10000.
+> **Tệp này do `harness/bang_tong_hop.py` sinh ra — đừng sửa tay.** Cập nhật: thêm nhánh vào danh sách trong script rồi `cd harness && python3 bang_tong_hop.py`. Lần sinh gần nhất: 24/11/2026 13:26 (giờ máy WSL, UTC). Bootstrap B = 10000.
 
 Quy ước: số **test** = tập kiểm AndroidControl của dự án (4.463 bước chạm + 2.495 bước không chạm), trích được. Số **DEV/val** chỉ để chọn nhánh, cấm trích ra bài. Mọi nhánh một hạt giống (101) trừ chỗ ghi khác. KTC95 bootstrap cụm app (test) hoặc cụm episode (DEV-v3); p là McNemar chính xác; * = KTC loại 0.
 
@@ -37,11 +37,11 @@ Mọi lượt: LoRA mới cỡ S1, KL β 0,04 về S1/101, 1.000 câu nhắc tra
 | GRPO (lượt gốc) | 52,36 | <u>37,92</u> | 68,36 | 430,05 | 45,79 | 62,87 | 67,07 |
 | SCST (mốc = câu greedy) | 51,97 | **38,15** | **68,70** | <u>430,89</u> | <u>45,93</u> | **63,31** | **67,25** |
 | PPO, GAE λ = 1 <sup>a</sup> | 50,70 | 37,86 | 68,25 | 420,72 | 44,98 | <u>63,00</u> | 66,78 |
-| DAPO (lấy mẫu động, bỏ nhóm hoà, kẹp lệch ε 0,2/0,28; giữ β 0,04) <sup>c</sup> | - | - | - | - | - | - | - |
+| DAPO (lấy mẫu động, bỏ nhóm hoà, kẹp lệch ε 0,2/0,28; giữ β 0,04) <sup>c</sup> | 52,45 | 37,75 | <u>68,49</u> | 427,17 | 45,50 | 62,63 | 67,00 |
 | REINFORCE (mốc EMA) | <u>52,52</u> | 37,37 | 67,97 | 426,11 | 45,27 | 62,06 | 66,76 |
 | Dr.GRPO (bỏ chuẩn hoá độ lệch chuẩn + độ dài) | 52,10 | 37,66 | 68,24 | 428,84 | 45,60 | 62,56 | 66,96 |
 | PPO, GAE λ = 0,95 <sup>a</sup> | 50,67 | 37,89 | 67,96 | 419,53 | 44,81 | 62,85 | 66,54 |
-| GRPO (A/A) | **52,97** | 37,55 | <u>68,44</u> | **430,92** | **46,00** | 62,39 | <u>67,09</u> |
+| GRPO (A/A) | **52,97** | 37,55 | 68,44 | **430,92** | **46,00** | 62,39 | <u>67,09</u> |
 | RLOO | 52,00 | 37,00 | 67,33 | 422,10 | 45,26 | 61,65 | 66,31 |
 | DPO trực tuyến (cặp tốt nhất − kém nhất trong nhóm 8, β 0,1) <sup>b</sup> | 51,93 | 37,40 | 67,78 | 424,90 | 45,42 | 62,24 | 66,61 |
 | *mốc không RL* | | | | | | | |
@@ -237,7 +237,7 @@ Cùng cách đánh dấu như mục 3.
 | RLOO + SPICE | 52,00 | 37,00 | 67,33 | 422,10 | 45,26 | 61,65 | 66,31 | chu_luoi_8_11b.json |
 | Dr.GRPO đầy đủ + SPICE | 52,10 | 37,66 | 68,24 | 428,84 | 45,60 | 62,56 | 66,96 | chu_drgrpo_22_11.json (22/11) |
 | DPO trực tuyến + SPICE | 51,93 | 37,40 | 67,78 | 424,90 | 45,42 | 62,24 | 66,61 | chu_dpo_23_11.json (24/11) |
-| DAPO + SPICE | chưa có | | | | | | | |
+| DAPO + SPICE | 52,45 | 37,75 | 68,49 | 427,17 | 45,50 | 62,63 | 67,00 | chu_dapo_24_11.json (24/11) |
 | xao101 (SPICE ghép ngẫu nhiên) | 51,32 | 36,95 | 67,36 | 418,13 | 44,40 | 61,52 | 66,40 | ktc_chu_27_10.json |
 | SA-SPICE-v3 ck400 | 51,24 | **38,90** | <u>69,31</u> | 429,12 | 45,76 | **64,40** | 67,59 | chu_sa3_test_15_11.json |
 | SPICE-MATCH ck400 | 52,59 | <u>38,74</u> | **69,51** | <u>436,26</u> | <u>46,41</u> | 64,07 | **67,96** | chu_match_17_11.json |

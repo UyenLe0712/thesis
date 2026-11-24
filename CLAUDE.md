@@ -107,7 +107,7 @@ bảng log train ở `HUONG_DA_THU.md` §2e):
   kiểm bộ chấm 10/10), số smoke không dùng. Test thật: Kaggle sau 28/11 hoặc Colab (`harness/runbook/colab_test_b5_22_11.md`).
 - **DPO trực tuyến có số test (Colab T4, 23/11):** exec 59,44, − ck500 **−1,21 [−1,73; −0,71]** (thua), − S1 +0,34 ns, ngang
   A/A (`report/320` §31). Kiểm bộ chấm trên Colab 9/10 (Kaggle 10/10) ⇒ phải khai. Độ đo văn bản: kernel CPU `trangphngngc/chu-dpo-23-11-cpu`.
-- **DAPO có số test (Colab T4, 24/11):** exec 60,03, − ck500 **−0,63 [−1,14; −0,12]** (thua), − S1 +0,92 [+0,09; +1,75], ngang A/A và Dr.GRPO (`report/320` §32). Kiểm bộ chấm Colab 9/10.
+- **DAPO có số test (Colab T4, 24/11):** exec 60,03, − ck500 **−0,63 [−1,14; −0,12]** (thua), − S1 +0,92 [+0,09; +1,75], ngang A/A và Dr.GRPO; độ đo văn bản ngang ck500 cả 6 cột (`report/320` §32). Kiểm bộ chấm Colab 9/10.
 - **Dừng giữa chừng, chờ hạn mức 28/11:** GRPO μ=2 và GSPO ck750/1.000 (thưởng đều không tăng; còn 250 bước,
   PREV=`trangphuongngoc/luoi-b5-t2-3`) · REINFORCE++ lô 64 ck70/125. GRPO/REINFORCE++ lô 128 chết RAM,
   chưa sửa mã (user chưa đồng ý hướng sửa).

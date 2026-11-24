@@ -1,0 +1,72 @@
+câu trống DAPO: [('18710', '1')]
+PTBTokenizer tokenized 41033 tokens at 204629.28 tokens per second.
+PTBTokenizer tokenized 41292 tokens at 242991.50 tokens per second.
+Parsing reference captions
+Initiating Stanford parsing pipeline
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator tokenize
+[main] INFO edu.stanford.nlp.pipeline.TokenizerAnnotator - TokenizerAnnotator: No tokenizer type provided. Defaulting to PTBTokenizer.
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ssplit
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator parse
+[main] INFO edu.stanford.nlp.parser.common.ParserGrammar - Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... 
+done [0.7 sec].
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator lemma
+[main] INFO edu.stanford.nlp.pipeline.StanfordCoreNLP - Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz ... done [3.2 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.muc.7class.distsim.crf.ser.gz ... done [0.6 sec].
+Loading classifier from edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz ... done [0.7 sec].
+Threads( StanfordCoreNLP ) [01:14.672 minutes]
+Parsing test captions
+Threads( StanfordCoreNLP ) [33.577 seconds]
+SPICE evaluation took: 1.986 min
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/389 [00:00<?, ?it/s]Loading weights:  64%|██████▍   | 250/389 [00:00<00:00, 2496.87it/s]Loading weights: 100%|██████████| 389/389 [00:00<00:00, 2533.30it/s]
+[transformers] [1mRobertaModel LOAD REPORT[0m from: roberta-large
+Key                       | Status     | 
+--------------------------+------------+-
+lm_head.dense.bias        | UNEXPECTED | 
+lm_head.layer_norm.weight | UNEXPECTED | 
+lm_head.bias              | UNEXPECTED | 
+lm_head.dense.weight      | UNEXPECTED | 
+lm_head.layer_norm.bias   | UNEXPECTED | 
+pooler.dense.bias         | MISSING    | 
+pooler.dense.weight       | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Warning: Empty candidate sentence detected; setting raw BERTscores to 0.
+Warning: Empty reference sentence detected; setting raw BERTScores to 0.
+  DAPO: tính từng bước xong (502 s)
+✅ AndroidControl: 7 nhánh tái lập số đã lưu
+  AndroidControl bootstrap 200/2000 · 1 s
+  AndroidControl bootstrap 400/2000 · 3 s
+  AndroidControl bootstrap 600/2000 · 4 s
+  AndroidControl bootstrap 800/2000 · 5 s
+  AndroidControl bootstrap 1000/2000 · 6 s
+  AndroidControl bootstrap 1200/2000 · 8 s
+  AndroidControl bootstrap 1400/2000 · 9 s
+  AndroidControl bootstrap 1600/2000 · 10 s
+  AndroidControl bootstrap 1800/2000 · 11 s
+  AndroidControl bootstrap 2000/2000 · 13 s
+PTBTokenizer tokenized 41033 tokens at 240283.40 tokens per second.
+PTBTokenizer tokenized 41102 tokens at 244860.25 tokens per second.
+PTBTokenizer tokenized 41033 tokens at 244005.67 tokens per second.
+PTBTokenizer tokenized 41674 tokens at 241836.18 tokens per second.
+PTBTokenizer tokenized 41033 tokens at 237398.07 tokens per second.
+PTBTokenizer tokenized 41718 tokens at 240114.80 tokens per second.
+PTBTokenizer tokenized 41033 tokens at 236040.57 tokens per second.
+PTBTokenizer tokenized 40806 tokens at 228615.71 tokens per second.
+PTBTokenizer tokenized 41033 tokens at 235300.01 tokens per second.
+PTBTokenizer tokenized 41694 tokens at 242684.59 tokens per second.
+PTBTokenizer tokenized 41033 tokens at 232854.64 tokens per second.
+PTBTokenizer tokenized 41663 tokens at 240983.76 tokens per second.
+PTBTokenizer tokenized 41033 tokens at 235263.19 tokens per second.
+PTBTokenizer tokenized 41292 tokens at 232273.55 tokens per second.
+  METEOR {'S1/101': 36.79, 'ck500': 37.92, 'SFT tiếp': 37.75, 'GRPO A/A': 37.55, 'Dr.GRPO đầy đủ': 37.66, 'DPO trực tuyến': 37.4, 'DAPO': 37.75}
+  DAPO − ck500: bleu4 +0.09 [-0.39; +0.57] · rougeL +0.12 [-0.22; +0.47] · cider_d -2.88 [-7.23; +1.29] · spice -0.29 [-0.82; +0.23] · chrf -0.24 [-0.59; +0.11] · bert -0.06 [-0.37; +0.25]
+  DAPO − GRPO A/A: bleu4 -0.52 [-1.14; +0.29] · rougeL +0.05 [-0.31; +0.40] · cider_d -3.74 [-8.35; +0.96] · spice -0.49 [-1.09; +0.09] · chrf +0.25 [-0.12; +0.63] · bert -0.08 [-0.41; +0.24]
+  DAPO − SFT tiếp: bleu4 +0.38 [-0.18; +0.96] · rougeL -0.06 [-0.45; +0.34] · cider_d +1.38 [-4.02; +6.87] · spice +0.18 [-0.50; +0.89] · chrf -0.00 [-0.43; +0.46] · bert -0.05 [-0.42; +0.35]
+  DAPO − S1/101: bleu4 +0.89 [+0.30; +1.69] · rougeL +1.14 [+0.64; +1.64] · cider_d +11.06 [+4.72; +17.53] · spice +1.13 [+0.37; +1.94] · chrf +1.37 [+0.86; +1.90] · bert +0.67 [+0.22; +1.13]
+  DAPO − Dr.GRPO đầy đủ: bleu4 +0.35 [-0.12; +0.81] · rougeL +0.25 [-0.09; +0.60] · cider_d -1.67 [-6.01; +2.82] · spice -0.10 [-0.66; +0.45] · chrf +0.07 [-0.28; +0.44] · bert +0.04 [-0.27; +0.36]
+  DAPO − DPO trực tuyến: bleu4 +0.52 [+0.04; +1.01] · rougeL +0.71 [+0.33; +1.14] · cider_d +2.27 [-2.18; +7.46] · spice +0.08 [-0.58; +0.74] · chrf +0.39 [+0.01; +0.83] · bert +0.40 [+0.05; +0.78]
+→ /kaggle/working/w/runs/chu_dapo_24_11.json

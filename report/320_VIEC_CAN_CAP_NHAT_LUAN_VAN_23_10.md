@@ -1248,4 +1248,21 @@ Test trên **Colab T4** (`_bundles/luoi/k_luoi-test-c-dapo/`), cùng mã với t
 - Câu trùng: DAPO = S1 ở 2.605/4.463, = ck500 ở 3.333, = Dr.GRPO ở 3.279, = DPO ở 3.125.
 - Đọc: DAPO hơn S1 có ý nghĩa (KTC loại 0, p 0,022), thấp hơn ck500 có ý nghĩa, ngang A/A, SFT tiếp và Dr.GRPO. Exec gần như trùng Dr.GRPO (60,03 vs 60,00) nhưng câu chỉ trùng 3.279/4.463 ⇒ trùng tổng, không trùng từng bước. Một seed.
 - Câu được viết: "DAPO đạt 60,03, hơn S1 +0,92 nhưng thấp hơn ck500 −0,63 (một seed); ngang GRPO A/A cùng mã". Cấm "DAPO kém GRPO" (so A/A thì ngang); cấm suy rộng sang DAPO bản gốc (β = 0).
-- Chưa làm: độ đo văn bản (kernel CPU kiểu `chu_dpo_23_11`), bước không chạm.
+- Độ đo văn bản (kernel CPU `trangphngngc/chu-dapo-24-11-cpu`, 24/11; `runs/luoi/20_11/chu_dapo/chu_dapo_24_11.json`;
+  kiểm tái lập 7/7 nhánh khớp số đã lưu; KTC bootstrap cụm theo app):
+
+| nhánh | BLEU-4 | METEOR | ROUGE-L | CIDEr-D | SPICE | chrF | BERTScore |
+|---|---|---|---|---|---|---|---|
+| S1/101 | 51,56 | 36,79 | 67,35 | 416,12 | 44,37 | 61,26 | 66,33 |
+| ck500 | 52,36 | 37,92 | 68,36 | 430,05 | 45,79 | 62,87 | 67,07 |
+| GRPO A/A | 52,97 | 37,55 | 68,44 | 430,92 | 46,00 | 62,39 | 67,09 |
+| Dr.GRPO | 52,10 | 37,66 | 68,24 | 428,84 | 45,60 | 62,56 | 66,96 |
+| DPO trực tuyến | 51,93 | 37,40 | 67,78 | 424,90 | 45,42 | 62,24 | 66,61 |
+| **DAPO** | 52,45 | 37,75 | 68,49 | 427,17 | 45,50 | 62,63 | 67,00 |
+
+  - DAPO − ck500: cả 6 cột có KTC phủ 0 (BLEU-4 +0,09 · ROUGE-L +0,12 · CIDEr-D −2,88 [−7,23; +1,29] · SPICE −0,29 ·
+    chrF −0,24 · BERTScore −0,06) ⇒ **ngang ck500 về văn bản**, như Dr.GRPO.
+  - DAPO − S1/101: hơn có ý nghĩa cả 6 cột (CIDEr-D +11,06 [+4,72; +17,53], SPICE +1,13 [+0,37; +1,94], chrF +1,37).
+  - DAPO − DPO trực tuyến: hơn có ý nghĩa ở BLEU-4 +0,52, ROUGE-L +0,71, chrF +0,39, BERTScore +0,40.
+  - DAPO − A/A, − Dr.GRPO, − SFT tiếp: mọi cột phủ 0.
+- Chưa làm: bước không chạm.

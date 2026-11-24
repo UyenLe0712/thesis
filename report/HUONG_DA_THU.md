@@ -142,7 +142,7 @@ Cách đọc: *ý tưởng → cách làm → số → vì sao dừng → muốn
 | Dr.GRPO (lượt cũ) | treo ở bước 475, chưa chấm | | đã chạy lại đầy đủ ở đợt B5 (§2e) |
 | **Dr.GRPO đầy đủ** (B5, 22/11; bỏ chia std + bỏ chuẩn hoá độ dài) | 60,00 | **−0,65 p=0,009** (thua); − SCST −0,54 p=0,015; ngang A/A, SFT tiếp | đổi phần tử chỉ +18 (ck500 +41); report/320 §30 |
 | **DPO trực tuyến** (B5, 23/11; cặp SPICE tốt nhất − kém nhất trong nhóm 8, β 0,1) | 59,44 | **−1,21 p=4e−6** (thua); − SFT tiếp −0,72*; − SCST −1,10* | − S1 +0,34 ns, ngang A/A ⇒ không hơn SFT; chấm trên Colab T4 (kiểm bộ chấm 9/10); report/320 §31 |
-| **DAPO** (B5, 24/11; lấy mẫu động, ε 0,2/0,28, giữ β 0,04) | 60,03 | **−0,63 p=0,02** (thua); ngang A/A, Dr.GRPO, SFT tiếp | − S1 +0,92 [+0,09; +1,75]; nhóm hoà bị loại 27,3%; chấm Colab T4 (kiểm bộ chấm 9/10); report/320 §32 |
+| **DAPO** (B5, 24/11; lấy mẫu động, ε 0,2/0,28, giữ β 0,04) | 60,03 | **−0,63 p=0,02** (thua); ngang A/A, Dr.GRPO, SFT tiếp | − S1 +0,92 [+0,09; +1,75]; nhóm hoà bị loại 27,3%; độ đo văn bản ngang ck500 cả 6 cột; chấm Colab T4 (kiểm bộ chấm 9/10); report/320 §32 |
 | GRPO + ROUGE-L | 60,63 | ngang | đứng đầu CIDEr-D |
 | GRPO + METEOR | 60,27 | ngang | |
 | GRPO + CIDEr-D | 60,27 | ngang; CIDEr-D thấp hơn ck500 −5,53 | §22: **không** do df hay tách từ (đã kiểm 5 biến thể), tối ưu kém ngay trên mục tiêu của chính nó |
@@ -176,7 +176,7 @@ Số dưới đây là **log train**, không phải số test. Có số test th�
 | lượt | tới đâu (21/11) | thưởng train · KL | ghi chú |
 |---|---|---|---|
 | Dr.GRPO đầy đủ | **xong, có số test** | 0,467 → 0,520 · KL TB/max 0,014/0,095 | **exec 60,00; − ck500 −0,65 [−1,11; −0,18] p=0,009; − A/A +0,27 (ns); − S1 +0,90**; độ đo văn bản ngang ck500 cả 6 cột (report/320 §30) |
-| DAPO (lấy mẫu động, eps 0,28) | **xong, có số test** (ck400 Kaggle → ck500 Colab T4, test Colab T4 24/11) | 0,46 (bước 1–50) → 0,55 (451–500) · KL TB/max 0,030/0,419 | **exec 60,03; − ck500 −0,63 [−1,14; −0,12] p=0,02 (thua); − S1 +0,92 [+0,09; +1,75]; − A/A +0,29 (ns); − Dr.GRPO +0,02**; kiểm bộ chấm Colab 9/10; nhóm hoà bị loại 27,3%; report/320 §32; `runs/luoi/20_11/luoi-b5-dapo-c/` |
+| DAPO (lấy mẫu động, eps 0,28) | **xong, có số test** (ck400 Kaggle → ck500 Colab T4, test Colab T4 24/11) | 0,46 (bước 1–50) → 0,55 (451–500) · KL TB/max 0,030/0,419 | **exec 60,03; − ck500 −0,63 [−1,14; −0,12] p=0,02 (thua); − S1 +0,92 [+0,09; +1,75]; − A/A +0,29 (ns); − Dr.GRPO +0,02**; độ đo văn bản ngang ck500 cả 6 cột, hơn S1 cả 6; kiểm bộ chấm Colab 9/10; nhóm hoà bị loại 27,3%; report/320 §32; `runs/luoi/20_11/luoi-b5-dapo-c/` |
 | GRPO μ=2 (2 lượt tối ưu mỗi lô sinh) | ck750/1.000 (22/11) | phẳng 0,500 → 0,496 · **KL max 0,592** | |
 | GSPO (tỉ số mức chuỗi) | ck750/1.000 (22/11) | **giảm** 0,496 → 0,485 (đáy 0,455 ở ck600) · clip_ratio 0,19 → 0,36 | dấu hiệu xấu |
 | REINFORCE++ lô 64 | ck70/125 | 0,470 → 0,472 | OOM GPU lần đầu, sửa `--gen-chunk 4` |
